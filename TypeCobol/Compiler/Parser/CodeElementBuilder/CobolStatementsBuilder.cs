@@ -12,14 +12,14 @@ namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolStatementsBuilder
 	{
-        public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, UnsupportedLanguageLevelFeaturesChecker languageLevelChecker)
-        {
-	        LanguageLevelChecker = languageLevelChecker;
+		public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, UnsupportedLanguageLevelFeaturesChecker languageLevelChecker)
+		{
+			LanguageLevelChecker = languageLevelChecker;
 			CobolWordsBuilder = cobolWordsBuilder;
 			CobolExpressionsBuilder = cobolExpressionsBuilder;
 		}
 
-        private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+		private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
 		private CobolWordsBuilder CobolWordsBuilder { get; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 

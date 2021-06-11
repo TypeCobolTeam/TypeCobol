@@ -20,19 +20,19 @@ namespace TypeCobol.Compiler.Parser
         private ParserRuleContext Context;
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
-        private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+		private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
 		private CobolWordsBuilder CobolWordsBuilder { get; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 		private CobolStatementsBuilder CobolStatementsBuilder { get; }
 
-        public CodeElementBuilder(TypeCobolOptions compilerOptions)
-        {
-            var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
-            LanguageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
+		public CodeElementBuilder(TypeCobolOptions compilerOptions)
+		{
+			var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
+			LanguageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
             CobolWordsBuilder = new CobolWordsBuilder();
             CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, LanguageLevelChecker);
-            CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
-        }
+			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
+		}
 
 		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
 		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
@@ -1411,12 +1411,12 @@ namespace TypeCobol.Compiler.Parser
 		    FormalizedCommentDocumentation formalizedCommentDocumentation = null;
 		    if (context.formalizedComment() != null)
 		        formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
-		    // [/TypeCobol]
-            var procedureDivisionHeader = new ProcedureDivisionHeader(formalizedCommentDocumentation);
-            Context = context;
-            CodeElement = procedureDivisionHeader;
+			// [/TypeCobol]
+			var procedureDivisionHeader = new ProcedureDivisionHeader(formalizedCommentDocumentation);
+			Context = context;
+			CodeElement = procedureDivisionHeader;
 
-            LanguageLevelChecker.Check(procedureDivisionHeader, context);
+			LanguageLevelChecker.Check(procedureDivisionHeader, context);
 		}
 		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
 			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());

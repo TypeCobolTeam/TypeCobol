@@ -639,17 +639,6 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        private bool InterpretDoubleColonAsQualifiedNameSeparator
-        {
-            get
-            {
-                var currentState = tokensLine.ScanState;
-                return !compilerOptions.IsCobolLanguage  //No QualifiedNameSeparator allowed in pure Cobol
-                       && !currentState.InsidePseudoText //In TypeCobol, no QualifiedNameSeparator allowed in pseudoText
-                       && !currentState.InsideCopy;      //In TypeCobol, no QualifiedNameSeparator allowed in copies 
-            }
-        }
-
         public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
         {
             this.tokensLine = tokensLine;
