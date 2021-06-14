@@ -9,21 +9,6 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public class Context
         {
-            internal static readonly string SymbolCountCannotBeZeroMsg = "Symbol count cannot be zero";
-            internal static readonly string InvalidSymbolPosMsg = "Invalid position in PICTURE string of the symbol : {0}";
-            internal static readonly string SymbolSMustOccurOnlyOnceMsg = "Character S must be repeated only once in PICTURE string";
-            internal static readonly string SymbolSMustBeTheFirstMsg = "S must be at the beginning of a PICTURE string";
-            internal static readonly string MultipleVMsg = "V must appears only once in a PICTURE string";
-            internal static readonly string WrongPPositionMsg = "P must appears at the head or tail position of a PICTURE string";
-            internal static readonly string ZStarMutuallyExclusiveMsg = "Z and * symbols are mutually exclusive in a PICTURE string.";
-            internal static readonly string MoreThanOne_E_CharacterMsg = "Only one occurrence of E symbol can appear in a PICTURE string";
-            internal static readonly string MoreThanOne_CR_CharacterMsg = "Only one occurrence of CR symbol can appear in a PICTURE string";
-            internal static readonly string MoreThanOne_DB_CharacterMsg = "Only one occurrence of DB symbol can appear in a PICTURE string";
-            internal static readonly string MoreThanOne_S_CharacterMsg = "Only one occurrence of S symbol can appear in a PICTURE string";
-            internal static readonly string MoreThanOne_V_CharacterMsg = "Only one occurrence of V symbol can appear in a PICTURE string";
-            internal static readonly string MoreThanOne_Dot_CharacterMsg = "Only one occurrence of '.' symbol can appear in a PICTURE string";
-            internal static readonly string MutuallyExclusiveSymbolMsg = "+/-/CR/DB are mutually exclusive";
-
             /// <summary>
             /// Empty constructor.
             /// </summary>
@@ -235,7 +220,7 @@ namespace TypeCobol.Compiler.Types
                             Star_seen = true;
                         if (Z_seen && Star_seen)
                         {
-                            ValidationMessages.Add(ZStarMutuallyExclusiveMsg);
+                            ValidationMessages.Add(Z_STAR_MUTUALLY_EXCLUSIVE);
                             return false;
                         }
                         this.Category |= PictureCategory.NumericEdited;
@@ -285,12 +270,12 @@ namespace TypeCobol.Compiler.Types
                         this.Category |= PictureCategory.Numeric;
                         if (c.Count > 1)
                         {
-                            ValidationMessages.Add(SymbolSMustOccurOnlyOnceMsg);
+                            ValidationMessages.Add(SYMBOL_S_MUST_OCCUR_ONLY_ONCE);
                             return false;
                         }
                         if (state != 0 || this.SequenceIndex != 0)
                         {
-                            ValidationMessages.Add(SymbolSMustBeTheFirstMsg);
+                            ValidationMessages.Add(SYMBOL_S_MUST_BE_THE_FIRST);
                             return false;
                         }
                         S_count += c.Count;
@@ -306,7 +291,7 @@ namespace TypeCobol.Compiler.Types
                         V_count += c.Count;
                         if (V_count > 1)
                         {
-                            ValidationMessages.Add(MultipleVMsg);
+                            ValidationMessages.Add(MULTIPLE_V);
                             return false;
                         }
                         this.IsBeforeDecimalPoint = false;
@@ -373,7 +358,7 @@ namespace TypeCobol.Compiler.Types
                 }
                 if (this.SequenceIndex == (this.Sequence.Count - 2) && this.Sequence[this.Sequence.Count - 1].SpecialChar == SC.V)
                     return true;//$PV
-                this.ValidationMessages.Add(WrongPPositionMsg);
+                this.ValidationMessages.Add(WRONG_P_POSITION);
                 return false;
             }
 

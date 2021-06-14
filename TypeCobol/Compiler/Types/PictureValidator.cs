@@ -14,6 +14,21 @@ namespace TypeCobol.Compiler.Types
     /// </summary>
     public partial class PictureValidator
     {
+        private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
+        private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol : {0}";
+        private const string SYMBOL_S_MUST_OCCUR_ONLY_ONCE = "Character S must be repeated only once in PICTURE string";
+        private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
+        private const string MULTIPLE_V = "V must appears only once in a PICTURE string";
+        private const string WRONG_P_POSITION = "P must appears at the head or tail position of a PICTURE string";
+        private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string.";
+        private const string MORE_THAN_ONE_E_CHARACTER = "Only one occurrence of E symbol can appear in a PICTURE string";
+        private const string MORE_THAN_ONE_CR_CHARACTER = "Only one occurrence of CR symbol can appear in a PICTURE string";
+        private const string MORE_THAN_ONE_DB_CHARACTER = "Only one occurrence of DB symbol can appear in a PICTURE string";
+        private const string MORE_THAN_ONE_S_CHARACTER = "Only one occurrence of S symbol can appear in a PICTURE string";
+        private const string MORE_THAN_ONE_V_CHARACTER = "Only one occurrence of V symbol can appear in a PICTURE string";
+        private const string MORE_THAN_ONE_DOT_CHARACTER = "Only one occurrence of '.' symbol can appear in a PICTURE string";
+        private const string MUTUALLY_EXCLUSIVE_SYMBOLS = "+/-/CR/DB are mutually exclusive";
+
         /// <summary>
         /// Picture string constructor.
         /// </summary>
@@ -313,7 +328,7 @@ namespace TypeCobol.Compiler.Types
                 int count = m.Item2;
                 if (count == 0)
                 {//Count cannot be 0.
-                    ValidationMessages.Add(Context.SymbolCountCannotBeZeroMsg);
+                    ValidationMessages.Add(SYMBOL_COUNT_CANNOT_BE_ZERO);
                 }
 
                 SC sc;
@@ -366,7 +381,7 @@ namespace TypeCobol.Compiler.Types
                         cr_count += count;
                         if (cr_count > 1)
                         {
-                            ValidationMessages.Add(Context.MoreThanOne_CR_CharacterMsg);
+                            ValidationMessages.Add(MORE_THAN_ONE_CR_CHARACTER);
                         }
                         break;
                     case SC.DB:
@@ -374,35 +389,35 @@ namespace TypeCobol.Compiler.Types
                         db_count += count;
                         if (db_count > 1)
                         {
-                            ValidationMessages.Add(Context.MoreThanOne_DB_CharacterMsg);
+                            ValidationMessages.Add(MORE_THAN_ONE_DB_CHARACTER);
                         }
                         break;
                     case SC.S:
                         s_count += count;
                         if (s_count > 1)
                         {
-                            ValidationMessages.Add(Context.MoreThanOne_S_CharacterMsg);
+                            ValidationMessages.Add(MORE_THAN_ONE_S_CHARACTER);
                         }
                         break;
                     case SC.V:
                         v_count += count;
                         if (v_count > 1)
                         {
-                            ValidationMessages.Add(Context.MoreThanOne_V_CharacterMsg);
+                            ValidationMessages.Add(MORE_THAN_ONE_V_CHARACTER);
                         }
                         break;
                     case SC.E:
                         e_count += count;
                         if (e_count > 1)
                         {
-                            ValidationMessages.Add(Context.MoreThanOne_E_CharacterMsg);
+                            ValidationMessages.Add(MORE_THAN_ONE_E_CHARACTER);
                         }
                         break;
                     case SC.DOT:
                         dot_count += count;
                         if (dot_count > 1)
                         {
-                            ValidationMessages.Add(Context.MoreThanOne_Dot_CharacterMsg);
+                            ValidationMessages.Add(MORE_THAN_ONE_DOT_CHARACTER);
                         }
                         break;
                 }
@@ -411,7 +426,7 @@ namespace TypeCobol.Compiler.Types
             cntFound += (foundPlus || foundMinus ? 1 : 0);
             if (cntFound > 1)
             { // 0 is valid
-                ValidationMessages.Add(Context.MutuallyExclusiveSymbolMsg);
+                ValidationMessages.Add(MUTUALLY_EXCLUSIVE_SYMBOLS);
             }
             return sequence;
         }
@@ -626,7 +641,7 @@ namespace TypeCobol.Compiler.Types
                 Character c = ctx.Sequence[i];
                 if (!_Automata[stateIndex][c])
                 {//No transition
-                    ctx.ValidationMessages.Add(string.Format(Context.InvalidSymbolPosMsg, SC2String(c.SpecialChar)));
+                    ctx.ValidationMessages.Add(string.Format(INVALID_SYMBOL_POSITION, SC2String(c.SpecialChar)));
                     return false;
                 }
                 ctx.StateIndex = stateIndex;
