@@ -446,20 +446,12 @@ namespace TypeCobol.LanguageServer
                             GetNextRelevantChildren(child, computedChildrenList);
                         }
 
-                        foreach (var child in computedChildrenList)
-                        {
-                            System.Diagnostics.Debug.Assert(child is DataDefinition);
-                            var data = (DataDefinition) child;
-                            if (data.Name != null && data.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            {
-                                childrenCandidates.Add(data);
-                            }
-                        }
+                        FilterOnUserText(computedChildrenList);
                     }
                 }
                 else
                 {
-                    //If no variables found, it's could be a children declared in a typedef..
+                    //If no variable found, it could be a child declared in a typedef.
                     var children = new List<Node>();
                     var potentialTypes =
                         node.SymbolTable.GetTypes(
@@ -480,11 +472,16 @@ namespace TypeCobol.LanguageServer
                             children.AddRange(typeChildren);
                     }
 
-                    foreach (var child in children)
+                    FilterOnUserText(children);
+                }
+
+                void FilterOnUserText(List<Node> nodes)
+                {
+                    foreach (var child in nodes)
                     {
                         System.Diagnostics.Debug.Assert(child is DataDefinition);
                         var data = (DataDefinition) child;
-                        if (data.Name != null && data.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
+                        if (data.Name != null && data.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase))
                         {
                             childrenCandidates.Add(data);
                         }
