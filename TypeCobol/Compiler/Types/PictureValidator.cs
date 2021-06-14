@@ -192,104 +192,6 @@ namespace TypeCobol.Compiler.Types
             return items;
         }
 
-        private static SC Char2SC(char c)
-        {
-            switch (c)
-            {
-                case 'A':
-                    return SC.A;
-                case 'B':
-                    return SC.B;
-                case 'E':
-                    return SC.E;
-                case 'G':
-                    return SC.G;
-                case 'N':
-                    return SC.N;
-                case 'P':
-                    return SC.P;
-                case 'S':
-                    return SC.S;
-                case 'V':
-                    return SC.V;
-                case 'X':
-                    return SC.X;
-                case 'Z':
-                    return SC.Z;
-                case '9':
-                    return SC.NINE;
-                case '0':
-                    return SC.ZERO;
-                case '/':
-                    return SC.SLASH;
-                case ',':
-                    return SC.COMMA;
-                case '.':
-                    return SC.DOT;
-                case '+':
-                    return SC.PLUS;
-                case '-':
-                    return SC.MINUS;
-                case '*':
-                    return SC.STAR;
-                case '$':
-                    return SC.CS;
-                default:
-                    throw new ArgumentException();
-            }
-        }
-
-        private string SC2String(SC c)
-        {
-            switch (c)
-            {
-                case SC.A:
-                    return "A";
-                case SC.B:
-                    return "B";
-                case SC.E:
-                    return "E";
-                case SC.G:
-                    return "G";
-                case SC.N:
-                    return "N";
-                case SC.P:
-                    return "P";
-                case SC.S:
-                    return "S";
-                case SC.V:
-                    return "V";
-                case SC.X:
-                    return "X";
-                case SC.Z:
-                    return "Z";
-                case SC.NINE:
-                    return "9";
-                case SC.ZERO:
-                    return "0";
-                case SC.SLASH:
-                    return "/";
-                case SC.COMMA:
-                    return ",";
-                case SC.DOT:
-                    return ".";
-                case SC.PLUS:
-                    return "+";
-                case SC.MINUS:
-                    return "-";
-                case SC.STAR:
-                    return "*";
-                case SC.CS:
-                    return CurrencySymbol;
-                case SC.CR:
-                    return "CR";
-                case SC.DB:
-                    return "DB";
-                default:
-                    throw new ArgumentException($"Unknown '{c}' special character.", nameof(c));
-            }
-        }
-
         /// <summary>
         /// Determine if the given character is a simple insertion character.
         /// </summary>
@@ -556,78 +458,6 @@ namespace TypeCobol.Compiler.Types
                    };
         }
 
-        private static SC T(char c)
-        {
-            return Char2SC(c);
-        }
-
-        /// <summary>
-        /// Static representation of a (NFA) Non Deterministic Finite Automata over PICTURE symbols precedence rules.
-        /// </summary>
-        private static readonly State[] _Automata =
-        {
-            //State 0: Start Symbols
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('S'),T('V'),T('P'),T('G'),T('N') ),
-
-            //------------------------------------------------------
-            // NON FLOATING INSERTION SYMBOLS
-            //------------------------------------------------------
-            //State 1: --B-->(1)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('G'),T('N') ),
-            //State 2: --[0|/]-->(2)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('N') ),
-            //State 3: --,-->(3)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9'),T('V'),T('P') ),
-            //State 4: --.-->(4)
-            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9') ),
-            //State 5: --[+|-]-->(5)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('Z'),T('*'),SC.CS,T('9'),T('V'),T('P') ),
-            //State 6: --[+|-]-->(6)
-            new State(),
-            //State : --[CR|DB]-->()
-            new State(),
-            //State : --CS-->(8)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
-            //State : --E-->(9)
-            new State(T('+'),T('-') ),
-
-            //------------------------------------------------------
-            //FLOATING INSERTION SYMBOLS
-            //------------------------------------------------------
-            //State 10: --[Z|*]-->(10)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
-            //State 11: --[Z|*]-->(11)
-            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*') ),
-            //State 12: --[+|-]-->(12)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('9'),T('V'),T('P') ),
-            //State 13: --[+|-]-->(13)
-            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-') ),
-            //State 14: --CS-->(14)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,SC.CS,T('9'),T('V'),T('P') ),
-            //State 15: --CS-->(15)
-            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,SC.CS ),
-
-            //------------------------------------------------------
-            //OTHER SYMBOLS
-            //------------------------------------------------------
-            //State 16: --9-->(16)
-            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('9'),T('A'),T('X'),T('V'),T('P')),
-            //State 17: --[A|X]-->(17)
-            new State(T('B'),T('0'),T('/'),T('9'),T('A'),T('X')),
-            //State 18: --S-->(18)
-            new State(T('9'),T('V'),T('P')),
-            //State 19: --V-->(19)
-            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('Z'),T('*'),SC.CS,T('9'),T('P') ),
-            //State 20: --P-->(20)
-            new State(T('+'),T('-'),SC.CR,SC.DB,T('V'),T('P')),
-            //State 21: --P-->(21)
-            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('P')),
-            //State 22: --G-->(22)
-            new State(T('B'),T('G') ),
-            //State 23: --N-->(23)
-            new State(T('B'),T('0'),T('/'),T('N') ),
-        };
-
         /// <summary>
         /// Run the automata on the given context along with its PICTURE sequence.
         /// </summary>
@@ -635,23 +465,8 @@ namespace TypeCobol.Compiler.Types
         /// <returns>true if we reach the final character in a valid state, false otherwise.</returns>
         private bool RunAutomata(Context ctx)
         {
-            int stateIndex = 0;
-            for (int i = 0; i < ctx.Sequence.Count; i++)
-            {
-                Character c = ctx.Sequence[i];
-                if (!_Automata[stateIndex][c])
-                {//No transition
-                    ctx.ValidationMessages.Add(string.Format(INVALID_SYMBOL_POSITION, SC2String(c.SpecialChar)));
-                    return false;
-                }
-                ctx.StateIndex = stateIndex;
-                ctx.SequenceIndex = i;
-                int gotoState = ctx.GetState(c);
-                if (!ctx.OnGoto(c, stateIndex, ref gotoState))
-                    return false;
-                stateIndex = gotoState;
-            }
-            return true;
+            var automata = new Automata(this, ctx.Sequence.ToArray(), ctx.FirstFloatingIndex, ctx.LastFloatingIndex);
+            return automata.Run(ctx.ValidationMessages, ctx);
         }
     }
 }
