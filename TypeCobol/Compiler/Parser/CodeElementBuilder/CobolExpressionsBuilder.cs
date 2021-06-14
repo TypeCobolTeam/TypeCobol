@@ -3,14 +3,12 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
-using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolExpressionsBuilder
 	{
-        private TypeCobolOptions CompilerOptions { get; }
-
         // Storage area definitions (explicit data definitions AND compiler generated storage area allocations)
         internal IDictionary<SymbolDefinition, DataDescriptionEntry> storageAreaDefinitions { get; set; }
         
@@ -30,10 +28,10 @@ namespace TypeCobol.Compiler.Parser
         // List of program, method, or function call instructions (with shared sotrage areas)
         internal IList<CallSite> callSites { get; set; }
 
-        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder, TypeCobolOptions compilerOptions)
+        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder, UnsupportedLanguageLevelFeaturesChecker languageLevelChecker)
         {
-            CompilerOptions = compilerOptions;
             CobolWordsBuilder = cobolWordsBuilder;
+            LanguageLevelChecker = languageLevelChecker;
         }
 
         public void Reset()
@@ -46,8 +44,10 @@ namespace TypeCobol.Compiler.Parser
             callSites = new List<CallSite>();
         }
 
-		private CobolWordsBuilder CobolWordsBuilder { get; set; }
-        
+        private CobolWordsBuilder CobolWordsBuilder { get; }
+
+        private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+
         #region --- (Data storage area) Identifiers 1. Table elements reference : subscripting data names or condition names ---
 
         [CanBeNull]
@@ -283,6 +283,9 @@ namespace TypeCobol.Compiler.Parser
                                Parameters = functionCall.Arguments
                            };
             this.callSites.Add(callSite);
+
+            //Check allowed syntax
+            LanguageLevelChecker.Check(context);
 
             // Create storage area for result
             if (functionCall.FunctionName != null && functionCall.FunctionNameToken != null)

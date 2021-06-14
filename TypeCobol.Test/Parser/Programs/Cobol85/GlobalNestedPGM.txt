@@ -14,14 +14,14 @@ PROGRAM: EnclosingPgm common:False initial:False recursive:False
   MyNotGlobalGroup:Alphanumeric
   MNGG1:Alphanumeric
   MNGG2:Alphanumeric
-  MNGGDate:DATE
+  MNGGDate:Numeric
 --- Intrinsic:Namespace:Program:Global
 -- DATA --------
   MyGlobalVar:Alphanumeric
   MyGlobalGroup:Alphanumeric
   MGG1:Alphanumeric
   MGG2:Alphanumeric
-  MGGDate:DATE
+  MGGDate:Numeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

@@ -631,8 +631,7 @@ namespace TypeCobol.Compiler.Parser
                 statement.CallSites.Add(callSite);
             }
 
-            if (CompilerOptions.IsCobolLanguage)
-                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+            LanguageLevelChecker.Check(statement, context);
 
             CodeElement = statement;
         }
@@ -659,6 +658,18 @@ namespace TypeCobol.Compiler.Parser
                 if (mode != null) by = mode.Value;
                 mode = new SyntaxProperty<ParameterSharingMode>(by, null);
             }
+        }
+
+        public override void ExitDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            System.Diagnostics.Debug.Assert(CodeElement is DataDefinitionEntry);
+            LanguageLevelChecker.Check((DataDefinitionEntry) CodeElement, context);
+        }
+
+        public override void ExitTcCodeElement(CodeElementsParser.TcCodeElementContext context)
+        {
+            System.Diagnostics.Debug.Assert(CodeElement != null);
+            LanguageLevelChecker.Check(CodeElement, context);
         }
     }
 }
