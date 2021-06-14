@@ -446,7 +446,7 @@ namespace TypeCobol.LanguageServer
                             GetNextRelevantChildren(child, computedChildrenList);
                         }
 
-                        FilterOnUserText(computedChildrenList);
+                        FilterByUserText(computedChildrenList);
                     }
                 }
                 else
@@ -472,10 +472,10 @@ namespace TypeCobol.LanguageServer
                             children.AddRange(typeChildren);
                     }
 
-                    FilterOnUserText(children);
+                    FilterByUserText(children);
                 }
 
-                void FilterOnUserText(List<Node> nodes)
+                void FilterByUserText(List<Node> nodes)
                 {
                     foreach (var child in nodes)
                     {
