@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Types
                 this.RealDigits = validator.ValidationContext.RealDigits;
                 this.Category = validator.ValidationContext.Category;
                 this.IsExternalFloat = validator.ValidationContext.IsExternalFloatSequence();
-                this.Sequence = validator.ValidationContext.Sequence.ToArray();
+                this.Sequence = validator.ValidationContext.Sequence;
                 this.Size = validator.ValidationContext.Size;
                 this.IsSeparateSign = validator.IsSeparateSign;
                 if (validator.ValidationContext.IsDbcsSequence())

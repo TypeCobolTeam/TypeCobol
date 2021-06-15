@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// States of the automata. Each state lists all allowed transitions from one SC to another.
             /// </summary>
-            private static readonly bool[][] _States =
+            internal static readonly bool[][] _States = //make private !
             {
                 //State 0: Start Symbols
                 State(SC.B, SC.ZERO, SC.SLASH, SC.COMMA, SC.DOT, SC.PLUS, SC.MINUS, SC.Z, SC.STAR, SC.CS, SC.NINE, SC.A, SC.X, SC.S, SC.V, SC.P, SC.G, SC.N),
@@ -97,40 +97,80 @@ namespace TypeCobol.Compiler.Types
             }
 
             private readonly PictureValidator _validator;
-            private readonly Character[] _sequence;
-            private readonly int _firstFloatingIndex;
-            private readonly int _lastFloatingIndex;
 
-            public Automata(PictureValidator validator, Character[] sequence, int firstFloatingIndex, int lastFloatingIndex)
+            //run private data
+            private Character[] _sequence;
+            private int _firstFloatingIndex;
+            private int _lastFloatingIndex;
+            private int _sequenceIndex;
+            private bool _digitsSeenBeforeP;
+            private bool _isBeforeDecimalPoint;
+
+            //run output
+            public PictureCategory Category { get; private set; }
+            public int Digits { get; private set; }
+            public int RealDigits { get; private set; }
+            public bool IsSigned { get; private set; }
+            public int Scale { get; private set; }
+            public int Size { get; private set; }
+
+            public Automata(PictureValidator validator)
             {
                 _validator = validator;
-                _sequence = sequence;
-                _firstFloatingIndex = firstFloatingIndex;
-                _lastFloatingIndex = lastFloatingIndex;
             }
 
-            public bool Run(List<string> validationMessages, Context context) //TODO remove context arg when done
+            /// <summary>
+            /// Determines if the current Sequence Index is inside the Floating Insertion Symbols range.
+            /// </summary>
+            private bool IsCurrentIndexInsideFloatingInsertion
+                => _firstFloatingIndex >= 0
+                   && _lastFloatingIndex >= 0
+                   && _firstFloatingIndex <= _sequenceIndex
+                   && _sequenceIndex <= _lastFloatingIndex;
+
+            /// <summary>
+            /// Return true if the current sequence index is the first symbol of the sequence.
+            /// </summary>
+            private bool IsFirstSymbol => _sequenceIndex == 0;
+
+            /// <summary>
+            /// Return true if the current sequence index is the last symbol of the sequence.
+            /// </summary>
+            private bool IsLastSymbol => _sequenceIndex == _sequence.Length - 1;
+
+            public bool Run(Character[] sequence, List<string> validationMessages)
             {
+                //Initialize run variables
+                Initialize(sequence);
+
+                //Run automata
                 int stateIndex = 0;
-                for (int sequenceIndex = 0; sequenceIndex < _sequence.Length; sequenceIndex++)
+                while (_sequenceIndex < _sequence.Length)
                 {
-                    Character c = _sequence[sequenceIndex];
-                    if (!_States[stateIndex][(int)c.SpecialChar])
+                    Character c = _sequence[_sequenceIndex];
+
+                    if (!_States[stateIndex][(int) c.SpecialChar])
                     {
                         //No transition
                         validationMessages.Add(string.Format(INVALID_SYMBOL_POSITION, _validator.SC2String(c.SpecialChar)));
                         return false;
                     }
 
-                    context.SequenceIndex = sequenceIndex;
-                    int gotoState = context.GetState(c);
-                    if (!context.OnGoto(c, stateIndex, ref gotoState))
-                        return false;
+                    //TODO GetState / OnGoto
 
-                    stateIndex = gotoState;
+                    _sequenceIndex++;
                 }
 
                 return true;
+            }
+
+            private void Initialize(Character[] sequence)
+            {
+                _sequence = sequence;
+                _validator.ComputeFloatingStringIndexes(_sequence, out _firstFloatingIndex, out _lastFloatingIndex);
+                _sequenceIndex = 0;
+                _digitsSeenBeforeP = false;
+                _isBeforeDecimalPoint = true;
             }
         }
     }

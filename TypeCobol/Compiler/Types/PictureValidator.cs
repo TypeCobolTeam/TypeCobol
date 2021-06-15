@@ -208,7 +208,7 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="matches">All Picture items matched</param>
         /// <returns>The list of picture item sequence</returns>
-        private List<Character> CollectPictureSequence(List<Tuple<string, int>> matches)
+        private Character[] CollectPictureSequence(List<Tuple<string, int>> matches)
         {
             List<Character> sequence = new List<Character>();
             Character prevChar = null;//Previous char so that we can accumulate consecutive same characters.
@@ -236,21 +236,7 @@ namespace TypeCobol.Compiler.Types
                 SC sc;
                 if (ch.Length == 1)
                 {
-                    try
-                    {
-                        sc = Char2SC(ch[0]);
-                    }
-                    catch (ArgumentException ae)
-                    {
-                        if (ch.Equals(CurrencySymbol))
-                        {
-                            sc = SC.CS;
-                        }
-                        else
-                        {
-                            throw ae;
-                        }
-                    }
+                    sc = ch.Equals(CurrencySymbol) ? SC.CS : Char2SC(ch[0]);
                 }
                 else if (ch == CurrencySymbol)
                     sc = SC.CS;
@@ -330,7 +316,8 @@ namespace TypeCobol.Compiler.Types
             { // 0 is valid
                 ValidationMessages.Add(MUTUALLY_EXCLUSIVE_SYMBOLS);
             }
-            return sequence;
+
+            return sequence.ToArray();
         }
 
         /// <summary>
@@ -357,7 +344,7 @@ namespace TypeCobol.Compiler.Types
                 return false;
             //Construct Character sequence
             ValidationMessages.Clear();
-            List<Character> sequence = CollectPictureSequence(matches);
+            Character[] sequence = CollectPictureSequence(matches);
             if (ValidationMessages.Count > 0)
                 return false;
             //No Validate the sequence
@@ -369,7 +356,7 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="sequence">The sequence to validate</param>
         /// <returns>true if the sequence represents a valid Picture, false otherwise.</returns>
-        private bool ValidatePictureSequence(List<Character> sequence)
+        private bool ValidatePictureSequence(Character[] sequence)
         {
             Context ctx = ComputeInitialContext(sequence);
             ValidationContext = ctx;
@@ -383,13 +370,13 @@ namespace TypeCobol.Compiler.Types
         /// <param name="sequence">The on which to perform the computation</param>
         /// <param name="firstIndex">[out] First Floating Index</param>
         /// <param name="lastIndex">[out] Last Floating Index</param>
-        private void ComputeFloatingStringIndexes(List<Character> sequence, out int firstIndex, out int lastIndex)
+        private void ComputeFloatingStringIndexes(Character[] sequence, out int firstIndex, out int lastIndex)
         {
             firstIndex = lastIndex = -1;
             int lastNonSimpleIndex = -1;
             SC floatChar = (SC)(-1); //The float character that corresponds to the first index either CS, + or -.
             int i;
-            for (i = 0; i < sequence.Count; i++)
+            for (i = 0; i < sequence.Length; i++)
             {
                 Character c = sequence[i];
                 if (firstIndex == -1 && (c.SpecialChar == SC.PLUS || c.SpecialChar == SC.MINUS || c.SpecialChar == SC.CS))
@@ -418,20 +405,20 @@ namespace TypeCobol.Compiler.Types
                 }
             }
 
-            if (i >= sequence.Count && firstIndex >= 0)
+            if (i >= sequence.Length && firstIndex >= 0)
             { //We have reach the end of the sequence with a first index and no lastIndex ==>
               //Set the last index to the last character of the sequence
-                lastIndex = sequence.Count - 1;
+                lastIndex = sequence.Length - 1;
                 return;
             }
-            else if (!(i < sequence.Count && (SC2String(sequence[i].SpecialChar)[0] == DecimalPoint || sequence[i].SpecialChar == SC.V)))
+            else if (!(i < sequence.Length && (SC2String(sequence[i].SpecialChar)[0] == DecimalPoint || sequence[i].SpecialChar == SC.V)))
             {//The last index does not precede the DecimalPoint separator position
                 return;
             }
             //If the last index precede the DecimalPoint position so all characters including the decimal point
             //that are not simple characters or the floating character must be part o the right most index
 
-            for (++i; i < sequence.Count; i++)
+            for (++i; i < sequence.Length; i++)
             {
                 Character c = sequence[i];
                 if (!(IsSimpleInsertionCharacter(c.SpecialChar) || c.SpecialChar == floatChar))
@@ -445,7 +432,7 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="sequence">The sequence of characters.</param>
         /// <returns></returns>
-        private Context ComputeInitialContext(List<Character> sequence)
+        private Context ComputeInitialContext(Character[] sequence)
         {
             ComputeFloatingStringIndexes(sequence, out int firstIndex, out int lastIndex);
             return new Context(sequence, this.ValidationMessages, this.IsSeparateSign)
@@ -465,8 +452,23 @@ namespace TypeCobol.Compiler.Types
         /// <returns>true if we reach the final character in a valid state, false otherwise.</returns>
         private bool RunAutomata(Context ctx)
         {
-            var automata = new Automata(this, ctx.Sequence.ToArray(), ctx.FirstFloatingIndex, ctx.LastFloatingIndex);
-            return automata.Run(ctx.ValidationMessages, ctx);
+            int state = 0;
+            for (int i = 0; i < ctx.Sequence.Length; i++)
+            {
+                Character c = ctx.Sequence[i];
+                if (!Automata._States[state][(int) c.SpecialChar])
+                {//No transition
+                    ctx.ValidationMessages.Add(string.Format(INVALID_SYMBOL_POSITION, SC2String(c.SpecialChar)));
+                    return false;
+                }
+                
+                ctx.SequenceIndex = i;
+                int gotoState = ctx.GetState(c); ;
+                if (!ctx.OnGoto(c, state, ref gotoState))
+                    return false;
+                state = gotoState;
+            }
+            return true;
         }
     }
 }

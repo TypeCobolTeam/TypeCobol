@@ -32,6 +32,7 @@ namespace TypeCobol.Compiler.Types
             N
         }
 
+        //Does not handle CR, DB and CS
         private static SC Char2SC(char c)
         {
             switch (c)
@@ -72,8 +73,6 @@ namespace TypeCobol.Compiler.Types
                     return SC.MINUS;
                 case '*':
                     return SC.STAR;
-                case '$':
-                    return SC.CS;
                 default:
                     throw new NotSupportedException($"Could not convert char '{c}' to special character.");
             }

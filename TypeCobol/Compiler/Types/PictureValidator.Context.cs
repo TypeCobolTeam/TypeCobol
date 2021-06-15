@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -12,7 +13,7 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// Empty constructor.
             /// </summary>
-            internal Context(List<Character> sequence, List<string> validationMessages, bool isSeparateSign)
+            internal Context(Character[] sequence, List<string> validationMessages, bool isSeparateSign)
             {
                 Sequence = sequence;
                 ValidationMessages = validationMessages;
@@ -64,7 +65,7 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// The sequence
             /// </summary>
-            internal List<Character> Sequence
+            internal Character[] Sequence
             {
                 get;
                 set;
@@ -341,7 +342,7 @@ namespace TypeCobol.Compiler.Types
             /// <returns>true if OK, false otherwise.</returns>
             private bool ValidateP()
             {
-                if (this.SequenceIndex == 0 || this.SequenceIndex == (this.Sequence.Count - 1))
+                if (this.SequenceIndex == 0 || this.SequenceIndex == (this.Sequence.Length - 1))
                 {
                     V_count += (this.SequenceIndex == 0) ? 1 : 0; //Assume decimal point symbol V at the beginning
                     return true;//^P | P$;
@@ -356,7 +357,7 @@ namespace TypeCobol.Compiler.Types
                     V_count += 1;//Assume decimal point symbol V at the beginning
                     return true;//^SVP
                 }
-                if (this.SequenceIndex == (this.Sequence.Count - 2) && this.Sequence[this.Sequence.Count - 1].SpecialChar == SC.V)
+                if (this.SequenceIndex == (this.Sequence.Length - 2) && this.Sequence[this.Sequence.Length - 1].SpecialChar == SC.V)
                     return true;//$PV
                 this.ValidationMessages.Add(WRONG_P_POSITION);
                 return false;
@@ -379,7 +380,7 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// Return true if the current sequence index is the last symbol of the sequence.
             /// </summary>
-            private bool IsLastSymbol => SequenceIndex == Sequence.Count - 1;
+            private bool IsLastSymbol => SequenceIndex == Sequence.Length - 1;
 
             /// <summary>
             /// Get the state that is used to handle the given character in the Automata
@@ -468,14 +469,14 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count <= 4)
+                if (this.Sequence.Length <= 4)
                     return false;// should contained with at leas (+|-)*2,(.|V),E
                 if (this.Category != PictureCategory.NumericEdited)
                     return false;//By Default is a NumericEdited category.
                 int i = 0;
                 if (Sequence[i].SpecialChar != SC.PLUS && Sequence[i].SpecialChar != SC.MINUS)
                     return false;
-                int len = Sequence.Count;
+                int len = Sequence.Length;
                 i++;
                 if (Sequence[i].SpecialChar == SC.DOT || Sequence[i].SpecialChar == SC.V)
                 {
@@ -510,9 +511,9 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
-                return this.Sequence.TrueForAll(c => c.SpecialChar == SC.A);
+                return this.Sequence.All(c => c.SpecialChar == SC.A);
             }
 
             /// <summary>
@@ -523,9 +524,9 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
-                return this.Sequence.TrueForAll(c => c.SpecialChar == SC.G || c.SpecialChar == SC.B);
+                return this.Sequence.All(c => c.SpecialChar == SC.G || c.SpecialChar == SC.B);
             }
 
             /// <summary>
@@ -536,9 +537,9 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
-                return this.Sequence.TrueForAll(c => c.SpecialChar == SC.NINE || c.SpecialChar == SC.S || c.SpecialChar == SC.V || c.SpecialChar == SC.P);
+                return this.Sequence.All(c => c.SpecialChar == SC.NINE || c.SpecialChar == SC.S || c.SpecialChar == SC.V || c.SpecialChar == SC.P);
             }
 
             /// <summary>
@@ -549,9 +550,9 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
-                return this.Sequence.TrueForAll(c => c.SpecialChar == SC.NINE || c.SpecialChar == SC.X || c.SpecialChar == SC.A);
+                return this.Sequence.All(c => c.SpecialChar == SC.NINE || c.SpecialChar == SC.X || c.SpecialChar == SC.A);
             }
 
             /// <summary>
@@ -562,9 +563,9 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
-                return this.Sequence.TrueForAll(c =>
+                return this.Sequence.All(c =>
                     c.SpecialChar == SC.B ||
                     c.SpecialChar == SC.P ||
                     c.SpecialChar == SC.V ||
@@ -589,9 +590,9 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
-                return this.Sequence.TrueForAll(c =>
+                return this.Sequence.All(c =>
                     c.SpecialChar == SC.A ||
                     c.SpecialChar == SC.X ||
                     c.SpecialChar == SC.NINE ||
@@ -609,9 +610,9 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
-                return this.Sequence.TrueForAll(c => c.SpecialChar == SC.N);
+                return this.Sequence.All(c => c.SpecialChar == SC.N);
             }
 
             /// <summary>
@@ -623,10 +624,10 @@ namespace TypeCobol.Compiler.Types
             {
                 if (this.Sequence == null)
                     return false;
-                if (this.Sequence.Count == 0)
+                if (this.Sequence.Length == 0)
                     return false;
                 bool hasN = false;
-                bool bAll = this.Sequence.TrueForAll(c => (hasN |= c.SpecialChar == SC.N) ||
+                bool bAll = this.Sequence.All(c => (hasN |= c.SpecialChar == SC.N) ||
                                 c.SpecialChar == SC.B ||
                                 c.SpecialChar == SC.ZERO ||
                                 c.SpecialChar == SC.SLASH);
