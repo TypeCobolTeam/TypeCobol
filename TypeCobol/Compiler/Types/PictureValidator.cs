@@ -14,6 +14,7 @@ namespace TypeCobol.Compiler.Types
     /// </summary>
     public partial class PictureValidator
     {
+        private const string INVALID_SEQUENCE = "Invalid PICTURE String, could not parse character groups";
         private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
         private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol : {0}";
         private const string SYMBOL_S_MUST_OCCUR_ONLY_ONCE = "Character S must be repeated only once in PICTURE string";
@@ -89,6 +90,47 @@ namespace TypeCobol.Compiler.Types
         /// All validation messages if any.
         /// </summary>
         public List<string> ValidationMessages { get; }
+
+        private Result _validationResult;
+        public Result Validate()
+        {
+            if (_validationResult == null) ComputeValidationResult();
+            return _validationResult;
+        }
+
+        private void ComputeValidationResult()
+        {
+            //Accumulate validation error messages
+            List<string> validationMessages = new List<string>();
+
+            //1. First Validate against the PICTURE string regular expression.
+            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol);
+            if (matches == null || matches.Count == 0)
+            {
+                validationMessages.Add(INVALID_SEQUENCE);
+                _validationResult = new Result(validationMessages);
+                return;
+            }
+
+            //Build Character sequence
+            Character[] sequence = CollectPictureSequence(matches);
+            if (validationMessages.Count > 0)
+            {
+                _validationResult = new Result(validationMessages, sequence);
+                return;
+            }
+
+            //Validate the sequence
+            Automata automata = new Automata(this);
+            if (automata.Run(sequence, validationMessages))
+            {
+                _validationResult = new Result(sequence, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+            }
+            else
+            {
+                _validationResult = new Result(validationMessages, sequence);
+            }
+        }
 
         /// <summary>
         /// Check the count in a picture string part ([0-9]+)
