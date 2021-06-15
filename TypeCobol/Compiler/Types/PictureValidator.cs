@@ -401,9 +401,18 @@ namespace TypeCobol.Compiler.Types
         private bool ValidatePictureSequence(Character[] sequence)
         {
             Automata automata = new Automata(this);
-            bool result = automata.Run(sequence, ValidationMessages);
-            ValidationContext = new Context(sequence, automata);
-            return result;
+            bool isValid = automata.Run(sequence, ValidationMessages);
+            Result result;
+            if (isValid)
+            {
+                result = new Result(sequence, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+            }
+            else
+            {
+                result = new Result(ValidationMessages, sequence);
+            }
+            ValidationContext = new Context(sequence, result);
+            return isValid;
         }
 
         /// <summary>

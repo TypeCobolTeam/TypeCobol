@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Types;
+
 using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Test.Types
@@ -13,10 +12,8 @@ namespace TypeCobol.Test.Types
         [TestMethod]
         public void PictureStringRegExpValidationTest()
         {
-            TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator("$99(45)99.99CRV");
-            Assert.IsTrue(!psv.IsValid());
-            //psv = new TypeCobol.Compiler.Types.PictureStringValidator("ZZZ.Z9");
-            //Assert.IsTrue(!psv.IsValid());
+            PictureValidator.Result result = (new PictureValidator("$99(45)99.99CRV")).Validate();
+            Assert.IsTrue(!result.IsValid);
 
             //Numeric
             string[] numerics = { "9999",
@@ -27,8 +24,8 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < numerics.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(numerics[i]);
-                Assert.IsTrue(psv.IsValid());
+                result = (new PictureValidator(numerics[i])).Validate();
+                Assert.IsTrue(result.IsValid);
             }
 
 
@@ -48,8 +45,8 @@ namespace TypeCobol.Test.Types
                         "$,$$$,$$$.99DB"};
             for (int i = 0; i < valids.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(valids[i]);
-                Assert.IsTrue(psv.IsValid());
+                result = (new PictureValidator(valids[i])).Validate();
+                Assert.IsTrue(result.IsValid);
             }
 
             Tuple<string, int, int, bool>[] pics = {
@@ -65,11 +62,11 @@ namespace TypeCobol.Test.Types
 
             for (int i = 0; i < pics.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
-                Assert.AreEqual(psv.ValidationContext.RealDigits - psv.ValidationContext.Scale, pics[i].Item2);
-                Assert.AreEqual(psv.ValidationContext.Scale, pics[i].Item3);
-                Assert.AreEqual(psv.ValidationContext.IsSigned, pics[i].Item4);
+                result = (new PictureValidator(pics[i].Item1)).Validate();
+                Assert.IsTrue(result.IsValid);
+                Assert.AreEqual(result.RealDigits - result.Scale, pics[i].Item2);
+                Assert.AreEqual(result.Scale, pics[i].Item3);
+                Assert.AreEqual(result.IsSigned, pics[i].Item4);
             }
 
             string[] ifp_pics =
@@ -100,24 +97,24 @@ namespace TypeCobol.Test.Types
 
             for (int i = 0; i < ifp_pics.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(ifp_pics[i]);
-                Assert.IsTrue(psv.IsValid());
+                result = (new PictureValidator(ifp_pics[i])).Validate();
+                Assert.IsTrue(result.IsValid);
             }
 
             string ex_float_pic = "-9v9(9)E-99";
-            psv = new TypeCobol.Compiler.Types.PictureValidator(ex_float_pic);
-            Assert.IsTrue(psv.IsValid());
-            Assert.IsTrue(psv.ValidationContext.IsExternalFloatSequence());
+            result = (new PictureValidator(ex_float_pic)).Validate();
+            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloat);
 
             ex_float_pic = "-99(9).E-99";
-            psv = new TypeCobol.Compiler.Types.PictureValidator(ex_float_pic);
-            Assert.IsTrue(psv.IsValid());
-            Assert.IsTrue(psv.ValidationContext.IsExternalFloatSequence());
+            result = (new PictureValidator(ex_float_pic)).Validate();
+            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloat);
 
             ex_float_pic = "+VE-99";
-            psv = new TypeCobol.Compiler.Types.PictureValidator(ex_float_pic);
-            Assert.IsTrue(psv.IsValid());
-            Assert.IsTrue(!psv.ValidationContext.IsExternalFloatSequence());
+            result = (new PictureValidator(ex_float_pic)).Validate();
+            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(result.Category != PictureCategory.ExternalFloat);
         }
 
         /// <summary>
@@ -287,21 +284,21 @@ namespace TypeCobol.Test.Types
         [TestMethod]
         public void DecimalPointIsComma()
         {
-            PictureValidator psv = new PictureValidator("99.999");
-            Assert.IsTrue(psv.IsValid());
-            Assert.AreEqual(3, psv.ValidationContext.Scale);
+            PictureValidator.Result result = (new PictureValidator("99.999")).Validate();
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(3, result.Scale);
 
-            psv = new PictureValidator("99,999");
-            Assert.IsTrue(psv.IsValid());
-            Assert.AreEqual(0, psv.ValidationContext.Scale);
+            result = (new PictureValidator("99,999")).Validate();
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(0, result.Scale);
 
-            psv = new PictureValidator("99.999", decimalPointIsComma: true);
-            Assert.IsTrue(psv.IsValid());
-            Assert.AreEqual(0, psv.ValidationContext.Scale);
+            result = (new PictureValidator("99.999", decimalPointIsComma: true)).Validate();
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(0, result.Scale);
 
-            psv = new PictureValidator("99,999", decimalPointIsComma: true);
-            Assert.IsTrue(psv.IsValid());
-            Assert.AreEqual(3, psv.ValidationContext.Scale);
+            result = (new PictureValidator("99,999", decimalPointIsComma: true)).Validate();
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(3, result.Scale);
         }
     }
 }

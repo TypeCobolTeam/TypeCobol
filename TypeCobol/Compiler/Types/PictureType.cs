@@ -105,21 +105,17 @@ namespace TypeCobol.Compiler.Types
         private void AssignFromValidator(PictureValidator validator)
         {
             System.Diagnostics.Debug.Assert(validator != null);
-            if (validator.IsValid())
+            var result = validator.Validate();
+            if (result.IsValid)
             {
-                this.IsSigned = validator.ValidationContext.IsSigned;
-                this.Scale = validator.ValidationContext.Scale;
-                this.Digits = validator.ValidationContext.Digits;
-                this.RealDigits = validator.ValidationContext.RealDigits;
-                this.Category = validator.ValidationContext.Category;
-                this.IsExternalFloat = validator.ValidationContext.IsExternalFloatSequence();
-                this.Sequence = validator.ValidationContext.Sequence;
-                this.Size = validator.ValidationContext.Size;
+                this.IsSigned = result.IsSigned;
+                this.Scale = result.Scale;
+                this.Digits = result.Digits;
+                this.RealDigits = result.RealDigits;
+                this.Category = result.Category;
+                this.Sequence = result.Sequence;
+                this.Size = result.Size;
                 this.IsSeparateSign = validator.IsSeparateSign;
-                if (validator.ValidationContext.IsDbcsSequence())
-                    Category = PictureCategory.Dbcs;
-                if (this.IsExternalFloat)
-                    Category = PictureCategory.ExternalFloat;
             }
             else
             {
@@ -208,15 +204,6 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Is this picture an external Floating point ?
-        /// </summary>
-        public bool IsExternalFloat
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// The sequence of characters that was calculated by the PictureValidator
         /// to validate this PICTURE string.
         /// </summary>
@@ -255,14 +242,9 @@ namespace TypeCobol.Compiler.Types
                     }
                     return Size + add;
                 }
-                if (IsExternalFloat)
+                if (Category == PictureCategory.ExternalFloat)
                 {
-                    int add = 0;
-                    if (Category == PictureCategory.Dbcs)
-                    {
-                        add = Sequence.Sum(c => c.SpecialChar == PictureValidator.SC.B ? c.Count : 0);
-                    }
-                    return Size + add;
+                    return Size;
                 }
                 switch (Usage)
                 {

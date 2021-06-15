@@ -486,7 +486,7 @@ namespace TypeCobol.Compiler.Nodes {
                     switch (Usage.Value)
                     {
                         case DataUsage.Binary:
-                            if (PictureValidator.ValidationContext.Digits <= 4)
+                            if (PictureValidator.Validate().Digits <= 4)
                             {
                                 m = 2;
                             }

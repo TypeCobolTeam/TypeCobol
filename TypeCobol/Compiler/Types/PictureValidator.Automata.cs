@@ -5,7 +5,7 @@ namespace TypeCobol.Compiler.Types
 {
     public partial class PictureValidator
     {
-        internal class Automata //TODO make private
+        private class Automata
         {
             /// <summary>
             /// Total count of special characters. Size of the automata alphabet.
@@ -172,7 +172,8 @@ namespace TypeCobol.Compiler.Types
                     _sequenceIndex++;
                 }
 
-                //Finished on a valid state, validation is successful.
+                //Successful validation, adjust category then return
+                AdjustCategory();
                 return true;
 
                 //Called when changing transition on the given character, so specific validation actions can be performed here.
@@ -425,6 +426,60 @@ namespace TypeCobol.Compiler.Types
                     default:
                         return -1;//Should never arrive.
                 }
+            }
+
+            /// <summary>
+            /// Perform post-validation adjustment of the computed Category
+            /// for special categories ExternalFloat and Dbcs.
+            /// </summary>
+            private void AdjustCategory()
+            {
+                if (IsExternalFloatSequence())
+                {
+                    Category = PictureCategory.ExternalFloat;
+                }
+                else if (IsDbcsSequence())
+                {
+                    Category = PictureCategory.Dbcs;
+                }
+
+                bool IsExternalFloatSequence()
+                {
+                    if (_sequence.Length <= 4)
+                        return false; //Should contain at least (+|-)*2,(.|V),E
+                    if (Category != PictureCategory.NumericEdited)
+                        return false; //By Default we should end on a NumericEdited category.
+                    int i = 0;
+                    if (_sequence[i].SpecialChar != SC.PLUS && _sequence[i].SpecialChar != SC.MINUS)
+                        return false;
+                    int len = _sequence.Length;
+                    i++;
+                    if (_sequence[i].SpecialChar == SC.DOT || _sequence[i].SpecialChar == SC.V)
+                    {
+                        if (_sequence[i + 1].SpecialChar != SC.NINE)
+                            return false;
+                    }
+                    else if (_sequence[i].SpecialChar == SC.NINE)
+                    {
+                        i++;
+                        if (_sequence[i].SpecialChar != SC.DOT & _sequence[i].SpecialChar != SC.V)
+                            return false;
+                        i++;
+                    }
+                    else
+                        return false;
+                    if (i >= len || _sequence[i].SpecialChar == SC.NINE)
+                        i++;
+                    if (i >= len || _sequence[i].SpecialChar != SC.E)
+                        return false;
+                    if (++i >= len || (_sequence[i].SpecialChar != SC.PLUS && _sequence[i].SpecialChar != SC.MINUS))
+                        return false;
+                    if (++i >= len || !(_sequence[i].SpecialChar == SC.NINE && _sequence[i].Count == 2))
+                        return false;
+                    return i == (len - 1);
+                }
+
+                bool IsDbcsSequence() => _sequence.Length > 0 && Array.TrueForAll(_sequence, c => c.SpecialChar == SC.G || c.SpecialChar == SC.B);
             }
         }
     }
