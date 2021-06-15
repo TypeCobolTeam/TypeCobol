@@ -5,7 +5,7 @@ namespace TypeCobol.Compiler.Types
 {
     public partial class PictureValidator
     {
-        private class Automata
+        internal class Automata //TODO make private
         {
             /// <summary>
             /// Total count of special characters. Size of the automata alphabet.
@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// States of the automata. Each state lists all allowed transitions from one SC to another.
             /// </summary>
-            internal static readonly bool[][] _States = //make private !
+            private static readonly bool[][] _States =
             {
                 //State 0: Start Symbols
                 State(SC.B, SC.ZERO, SC.SLASH, SC.COMMA, SC.DOT, SC.PLUS, SC.MINUS, SC.Z, SC.STAR, SC.CS, SC.NINE, SC.A, SC.X, SC.S, SC.V, SC.P, SC.G, SC.N),
@@ -143,25 +143,206 @@ namespace TypeCobol.Compiler.Types
                 //Initialize run variables
                 Initialize(sequence);
 
+                //Some character counts/flags used during validation
+                int S_count = 0;        //Count of either CR, DB, + or - symbols
+                int V_count = 0;        //Count of V symbol
+                bool Z_seen = false;    //Have we seen Z ?
+                bool Star_seen = false; //Have we seen '*' ?
+
                 //Run automata
-                int stateIndex = 0;
+                int state = 0;
                 while (_sequenceIndex < _sequence.Length)
                 {
                     Character c = _sequence[_sequenceIndex];
 
-                    if (!_States[stateIndex][(int) c.SpecialChar])
+                    if (!_States[state][(int) c.SpecialChar])
                     {
-                        //No transition
+                        //No transition allowed
                         validationMessages.Add(string.Format(INVALID_SYMBOL_POSITION, _validator.SC2String(c.SpecialChar)));
                         return false;
                     }
 
-                    //TODO GetState / OnGoto
+                    int nextState = GetState(c);
+                    if (!ValidateState(c))
+                    {
+                        return false;
+                    }
 
+                    state = nextState;
                     _sequenceIndex++;
                 }
 
+                //Finished on a valid state, validation is successful.
                 return true;
+
+                //Called when changing transition on the given character, so specific validation actions can be performed here.
+                bool ValidateState(Character c)
+                {
+                    switch (c.SpecialChar)
+                    {
+                        case SC.B:      //'B'
+                        case SC.ZERO:   //'0'
+                        case SC.SLASH:  //'/'
+                            Category |= PictureCategory.Edited;
+                            break;
+                        case SC.PLUS:   //'+'
+                        case SC.MINUS:  //'-'
+                            Category |= PictureCategory.NumericEdited;
+                            Digits += c.Count - 1;
+                            S_count++;
+                            break;
+                        case SC.Z:
+                        case SC.STAR:
+                            if (c.SpecialChar == SC.Z)
+                                Z_seen = true;
+                            else
+                                Star_seen = true;
+                            if (Z_seen && Star_seen)
+                            {
+                                validationMessages.Add(Z_STAR_MUTUALLY_EXCLUSIVE);
+                                return false;
+                            }
+                            Category |= PictureCategory.NumericEdited;
+                            Digits += c.Count;
+                            if (V_count > 0)
+                            {
+                                Scale += c.Count;
+                            }
+                            break;
+                        case SC.CR:
+                        case SC.DB:
+                            Category |= PictureCategory.NumericEdited;
+                            S_count++;
+                            break;
+                        case SC.CS:
+                            Category |= PictureCategory.NumericEdited;
+                            Digits += c.Count - 1;
+                            break;
+                        case SC.E:
+                            break;
+                        case SC.A:
+                            Category |= PictureCategory.Alphabetic;
+                            break;
+                        case SC.X:
+                            Category |= PictureCategory.AlphaNumeric;
+                            break;
+                        case SC.NINE://9
+                            Category |= PictureCategory.Numeric;
+                            Digits += c.Count;
+                            RealDigits += c.Count;
+                            if (V_count > 0)
+                            {
+                                //We have seen the decimal point --> digits are in the decimal part
+                                Scale += c.Count;
+                            }
+                            break;
+                        case SC.G:
+                            Category |= PictureCategory.Dbcs;
+                            break;
+                        case SC.N:
+                            Category |= PictureCategory.National;
+                            break;
+                        case SC.S:
+                            Category |= PictureCategory.Numeric;
+                            if (c.Count > 1)
+                            {
+                                validationMessages.Add(SYMBOL_S_MUST_OCCUR_ONLY_ONCE);
+                                return false;
+                            }
+                            if (state != 0 || _sequenceIndex != 0)
+                            {
+                                validationMessages.Add(SYMBOL_S_MUST_BE_THE_FIRST);
+                                return false;
+                            }
+                            S_count += c.Count;
+                            break;
+                        case SC.DOT:
+                        case SC.COMMA:
+                            Category |= PictureCategory.NumericEdited;
+                            if (c.SpecialChar != Char2SC(_validator.DecimalPoint))
+                                break;
+                            goto case SC.V;
+                        case SC.V:
+                            Category |= PictureCategory.Numeric;
+                            V_count += c.Count;
+                            if (V_count > 1)
+                            {
+                                validationMessages.Add(MULTIPLE_V);
+                                return false;
+                            }
+                            _isBeforeDecimalPoint = false;
+                            break;
+                        case SC.P:
+                            Category |= PictureCategory.Numeric;
+                            if (!ValidateP())
+                                return false;
+                            Digits += c.Count;
+                            Scale += (V_count > 0 ? c.Count : (-c.Count));
+                            break;
+                    }
+
+                    if (S_count > 0)
+                        IsSigned = true;
+
+                    //Update total size
+                    switch (c.SpecialChar)
+                    {
+                        case SC.S:
+                            Size += _validator.IsSeparateSign ? 1 : 0;
+                            break;
+                        case SC.V:
+                        case SC.P:
+                            break;
+                        case SC.CR:
+                        case SC.CS:
+                            Size += c.Count * 2;
+                            break;
+                        case SC.N:
+                        case SC.G:
+                            Size += c.Count * 2;
+                            break;
+                        default:
+                            Size += c.Count;
+                            break;
+                    }
+
+                    return true;
+                }
+
+                /*
+                 * Validate the position of the P character. 
+                   The Symbol P specified a scaling position and implies an assumed decimal point (to the left of the Ps if the Ps are leftmost PICTURE characters,
+                   to right of the Ps if the Ps are rightmost PICTURE characters).
+                   If we say that the character ^ means the beginning of the PICTURE sequence
+                   and $ means the end of the PICTURE sequence sequence, only the following situations are valid for P.
+                   ^P | ^VP | ^SP | ^SVP | P$ | PV$
+                 */
+                bool ValidateP()
+                {
+                    if (IsFirstSymbol || IsLastSymbol)
+                    {
+                        V_count += _sequenceIndex == 0 ? 1 : 0; //Assume decimal point symbol V at the beginning
+                        return true;//^P | P$;
+                    }
+                    if (_sequenceIndex == 1 && (_sequence[0].SpecialChar == SC.S || _sequence[0].SpecialChar == SC.V))
+                    {
+                        V_count += 1;//Assume decimal point symbol V at the beginning
+                        return true;//^SP | ^VP
+                    }
+                    if (_sequenceIndex == 2 && _sequence[0].SpecialChar == SC.S && _sequence[1].SpecialChar == SC.V)
+                    {
+                        V_count += 1;//Assume decimal point symbol V at the beginning
+                        return true;//^SVP
+                    }
+                    if (_sequenceIndex == _sequence.Length - 2 && _sequence[_sequence.Length - 1].SpecialChar == SC.V)
+                    {
+                        return true;//$PV
+                    }
+
+                    //validation failed
+                    validationMessages.Add(WRONG_P_POSITION);
+                    return false;
+                }
             }
 
             private void Initialize(Character[] sequence)
@@ -171,6 +352,79 @@ namespace TypeCobol.Compiler.Types
                 _sequenceIndex = 0;
                 _digitsSeenBeforeP = false;
                 _isBeforeDecimalPoint = true;
+            }
+
+            /// <summary>
+            /// Get the state that is used to handle the given character in the Automata
+            /// </summary>
+            /// <param name="c">The character to get the handling state</param>
+            /// <returns>The state number if one exist, -1 otherwise</returns>
+            private int GetState(Character c)
+            {
+                switch (c.SpecialChar)
+                {
+                    case SC.B:
+                        return 1;
+                    case SC.ZERO:
+                    case SC.SLASH:
+                        return 2;
+                    case SC.COMMA:
+                        return 3;
+                    case SC.DOT:
+                        return 4;
+                    case SC.PLUS:
+                    case SC.MINUS:
+                        {
+                            if (!IsCurrentIndexInsideFloatingInsertion)
+                            {
+                                if (IsFirstSymbol)
+                                    return 5;
+                                if (IsLastSymbol)
+                                    return 6;
+                                return 5;
+                            }
+
+                            _digitsSeenBeforeP = true;
+                            return _isBeforeDecimalPoint ? 12 : 13;
+                        }
+                    case SC.CR:
+                    case SC.DB:
+                        return 7;
+                    case SC.CS:
+                        {
+                            if (!IsCurrentIndexInsideFloatingInsertion)
+                            {
+                                return 8;
+                            }
+
+                            _digitsSeenBeforeP = true;
+                            return _isBeforeDecimalPoint ? 14 : 15;
+                        }
+                    case SC.E:
+                        return 9;
+                    case SC.Z:
+                    case SC.STAR:
+                        _digitsSeenBeforeP = true;
+                        return _isBeforeDecimalPoint ? 10 : 11;
+                    case SC.NINE:
+                        _digitsSeenBeforeP = true;
+                        return 16;
+                    case SC.A:
+                    case SC.X:
+                        return 17;
+                    case SC.S:
+                        return 18;
+                    case SC.V:
+                        return 19;
+                    case SC.P:
+                        return _digitsSeenBeforeP && _isBeforeDecimalPoint ? 20 : 21;
+                    case SC.G:
+                        return 22;
+                    case SC.N:
+                        return 23;
+                    default:
+                        return -1;//Should never arrive.
+                }
             }
         }
     }

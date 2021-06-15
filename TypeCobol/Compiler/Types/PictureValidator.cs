@@ -358,9 +358,10 @@ namespace TypeCobol.Compiler.Types
         /// <returns>true if the sequence represents a valid Picture, false otherwise.</returns>
         private bool ValidatePictureSequence(Character[] sequence)
         {
-            Context ctx = ComputeInitialContext(sequence);
-            ValidationContext = ctx;
-            return this.RunAutomata(ctx);
+            Automata automata = new Automata(this);
+            bool result = automata.Run(sequence, ValidationMessages);
+            ValidationContext = new Context(sequence, automata);
+            return result;
         }
 
         /// <summary>
@@ -425,50 +426,6 @@ namespace TypeCobol.Compiler.Types
                     return;
             }
             lastIndex = i - 1;
-        }
-
-        /// <summary>
-        /// Compute the initial validation context.
-        /// </summary>
-        /// <param name="sequence">The sequence of characters.</param>
-        /// <returns></returns>
-        private Context ComputeInitialContext(Character[] sequence)
-        {
-            ComputeFloatingStringIndexes(sequence, out int firstIndex, out int lastIndex);
-            return new Context(sequence, this.ValidationMessages, this.IsSeparateSign)
-                   {
-                       FirstFloatingIndex = firstIndex,
-                       LastFloatingIndex = lastIndex,
-                       CurrencySymbol = this.CurrencySymbol,
-                       DecimalPoint = this.DecimalPoint,
-                       NumericSeparator = this.NumericSeparator
-                   };
-        }
-
-        /// <summary>
-        /// Run the automata on the given context along with its PICTURE sequence.
-        /// </summary>
-        /// <param name="ctx">The context</param>
-        /// <returns>true if we reach the final character in a valid state, false otherwise.</returns>
-        private bool RunAutomata(Context ctx)
-        {
-            int state = 0;
-            for (int i = 0; i < ctx.Sequence.Length; i++)
-            {
-                Character c = ctx.Sequence[i];
-                if (!Automata._States[state][(int) c.SpecialChar])
-                {//No transition
-                    ctx.ValidationMessages.Add(string.Format(INVALID_SYMBOL_POSITION, SC2String(c.SpecialChar)));
-                    return false;
-                }
-                
-                ctx.SequenceIndex = i;
-                int gotoState = ctx.GetState(c); ;
-                if (!ctx.OnGoto(c, state, ref gotoState))
-                    return false;
-                state = gotoState;
-            }
-            return true;
         }
     }
 }
