@@ -417,7 +417,7 @@ namespace TypeCobol.Compiler.Nodes {
                 }
                 return 1;
             }
-            if (PictureValidator.IsValid())
+            if (PictureValidator.Validate().IsValid)
             {
                 PictureType type = new PictureType(PictureValidator);
                 type.Usage = usage;

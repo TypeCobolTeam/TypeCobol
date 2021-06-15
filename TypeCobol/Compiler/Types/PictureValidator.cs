@@ -58,7 +58,6 @@ namespace TypeCobol.Compiler.Types
                 DecimalPoint = '.';
                 NumericSeparator = ',';
             }
-            ValidationMessages = new List<string>();
         }
 
         /// <summary>
@@ -86,12 +85,12 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public char NumericSeparator { get; }
 
-        /// <summary>
-        /// All validation messages if any.
-        /// </summary>
-        public List<string> ValidationMessages { get; }
-
         private Result _validationResult;
+        /// <summary>
+        /// Determines whether the picture string of this instance is valid or not.
+        /// </summary>
+        /// <returns>A validation result instance.</returns>
+        /// <remarks>Safe to call multiple times, the result is cached.</remarks>
         public Result Validate()
         {
             if (_validationResult == null) ComputeValidationResult();
@@ -113,7 +112,7 @@ namespace TypeCobol.Compiler.Types
             }
 
             //Build Character sequence
-            Character[] sequence = CollectPictureSequence(matches);
+            Character[] sequence = CollectPictureSequence(matches, validationMessages);
             if (validationMessages.Count > 0)
             {
                 _validationResult = new Result(validationMessages, sequence);
@@ -185,7 +184,7 @@ namespace TypeCobol.Compiler.Types
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        public static List<Tuple<string, int>> PictureStringSplitter(string picture, string currencySymbol)
+        private static List<Tuple<string, int>> PictureStringSplitter(string picture, string currencySymbol)
         {
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
             string[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
@@ -249,8 +248,9 @@ namespace TypeCobol.Compiler.Types
         /// checks.
         /// </summary>
         /// <param name="matches">All Picture items matched</param>
+        /// <param name="validationMessages">List of error messages</param>
         /// <returns>The list of picture item sequence</returns>
-        private Character[] CollectPictureSequence(List<Tuple<string, int>> matches)
+        private Character[] CollectPictureSequence(List<Tuple<string, int>> matches, List<string> validationMessages)
         {
             List<Character> sequence = new List<Character>();
             Character prevChar = null;//Previous char so that we can accumulate consecutive same characters.
@@ -272,7 +272,7 @@ namespace TypeCobol.Compiler.Types
                 int count = m.Item2;
                 if (count == 0)
                 {//Count cannot be 0.
-                    ValidationMessages.Add(SYMBOL_COUNT_CANNOT_BE_ZERO);
+                    validationMessages.Add(SYMBOL_COUNT_CANNOT_BE_ZERO);
                 }
 
                 SC sc;
@@ -311,7 +311,7 @@ namespace TypeCobol.Compiler.Types
                         cr_count += count;
                         if (cr_count > 1)
                         {
-                            ValidationMessages.Add(MORE_THAN_ONE_CR_CHARACTER);
+                            validationMessages.Add(MORE_THAN_ONE_CR_CHARACTER);
                         }
                         break;
                     case SC.DB:
@@ -319,35 +319,35 @@ namespace TypeCobol.Compiler.Types
                         db_count += count;
                         if (db_count > 1)
                         {
-                            ValidationMessages.Add(MORE_THAN_ONE_DB_CHARACTER);
+                            validationMessages.Add(MORE_THAN_ONE_DB_CHARACTER);
                         }
                         break;
                     case SC.S:
                         s_count += count;
                         if (s_count > 1)
                         {
-                            ValidationMessages.Add(MORE_THAN_ONE_S_CHARACTER);
+                            validationMessages.Add(MORE_THAN_ONE_S_CHARACTER);
                         }
                         break;
                     case SC.V:
                         v_count += count;
                         if (v_count > 1)
                         {
-                            ValidationMessages.Add(MORE_THAN_ONE_V_CHARACTER);
+                            validationMessages.Add(MORE_THAN_ONE_V_CHARACTER);
                         }
                         break;
                     case SC.E:
                         e_count += count;
                         if (e_count > 1)
                         {
-                            ValidationMessages.Add(MORE_THAN_ONE_E_CHARACTER);
+                            validationMessages.Add(MORE_THAN_ONE_E_CHARACTER);
                         }
                         break;
                     case SC.DOT:
                         dot_count += count;
                         if (dot_count > 1)
                         {
-                            ValidationMessages.Add(MORE_THAN_ONE_DOT_CHARACTER);
+                            validationMessages.Add(MORE_THAN_ONE_DOT_CHARACTER);
                         }
                         break;
                 }
@@ -356,63 +356,10 @@ namespace TypeCobol.Compiler.Types
             cntFound += (foundPlus || foundMinus ? 1 : 0);
             if (cntFound > 1)
             { // 0 is valid
-                ValidationMessages.Add(MUTUALLY_EXCLUSIVE_SYMBOLS);
+                validationMessages.Add(MUTUALLY_EXCLUSIVE_SYMBOLS);
             }
 
             return sequence.ToArray();
-        }
-
-        /// <summary>
-        /// The validation context that has been used.
-        /// </summary>
-        public Context ValidationContext
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Determines whether the picture string of this instance is valid or not.
-        /// </summary>
-        /// <returns>true if the pic is valid, false otherwise</returns>
-        public bool IsValid()
-        {
-            //0. Picture String must contains at least
-            //1. First Validate against the PICTURE string regular expression.
-            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol);
-            if (matches == null)
-                return false;
-            if (matches.Count <= 0)
-                return false;
-            //Construct Character sequence
-            ValidationMessages.Clear();
-            Character[] sequence = CollectPictureSequence(matches);
-            if (ValidationMessages.Count > 0)
-                return false;
-            //No Validate the sequence
-            return ValidatePictureSequence(sequence);
-        }
-
-        /// <summary>
-        /// Validate a picture sequence
-        /// </summary>
-        /// <param name="sequence">The sequence to validate</param>
-        /// <returns>true if the sequence represents a valid Picture, false otherwise.</returns>
-        private bool ValidatePictureSequence(Character[] sequence)
-        {
-            Automata automata = new Automata(this);
-            bool isValid = automata.Run(sequence, ValidationMessages);
-            Result result;
-            if (isValid)
-            {
-                result = new Result(sequence, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
-            }
-            else
-            {
-                result = new Result(ValidationMessages, sequence);
-            }
-            ValidationContext = new Context(sequence, result);
-            return isValid;
         }
 
         /// <summary>

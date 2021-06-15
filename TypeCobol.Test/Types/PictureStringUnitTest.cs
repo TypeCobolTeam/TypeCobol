@@ -134,8 +134,9 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate();
+                Assert.IsTrue(result.IsValid);
                 PictureType type = new PictureType(psv);
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item2);
@@ -156,8 +157,9 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate();
+                Assert.IsTrue(result.IsValid);
                 PictureType type = new PictureType(psv);
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item2);
@@ -180,8 +182,9 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate();
+                Assert.IsTrue(result.IsValid);
                 PictureType type = new PictureType(psv);
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item2);
@@ -207,8 +210,9 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate();
+                Assert.IsTrue(result.IsValid);
                 PictureType type = new PictureType(psv);
                 type.Usage = pics[i].Item2;
                 int len = type.Length;
@@ -250,13 +254,13 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < invalids.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(invalids[i]);
-                Assert.IsFalse(psv.IsValid());
+                PictureValidator.Result result = (new PictureValidator(invalids[i])).Validate();
+                Assert.IsFalse(result.IsValid);
             }
 
             //Change other currency symbol than $
-            TypeCobol.Compiler.Types.PictureValidator psv1 = new TypeCobol.Compiler.Types.PictureValidator("$,$$$.99", currencySymbol: "€");
-            Assert.IsFalse(psv1.IsValid());
+            PictureValidator.Result result1 = (new PictureValidator("$,$$$.99", currencySymbol: "€")).Validate();
+            Assert.IsFalse(result1.IsValid);
         }
 
         /// <summary>
@@ -266,16 +270,16 @@ namespace TypeCobol.Test.Types
         public void StrangeCurrencyPictureStringTest()
         {
             //EURO
-            TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencySymbol: "€");
-            Assert.IsTrue(psv.IsValid());
+            PictureValidator.Result result = (new PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencySymbol: "€")).Validate();
+            Assert.IsTrue(result.IsValid);
 
             //Swiss franc
-            psv = new TypeCobol.Compiler.Types.PictureValidator("CHFZ,ZZZ,ZZZ.ZZCR", currencySymbol: "CHF");
-            Assert.IsTrue(psv.IsValid());
+            result = (new PictureValidator("CHFZ,ZZZ,ZZZ.ZZCR", currencySymbol: "CHF")).Validate();
+            Assert.IsTrue(result.IsValid);
 
             //Hong Kong Dollar
-            psv = new TypeCobol.Compiler.Types.PictureValidator("HK$Z,ZZZ,ZZZ.ZZCR", currencySymbol: "HK$");
-            Assert.IsTrue(psv.IsValid());
+            result = (new PictureValidator("HK$Z,ZZZ,ZZZ.ZZCR", currencySymbol: "HK$")).Validate();
+            Assert.IsTrue(result.IsValid);
         }
 
         /// <summary>
