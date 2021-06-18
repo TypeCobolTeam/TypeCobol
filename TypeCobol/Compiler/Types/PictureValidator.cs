@@ -14,14 +14,16 @@ namespace TypeCobol.Compiler.Types
     /// </summary>
     public partial class PictureValidator
     {
-        private const string INVALID_SEQUENCE = "Invalid PICTURE String, could not parse character groups";
+        private const string EMPTY = "Empty PICTURE string";
+        private const string UNKNOWN_SYMBOL = "Invalid PICTURE string '{0}': character '{1}' at position '{2}' was not expected";
+        private const string PARENTHESES_DO_NOT_MATCH = "Missing '(' or ')' in PICTURE string";
         private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
-        private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol : {0}";
+        private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
         private const string SYMBOL_S_MUST_OCCUR_ONLY_ONCE = "Character S must be repeated only once in PICTURE string";
         private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
         private const string MULTIPLE_V = "V must appears only once in a PICTURE string";
         private const string WRONG_P_POSITION = "P must appears at the head or tail position of a PICTURE string";
-        private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string.";
+        private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string";
         private const string MORE_THAN_ONE_E_CHARACTER = "Only one occurrence of E symbol can appear in a PICTURE string";
         private const string MORE_THAN_ONE_CR_CHARACTER = "Only one occurrence of CR symbol can appear in a PICTURE string";
         private const string MORE_THAN_ONE_DB_CHARACTER = "Only one occurrence of DB symbol can appear in a PICTURE string";
@@ -103,10 +105,9 @@ namespace TypeCobol.Compiler.Types
             List<string> validationMessages = new List<string>();
 
             //1. First Validate against the PICTURE string regular expression.
-            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol);
+            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol, validationMessages);
             if (matches == null || matches.Count == 0)
             {
-                validationMessages.Add(INVALID_SEQUENCE);
                 _validationResult = new Result(validationMessages);
                 return;
             }
@@ -136,17 +137,14 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="pic">The picture string</param>
         /// <param name="startOffset">start offset inside the picture string where should begin the count</param>
+        /// <param name="validationMessages">List of error messages</param>
         /// <param name="count">[out] the count calculated if no error, -1 otherwise.</param>
         /// <returns>The new starting offset after the count part.</returns>
-        private static int CheckItemCount(string pic, int startOffset, out int count)
+        private static int CheckItemCount(string pic, int startOffset, List<string> validationMessages, out int count)
         {
-            count = -1;
-            if (startOffset >= pic.Length)
+            if (startOffset < pic.Length && pic[startOffset] == '(')
             {
-                count = 1;
-            }
-            else if (pic[startOffset] == '(')
-            {
+                count = 0;
                 bool bGood = false;
                 startOffset++;
                 while (startOffset < pic.Length)
@@ -158,16 +156,17 @@ namespace TypeCobol.Compiler.Types
                         break;
                     }
                     if (pic[startOffset] < '0' || pic[startOffset] > '9')
-                    {//Error
-                        count = -1;
+                    {
                         break;
                     }
                     int n = pic[startOffset] - '0';
-                    count = count == -1 ? n : count * 10 + n;
+                    count = count * 10 + n;
                     startOffset++;
                 }
                 if (!bGood)
                 {
+                    //Error on parenthesis
+                    validationMessages.Add(PARENTHESES_DO_NOT_MATCH);
                     count = -1;
                 }
             }
@@ -184,8 +183,14 @@ namespace TypeCobol.Compiler.Types
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        private static List<Tuple<string, int>> PictureStringSplitter(string picture, string currencySymbol)
+        private static List<Tuple<string, int>> PictureStringSplitter(string picture, string currencySymbol, List<string> validationMessages)
         {
+            if (string.IsNullOrWhiteSpace(picture))
+            {
+                validationMessages.Add(EMPTY);
+                return null;
+            }
+
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
             string[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
             for (int l = 0; l < picture.Length;)
@@ -219,16 +224,21 @@ namespace TypeCobol.Compiler.Types
                             }
                             break;
                     }
+
                     if (match)
                     {
-                        l = CheckItemCount(picture, l + alphabet[i].Length, out int count);
+                        l = CheckItemCount(picture, l + alphabet[i].Length, validationMessages, out int count);
                         if (count == -1)
                             return null;
                         items.Add(new Tuple<string, int>(alphabet[i], count));
                     }
                 }
+
                 if (!match)
+                {
+                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, picture, picture[l], l + 1));
                     return null;
+                }
             }
             return items;
         }
