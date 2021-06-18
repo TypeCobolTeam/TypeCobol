@@ -186,16 +186,22 @@ namespace TypeCobol.Compiler.CodeElements
             if (type == DataType.Date)
             {
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
-                typeDefinition.Add(CreateData(5, "YYYY", '9', 4, typeDefinition));
-                typeDefinition.Add(CreateData(5, "MM", '9', 2, typeDefinition));
-                typeDefinition.Add(CreateData(5, "DD", '9', 2, typeDefinition));
+                typeDefinition.Add(CreateNumericData(5, "YYYY", 4, typeDefinition));
+                typeDefinition.Add(CreateNumericData(5, "MM", 2, typeDefinition));
+                typeDefinition.Add(CreateNumericData(5, "DD", 2, typeDefinition));
                 typeDefinition.SemanticData = Compiler.Symbols.Builtins.Date;
             }
             else if (type == DataType.Currency)
             {
-                const string pictureCharacterString = "X(03)";
-                dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue(pictureCharacterString);
-                dataTypeDescriptionEntry.PictureValidationResult = (new PictureValidator(pictureCharacterString)).Validate();
+                dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue("X(03)");
+                dataTypeDescriptionEntry.PictureValidationResult = new PictureValidator.Result(
+                    new[] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    PictureCategory.AlphaNumeric,
+                    0,
+                    0,
+                    false,
+                    0,
+                    3);
                 var tokenLine = TokensLine.CreateVirtualLineForInsertedToken(dataTypeDescriptionEntry.Line, "01 CURRENCY TYPEDEF STRICT PUBLIC PIC X(03).");
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.LevelNumber, 0, 1, tokenLine));
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.UserDefinedWord, 3, 10, tokenLine));
@@ -238,13 +244,20 @@ namespace TypeCobol.Compiler.CodeElements
             };
         }
 
-        private static Nodes.DataDescription CreateData(int level, string name, char type, int length, TypeDefinition parentTypeDef) {
+        private static Nodes.DataDescription CreateNumericData(int level, string name, int length, TypeDefinition parentTypeDef) {
             var data = new DataDescriptionEntry();
             data.LevelNumber = new GeneratedIntegerValue(level);
             data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
-            string pictureCharacterString = $"{type}({length})";
+            string pictureCharacterString = $"9({length})";
             data.Picture = new GeneratedAlphanumericValue(pictureCharacterString);
-            data.PictureValidationResult = (new PictureValidator(pictureCharacterString)).Validate();
+            data.PictureValidationResult = new PictureValidator.Result(
+                new[] { new PictureValidator.Character(PictureValidator.SC.NINE, length) },
+                PictureCategory.Numeric,
+                length,
+                length,
+                false,
+                0,
+                length);
             data.DataType = DataType.Create(data.Picture.Value);
             var node = new Nodes.DataDescription(data);
             node.ParentTypeDefinition = parentTypeDef;

@@ -87,10 +87,8 @@ namespace TypeCobol.Compiler.Symbols
 
             GroupType CreateDateComponent()
             {
-                var pictureValidator = new PictureValidator("9(04)");
-                var yyyyType = new PictureType(pictureValidator.Validate(), false);
-                pictureValidator = new PictureValidator("9(02)");
-                var mmType = new PictureType(pictureValidator.Validate(), false);
+                var yyyyType = new PictureType(NumericValidationResult(4), false);
+                var mmType = new PictureType(NumericValidationResult(3), false);
                 var ddType = mmType;
 
                 Date.Level = 1;
@@ -103,12 +101,31 @@ namespace TypeCobol.Compiler.Symbols
                 recType.Fields.Enter(dd);
 
                 return recType;
+
+                PictureValidator.Result NumericValidationResult(int count)
+                {
+                    return new PictureValidator.Result(
+                        new[] { new PictureValidator.Character(PictureValidator.SC.NINE, count) },
+                        PictureCategory.Numeric,
+                        count,
+                        count,
+                        false,
+                        0,
+                        count);
+                }
             }
 
             PictureType CreateCurrencyComponent()
             {
-                var pictureValidator = new PictureValidator("X(03)");
-                return new PictureType(pictureValidator.Validate(), false);
+                var validationResult = new PictureValidator.Result(
+                    new [] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    PictureCategory.AlphaNumeric,
+                    0,
+                    0,
+                    false,
+                    0,
+                    3);
+                return new PictureType(validationResult, false);
             }
         }
 
