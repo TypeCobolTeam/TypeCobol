@@ -96,13 +96,13 @@ namespace TypeCobol.Compiler.Diagnostics
              */
             bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
             var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate);
-            var pictureValidationResult = pictureValidator.Validate();
+            var pictureValidationResult = pictureValidator.Validate(out var validationMessages);
 
             //Report validation errors as diagnostics
             if (!pictureValidationResult.IsValid)
             {
                 var pictureToken = codeElement.Picture.Token;
-                foreach (var validationMessage in pictureValidationResult.ValidationMessages)
+                foreach (var validationMessage in validationMessages)
                 {
                     DiagnosticUtils.AddError(codeElement, validationMessage, pictureToken);
                 }

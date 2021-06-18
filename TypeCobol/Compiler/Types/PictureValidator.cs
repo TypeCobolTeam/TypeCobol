@@ -87,49 +87,34 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public char NumericSeparator { get; }
 
-        private Result _validationResult;
         /// <summary>
         /// Determines whether the picture string of this instance is valid or not.
         /// </summary>
+        /// <param name="validationMessages">List of encountered validation errors.</param>
         /// <returns>A validation result instance.</returns>
-        /// <remarks>Safe to call multiple times, the result is cached.</remarks>
-        public Result Validate()
-        {
-            if (_validationResult == null) ComputeValidationResult();
-            return _validationResult;
-        }
-
-        private void ComputeValidationResult()
+        public Result Validate(out List<string> validationMessages)
         {
             //Accumulate validation error messages
-            List<string> validationMessages = new List<string>();
+            validationMessages = new List<string>();
 
             //1. First Validate against the PICTURE string regular expression.
             List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol, validationMessages);
-            if (matches == null || matches.Count == 0)
-            {
-                _validationResult = new Result(validationMessages);
-                return;
-            }
+            if (matches == null || matches.Count == 0) return new Result();
 
             //Build Character sequence
             Character[] sequence = CollectPictureSequence(matches, validationMessages);
-            if (validationMessages.Count > 0)
-            {
-                _validationResult = new Result(validationMessages, sequence);
-                return;
-            }
+            if (validationMessages.Count > 0) return new Result(sequence);
 
             //Validate the sequence
             Automata automata = new Automata(this);
             if (automata.Run(sequence, validationMessages))
             {
-                _validationResult = new Result(sequence, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+                //OK
+                return new Result(sequence, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
             }
-            else
-            {
-                _validationResult = new Result(validationMessages, sequence);
-            }
+
+            //KO
+            return new Result(sequence);
         }
 
         /// <summary>

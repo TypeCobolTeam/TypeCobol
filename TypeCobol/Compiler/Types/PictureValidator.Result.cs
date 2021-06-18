@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TypeCobol.Compiler.Types
+﻿namespace TypeCobol.Compiler.Types
 {
     public partial class PictureValidator
     {
@@ -13,11 +11,6 @@ namespace TypeCobol.Compiler.Types
             /// Is the string valid or not ?
             /// </summary>
             public bool IsValid { get; }
-
-            /// <summary>
-            /// All error messages, null if valid, non-null, non-empty otherwise.
-            /// </summary>
-            public List<string> ValidationMessages { get; }
 
             /// <summary>
             /// Parsed character sequence.
@@ -55,20 +48,16 @@ namespace TypeCobol.Compiler.Types
             public int Size { get; }
 
             //Invalid result, no parsed sequence
-            internal Result(List<string> validationMessages)
-                : this(validationMessages, null)
+            internal Result()
+                : this(null)
             {
 
             }
 
             //Invalid result, but we have a parsed sequence
-            internal Result(List<string> validationMessages, Character[] sequence)
+            internal Result(Character[] sequence)
             {
-                System.Diagnostics.Debug.Assert(validationMessages != null);
-                System.Diagnostics.Debug.Assert(validationMessages.Count > 0);
-
                 IsValid = false;
-                ValidationMessages = validationMessages;
                 Sequence = sequence;
                 //Default values for the rest of properties
             }
@@ -77,7 +66,6 @@ namespace TypeCobol.Compiler.Types
             internal Result(Character[] sequence, PictureCategory category, int digits, int realDigits, bool isSigned, int scale, int size)
             {
                 IsValid = true;
-                ValidationMessages = null;
                 Sequence = sequence;
                 Category = category;
                 Digits = digits;
