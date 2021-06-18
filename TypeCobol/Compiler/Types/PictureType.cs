@@ -23,22 +23,20 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Validator constructor.
         /// </summary>
-        /// <param name="validator"></param>
-        public PictureType(PictureValidator validator)
+        public PictureType(PictureValidator.Result validationResult, bool isSeparateSign)
             : base(Tags.Picture)
         {
-            System.Diagnostics.Debug.Assert(validator != null);
-            var result = validator.Validate();
-            if (result.IsValid)
+            System.Diagnostics.Debug.Assert(validationResult != null);
+            if (validationResult.IsValid)
             {
-                IsSigned = result.IsSigned;
-                Scale = result.Scale;
-                Digits = result.Digits;
-                RealDigits = result.RealDigits;
-                Category = result.Category;
-                Sequence = result.Sequence;
-                Size = result.Size;
-                IsSeparateSign = validator.IsSeparateSign;
+                IsSigned = validationResult.IsSigned;
+                Scale = validationResult.Scale;
+                Digits = validationResult.Digits;
+                RealDigits = validationResult.RealDigits;
+                Category = validationResult.Category;
+                Sequence = validationResult.Sequence;
+                Size = validationResult.Size;
+                IsSeparateSign = isSeparateSign;
             }
             else
             {

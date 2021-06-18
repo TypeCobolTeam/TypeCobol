@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Types;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -88,35 +89,27 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (codeElement.Picture == null) return;
 
-            var pictureToken = codeElement.Picture.Token;
-            // if there is not the same number of '(' than of ')'
-            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
+            /*
+             * Validate using PictureValidator
+             * Decimal point and numeric separator have already been normalized
+             * TODO how to get currency symbol from special-names paragraph
+             */
+            bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
+            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate);
+            var pictureValidationResult = pictureValidator.Validate();
+
+            //Report validation errors as diagnostics
+            if (!pictureValidationResult.IsValid)
             {
-                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", pictureToken);
-            }
-            // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
-                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
-            {
-                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", pictureToken);
-            }
-            else
-            {
-                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
+                var pictureToken = codeElement.Picture.Token;
+                foreach (var validationMessage in pictureValidationResult.ValidationMessages)
                 {
-                    try //Try catch is here because of the risk to parse a non numerical value
-                    {
-                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                    }
-                    catch (Exception)
-                    {
-                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(codeElement, m, pictureToken);
-                    }
+                    DiagnosticUtils.AddError(codeElement, validationMessage, pictureToken);
                 }
             }
+
+            //Store validation result for future usages
+            codeElement.PictureValidationResult = pictureValidationResult;
         }
 
         public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)

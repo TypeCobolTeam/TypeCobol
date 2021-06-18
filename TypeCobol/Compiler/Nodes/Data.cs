@@ -325,19 +325,6 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        private PictureValidator _pictureValidator;
-        public PictureValidator PictureValidator
-        {
-            get
-            {
-                if (_pictureValidator != null) return _pictureValidator;
-
-                _pictureValidator = new PictureValidator(Picture.Value, SignIsSeparate);
-
-                return _pictureValidator;
-            }
-        }
-
         /// <summary>
         /// PhysicalLength is the size taken by a DataDefinition and its children in memory
         /// </summary>
@@ -417,14 +404,16 @@ namespace TypeCobol.Compiler.Nodes {
                 }
                 return 1;
             }
-            if (PictureValidator.Validate().IsValid)
+
+            System.Diagnostics.Debug.Assert(PictureValidationResult != null);
+            if (PictureValidationResult.IsValid)
             {
-                PictureType type = new PictureType(PictureValidator);
+                PictureType type = new PictureType(PictureValidationResult, SignIsSeparate);
                 type.Usage = usage;
                 return type.Length;
             }
-            else
-                return 1;
+            
+            return 1;
         }
 
         /// <summary>
@@ -486,7 +475,7 @@ namespace TypeCobol.Compiler.Nodes {
                     switch (Usage.Value)
                     {
                         case DataUsage.Binary:
-                            if (PictureValidator.Validate().Digits <= 4)
+                            if (PictureValidationResult?.Digits <= 4)
                             {
                                 m = 2;
                             }
@@ -655,7 +644,8 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         #region TypeProperties
-        public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
+        public AlphanumericValue Picture => _ComonDataDesc?.Picture;
+        internal PictureValidator.Result PictureValidationResult => _ComonDataDesc?.PictureValidationResult;
         public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
         public DataUsage? Usage
         {

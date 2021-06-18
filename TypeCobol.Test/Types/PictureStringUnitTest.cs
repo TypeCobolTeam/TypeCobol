@@ -137,7 +137,7 @@ namespace TypeCobol.Test.Types
                 PictureValidator psv = new PictureValidator(pics[i].Item1);
                 PictureValidator.Result result = psv.Validate();
                 Assert.IsTrue(result.IsValid);
-                PictureType type = new PictureType(psv);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item2);
             }
@@ -160,7 +160,7 @@ namespace TypeCobol.Test.Types
                 PictureValidator psv = new PictureValidator(pics[i].Item1);
                 PictureValidator.Result result = psv.Validate();
                 Assert.IsTrue(result.IsValid);
-                PictureType type = new PictureType(psv);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item2);
             }
@@ -185,7 +185,7 @@ namespace TypeCobol.Test.Types
                 PictureValidator psv = new PictureValidator(pics[i].Item1);
                 PictureValidator.Result result = psv.Validate();
                 Assert.IsTrue(result.IsValid);
-                PictureType type = new PictureType(psv);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item2);
             }
@@ -213,7 +213,7 @@ namespace TypeCobol.Test.Types
                 PictureValidator psv = new PictureValidator(pics[i].Item1);
                 PictureValidator.Result result = psv.Validate();
                 Assert.IsTrue(result.IsValid);
-                PictureType type = new PictureType(psv);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 type.Usage = pics[i].Item2;
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item3);

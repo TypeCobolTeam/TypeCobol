@@ -9,184 +9,186 @@
 
       * OK
        01 pic X(5).
-Line 12[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+       
+Line 13[15,17] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X5).
-Line 13[15,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 14[15,18] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X)5).
-Line 14[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 15[15,17] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X(5.
-      * OK
+Line 16[15,16] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X5.
-Line 17[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 17[15,17] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X)5.
-Line 18[15,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 18[15,18] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X(5(.
-Line 19[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 19[15,17] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X5(.
-Line 20[15,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 20[15,18] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic X)5(.
 
       * OK
        01 pic S9(5)V9(5).
-Line 24[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+       
+Line 25[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V9(5).
-Line 25[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 26[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V9(5).
-Line 26[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 27[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V9(5).
-      * OK
+Line 28[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V9(5).
-Line 29[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 29[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V9(5).
-Line 30[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 30[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V9(5).
-Line 31[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 31[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V9(5).
-Line 32[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 32[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V9(5).
-Line 33[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 33[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V95).
-Line 34[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 34[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V95).
-Line 35[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 35[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V95).
-Line 36[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (5V95) expected numerical value only
+Line 36[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V95).
-Line 37[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 37[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V95).
-Line 38[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 38[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V95).
-Line 39[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 39[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V95).
-Line 40[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (V95) expected numerical value only
+Line 40[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V95).
-Line 41[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 41[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V95).
-Line 42[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 42[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V9)5).
-Line 43[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 43[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V9)5).
-Line 44[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 44[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V9)5).
-Line 45[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 45[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V9)5).
-Line 46[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 46[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V9)5).
-Line 47[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 47[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V9)5).
-Line 48[15,24] <27, Error, Syntax> - Syntax error : Given value is not correct : (5(V9) expected numerical value only
+Line 48[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V9)5).
-Line 49[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 49[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V9)5).
-Line 50[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 50[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V9)5).
-Line 51[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 51[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V9(5.
-Line 52[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 52[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V9(5.
-Line 53[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 53[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V9(5.
-Line 54[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 54[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V9(5.
-Line 55[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 55[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V9(5.
-Line 56[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 56[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V9(5.
-Line 57[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 57[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V9(5.
-Line 58[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 58[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V9(5.
-Line 59[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 59[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V9(5.
-      * OK
+Line 60[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V95.
-Line 62[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 61[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V95.
-Line 63[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 62[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V95.
-Line 64[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 63[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V95.
-      * OK
+Line 64[15,20] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V95.
-Line 67[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 65[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V95.
-Line 68[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 66[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V95.
-Line 69[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 67[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V95.
-Line 70[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 68[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V95.
-Line 71[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 69[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V9)5.
-Line 72[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 70[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V9)5.
-Line 73[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 71[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V9)5.
-Line 74[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (5V9) expected numerical value only
+Line 72[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V9)5.
-Line 75[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 73[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V9)5.
-Line 76[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 74[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V9)5.
-Line 77[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 75[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V9)5.
-Line 78[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (V9) expected numerical value only
+Line 76[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V9)5.
-Line 79[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 77[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V9)5.
-Line 80[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 78[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V9(5(.
-Line 81[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 79[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V9(5(.
-Line 82[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 80[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V9(5(.
-Line 83[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 81[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V9(5(.
-Line 84[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 82[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V9(5(.
-Line 85[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 83[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V9(5(.
-Line 86[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 84[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V9(5(.
-Line 87[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 85[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V9(5(.
-Line 88[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 86[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V9(5(.
-Line 89[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 87[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V95(.
-Line 90[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 88[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V95(.
-Line 91[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 89[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V95(.
-Line 92[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 90[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V95(.
-Line 93[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 91[15,21] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V95(.
-Line 94[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 92[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V95(.
-Line 95[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 93[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V95(.
-Line 96[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 94[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V95(.
-Line 97[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 95[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V95(.
-Line 98[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 96[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5)V9)5(.
-Line 99[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 97[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95)V9)5(.
-Line 100[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 98[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5)V9)5(.
-Line 101[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 99[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5V9)5(.
-Line 102[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 100[15,22] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95V9)5(.
-Line 103[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 101[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5V9)5(.
-Line 104[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 102[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9(5(V9)5(.
-Line 105[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 103[15,23] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S95(V9)5(.
-Line 106[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 104[15,24] <27, Error, Syntax> - Syntax error : Invalid PICTURE String, could not parse character groups
        01 pic S9)5(V9)5(.
 
        PROCEDURE DIVISION.

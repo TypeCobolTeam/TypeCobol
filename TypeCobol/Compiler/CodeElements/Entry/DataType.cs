@@ -4,6 +4,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -192,7 +193,9 @@ namespace TypeCobol.Compiler.CodeElements
             }
             else if (type == DataType.Currency)
             {
-                dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", 'X', 3));
+                const string pictureCharacterString = "X(03)";
+                dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue(pictureCharacterString);
+                dataTypeDescriptionEntry.PictureValidationResult = (new PictureValidator(pictureCharacterString)).Validate();
                 var tokenLine = TokensLine.CreateVirtualLineForInsertedToken(dataTypeDescriptionEntry.Line, "01 CURRENCY TYPEDEF STRICT PUBLIC PIC X(03).");
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.LevelNumber, 0, 1, tokenLine));
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.UserDefinedWord, 3, 10, tokenLine));
@@ -239,7 +242,9 @@ namespace TypeCobol.Compiler.CodeElements
             var data = new DataDescriptionEntry();
             data.LevelNumber = new GeneratedIntegerValue(level);
             data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
-            data.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", type, length));
+            string pictureCharacterString = $"{type}({length})";
+            data.Picture = new GeneratedAlphanumericValue(pictureCharacterString);
+            data.PictureValidationResult = (new PictureValidator(pictureCharacterString)).Validate();
             data.DataType = DataType.Create(data.Picture.Value);
             var node = new Nodes.DataDescription(data);
             node.ParentTypeDefinition = parentTypeDef;
