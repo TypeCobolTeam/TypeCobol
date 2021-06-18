@@ -158,6 +158,10 @@ namespace TypeCobol.Server
                 GenerateExpandingCopyFile(inputFilePath, parser.Results);
             }
 
+#if EUROINFO_RULES
+            if (this._configuration.ReportUsedCopyNamesPath != null)
+                typeCobolOptions.ReportCollectedUsedCopy();
+#endif
             //Second phase : now that we have all known programs in the table, we can launch a CrossCheck
             if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
             {
@@ -523,6 +527,11 @@ namespace TypeCobol.Server
             //Check diagnostics in dependencies, then intrinsics
             CheckExternalDiagnostics(_dependenciesDiagnostics);
             CheckExternalDiagnostics(_intrinsicsDiagnostics);
+
+#if EUROINFO_RULES
+            if (this._configuration.ReportUsedCopyNamesPath != null && _configuration.ExecToStep <= ExecutionStep.Preprocessor)
+                return returnCode;
+#endif
 
             //Always return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
             if (_missingCopies.Count > 0)

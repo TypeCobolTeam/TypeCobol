@@ -84,7 +84,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-            {                
+            {
 #if EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
@@ -128,6 +128,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         }
                     }
                 }
+                this.TypeCobolOptions.CollectUsedCopy(copy);
 #endif
             }
             copy.LibraryName = GetName(qualifiedTextName.LibraryName);

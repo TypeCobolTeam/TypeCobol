@@ -475,6 +475,14 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
 
+#if EUROINFO_RULES
+                if (document.CompilerOptions.ReportUsedCopyNamesPath != null && 
+                    document.CompilerOptions.ExecToStep <= ExecutionStep.Preprocessor) 
+                {
+                    continue;
+                }
+#endif
+
                 perfStatsForParserInvocation.OnStartTreeBuilding();
                 // 4. Visit the parse tree to build a first class object representing the compiler directive
                 CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;

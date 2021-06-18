@@ -39,6 +39,7 @@ namespace TypeCobol.Tools.Options_Config
 
 #if EUROINFO_RULES
         public bool UseEuroInformationLegacyReplacingSyntax = true;
+        public string ReportUsedCopyNamesPath;
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
@@ -283,7 +284,10 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cep|diagnostic.checkEndProgram=", "Indicate level of check end program: warning, error, info, ignore.", v => typeCobolConfig.CheckEndProgram = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
-                { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true }
+                { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
+#if EUROINFO_RULES
+                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v },
+#endif
             };
             return commonOptions;
         }
