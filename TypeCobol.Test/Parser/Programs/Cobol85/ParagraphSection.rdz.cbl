@@ -8,7 +8,7 @@
             06 VarLevel2 PIC X(10).
           05 Level2-2.
             06 VarLevel2-2 PIC X(10).
-          05 MyBool TYPE BOOL.
+
        PROCEDURE DIVISION.
 
       *** Testing perform statements in procedure division
@@ -90,7 +90,7 @@
        Parag3.
            .
       
-           MOVE Level1::Level2 TO Level1::Level2-2.
+           MOVE Level2 OF Level1 TO Level2-2 IN Level1.
       
        Parag4.
            .

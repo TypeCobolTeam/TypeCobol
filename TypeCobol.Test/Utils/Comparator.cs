@@ -21,9 +21,8 @@ namespace TypeCobol.Test.Utils
         public FileCompiler Compiler { get; }
         public FilesComparator Comparator { get; }
         public TestObserver Observer { get; }
-        public bool IsCobolLanguage { get; set; }
 
-        public TestUnit(FilesComparator comparator1, string[] copyExtensions = null, bool autoRemarks = false, bool antlrProfiler = false)
+        public TestUnit(FilesComparator comparator1, string[] copyExtensions = null, bool antlrProfiler = false)
         {
             Comparator = comparator1;
             Observer = new TestObserver();
@@ -31,11 +30,6 @@ namespace TypeCobol.Test.Utils
             string filePath = Comparator.paths.SamplePath;
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName(filePath));
             DocumentFormat format = Comparator?.GetSampleFormat();
-            TypeCobolOptions options = new TypeCobolOptions();
-            options.IsCobolLanguage = IsCobolLanguage;
-#if EUROINFO_RULES
-            options.AutoRemarksEnable = autoRemarks;
-#endif
 
             var sampleExtension = Path.GetExtension(filePath);
             HashSet<string> compilerExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -51,6 +45,7 @@ namespace TypeCobol.Test.Utils
                 compilerExtensions.Add(copyExtension);
             }
 
+            TypeCobolOptions options = new TypeCobolOptions();
             CompilationProject project = new CompilationProject("TEST",
                 localDirectory.FullName, compilerExtensions.ToArray(),
                 format, options, null);
@@ -159,7 +154,6 @@ namespace TypeCobol.Test.Utils
         private string _resultsRoot;
         private string[] _copyExtensions;
         private int _nbOfTests;
-        public bool IsCobolLanguage { get; set; }
 
         internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] copyExtensions = null, string[] ignored = null, bool deep = true) {
 			_sampleRoot = sampleRoot;
@@ -197,7 +191,7 @@ namespace TypeCobol.Test.Utils
             return _nbOfTests;
         }
 
-		public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
+		public void Test(bool debug = false, bool json = false, bool autoRemarks = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
 				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
@@ -208,8 +202,11 @@ namespace TypeCobol.Test.Utils
 				}
                 foreach (var comparator in comparators) {
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
-					var unit = new TestUnit(comparator, _copyExtensions, autoRemarks);
-                    unit.IsCobolLanguage = IsCobolLanguage;
+                    var unit = new TestUnit(comparator, _copyExtensions);
+#if EUROINFO_RULES
+                    unit.Compiler.CompilerOptions.AutoRemarksEnable = autoRemarks;
+#endif
+                    unit.Compiler.CompilerOptions.IsCobolLanguage = isCobolLanguage;
                     unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {

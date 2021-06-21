@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -19,17 +20,26 @@ namespace TypeCobol.Compiler.Parser
         private ParserRuleContext Context;
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
-		private CobolWordsBuilder CobolWordsBuilder { get; set; }
-		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
-		private CobolStatementsBuilder CobolStatementsBuilder { get; set; }
+		private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+		private CobolWordsBuilder CobolWordsBuilder { get; }
+		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
+		private CobolStatementsBuilder CobolStatementsBuilder { get; }
+
+		public CodeElementBuilder(TypeCobolOptions compilerOptions)
+		{
+			var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
+			LanguageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
+            CobolWordsBuilder = new CobolWordsBuilder();
+            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, LanguageLevelChecker);
+			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
+		}
 
 		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
 		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
 			CodeElement = null;
 			Context = null;
-			CobolWordsBuilder = new CobolWordsBuilder(new Dictionary<Token, SymbolInformation>());
-			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
-			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder);
+			CobolWordsBuilder.Reset();
+			CobolExpressionsBuilder.Reset();
 		}
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
@@ -1401,9 +1411,12 @@ namespace TypeCobol.Compiler.Parser
 		    FormalizedCommentDocumentation formalizedCommentDocumentation = null;
 		    if (context.formalizedComment() != null)
 		        formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
-		    // [/TypeCobol]
-            Context = context;
-            CodeElement = new ProcedureDivisionHeader(formalizedCommentDocumentation);
+			// [/TypeCobol]
+			var procedureDivisionHeader = new ProcedureDivisionHeader(formalizedCommentDocumentation);
+			Context = context;
+			CodeElement = procedureDivisionHeader;
+
+			LanguageLevelChecker.Check(procedureDivisionHeader, context);
 		}
 		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
 			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());

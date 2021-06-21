@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
@@ -188,14 +189,16 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(CallStatement statement, CodeElementsParser.CallStatementContext c)
         {
             var context = c?.cobolCallStatement();
-            if (context != null) //if null it's certainly a CallStatementContext
+            if (context != null) //if null it's certainly a TcCallStatementContext
             {
+                if (context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable() == null)
+                    DiagnosticUtils.AddError(statement, "Empty CALL is not authorized", context.Start);
+
                 foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 
                 if (context.callReturningParameter() != null && statement.OutputParameter == null)
                     DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
             }
-
         }
 
         private static void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
@@ -390,6 +393,179 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(statement, "GOBACK should be used instead of STOP RUN", ParseTreeUtils.GetFirstToken(context), 
                     null, MessageCode.Warning);
             }
+        }
+    }
+
+    /// <summary>
+    /// Create diagnostics for language level restricted elements used in a lower level parsing context
+    /// (typically TypeCobol syntax used in Cobol85 code).
+    /// </summary>
+    internal class UnsupportedLanguageLevelFeaturesChecker
+    {
+        private static Diagnostic CreateDiagnostic(string message, IParseTree location, CobolLanguageLevel minLevel)
+        {
+            var position = ParseTreeUtils.GetFirstToken(location).Position();
+            return new Diagnostic(MessageCode.UnsupportedLanguageFeature, position, minLevel, message);
+        }
+
+        private static void AddError(CodeElement codeElement, string message, IParseTree location, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        {
+            if (codeElement.Diagnostics == null) codeElement.Diagnostics = new List<Diagnostic>();
+            codeElement.Diagnostics.Add(CreateDiagnostic(message, location, minLevel));
+        }
+
+        private static void AddError(ParserRuleContextWithDiagnostics context, string message, IParseTree location = null, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        {
+            location = location ?? context;
+            context.AttachDiagnostic(CreateDiagnostic(message, location, minLevel));
+        }
+
+        private readonly CobolLanguageLevel _targetLevel;
+
+        public UnsupportedLanguageLevelFeaturesChecker(CobolLanguageLevel targetLevel)
+        {
+            _targetLevel = targetLevel;
+        }
+
+        public void Check(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.booleanValue() != null)
+            {
+                AddError(statement, "moving boolean values is not supported.", context.booleanValue());
+            }
+
+            //No need to check UNSAFE keyword, it will be picked up as a syntax error by ANTLR
+        }
+
+        public void Check(SetStatementForIndexes statement, CodeElementsParser.SetStatementForIndexesContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.variableOrExpression2()?.arithmeticExpression() != null)
+            {
+                AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.", context.variableOrExpression2().arithmeticExpression());
+            }
+        }
+
+        public void Check(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.FALSE() != null)
+            {
+                AddError(statement, "SET TO FALSE statement is not supported.", context.FALSE());
+            }
+        }
+
+        public void Check(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.INPUT() != null)
+            {
+                AddErrorOnUnsupportedKeyword(context.INPUT());
+            }
+
+            if (context.OUTPUT() != null)
+            {
+                AddErrorOnUnsupportedKeyword(context.OUTPUT());
+            }
+
+            //No need to check IN-OUT keyword, it will be picked up as a syntax error by ANTLR
+
+            void AddErrorOnUnsupportedKeyword(ITerminalNode unsupportedKeyword)
+                => AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword);
+        }
+
+        //dataDescriptionEntry ANTLR rule translates to DataDefinitionEntry CodeElement
+        public void Check(DataDefinitionEntry entry, CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            var minLevel = CobolLanguageLevel.TypeCobol;
+            if (_targetLevel >= minLevel) return;
+
+            //TC-only
+            if (context.formalizedComment() != null)
+            {
+                AddError(entry, "formalized comments are not supported.", context.formalizedComment(), minLevel);
+            }
+
+            if (context.valueClauseWithBoolean() != null && context.valueClauseWithBoolean().Length > 0)
+            {
+                AddError(entry, "initial value for boolean data is not supported.", context.valueClauseWithBoolean()[0], minLevel);
+            }
+
+            /*
+             * TYPEDEF : in Cobol85 TYPEDEF is not a keyword so entire clause is not parsed => no need to check here.
+             * In Cobol2002 or Cobol2014, TYPEDEF is a keyword but STRICT, PUBLIC and PRIVATE remain user-defined words => no need to check here
+             */
+
+            minLevel = CobolLanguageLevel.Cobol2002;
+            if (_targetLevel >= minLevel) return;
+
+            //Cobol2002 and above only
+            if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0)
+            {
+                AddError(entry, "TYPE clause is not supported.", context.cobol2002TypeClause()[0], minLevel);
+            }
+        }
+
+        public void Check(ProcedureDivisionHeader procedureDivisionHeader, CodeElementsParser.ProcedureDivisionHeaderContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.formalizedComment() != null)
+            {
+                AddError(procedureDivisionHeader, "formalized comments are not supported.", context.formalizedComment());
+            }
+        }
+
+        public void Check(CodeElementsParser.FunctionIdentifierContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            //User-defined function call
+            if (context.userDefinedFunctionCall() != null)
+            {
+                AddError(context.userDefinedFunctionCall().functionNameReference(), "calling user-defined function is not supported.");
+            }
+
+            //Use of 'FUNCTION func1()' instead of 'FUNCTION func1'
+            //Do not check for user-defined function calls as they would already get an error
+            if (context.intrinsicFunctionCall() != null)
+            {
+                var intrinsicFunctionCall = context.intrinsicFunctionCall();
+                if (intrinsicFunctionCall.LeftParenthesisSeparator() != null
+                    && intrinsicFunctionCall.RightParenthesisSeparator() != null
+                    && intrinsicFunctionCall.argument().Length == 0)
+                {
+                    var name = intrinsicFunctionCall.IntrinsicFunctionName().GetText();
+                    AddError(intrinsicFunctionCall, $"using empty brackets is not allowed, use 'FUNCTION {name}'.", intrinsicFunctionCall.IntrinsicFunctionName());
+                }
+            }
+        }
+
+        public void Check(CodeElement codeElement, CodeElementsParser.TcCodeElementContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.globalStorageSectionHeader() != null)
+            {
+                AddError(codeElement, "GLOBAL-STORAGE SECTION is not supported.", context.globalStorageSectionHeader());
+            }
+
+            if (context.libraryCopy() != null)
+            {
+                AddError(codeElement, "service include feature is not supported.", context.libraryCopy());
+            }
+
+            if (context.functionDeclarationHeader() != null)
+            {
+                AddError(codeElement, "defining custom functions/procedures is not supported.", context.functionDeclarationHeader());
+            }
+
+            //If a functionDeclarationEnd is present without any header, there will be a Cup parsing error so no need to check it here.
         }
     }
 

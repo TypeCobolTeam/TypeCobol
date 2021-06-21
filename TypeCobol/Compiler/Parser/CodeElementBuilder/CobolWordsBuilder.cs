@@ -13,12 +13,11 @@ namespace TypeCobol.Compiler.Parser
 {
     internal class CobolWordsBuilder
     {
-
         internal IDictionary<Token, SymbolInformation> symbolInformationForTokens { get; private set; }
 
-        public CobolWordsBuilder(IDictionary<Token, SymbolInformation> symbolInformationForTokens)
+        public void Reset()
         {
-            this.symbolInformationForTokens = symbolInformationForTokens;
+            this.symbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
         }
 
         private void AddToSymbolInformations(AlphanumericValue nameLiteral, SymbolInformation symbolInfo)
