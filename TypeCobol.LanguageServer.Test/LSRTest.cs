@@ -449,6 +449,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionCallDuplicateProcedure", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void AmbiguousVariablesCompletion()
+        {
+            LSRTestHelper.Test("AmbiguousVariablesCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("AmbiguousVariablesCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
+        }
         #endregion
 
         [TestMethod]
