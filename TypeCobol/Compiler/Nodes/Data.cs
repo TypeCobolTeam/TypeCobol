@@ -632,7 +632,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public bool IsIndex { get; internal set; }
+        public bool IsTableIndex { get; internal set; }
         public string Hash
         {
             get
@@ -647,7 +647,7 @@ namespace TypeCobol.Compiler.Nodes {
         public AlphanumericValue Picture => _CommonDataDesc?.Picture;
         internal PictureValidator.Result PictureValidationResult => _CommonDataDesc?.PictureValidationResult;
         public bool IsJustified { get {  if(_CommonDataDesc != null && _CommonDataDesc.IsJustified != null) return _CommonDataDesc.IsJustified.Value; else return false; } }
-        public DataUsage? Usage
+        public virtual DataUsage? Usage
         {
             get
             {
@@ -932,7 +932,7 @@ namespace TypeCobol.Compiler.Nodes {
         public IndexDefinition(SymbolDefinition symbolDefinition) : base(null)
         {
             _SymbolDefinition = symbolDefinition;
-            IsIndex = true;
+            IsTableIndex = true;
         }
 
         private SymbolDefinition _SymbolDefinition;
@@ -945,6 +945,18 @@ namespace TypeCobol.Compiler.Nodes {
         public override DataType DataType
         {
             get { return DataType.Numeric; }
+        }
+
+        public override DataUsage? Usage
+        {
+	        get { return DataUsage.Index; }
+        }
+
+        public override long PhysicalLength
+        {
+            //Table indexes are not physically stored into their parent DATA section.
+            //Their size and actual location in memory depends on the compiler implementation.
+            get { return 0; }
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
