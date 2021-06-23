@@ -12,13 +12,21 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Indicates whether the usage is compatible with a PictureType.
         /// </summary>
-        public static bool IsUsageCompatible(UsageFormat usage) =>
-            !(usage == UsageFormat.Comp1 ||
-              usage == UsageFormat.Comp2 ||
-              usage == UsageFormat.ObjectReference ||
-              usage == UsageFormat.Pointer ||
-              usage == UsageFormat.FunctionPointer ||
-              usage == UsageFormat.ProcedurePointer);
+        public static bool IsUsageCompatible(UsageFormat usage)
+        {
+            switch (usage)
+            {
+                case UsageFormat.Comp1:
+                case UsageFormat.Comp2:
+                case UsageFormat.ObjectReference:
+                case UsageFormat.Pointer:
+                case UsageFormat.FunctionPointer:
+                case UsageFormat.ProcedurePointer:
+                    return false;
+                default:
+                    return true;
+            }
+        }
 
         /// <summary>
         /// Validator constructor.
