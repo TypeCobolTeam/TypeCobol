@@ -1,0 +1,18 @@
+--- Program ---
+PROGRAM: PGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  X:Alphanumeric
+  X1:Alphanumeric
+  X2:Alphanumeric
+  X3:Alphanumeric
+  X4:Alphanumeric
+  X5:Alphanumeric
+  Y:?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

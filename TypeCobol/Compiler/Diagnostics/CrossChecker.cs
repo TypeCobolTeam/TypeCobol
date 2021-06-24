@@ -778,7 +778,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 //SemanticDomain validation : check that the symbol has been built.
                 if (dataDefinitionFound.ParentTypeDefinition == null)
                 {
-                    System.Diagnostics.Debug.Assert(variableSymbol != null);
+                    //TODO SemanticDomain: requires support for RENAMES.
+                    System.Diagnostics.Debug.Assert(variableSymbol != null || dataDefinitionFound is DataRenames);
                 }
                 else
                 {
@@ -1167,8 +1168,8 @@ namespace TypeCobol.Compiler.Diagnostics
             else
             {
                 //This will resolve the following cases MOVE 1 TO myVar / MOVE true TO myVar / MOVE "test" TO myVar. 
-                if (sent is bool?) sendingTypeDefinition = GeneratedDefinition.BooleanGeneratedDefinition;
-                if (sent is double?) sendingTypeDefinition = GeneratedDefinition.NumericGeneratedDefinition;
+                if (sent is bool) sendingTypeDefinition = GeneratedDefinition.BooleanGeneratedDefinition;
+                if (sent is double) sendingTypeDefinition = GeneratedDefinition.NumericGeneratedDefinition;
                 if (sent is string) sendingTypeDefinition = GeneratedDefinition.AlphanumericGeneratedDefinition;
             }
 
@@ -1253,12 +1254,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         entry = GetDataDescriptionEntry(node, redefines, isReadDictionary);
                     }
                 }
-                else if (data is IndexDefinition)
+                else
                 {
+                    //TODO Unsupported DataRenames (and IndexDefinition ?)
                     entry = null;
                 }
-                else
-                    throw new NotImplementedException(data.CodeElement.GetType().Name);
 
                 if (entry == null)
                     return null;
@@ -1271,7 +1271,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 return null;
             }
 
-            if (data?.TypeDefinition != null)
+            if (data.TypeDefinition != null)
                 return data.TypeDefinition;
 
             var types = node.SymbolTable.GetType(data);
@@ -1291,20 +1291,17 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var searchedDataDefinition =
                 node.GetDataDefinitionForQualifiedName(dataRedefinesEntry.RedefinesDataName.URI, isReadDictionary);
-            if (searchedDataDefinition == null)
-            {
-                return null;
-            }
+
             if (searchedDataDefinition is DataDescription)
             {
                 return (DataDescriptionEntry) searchedDataDefinition.CodeElement;
             }
             if (searchedDataDefinition is DataRedefines)
             {
-                return GetDataDescriptionEntry(node, (DataRedefinesEntry) searchedDataDefinition.CodeElement,
-                    isReadDictionary);
+                return GetDataDescriptionEntry(node, (DataRedefinesEntry) searchedDataDefinition.CodeElement, isReadDictionary);
             }
-            throw new NotImplementedException(searchedDataDefinition.Name);
+
+            return null;
         }
 
     }
