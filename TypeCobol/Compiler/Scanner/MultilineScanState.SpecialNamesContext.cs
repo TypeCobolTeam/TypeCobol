@@ -33,42 +33,98 @@ namespace TypeCobol.Compiler.Scanner
                 SymbolicCharacters.Add(tokenText);
             }
 
-            internal bool BeforeCurrencySignToken { get; set; }
+            private bool _nextLiteralIsCurrencySign;
+            private bool _nextLiteralIsCurrencySymbol;
+            private Token _lastCurrencySignToken;
+            private Token _lastCurrencySymbolToken;
 
-            internal bool BeforeCurrencySymbolToken { get; set; }
+            /// <summary>
+            /// True if we are inside currencySignClause
+            /// </summary>
+            internal bool InsideCurrencySignDefinitions => _nextLiteralIsCurrencySign || _nextLiteralIsCurrencySymbol;
 
-            internal Token LastCurrencySignToken { get; set; }
+            /// <summary>
+            /// Call to signal the beginning of a currencySignClause
+            /// </summary>
+            internal void BeginCurrencySignClause()
+            {
+                _nextLiteralIsCurrencySign = true;
+                _nextLiteralIsCurrencySymbol = false;
+                //Flush tokens of the previous clause (if any)
+                CreateCurrencyDescriptor();
+            }
 
-            internal Token LastCurrencySymbolToken { get; set; }
+            /// <summary>
+            /// Call to signal the presence of a WITH PICTURE SYMBOL fragment
+            /// </summary>
+            internal void WithPictureSymbol()
+            {
+                _nextLiteralIsCurrencySign = false;
+                _nextLiteralIsCurrencySymbol = true;
+            }
 
-            public IList<PictureValidator.CurrencyDescriptor> CurrencyDescriptors { get; private set; }
+            /// <summary>
+            /// Allows to register currency signs and symbols
+            /// </summary>
+            /// <param name="alphanumericLiteralToken">Current alphanumeric literal token</param>
+            /// <remarks>Expects a non-null, AlphanumericLiteralToken TokenType</remarks>
+            internal void OnAlphanumericLiteralToken(Token alphanumericLiteralToken)
+            {
+                if (_nextLiteralIsCurrencySign)
+                {
+                    _lastCurrencySignToken = alphanumericLiteralToken;
+                }
 
-            internal void CreateCurrencyDescriptor()
+                if (_nextLiteralIsCurrencySymbol)
+                {
+                    _lastCurrencySymbolToken = alphanumericLiteralToken;
+                    //End of clause, flush
+                    CreateCurrencyDescriptor();
+                }
+            }
+
+            /// <summary>
+            /// Call to signal that all currencySignClause have been scanned
+            /// </summary>
+            internal void EndAllCurrencySignClauses()
+            {
+                _nextLiteralIsCurrencySign = false;
+                _nextLiteralIsCurrencySymbol = false;
+                //Flush last tokens if any
+                CreateCurrencyDescriptor();
+            }
+
+            /// <summary>
+            /// All user-defined currency descriptors.
+            /// </summary>
+            public IList<PictureValidator.CurrencyDescriptor> CustomCurrencyDescriptors { get; private set; }
+
+            private void CreateCurrencyDescriptor()
             {
                 //Assign token roles
                 Token symbolToken, signToken;
-                if (LastCurrencySignToken == null)
+                if (_lastCurrencySignToken == null)
                 {
                     //If we have a symbol but no sign, then we'll get a syntax error in ANTLR, this is an invalid CURRENCY SIGN clause.
                     //If both are null, we have nothing to do. So either case, reset tokens and return.
-                    LastCurrencySymbolToken = null;
+                    _lastCurrencySymbolToken = null;
                     return;
                 }
 
-                if (LastCurrencySymbolToken == null)
+                if (_lastCurrencySymbolToken == null)
                 {
                     //Sign is also its own associated symbol
-                    symbolToken = LastCurrencySignToken;
-                    signToken = LastCurrencySignToken;
-                    LastCurrencySignToken = null;
+                    symbolToken = _lastCurrencySignToken;
+                    signToken = _lastCurrencySignToken;
+                    _lastCurrencySignToken = null;
                 }
                 else
                 {
                     //Use both custom sign and symbol
-                    symbolToken = LastCurrencySymbolToken;
-                    signToken = LastCurrencySignToken;
-                    LastCurrencySymbolToken = null;
-                    LastCurrencySignToken = null;
+                    symbolToken = _lastCurrencySymbolToken;
+                    signToken = _lastCurrencySignToken;
+                    _lastCurrencySymbolToken = null;
+                    _lastCurrencySignToken = null;
                 }
 
                 /*
@@ -85,11 +141,11 @@ namespace TypeCobol.Compiler.Scanner
                 char symbol = symbolText[0];
 
                 //Add new descriptor
-                if (CurrencyDescriptors == null)
+                if (CustomCurrencyDescriptors == null)
                 {
-                    CurrencyDescriptors = new List<PictureValidator.CurrencyDescriptor>();
+                    CustomCurrencyDescriptors = new List<PictureValidator.CurrencyDescriptor>();
                 }
-                CurrencyDescriptors.Add(new PictureValidator.CurrencyDescriptor(symbol, sign));
+                CustomCurrencyDescriptors.Add(new PictureValidator.CurrencyDescriptor(symbol, sign));
 
                 //Helper local functions
                 string Text(Token alphanumericLiteralToken) => ((AlphanumericLiteralTokenValue) alphanumericLiteralToken.LiteralValue).Text;
@@ -113,30 +169,30 @@ namespace TypeCobol.Compiler.Scanner
                 bool beforeCurrencySymbolToken,
                 Token lastCurrencySignToken,
                 Token lastCurrencySymbolToken,
-                IList<PictureValidator.CurrencyDescriptor> currencyDescriptors,
+                IList<PictureValidator.CurrencyDescriptor> customCurrencyDescriptors,
                 bool decimalPointIsComma)
             {
                 InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
                 SymbolicCharacters = symbolicCharacters;
-                BeforeCurrencySignToken = beforeCurrencySignToken;
-                BeforeCurrencySymbolToken = beforeCurrencySymbolToken;
-                LastCurrencySignToken = lastCurrencySignToken;
-                LastCurrencySymbolToken = lastCurrencySymbolToken;
-                CurrencyDescriptors = currencyDescriptors;
+                _nextLiteralIsCurrencySign = beforeCurrencySignToken;
+                _nextLiteralIsCurrencySymbol = beforeCurrencySymbolToken;
+                _lastCurrencySignToken = lastCurrencySignToken;
+                _lastCurrencySymbolToken = lastCurrencySymbolToken;
+                CustomCurrencyDescriptors = customCurrencyDescriptors;
                 DecimalPointIsComma = decimalPointIsComma;
             }
 
             public SpecialNamesContext Clone()
             {
                 var symbolicCharacters = SymbolicCharacters != null ? new List<string>(SymbolicCharacters) : null;
-                var currencyDescriptors = CurrencyDescriptors != null ? new List<PictureValidator.CurrencyDescriptor>(CurrencyDescriptors) : null;
+                var customCurrencyDescriptors = CustomCurrencyDescriptors != null ? new List<PictureValidator.CurrencyDescriptor>(CustomCurrencyDescriptors) : null;
                 return new SpecialNamesContext(InsideSymbolicCharacterDefinitions,
                     symbolicCharacters,
-                    BeforeCurrencySignToken,
-                    BeforeCurrencySymbolToken,
-                    LastCurrencySignToken,
-                    LastCurrencySymbolToken,
-                    currencyDescriptors,
+                    _nextLiteralIsCurrencySign,
+                    _nextLiteralIsCurrencySymbol,
+                    _lastCurrencySignToken,
+                    _lastCurrencySymbolToken,
+                    customCurrencyDescriptors,
                     DecimalPointIsComma);
             }
 
@@ -147,10 +203,10 @@ namespace TypeCobol.Compiler.Scanner
 
                 return InsideSymbolicCharacterDefinitions == other.InsideSymbolicCharacterDefinitions
                        && SymbolicCharacters?.Count == other.SymbolicCharacters?.Count
-                       && BeforeCurrencySignToken == other.BeforeCurrencySignToken
-                       && BeforeCurrencySymbolToken == other.BeforeCurrencySymbolToken
+                       && _nextLiteralIsCurrencySign == other._nextLiteralIsCurrencySign
+                       && _nextLiteralIsCurrencySymbol == other._nextLiteralIsCurrencySymbol
                        //Compare tokens ?
-                       && CurrencyDescriptors?.Count == other.CurrencyDescriptors?.Count
+                       && CustomCurrencyDescriptors?.Count == other.CustomCurrencyDescriptors?.Count
                        && DecimalPointIsComma == other.DecimalPointIsComma;
             }
 
@@ -164,10 +220,10 @@ namespace TypeCobol.Compiler.Scanner
                     int hash = 17;
                     hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
                     hash = hash * 23 + SymbolicCharacters?.Count ?? 0;
-                    hash = hash * 23 + BeforeCurrencySignToken.GetHashCode();
-                    hash = hash * 23 + BeforeCurrencySymbolToken.GetHashCode();
+                    hash = hash * 23 + _nextLiteralIsCurrencySign.GetHashCode();
+                    hash = hash * 23 + _nextLiteralIsCurrencySymbol.GetHashCode();
                     //Include tokens ?
-                    hash = hash * 23 + CurrencyDescriptors?.Count ?? 0;
+                    hash = hash * 23 + CustomCurrencyDescriptors?.Count ?? 0;
                     hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                     return hash;
                 }
