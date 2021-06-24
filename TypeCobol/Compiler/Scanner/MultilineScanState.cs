@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Internal Scanner state propagated from one line to the other when compiling a complete source file
     /// </summary>
-    public class MultilineScanState : IEquatable<MultilineScanState>
+    public partial class MultilineScanState : IEquatable<MultilineScanState>
     {
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
