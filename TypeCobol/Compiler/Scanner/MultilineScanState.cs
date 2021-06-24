@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -99,6 +101,65 @@ namespace TypeCobol.Compiler.Scanner
             SymbolicCharacters.Add(tokenText);
         }
 
+        private bool _beforeCurrencySignToken;
+        private bool _beforeCurrencySymbolToken;
+        private Token _lastCurrencySignToken;
+        private Token _lastCurrencySymbolToken;
+
+        public IList<PictureValidator.CurrencyDescriptor> CurrencyDescriptors { get; private set; }
+
+        private void CreateCurrencyDescriptor()
+        {
+            //Assign token roles
+            Token symbolToken, signToken;
+            if (_lastCurrencySignToken == null)
+            {
+                //If we have a symbol but no sign, then we'll get a syntax error in ANTLR, this is an invalid CURRENCY SIGN clause.
+                //If both are null, we have nothing to do, so either case, reset tokens and return
+                _lastCurrencySymbolToken = null;
+                return;
+            }
+
+            if (_lastCurrencySymbolToken == null)
+            {
+                //Custom sign is also its associated symbol
+                symbolToken = _lastCurrencySignToken;
+                signToken = _lastCurrencySignToken;
+                _lastCurrencySignToken = null;
+            }
+            else
+            {
+                //Use both custom sign and symbol
+                symbolToken = _lastCurrencySymbolToken;
+                signToken = _lastCurrencySignToken;
+                _lastCurrencySymbolToken = null;
+                _lastCurrencySignToken = null;
+            }
+
+            /*
+             * Validate symbol token.
+             * NOTE: although specs describe restrictions on sign IBM compiler does not check them
+             */
+            string sign = Text(signToken);
+            string symbolText = Text(symbolToken);
+            if (!PictureValidator.CurrencyDescriptor.ValidateSymbol(Text(symbolToken), out string error))
+            {
+                AddError(symbolToken, error);
+                return;
+            }
+
+            char symbol = symbolText[0];
+
+            //Add new descriptor
+            if (CurrencyDescriptors == null)
+                CurrencyDescriptors = new List<PictureValidator.CurrencyDescriptor>();
+            CurrencyDescriptors.Add(new PictureValidator.CurrencyDescriptor(symbol, sign));
+
+            string Text(Token alphanumericLiteralToken) => ((AlphanumericLiteralTokenValue) alphanumericLiteralToken.LiteralValue).Text;
+
+            void AddError(Token token, string message) => ((TokensLine) token.TokensLine).AddDiagnostic(MessageCode.SyntaxErrorInParser, token, message);
+        }
+
 #if EUROINFO_RULES
         /// <summary>
         /// True when we are existing a remarks directive. 
@@ -156,6 +217,15 @@ namespace TypeCobol.Compiler.Scanner
             {
                 clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
             }
+
+            clone._beforeCurrencySignToken = _beforeCurrencySignToken;
+            clone._beforeCurrencySymbolToken = _beforeCurrencySymbolToken;
+            clone._lastCurrencySignToken = _lastCurrencySignToken;
+            clone._lastCurrencySymbolToken = _lastCurrencySymbolToken;
+            if (CurrencyDescriptors != null)
+            {
+                clone.CurrencyDescriptors = new List<PictureValidator.CurrencyDescriptor>(CurrencyDescriptors);
+            }
 #if EUROINFO_RULES
             clone.InsideRemarksDirective = InsideRemarksDirective;
             clone.InsideRemarksParentheses = InsideRemarksParentheses;
@@ -169,7 +239,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public void AdvanceToNextStateAndAdjustTokenProperties(Token newToken)
         {
-
             // Ignore whitespace separators
             if (newToken.TokenFamily == TokenFamily.Whitespace ||
                 newToken.TokenFamily == TokenFamily.Comments)
@@ -271,6 +340,26 @@ namespace TypeCobol.Compiler.Scanner
                     // Register the end of the formalized Comments
                     InsideMultilineComments = false;
                     return;
+                case TokenType.CURRENCY:
+                    if (LastSignificantToken?.TokenType != TokenType.TYPE)
+                    {
+                        _beforeCurrencySignToken = true;
+                        _beforeCurrencySymbolToken = false;
+                        CreateCurrencyDescriptor();
+                    }
+                    break;
+                case TokenType.SYMBOL:
+                    _beforeCurrencySignToken = false;
+                    _beforeCurrencySymbolToken = true;
+                    break;
+                case TokenType.AlphanumericLiteral:
+                    if (_beforeCurrencySignToken) _lastCurrencySignToken = newToken;
+                    if (_beforeCurrencySymbolToken)
+                    {
+                        _lastCurrencySymbolToken = newToken;
+                        CreateCurrencyDescriptor();
+                    }
+                    break;
             }
 
             // Avoid setting last significative token for multiline Comments
@@ -284,6 +373,27 @@ namespace TypeCobol.Compiler.Scanner
                 newToken.TokenType != TokenType.IntegerLiteral)
             {
                 InsideSymbolicCharacterDefinitions = false;
+            }
+
+            // Register the end of all CURRENCY SIGN clauses
+            if (_beforeCurrencySignToken || _beforeCurrencySymbolToken)
+            {
+                switch (newToken.TokenType)
+                {
+                    case TokenType.CURRENCY:
+                    case TokenType.SIGN:
+                    case TokenType.IS:
+                    case TokenType.AlphanumericLiteral:
+                    case TokenType.WITH:
+                    case TokenType.PICTURE:
+                    case TokenType.SYMBOL:
+                        break;
+                    default:
+                        _beforeCurrencySignToken = false;
+                        _beforeCurrencySymbolToken = false;
+                        CreateCurrencyDescriptor();
+                        break;
+                }
             }
 
             // Register the last significant token 
