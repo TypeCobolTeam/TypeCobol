@@ -242,16 +242,23 @@ namespace TypeCobol.Compiler.Scanner
                     InsideMultilineComments = false;
                     return;
                 case TokenType.CURRENCY:
+                    // CURRENCY token is used either to satrt a CURRENCY SIGN clause or as an intrinsic type name in tC
                     if (LastSignificantToken?.TokenType != TokenType.TYPE)
                     {
                         SpecialNames.BeginCurrencySignClause();
                     }
                     break;
                 case TokenType.SYMBOL:
+                    // SYMBOL keyword is used only in CURRENCY SIGN clause
                     SpecialNames.WithPictureSymbol();
                     break;
                 case TokenType.AlphanumericLiteral:
-                    SpecialNames.OnAlphanumericLiteralToken(newToken);
+                case TokenType.HexadecimalAlphanumericLiteral:
+                case TokenType.NullTerminatedAlphanumericLiteral:
+                    if (SpecialNames.InsideCurrencySignDefinitions)
+                    {
+                        SpecialNames.OnAlphanumericLiteralToken(newToken);
+                    }
                     break;
             }
 
@@ -277,6 +284,8 @@ namespace TypeCobol.Compiler.Scanner
                     case TokenType.SIGN:
                     case TokenType.IS:
                     case TokenType.AlphanumericLiteral:
+                    case TokenType.HexadecimalAlphanumericLiteral:
+                    case TokenType.NullTerminatedAlphanumericLiteral:
                     case TokenType.WITH:
                     case TokenType.PICTURE:
                     case TokenType.SYMBOL:

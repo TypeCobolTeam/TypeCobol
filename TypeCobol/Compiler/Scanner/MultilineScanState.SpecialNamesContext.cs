@@ -68,15 +68,14 @@ namespace TypeCobol.Compiler.Scanner
             /// Allows to register currency signs and symbols
             /// </summary>
             /// <param name="alphanumericLiteralToken">Current alphanumeric literal token</param>
-            /// <remarks>Expects a non-null, AlphanumericLiteralToken TokenType</remarks>
+            /// <remarks>Expects a non-null, AlphanumericLiteralToken|HexadecimalAlphanumericLiteral|NullTerminatedAlphanumericLiteral TokenType</remarks>
             internal void OnAlphanumericLiteralToken(Token alphanumericLiteralToken)
             {
                 if (_nextLiteralIsCurrencySign)
                 {
                     _lastCurrencySignToken = alphanumericLiteralToken;
                 }
-
-                if (_nextLiteralIsCurrencySymbol)
+                else if (_nextLiteralIsCurrencySymbol)
                 {
                     _lastCurrencySymbolToken = alphanumericLiteralToken;
                     //End of clause, flush
@@ -96,9 +95,25 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             /// <summary>
-            /// All user-defined currency descriptors.
+            /// All valid currency descriptors for this scan state. Not-null, never empty.
             /// </summary>
-            public IEnumerable<PictureValidator.CurrencyDescriptor> CustomCurrencyDescriptors2 => _customCurrencyDescriptors?.Values;
+            public IEnumerable<PictureValidator.CurrencyDescriptor> CurrencyDescriptors
+            {
+                get
+                {
+                    if (_customCurrencyDescriptors != null)
+                    {
+                        foreach (var customCurrencyDescriptor in _customCurrencyDescriptors.Values)
+                        {
+                            yield return customCurrencyDescriptor;
+                        }
+                    }
+                    else
+                    {
+                        yield return PictureValidator.CurrencyDescriptor.Default;
+                    }
+                }
+            }
 
             private void CreateCurrencyDescriptor()
             {
@@ -174,8 +189,8 @@ namespace TypeCobol.Compiler.Scanner
 
             private SpecialNamesContext(bool insideSymbolicCharacterDefinitions,
                 IList<string> symbolicCharacters,
-                bool beforeCurrencySignToken,
-                bool beforeCurrencySymbolToken,
+                bool nextLiteralIsCurrencySign,
+                bool nextLiteralIsCurrencySymbol,
                 Token lastCurrencySignToken,
                 Token lastCurrencySymbolToken,
                 IDictionary<char, PictureValidator.CurrencyDescriptor> customCurrencyDescriptors,
@@ -184,8 +199,8 @@ namespace TypeCobol.Compiler.Scanner
                 InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
                 SymbolicCharacters = symbolicCharacters;
                 _customCurrencyDescriptors = customCurrencyDescriptors;
-                _nextLiteralIsCurrencySign = beforeCurrencySignToken;
-                _nextLiteralIsCurrencySymbol = beforeCurrencySymbolToken;
+                _nextLiteralIsCurrencySign = nextLiteralIsCurrencySign;
+                _nextLiteralIsCurrencySymbol = nextLiteralIsCurrencySymbol;
                 _lastCurrencySignToken = lastCurrencySignToken;
                 _lastCurrencySymbolToken = lastCurrencySymbolToken;
                 DecimalPointIsComma = decimalPointIsComma;
