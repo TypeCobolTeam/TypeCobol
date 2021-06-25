@@ -201,53 +201,53 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable() == null)
                     DiagnosticUtils.AddError(statement, "Empty CALL is not authorized", context.Start);
 
-                foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
+                // Check each parameter of the CALL
+                foreach (var inputParameter in statement.InputParameters) CheckCallUsings(statement, inputParameter);
 
                 if (context.callReturningParameter() != null && statement.OutputParameter == null)
                     DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
             }
         }
 
-        private static void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
+        private static void CheckCallUsings(CallStatement statement, CallSiteParameter input)
         {
-            foreach (var input in statement.InputParameters)
+            var errorPosition = input.StorageAreaOrValue?.MainSymbolReference?.NameLiteral.Token;
+
+            // TODO#249 these checks should be done during semantic phase, after symbol type resolution
+            // TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
+            //	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
+            bool isFunctionCallResult = input.StorageAreaOrValue != null &&
+                                        input.StorageAreaOrValue.StorageArea is FunctionCallResult;
+
+            //SpecialRegister if LENGTH OF, LINAGE-COUNTER, ...
+            var specialRegister = input.StorageAreaOrValue != null
+                ? input.StorageAreaOrValue.StorageArea as StorageAreaPropertySpecialRegister
+                : null;
+
+            if (isFunctionCallResult)
+                DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", errorPosition);
+
+            if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LINAGE_COUNTER)
+                DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", errorPosition);
+
+
+            if (input.SharingMode != null)
             {
-                // TODO#249 these checks should be done during semantic phase, after symbol type resolution
-                // TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
-                //	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
-                bool isFunctionCallResult = input.StorageAreaOrValue != null &&
-                                            input.StorageAreaOrValue.StorageArea is FunctionCallResult;
-
-                //SpecialRegister if LENGTH OF, LINAGE-COUNTER, ...
-                var specialRegister = input.StorageAreaOrValue != null
-                    ? input.StorageAreaOrValue.StorageArea as StorageAreaPropertySpecialRegister
-                    : null;
-
-                if (isFunctionCallResult)
-                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
-
-                if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LINAGE_COUNTER)
-                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
-
-
-                if (input.SharingMode != null)
+                //BY REFERENCE
+                if (input.SharingMode.Value == ParameterSharingMode.ByReference)
                 {
-                    //BY REFERENCE
-                    if (input.SharingMode.Value == ParameterSharingMode.ByReference)
-                    {
-                        if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LENGTH)
-                            DiagnosticUtils.AddError(statement,
-                                "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
+                    if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LENGTH)
+                        DiagnosticUtils.AddError(statement,
+                            "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", errorPosition);
 
-                        if (input.StorageAreaOrValue != null && input.StorageAreaOrValue.IsLiteral)
-                            DiagnosticUtils.AddError(statement,
-                                "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-                    }
-
-                    //BY VALUE
-                    if (input.IsOmitted && input.SharingMode.Value == ParameterSharingMode.ByValue)
-                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
+                    if (input.StorageAreaOrValue != null && input.StorageAreaOrValue.IsLiteral)
+                        DiagnosticUtils.AddError(statement,
+                            "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", errorPosition);
                 }
+
+                //BY VALUE
+                if (input.IsOmitted && input.SharingMode.Value == ParameterSharingMode.ByValue)
+                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", errorPosition);
             }
         }
     }
