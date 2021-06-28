@@ -377,8 +377,8 @@ namespace TypeCobol.Compiler.Diagnostics
                             TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType != null && calleeType != null)
                             {
-                                //Compare references of TypeDefinition
-                                if (callerType != calleeType)
+                                //Compare TypeDefinitions
+                                if (!callerType.Equals(calleeType))
                                 {
                                     var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
