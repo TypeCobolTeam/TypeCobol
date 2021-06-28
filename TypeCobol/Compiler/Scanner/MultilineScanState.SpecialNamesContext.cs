@@ -164,7 +164,7 @@ namespace TypeCobol.Compiler.Scanner
                 }
                 else if (_customCurrencyDescriptors.ContainsKey(symbol))
                 {
-                    AddError(symbolToken, $"duplicate currency symbol '{symbol}'.");
+                    AddError(symbolToken, $"Duplicate currency symbol '{symbol}'.");
                 }
                 else
                 {

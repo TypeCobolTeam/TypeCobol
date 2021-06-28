@@ -5,7 +5,7 @@ Line 57[17,27] <27, Error, Syntax> - Syntax error : Currency symbol must be one 
 Line 58[44,48] <27, Error, Syntax> - Syntax error : Currency symbol must be one single character.
 Line 59[17,19] <27, Error, Syntax> - Syntax error : Character 'A' is not allowed as currency symbol.
 Line 60[44,46] <27, Error, Syntax> - Syntax error : Character '0' is not allowed as currency symbol.
-Line 61[44,46] <27, Error, Syntax> - Syntax error : duplicate currency symbol 'Y'.
+Line 61[44,46] <27, Error, Syntax> - Syntax error : Duplicate currency symbol 'Y'.
 --- Code Elements ---
 [[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [23,23+:.]<PeriodSeparator>
 
