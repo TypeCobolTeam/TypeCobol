@@ -108,18 +108,18 @@ namespace TypeCobol.Compiler.Types
 
             //Build Character sequence
             Character[] sequence = CollectPictureSequence(matches, validationMessages);
-            if (validationMessages.Count > 0) return new Result(sequence);
+            if (validationMessages.Count > 0) return new Result(sequence, _currencyDescriptor);
 
             //Validate the sequence
             Automata automata = new Automata(this);
             if (automata.Run(sequence, validationMessages))
             {
                 //OK
-                return new Result(sequence, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+                return new Result(sequence, _currencyDescriptor, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
             }
 
             //KO
-            return new Result(sequence);
+            return new Result(sequence, _currencyDescriptor);
         }
 
         /// <summary>

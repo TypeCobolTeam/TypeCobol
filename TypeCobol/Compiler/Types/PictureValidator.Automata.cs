@@ -300,6 +300,7 @@ namespace TypeCobol.Compiler.Types
                             break;
                         case SC.CS:
                             System.Diagnostics.Debug.Assert(c.Count == 1);
+                            System.Diagnostics.Debug.Assert(_validator._currencyDescriptor != null);
                             if (!CS_signSizeAdded)
                             {
                                 Size += _validator._currencyDescriptor.Sign.Length;

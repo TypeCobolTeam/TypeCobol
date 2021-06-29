@@ -18,6 +18,11 @@
             internal Character[] Sequence { get; }
 
             /// <summary>
+            /// Currency descriptor found in Picture, if any.
+            /// </summary>
+            public CurrencyDescriptor CurrencyDescriptor { get; }
+
+            /// <summary>
             /// Computed picture category.
             /// </summary>
             public PictureCategory Category { get; }
@@ -49,24 +54,26 @@
 
             //Invalid result, no parsed sequence
             internal Result()
-                : this(null)
+                : this(null, null)
             {
 
             }
 
-            //Invalid result, but we have a parsed sequence
-            internal Result(Character[] sequence)
+            //Invalid result, but we have a parsed sequence and potentially a currency descriptor
+            internal Result(Character[] sequence, CurrencyDescriptor currencyDescriptor)
             {
                 IsValid = false;
                 Sequence = sequence;
+                CurrencyDescriptor = currencyDescriptor;
                 //Default values for the rest of properties
             }
 
             //Valid result
-            internal Result(Character[] sequence, PictureCategory category, int digits, int realDigits, bool isSigned, int scale, int size)
+            internal Result(Character[] sequence, CurrencyDescriptor currencyDescriptor, PictureCategory category, int digits, int realDigits, bool isSigned, int scale, int size)
             {
                 IsValid = true;
                 Sequence = sequence;
+                CurrencyDescriptor = currencyDescriptor;
                 Category = category;
                 Digits = digits;
                 RealDigits = realDigits;

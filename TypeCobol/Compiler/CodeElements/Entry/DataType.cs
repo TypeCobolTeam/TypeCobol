@@ -196,6 +196,7 @@ namespace TypeCobol.Compiler.CodeElements
                 dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue("X(03)");
                 dataTypeDescriptionEntry.PictureValidationResult = new PictureValidator.Result(
                     new[] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    null,
                     PictureCategory.AlphaNumeric,
                     0,
                     0,
@@ -252,6 +253,7 @@ namespace TypeCobol.Compiler.CodeElements
             data.Picture = new GeneratedAlphanumericValue(pictureCharacterString);
             data.PictureValidationResult = new PictureValidator.Result(
                 new[] { new PictureValidator.Character(PictureValidator.SC.NINE, length) },
+                null,
                 PictureCategory.Numeric,
                 length,
                 length,
