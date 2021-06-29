@@ -261,7 +261,7 @@ namespace TypeCobol.Compiler.Types
                         case SC.DOT:
                         case SC.COMMA:
                             Category |= PictureCategory.NumericEdited;
-                            if (c.SpecialChar != Char2SC(_validator.DecimalPoint))
+                            if (!_validator.IsDecimalPoint(c.SpecialChar))
                                 break;
                             goto case SC.V;
                         case SC.V:

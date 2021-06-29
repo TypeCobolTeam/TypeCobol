@@ -76,7 +76,7 @@ namespace TypeCobol.Compiler.Types
                     case SC.STAR:
                         s = "*"; break;
                     case SC.CS:
-                        s = "."; break;
+                        s = "¤"; break;
                     case SC.CR:
                         s = "CR"; break;
                     case SC.DB:

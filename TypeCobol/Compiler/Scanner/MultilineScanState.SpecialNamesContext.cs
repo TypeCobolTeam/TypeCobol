@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Types;
 
@@ -95,25 +96,9 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             /// <summary>
-            /// All valid currency descriptors for this scan state. Not-null, never empty.
+            /// All custom currency descriptors declared in SPECIAL-NAMES. Maybe null but not empty.
             /// </summary>
-            public IEnumerable<PictureValidator.CurrencyDescriptor> CurrencyDescriptors
-            {
-                get
-                {
-                    if (_customCurrencyDescriptors != null)
-                    {
-                        foreach (var customCurrencyDescriptor in _customCurrencyDescriptors.Values)
-                        {
-                            yield return customCurrencyDescriptor;
-                        }
-                    }
-                    else
-                    {
-                        yield return PictureValidator.CurrencyDescriptor.Default;
-                    }
-                }
-            }
+            public PictureValidator.CurrencyDescriptor[] CustomCurrencyDescriptors => _customCurrencyDescriptors?.Values.ToArray();
 
             private void CreateCurrencyDescriptor()
             {

@@ -92,14 +92,12 @@ namespace TypeCobol.Compiler.Diagnostics
 
             /*
              * Validate using PictureValidator
-             * Decimal point and numeric separator have already been normalized, so here decimalPointIsComma is set to false in validator
+             * Decimal point and numeric separator have already been normalized, so here decimalPointIsComma is set to false for validator
              * Currency descriptors are taken from the scan state of the first token in ANTLR context for this code element
              */
             bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
-            var currencyDescriptors = context?.Start is Token firstToken
-                ? firstToken.ScanStateSnapshot.SpecialNames.CurrencyDescriptors.ToArray()
-                : new PictureValidator.CurrencyDescriptor[0];
-            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate, false, currencyDescriptors);
+            var customCurrencyDescriptors = (context?.Start as Token)?.TokensLine.ScanState.SpecialNames.CustomCurrencyDescriptors;
+            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate, false, customCurrencyDescriptors);
             var pictureValidationResult = pictureValidator.Validate(out var validationMessages);
 
             //Report validation errors as diagnostics

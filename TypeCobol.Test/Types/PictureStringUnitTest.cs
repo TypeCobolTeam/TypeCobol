@@ -270,7 +270,7 @@ namespace TypeCobol.Test.Types
         public void StrangeCurrencyPictureStringTest()
         {
             //EURO
-            PictureValidator.Result result = (new PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencyDescriptors: new PictureValidator.CurrencyDescriptor('€',"€"))).Validate(out _);
+            PictureValidator.Result result = (new PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencyDescriptors: new PictureValidator.CurrencyDescriptor('€', "€"))).Validate(out _);
             Assert.IsTrue(result.IsValid);
 
             //Swiss franc
