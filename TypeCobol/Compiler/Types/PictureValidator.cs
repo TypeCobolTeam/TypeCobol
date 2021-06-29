@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -39,20 +40,20 @@ namespace TypeCobol.Compiler.Types
         /// And it does not contains any spaces
         /// </param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
-        /// <param name="currencyDescriptor">a string to identify the Currency symbol in a picture character string, default is '$'</param>
         /// <param name="decimalPointIsComma">a boolean to swap NumericSeparator and DecimalPoint characters, default is false</param>
-        public PictureValidator(string picture, bool separateSign = false, CurrencyDescriptor currencyDescriptor = null, 
-            bool decimalPointIsComma = false)
+        /// <param name="currencyDescriptors">list of all potential currency descriptors, Default descriptor</param>
+        public PictureValidator(string picture, bool separateSign = false, bool decimalPointIsComma = false, params CurrencyDescriptor[] currencyDescriptors)
         {
             System.Diagnostics.Debug.Assert(picture != null);
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains(" "));
-            currencyDescriptor = currencyDescriptor ?? CurrencyDescriptor.Default;
 
-            //Picture = picture.ToUpper();
+            System.Diagnostics.Debug.Assert(currencyDescriptors != null);
+            _potentialCurrencyDescriptors = currencyDescriptors.Length == 0 ? new[] {CurrencyDescriptor.Default} : currencyDescriptors;
+            _currencyDescriptor = null;
+
             Picture = picture;
             IsSeparateSign = separateSign;
-            CurrencyDesc = currencyDescriptor;
             if (decimalPointIsComma)
             {
                 DecimalPoint = ',';
@@ -75,10 +76,11 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public bool IsSeparateSign { get; }
 
+        private readonly CurrencyDescriptor[] _potentialCurrencyDescriptors;
         /// <summary>
-        /// The Currency Symbol to be used.
+        /// The Currency Symbol found in the picture.
         /// </summary>
-        public CurrencyDescriptor CurrencyDesc { get; }
+        private CurrencyDescriptor _currencyDescriptor;
 
         /// <summary>
         /// The decimal point character
@@ -101,7 +103,7 @@ namespace TypeCobol.Compiler.Types
             validationMessages = new List<string>();
 
             //1. First Validate against the PICTURE string regular expression.
-            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencyDesc, validationMessages);
+            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, _potentialCurrencyDescriptors, validationMessages);
             if (matches == null || matches.Count == 0) return new Result();
 
             //Build Character sequence
@@ -171,7 +173,7 @@ namespace TypeCobol.Compiler.Types
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        private static List<Tuple<string, int>> PictureStringSplitter(string picture, CurrencyDescriptor currencyDesc, List<string> validationMessages)
+        private static List<Tuple<string, int>> PictureStringSplitter(string picture, CurrencyDescriptor[] currencyDescriptors, List<string> validationMessages)
         {
             if (string.IsNullOrWhiteSpace(picture))
             {
@@ -180,8 +182,10 @@ namespace TypeCobol.Compiler.Types
             }
 
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
-            string[] alphabet = { "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z", "9", "0", "/", ",", ".", "+", "-",
-                "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*", currencyDesc.Symbol.ToString() };
+            string[] staticAlphabet = { "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z", "9", "0", "/", ",", ".", "+", "-",
+                                          "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*" };
+            string[] alphabet = staticAlphabet.Concat(currencyDescriptors.Select(cd => cd.Symbol.ToString())).ToArray();
+
             for (int l = 0; l < picture.Length;)
             {
                 bool match = false;
@@ -277,7 +281,17 @@ namespace TypeCobol.Compiler.Types
                 SC sc;
                 if (ch.Length == 1)
                 {
-                    sc = ch[0] == CurrencyDesc.Symbol ? SC.CS : Char2SC(ch[0]);
+                    if (_currencyDescriptor == null)
+                    {
+                        //Check if char is one of potential currency symbols and memorize it
+                        _currencyDescriptor = _potentialCurrencyDescriptors.FirstOrDefault(cd => cd.Symbol == ch[0]);
+                        sc = _currencyDescriptor != null ? SC.CS : Char2SC(ch[0]);
+                    }
+                    else
+                    {
+                        //Check if char is the current currency symbol
+                        sc = ch[0] == _currencyDescriptor.Symbol ? SC.CS : Char2SC(ch[0]);
+                    }
                 }
                 else if (ch.Equals("CR", StringComparison.OrdinalIgnoreCase))
                     sc = SC.CR;

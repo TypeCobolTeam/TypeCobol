@@ -119,7 +119,7 @@ namespace TypeCobol.Compiler.Types
                 case SC.STAR:
                     return "*";
                 case SC.CS:
-                    return CurrencyDesc.Symbol.ToString();
+                    return _currencyDescriptor.Symbol.ToString();
                 case SC.CR:
                     return "CR";
                 case SC.DB:
