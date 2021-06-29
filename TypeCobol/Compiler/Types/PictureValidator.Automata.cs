@@ -148,6 +148,7 @@ namespace TypeCobol.Compiler.Types
                 int V_count = 0;        //Count of V symbol
                 bool Z_seen = false;    //Have we seen Z ?
                 bool Star_seen = false; //Have we seen '*' ?
+                bool CS_signSizeAdded = false;
 
                 //Run automata
                 int state = 0;
@@ -295,8 +296,19 @@ namespace TypeCobol.Compiler.Types
                         case SC.P:
                             break;
                         case SC.CR:
-                        case SC.CS:
                             Size += c.Count * 2;
+                            break;
+                        case SC.CS:
+                            System.Diagnostics.Debug.Assert(c.Count == 1);
+                            if (!CS_signSizeAdded)
+                            {
+                                Size += _validator._currencyDescriptor.Sign.Length;
+                                CS_signSizeAdded = true;
+                            }
+                            else
+                            {
+                                Size += 1;
+                            }
                             break;
                         case SC.N:
                         case SC.G:
