@@ -39,17 +39,20 @@ namespace TypeCobol.Compiler.Types
         /// And it does not contains any spaces
         /// </param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
-        /// <param name="currencySymbol">a string to identify the Currency symbol in a picture character string, default is '$'</param>
+        /// <param name="currencyDescriptor">a string to identify the Currency symbol in a picture character string, default is '$'</param>
         /// <param name="decimalPointIsComma">a boolean to swap NumericSeparator and DecimalPoint characters, default is false</param>
-        public PictureValidator(string picture, bool separateSign = false, string currencySymbol = "$", bool decimalPointIsComma = false)
+        public PictureValidator(string picture, bool separateSign = false, CurrencyDescriptor currencyDescriptor = null, 
+            bool decimalPointIsComma = false)
         {
             System.Diagnostics.Debug.Assert(picture != null);
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains(" "));
+            currencyDescriptor = currencyDescriptor ?? CurrencyDescriptor.Default;
 
-            Picture = picture.ToUpper();
+            //Picture = picture.ToUpper();
+            Picture = picture;
             IsSeparateSign = separateSign;
-            CurrencySymbol = currencySymbol;
+            CurrencyDesc = currencyDescriptor;
             if (decimalPointIsComma)
             {
                 DecimalPoint = ',';
@@ -75,7 +78,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// The Currency Symbol to be used.
         /// </summary>
-        public string CurrencySymbol { get; }
+        public CurrencyDescriptor CurrencyDesc { get; }
 
         /// <summary>
         /// The decimal point character
@@ -98,7 +101,7 @@ namespace TypeCobol.Compiler.Types
             validationMessages = new List<string>();
 
             //1. First Validate against the PICTURE string regular expression.
-            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol, validationMessages);
+            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencyDesc, validationMessages);
             if (matches == null || matches.Count == 0) return new Result();
 
             //Build Character sequence
@@ -168,7 +171,7 @@ namespace TypeCobol.Compiler.Types
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        private static List<Tuple<string, int>> PictureStringSplitter(string picture, string currencySymbol, List<string> validationMessages)
+        private static List<Tuple<string, int>> PictureStringSplitter(string picture, CurrencyDescriptor currencyDesc, List<string> validationMessages)
         {
             if (string.IsNullOrWhiteSpace(picture))
             {
@@ -177,7 +180,8 @@ namespace TypeCobol.Compiler.Types
             }
 
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
-            string[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
+            string[] alphabet = { "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z", "9", "0", "/", ",", ".", "+", "-",
+                "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*", currencyDesc.Symbol.ToString() };
             for (int l = 0; l < picture.Length;)
             {
                 bool match = false;
@@ -273,13 +277,11 @@ namespace TypeCobol.Compiler.Types
                 SC sc;
                 if (ch.Length == 1)
                 {
-                    sc = ch.Equals(CurrencySymbol) ? SC.CS : Char2SC(ch[0]);
+                    sc = ch[0] == CurrencyDesc.Symbol ? SC.CS : Char2SC(ch[0]);
                 }
-                else if (ch == CurrencySymbol)
-                    sc = SC.CS;
-                else if (ch == "CR")
+                else if (ch.Equals("CR", StringComparison.OrdinalIgnoreCase))
                     sc = SC.CR;
-                else if (ch == "DB")
+                else if (ch.Equals("DB", StringComparison.OrdinalIgnoreCase))
                     sc = SC.DB;
                 else
                     throw new InvalidOperationException();//Should never arrive

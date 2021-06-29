@@ -35,7 +35,7 @@ namespace TypeCobol.Compiler.Types
         //Does not handle CR, DB and CS
         private static SC Char2SC(char c)
         {
-            switch (c)
+            switch (Char.ToUpper(c))
             {
                 case 'A':
                     return SC.A;
@@ -119,7 +119,7 @@ namespace TypeCobol.Compiler.Types
                 case SC.STAR:
                     return "*";
                 case SC.CS:
-                    return CurrencySymbol;
+                    return CurrencyDesc.Symbol.ToString();
                 case SC.CR:
                     return "CR";
                 case SC.DB:
