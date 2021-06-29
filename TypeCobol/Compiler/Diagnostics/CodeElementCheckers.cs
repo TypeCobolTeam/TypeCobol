@@ -215,7 +215,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
             // TODO#249 these checks should be done during semantic phase, after symbol type resolution
             // TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
-            //	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
             bool isFunctionCallResult = input.StorageAreaOrValue != null &&
                                         input.StorageAreaOrValue.StorageArea is FunctionCallResult;
 

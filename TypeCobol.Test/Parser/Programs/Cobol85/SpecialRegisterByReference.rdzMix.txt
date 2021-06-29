@@ -1,0 +1,30 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm1.
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+       01 txt   pic X(100).
+       01 RC    pic 99.
+       PROCEDURE DIVISION.
+      *KO cannot use LENGTH OF by reference
+           Call "SOMEPGM" USING txt
+Line 10[33,38] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase
+                   by reference length of txt
+                                RC.
+      
+      *KO cannot use LENGTH OF by reference
+           Call "SOMEPGM" USING txt
+Line 15[33,38] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase
+                                length of txt
+                                RC.
+                                
+      *KO cannot use LENGTH OF by reference
+           Call "SOMEPGM" USING txt
+                   by content   length of txt
+Line 21[33,38] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase
+                   by reference length of txt.
+      
+      *Ok
+           Call "SOMEPGM" USING txt
+                   by content   length of txt
+                   by reference RC.
+       END PROGRAM Pgm1.
