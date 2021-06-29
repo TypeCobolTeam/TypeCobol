@@ -299,16 +299,16 @@ namespace TypeCobol.Compiler.Types
                             Size += c.Count * 2;
                             break;
                         case SC.CS:
-                            System.Diagnostics.Debug.Assert(c.Count == 1);
                             System.Diagnostics.Debug.Assert(_validator._currencyDescriptor != null);
                             if (!CS_signSizeAdded)
                             {
                                 Size += _validator._currencyDescriptor.Sign.Length;
                                 CS_signSizeAdded = true;
+                                Size += c.Count - 1;
                             }
                             else
                             {
-                                Size += 1;
+                                Size += c.Count;
                             }
                             break;
                         case SC.N:

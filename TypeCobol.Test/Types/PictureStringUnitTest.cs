@@ -64,9 +64,9 @@ namespace TypeCobol.Test.Types
             {
                 result = (new PictureValidator(pics[i].Item1)).Validate(out _);
                 Assert.IsTrue(result.IsValid);
-                Assert.AreEqual(result.RealDigits - result.Scale, pics[i].Item2);
-                Assert.AreEqual(result.Scale, pics[i].Item3);
-                Assert.AreEqual(result.IsSigned, pics[i].Item4);
+                Assert.AreEqual(pics[i].Item2, result.RealDigits - result.Scale);
+                Assert.AreEqual(pics[i].Item3, result.Scale);
+                Assert.AreEqual(pics[i].Item4, result.IsSigned);
             }
 
             string[] ifp_pics =
@@ -139,7 +139,7 @@ namespace TypeCobol.Test.Types
                 Assert.IsTrue(result.IsValid);
                 PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item2);
+                Assert.AreEqual(pics[i].Item2, len);
             }
         }
 
@@ -162,7 +162,7 @@ namespace TypeCobol.Test.Types
                 Assert.IsTrue(result.IsValid);
                 PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item2);
+                Assert.AreEqual(pics[i].Item2, len);
             }
         }
 
@@ -177,8 +177,8 @@ namespace TypeCobol.Test.Types
             {
                 new Tuple<string,int>("****.**", 7),
                 new Tuple<string,int>("*,***.**+", 9),
-                new Tuple<string,int>("$Z,ZZZ,ZZZ.ZZCR", 16),
-                new Tuple<string,int>("$B*,***,***.**BBDB", 18),
+                new Tuple<string,int>("$Z,ZZZ,ZZZ.ZZCR", 15),
+                new Tuple<string,int>("$B*,***,***.**BBDB", 17),
             };
             for (int i = 0; i < pics.Length; i++)
             {
@@ -187,7 +187,7 @@ namespace TypeCobol.Test.Types
                 Assert.IsTrue(result.IsValid);
                 PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item2);
+                Assert.AreEqual(pics[i].Item2, len);
             }
         }
 
@@ -216,7 +216,7 @@ namespace TypeCobol.Test.Types
                 PictureType type = new PictureType(result, psv.IsSeparateSign);
                 type.Usage = pics[i].Item2;
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item3);
+                Assert.AreEqual(pics[i].Item3, len);
             }
         }
 
