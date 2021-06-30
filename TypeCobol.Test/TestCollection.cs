@@ -162,10 +162,9 @@ namespace TypeCobol.Test {
 
 			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
 				var folderTester = new FolderTester(root, root, directory, extensions);
-                folderTester.IsCobolLanguage = cobol;
                 try
                 {
-                    folderTester.Test();
+                    folderTester.Test(isCobolLanguage: cobol);
                 }
                 catch (Exception ex)
                 {

@@ -1,0 +1,127 @@
+{
+  "name": "AmbiguousVariablesCompletionNoTC.tlsp",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2021_06_11_12_42_20_327\\TestSuite_2021_06_11_12_42_20_327.slsp",
+  "user": "MILLETFL",
+  "date": "2021/06/11 12:42:20 337",
+  "uri": "file:///C:/TypeCobol/LSRSessions/AmbiguousVariablesCompletionNoTC.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/GitHub/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.1(alpha)\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\",\"-cob\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 Group1.\\r\\n          05 Level1.\\r\\n             10 ambiguous       PIC X.\\r\\n             10 non-ambiguous-1 PIC X.\\r\\n          05 Level2.\\r\\n             10 ambiguous       PIC X.\\r\\n             10 non-ambiguous-2 PIC X.\\r\\n       PROCEDURE DIVISION.\\r\\n           DISPLAY\\r\\n           GOBACK\\r\\n           .\\r\\n       END PROGRAM Pgm.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 Group1.\\r\\n          05 Level1.\\r\\n             10 ambiguous       PIC X.\\r\\n             10 non-ambiguous-1 PIC X.\\r\\n          05 Level2.\\r\\n             10 ambiguous       PIC X.\\r\\n             10 non-ambiguous-2 PIC X.\\r\\n       PROCEDURE DIVISION.\\r\\n           DISPLAY\\r\\n           GOBACK\\r\\n           .\\r\\n       END PROGRAM Pgm.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":18},\"end\":{\"line\":12,\"character\":18}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"position\":{\"line\":12,\"character\":19}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\"},{\"label\":\"non-ambiguous-1 (Alphanumeric) (non-ambiguous-1)\",\"kind\":6,\"insertText\":\"non-ambiguous-1\"},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\"},{\"label\":\"non-ambiguous-2 (Alphanumeric) (non-ambiguous-2)\",\"kind\":6,\"insertText\":\"non-ambiguous-2\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":19}},\"rangeLength\":0,\"text\":\"a\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":20},\"end\":{\"line\":12,\"character\":20}},\"rangeLength\":0,\"text\":\"m\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":21},\"end\":{\"line\":12,\"character\":21}},\"rangeLength\":0,\"text\":\"b\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":13,\"character\":20},\"end\":{\"line\":13,\"character\":22}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol amb is not referenced\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"position\":{\"line\":12,\"character\":22}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":21},\"end\":{\"line\":12,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":20},\"end\":{\"line\":12,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":20}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":19}},\"rangeLength\":0,\"text\":\"L\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":20},\"end\":{\"line\":12,\"character\":20}},\"rangeLength\":0,\"text\":\"e\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":12,\"character\":21},\"end\":{\"line\":12,\"character\":21}},\"rangeLength\":0,\"text\":\"v\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":13,\"character\":20},\"end\":{\"line\":13,\"character\":22}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol Lev is not referenced\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"position\":{\"line\":12,\"character\":22}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"}}}",
+  "IsValid": true
+}

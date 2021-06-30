@@ -12,6 +12,12 @@ PROGRAM: IndexTester common:False initial:False recursive:False
   IND-2:Numeric
   IND-3:Numeric
   EL-2:Alphanumeric
+  W-TabPCBNAME:Alphanumeric
+  W-PCBNAME-Idc:Numeric
+  W-PCBNAME:Alphanumeric
+  W-TabPCBAdr:Alphanumeric
+  W-PCBAdr-Idc:Numeric
+  W-PCBAdr:Array
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

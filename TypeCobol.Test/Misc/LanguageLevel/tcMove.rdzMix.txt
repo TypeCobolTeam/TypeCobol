@@ -1,0 +1,25 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. tcMove.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X.
+       01 var2 PIC X.
+       PROCEDURE DIVISION.
+      *OK
+           MOVE var1 TO var2.
+      *KO unsupported MOVE on boolean values
+Line 11[17,20] <48, Error, Syntax> - TypeCobol-only feature: moving boolean values is not supported.
+           MOVE TRUE TO var2.
+Line 12[17,21] <48, Error, Syntax> - TypeCobol-only feature: moving boolean values is not supported.
+           MOVE FALSE TO var2.
+      *KO invalid UNSAFE keyword
+Line 14[24,27] <27, Error, Syntax> - Syntax error : extraneous input 'var1' expecting TO
+Line 14[17,22] <30, Error, Semantics> - Semantic error: Symbol UNSAFE is not referenced
+           MOVE UNSAFE var1 TO var2.
+Line 15[24,27] <27, Error, Syntax> - Syntax error : extraneous input 'TRUE' expecting TO
+Line 15[17,22] <30, Error, Semantics> - Semantic error: Symbol UNSAFE is not referenced
+           MOVE UNSAFE TRUE TO var2.
+Line 16[24,28] <27, Error, Syntax> - Syntax error : extraneous input 'FALSE' expecting TO
+Line 16[17,22] <30, Error, Semantics> - Semantic error: Symbol UNSAFE is not referenced
+           MOVE UNSAFE FALSE TO var2.
+       END PROGRAM tcMove.

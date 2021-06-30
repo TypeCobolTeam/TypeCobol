@@ -43,7 +43,6 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
   VarLevel2:Alphanumeric
   Level2-2:Alphanumeric
   VarLevel2-2:Alphanumeric
-  MyBool:BOOL
 -- SECTIONS ----
   SectionEmpty
   SectionEmpty2

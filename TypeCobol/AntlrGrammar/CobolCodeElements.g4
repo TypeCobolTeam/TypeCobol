@@ -211,8 +211,9 @@ codeElement:
 //	[TYPECOBOL]
 	| tcCodeElement;
 
-// what is here is not important as long as it is not epsilon
-tcCodeElement: PUBLIC | PRIVATE | UNSAFE;
+// dummy definition of TypeCobol code elements, not used but required by Antlr.
+// see TypeCobolCodeElements.g4 for the proper definition.
+tcCodeElement: UNSAFE;
 //	[/TYPECOBOL]
 
 
