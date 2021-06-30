@@ -41,14 +41,14 @@ namespace TypeCobol.Compiler.Types
         /// </param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
         /// <param name="decimalPointIsComma">a boolean to swap NumericSeparator and DecimalPoint characters, default is false</param>
-        /// <param name="currencyDescriptors">list of all potential currency descriptors, Default descriptor</param>
-        public PictureValidator(string picture, bool separateSign = false, bool decimalPointIsComma = false, params CurrencyDescriptor[] currencyDescriptors)
+        /// <param name="currencyDescriptors">All custom currency descriptors indexed by their symbol. If null, the default currency descriptor is used.</param>
+        public PictureValidator(string picture, bool separateSign = false, bool decimalPointIsComma = false, IDictionary<char, CurrencyDescriptor> currencyDescriptors = null)
         {
             System.Diagnostics.Debug.Assert(picture != null);
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
             System.Diagnostics.Debug.Assert(!picture.Contains(" "));
 
-            if (currencyDescriptors == null || currencyDescriptors.Length == 0)
+            if (currencyDescriptors == null || currencyDescriptors.Count == 0)
             {
                 //Use default currency descriptor ($)
                 var defaultCurrencyDescriptor = CurrencyDescriptor.Default;
@@ -59,8 +59,7 @@ namespace TypeCobol.Compiler.Types
             }
             else
             {
-                //Index all currency descriptors by their symbol
-                _potentialCurrencyDescriptors = currencyDescriptors.ToDictionary(currencyDescriptor => currencyDescriptor.Symbol);
+                _potentialCurrencyDescriptors = currencyDescriptors;
             }
             _currencyDescriptor = null;
 
@@ -115,7 +114,7 @@ namespace TypeCobol.Compiler.Types
             validationMessages = new List<string>();
 
             //1. First Validate against the PICTURE string regular expression.
-            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, _potentialCurrencyDescriptors.Keys, validationMessages);
+            List<Tuple<string, int>> matches = PictureStringSplitter(validationMessages);
             if (matches == null || matches.Count == 0) return new Result();
 
             //Build Character sequence
@@ -179,26 +178,34 @@ namespace TypeCobol.Compiler.Types
             return startOffset;
         }
 
+        //static part of the splitter alphabet
+        private static readonly string[] _Alphabet =
+        {
+            "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z",
+            "9", "0", "/", ",", ".", "+", "-", "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*"
+        };
+
         /// <summary>
         /// Split the Picture String into its parts. A List of tuple(Symbol, count)
         /// Example: 9(2)X(4)9
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        private static List<Tuple<string, int>> PictureStringSplitter(string picture, ICollection<char> currencySigns, List<string> validationMessages)
+        private List<Tuple<string, int>> PictureStringSplitter(List<string> validationMessages)
         {
-            if (string.IsNullOrWhiteSpace(picture))
+            if (string.IsNullOrWhiteSpace(Picture))
             {
                 validationMessages.Add(EMPTY);
                 return null;
             }
 
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
-            string[] staticAlphabet = { "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z", "9", "0", "/", ",", ".", "+", "-",
-                                          "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*" };
-            string[] alphabet = staticAlphabet.Concat(currencySigns.Select(sign => sign.ToString())).ToArray();
+            //The whole alphabet is made of static picture string symbols and custom (or only default) currency symbol(s).
+            string[] alphabet = _Alphabet
+                .Concat(_potentialCurrencyDescriptors.Keys.Select(currencySymbol => currencySymbol.ToString()))
+                .ToArray();
 
-            for (int l = 0; l < picture.Length;)
+            for (int l = 0; l < Picture.Length;)
             {
                 bool match = false;
                 for (int i = 0; i < alphabet.Length && !match; i++)
@@ -206,21 +213,21 @@ namespace TypeCobol.Compiler.Types
                     switch (alphabet[i].Length)
                     {
                         case 1:
-                            match = picture[l] == alphabet[i][0];
+                            match = Picture[l] == alphabet[i][0];
                             break;
                         case 2:
-                            if ((l + 1) < picture.Length)
+                            if ((l + 1) < Picture.Length)
                             {
-                                match = picture[l] == alphabet[i][0] && picture[l + 1] == alphabet[i][1];
+                                match = Picture[l] == alphabet[i][0] && Picture[l + 1] == alphabet[i][1];
                             }
                             break;
                         default:
-                            if ((l + alphabet[i].Length - 1) < picture.Length)
+                            if ((l + alphabet[i].Length - 1) < Picture.Length)
                             {
                                 match = true;
-                                for (int j = 0, n = l; j < alphabet[i].Length && n < picture.Length; j++, n++)
+                                for (int j = 0, n = l; j < alphabet[i].Length && n < Picture.Length; j++, n++)
                                 {
-                                    if (picture[n] != alphabet[i][j])
+                                    if (Picture[n] != alphabet[i][j])
                                     {
                                         match = false;
                                         break;
@@ -232,7 +239,7 @@ namespace TypeCobol.Compiler.Types
 
                     if (match)
                     {
-                        l = CheckItemCount(picture, l + alphabet[i].Length, validationMessages, out int count);
+                        l = CheckItemCount(Picture, l + alphabet[i].Length, validationMessages, out int count);
                         if (count == -1)
                             return null;
                         items.Add(new Tuple<string, int>(alphabet[i], count));
@@ -241,7 +248,7 @@ namespace TypeCobol.Compiler.Types
 
                 if (!match)
                 {
-                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, picture, picture[l], l + 1));
+                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, Picture, Picture[l], l + 1));
                     return null;
                 }
             }
@@ -296,12 +303,12 @@ namespace TypeCobol.Compiler.Types
                     char c = ch[0];
                     if (_currencyDescriptor == null)
                     {
-                        //Check if char is one of potential currency symbols and memorize it
+                        //Check if char is one of potential currency symbols and memorize it in _currencyDescriptor field
                         sc = _potentialCurrencyDescriptors.TryGetValue(c, out _currencyDescriptor) ? SC.CS : Char2SC(c);
                     }
                     else
                     {
-                        //Check if char is the first currency symbol found in picture
+                        //Check if char is the first currency symbol originally found in picture
                         sc = c == _currencyDescriptor.Symbol ? SC.CS : Char2SC(c);
                     }
                 }

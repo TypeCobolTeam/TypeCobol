@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Types;
 
@@ -34,11 +33,16 @@ namespace TypeCobol.Compiler.Scanner
                 SymbolicCharacters.Add(tokenText);
             }
 
-            private IDictionary<char, PictureValidator.CurrencyDescriptor> _customCurrencyDescriptors;
             private bool _nextLiteralIsCurrencySign;
             private bool _nextLiteralIsCurrencySymbol;
             private Token _lastCurrencySignToken;
             private Token _lastCurrencySymbolToken;
+            /// <summary>
+            /// All custom currency descriptors declared in SPECIAL-NAMES. Maybe null but not empty.
+            /// Do not add/remove items, use BeginCurrencySignClause / WithPictureSymbol / OnAlphanumericLiteralToken
+            /// and EndAllCurrencySignClauses methods to drive the currency descriptor building process.
+            /// </summary>
+            public IDictionary<char, PictureValidator.CurrencyDescriptor> CustomCurrencyDescriptors { get; private set; }
 
             /// <summary>
             /// True if we are inside currencySignClause
@@ -95,11 +99,6 @@ namespace TypeCobol.Compiler.Scanner
                 CreateCurrencyDescriptor();
             }
 
-            /// <summary>
-            /// All custom currency descriptors declared in SPECIAL-NAMES. Maybe null but not empty.
-            /// </summary>
-            public PictureValidator.CurrencyDescriptor[] CustomCurrencyDescriptors => _customCurrencyDescriptors?.Values.ToArray();
-
             private void CreateCurrencyDescriptor()
             {
                 //Assign token roles
@@ -143,17 +142,17 @@ namespace TypeCobol.Compiler.Scanner
 
                 //Add new descriptor
                 var descriptor = new PictureValidator.CurrencyDescriptor(symbol, sign);
-                if (_customCurrencyDescriptors == null)
+                if (CustomCurrencyDescriptors == null)
                 {
-                    _customCurrencyDescriptors = new Dictionary<char, PictureValidator.CurrencyDescriptor>() { { symbol, descriptor } };
+                    CustomCurrencyDescriptors = new Dictionary<char, PictureValidator.CurrencyDescriptor>() { { symbol, descriptor } };
                 }
-                else if (_customCurrencyDescriptors.ContainsKey(symbol))
+                else if (CustomCurrencyDescriptors.ContainsKey(symbol))
                 {
                     AddError(symbolToken, $"Duplicate currency symbol '{symbol}'.");
                 }
                 else
                 {
-                    _customCurrencyDescriptors.Add(symbol, descriptor);
+                    CustomCurrencyDescriptors.Add(symbol, descriptor);
                 }
 
                 //Helper local functions
@@ -183,18 +182,18 @@ namespace TypeCobol.Compiler.Scanner
             {
                 InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
                 SymbolicCharacters = symbolicCharacters;
-                _customCurrencyDescriptors = customCurrencyDescriptors;
                 _nextLiteralIsCurrencySign = nextLiteralIsCurrencySign;
                 _nextLiteralIsCurrencySymbol = nextLiteralIsCurrencySymbol;
                 _lastCurrencySignToken = lastCurrencySignToken;
                 _lastCurrencySymbolToken = lastCurrencySymbolToken;
+                CustomCurrencyDescriptors = customCurrencyDescriptors;
                 DecimalPointIsComma = decimalPointIsComma;
             }
 
             public SpecialNamesContext Clone()
             {
                 var symbolicCharacters = SymbolicCharacters != null ? new List<string>(SymbolicCharacters) : null;
-                var customCurrencyDescriptors = _customCurrencyDescriptors != null ? new Dictionary<char, PictureValidator.CurrencyDescriptor>(_customCurrencyDescriptors) : null;
+                var customCurrencyDescriptors = CustomCurrencyDescriptors != null ? new Dictionary<char, PictureValidator.CurrencyDescriptor>(CustomCurrencyDescriptors) : null;
                 return new SpecialNamesContext(InsideSymbolicCharacterDefinitions,
                     symbolicCharacters,
                     _nextLiteralIsCurrencySign,
@@ -214,7 +213,7 @@ namespace TypeCobol.Compiler.Scanner
                        && SymbolicCharacters?.Count == other.SymbolicCharacters?.Count
                        && _nextLiteralIsCurrencySign == other._nextLiteralIsCurrencySign
                        && _nextLiteralIsCurrencySymbol == other._nextLiteralIsCurrencySymbol
-                       && _customCurrencyDescriptors?.Count == other._customCurrencyDescriptors?.Count
+                       && CustomCurrencyDescriptors?.Count == other.CustomCurrencyDescriptors?.Count
                        && DecimalPointIsComma == other.DecimalPointIsComma;
             }
 
@@ -230,7 +229,7 @@ namespace TypeCobol.Compiler.Scanner
                     hash = hash * 23 + SymbolicCharacters?.Count ?? 0;
                     hash = hash * 23 + _nextLiteralIsCurrencySign.GetHashCode();
                     hash = hash * 23 + _nextLiteralIsCurrencySymbol.GetHashCode();
-                    hash = hash * 23 + _customCurrencyDescriptors?.Count ?? 0;
+                    hash = hash * 23 + CustomCurrencyDescriptors?.Count ?? 0;
                     hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                     return hash;
                 }

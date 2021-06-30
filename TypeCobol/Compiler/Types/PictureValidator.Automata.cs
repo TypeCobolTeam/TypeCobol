@@ -144,11 +144,11 @@ namespace TypeCobol.Compiler.Types
                 Initialize(sequence);
 
                 //Some character counts/flags used during validation
-                int S_count = 0;        //Count of either CR, DB, + or - symbols
-                int V_count = 0;        //Count of V symbol
-                bool Z_seen = false;    //Have we seen Z ?
-                bool Star_seen = false; //Have we seen '*' ?
-                bool CS_signSizeAdded = false;
+                int S_count = 0;               //Count of either CR, DB, + or - symbols
+                int V_count = 0;               //Count of V symbol
+                bool Z_seen = false;           //Have we seen Z ?
+                bool Star_seen = false;        //Have we seen '*' ?
+                bool CS_signSizeAdded = false; //Flag to detect the first time we encounter a CS symbol during size computation
 
                 //Run automata
                 int state = 0;
@@ -302,13 +302,14 @@ namespace TypeCobol.Compiler.Types
                             System.Diagnostics.Debug.Assert(_validator._currencyDescriptor != null);
                             if (!CS_signSizeAdded)
                             {
+                                //First CS adds the sign length
                                 Size += _validator._currencyDescriptor.Sign.Length;
                                 CS_signSizeAdded = true;
-                                Size += c.Count - 1;
+                                Size += c.Count - 1; //Each subsequent CS counts for 1 character
                             }
                             else
                             {
-                                Size += c.Count;
+                                Size += c.Count; //Each subsequent CS counts for 1 character
                             }
                             break;
                         case SC.N:

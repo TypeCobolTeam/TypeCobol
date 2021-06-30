@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Types;
 
@@ -9,6 +10,16 @@ namespace TypeCobol.Test.Types
     [TestClass]
     public class PictureStringUnitTest
     {
+        private static IDictionary<char, PictureValidator.CurrencyDescriptor> CurrencyDescriptor(char symbol) => CurrencyDescriptor(symbol, symbol.ToString());
+
+        private static IDictionary<char, PictureValidator.CurrencyDescriptor> CurrencyDescriptor(char symbol, string sign)
+        {
+            return new Dictionary<char, PictureValidator.CurrencyDescriptor>()
+                   {
+                       { symbol, new PictureValidator.CurrencyDescriptor(symbol, sign) }
+                   };
+        }
+
         [TestMethod]
         public void PictureStringRegExpValidationTest()
         {
@@ -259,7 +270,8 @@ namespace TypeCobol.Test.Types
             }
 
             //Change other currency symbol than $
-            PictureValidator.Result result1 = (new PictureValidator("$,$$$.99", currencyDescriptors: new PictureValidator.CurrencyDescriptor('€', "€"))).Validate(out _);
+            
+            PictureValidator.Result result1 = (new PictureValidator("$,$$$.99", currencyDescriptors: CurrencyDescriptor('€'))).Validate(out _);
             Assert.IsFalse(result1.IsValid);
         }
 
@@ -270,15 +282,15 @@ namespace TypeCobol.Test.Types
         public void StrangeCurrencyPictureStringTest()
         {
             //EURO
-            PictureValidator.Result result = (new PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencyDescriptors: new PictureValidator.CurrencyDescriptor('€', "€"))).Validate(out _);
+            PictureValidator.Result result = (new PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('€'))).Validate(out _);
             Assert.IsTrue(result.IsValid);
 
             //Swiss franc
-            result = (new PictureValidator("HZ,ZZZ,ZZZ.ZZCR", currencyDescriptors: new PictureValidator.CurrencyDescriptor('H', "CHF"))).Validate(out _);
+            result = (new PictureValidator("HZ,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('H', "CHF"))).Validate(out _);
             Assert.IsTrue(result.IsValid);
 
             //Hong Kong Dollar
-            result = (new PictureValidator("hZ,ZZZ,ZZZ.ZZCR", currencyDescriptors: new PictureValidator.CurrencyDescriptor('h', "HK$"))).Validate(out _);
+            result = (new PictureValidator("hZ,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('h', "HK$"))).Validate(out _);
             Assert.IsTrue(result.IsValid);
         }
 
