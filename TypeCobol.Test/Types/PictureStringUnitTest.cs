@@ -189,7 +189,7 @@ namespace TypeCobol.Test.Types
                 new Tuple<string,int>("****.**", 7),
                 new Tuple<string,int>("*,***.**+", 9),
                 new Tuple<string,int>("$Z,ZZZ,ZZZ.ZZCR", 15),
-                new Tuple<string,int>("$B*,***,***.**BBDB", 17),
+                new Tuple<string,int>("$B*,***,***.**BBDB", 18),
             };
             for (int i = 0; i < pics.Length; i++)
             {
@@ -315,6 +315,49 @@ namespace TypeCobol.Test.Types
             result = (new PictureValidator("99,999", decimalPointIsComma: true)).Validate(out _);
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(3, result.Scale);
+        }
+
+        /// <summary>
+        /// Basic type length tests
+        /// </summary>
+        [TestMethod]
+        public void DataItemLength()
+        {
+            var dollar = PictureValidator.CurrencyDescriptor.Default;
+            var currencyDescriptors = CurrencyDescriptor('€', "EUR");
+            currencyDescriptors.Add(dollar.Symbol, dollar);
+            List<(string, bool, Type.UsageFormat, int)> data = new List<(string, bool, Type.UsageFormat, int)>()
+                                                               {
+                                                                   ("S99", false, Type.UsageFormat.Display, 2),
+                                                                   ("S99", true, Type.UsageFormat.Display, 3),
+                                                                   ("99CR", false, Type.UsageFormat.Display, 4),
+                                                                   ("99DB", false, Type.UsageFormat.Display, 4),
+                                                                   ("+99", false, Type.UsageFormat.Display, 3),
+                                                                   ("-99", false, Type.UsageFormat.Display, 3),
+                                                                   ("$99", false, Type.UsageFormat.Display, 3),
+                                                                   ("$$$$99", false, Type.UsageFormat.Display, 6),
+                                                                   ("€99", false, Type.UsageFormat.Display, 5),
+                                                                   ("€€€€99", false, Type.UsageFormat.Display, 8),
+                                                                   ("GG", false, Type.UsageFormat.Display1, 4),
+                                                                   ("NN", false, Type.UsageFormat.National, 4),
+                                                                   ("XX", false, Type.UsageFormat.Display, 2),
+                                                                   ("X(20)", false, Type.UsageFormat.Display, 20)
+                                                               };
+            foreach (var item in data)
+            {
+                string picture = item.Item1;
+                bool signIsSeparate = item.Item2;
+                Type.UsageFormat usage = item.Item3;
+                int expectedLength = item.Item4;
+
+                PictureValidator validator = new PictureValidator(picture, signIsSeparate, false, currencyDescriptors);
+                var result = validator.Validate(out _);
+                Assert.IsTrue(result.IsValid);
+
+                PictureType type = new PictureType(result, validator.IsSeparateSign) { Usage = usage };
+                int actualLength = type.Length;
+                Assert.AreEqual(expectedLength, actualLength);
+            }
         }
     }
 }

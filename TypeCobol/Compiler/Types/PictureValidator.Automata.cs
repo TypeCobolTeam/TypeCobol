@@ -295,6 +295,7 @@ namespace TypeCobol.Compiler.Types
                         case SC.V:
                         case SC.P:
                             break;
+                        case SC.DB:
                         case SC.CR:
                             Size += c.Count * 2;
                             break;
