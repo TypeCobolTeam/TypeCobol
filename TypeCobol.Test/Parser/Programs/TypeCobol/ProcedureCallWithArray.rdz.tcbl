@@ -43,13 +43,13 @@
 
       *   Ok
            call fooWithDate input MyDateArray(1)
-           call fooWithDate input MyDateArray(199)
+           call fooWithDate input MyDateArray(49)
       *   KO because MyDateArray is an array
            call fooWithDate input MyDateArray
 
       *   Ok
            call fooWithPicX input MyPicXArray(1)
-           call fooWithPicX input MyPicXArray(199)
+           call fooWithPicX input MyPicXArray(49)
       *   KO because MyPicXArray is an array
            call fooWithPicX input MyPicXArray
 
@@ -63,27 +63,27 @@
       * 2 dimension array
       *   KO 2 dimension array not supported yet
            call fooWithDate input MyArray2D_Date(1, 1)
-           call fooWithDate input MyArray2D_Date(199 1)
+           call fooWithDate input MyArray2D_Date(49 1)
       *   KO because MyArray2 is an array
            call fooWithDate input MyArray2D_Date
 
       *   KO 2 dimension array not supported yet
            call fooWithPicX input MyArray2D_PicX(1, 1)
-           call fooWithPicX input MyArray2D_PicX(199 1)
+           call fooWithPicX input MyArray2D_PicX(49 1)
       *   KO because MyPicXArray is an array
            call fooWithPicX input MyArray2D_PicX
       
 
       *   Ok
            call foo input Event(199)
-                          MyDateArray(199)
+                          MyDateArray(49)
                           MyArray2D_PicX(1)(1:1)
       
-           call foo input Event(9999)
+           call foo input Event(199)
                           date1
                           MyPicXArray(1)
       
-           call foo input Event(9999)
+           call foo input Event(199)
                           date1
                           MyPicXArray(1)
       
