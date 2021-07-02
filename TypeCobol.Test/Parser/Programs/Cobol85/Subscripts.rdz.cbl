@@ -30,6 +30,10 @@
            MOVE item OF tab1 (20)         TO elt
            MOVE item OF tab2 (20, 30, 40) TO elt
            MOVE item OF notATable (9)     TO elt
+           MOVE item of tab1              TO elt
+           MOVE item of tab2 (1)          TO elt
+           MOVE item of tab1 (1 2)        TO elt
+           MOVE item of tab2 (1 2 3 4)    TO elt
            GOBACK
            .
        END PROGRAM Subscripts.

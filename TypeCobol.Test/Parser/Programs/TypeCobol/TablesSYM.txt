@@ -1,6 +1,7 @@
 --- Diagnostics ---
-Line 30[44,44] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[44,44:1]<IntegerLiteral>{1}
-Line 33[9,9] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'X', check number of OCCURS clauses. OffendingSymbol=[9,9:1]<IntegerLiteral>{1}
+Line 26[15,15] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[15,15:E]<UserDefinedWord>
+Line 30[15,15] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[15,15:E]<UserDefinedWord>
+Line 33[6,6] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'X', check number of OCCURS clauses. OffendingSymbol=[6,6:X]<UserDefinedWord>
 Line 49[30,32] <27, Error, Syntax> - Syntax error : Subscript value '101' exceeds the maximum occurrence count '100' of the table. OffendingSymbol=[30,32:101]<IntegerLiteral>{101}
 
 --- Program ---

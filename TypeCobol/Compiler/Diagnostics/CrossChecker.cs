@@ -800,10 +800,41 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void CheckSubscripts(Node node, DataOrConditionStorageArea dataOrConditionStorageArea, DataDefinition dataDefinition)
         {
-            DataDefinition tableDefinition = dataDefinition;
-            //Iterating in reverse as we are going up through the parents of the data item
-            foreach (var subscript in Enumerable.Reverse(dataOrConditionStorageArea.Subscripts))
+            //TODO some statements use tables directly, some other require unary items...
+            //TODO parsing variable argument functions (MIN, MAX, ?) produces subscripts...
+            if (dataOrConditionStorageArea.Subscripts.Count == 0) return;
+
+            //Create a list of all parent OCCURS
+            var tableDefinitions = new List<DataDefinition>();
+            var tableDefinition = dataDefinition;
+            while (tableDefinition != null)
             {
+                //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
+                if (tableDefinition.IsPartOfATypeDef) return;
+
+                if (tableDefinition.IsTableOccurence) tableDefinitions.Add(tableDefinition);
+                tableDefinition = tableDefinition.Parent as DataDefinition;
+            }
+
+            if (dataOrConditionStorageArea.Subscripts.Count < tableDefinitions.Count)
+            {
+                //Not enough subscripts
+                DiagnosticUtils.AddError(node, $"Not enough subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            if (dataOrConditionStorageArea.Subscripts.Count > tableDefinitions.Count)
+            {
+                //Too many subscripts
+                DiagnosticUtils.AddError(node, $"Too many subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Count; i++)
+            {
+                var subscript = dataOrConditionStorageArea.Subscripts[i];
+                tableDefinition = tableDefinitions[tableDefinitions.Count - 1 - i];//OCCURS are stored in reverse order
+
                 //Do not check expressions, only literal values are checked
                 if (!(subscript.NumericExpression is NumericVariableOperand subscriptNumeric)) continue;
 
@@ -813,22 +844,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (subscriptNumeric.IntegerVariable.Value == null) continue;
 
                 var subscriptLiteral = subscriptNumeric.IntegerVariable.Value;
-
-                //Find the corresponding occursed data def
-                while (tableDefinition != null && !tableDefinition.IsTableOccurence)
-                {
-                    //TODO SemanticDomain: use symbols and type expansion to get the corresponding OCCURS
-                    if (tableDefinition.IsPartOfATypeDef) return;
-
-                    tableDefinition = tableDefinition.Parent as DataDefinition;
-                }
-
-                //No OCCURS found !
-                if (tableDefinition == null)
-                {
-                    DiagnosticUtils.AddError(node, $"Too many subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", subscriptLiteral.Token);
-                    break;
-                }
 
                 //Check the value against the min
                 if (subscriptLiteral.Value < tableDefinition.MinOccurencesCount)
@@ -841,9 +856,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' exceeds the maximum occurrence count '{tableDefinition.MaxOccurencesCount}' of the table.", subscriptLiteral.Token);
                 }
-
-                //Move up to the parent data def for next subscript
-                tableDefinition = tableDefinition.Parent as DataDefinition;
             }
         }
 

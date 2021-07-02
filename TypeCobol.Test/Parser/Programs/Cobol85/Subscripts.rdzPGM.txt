@@ -2,10 +2,13 @@
 Line 28[31,31] <27, Error, Syntax> - Syntax error : Subscript value '0' is below the minimum occurrence count '1' of the table. OffendingSymbol=[31,31:0]<IntegerLiteral>{0}
 Line 29[31,33] <27, Error, Syntax> - Syntax error : Subscript value '-20' is below the minimum occurrence count '1' of the table. OffendingSymbol=[31,33:-20]<IntegerLiteral>{-20}
 Line 30[31,32] <27, Error, Syntax> - Syntax error : Subscript value '20' exceeds the maximum occurrence count '10' of the table. OffendingSymbol=[31,32:20]<IntegerLiteral>{20}
-Line 31[39,40] <27, Error, Syntax> - Syntax error : Subscript value '40' exceeds the maximum occurrence count '30' of the table. OffendingSymbol=[39,40:40]<IntegerLiteral>{40}
-Line 31[35,36] <27, Error, Syntax> - Syntax error : Subscript value '30' exceeds the maximum occurrence count '20' of the table. OffendingSymbol=[35,36:30]<IntegerLiteral>{30}
 Line 31[31,32] <27, Error, Syntax> - Syntax error : Subscript value '20' exceeds the maximum occurrence count '10' of the table. OffendingSymbol=[31,32:20]<IntegerLiteral>{20}
-Line 32[36,36] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[36,36:9]<IntegerLiteral>{9}
+Line 31[35,36] <27, Error, Syntax> - Syntax error : Subscript value '30' exceeds the maximum occurrence count '20' of the table. OffendingSymbol=[35,36:30]<IntegerLiteral>{30}
+Line 31[39,40] <27, Error, Syntax> - Syntax error : Subscript value '40' exceeds the maximum occurrence count '30' of the table. OffendingSymbol=[39,40:40]<IntegerLiteral>{40}
+Line 32[17,20] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 34[17,20] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 35[17,20] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 36[17,20] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: Subscripts common:False initial:False recursive:False

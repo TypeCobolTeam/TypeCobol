@@ -84,7 +84,7 @@ Line 74[12,48] <27, Error, Syntax> - Syntax error : Function 'fooWithPicX' expec
       *   Ok
            call foo input Event(199)
                           MyDateArray(49)
-                          MyArray2D_PicX(1)(1:1)
+                          MyArray2D_PicX(1 1)(1:1)
       
            call foo input Event(199)
                           date1
