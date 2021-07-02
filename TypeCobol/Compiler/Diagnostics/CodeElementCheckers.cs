@@ -252,7 +252,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
                     //BY VALUE
                     if (inputParameter.IsOmitted && inputParameter.SharingMode.Value == ParameterSharingMode.ByValue)
-                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", inputParameter.Omitted?.Token);
+                    {
+                        // Placing error on the token Omitted
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", inputParameter.Omitted.Token);
+                    }
                 }
             }
         }
