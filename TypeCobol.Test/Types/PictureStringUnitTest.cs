@@ -279,7 +279,7 @@ namespace TypeCobol.Test.Types
         /// Test Picture String Syntax with various Currency Symbols
         /// </summary>
         [TestMethod]
-        public void StrangeCurrencyPictureStringTest()
+        public void CurrenciesPictureStringTest()
         {
             //EURO
             PictureValidator.Result result = (new PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('€'))).Validate(out _);
@@ -292,6 +292,15 @@ namespace TypeCobol.Test.Types
             //Hong Kong Dollar
             result = (new PictureValidator("hZ,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('h', "HK$"))).Validate(out _);
             Assert.IsTrue(result.IsValid);
+
+            //Mixed
+            var dollar = PictureValidator.CurrencyDescriptor.Default;
+            var currencyDescriptors = CurrencyDescriptor('€', "EUR");
+            currencyDescriptors.Add(dollar.Symbol, dollar);
+            result = (new PictureValidator("$€99", currencyDescriptors: currencyDescriptors)).Validate(out var messages);
+            Assert.IsFalse(result.IsValid);
+            Assert.IsTrue(messages.Count == 1);
+            Assert.AreEqual("Cannot mix currency symbols in a PICTURE string: '€' symbol was not expected", messages[0]);
         }
 
         /// <summary>

@@ -19,6 +19,7 @@ namespace TypeCobol.Compiler.Types
         private const string UNKNOWN_SYMBOL = "Invalid PICTURE string '{0}': character '{1}' at position '{2}' was not expected";
         private const string PARENTHESES_DO_NOT_MATCH = "Missing '(' or ')' in PICTURE string";
         private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
+        private const string MULTIPLE_CURRENCIES_IN_SAME_PICTURE = "Cannot mix currency symbols in a PICTURE string: '{0}' symbol was not expected";
         private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
         private const string SYMBOL_S_MUST_OCCUR_ONLY_ONCE = "Character S must be repeated only once in PICTURE string";
         private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
@@ -301,15 +302,29 @@ namespace TypeCobol.Compiler.Types
                 if (ch.Length == 1)
                 {
                     char c = ch[0];
-                    if (_currencyDescriptor == null)
+                    if (_potentialCurrencyDescriptors.TryGetValue(c, out var currencyDescriptor))
                     {
-                        //Check if char is one of potential currency symbols and memorize it in _currencyDescriptor field
-                        sc = _potentialCurrencyDescriptors.TryGetValue(c, out _currencyDescriptor) ? SC.CS : Char2SC(c);
+                        if (_currencyDescriptor == null)
+                        {
+                            //This is the first currency symbol encountered
+                            _currencyDescriptor = currencyDescriptor;
+                            sc = SC.CS;
+                        }
+                        else if (_currencyDescriptor == currencyDescriptor)
+                        {
+                            //New occurrence of the previously found currency symbol
+                            sc = SC.CS;
+                        }
+                        else
+                        {
+                            //Error, cannot use different currency symbols
+                            validationMessages.Add(string.Format(MULTIPLE_CURRENCIES_IN_SAME_PICTURE, c));
+                            continue;
+                        }
                     }
                     else
                     {
-                        //Check if char is the first currency symbol originally found in picture
-                        sc = c == _currencyDescriptor.Symbol ? SC.CS : Char2SC(c);
+                        sc = Char2SC(c);
                     }
                 }
                 else if (ch.Equals("CR", StringComparison.OrdinalIgnoreCase))
