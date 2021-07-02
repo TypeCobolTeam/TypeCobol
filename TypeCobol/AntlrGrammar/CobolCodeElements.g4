@@ -3843,13 +3843,13 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement: 
-	acceptDataTransfer | acceptSystemDateTime;
+	ACCEPT alphanumericStorageArea? (fromEnvironment? | fromSystemDateTime);
 
-acceptDataTransfer:
-	ACCEPT alphanumericStorageArea (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
+fromEnvironment:
+	FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName;
 
-acceptSystemDateTime:
-	ACCEPT alphanumericStorageArea FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
+fromSystemDateTime:
+	FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
 
 
 yyyyMmDd: (
