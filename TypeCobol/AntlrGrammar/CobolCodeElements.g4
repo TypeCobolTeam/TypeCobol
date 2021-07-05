@@ -3843,7 +3843,7 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement: 
-	ACCEPT alphanumericStorageArea? (fromEnvironment? | fromSystemDateTime);
+	ACCEPT alphanumericStorageArea? (fromEnvironment | fromSystemDateTime)?;
 
 fromEnvironment:
 	FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName;
