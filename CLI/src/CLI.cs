@@ -156,12 +156,13 @@ namespace TypeCobol.Server
                 
                 //Optionally generate the source with expanded copy (note that it is not supported for multiple files)
                 GenerateExpandingCopyFile(inputFilePath, parser.Results);
-            }
 
 #if EUROINFO_RULES
-            if (this._configuration.ReportUsedCopyNamesPath != null)
-                typeCobolOptions.ReportCollectedUsedCopy();
+                if (this._configuration.ReportUsedCopyNamesPath != null)
+                    parser.Results.ReportCollectedUsedCopy();
 #endif
+            }
+
             //Second phase : now that we have all known programs in the table, we can launch a CrossCheck
             if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
             {

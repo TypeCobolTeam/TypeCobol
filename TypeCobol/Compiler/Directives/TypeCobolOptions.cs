@@ -17,10 +17,6 @@ namespace TypeCobol.Compiler.Directives
         /// Path to generrate collected used copy names
         /// </summary>
         public string ReportUsedCopyNamesPath { get; private set; }
-        /// <summary>
-        /// Collected CopyNames if -cpyr report is selected.
-        /// </summary>
-        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>> CollectedCopyNames;
 #endif
         /// <summary>
         /// Option to create a missing copy file, it will stop the execution before semantic phase if a copy is missing
@@ -108,54 +104,5 @@ namespace TypeCobol.Compiler.Directives
             this.CopyIBMOptionsTo(newOptions);
             return newOptions;
         }
-
-#if EUROINFO_RULES
-        internal void CollectUsedCopy(CopyDirective copy)
-        {
-            if (ReportUsedCopyNamesPath != null)
-            {
-                if (CollectedCopyNames == null)
-                    CollectedCopyNames = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>>();
-
-                string copyName = copy.TextName.ToUpper();
-                if (!CollectedCopyNames.ContainsKey(copyName))
-                {
-                    CollectedCopyNames[copyName] = new System.Collections.Generic.HashSet<string>();
-                }
-                if (copy.Suffix != null)
-                {
-                    System.Collections.Generic.HashSet<string> suffixedNames = CollectedCopyNames[copyName];
-                    suffixedNames.Add(copyName + copy.Suffix.ToUpper());
-                }                
-            }
-        }
-
-        /// <summary>
-        /// Report all Used Copy Name with suffixed names if any
-        /// </summary>
-        public void ReportCollectedUsedCopy()
-        {
-            if (ReportUsedCopyNamesPath != null)
-            {
-                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(ReportUsedCopyNamesPath))
-                {
-                    if (CollectedCopyNames != null)
-                    {
-                        foreach (string cpyName in CollectedCopyNames.Keys)
-                        {
-                            sw.Write(cpyName);
-                            System.Collections.Generic.HashSet<string> suffixedNames = CollectedCopyNames[cpyName];
-                            foreach (string suffixed in suffixedNames)
-                            {
-                                sw.Write(';');
-                                sw.Write(suffixed);
-                            }
-                            sw.WriteLine();
-                        }
-                    }
-                }
-            }
-        }
-#endif
     }
 }

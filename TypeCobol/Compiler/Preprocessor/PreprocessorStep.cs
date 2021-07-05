@@ -435,7 +435,7 @@ namespace TypeCobol.Compiler.Preprocessor
             CupCobolErrorStrategy cupCobolErrorStrategy = new CupPreprocessor.CompilerDirectiveErrorStrategy();
 
             // Prepare to analyze the parse tree            
-            TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder(document.CompilerOptions, document.CopyTextNamesVariations);
+            TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder(document);
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
             foreach (Token compilerDirectiveStartingToken in documentLines
@@ -476,8 +476,8 @@ namespace TypeCobol.Compiler.Preprocessor
                 TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
 
 #if EUROINFO_RULES
-                if (document.CompilerOptions.ReportUsedCopyNamesPath != null && 
-                    document.CompilerOptions.ExecToStep <= ExecutionStep.Preprocessor) 
+                if (document.CompilerOptions.ReportUsedCopyNamesPath != null &&
+                    document.CompilerOptions.ExecToStep <= ExecutionStep.Preprocessor)
                 {
                     continue;
                 }
