@@ -800,20 +800,27 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void CheckSubscripts(Node node, DataOrConditionStorageArea dataOrConditionStorageArea, DataDefinition dataDefinition)
         {
-            //TODO some statements use tables directly, some other require unary items...
-            //TODO parsing variable argument functions (MIN, MAX, ?) produces subscripts...
-            if (dataOrConditionStorageArea.Subscripts.Count == 0) return;
+            switch (node.CodeElement?.Type)
+            {
+                //Those have their own specific subscript checking
+                case CodeElementType.SearchStatement:
+                case CodeElementType.ProcedureStyleCall:
+                    return;
+            }
 
             //Create a list of all parent OCCURS
             var tableDefinitions = new List<DataDefinition>();
             var tableDefinition = dataDefinition;
-            while (tableDefinition != null)
+            if (!dataDefinition.IsTableIndex) //An index cannot be subscripted
             {
-                //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
-                if (tableDefinition.IsPartOfATypeDef) return;
+                while (tableDefinition != null)
+                {
+                    //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
+                    if (tableDefinition.IsPartOfATypeDef) return;
 
-                if (tableDefinition.IsTableOccurence) tableDefinitions.Add(tableDefinition);
-                tableDefinition = tableDefinition.Parent as DataDefinition;
+                    if (tableDefinition.IsTableOccurence) tableDefinitions.Add(tableDefinition);
+                    tableDefinition = tableDefinition.Parent as DataDefinition;
+                }
             }
 
             if (dataOrConditionStorageArea.Subscripts.Count < tableDefinitions.Count)
