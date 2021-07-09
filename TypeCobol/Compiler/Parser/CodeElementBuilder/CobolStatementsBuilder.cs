@@ -52,20 +52,19 @@ namespace TypeCobol.Compiler.Parser
 		 // ACCEPT STATEMENT //
 		//////////////////////
 
-		internal AcceptFromInputDeviceStatement CreateAcceptDataTransferStatement(CodeElementsParser.AcceptDataTransferContext context) {
+		internal AcceptFromInputDeviceStatement CreateAcceptDataTransferStatement(ReceivingStorageArea receivingStorageArea, CodeElementsParser.FromEnvironmentContext context) {
 			var statement = new AcceptFromInputDeviceStatement();
-			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
-			if (context.mnemonicForEnvironmentNameReferenceOrEnvironmentName() != null) {
+            statement.ReceivingStorageArea = receivingStorageArea;
+			if (context?.mnemonicForEnvironmentNameReferenceOrEnvironmentName() != null) {
 				statement.InputDevice = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(context.mnemonicForEnvironmentNameReferenceOrEnvironmentName());
 			}
 			return statement;
 		}
 
-		internal AcceptFromSystemDateStatement CreateAcceptSystemDateTime(CodeElementsParser.AcceptSystemDateTimeContext context)
+		internal AcceptFromSystemDateStatement CreateAcceptSystemDateTime(ReceivingStorageArea receivingStorageArea, CodeElementsParser.FromSystemDateTimeContext context)
 		{
 			var statement = new AcceptFromSystemDateStatement();
-
-			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
+            statement.ReceivingStorageArea = receivingStorageArea;
 			if (context.yyyyMmDd() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYYYMMDD,
