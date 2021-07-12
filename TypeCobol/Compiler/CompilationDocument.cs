@@ -789,22 +789,22 @@ namespace TypeCobol.Compiler
 #if EUROINFO_RULES
         internal void CollectUsedCopy(CopyDirective copy)
         {
-	        if (CollectedCopyNames == null)
-	        {
-		        CollectedCopyNames = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
-			}
+            if (CollectedCopyNames == null)
+            {
+                CollectedCopyNames = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+            }
 
-	        if (!CollectedCopyNames.TryGetValue(copy.TextName, out var suffixedNames))
-	        {
-		        suffixedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				CollectedCopyNames.Add(copy.TextName, suffixedNames);
-	        }
+            if (!CollectedCopyNames.TryGetValue(copy.TextName, out var suffixedNames))
+            {
+                suffixedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                CollectedCopyNames.Add(copy.TextName, suffixedNames);
+            }
 
-			if (copy.Suffix != null)
-			{
-				suffixedNames.Add(copy.TextName + copy.Suffix);
-			}
-		}
+            if (copy.Suffix != null)
+            {
+                suffixedNames.Add(copy.TextName + copy.Suffix);
+            }
+        }
 #endif
 
     }

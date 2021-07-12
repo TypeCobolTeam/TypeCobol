@@ -563,7 +563,7 @@ namespace TypeCobol.Server
             CheckExternalDiagnostics(_dependenciesDiagnostics);
             CheckExternalDiagnostics(_intrinsicsDiagnostics);
 
-			//Avoid returning MissingCopy for users who are only interested in copies extraction
+            //Avoid returning MissingCopy for users who are only interested in copies extraction
             if (_configuration.ExecToStep <= ExecutionStep.Preprocessor)
             {
 	            if (_configuration.ExtractedCopiesFilePath != null
