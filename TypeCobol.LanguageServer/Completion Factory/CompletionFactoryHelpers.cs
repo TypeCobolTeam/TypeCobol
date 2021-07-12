@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
@@ -201,56 +202,91 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, TypeCobolOptions options, bool useQualifiedName = true)
+        public static List<CompletionItem> CreateCompletionItemsForVariableSetAndDisambiguate(IEnumerable<KeyValuePair<DataDefinitionPath, DataDefinition>> variables, TypeCobolOptions options, bool forceUnqualifiedName = false)
         {
-            return variables.Select(variable => CreateCompletionItemForVariable(variable, options, useQualifiedName)).ToList();
-        }
+            var results = new List<CompletionItem>();
 
-        public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, TypeCobolOptions options, bool useQualifiedName = true)
-        {
-            var qualifiedName = variable.VisualQualifiedNameWithoutProgram;
-
-            var finalQualifiedName = qualifiedName.ToList();
-
-            if (variable.CodeElement != null && variable.CodeElement.IsInsideCopy())
+            //Group variables by name
+            var variablesGroupedByName = variables
+                .GroupBy(p => p.Value.Name, StringComparer.OrdinalIgnoreCase)
+                .Select(g => g.ToList());
+            foreach (var variableGroup in variablesGroupedByName)
             {
-                finalQualifiedName.Clear();
-               
-#if EUROINFO_RULES
-                var parts = qualifiedName.Last().Split('-');
-                if (!qualifiedName.First().Contains(parts.First()))
-                    finalQualifiedName.Add(qualifiedName.First());
-#else
-                finalQualifiedName.Add(qualifiedName.First());
-                
-#endif
-                if (qualifiedName.First() != qualifiedName.Last())
-                    finalQualifiedName.Add(qualifiedName.Last());
-            }
-
-            string variableArrangedQualifiedName;
-            if (useQualifiedName)
-            {
-                if (options.IsCobolLanguage)
+                if (variableGroup.Count > 1)
                 {
-                    //Pure Cobol, reverse and use 'OF' separator
-                    finalQualifiedName.Reverse();
-                    variableArrangedQualifiedName = string.Join(" OF ", finalQualifiedName);
+                    //Ambiguity: use qualified name for completion items (except if forceUnqualifiedName is set, in that case it may lead to ambiguities in completion list...)
+                    foreach (var pair in variableGroup)
+                    {
+                        var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, options, !forceUnqualifiedName);
+                        results.Add(completionItem);
+                    }
                 }
                 else
                 {
-                    //Use TypeCobol separator
-                    variableArrangedQualifiedName = string.Join("::", finalQualifiedName);
+                    //Non ambiguous name, remove qualifier for pure Cobol 
+                    var pair = variableGroup[0];
+                    bool qualify = !options.IsCobolLanguage && !forceUnqualifiedName;
+                    var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, options, qualify);
+                    results.Add(completionItem);
+                }
+            }
+
+            return results;
+        }
+
+        public static CompletionItem CreateCompletionItemForSingleVariable(DataDefinition parent, DataDefinition variable, TypeCobolOptions options, bool qualify)
+        {
+            string name = variable.Name;
+            string type = variable.DataType.Name;
+
+            string insertText;
+            if (qualify)
+            {
+                List<string> nameParts;
+                if (parent != null)
+                {
+                    nameParts = parent.VisualQualifiedNameWithoutProgram.ToList();
+                    nameParts.Add(name);
+                }
+                else
+                {
+                    nameParts = variable.VisualQualifiedNameWithoutProgram.ToList();
+                }
+
+                //For copies
+                if (variable.CodeElement != null && variable.CodeElement.IsInsideCopy())
+                {
+                    nameParts.Clear();
+                    string owner = parent?.VisualQualifiedNameWithoutProgram[0] ?? variable.VisualQualifiedNameWithoutProgram[0];
+#if EUROINFO_RULES
+                    var parts = name.Split('-');
+                    if (parts.Length > 0 && !owner.Contains(parts[0]))
+                        nameParts.Add(owner);
+#else
+                    nameParts.Add(owner);
+#endif
+                    if (owner != name)
+                        nameParts.Add(name);
+                }
+
+                //Qualifying style depending on target language
+                if (options.IsCobolLanguage)
+                {
+                    nameParts.Reverse();
+                    insertText = string.Join(" OF ", nameParts);
+                }
+                else
+                {
+                    insertText = string.Join("::", nameParts);
                 }
             }
             else
             {
-                //Do not use qualifier
-                variableArrangedQualifiedName = variable.Name;
+                insertText = name;
             }
 
-            var variableDisplay = $"{variable.Name} ({variable.DataType.Name}) ({variableArrangedQualifiedName})";
-            return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind = CompletionItemKind.Variable };
+            string label = $"{name} ({type}) ({insertText})";
+            return new CompletionItem(label) { insertText = insertText, kind = CompletionItemKind.Variable };
         }
 
         public static Case GetTextCase(string tokenText)
