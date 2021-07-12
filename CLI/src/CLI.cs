@@ -199,6 +199,9 @@ namespace TypeCobol.Server
             //Write used and missing copies files
             WriteCopiesFile(_configuration.ExtractedCopiesFilePath, _usedCopies);
             WriteCopiesFile(_configuration.HaltOnMissingCopyFilePath, _missingCopies);
+#if EUROINFO_RULES
+            WriteUsedCopiesFile();
+#endif
 
             return AddErrorsAndComputeReturnCode();
         }
@@ -461,6 +464,42 @@ namespace TypeCobol.Server
             }
         }
 
+#if EUROINFO_RULES
+        private void WriteUsedCopiesFile()
+        {
+            if (_configuration.ReportUsedCopyNamesPath != null)
+            {
+                using (var output = File.CreateText(_configuration.ReportUsedCopyNamesPath))
+                {
+                    foreach (var parserResult in _parserResults)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(parserResult.Key);
+                        var usedCopies = parserResult.Value.CollectedCopyNames;
+
+                        if (usedCopies == null)
+                        {
+                            output.WriteLine(fileName);
+                            continue;
+                        }
+
+                        foreach (var usedCopy in usedCopies)
+                        {
+                            output.Write(fileName);
+                            output.Write(';');
+                            output.Write(usedCopy.Key);
+                            foreach (var suffixedName in usedCopy.Value)
+                            {
+                                output.Write(';');
+                                output.Write(suffixedName);
+                            }
+                            output.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+#endif
+
         private ReturnCode AddErrorsAndComputeReturnCode()
         {
             /*
@@ -524,7 +563,20 @@ namespace TypeCobol.Server
             CheckExternalDiagnostics(_dependenciesDiagnostics);
             CheckExternalDiagnostics(_intrinsicsDiagnostics);
 
-            //Always return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
+            //Avoid returning MissingCopy for users who are only interested in copies extraction
+            if (_configuration.ExecToStep <= ExecutionStep.Preprocessor)
+            {
+	            if (_configuration.ExtractedCopiesFilePath != null
+#if EUROINFO_RULES
+	                || _configuration.ReportUsedCopyNamesPath != null
+#endif
+	               )
+	            {
+		            return returnCode;
+	            }
+            }
+
+            //Return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
             if (_missingCopies.Count > 0)
             {
                 returnCode = ReturnCode.MissingCopy;
