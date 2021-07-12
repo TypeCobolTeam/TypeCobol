@@ -585,5 +585,16 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    static class AcceptStatementChecker
+    {
+        public static void OnCodeElement(AcceptStatement acceptStatement, CodeElementsParser.AcceptStatementContext context)
+        {
+            if (acceptStatement.ReceivingStorageArea == null)
+            {
+                DiagnosticUtils.AddError(acceptStatement, "Invalid ACCEPT statement, receiving area for data is required.", context);
+            }
+        }
+    }
+
     #endregion
 }
