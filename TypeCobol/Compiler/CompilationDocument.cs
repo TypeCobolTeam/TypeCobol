@@ -67,7 +67,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Collected CopyNames if -cpyr report is selected.
         /// </summary>
-        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>> CollectedCopyNames;
+        public IDictionary<string, HashSet<string>> CollectedCopyNames { get; private set; }
 #endif
 
         /// <summary>
@@ -789,50 +789,22 @@ namespace TypeCobol.Compiler
 #if EUROINFO_RULES
         internal void CollectUsedCopy(CopyDirective copy)
         {
-            if (CompilerOptions.ReportUsedCopyNamesPath != null)
-            {
-                if (CollectedCopyNames == null)
-                    CollectedCopyNames = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>>();
+	        if (CollectedCopyNames == null)
+	        {
+		        CollectedCopyNames = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+			}
 
-                string copyName = copy.TextName.ToUpper();
-                if (!CollectedCopyNames.ContainsKey(copyName))
-                {
-                    CollectedCopyNames[copyName] = new System.Collections.Generic.HashSet<string>();
-                }
-                if (copy.Suffix != null)
-                {
-                    System.Collections.Generic.HashSet<string> suffixedNames = CollectedCopyNames[copyName];
-                    suffixedNames.Add(copyName + copy.Suffix.ToUpper());
-                }
-            }
-        }
+	        if (!CollectedCopyNames.TryGetValue(copy.TextName, out var suffixedNames))
+	        {
+		        suffixedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				CollectedCopyNames.Add(copy.TextName, suffixedNames);
+	        }
 
-        /// <summary>
-        /// Report all Used Copy Name with suffixed names if any
-        /// </summary>
-        public void ReportCollectedUsedCopy()
-        {
-            if (CompilerOptions.ReportUsedCopyNamesPath != null)
-            {
-                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(CompilerOptions.ReportUsedCopyNamesPath))
-                {
-                    if (CollectedCopyNames != null)
-                    {
-                        foreach (string cpyName in CollectedCopyNames.Keys)
-                        {
-                            sw.Write(cpyName);
-                            System.Collections.Generic.HashSet<string> suffixedNames = CollectedCopyNames[cpyName];
-                            foreach (string suffixed in suffixedNames)
-                            {
-                                sw.Write(';');
-                                sw.Write(suffixed);
-                            }
-                            sw.WriteLine();
-                        }
-                    }
-                }
-            }
-        }
+			if (copy.Suffix != null)
+			{
+				suffixedNames.Add(copy.TextName + copy.Suffix);
+			}
+		}
 #endif
 
     }
