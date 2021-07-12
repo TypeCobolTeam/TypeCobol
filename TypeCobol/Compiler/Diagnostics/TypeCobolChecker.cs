@@ -377,8 +377,8 @@ namespace TypeCobol.Compiler.Diagnostics
                             TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType != null && calleeType != null)
                             {
-                                //Compare references of TypeDefinition
-                                if (callerType != calleeType)
+                                //Compare TypeDefinitions
+                                if (!callerType.Equals(calleeType))
                                 {
                                     var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
@@ -872,7 +872,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (statement != null)
             {
                 // Check receivers (incremented) 
-                var receivers = node?.StorageAreaWritesDataDefinition?.Values;
+                var receivers = node.StorageAreaWritesDataDefinition?.Values;
                 if (receivers == null)
                     return;
                 bool containsPointers = false;
@@ -882,7 +882,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (receiver.Usage == DataUsage.Pointer)
                     {
                         containsPointers = true;
-                        var levelNumber = (receiver.CodeElement).LevelNumber;
+                        System.Diagnostics.Debug.Assert(receiver.CodeElement != null);
+                        var levelNumber = receiver.CodeElement.LevelNumber;
                         if (levelNumber != null && levelNumber.Value > 49)
                         {
                             DiagnosticUtils.AddError(node,

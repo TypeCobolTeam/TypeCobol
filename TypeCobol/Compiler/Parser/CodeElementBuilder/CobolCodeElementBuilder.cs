@@ -1683,15 +1683,24 @@ namespace TypeCobol.Compiler.Parser
 
 		// --- ACCEPT ---
 
-		public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context) {
+		public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context)
+        {
 			Context = context;
-			if (context.acceptDataTransfer() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(context.acceptDataTransfer());
-			} else
-			if(context.acceptSystemDateTime() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAcceptSystemDateTime(context.acceptSystemDateTime());
-			}
-		}
+
+            AcceptStatement acceptStatement;
+            var receivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
+            if (context.fromSystemDateTime() != null)
+            {
+                acceptStatement = CobolStatementsBuilder.CreateAcceptSystemDateTime(receivingStorageArea, context.fromSystemDateTime());
+            }
+            else
+            {
+                acceptStatement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(receivingStorageArea, context.fromEnvironment());
+            }
+
+            AcceptStatementChecker.OnCodeElement(acceptStatement, context);
+            CodeElement = acceptStatement;
+        }
 
 
 	    // --- ALTER ---
