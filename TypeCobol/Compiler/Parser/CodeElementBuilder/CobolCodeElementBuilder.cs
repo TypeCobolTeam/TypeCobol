@@ -328,8 +328,7 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterObjectComputerParagraph(CodeElementsParser.ObjectComputerParagraphContext context) {
 			var paragraph = new ObjectComputerParagraph();
-			if(context.computerName != null)
-			{
+			if(context.computerName != null) {
 				System.Diagnostics.Debug.Assert(context.computerName is Token);
 				//TokenType is UserDefinedWord, so it's ok to create an AlphanumericValue
 				paragraph.ComputerName = new AlphanumericValue((Token) context.computerName);
