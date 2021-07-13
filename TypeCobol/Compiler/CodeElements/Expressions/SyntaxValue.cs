@@ -435,7 +435,7 @@ namespace TypeCobol.Compiler.CodeElements
             if (picText.Contains(",") || picText.Contains("."))
             {
                 var tokensLine = Token.TokensLine as TokensLine;
-                if (tokensLine != null && tokensLine.InitialScanState.DecimalPointIsComma)
+                if (tokensLine != null && tokensLine.InitialScanState.SpecialNames.DecimalPointIsComma)
                 {
                     System.Text.StringBuilder parsedPicture = new System.Text.StringBuilder();
                     foreach (char c in picText)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -18,6 +19,7 @@ namespace TypeCobol.Compiler.Types
         private const string UNKNOWN_SYMBOL = "Invalid PICTURE string '{0}': character '{1}' at position '{2}' was not expected";
         private const string PARENTHESES_DO_NOT_MATCH = "Missing '(' or ')' in PICTURE string";
         private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
+        private const string MULTIPLE_CURRENCIES_IN_SAME_PICTURE = "Cannot mix currency symbols in a PICTURE string: '{0}' symbol was not expected";
         private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
         private const string SYMBOL_S_MUST_OCCUR_ONLY_ONCE = "Character S must be repeated only once in PICTURE string";
         private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
@@ -39,17 +41,31 @@ namespace TypeCobol.Compiler.Types
         /// And it does not contains any spaces
         /// </param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
-        /// <param name="currencySymbol">a string to identify the Currency symbol in a picture character string, default is '$'</param>
         /// <param name="decimalPointIsComma">a boolean to swap NumericSeparator and DecimalPoint characters, default is false</param>
-        public PictureValidator(string picture, bool separateSign = false, string currencySymbol = "$", bool decimalPointIsComma = false)
+        /// <param name="currencyDescriptors">All custom currency descriptors indexed by their symbol. If null, the default currency descriptor is used.</param>
+        public PictureValidator(string picture, bool separateSign = false, bool decimalPointIsComma = false, IDictionary<char, CurrencyDescriptor> currencyDescriptors = null)
         {
             System.Diagnostics.Debug.Assert(picture != null);
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
-            System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains(" "));
+            System.Diagnostics.Debug.Assert(!picture.Contains(" "));
 
-            Picture = picture.ToUpper();
+            if (currencyDescriptors == null || currencyDescriptors.Count == 0)
+            {
+                //Use default currency descriptor ($)
+                var defaultCurrencyDescriptor = CurrencyDescriptor.Default;
+                _potentialCurrencyDescriptors = new Dictionary<char, CurrencyDescriptor>()
+                                                {
+                                                    { defaultCurrencyDescriptor.Symbol, defaultCurrencyDescriptor }
+                                                };
+            }
+            else
+            {
+                _potentialCurrencyDescriptors = currencyDescriptors;
+            }
+            _currencyDescriptor = null;
+
+            Picture = picture;
             IsSeparateSign = separateSign;
-            CurrencySymbol = currencySymbol;
             if (decimalPointIsComma)
             {
                 DecimalPoint = ',';
@@ -72,10 +88,11 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public bool IsSeparateSign { get; }
 
+        private readonly IDictionary<char, CurrencyDescriptor> _potentialCurrencyDescriptors;
         /// <summary>
-        /// The Currency Symbol to be used.
+        /// The Currency Symbol found in the picture.
         /// </summary>
-        public string CurrencySymbol { get; }
+        private CurrencyDescriptor _currencyDescriptor;
 
         /// <summary>
         /// The decimal point character
@@ -98,23 +115,23 @@ namespace TypeCobol.Compiler.Types
             validationMessages = new List<string>();
 
             //1. First Validate against the PICTURE string regular expression.
-            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol, validationMessages);
+            List<Tuple<string, int>> matches = PictureStringSplitter(validationMessages);
             if (matches == null || matches.Count == 0) return new Result();
 
             //Build Character sequence
             Character[] sequence = CollectPictureSequence(matches, validationMessages);
-            if (validationMessages.Count > 0) return new Result(sequence);
+            if (validationMessages.Count > 0) return new Result(sequence, _currencyDescriptor);
 
             //Validate the sequence
             Automata automata = new Automata(this);
             if (automata.Run(sequence, validationMessages))
             {
                 //OK
-                return new Result(sequence, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+                return new Result(sequence, _currencyDescriptor, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
             }
 
             //KO
-            return new Result(sequence);
+            return new Result(sequence, _currencyDescriptor);
         }
 
         /// <summary>
@@ -162,23 +179,34 @@ namespace TypeCobol.Compiler.Types
             return startOffset;
         }
 
+        //static part of the splitter alphabet
+        private static readonly string[] _Alphabet =
+        {
+            "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z",
+            "9", "0", "/", ",", ".", "+", "-", "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*"
+        };
+
         /// <summary>
         /// Split the Picture String into its parts. A List of tuple(Symbol, count)
         /// Example: 9(2)X(4)9
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        private static List<Tuple<string, int>> PictureStringSplitter(string picture, string currencySymbol, List<string> validationMessages)
+        private List<Tuple<string, int>> PictureStringSplitter(List<string> validationMessages)
         {
-            if (string.IsNullOrWhiteSpace(picture))
+            if (string.IsNullOrWhiteSpace(Picture))
             {
                 validationMessages.Add(EMPTY);
                 return null;
             }
 
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
-            string[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
-            for (int l = 0; l < picture.Length;)
+            //The whole alphabet is made of static picture string symbols and custom (or only default) currency symbol(s).
+            string[] alphabet = _Alphabet
+                .Concat(_potentialCurrencyDescriptors.Keys.Select(currencySymbol => currencySymbol.ToString()))
+                .ToArray();
+
+            for (int l = 0; l < Picture.Length;)
             {
                 bool match = false;
                 for (int i = 0; i < alphabet.Length && !match; i++)
@@ -186,21 +214,21 @@ namespace TypeCobol.Compiler.Types
                     switch (alphabet[i].Length)
                     {
                         case 1:
-                            match = picture[l] == alphabet[i][0];
+                            match = Picture[l] == alphabet[i][0];
                             break;
                         case 2:
-                            if ((l + 1) < picture.Length)
+                            if ((l + 1) < Picture.Length)
                             {
-                                match = picture[l] == alphabet[i][0] && picture[l + 1] == alphabet[i][1];
+                                match = Picture[l] == alphabet[i][0] && Picture[l + 1] == alphabet[i][1];
                             }
                             break;
                         default:
-                            if ((l + alphabet[i].Length - 1) < picture.Length)
+                            if ((l + alphabet[i].Length - 1) < Picture.Length)
                             {
                                 match = true;
-                                for (int j = 0, n = l; j < alphabet[i].Length && n < picture.Length; j++, n++)
+                                for (int j = 0, n = l; j < alphabet[i].Length && n < Picture.Length; j++, n++)
                                 {
-                                    if (picture[n] != alphabet[i][j])
+                                    if (Picture[n] != alphabet[i][j])
                                     {
                                         match = false;
                                         break;
@@ -212,7 +240,7 @@ namespace TypeCobol.Compiler.Types
 
                     if (match)
                     {
-                        l = CheckItemCount(picture, l + alphabet[i].Length, validationMessages, out int count);
+                        l = CheckItemCount(Picture, l + alphabet[i].Length, validationMessages, out int count);
                         if (count == -1)
                             return null;
                         items.Add(new Tuple<string, int>(alphabet[i], count));
@@ -221,7 +249,7 @@ namespace TypeCobol.Compiler.Types
 
                 if (!match)
                 {
-                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, picture, picture[l], l + 1));
+                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, Picture, Picture[l], l + 1));
                     return null;
                 }
             }
@@ -235,7 +263,7 @@ namespace TypeCobol.Compiler.Types
         /// <returns>true if yes, false otherwise</returns>
         private bool IsSimpleInsertionCharacter(SC c)
         {
-            return c == SC.B || c == SC.ZERO || c == SC.SLASH || c == Char2SC(NumericSeparator);
+            return c == SC.B || c == SC.ZERO || c == SC.SLASH || IsNumericSeparator(c);
         }
 
         /// <summary>
@@ -273,13 +301,35 @@ namespace TypeCobol.Compiler.Types
                 SC sc;
                 if (ch.Length == 1)
                 {
-                    sc = ch.Equals(CurrencySymbol) ? SC.CS : Char2SC(ch[0]);
+                    char c = ch[0];
+                    if (_potentialCurrencyDescriptors.TryGetValue(c, out var currencyDescriptor))
+                    {
+                        if (_currencyDescriptor == null)
+                        {
+                            //This is the first currency symbol encountered
+                            _currencyDescriptor = currencyDescriptor;
+                            sc = SC.CS;
+                        }
+                        else if (_currencyDescriptor == currencyDescriptor)
+                        {
+                            //New occurrence of the previously found currency symbol
+                            sc = SC.CS;
+                        }
+                        else
+                        {
+                            //Error, cannot use different currency symbols
+                            validationMessages.Add(string.Format(MULTIPLE_CURRENCIES_IN_SAME_PICTURE, c));
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        sc = Char2SC(c);
+                    }
                 }
-                else if (ch == CurrencySymbol)
-                    sc = SC.CS;
-                else if (ch == "CR")
+                else if (ch.Equals("CR", StringComparison.OrdinalIgnoreCase))
                     sc = SC.CR;
-                else if (ch == "DB")
+                else if (ch.Equals("DB", StringComparison.OrdinalIgnoreCase))
                     sc = SC.DB;
                 else
                     throw new InvalidOperationException();//Should never arrive
@@ -405,7 +455,8 @@ namespace TypeCobol.Compiler.Types
                 lastIndex = sequence.Length - 1;
                 return;
             }
-            else if (!(i < sequence.Length && (SC2String(sequence[i].SpecialChar)[0] == DecimalPoint || sequence[i].SpecialChar == SC.V)))
+
+            if (!(i < sequence.Length && (IsDecimalPoint(sequence[i].SpecialChar) || sequence[i].SpecialChar == SC.V)))
             {//The last index does not precede the DecimalPoint separator position
                 return;
             }

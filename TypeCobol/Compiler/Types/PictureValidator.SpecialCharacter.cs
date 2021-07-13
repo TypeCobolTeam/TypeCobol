@@ -35,7 +35,7 @@ namespace TypeCobol.Compiler.Types
         //Does not handle CR, DB and CS
         private static SC Char2SC(char c)
         {
-            switch (c)
+            switch (char.ToUpper(c))
             {
                 case 'A':
                     return SC.A;
@@ -119,13 +119,40 @@ namespace TypeCobol.Compiler.Types
                 case SC.STAR:
                     return "*";
                 case SC.CS:
-                    return CurrencySymbol;
+                    System.Diagnostics.Debug.Assert(_currencyDescriptor != null);
+                    return _currencyDescriptor.Symbol.ToString();
                 case SC.CR:
                     return "CR";
                 case SC.DB:
                     return "DB";
                 default:
                     throw new NotSupportedException($"Unknown '{sc}' special character.");
+            }
+        }
+
+        private bool IsDecimalPoint(SC sc)
+        {
+            switch (sc)
+            {
+                case SC.DOT:
+                    return DecimalPoint == '.';
+                case SC.COMMA:
+                    return DecimalPoint == ',';
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsNumericSeparator(SC sc)
+        {
+            switch (sc)
+            {
+                case SC.DOT:
+                    return NumericSeparator == '.';
+                case SC.COMMA:
+                    return NumericSeparator == ',';
+                default:
+                    return false;
             }
         }
     }

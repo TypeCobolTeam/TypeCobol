@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
@@ -83,20 +82,21 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //Check Picture character string format
-            CheckPicture(data);
+            CheckPicture(data, context);
         }
 
-        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement)
+        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement, ParserRuleContextWithDiagnostics context)
         {
             if (codeElement.Picture == null) return;
 
             /*
              * Validate using PictureValidator
-             * Decimal point and numeric separator have already been normalized
-             * TODO how to get currency symbol from special-names paragraph
+             * Decimal point and numeric separator have already been normalized, so here decimalPointIsComma is set to false for validator
+             * Currency descriptors are taken from the scan state of the first token in ANTLR context for this code element
              */
             bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
-            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate);
+            var customCurrencyDescriptors = (context?.Start as Token)?.TokensLine.ScanState.SpecialNames.CustomCurrencyDescriptors;
+            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate, false, customCurrencyDescriptors);
             var pictureValidationResult = pictureValidator.Validate(out var validationMessages);
 
             //Report validation errors as diagnostics
@@ -116,7 +116,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
         {
             TypeDefinitionEntryChecker.CheckRedefines(redefines, context);
-            CheckPicture(redefines);
+            CheckPicture(redefines, context);
         }
 
         /// <summary>

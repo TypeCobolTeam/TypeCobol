@@ -106,6 +106,7 @@ namespace TypeCobol.Compiler.Symbols
                 {
                     return new PictureValidator.Result(
                         new[] { new PictureValidator.Character(PictureValidator.SC.NINE, count) },
+                        null,
                         PictureCategory.Numeric,
                         count,
                         count,
@@ -119,6 +120,7 @@ namespace TypeCobol.Compiler.Symbols
             {
                 var validationResult = new PictureValidator.Result(
                     new [] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    null,
                     PictureCategory.AlphaNumeric,
                     0,
                     0,
