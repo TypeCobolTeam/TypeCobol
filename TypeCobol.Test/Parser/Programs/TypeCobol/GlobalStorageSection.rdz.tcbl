@@ -20,7 +20,7 @@
            05 ForbiddenGlobalVar     PIC x(10) GLOBAL.
            88 zedzed                VALUE 'TEST'.
       *External clause is not authorized inside Global Storage
-       01 ForbiddenExternalVar   PIC 10 EXTERNAL.
+       01 ForbiddenExternalVar   PIC X(10) EXTERNAL.
 
        01 DefInGlobalStorageAndNested pic X.
 

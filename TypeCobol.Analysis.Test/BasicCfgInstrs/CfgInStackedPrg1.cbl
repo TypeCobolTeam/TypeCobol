@@ -45,9 +45,9 @@
           02 zres pic s9(12)v999.
        WORKING-STORAGE SECTION.
        01 tabind.
-          02 ind pic 1 occurs 99.
-       77 ef pic 1 value "1".
-       77 fct3 pic 1 value "1".
+          02 ind pic X occurs 99.
+       77 ef pic X value "1".
+       77 fct3 pic X value "1".
        PROCEDURE DIVISION.
            open i-o VUE.
            move zero to fct1 fct2 zres.

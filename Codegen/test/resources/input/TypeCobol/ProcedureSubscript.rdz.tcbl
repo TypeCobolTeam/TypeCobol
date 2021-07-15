@@ -5,7 +5,7 @@
        WORKING-STORAGE SECTION.
        01 MyPicVar PIC X(10).
        01 MyGroup.
-          05 MyValue  PIC 2.
+          05 MyValue  PIC 9(2).
        01  StringArray.
            05 OCCURS 10 INDEXED BY StringIdx.
               10  Pnt               POINTER.

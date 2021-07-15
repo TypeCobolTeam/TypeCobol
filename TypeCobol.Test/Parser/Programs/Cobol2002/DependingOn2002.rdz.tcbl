@@ -96,7 +96,7 @@
             05 tableVar PIC X(1) occurs 5 
             depending on GroupCounter.
 
-       01 TypeCounter pic 666 comp-5.
+       01 TypeCounter pic 999 comp-5.
        01 VarCounter TYPE CounterType.
        01 VarCounter TYPE CounterType.
        01 DenpendingGroup.

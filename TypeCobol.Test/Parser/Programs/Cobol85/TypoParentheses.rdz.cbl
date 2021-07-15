@@ -9,10 +9,10 @@
 
       * OK
        01 pic X(5).
+       
        01 pic X5).
        01 pic X)5).
        01 pic X(5.
-      * OK
        01 pic X5.
        01 pic X)5.
        01 pic X(5(.
@@ -21,10 +21,10 @@
 
       * OK
        01 pic S9(5)V9(5).
+       
        01 pic S95)V9(5).
        01 pic S9)5)V9(5).
        01 pic S9(5V9(5).
-      * OK
        01 pic S95V9(5).
        01 pic S9)5V9(5).
        01 pic S9(5(V9(5).
@@ -57,12 +57,10 @@
        01 pic S9(5(V9(5.
        01 pic S95(V9(5.
        01 pic S9)5(V9(5.
-      * OK
        01 pic S9(5)V95.
        01 pic S95)V95.
        01 pic S9)5)V95.
        01 pic S9(5V95.
-      * OK
        01 pic S95V95.
        01 pic S9)5V95.
        01 pic S9(5(V95.

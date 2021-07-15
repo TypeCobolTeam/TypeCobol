@@ -883,7 +883,7 @@ namespace TypeCobol.Compiler.Scanner
                 case ',':
                     //CommaSeparator=2,
                     // p46: A separator comma is composed of a comma followed by a space. 
-                    if (tokensLine.ScanState.DecimalPointIsComma)
+                    if (tokensLine.ScanState.SpecialNames.DecimalPointIsComma)
                     {
                         //IntegerLiteral = 27,
                         //DecimalLiteral = 28,
@@ -1010,7 +1010,7 @@ namespace TypeCobol.Compiler.Scanner
                 case '.':
                     //PeriodSeparator=7,
                     // p46: A separator period is composed of a period followed by a space.
-                    if(tokensLine.ScanState.DecimalPointIsComma)
+                    if(tokensLine.ScanState.SpecialNames.DecimalPointIsComma)
                     {
                         return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
@@ -1488,7 +1488,7 @@ namespace TypeCobol.Compiler.Scanner
                 return ScanNumericLiteral(startIndex);
             }
             else if((tokenType == TokenType.PlusOperator || tokenType == TokenType.MinusOperator) && 
-                    line[currentIndex + 1] == (tokensLine.ScanState.DecimalPointIsComma?',':'.'))
+                    line[currentIndex + 1] == (tokensLine.ScanState.SpecialNames.DecimalPointIsComma ? ',' : '.'))
             {
                 return ScanNumericLiteral(startIndex);
             }
@@ -1563,7 +1563,7 @@ namespace TypeCobol.Compiler.Scanner
       
             // Handle DECIMAL-POINT IS COMMA clause
             char decimalPoint = '.';
-            if(tokensLine.ScanState.DecimalPointIsComma)
+            if (tokensLine.ScanState.SpecialNames.DecimalPointIsComma)
             {
                 decimalPoint = ',';
             }
@@ -2169,16 +2169,16 @@ namespace TypeCobol.Compiler.Scanner
                     // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character.
                     // The same symbolic-character can appear only once in a SYMBOLIC CHARACTERS clause.
                     // The symbolic character can be a DBCS user-defined word.
-                    if (tokensLine.ScanState.InsideSymbolicCharacterDefinitions)
+                    if (tokensLine.ScanState.SpecialNames.InsideSymbolicCharacterDefinitions)
                     {
                         // Symbolic character definition
                         tokenType = TokenType.SymbolicCharacter;
-                        tokensLine.ScanState.AddSymbolicCharacter(tokenText);
+                        tokensLine.ScanState.SpecialNames.AddSymbolicCharacter(tokenText);
                     }
-                    else if (tokensLine.ScanState.SymbolicCharacters != null)
+                    else if (tokensLine.ScanState.SpecialNames.SymbolicCharacters != null)
                     {
                         // Try to match a previously defined SymbolicCharacter
-                        if (tokensLine.ScanState.SymbolicCharacters.Contains(tokenText))
+                        if (tokensLine.ScanState.SpecialNames.SymbolicCharacters.Contains(tokenText))
                         {
                             tokenType = TokenType.SymbolicCharacter;
                         }

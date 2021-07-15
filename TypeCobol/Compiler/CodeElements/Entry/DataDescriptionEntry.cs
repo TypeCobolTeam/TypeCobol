@@ -166,6 +166,11 @@ namespace TypeCobol.Compiler.CodeElements {
         /// </summary>
         public AlphanumericValue Picture { get; set; }
 
+        /// <summary>
+        /// Stores the result of Picture validation process
+        /// </summary>
+        internal PictureValidator.Result PictureValidationResult { get; set; }
+
 // [COBOL 2002]        
         /// <summary>
         /// COBOL 2002 TYPE clause.
@@ -466,7 +471,7 @@ namespace TypeCobol.Compiler.CodeElements {
         ///   - Must be subordinate to the subject of the table entry itself
         ///   - Must not be subordinate to, or follow, any other entry that contains an
         ///     OCCURS clause
-        //    - Must not contain an OCCURS clause
+        ///   - Must not contain an OCCURS clause
         ///   data-name-2 must not have subordinate items that contain OCCURS
         ///   DEPENDING ON clauses.
         /// </summary>
