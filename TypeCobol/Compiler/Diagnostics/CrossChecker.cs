@@ -100,8 +100,8 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var performCE = performProcedureNode.CodeElement;
 
-            (performProcedureNode.ProcedureParagraphSymbol, performProcedureNode.ProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.Procedure, _currentSection);
-            (performProcedureNode.ThroughProcedureParagraphSymbol, performProcedureNode.ThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure, _currentSection);
+            (performProcedureNode.ProcedureParagraphSymbol, performProcedureNode.ProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.Procedure, _currentSection);
+            (performProcedureNode.ThroughProcedureParagraphSymbol, performProcedureNode.ThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.ThroughProcedure, _currentSection);
 
             return true;
         }
@@ -110,11 +110,11 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var sortStatement = sort.CodeElement;
 
-            (sort.InputProcedureParagraphSymbol, sort.InputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(sort, sortStatement.InputProcedure, _currentSection);
-            (sort.InputThroughProcedureParagraphSymbol, sort.InputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(sort, sortStatement.ThroughInputProcedure, _currentSection);
+            (sort.InputProcedureParagraphSymbol, sort.InputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.InputProcedure, _currentSection);
+            (sort.InputThroughProcedureParagraphSymbol, sort.InputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughInputProcedure, _currentSection);
 
-            (sort.OutputProcedureParagraphSymbol, sort.OutputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(sort, sortStatement.OutputProcedure, _currentSection);
-            (sort.OutputThroughProcedureParagraphSymbol, sort.OutputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(sort, sortStatement.ThroughOutputProcedure, _currentSection);
+            (sort.OutputProcedureParagraphSymbol, sort.OutputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.OutputProcedure, _currentSection);
+            (sort.OutputThroughProcedureParagraphSymbol, sort.OutputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughOutputProcedure, _currentSection);
 
             return true;
         }
@@ -968,7 +968,7 @@ namespace TypeCobol.Compiler.Diagnostics
     static class SectionOrParagraphUsageChecker
     {
         /// <summary>
-        /// Disambiguate between Section or Paragraph reference.
+        /// Disambiguate between Paragraph or Section reference.
         /// </summary>
         /// <param name="callerNode">Node using the paragraph or the reference.</param>
         /// <param name="target">A Symbol reference to disambiguate.</param>
@@ -976,7 +976,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <returns>A tuple corresponding to the paragraph OR section found.
         /// The returned tuple has one null value and one filled value if the reference is non-ambiguous.</returns>
         /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
-        public static (ParagraphSymbol, SectionSymbol) ResolveSectionOrParagraph(Node callerNode, SymbolReference target, Section currentSection)
+        public static (ParagraphSymbol, SectionSymbol) ResolveParagraphOrSection(Node callerNode, SymbolReference target, Section currentSection)
         {
             if (target == null) return (null, null);
 
