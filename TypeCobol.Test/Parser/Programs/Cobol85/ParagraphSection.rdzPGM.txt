@@ -1,43 +1,79 @@
 --- Diagnostics ---
-Line 19[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[20,24:PAR05]<UserDefinedWord>
-Line 28[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
-Line 31[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[20,24:SEC05]<UserDefinedWord>
-Line 37[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[20,24:SEC07]<UserDefinedWord>
-Line 45[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[20,24:PAR05]<UserDefinedWord>
-Line 54[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
-Line 66[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already declared in procedure-division
-Line 70[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already declared in procedure-division
-Line 76[8,28] <37, Warning, General> - Warning: Section 'SectionEmpty' is empty
-Line 78[8,29] <37, Warning, General> - Warning: Section 'SectionEmpty2' is empty
-Line 87[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
-Line 95[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
-Line 98[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty
-Line 102[8,14] <37, Warning, General> - Warning: Paragraph 'Parag6' is empty
-Line 107[8,13] <37, Warning, General> - Warning: Paragraph 'PAR01' already declared in SEC01
-Line 119[8,13] <37, Warning, General> - Warning: Paragraph 'PAR01' already declared in SEC01
-Line 142[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[20,24:PAR01]<UserDefinedWord>
-Line 145[20,24] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[20,24:PAR02]<UserDefinedWord>
-Line 148[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
-Line 159[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[20,24:PAR01]<UserDefinedWord>
-Line 162[20,24] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[20,24:PAR02]<UserDefinedWord>
-Line 165[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
-Line 174[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
-Line 176[31,35] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[31,35:PAR04]<UserDefinedWord>
-Line 182[8,21] <30, Error, Semantics> - Semantic error: Section SEC04 is also declared as a paragraph
-Line 184[8,13] <30, Error, Semantics> - Semantic error: Paragraph SEC04 is also declared as a section
-Line 189[8,21] <30, Error, Semantics> - Semantic error: Section SEC05 is also declared as a paragraph
-Line 194[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[20,24:SEC05]<UserDefinedWord>
-Line 198[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[20,24:SEC05]<UserDefinedWord>
-Line 202[8,14] <30, Error, Semantics> - Semantic error: Paragraph SEC05 is also declared as a section
-Line 207[21,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[21,25:SEC07]<UserDefinedWord>
-Line 211[8,21] <37, Warning, General> - Warning: Section 'SEC07' already declared
-Line 217[8,21] <37, Warning, General> - Warning: Section 'SEC07' already declared
+Line 31[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[20,24:PAR05]<UserDefinedWord>
+Line 33[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[35,39:PAR05]<UserDefinedWord>
+Line 34[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[36,40:PAR05]<UserDefinedWord>
+Line 49[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
+Line 51[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[35,39:PAR04]<UserDefinedWord>
+Line 52[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[36,40:PAR04]<UserDefinedWord>
+Line 55[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[20,24:SEC05]<UserDefinedWord>
+Line 57[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[35,39:SEC05]<UserDefinedWord>
+Line 58[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[36,40:SEC05]<UserDefinedWord>
+Line 67[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[20,24:SEC07]<UserDefinedWord>
+Line 69[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[35,39:SEC07]<UserDefinedWord>
+Line 70[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[36,40:SEC07]<UserDefinedWord>
+Line 81[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[20,24:PAR05]<UserDefinedWord>
+Line 83[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[35,39:PAR05]<UserDefinedWord>
+Line 84[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[36,40:PAR05]<UserDefinedWord>
+Line 99[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
+Line 101[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[35,39:PAR04]<UserDefinedWord>
+Line 102[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[36,40:PAR04]<UserDefinedWord>
+Line 114[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already declared in procedure-division
+Line 118[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already declared in procedure-division
+Line 124[8,28] <37, Warning, General> - Warning: Section 'SectionEmpty' is empty
+Line 126[8,29] <37, Warning, General> - Warning: Section 'SectionEmpty2' is empty
+Line 135[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
+Line 143[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
+Line 146[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty
+Line 150[8,14] <37, Warning, General> - Warning: Paragraph 'Parag6' is empty
+Line 155[8,13] <37, Warning, General> - Warning: Paragraph 'PAR01' already declared in SEC01
+Line 167[8,13] <37, Warning, General> - Warning: Paragraph 'PAR01' already declared in SEC01
+Line 193[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[20,24:PAR01]<UserDefinedWord>
+Line 195[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[35,39:PAR01]<UserDefinedWord>
+Line 196[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[36,40:PAR01]<UserDefinedWord>
+Line 199[20,24] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[20,24:PAR02]<UserDefinedWord>
+Line 201[35,39] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[35,39:PAR02]<UserDefinedWord>
+Line 202[36,40] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[36,40:PAR02]<UserDefinedWord>
+Line 205[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
+Line 207[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[35,39:PAR03]<UserDefinedWord>
+Line 208[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[36,40:PAR03]<UserDefinedWord>
+Line 225[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[20,24:PAR01]<UserDefinedWord>
+Line 227[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[35,39:PAR01]<UserDefinedWord>
+Line 228[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[36,40:PAR01]<UserDefinedWord>
+Line 231[20,24] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[20,24:PAR02]<UserDefinedWord>
+Line 233[35,39] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[35,39:PAR02]<UserDefinedWord>
+Line 234[36,40] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[36,40:PAR02]<UserDefinedWord>
+Line 237[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
+Line 239[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[35,39:PAR03]<UserDefinedWord>
+Line 240[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[36,40:PAR03]<UserDefinedWord>
+Line 252[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
+Line 254[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[35,39:PAR04]<UserDefinedWord>
+Line 255[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[36,40:PAR04]<UserDefinedWord>
+Line 257[31,35] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[31,35:PAR04]<UserDefinedWord>
+Line 259[46,50] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[46,50:PAR04]<UserDefinedWord>
+Line 260[47,51] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[47,51:PAR04]<UserDefinedWord>
+Line 266[8,21] <30, Error, Semantics> - Semantic error: Section SEC04 is also declared as a paragraph
+Line 268[8,13] <30, Error, Semantics> - Semantic error: Paragraph SEC04 is also declared as a section
+Line 273[8,21] <30, Error, Semantics> - Semantic error: Section SEC05 is also declared as a paragraph
+Line 278[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[20,24:SEC05]<UserDefinedWord>
+Line 280[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[35,39:SEC05]<UserDefinedWord>
+Line 281[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[36,40:SEC05]<UserDefinedWord>
+Line 285[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[20,24:SEC05]<UserDefinedWord>
+Line 287[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[35,39:SEC05]<UserDefinedWord>
+Line 288[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure SEC05 OffendingSymbol=[36,40:SEC05]<UserDefinedWord>
+Line 295[8,14] <30, Error, Semantics> - Semantic error: Paragraph SEC05 is also declared as a section
+Line 300[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[20,24:SEC07]<UserDefinedWord>
+Line 302[35,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[35,39:SEC07]<UserDefinedWord>
+Line 303[36,40] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[36,40:SEC07]<UserDefinedWord>
+Line 307[8,21] <37, Warning, General> - Warning: Section 'SEC07' already declared
+Line 313[8,21] <37, Warning, General> - Warning: Section 'SEC07' already declared
 
 --- Program ---
 PROGRAM: TestingPgm common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
+  Z-SD-1-1-RECORD:Alphanumeric
+  Z-SD-1-1-KEY:Numeric
   Level1:Alphanumeric
   Level2:Alphanumeric
   VarLevel2:Alphanumeric
