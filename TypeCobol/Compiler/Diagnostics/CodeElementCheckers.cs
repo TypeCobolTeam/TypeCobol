@@ -311,7 +311,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (statement.TableToSearch == null) return; // syntax error
             if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea &&
-                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Count > 0)
+                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Length > 0)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(context));
             if (statement.TableToSearch.StorageArea?.ReferenceModifier != null)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier",

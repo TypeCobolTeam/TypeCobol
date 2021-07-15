@@ -375,7 +375,7 @@ namespace TypeCobol.Compiler.Parser
         private static CallTargetParameter CreateCallTargetParameter(ParameterDescriptionEntry param)
         {
             var symbolReference = new SymbolReference(param.DataName);
-            var storageArea = new DataOrConditionStorageArea(symbolReference);
+            var storageArea = new DataOrConditionStorageArea(symbolReference, false);
             var callParameter = new CallTargetParameter {StorageArea = storageArea};
             return callParameter;
         }

@@ -276,7 +276,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
                 // TODO : Handle the case of sub-tables
-                if (variableStorageArea?.Subscripts.Count == 1)
+                if (variableStorageArea?.Subscripts.Length == 1)
                 {
                     ////////// WHEN must use one of the declared keys (ascending or descending) //////////
                     var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
@@ -800,6 +800,12 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void CheckSubscripts(Node node, DataOrConditionStorageArea dataOrConditionStorageArea, DataDefinition dataDefinition)
         {
+            if (dataOrConditionStorageArea.IsPartOfFunctionArgument)
+            {
+                //Avoid checking uncertain subscripts, see issue #2001
+                return;
+            }
+
             switch (node.CodeElement?.Type)
             {
                 //Those have their own specific subscript checking
@@ -823,21 +829,21 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (dataOrConditionStorageArea.Subscripts.Count < tableDefinitions.Count)
+            if (dataOrConditionStorageArea.Subscripts.Length < tableDefinitions.Count)
             {
                 //Not enough subscripts
                 DiagnosticUtils.AddError(node, $"Not enough subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
                 return;
             }
 
-            if (dataOrConditionStorageArea.Subscripts.Count > tableDefinitions.Count)
+            if (dataOrConditionStorageArea.Subscripts.Length > tableDefinitions.Count)
             {
                 //Too many subscripts
                 DiagnosticUtils.AddError(node, $"Too many subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
                 return;
             }
 
-            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Count; i++)
+            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
             {
                 var subscript = dataOrConditionStorageArea.Subscripts[i];
                 tableDefinition = tableDefinitions[tableDefinitions.Count - 1 - i];//OCCURS are stored in reverse order
