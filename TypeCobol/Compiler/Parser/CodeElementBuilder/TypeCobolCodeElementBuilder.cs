@@ -123,9 +123,14 @@ namespace TypeCobol.Compiler.Parser
             parameter.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
             if (context.pictureClause() != null)
             {
-                parameter.Picture =
-                    CobolWordsBuilder.CreateAlphanumericValue(context.pictureClause().pictureCharacterString);
-                parameter.DataType = DataType.Create(parameter.Picture.Value);
+                var pictureClauseContext = context.pictureClause();
+                if (pictureClauseContext.pictureCharacterString != null)
+                {
+                    System.Diagnostics.Debug.Assert(pictureClauseContext.pictureCharacterString is Token);
+                    //TokenType is PictureCharacterString so it's ok to create an AlphanumericValue
+                    parameter.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
+                    parameter.DataType = DataType.Create(parameter.Picture.Value);
+                }
             }
             else if (context.cobol2002TypeClause() != null)
             {
