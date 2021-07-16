@@ -108,20 +108,24 @@ namespace TypeCobol.Compiler.CodeElements
 	/// defined special registers (see list in a comment just below).
 	/// </summary>
 	public class DataOrConditionStorageArea: StorageArea {
-        public DataOrConditionStorageArea(SymbolReference symbolReference)
-				: base(StorageAreaKind.DataOrCondition) {
-			SymbolReference = symbolReference;
-			Subscripts = new List<SubscriptExpression>();
+        public DataOrConditionStorageArea(SymbolReference symbolReference, bool isPartOfFunctionArgument)
+            : this(symbolReference, new SubscriptExpression[0], isPartOfFunctionArgument)
+        {
+
         }
 
-		public DataOrConditionStorageArea(SymbolReference subscriptedSymbolReference, SubscriptExpression[] subscripts)
-				: base(StorageAreaKind.DataOrCondition) {
-			SymbolReference = subscriptedSymbolReference;
-			Subscripts = new List<SubscriptExpression>(subscripts);
+		public DataOrConditionStorageArea(SymbolReference symbolReference, SubscriptExpression[] subscripts, bool isPartOfFunctionArgument)
+            : base(StorageAreaKind.DataOrCondition)
+        {
+			SymbolReference = symbolReference;
+			Subscripts = subscripts;
+            IsPartOfFunctionArgument = isPartOfFunctionArgument;
         }
+
+        public bool IsPartOfFunctionArgument { get; }
 
         [NotNull]
-		public List<SubscriptExpression> Subscripts { get; private set; }
+		public SubscriptExpression[] Subscripts { get; }
 
         /// <summary>Ambiguities in the grammar in the first phase of parsing</summary>
 		public SymbolType AlternativeSymbolType {
@@ -168,7 +172,7 @@ namespace TypeCobol.Compiler.CodeElements
                         str.Append(SymbolReference.Name);
                     }
                 }
-                if (Subscripts.Count > 0)
+                if (Subscripts.Length > 0)
                 {
                     str.Append('(');
                     foreach (var subscript in Subscripts)

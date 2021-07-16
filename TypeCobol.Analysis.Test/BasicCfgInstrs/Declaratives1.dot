@@ -38,10 +38,10 @@ Block9 [
 label = "{EMPL-FOOT-USE. Block9|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block10 [
-label = "{EMPL-FOOT-PROC. Block10|MOVE NUM TO NBJ\l}"
+label = "{EMPL-FOOT-PROC. Block10|MOVE NUM(1) TO NBJ(1)\l}"
 ]
 Block11 [
-label = "{EMPL-FOOT-PROC. Block11|MOVE NBJ TO NUM\l}"
+label = "{EMPL-FOOT-PROC. Block11|MOVE NBJ(2) TO NUM(2)\l}"
 ]
 Block12 [
 label = "{EMPL-FOOT-EXIT. Block12|EXIT\l}"
@@ -50,10 +50,10 @@ Block13 [
 label = "{DEPT-FOOT-USE. Block13|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block14 [
-label = "{DEPT-FOOT-PROC. Block14|MOVE NUM TO NBJ\l}"
+label = "{DEPT-FOOT-PROC. Block14|MOVE NUM(3) TO NBJ(3)\l}"
 ]
 Block15 [
-label = "{DEPT-FOOT-PROC. Block15|MOVE NBJ TO NUM\l}"
+label = "{DEPT-FOOT-PROC. Block15|MOVE NBJ(4) TO NUM(4)\l}"
 ]
 Block16 [
 label = "{DEPT-FOOT-EXIT. Block16|EXIT\l}"
@@ -71,10 +71,10 @@ subgraph cluster_1{
 color = blue;
 label = "COMP-FOOT-CALC";
 Block27 [
-label = "{COMP-FOOT-CALC. Block27|MOVE NUM TO NBJ\l}"
+label = "{COMP-FOOT-CALC. Block27|MOVE NUM(5) TO NBJ(5)\l}"
 ]
 Block28 [
-label = "{COMP-FOOT-CALC. Block28|MOVE NBJ TO NUM\l}"
+label = "{COMP-FOOT-CALC. Block28|MOVE NBJ(6) TO NUM(6)\l}"
 ]
 
 }
