@@ -78,6 +78,7 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
+        //For error messages
         private string SC2String(SC sc)
         {
             switch (sc)
@@ -109,9 +110,9 @@ namespace TypeCobol.Compiler.Types
                 case SC.SLASH:
                     return "/";
                 case SC.COMMA:
-                    return ",";
+                    return _decimalPointIsComma ? "." : ",";
                 case SC.DOT:
-                    return ".";
+                    return _decimalPointIsComma ? "," : ".";
                 case SC.PLUS:
                     return "+";
                 case SC.MINUS:
@@ -127,32 +128,6 @@ namespace TypeCobol.Compiler.Types
                     return "DB";
                 default:
                     throw new NotSupportedException($"Unknown '{sc}' special character.");
-            }
-        }
-
-        private bool IsDecimalPoint(SC sc)
-        {
-            switch (sc)
-            {
-                case SC.DOT:
-                    return DecimalPoint == '.';
-                case SC.COMMA:
-                    return DecimalPoint == ',';
-                default:
-                    return false;
-            }
-        }
-
-        private bool IsNumericSeparator(SC sc)
-        {
-            switch (sc)
-            {
-                case SC.DOT:
-                    return NumericSeparator == '.';
-                case SC.COMMA:
-                    return NumericSeparator == ',';
-                default:
-                    return false;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -64,18 +65,35 @@ namespace TypeCobol.Compiler.Types
             }
             _currencyDescriptor = null;
 
-            Picture = picture;
-            IsSeparateSign = separateSign;
-            if (decimalPointIsComma)
+            _decimalPointIsComma = decimalPointIsComma;
+            if (_decimalPointIsComma)
             {
-                DecimalPoint = ',';
-                NumericSeparator = '.';
+                //Swap '.' and ',' in original picture
+                var pictureBuilder = new StringBuilder();
+                foreach (char c in picture)
+                {
+                    switch (c)
+                    {
+                        case '.':
+                            pictureBuilder.Append(',');
+                            break;
+                        case ',':
+                            pictureBuilder.Append('.');
+                            break;
+                        default:
+                            pictureBuilder.Append(c);
+                            break;
+                    }
+                }
+
+                Picture = pictureBuilder.ToString();
             }
             else
             {
-                DecimalPoint = '.';
-                NumericSeparator = ',';
+                Picture = picture;
             }
+
+            IsSeparateSign = separateSign;
         }
 
         /// <summary>
@@ -95,14 +113,9 @@ namespace TypeCobol.Compiler.Types
         private CurrencyDescriptor _currencyDescriptor;
 
         /// <summary>
-        /// The decimal point character
+        /// Comma and Dot swapped ?
         /// </summary>
-        public char DecimalPoint { get; }
-
-        /// <summary>
-        /// The Numeric Separator
-        /// </summary>
-        public char NumericSeparator { get; }
+        private readonly bool _decimalPointIsComma;
 
         /// <summary>
         /// Determines whether the picture string of this instance is valid or not.
@@ -263,7 +276,7 @@ namespace TypeCobol.Compiler.Types
         /// <returns>true if yes, false otherwise</returns>
         private bool IsSimpleInsertionCharacter(SC c)
         {
-            return c == SC.B || c == SC.ZERO || c == SC.SLASH || IsNumericSeparator(c);
+            return c == SC.B || c == SC.ZERO || c == SC.SLASH || c == SC.COMMA;
         }
 
         /// <summary>
@@ -456,7 +469,7 @@ namespace TypeCobol.Compiler.Types
                 return;
             }
 
-            if (!(i < sequence.Length && (IsDecimalPoint(sequence[i].SpecialChar) || sequence[i].SpecialChar == SC.V)))
+            if (!(i < sequence.Length && (sequence[i].SpecialChar == SC.DOT || sequence[i].SpecialChar == SC.V)))
             {//The last index does not precede the DecimalPoint separator position
                 return;
             }
