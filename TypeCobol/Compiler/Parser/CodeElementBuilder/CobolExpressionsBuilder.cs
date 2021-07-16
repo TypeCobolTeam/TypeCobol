@@ -669,11 +669,13 @@ namespace TypeCobol.Compiler.Parser
 					ParseTreeUtils.GetFirstToken(context.NOT()));
 			}
 
+			var dataItemStorageArea = CreateIdentifier(context.identifier());
+
 			ClassCondition classCondition = null;
 			if(context.characterClassNameReference() != null)
 			{
 				classCondition = new ClassCondition(
-					new ConditionOperand(new Variable(CreateIdentifier(context.identifier()))),
+					new ConditionOperand(new Variable(dataItemStorageArea)),
 					CobolWordsBuilder.CreateCharacterClassNameReference(context.characterClassNameReference()), 
 					invertResult);
 			}
@@ -705,16 +707,15 @@ namespace TypeCobol.Compiler.Parser
 					ParseTreeUtils.GetFirstToken(context.dataItemContentType()));
 
 				classCondition = new ClassCondition(
-					new ConditionOperand(new Variable(CreateIdentifier(context.identifier()))),
+					new ConditionOperand(new Variable(dataItemStorageArea)),
 					dataItemContentType,
 					invertResult);
 			}
 
             // Collect storage area read/writes at the code element level
-            if (classCondition.DataItem != null)
+            if (dataItemStorageArea != null)
             {
-                Debug.Assert(classCondition.DataItem.Variable?.StorageArea != null); // This is how we created it above
-                this.storageAreaReads.Add(classCondition.DataItem.Variable.StorageArea);
+                this.storageAreaReads.Add(dataItemStorageArea);
             }
 
             return classCondition;
