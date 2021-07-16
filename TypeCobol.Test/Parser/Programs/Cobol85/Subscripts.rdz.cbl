@@ -21,8 +21,10 @@
       *OK
            MOVE item OF tab1 (1)          TO elt
            MOVE item OF tab2 (1, 2, 3)    TO elt
+           MOVE item OF tab2 (1 2 3)      TO elt
            MOVE item OF tab1 (10)         TO elt
            MOVE item OF tab2 (10, 20, 30) TO elt
+           MOVE item OF tab2 (10 20 30)   TO elt
            MOVE item OF tab3 (9999999999) TO elt
       *KO
            MOVE item OF tab1 (0)          TO elt
