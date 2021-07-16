@@ -154,21 +154,29 @@ SignCondition: X IS NOT Zero ? →
     ConditionOperand: X →
         NumericVariable: X
 ________________________________________
-ClassCondition: Var-txt Numeric ?
+ClassCondition: Var-txt Numeric ? →
+    ConditionOperand: Var-txt
 ________________________________________
-ClassCondition: Var-txt Alphabetic ?
+ClassCondition: Var-txt Alphabetic ? →
+    ConditionOperand: Var-txt
 ________________________________________
-ClassCondition: Var-txt AlphabeticLower ?
+ClassCondition: Var-txt AlphabeticLower ? →
+    ConditionOperand: Var-txt
 ________________________________________
-ClassCondition: Var-txt AlphabeticUpper ?
+ClassCondition: Var-txt AlphabeticUpper ? →
+    ConditionOperand: Var-txt
 ________________________________________
-ClassCondition: Var-DBCS DBCS ?
+ClassCondition: Var-DBCS DBCS ? →
+    ConditionOperand: Var-DBCS
 ________________________________________
-ClassCondition: Var-DBCS Kanji ?
+ClassCondition: Var-DBCS Kanji ? →
+    ConditionOperand: Var-DBCS
 ________________________________________
-ClassCondition: Var-txt MYCLASS ?
+ClassCondition: Var-txt MYCLASS ? →
+    ConditionOperand: Var-txt
 ________________________________________
-ClassCondition: Var-txt NOT Numeric ?
+ClassCondition: Var-txt NOT Numeric ? →
+    ConditionOperand: Var-txt
 ________________________________________
 ConditionNameConditionOrSwitchStatusCondition: GREEN
 ________________________________________
