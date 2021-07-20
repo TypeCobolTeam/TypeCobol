@@ -1,2 +1,2 @@
 --- Diagnostics ---
-Line 27[15,29] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.
+Line 27[15,29] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.

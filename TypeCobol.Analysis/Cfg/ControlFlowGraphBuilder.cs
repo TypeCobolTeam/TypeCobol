@@ -1330,7 +1330,7 @@ namespace TypeCobol.Analysis.Cfg
         private void CreateOptionalDiagnostics()
         {
             //BasicBlockGroupGoesBeyondTheLimit
-            if (this.Cfg.PrematurePerformExits != null)
+            if (_compilerOptions.CheckPerformPrematureExits.IsActive && this.Cfg.PrematurePerformExits != null)
             {
                 foreach (var prematurePerformExit in this.Cfg.PrematurePerformExits)
                 {
@@ -1341,7 +1341,7 @@ namespace TypeCobol.Analysis.Cfg
                         string offendingStatement = offendingInstruction.CodeElement.SourceText;
                         int offendingLine = offendingInstruction.CodeElement.Line;
                         int offendingColumn = offendingInstruction.CodeElement.Column;
-                        Diagnostic d = new Diagnostic(MessageCode.Warning, perform.CodeElement.Position(),
+                        Diagnostic d = new Diagnostic(_compilerOptions.CheckPerformPrematureExits.GetMessageCode(), perform.CodeElement.Position(),
                             string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
                         AddDiagnostic(d);
                     }
@@ -1349,20 +1349,20 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             //BadPerformProcedureThru
-            if (this.Cfg.WrongOrderPerformThrus != null)
+            if (_compilerOptions.CheckPerformThruOrder.IsActive && this.Cfg.WrongOrderPerformThrus != null)
             {
                 foreach (var wrongOrderPerformThru in this.Cfg.WrongOrderPerformThrus)
                 {
                     var procedure = wrongOrderPerformThru.Value.Item1;
                     var throughProcedure = wrongOrderPerformThru.Value.Item2;
-                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, wrongOrderPerformThru.Key.CodeElement.Position(),
+                    Diagnostic d = new Diagnostic(_compilerOptions.CheckPerformThruOrder.GetMessageCode(), wrongOrderPerformThru.Key.CodeElement.Position(),
                         string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
                     AddDiagnostic(d);
                 }
             }
 
             //RecursiveBlockOnPerformProcedure
-            if (this.Cfg.RecursivePerforms != null)
+            if (_compilerOptions.CheckRecursivePerforms.IsActive && this.Cfg.RecursivePerforms != null)
             {
                 foreach (var recursivePerform in this.Cfg.RecursivePerforms)
                 {
@@ -1376,7 +1376,7 @@ namespace TypeCobol.Analysis.Cfg
                             : procedureReference.ToString();
                         System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
                         string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, perform.CodeElement.Position(),
+                        Diagnostic d = new Diagnostic(_compilerOptions.CheckRecursivePerforms.GetMessageCode(), perform.CodeElement.Position(),
                             string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
                         AddDiagnostic(d);
                     }
