@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Analysis.Graph
 {
@@ -121,6 +122,25 @@ namespace TypeCobol.Analysis.Graph
         public N ProcedureDivisionNode { get; private set; }
 
         /// <summary>
+        /// All PERFORMs found in the program which may be prematurely exited. Null if no such perform found.
+        /// Key is the PERFORM statement which is prematurely ended, value is the list of all the instructions that break the flow of this PERFORM.
+        /// </summary>
+        public Dictionary<PerformProcedure, List<N>> PrematurePerformExits { get; private set; }
+
+        /// <summary>
+        /// All PERFORM THRUs found in the program which are using incorrect order for their starting and ending procedures. Null if no such perform found.
+        /// Key is the PERFORM THRU statement which has wrong procedure order, the tuple contains the resolved paragraph or section nodes.
+        /// First item is the start of range (before THRU), second item is the end of range (after THRU). So Item1 is declared after Item2 in program.
+        /// </summary>
+        public Dictionary<PerformProcedure, Tuple<N, N>> WrongOrderPerformThrus { get; private set; }
+
+        /// <summary>
+        /// All recursive PERFORMs found in the program. Null if no such perform found.
+        /// Key is the recursive PERFORM statement, value is the list of all detected instructions that lead to recursion.
+        /// </summary>
+        public Dictionary<PerformProcedure, List<N>> RecursivePerforms { get; private set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="programOrFunctionNode">The program of function node of the graph.</param>
@@ -158,6 +178,67 @@ namespace TypeCobol.Analysis.Graph
         public bool IsInitialized => ProcedureDivisionNode != null;
 
         /// <summary>
+        /// Register an instruction that make a perform statement go out of its boundaries.
+        /// </summary>
+        /// <param name="perform">Perform node</param>
+        /// <param name="exitingInstruction">Exiting instruction</param>
+        internal void AddPrematureExitForPerformStatement(PerformProcedure perform, N exitingInstruction)
+        {
+            if (PrematurePerformExits == null)
+            {
+                PrematurePerformExits = new Dictionary<PerformProcedure, List<N>>();
+            }
+
+            if (PrematurePerformExits.TryGetValue(perform, out var nodes))
+            {
+                nodes.Add(exitingInstruction);
+            }
+            else
+            {
+                PrematurePerformExits.Add(perform, new List<N>(){ exitingInstruction });
+            }
+        }
+
+        /// <summary>
+        /// Register a Perform Thru with incorrect order of its target procedures.
+        /// </summary>
+        /// <param name="performThru">Perform node</param>
+        /// <param name="procedure">Target procedure node</param>
+        /// <param name="throughProcedure">Target THRU procedure node</param>
+        internal void AddWrongOrderPerformThru(PerformProcedure performThru, N procedure, N throughProcedure)
+        {
+            if (WrongOrderPerformThrus == null)
+            {
+                WrongOrderPerformThrus = new Dictionary<PerformProcedure, Tuple<N, N>>();
+            }
+
+            System.Diagnostics.Debug.Assert(!WrongOrderPerformThrus.ContainsKey(performThru));
+            WrongOrderPerformThrus.Add(performThru, new Tuple<N, N>(procedure, throughProcedure));
+        }
+
+        /// <summary>
+        /// Register a recursive jump for a perform statement.
+        /// </summary>
+        /// <param name="perform">Perform node</param>
+        /// <param name="recursiveJump">Recursive jump node</param>
+        internal void AddRecursivePerform(PerformProcedure perform, N recursiveJump)
+        {
+            if (RecursivePerforms == null)
+            {
+                RecursivePerforms = new Dictionary<PerformProcedure, List<N>>();
+            }
+
+            if (RecursivePerforms.TryGetValue(perform, out var nodes))
+            {
+                nodes.Add(recursiveJump);
+            }
+            else
+            {
+                RecursivePerforms.Add(perform, new List<N>() { recursiveJump });
+            }
+        }
+
+        /// <summary>
         /// Set up the Predecessor Edges list starting from the root block.	
         /// </summary>
         public void SetupPredecessorEdgesFromRoot()
@@ -172,7 +253,7 @@ namespace TypeCobol.Analysis.Graph
         /// Set up the Predecessor Edges list starting from a given start block.	
         /// </summary>	
         /// <param name="start">The start block.</param>	
-        private void SetupPredecessorEdgesFromStart(BasicBlock<N, D> start)
+        internal void SetupPredecessorEdgesFromStart(BasicBlock<N, D> start)
         {
             if (this.PredecessorEdges != null || this.SuccessorEdges == null)
                 return;
@@ -226,7 +307,7 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// Clear previous analysis data for all blocks.
         /// </summary>
-        public void ResetAllBlockData()
+        internal void ResetAllBlockData()
         {
             foreach (var block in AllBlocks)
             {

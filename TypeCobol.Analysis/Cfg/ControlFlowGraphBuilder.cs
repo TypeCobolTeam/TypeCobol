@@ -937,8 +937,8 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The node using the target procedure.</param>
         /// <param name="sectionNode">The section node in which the caller node appears.</param>
         /// <param name="symRef">The SymbolReference to resolve.</param>
-        /// <returns>An instance of Procedure or null if no matching procedure has been found.</returns>
-        private Procedure ResolveProcedure(Node node, SectionNode sectionNode, SymbolReference symRef)
+        /// <returns>The matched procedure node if any.</returns>
+        private Node ResolveProcedure(Node node, SectionNode sectionNode, SymbolReference symRef)
         {
             var candidates = node.SymbolTable.GetSectionOrParagraph(symRef, sectionNode);
             var section = GetUnique(candidates.Item1);
@@ -954,10 +954,8 @@ namespace TypeCobol.Analysis.Cfg
                 procedureNode = section;
             }
 
-            if (procedureNode == null) return null;
-
-            System.Diagnostics.Debug.Assert(_nodeToProcedure.ContainsKey(procedureNode));
-            return _nodeToProcedure[procedureNode];
+            System.Diagnostics.Debug.Assert(procedureNode == null || _nodeToProcedure.ContainsKey(procedureNode));
+            return procedureNode;
 
             T GetUnique<T>(IList<T> list) where T : Node
             {
@@ -988,23 +986,23 @@ namespace TypeCobol.Analysis.Cfg
             SymbolReference procedureReference = p.CodeElement.Procedure;
             SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
 
-            Procedure procedure = ResolveProcedure(p, sectionNode, procedureReference);
-            if (procedure == null)
+            Node procedureNode = ResolveProcedure(p, sectionNode, procedureReference);
+            if (procedureNode == null)
                 return;
 
+            Procedure procedure = _nodeToProcedure[procedureNode];
             var clonedBlocksIndexMap = new Dictionary<int, int>();
             if (throughProcedureReference != null)
             {
-                Procedure throughProcedure = ResolveProcedure(p, sectionNode, throughProcedureReference);
-                if (throughProcedure == null)
+                Node throughProcedureNode = ResolveProcedure(p, sectionNode, throughProcedureReference);
+                if (throughProcedureNode == null)
                     return;
 
+                Procedure throughProcedure = _nodeToProcedure[throughProcedureNode];
                 if (procedure.Number > throughProcedure.Number)
                 {
                     // the second procedure name is declared before the first one.
-                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, p.CodeElement.Position(),
-                        string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
-                    AddDiagnostic(d);
+                    this.Cfg.AddWrongOrderPerformThru(p, procedureNode, throughProcedureNode);
                     return;
                 }
 
@@ -1047,18 +1045,11 @@ namespace TypeCobol.Analysis.Cfg
                             //Is there a recursion in the graph ?
                             if (group.RecursivityGroupSet.Get(group0.GroupIndex) && !group0.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
                             {
-                                //Flag and report recursivity diagnostic
+                                //Flag group and store recursive perform
                                 group0.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
-                                string performTarget = throughProcedureReference != null
-                                    ? $"{procedureReference} THRU {throughProcedureReference}"
-                                    : procedureReference.ToString();
                                 Node offendingInstruction = group0.Instructions.Last.Value;
                                 System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                                System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
-                                string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, p.CodeElement.Position(),
-                                    string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
-                                AddDiagnostic(d);
+                                this.Cfg.AddRecursivePerform(p, offendingInstruction);
                             }
 
                             var clonedGroup0 = clonedPerforms
@@ -1156,13 +1147,7 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     Node offendingInstruction = clonedBlock.Instructions.Last.Value;
                     System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                    System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
-                    string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                    int offendingLine = offendingInstruction.CodeElement.Line;
-                    int offendingColumn = offendingInstruction.CodeElement.Column;
-                    Diagnostic d = new Diagnostic(MessageCode.Warning, p.CodeElement.Position(),
-                        string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
-                    AddDiagnostic(d);
+                    this.Cfg.AddPrematureExitForPerformStatement(p, offendingInstruction);
                 }
             }
         }
@@ -1336,6 +1321,63 @@ namespace TypeCobol.Analysis.Cfg
             }
         }
 
+        private void CreateOptionalDiagnostics()
+        {
+            //BasicBlockGroupGoesBeyondTheLimit
+            if (this.Cfg.PrematurePerformExits != null)
+            {
+                foreach (var prematurePerformExit in this.Cfg.PrematurePerformExits)
+                {
+                    var perform = prematurePerformExit.Key;
+                    foreach (var offendingInstruction in prematurePerformExit.Value)
+                    {
+                        System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
+                        string offendingStatement = offendingInstruction.CodeElement.SourceText;
+                        int offendingLine = offendingInstruction.CodeElement.Line;
+                        int offendingColumn = offendingInstruction.CodeElement.Column;
+                        Diagnostic d = new Diagnostic(MessageCode.Warning, perform.CodeElement.Position(),
+                            string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
+                        AddDiagnostic(d);
+                    }
+                }
+            }
+
+            //BadPerformProcedureThru
+            if (this.Cfg.WrongOrderPerformThrus != null)
+            {
+                foreach (var wrongOrderPerformThru in this.Cfg.WrongOrderPerformThrus)
+                {
+                    var procedure = wrongOrderPerformThru.Value.Item1;
+                    var throughProcedure = wrongOrderPerformThru.Value.Item2;
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, wrongOrderPerformThru.Key.CodeElement.Position(),
+                        string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
+                    AddDiagnostic(d);
+                }
+            }
+
+            //RecursiveBlockOnPerformProcedure
+            if (this.Cfg.RecursivePerforms != null)
+            {
+                foreach (var recursivePerform in this.Cfg.RecursivePerforms)
+                {
+                    var perform = recursivePerform.Key;
+                    SymbolReference procedureReference = perform.CodeElement.Procedure;
+                    SymbolReference throughProcedureReference = perform.CodeElement.ThroughProcedure;
+                    foreach (var offendingInstruction in recursivePerform.Value)
+                    {
+                        string performTarget = throughProcedureReference != null
+                            ? $"{procedureReference} THRU {throughProcedureReference}"
+                            : procedureReference.ToString();
+                        System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
+                        string offendingStatement = offendingInstruction.CodeElement.SourceText;
+                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, perform.CodeElement.Position(),
+                            string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
+                        AddDiagnostic(d);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Leaving a PROCEDURE DIVISION
         /// </summary>
@@ -1357,6 +1399,8 @@ namespace TypeCobol.Analysis.Cfg
             ResolvePendingPERFORMProcedures();
             //Handle Iterative Perform Procedure Having an AFTER clause
             HandlePerformsWithTestAfter();
+            //Create optional diagnostics
+            CreateOptionalDiagnostics();
 
             this.CurrentProgramCfgBuilder.EndCfg(procDiv);
         }
@@ -1373,8 +1417,11 @@ namespace TypeCobol.Analysis.Cfg
             HashSet<Procedure> targetProcedures = new HashSet<Procedure>();
             foreach (var sref in target)
             {
-                Procedure targetProcedure = ResolveProcedure(@goto, sectionNode, sref);
-                if (targetProcedure != null && !targetProcedures.Contains(targetProcedure))
+                Node targetProcedureNode = ResolveProcedure(@goto, sectionNode, sref);
+                if (targetProcedureNode == null) continue;
+
+                Procedure targetProcedure = _nodeToProcedure[targetProcedureNode];
+                if (!targetProcedures.Contains(targetProcedure))
                 {
                     targetProcedures.Add(targetProcedure);
 
@@ -2175,17 +2222,18 @@ namespace TypeCobol.Analysis.Cfg
                         SymbolReference targetProcReference = alterGoto.NewTargetProcedure;
                         
                         //So lookup the paragraph
-                        Procedure alterProc = ResolveProcedure(alter, sectionNode, alterProcReference);
-                        if (alterProc == null)
+                        Node alterProcNode = ResolveProcedure(alter, sectionNode, alterProcReference);
+                        if (alterProcNode == null)
                             continue;
 
                         //So also Resolve the target.
-                        Procedure targetProc = ResolveProcedure(alter, sectionNode, targetProcReference);
-                        if (targetProc == null)
+                        Node targetProcNode = ResolveProcedure(alter, sectionNode, targetProcReference);
+                        if (targetProcNode == null)
                             continue;
 
                         //So Look for the first Goto Instruction
                         //The first instruction of the altered procedure must be a GOTO instruction (without DEPENDING ON)
+                        Procedure alterProc = _nodeToProcedure[alterProcNode];
                         bool targetGotoResolved = false;
                         var instructions = alterProc.FirstOrDefault()?.FirstBlock?.Instructions;
                         if (instructions != null && instructions.Count > 0)
@@ -2213,6 +2261,7 @@ namespace TypeCobol.Analysis.Cfg
 
                         if (!targetGotoResolved)
                         {
+                            //Not an optional diag, this is always a compiler error
                             Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, alter.CodeElement.Position(), Resource.BadAlterIntrWithNoSiblingGotoInstr);
                             AddDiagnostic(d);
                         }
