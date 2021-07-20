@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using SectionNode = TypeCobol.Compiler.Nodes.Section;
@@ -18,6 +19,8 @@ namespace TypeCobol.Analysis.Cfg
     /// </summary>
     public partial class ControlFlowGraphBuilder<D> : SyntaxDrivenAnalyzerBase
     {
+        private readonly TypeCobolOptions _compilerOptions;
+
         /// <summary>
         /// Control how the blocks targeted by a PERFORM are handled.
         /// True : blocks are cloned each time a perform uses them, False we keep reference to a block group
@@ -161,12 +164,14 @@ namespace TypeCobol.Analysis.Cfg
         /// Initial constructor. Allows to configure CFG building.
         /// </summary>
         /// <param name="identifier">String identifier of this analyzer-builder.</param>
+        /// <param name="compilerOptions">Compiler options</param>
         /// <param name="extendPerformTargets">True to extend the blocks targeted by PERFORM statements.</param>
         /// <param name="useEvaluateCascade">True to convert EVALUATE statements into cascaded-IFs.</param>
         /// <param name="useSearchCascade">True to convert SEARCH statements into cascaded-IFs.</param>
-        protected ControlFlowGraphBuilder(string identifier, bool extendPerformTargets, bool useEvaluateCascade, bool useSearchCascade)
+        protected ControlFlowGraphBuilder(string identifier, TypeCobolOptions compilerOptions, bool extendPerformTargets, bool useEvaluateCascade, bool useSearchCascade)
             : base(identifier)
         {
+            this._compilerOptions = compilerOptions;
             this.Graphs = new List<ControlFlowGraph<Node, D>>();
             this.AddDiagnostic = DiagnosticList.Add;
             this.AllProcedures = new List<Procedure>();
@@ -184,6 +189,7 @@ namespace TypeCobol.Analysis.Cfg
         private ControlFlowGraphBuilder(ControlFlowGraphBuilder<D> builder, bool asParent)
             : base(null) // Identifier of a child CFG builder won't be used so it's ok to pass null.
         {
+            this._compilerOptions = builder._compilerOptions;
             this.Graphs = builder.Graphs;
             this.AddDiagnostic = builder.AddDiagnostic;
             this.AllProcedures = new List<Procedure>();
