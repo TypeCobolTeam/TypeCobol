@@ -22,18 +22,12 @@ namespace TypeCobol.Compiler.Types
         private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
         private const string MULTIPLE_CURRENCIES_IN_SAME_PICTURE = "Cannot mix currency symbols in a PICTURE string: '{0}' symbol was not expected";
         private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
-        private const string SYMBOL_S_MUST_OCCUR_ONLY_ONCE = "Character S must be repeated only once in PICTURE string";
         private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
         private const string MULTIPLE_V = "V must appears only once in a PICTURE string";
         private const string WRONG_P_POSITION = "P must appears at the head or tail position of a PICTURE string";
         private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string";
-        private const string MORE_THAN_ONE_E_CHARACTER = "Only one occurrence of E symbol can appear in a PICTURE string";
-        private const string MORE_THAN_ONE_CR_CHARACTER = "Only one occurrence of CR symbol can appear in a PICTURE string";
-        private const string MORE_THAN_ONE_DB_CHARACTER = "Only one occurrence of DB symbol can appear in a PICTURE string";
-        private const string MORE_THAN_ONE_S_CHARACTER = "Only one occurrence of S symbol can appear in a PICTURE string";
-        private const string MORE_THAN_ONE_V_CHARACTER = "Only one occurrence of V symbol can appear in a PICTURE string";
-        private const string MORE_THAN_ONE_DOT_CHARACTER = "Only one occurrence of '.' symbol can appear in a PICTURE string";
-        private const string MUTUALLY_EXCLUSIVE_SYMBOLS = "+/-/CR/DB are mutually exclusive";
+        private const string SYMBOL_CAN_APPEAR_ONLY_ONCE = "Only one occurrence of '{0}' symbol can appear in a PICTURE string";
+        private const string AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT = "At least one of symbols A, G, N, X, Z, 9, or *, or at least two of symbols +, -, or CS must be present";
 
         /// <summary>
         /// Picture string constructor.
@@ -132,7 +126,7 @@ namespace TypeCobol.Compiler.Types
             if (matches == null || matches.Count == 0) return new Result();
 
             //Build Character sequence
-            Character[] sequence = CollectPictureSequence(matches, validationMessages);
+            Character[] sequence = CollectPictureSequence(matches, validationMessages, out var symbolCounts);
             if (validationMessages.Count > 0) return new Result(sequence, _currencyDescriptor);
 
             //Validate the sequence
@@ -285,29 +279,20 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="matches">All Picture items matched</param>
         /// <param name="validationMessages">List of error messages</param>
+        /// <param name="symbolCounts">[out] Symbol count dictionary</param>
         /// <returns>The list of picture item sequence</returns>
-        private Character[] CollectPictureSequence(List<Tuple<string, int>> matches, List<string> validationMessages)
+        private Character[] CollectPictureSequence(List<Tuple<string, int>> matches, List<string> validationMessages, out IDictionary<SC, int> symbolCounts)
         {
+            symbolCounts = Enum.GetValues(typeof(SC)).Cast<SC>().ToDictionary(sc => sc, sc => 0);
             List<Character> sequence = new List<Character>();
-            Character prevChar = null;//Previous char so that we can accumulate consecutive same characters.
-            int cr_count = 0;
-            int db_count = 0;
-            int e_count = 0;
-            int s_count = 0;
-            int v_count = 0;
-            int dot_count = 0;
-
-            bool foundCR = false;
-            bool foundDB = false;
-            bool foundPlus = false;
-            bool foundMinus = false;
-
+            Character prevChar = null; //Previous char so that we can accumulate consecutive same characters.
             foreach (var m in matches)
             {
                 string ch = m.Item1;
                 int count = m.Item2;
                 if (count == 0)
-                {//Count cannot be 0.
+                {
+                    //Count cannot be 0.
                     validationMessages.Add(SYMBOL_COUNT_CANNOT_BE_ZERO);
                 }
 
@@ -330,7 +315,7 @@ namespace TypeCobol.Compiler.Types
                         }
                         else
                         {
-                            //Error, cannot use different currency symbols
+                            //Error, cannot mix different currency symbols
                             validationMessages.Add(string.Format(MULTIPLE_CURRENCIES_IN_SAME_PICTURE, c));
                             continue;
                         }
@@ -346,6 +331,9 @@ namespace TypeCobol.Compiler.Types
                     sc = SC.DB;
                 else
                     throw new InvalidOperationException();//Should never arrive
+
+                //Accumulate symbol with previous or create new Character
+                symbolCounts[sc] += count;
                 if (prevChar != null && prevChar.SpecialChar == sc)
                 {
                     prevChar.Count += count;
@@ -355,66 +343,24 @@ namespace TypeCobol.Compiler.Types
                     prevChar = new Character(sc, count);
                     sequence.Add(prevChar);
                 }
-                //Validate those symbols that can appear only once in a PICTURE string.
-                switch (sc)
+            }
+
+            //Validate symbol counts
+            SC[] onlyOnce = { SC.E, SC.S, SC.DOT, SC.CR, SC.DB};
+            foreach (var sc in onlyOnce)
+            {
+                if (symbolCounts[sc] > 1)
                 {
-                    case SC.PLUS:
-                        foundPlus = true;
-                        break;
-                    case SC.MINUS:
-                        foundMinus = true;
-                        break;
-                    case SC.CR:
-                        foundCR = true;
-                        cr_count += count;
-                        if (cr_count > 1)
-                        {
-                            validationMessages.Add(MORE_THAN_ONE_CR_CHARACTER);
-                        }
-                        break;
-                    case SC.DB:
-                        foundDB = true;
-                        db_count += count;
-                        if (db_count > 1)
-                        {
-                            validationMessages.Add(MORE_THAN_ONE_DB_CHARACTER);
-                        }
-                        break;
-                    case SC.S:
-                        s_count += count;
-                        if (s_count > 1)
-                        {
-                            validationMessages.Add(MORE_THAN_ONE_S_CHARACTER);
-                        }
-                        break;
-                    case SC.V:
-                        v_count += count;
-                        if (v_count > 1)
-                        {
-                            validationMessages.Add(MORE_THAN_ONE_V_CHARACTER);
-                        }
-                        break;
-                    case SC.E:
-                        e_count += count;
-                        if (e_count > 1)
-                        {
-                            validationMessages.Add(MORE_THAN_ONE_E_CHARACTER);
-                        }
-                        break;
-                    case SC.DOT:
-                        dot_count += count;
-                        if (dot_count > 1)
-                        {
-                            validationMessages.Add(MORE_THAN_ONE_DOT_CHARACTER);
-                        }
-                        break;
+                    validationMessages.Add(string.Format(SYMBOL_CAN_APPEAR_ONLY_ONCE, sc));
                 }
             }
-            int cntFound = (foundCR || foundDB ? 1 : 0);
-            cntFound += (foundPlus || foundMinus ? 1 : 0);
-            if (cntFound > 1)
-            { // 0 is valid
-                validationMessages.Add(MUTUALLY_EXCLUSIVE_SYMBOLS);
+            bool atLeastOneAGNXZNineStar = symbolCounts[SC.A] + symbolCounts[SC.G] + symbolCounts[SC.N] +
+                                           symbolCounts[SC.X] + symbolCounts[SC.Z] + symbolCounts[SC.NINE] +
+                                           symbolCounts[SC.STAR] >= 1;
+            bool atLeastTwoPlusMinusCs = symbolCounts[SC.PLUS] + symbolCounts[SC.MINUS] + symbolCounts[SC.CS] >= 2;
+            if (!(atLeastOneAGNXZNineStar || atLeastTwoPlusMinusCs))
+            {
+                validationMessages.Add(AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT);
             }
 
             return sequence.ToArray();

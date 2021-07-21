@@ -246,11 +246,6 @@ namespace TypeCobol.Compiler.Types
                             break;
                         case SC.S:
                             Category |= PictureCategory.Numeric;
-                            if (c.Count > 1)
-                            {
-                                validationMessages.Add(SYMBOL_S_MUST_OCCUR_ONLY_ONCE);
-                                return false;
-                            }
                             if (state != 0 || _sequenceIndex != 0)
                             {
                                 validationMessages.Add(SYMBOL_S_MUST_BE_THE_FIRST);
