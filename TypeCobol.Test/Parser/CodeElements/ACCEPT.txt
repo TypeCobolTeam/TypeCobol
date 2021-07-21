@@ -1,0 +1,31 @@
+﻿--- Diagnostics ---
+Line 1[1,6] <27, Error, Syntax> - Syntax error : Invalid ACCEPT statement, receiving area for data is required. RuleStack=codeElement>acceptStatement,  OffendingSymbol=[1,6:ACCEPT]<ACCEPT>
+Line 3[1,6] <27, Error, Syntax> - Syntax error : Invalid ACCEPT statement, receiving area for data is required. RuleStack=codeElement>acceptStatement,  OffendingSymbol=[1,6:ACCEPT]<ACCEPT>
+Line 4[1,6] <27, Error, Syntax> - Syntax error : no viable alternative at input 'FROM ... ACCEPT' RuleStack=codeElement>acceptStatement,  OffendingSymbol=[1,6:ACCEPT]<ACCEPT>
+Line 4[1,6] <27, Error, Syntax> - Syntax error : Invalid ACCEPT statement, receiving area for data is required. RuleStack=codeElement>acceptStatement,  OffendingSymbol=[1,6:ACCEPT]<ACCEPT>
+Line 6[1,6] <27, Error, Syntax> - Syntax error : no viable alternative at input 'FROM ... ACCEPT' RuleStack=codeElement>acceptStatement,  OffendingSymbol=[1,6:ACCEPT]<ACCEPT>
+--- Code Elements ---
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [1,6:ACCEPT]<ACCEPT>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [8,11:var1]<UserDefinedWord>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [8,11:FROM]<FROM>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [13,17:SYSIN]<UserDefinedWord>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [13,16:FROM]<FROM>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [18,22:SYSIN]<UserDefinedWord>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [18,21:DATE]<DATE>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [23,30:YYYYMMDD]<UserDefinedWord>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [18,20:DAY]<DAY>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [22,28:YYYYDDD]<UserDefinedWord>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [18,28:DAY-OF-WEEK]<DAY_OF_WEEK>
+
+[[AcceptStatement]] [1,6:ACCEPT]<ACCEPT> --> [18,21:TIME]<TIME>
+
