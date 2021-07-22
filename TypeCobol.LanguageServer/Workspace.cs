@@ -582,13 +582,13 @@ namespace TypeCobol.LanguageServer
             else
                 RefreshCustomSymbols();
 
-            //Dispose previous watcher before setting new ones            
+            //Dispose previous watchers before setting new ones            
             if (_CopyWatcher != null)
             {
                 _CopyWatcher.Dispose();
-                foreach (var depFolder in Configuration.CopyFolders)
+                foreach (var copyFolder in Configuration.CopyFolders)
                 {
-                    _CopyWatcher.SetDirectoryWatcher(depFolder);
+                    _CopyWatcher.SetDirectoryWatcher(copyFolder);
                 }
             }
             if (_DepWatcher != null)
