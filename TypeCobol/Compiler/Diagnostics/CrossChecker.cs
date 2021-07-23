@@ -227,14 +227,35 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     return true;
                 }
+
+                var senderIsAlphanumeric = false;
+                DataDefinition senderDataDefinition = null;
+                if (moveSimple.SendingVariable?.StorageArea?.Kind == StorageAreaKind.DataOrCondition
+                    && move.StorageAreaReadsDataDefinition.TryGetValue(moveSimple.SendingVariable.StorageArea, out senderDataDefinition))
+                {
+                    senderIsAlphanumeric = senderDataDefinition.DataType == DataType.Alphanumeric;
+                }
+
                 foreach (var area in moveSimple.StorageAreaWrites)
                 {
                     var receiver = area.StorageArea;
                     if (receiver is FunctionCallResult)
                         DiagnosticUtils.AddError(move, "MOVE: illegal <function call> after TO");
+
+                    if (senderIsAlphanumeric
+                        && receiver is DataOrConditionStorageArea dataOrConditionStorageArea 
+                        && move.StorageAreaWritesDataDefinition.TryGetValue(dataOrConditionStorageArea, out var receiverDataDefinition))
+                    {
+                        if (receiverDataDefinition.DataType == DataType.Numeric || receiverDataDefinition.DataType == DataType.NumericEdited)
+                        {
+                            if (receiverDataDefinition.Usage != null && receiverDataDefinition.Usage != DataUsage.None)
+                            {
+                                DiagnosticUtils.AddError(move, $"Moving alphanumeric '{senderDataDefinition.Name}' to numeric '{receiverDataDefinition.Name}' declared with an USAGE is dangerous as using the numeric may lead to ABEND.", code: MessageCode.Warning);
+                            }
+                        }
+                    }
                 }
             }
-
 
             return true;
         }
