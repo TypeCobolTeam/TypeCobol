@@ -9,7 +9,7 @@ namespace TypeCobol.Analysis.Graph
     /// </summary>
     /// <typeparam name="N"></typeparam>
     /// <typeparam name="D"></typeparam>
-    public class ControlFlowGraph<N, D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// BasicBlock callback type.

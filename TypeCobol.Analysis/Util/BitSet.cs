@@ -150,6 +150,15 @@ namespace TypeCobol.Analysis.Util
                 _data[i] = 0;
         }
 
+        /// <summary>
+        /// Set all bit to 1
+        /// </summary>
+        public void Full()
+        {
+            for (int i = 0; i < _data.Length; i++)
+                _data[i] = ulong.MaxValue;
+        }
+
         public void Copy(BitSet from)
         {
             if (_data.Length != from._data.Length)
