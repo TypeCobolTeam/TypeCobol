@@ -115,17 +115,17 @@ namespace TypeCobol.Test.Types
             string ex_float_pic = "-9v9(9)E-99";
             result = (new PictureValidator(ex_float_pic)).Validate(out _);
             Assert.IsTrue(result.IsValid);
-            Assert.IsTrue(result.Category == PictureCategory.ExternalFloat);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloatingPoint);
 
             ex_float_pic = "-99(9).E-99";
             result = (new PictureValidator(ex_float_pic)).Validate(out _);
             Assert.IsTrue(result.IsValid);
-            Assert.IsTrue(result.Category == PictureCategory.ExternalFloat);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloatingPoint);
 
             ex_float_pic = "+VE-99";
             result = (new PictureValidator(ex_float_pic)).Validate(out _);
             Assert.IsTrue(result.IsValid);
-            Assert.IsTrue(result.Category != PictureCategory.ExternalFloat);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloatingPoint);
         }
 
         /// <summary>

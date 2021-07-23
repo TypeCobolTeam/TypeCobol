@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.Types
             }
             else
             {
-                Category = PictureCategory.Error;
+                Category = PictureCategory.Invalid;
             }
         }
 
@@ -123,18 +123,18 @@ namespace TypeCobol.Compiler.Types
         {
             get
             {
-                if (Category == PictureCategory.Error)
+                if (Category == PictureCategory.Invalid)
                     return 0;
                 if (Usage == UsageFormat.None)
                 {
                     int add = 0;
-                    if (Category == PictureCategory.Dbcs)
+                    if (Category == PictureCategory.DBCS)
                     {
                         add = Sequence.Sum(c => c.SpecialChar == PictureValidator.SC.B ? c.Count : 0);
                     }
                     return Size + add;
                 }
-                if (Category == PictureCategory.ExternalFloat)
+                if (Category == PictureCategory.ExternalFloatingPoint)
                 {
                     return Size;
                 }
@@ -188,7 +188,7 @@ namespace TypeCobol.Compiler.Types
                                     case PictureValidator.SC.S:
                                         break;
                                     case PictureValidator.SC.B:
-                                        if (Category == PictureCategory.Dbcs)
+                                        if (Category == PictureCategory.DBCS)
                                         {
                                             len += c.Count;//double the size of B.
                                         }

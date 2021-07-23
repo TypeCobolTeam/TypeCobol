@@ -351,7 +351,7 @@ namespace TypeCobol.Compiler.Types
             {
                 if (symbolCounts[sc] > 1)
                 {
-                    validationMessages.Add(string.Format(SYMBOL_CAN_APPEAR_ONLY_ONCE, sc));
+                    validationMessages.Add(string.Format(SYMBOL_CAN_APPEAR_ONLY_ONCE, SC2String(sc)));
                 }
             }
             bool atLeastOneAGNXZNineStar = symbolCounts[SC.A] + symbolCounts[SC.G] + symbolCounts[SC.N] +

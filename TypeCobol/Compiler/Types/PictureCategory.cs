@@ -3,18 +3,17 @@
     /// <summary>
     /// Category of a Picture Type
     /// </summary>
-    public enum PictureCategory : sbyte
+    public enum PictureCategory
     {
-        Error = 0, //Invalid Picture Type --> Constructed from an Invalid Picture String.
-        Alphabetic = 0x1 << 0,
-        Numeric = 0x1 << 1,
-        AlphaNumeric = Alphabetic | Numeric,
-        Edited = 0x1 << 2,
-        NumericEdited = Numeric | Edited,
-        AlphaNumericEdited = AlphaNumeric | Edited,
-        Dbcs = 0x1 << 3,
-        ExternalFloat = 0x1 << 4 | Numeric | Edited,
-        National = 0x1 << 5,
-        NationalEdited = National | Edited
+        Invalid = 0,
+        Alphabetic = 0x01 << 0,
+        Alphanumeric = 0x01 << 1,
+        AlphanumericEdited = 0x01 << 2,
+        DBCS = 0x01 << 3,
+        National = 0x01 << 4,
+        NationalEdited = 0x01 << 5,
+        ExternalFloatingPoint = 0x01 << 6,
+        Numeric = 0x01 << 7,
+        NumericEdited = 0x01 << 8
     }
 }

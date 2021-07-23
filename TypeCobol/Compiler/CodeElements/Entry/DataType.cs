@@ -197,7 +197,7 @@ namespace TypeCobol.Compiler.CodeElements
                 dataTypeDescriptionEntry.PictureValidationResult = new PictureValidator.Result(
                     new[] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
                     null,
-                    PictureCategory.AlphaNumeric,
+                    PictureCategory.Alphanumeric,
                     0,
                     0,
                     false,
