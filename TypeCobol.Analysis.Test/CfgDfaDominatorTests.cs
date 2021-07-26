@@ -1,7 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using TypeCobol.Analysis.Graph;
 using TypeCobol.Test;
 using static TypeCobol.Analysis.Test.CfgTestUtils;
+using CFG = TypeCobol.Analysis.Graph.ControlFlowGraph<TypeCobol.Compiler.Nodes.Node,
+    TypeCobol.Analysis.Dfa.DfaBasicBlockInfo<TypeCobol.Compiler.Symbols.VariableSymbol>>;
 
 namespace TypeCobol.Analysis.Test
 {
@@ -19,7 +22,7 @@ namespace TypeCobol.Analysis.Test
 
             string expectedDomsFile = Path.Combine(BasicCfgPrograms, "HanoiPrg.doms");
             StringWriter writer = new StringWriter();
-            dfaResults.Graphs[0].DumpDominators(blocks_dominators.Item2, writer);
+            CFG.DumpDominators(blocks_dominators.Item2, writer);
             // compare with expected result
             string result = writer.ToString();
             string expected = File.ReadAllText(expectedDomsFile);
@@ -36,7 +39,7 @@ namespace TypeCobol.Analysis.Test
 
             string expectedDomsFile = Path.Combine(BasicCfgPrograms, "HanoiPrg.idoms");
             StringWriter writer = new StringWriter();
-            dfaResults.Graphs[0].DumpDominators(idoms, writer);
+            CFG.DumpDominators(idoms, writer);
             // compare with expected result
             string result = writer.ToString();
             string expected = File.ReadAllText(expectedDomsFile);

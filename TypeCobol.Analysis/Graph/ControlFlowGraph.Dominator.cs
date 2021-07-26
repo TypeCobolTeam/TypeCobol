@@ -110,15 +110,14 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         /// <param name="dominators">The set of Dominators</param>
         /// <param name="writer"></param>
-        public void DumpDominators(BitSet[] dominators, System.IO.TextWriter writer)
+        public static void DumpDominators(BitSet[] dominators, System.IO.TextWriter writer)
         {
             for (int i = 0; i < dominators.Length; i++)
             {
                 BitSet doms = dominators[i];
                 if (doms != null)
                 {
-                    BasicBlock<N, D> b = this.AllBlocks[i];
-                    writer.WriteLine($"Dominators[Block{b.Index}]={doms.ToString()}");
+                    writer.WriteLine($"Dominators[Block{i}]={doms.ToString()}");
                 }
             }
         }
