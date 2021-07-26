@@ -253,7 +253,7 @@ namespace TypeCobol.Analysis.Graph
         /// Set up the Predecessor Edges list starting from a given start block.	
         /// </summary>	
         /// <param name="start">The start block.</param>	
-        internal void SetupPredecessorEdgesFromStart(BasicBlock<N, D> start)
+        private void SetupPredecessorEdgesFromStart(BasicBlock<N, D> start)
         {
             if (this.PredecessorEdges != null || this.SuccessorEdges == null)
                 return;
