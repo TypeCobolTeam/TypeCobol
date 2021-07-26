@@ -44,8 +44,7 @@ namespace TypeCobol.Analysis.Graph
                     if (n == this.RootBlock.Index)
                         continue;
                     BasicBlock<N, D> b = this.AllBlocks[n];
-                    if (b.PredecessorEdges == null)
-                        continue;
+                    System.Diagnostics.Debug.Assert(b.PredecessorEdges != null);
                     workSet.Full();
                     foreach (int r in b.PredecessorEdges)
                     {
