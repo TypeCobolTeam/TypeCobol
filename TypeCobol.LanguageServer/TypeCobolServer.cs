@@ -272,6 +272,9 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnShutdown()
         {
+            this.Workspace.LoadingIssueEvent -= LoadingIssueDetected;
+            this.Workspace.ExceptionTriggered -= ExceptionTriggered;
+            this.Workspace.WarningTrigger -= WarningTrigger;
             this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
             this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 

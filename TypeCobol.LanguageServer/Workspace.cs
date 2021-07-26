@@ -47,12 +47,12 @@ namespace TypeCobol.LanguageServer
 
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
         public TypeCobolConfiguration Configuration { get; private set; }
-        public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
-        public EventHandler<EventArgs> DocumentModifiedEvent { get; set; }
-        public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
-        public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
-        public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
-        public EventHandler<string> WarningTrigger { get; set; }
+        public event EventHandler<DiagnosticEvent> DiagnosticsEvent;
+        public event EventHandler<EventArgs> DocumentModifiedEvent;
+        public event EventHandler<MissingCopiesEvent> MissingCopiesEvent;
+        public event EventHandler<LoadingIssueEvent> LoadingIssueEvent;
+        public event EventHandler<ThreadExceptionEventArgs> ExceptionTriggered;
+        public event EventHandler<string> WarningTrigger;
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
         private Func<string, Uri, bool> _Logger;       
         /// <summary>
