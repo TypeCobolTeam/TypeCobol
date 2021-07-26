@@ -119,7 +119,7 @@ namespace TypeCobol.Analysis.Graph
                 if (doms != null)
                 {
                     BasicBlock<N, D> b = this.AllBlocks[i];
-                    writer.WriteLine($"Dominators[Block{b.Index}]={{{doms.ToString()}}}");
+                    writer.WriteLine($"Dominators[Block{b.Index}]={doms.ToString()}");
                 }
             }
         }
