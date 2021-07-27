@@ -553,10 +553,10 @@ namespace TypeCobol.LanguageServer
 
             //Configure CFG/DFA analyzer(s) + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode));
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode, o));
             if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
             {
-                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard));
+                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard, o));
             }
             System.Diagnostics.Debug.Assert(this._customAnalyzerProviders != null);
             foreach (var a in this._customAnalyzerProviders)
