@@ -79,6 +79,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public List<string> CustomAnalyzerFiles { get; set; }
 
+        /// <summary>
+        /// No Copy and Dependency files watchers.
+        /// </summary>
+        public bool NoCopyDependencyWatchers { get; set; }
+
         private bool Logger(string message, Uri uri)
         {
             if (uri == null)
@@ -238,6 +243,8 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace.
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
+            if (!NoCopyDependencyWatchers)
+                this.Workspace.InitCopyDependencyWatchers();
 #if EUROINFO_RULES
             this.Workspace.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
 #endif

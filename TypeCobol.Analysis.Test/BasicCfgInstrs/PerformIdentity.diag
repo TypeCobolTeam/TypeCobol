@@ -1,2 +1,2 @@
 --- Diagnostics ---
-Line 6[12,23] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM main', recursive instruction is '    PERFORM main'.
+Line 6[12,23] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM main', recursive instruction is '    PERFORM main'.
