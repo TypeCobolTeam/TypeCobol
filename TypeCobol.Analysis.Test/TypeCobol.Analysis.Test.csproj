@@ -36,6 +36,7 @@
     <Compile Include="BasicControlFlowInstructionTest.cs" />
     <Compile Include="BitSetTest.cs" />
     <Compile Include="CfgDfaBuildingTests.cs" />
+    <Compile Include="CfgDfaDominatorTests.cs" />
     <Compile Include="CfgTestUtils.cs" />
     <Compile Include="CfgTestResults.cs" />
     <Compile Include="DfaBuildUseAndDefListTest.cs" />
@@ -62,6 +63,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="BasicCfgPrograms\HanoiPrg.doms" />
+    <None Include="BasicCfgPrograms\HanoiPrg.idoms" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
