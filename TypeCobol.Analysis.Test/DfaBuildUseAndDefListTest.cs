@@ -35,9 +35,9 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(dfaResults.Graphs.Count == 1);
 
             var useList = dfaResults.GetUseList(dfaResults.Graphs[0]);
-            Assert.AreEqual(8, useList.Count);
-            string[] useVars = { "ELEM", "IDX", "NBJ", "IDX", "NUM", "LIB", "IDX", "IDX-END"};
-            for (int i = 0; i < 8; i++)
+            Assert.AreEqual(9, useList.Count);
+            string[] useVars = { "ELEM", "IDX", "NBJ", "IDX", "IDX", "NUM", "LIB", "IDX", "IDX-END"};
+            for (int i = 0; i < 9; i++)
             {
                 Assert.AreEqual(useList[i].Variable.Name, useVars[i]);
             }
