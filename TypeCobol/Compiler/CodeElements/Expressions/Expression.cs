@@ -136,21 +136,21 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class ClassCondition : ConditionalExpression
 	{
-		public ClassCondition(StorageArea dataItem, SymbolReference characterClassNameReference, SyntaxProperty<bool> invertResult) :
+		public ClassCondition(ConditionOperand dataItem, SymbolReference characterClassNameReference, SyntaxProperty<bool> invertResult) :
 			base(ExpressionNodeType.ClassCondition) {
 			DataItem = dataItem;
 			CharacterClassNameReference = characterClassNameReference;
 			InvertResult = invertResult;
 		}
 
-		public ClassCondition(StorageArea dataItem, SyntaxProperty<DataItemContentType> dataItemContentType, SyntaxProperty<bool> invertResult) :
+		public ClassCondition(ConditionOperand dataItem, SyntaxProperty<DataItemContentType> dataItemContentType, SyntaxProperty<bool> invertResult) :
 			base(ExpressionNodeType.ClassCondition) {
 			DataItem = dataItem;
 			DataItemContentType = dataItemContentType;
 			InvertResult = invertResult;
 		}
 
-		public StorageArea DataItem { get; private set; }
+		public ConditionOperand DataItem { get; private set; }
 
 		public SymbolReference CharacterClassNameReference { get; private set; }
 
@@ -162,6 +162,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             Debug.Assert(other is ClassCondition);
             var otherClassCondition = (ClassCondition) other;
+            
             return string.Equals(CharacterClassNameReference?.Name, otherClassCondition.CharacterClassNameReference?.Name, StringComparison.OrdinalIgnoreCase)
                    && DataItemContentType?.Value == otherClassCondition.DataItemContentType?.Value
                    && InvertResult?.Value == otherClassCondition.InvertResult?.Value;
@@ -169,7 +170,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override (Expression, Expression) GetOperands()
         {
-            return (null, null);
+            return (DataItem, null);
         }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {

@@ -3,7 +3,9 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -671,11 +673,13 @@ namespace TypeCobol.Compiler.Parser
 					ParseTreeUtils.GetFirstToken(context.NOT()));
 			}
 
+			var dataItemStorageArea = CreateIdentifier(context.identifier());
+
 			ClassCondition classCondition = null;
 			if(context.characterClassNameReference() != null)
 			{
 				classCondition = new ClassCondition(
-					CreateIdentifier(context.identifier()),
+					new ConditionOperand(new Variable(dataItemStorageArea)),
 					CobolWordsBuilder.CreateCharacterClassNameReference(context.characterClassNameReference()), 
 					invertResult);
 			}
@@ -707,15 +711,15 @@ namespace TypeCobol.Compiler.Parser
 					ParseTreeUtils.GetFirstToken(context.dataItemContentType()));
 
 				classCondition = new ClassCondition(
-					CreateIdentifier(context.identifier()),
+					new ConditionOperand(new Variable(dataItemStorageArea)),
 					dataItemContentType,
 					invertResult);
             }
 
             // Collect storage area read/writes at the code element level
-            if (classCondition.DataItem != null)
+            if (dataItemStorageArea != null)
             {
-                this.storageAreaReads.Add(classCondition.DataItem);
+                this.storageAreaReads.Add(dataItemStorageArea);
             }
 
             return classCondition;
