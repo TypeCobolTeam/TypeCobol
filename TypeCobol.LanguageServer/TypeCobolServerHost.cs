@@ -121,6 +121,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// No Copy and Dependency files watchers.
+        /// </summary>
+        public static bool NoCopyDependencyWatchers { get; set; }
+
 #if EUROINFO_RULES
         /// <summary>
         /// A Path to a file of CPY Copy names
@@ -233,7 +238,8 @@ namespace TypeCobol.LanguageServer
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
-                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => CustomAnalyzerFiles.Add(v) }
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => CustomAnalyzerFiles.Add(v) },
+                { "now|nowatchers",  "No Copy and Dependency files watchers.", _ => NoCopyDependencyWatchers = true}
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -312,6 +318,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
                 typeCobolServer.CustomAnalyzerFiles = CustomAnalyzerFiles;
+                typeCobolServer.NoCopyDependencyWatchers = NoCopyDependencyWatchers;
 #if EUROINFO_RULES
                 typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
 #endif

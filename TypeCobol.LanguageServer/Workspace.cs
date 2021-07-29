@@ -47,12 +47,12 @@ namespace TypeCobol.LanguageServer
 
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
         public TypeCobolConfiguration Configuration { get; private set; }
-        public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
-        public EventHandler<EventArgs> DocumentModifiedEvent { get; set; }
-        public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
-        public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
-        public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
-        public EventHandler<string> WarningTrigger { get; set; }
+        public event EventHandler<DiagnosticEvent> DiagnosticsEvent;
+        public event EventHandler<EventArgs> DocumentModifiedEvent;
+        public event EventHandler<MissingCopiesEvent> MissingCopiesEvent;
+        public event EventHandler<LoadingIssueEvent> LoadingIssueEvent;
+        public event EventHandler<ThreadExceptionEventArgs> ExceptionTriggered;
+        public event EventHandler<string> WarningTrigger;
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
         private Func<string, Uri, bool> _Logger;       
         /// <summary>
@@ -155,7 +155,6 @@ namespace TypeCobol.LanguageServer
                 }
             }
         }
-
         #endregion
 
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
@@ -179,10 +178,12 @@ namespace TypeCobol.LanguageServer
             this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
+        }
 
+        internal void InitCopyDependencyWatchers()
+        {
             // Create the refresh action that will be used by file watchers
             Action refreshAction = RefreshOpenedFiles;
-
             _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
             _CopyWatcher = new CopyWatcher(this, refreshAction);
         }
@@ -553,10 +554,10 @@ namespace TypeCobol.LanguageServer
 
             //Configure CFG/DFA analyzer(s) + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode));
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode, o));
             if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
             {
-                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard));
+                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard, o));
             }
             System.Diagnostics.Debug.Assert(this._customAnalyzerProviders != null);
             foreach (var a in this._customAnalyzerProviders)
@@ -581,26 +582,42 @@ namespace TypeCobol.LanguageServer
             else
                 RefreshCustomSymbols();
 
-            //Dispose previous watcher before setting new ones
-            _DepWatcher.Dispose();
-            _CopyWatcher.Dispose();
-            foreach (var depFolder in Configuration.CopyFolders)
+            //Dispose previous watchers before setting new ones            
+            if (_CopyWatcher != null)
             {
-                _CopyWatcher.SetDirectoryWatcher(depFolder);
+                _CopyWatcher.Dispose();
+                foreach (var copyFolder in Configuration.CopyFolders)
+                {
+                    _CopyWatcher.SetDirectoryWatcher(copyFolder);
+                }
             }
-            foreach (var depFolder in Configuration.Dependencies)
+            if (_DepWatcher != null)
             {
-                _DepWatcher.SetDirectoryWatcher(depFolder);
-            }
-            foreach (var intrinsicFolder in Configuration.Copies)
-            {
-                _DepWatcher.SetDirectoryWatcher(intrinsicFolder);
+                _DepWatcher.Dispose();
+                foreach (var depFolder in Configuration.Dependencies)
+                {
+                    _DepWatcher.SetDirectoryWatcher(depFolder);
+                }
+                foreach (var intrinsicFolder in Configuration.Copies)
+                {
+                    _DepWatcher.SetDirectoryWatcher(intrinsicFolder);
+                }
             }
         }
 
+        /// <summary>
+        /// The method is called in response to a MissingCopyNotification from the client.
+        /// The RemainingMissingCopies list can contain a list of COPY that the client fails to load,
+        /// or an empty list if all COPY have been loaded.
+        /// </summary>
+        /// <param name="fileUri">Uri of the document from wich the response is emitted</param>
+        /// <param name="RemainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
         public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
         {
-            //TODO remove client to server notification properly.
+            if (_CopyWatcher == null)
+            {// No Copy Watcher ==> Refresh ourself opened file.
+                RefreshOpenedFiles();
+            }
         }
 
         /// <summary>
