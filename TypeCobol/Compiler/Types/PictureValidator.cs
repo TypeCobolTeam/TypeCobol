@@ -21,8 +21,10 @@ namespace TypeCobol.Compiler.Types
         private const string PARENTHESES_DO_NOT_MATCH = "Missing '(' or ')' in PICTURE string";
         private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
         private const string MULTIPLE_CURRENCIES_IN_SAME_PICTURE = "Cannot mix currency symbols in a PICTURE string: '{0}' symbol was not expected";
+        private const string INVALID_DATA_CATEGORY = "Invalid data category for PICTURE string '{0}'";
         private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
         private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
+        private const string DECIMAL_POINT_LAST_SYMBOL = "Decimal point cannot be in last position";
         private const string MULTIPLE_V = "V must appears only once in a PICTURE string";
         private const string WRONG_P_POSITION = "P must appears at the head or tail position of a PICTURE string";
         private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string";
@@ -91,7 +93,7 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Picture string.
+        /// The Picture string, with comma and dot swapped if DECIMAL POINT IS COMMA is active.
         /// </summary>
         public string Picture { get; }
 
@@ -129,12 +131,21 @@ namespace TypeCobol.Compiler.Types
             Character[] sequence = CollectPictureSequence(matches, validationMessages, out var symbolCounts);
             if (validationMessages.Count > 0) return new Result(sequence, _currencyDescriptor);
 
-            //Validate the sequence
-            Automata automata = new Automata(this);
-            if (automata.Run(sequence, validationMessages))
+            //Determine data category
+            var category = DeterminePictureCategory(sequence, symbolCounts);
+            if (category == PictureCategory.Invalid)
             {
-                //OK
-                return new Result(sequence, _currencyDescriptor, automata.Category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+                validationMessages.Add(string.Format(INVALID_DATA_CATEGORY, Picture));
+            }
+            else
+            {
+                //Validate the sequence using automata
+                Automata automata = new Automata(this);
+                if (automata.Run(sequence, category, validationMessages))
+                {
+                    //OK
+                    return new Result(sequence, _currencyDescriptor, category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+                }
             }
 
             //KO
@@ -264,16 +275,6 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Determine if the given character is a simple insertion character.
-        /// </summary>
-        /// <param name="c">Return true if yes, false otherwise</param>
-        /// <returns>true if yes, false otherwise</returns>
-        private bool IsSimpleInsertionCharacter(SC c)
-        {
-            return c == SC.B || c == SC.ZERO || c == SC.SLASH || c == SC.COMMA;
-        }
-
-        /// <summary>
         /// Collect the Picture sequence of characters from the list of parts. And perform some pre-validation
         /// checks.
         /// </summary>
@@ -357,7 +358,7 @@ namespace TypeCobol.Compiler.Types
             bool atLeastOneAGNXZNineStar = symbolCounts[SC.A] + symbolCounts[SC.G] + symbolCounts[SC.N] +
                                            symbolCounts[SC.X] + symbolCounts[SC.Z] + symbolCounts[SC.NINE] +
                                            symbolCounts[SC.STAR] >= 1;
-            bool atLeastTwoPlusMinusCs = symbolCounts[SC.PLUS] + symbolCounts[SC.MINUS] + symbolCounts[SC.CS] >= 2;
+            bool atLeastTwoPlusMinusCs = symbolCounts[SC.PLUS] >= 2 || symbolCounts[SC.MINUS] >= 2 || symbolCounts[SC.CS] >= 2;
             if (!(atLeastOneAGNXZNineStar || atLeastTwoPlusMinusCs))
             {
                 validationMessages.Add(AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT);
@@ -367,68 +368,168 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Compute indexes of the Floating Insertion String. That is to the left most and the right most of the characters
-        /// CS, + or -.
+        /// Check symbol counts to determine the data category of the picture.
         /// </summary>
-        /// <param name="sequence">The on which to perform the computation</param>
-        /// <param name="firstIndex">[out] First Floating Index</param>
-        /// <param name="lastIndex">[out] Last Floating Index</param>
-        private void ComputeFloatingStringIndexes(Character[] sequence, out int firstIndex, out int lastIndex)
+        /// <param name="sequence">Sequence of symbols</param>
+        /// <param name="symbolCounts">Dictionary of all symbol counts</param>
+        /// <returns>PictureCategory of the sequence, maybe Invalid</returns>
+        private PictureCategory DeterminePictureCategory(Character[] sequence, IDictionary<SC, int> symbolCounts)
         {
-            firstIndex = lastIndex = -1;
-            int lastNonSimpleIndex = -1;
-            SC floatChar = (SC)(-1); //The float character that corresponds to the first index either CS, + or -.
-            int i;
-            for (i = 0; i < sequence.Length; i++)
+            int totalCount = symbolCounts.Values.Sum();
+            if (IsNumericEdited())         return PictureCategory.NumericEdited;
+            if (IsNumeric())               return PictureCategory.Numeric;
+            if (IsAlphanumericEdited())    return PictureCategory.AlphanumericEdited;
+            if (IsAlphanumeric())          return PictureCategory.Alphanumeric;
+            if (IsExternalFloatingPoint()) return PictureCategory.ExternalFloatingPoint;
+            if (IsDBCS())                  return PictureCategory.DBCS;
+            if (IsNationalEdited())        return PictureCategory.NationalEdited;
+            if (IsNational())              return PictureCategory.National;
+            if (IsAlphabetic())            return PictureCategory.Alphabetic;
+            return PictureCategory.Invalid;
+
+            bool IsAlphabetic()
             {
-                Character c = sequence[i];
-                if (firstIndex == -1 && (c.SpecialChar == SC.PLUS || c.SpecialChar == SC.MINUS || c.SpecialChar == SC.CS))
-                {
-                    if (lastNonSimpleIndex >= 0 && sequence[lastNonSimpleIndex].SpecialChar == c.SpecialChar)
-                    {
-                        firstIndex = lastNonSimpleIndex;
-                        floatChar = c.SpecialChar;
-                        continue;
-                    }
-                    else if (c.Count > 1)
-                    {
-                        firstIndex = i;
-                        floatChar = c.SpecialChar;
-                        continue;
-                    }
-                }
-                if (firstIndex == -1 && !IsSimpleInsertionCharacter(c.SpecialChar))
-                {
-                    lastNonSimpleIndex = i;
-                }
-                else if (firstIndex >= 0 && !(IsSimpleInsertionCharacter(c.SpecialChar) || c.SpecialChar == floatChar))
-                {
-                    lastIndex = i - 1;
-                    break;
-                }
+                //Only A
+                return Count(SC.A) == totalCount;
             }
 
-            if (i >= sequence.Length && firstIndex >= 0)
-            { //We have reach the end of the sequence with a first index and no lastIndex ==>
-              //Set the last index to the last character of the sequence
-                lastIndex = sequence.Length - 1;
-                return;
-            }
-
-            if (!(i < sequence.Length && (sequence[i].SpecialChar == SC.DOT || sequence[i].SpecialChar == SC.V)))
-            {//The last index does not precede the DecimalPoint separator position
-                return;
-            }
-            //If the last index precede the DecimalPoint position so all characters including the decimal point
-            //that are not simple characters or the floating character must be part o the right most index
-
-            for (++i; i < sequence.Length; i++)
+            bool IsAlphanumeric()
             {
-                Character c = sequence[i];
-                if (!(IsSimpleInsertionCharacter(c.SpecialChar) || c.SpecialChar == floatChar))
-                    return;
+                //Only A X 9 but not allowed to be made only of A or 9
+                int x = Count(SC.X);
+                if (x == totalCount) return true;
+                int a = Count(SC.A);
+                int nine = Count(SC.NINE);
+                return a + x + nine == totalCount && a != totalCount && nine != totalCount;
             }
-            lastIndex = i - 1;
+
+            bool IsAlphanumericEdited()
+            {
+                //Only A X 9 B 0 /
+                bool onlyAXNineBZeroSlash = Count(SC.A, SC.X, SC.NINE, SC.B, SC.ZERO, SC.SLASH) == totalCount;
+                if (!onlyAXNineBZeroSlash) return false;
+
+                //At least one A or one X
+                bool atLeastOneAX = Count(SC.A, SC.X) >= 1;
+                if (!atLeastOneAX) return false;
+
+                //At least one B or 0 or /
+                bool atLeastOneBZeroSlash = Count(SC.B, SC.ZERO, SC.SLASH) >= 1;
+                return atLeastOneBZeroSlash;
+            }
+
+            bool IsDBCS()
+            {
+                //Only G B
+                bool onlyGB = Count(SC.G, SC.B) == totalCount;
+                if (!onlyGB) return false;
+
+                //At least one G
+                bool atLeastOneG = Count(SC.G) >= 1;
+                return atLeastOneG;
+            }
+
+            bool IsNational()
+            {
+                //Only N
+                return Count(SC.N) == totalCount;
+            }
+
+            bool IsNationalEdited()
+            {
+                //Only N B 0 /
+                bool onlyNBZeroSlash = Count(SC.N, SC.B, SC.ZERO, SC.SLASH) == totalCount;
+                if (!onlyNBZeroSlash) return false;
+
+                //At least one N
+                bool atLeastOneN = Count(SC.N) >= 1;
+                if (!atLeastOneN) return false;
+
+                //At least one B or 0 or /
+                bool atLeastOneBZeroSlash = Count(SC.B, SC.ZERO, SC.SLASH) >= 1;
+                return atLeastOneBZeroSlash;
+            }
+
+            bool IsExternalFloatingPoint()
+            {
+                //Format is: (+|-) (9|.|V) E (+|-) 99
+                int i = 0;
+                int length = sequence.Length;
+
+                //First symbol is + or -
+                if (!OnePlusOrMinus()) return false;
+                i++;
+
+                //Consume mantissa
+                bool seenDecimalPoint = false;
+                while (i < length && sequence[i].SpecialChar != SC.E)
+                {
+                    switch (sequence[i].SpecialChar)
+                    {
+                        case SC.DOT:
+                        case SC.V:
+                            if (seenDecimalPoint) return false;
+                            seenDecimalPoint = true;
+                            goto case SC.NINE;
+                        case SC.NINE:
+                            i++;
+                            break;
+                        default:
+                            return false;
+                    }
+                }
+
+                //Found a decimal point ?
+                if (!seenDecimalPoint) return false;
+
+                //Reached the E ?
+                if (i == length) return false;
+                i++;
+
+                //Next is + or -
+                if (!OnePlusOrMinus()) return false;
+                i++;
+
+                //Last symbol is exponent, always represented as two 9
+                return i == length - 1 && sequence[i].SpecialChar == SC.NINE && sequence[i].Count == 2;
+
+                bool OnePlusOrMinus() => sequence[i].Count == 1 && (sequence[i].SpecialChar == SC.PLUS || sequence[i].SpecialChar == SC.MINUS);
+            }
+
+            bool IsNumeric()
+            {
+                //Only 9 P S V
+                bool onlyNinePSV = Count(SC.NINE, SC.P, SC.S, SC.V) == totalCount;
+                if (!onlyNinePSV) return false;
+
+                //S must be first -> validated by automata
+
+                //Only one V
+                bool onlyOneV = Count(SC.V) <= 1;
+                return onlyOneV;
+            }
+
+            bool IsNumericEdited()
+            {
+                //Only B P V Z 9 0 / , . + - CR DB * cs
+                bool onlyBPVZNineZeroSlashCommaDotPlusMinusCRDBStarCS = Count(SC.E, SC.A, SC.X, SC.S, SC.G, SC.N) == 0;
+                if (!onlyBPVZNineZeroSlashCommaDotPlusMinusCRDBStarCS) return false;
+
+                //Truly edited otherwise it is Numeric
+                bool edited = Count(SC.NINE, SC.P, SC.V) != totalCount;
+                if (!edited) return false;
+
+                //+ - CR DB mutually exclusive
+                int plus = Count(SC.PLUS);
+                int minus = Count(SC.MINUS);
+                int cr = Count(SC.CR);
+                int db = Count(SC.DB);
+                int plusMinusCrDb = plus + minus + cr + db;
+                bool plusMinusCrDbExclusive = plus == plusMinusCrDb || minus == plusMinusCrDb || cr == plusMinusCrDb || db == plusMinusCrDb;
+                return plusMinusCrDbExclusive;
+            }
+
+            int Count(params SC[] symbols) => symbols.Sum(symbol => symbolCounts[symbol]);
         }
     }
 }

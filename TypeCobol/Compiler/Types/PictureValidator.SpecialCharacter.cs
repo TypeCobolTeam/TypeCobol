@@ -110,8 +110,10 @@ namespace TypeCobol.Compiler.Types
                 case SC.SLASH:
                     return "/";
                 case SC.COMMA:
+                    //Unswap comma and dot for error message
                     return _decimalPointIsComma ? "." : ",";
                 case SC.DOT:
+                    //Unswap comma and dot for error message
                     return _decimalPointIsComma ? "," : ".";
                 case SC.PLUS:
                     return "+";

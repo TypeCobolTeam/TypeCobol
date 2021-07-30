@@ -82,6 +82,8 @@ namespace TypeCobol.Test.Types
 
             string[] ifp_pics =
             {
+                "9(5)-",
+                "9(5)+",
                 "-ZZ9.99",
                 "-ZZ9.99",
                 "Z,ZZ9-",
@@ -270,9 +272,27 @@ namespace TypeCobol.Test.Types
             }
 
             //Change other currency symbol than $
-            
             PictureValidator.Result result1 = (new PictureValidator("$,$$$.99", currencyDescriptors: CurrencyDescriptor('€'))).Validate(out _);
             Assert.IsFalse(result1.IsValid);
+
+            invalids = new[]
+                       {
+                           "$v",
+                           ",,.",
+                           ",/.",
+                           "zzzbb+zz-",
+                           "aa9b+",
+                           "$-***9b",
+                           "b9b$",
+                           "*9v-99",
+                           "9/0*",
+                           "$+"
+                       };
+            for (int i = 0; i < invalids.Length; i++)
+            {
+                PictureValidator.Result result = (new PictureValidator(invalids[i])).Validate(out _);
+                Assert.IsFalse(result.IsValid);
+            }
         }
 
         /// <summary>
@@ -367,6 +387,22 @@ namespace TypeCobol.Test.Types
                 int actualLength = type.Length;
                 Assert.AreEqual(expectedLength, actualLength);
             }
+        }
+
+        /// <summary>
+        /// Test about Character-string representation
+        /// </summary>
+        [TestMethod]
+        public void PictureRepresentation()
+        {
+            PictureValidator.Result result = (new PictureValidator("$+")).Validate(out _);
+            Assert.IsFalse(result.IsValid);
+            result = (new PictureValidator("$$")).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            result = (new PictureValidator("$++")).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            result = (new PictureValidator("$v")).Validate(out _);
+            Assert.IsFalse(result.IsValid);
         }
     }
 }
