@@ -27,22 +27,22 @@
            move alpha          to num3
 
       *   Ko because it is a comp variable
-Line 30[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num4' declared with an USAGE is dangerous as using the numeric may lead to unexpected results.
+Line 30[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num4' declared with an USAGE may lead to unexpected results.
            move alpha          to num4
       *   Ko because it is a comp variable
-Line 32[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num5' declared with an USAGE is dangerous as using the numeric may lead to unexpected results.
+Line 32[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num5' declared with an USAGE may lead to unexpected results.
            move alpha          to num5
       *   Ko because it is a comp variable
-Line 34[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num6' declared with an USAGE is dangerous as using the numeric may lead to unexpected results.
+Line 34[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num6' declared with an USAGE may lead to unexpected results.
            move alpha          to num6
       *   Ko because it is a comp variable
-Line 36[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num7' declared with an USAGE is dangerous as using the numeric may lead to unexpected results.
+Line 36[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num7' declared with an USAGE may lead to unexpected results.
            move alpha          to num7
       *   Ko because it is a comp variable
-Line 38[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num8' declared with an USAGE is dangerous as using the numeric may lead to unexpected results.
+Line 38[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num8' declared with an USAGE may lead to unexpected results.
            move alpha          to num8
       *   Ko because it is a comp variable
-Line 40[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num9' declared with an USAGE is dangerous as using the numeric may lead to unexpected results.
+Line 40[12,38] <37, Warning, General> - Warning: Moving alphanumeric 'alpha' to numeric 'num9' declared with an USAGE may lead to unexpected results.
            move alpha          to num9
 
       *   Ok because it is a function

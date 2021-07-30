@@ -226,19 +226,21 @@ namespace TypeCobol.Compiler.Diagnostics
                 foreach (var area in moveSimple.StorageAreaWrites)
                 {
                     var receiver = area.StorageArea;
-                    if (receiver is FunctionCallResult)
+                    if (receiver == null) continue;
+
+                    if (receiver.Kind == StorageAreaKind.FunctionCallResult)
                         DiagnosticUtils.AddError(move, "MOVE: illegal <function call> after TO");
 
                     if (senderIsAlphanumeric
-                        && receiver is DataOrConditionStorageArea dataOrConditionStorageArea
+                        && receiver.Kind == StorageAreaKind.DataOrCondition
                         && move.StorageAreaWritesDataDefinition != null
-                        && move.StorageAreaWritesDataDefinition.TryGetValue(dataOrConditionStorageArea, out var receiverDataDefinition))
+                        && move.StorageAreaWritesDataDefinition.TryGetValue(receiver, out var receiverDataDefinition))
                     {
                         if (receiverDataDefinition.DataType == DataType.Numeric || receiverDataDefinition.DataType == DataType.NumericEdited)
                         {
                             if (receiverDataDefinition.Usage != null && receiverDataDefinition.Usage != DataUsage.None)
                             {
-                                DiagnosticUtils.AddError(move, $"Moving alphanumeric '{senderDataDefinition.Name}' to numeric '{receiverDataDefinition.Name}' declared with an USAGE is dangerous as using the numeric may lead to unexpected results.", code: MessageCode.Warning);
+                                DiagnosticUtils.AddError(move, $"Moving alphanumeric '{senderDataDefinition.Name}' to numeric '{receiverDataDefinition.Name}' declared with an USAGE may lead to unexpected results.", code: MessageCode.Warning);
                             }
                         }
                     }
