@@ -130,12 +130,6 @@ namespace TypeCobol.Compiler.Types
                             IsSigned = true;
                             break;
                         case SC.DOT:
-                            if (sequenceEnumerator.IsLast)
-                            {
-                                validationMessages.Add(DECIMAL_POINT_LAST_SYMBOL);
-                                return false;
-                            }
-                            goto case SC.V;
                         case SC.V:
                             vCount += c.Count;
                             if (vCount > 1)

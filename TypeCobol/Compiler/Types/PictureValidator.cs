@@ -24,7 +24,6 @@ namespace TypeCobol.Compiler.Types
         private const string INVALID_DATA_CATEGORY = "Invalid data category for PICTURE string '{0}'";
         private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
         private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
-        private const string DECIMAL_POINT_LAST_SYMBOL = "Decimal point cannot be in last position";
         private const string MULTIPLE_V = "V must appears only once in a PICTURE string";
         private const string WRONG_P_POSITION = "P must appears at the head or tail position of a PICTURE string";
         private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string";
