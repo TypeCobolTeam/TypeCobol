@@ -309,7 +309,9 @@ namespace TypeCobol.Compiler.Parser
 			var paragraph = new SourceComputerParagraph();
 			if (context.computerName != null)
 			{
-				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
+				System.Diagnostics.Debug.Assert(context.computerName is Token);
+				//TokenType is UserDefinedWord, so it's ok to create an AlphanumericValue
+				paragraph.ComputerName = new AlphanumericValue((Token) context.computerName);
 			}
 
 			if (context.DEBUGGING() != null)
@@ -327,7 +329,9 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterObjectComputerParagraph(CodeElementsParser.ObjectComputerParagraphContext context) {
 			var paragraph = new ObjectComputerParagraph();
 			if(context.computerName != null) {
-				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
+				System.Diagnostics.Debug.Assert(context.computerName is Token);
+				//TokenType is UserDefinedWord, so it's ok to create an AlphanumericValue
+				paragraph.ComputerName = new AlphanumericValue((Token) context.computerName);
 			}
 			if(context.memorySizeClause() != null) {
 				var memorySizeClauseContext = context.memorySizeClause();
@@ -1154,7 +1158,12 @@ namespace TypeCobol.Compiler.Parser
             if (context.pictureClause() != null && context.pictureClause().Length > 0)
             {
                 var pictureClauseContext = context.pictureClause()[0];
-                entry.Picture = CobolWordsBuilder.CreateAlphanumericValue(pictureClauseContext.pictureCharacterString);
+                if (pictureClauseContext.pictureCharacterString != null)
+                {
+                    System.Diagnostics.Debug.Assert(pictureClauseContext.pictureCharacterString is Token);
+                    //TokenType is PictureCharacterString so it's ok to create an AlphanumericValue
+                    entry.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
+                }
             }
 
 // [COBOL 2002]
@@ -1683,15 +1692,24 @@ namespace TypeCobol.Compiler.Parser
 
 		// --- ACCEPT ---
 
-		public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context) {
+		public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context)
+        {
 			Context = context;
-			if (context.acceptDataTransfer() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(context.acceptDataTransfer());
-			} else
-			if(context.acceptSystemDateTime() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAcceptSystemDateTime(context.acceptSystemDateTime());
-			}
-		}
+
+            AcceptStatement acceptStatement;
+            var receivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
+            if (context.fromSystemDateTime() != null)
+            {
+                acceptStatement = CobolStatementsBuilder.CreateAcceptSystemDateTime(receivingStorageArea, context.fromSystemDateTime());
+            }
+            else
+            {
+                acceptStatement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(receivingStorageArea, context.fromEnvironment());
+            }
+
+            AcceptStatementChecker.OnCodeElement(acceptStatement, context);
+            CodeElement = acceptStatement;
+        }
 
 
 	    // --- ALTER ---

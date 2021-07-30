@@ -16,7 +16,7 @@ namespace TypeCobol.Analysis.Test
             //Add analyzers
             var analyzerProvider = new AnalyzerProvider();
             //CFG/DFA
-            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa));
+            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
             return analyzerProvider;
         }
 

@@ -335,7 +335,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.IsTableOccurence)
                     {
                         var subscriptedStorageArea = actual.StorageArea as DataOrConditionStorageArea;
-                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Count > 0)
+                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Length > 0)
                         {
                             //if there are subscripts
 
@@ -377,8 +377,8 @@ namespace TypeCobol.Compiler.Diagnostics
                             TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType != null && calleeType != null)
                             {
-                                //Compare references of TypeDefinition
-                                if (callerType != calleeType)
+                                //Compare TypeDefinitions
+                                if (!callerType.Equals(calleeType))
                                 {
                                     var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
