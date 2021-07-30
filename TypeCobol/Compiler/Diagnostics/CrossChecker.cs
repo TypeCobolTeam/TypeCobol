@@ -229,12 +229,13 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (receiver == null) continue;
 
                     if (receiver.Kind == StorageAreaKind.FunctionCallResult)
+                    {
                         DiagnosticUtils.AddError(move, "MOVE: illegal <function call> after TO");
-
-                    if (senderIsAlphanumeric
-                        && receiver.Kind == StorageAreaKind.DataOrCondition
-                        && move.StorageAreaWritesDataDefinition != null
-                        && move.StorageAreaWritesDataDefinition.TryGetValue(receiver, out var receiverDataDefinition))
+                    }
+                    else if (senderIsAlphanumeric
+                              && receiver.Kind == StorageAreaKind.DataOrCondition
+                              && move.StorageAreaWritesDataDefinition != null
+                              && move.StorageAreaWritesDataDefinition.TryGetValue(receiver, out var receiverDataDefinition))
                     {
                         if (receiverDataDefinition.DataType == DataType.Numeric || receiverDataDefinition.DataType == DataType.NumericEdited)
                         {
