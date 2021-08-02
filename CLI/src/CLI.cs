@@ -260,7 +260,7 @@ namespace TypeCobol.Server
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
                 //All purpose CFG/DFA
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode));
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
 
                 //CFG/DFA for ZCALL report
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
@@ -268,7 +268,7 @@ namespace TypeCobol.Server
                     if (_configuration.CfgBuildingMode != CfgBuildingMode.WithDfa)
                     {
                         //Need to create a dedicated CFG builder with DFA activated
-                        analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa));
+                        analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
                     }
 
                     string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);

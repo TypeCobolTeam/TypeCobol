@@ -201,52 +201,61 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable() == null)
                     DiagnosticUtils.AddError(statement, "Empty CALL is not authorized", context.Start);
 
-                foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
+                // Check each parameter of the CALL
+                CheckCallUsings(statement);
 
                 if (context.callReturningParameter() != null && statement.OutputParameter == null)
                     DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
             }
         }
 
-        private static void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
+        /// <summary>
+        /// Check the parameters of the CALL
+        /// </summary>
+        /// <param name="statement">CALL to check the parameters</param>
+        private static void CheckCallUsings(CallStatement statement)
         {
-            foreach (var input in statement.InputParameters)
+            foreach (var inputParameter in statement.InputParameters)
             {
+                var errorPosition = inputParameter.StorageAreaOrValue?.MainSymbolReference?.NameLiteral.Token;
+
                 // TODO#249 these checks should be done during semantic phase, after symbol type resolution
                 // TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
-                //	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
-                bool isFunctionCallResult = input.StorageAreaOrValue != null &&
-                                            input.StorageAreaOrValue.StorageArea is FunctionCallResult;
+                bool isFunctionCallResult = inputParameter.StorageAreaOrValue != null &&
+                                            inputParameter.StorageAreaOrValue.StorageArea is FunctionCallResult;
 
                 //SpecialRegister if LENGTH OF, LINAGE-COUNTER, ...
-                var specialRegister = input.StorageAreaOrValue != null
-                    ? input.StorageAreaOrValue.StorageArea as StorageAreaPropertySpecialRegister
+                var specialRegister = inputParameter.StorageAreaOrValue != null
+                    ? inputParameter.StorageAreaOrValue.StorageArea as StorageAreaPropertySpecialRegister
                     : null;
 
                 if (isFunctionCallResult)
-                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
+                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", errorPosition);
 
                 if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LINAGE_COUNTER)
-                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
+                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", errorPosition);
 
 
-                if (input.SharingMode != null)
+                if (inputParameter.SharingMode != null)
                 {
                     //BY REFERENCE
-                    if (input.SharingMode.Value == ParameterSharingMode.ByReference)
+                    if (inputParameter.SharingMode.Value == ParameterSharingMode.ByReference)
                     {
                         if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LENGTH)
                             DiagnosticUtils.AddError(statement,
-                                "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
+                                "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", errorPosition);
 
-                        if (input.StorageAreaOrValue != null && input.StorageAreaOrValue.IsLiteral)
+                        if (inputParameter.StorageAreaOrValue != null && inputParameter.StorageAreaOrValue.IsLiteral)
                             DiagnosticUtils.AddError(statement,
-                                "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
+                                "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", errorPosition);
                     }
 
                     //BY VALUE
-                    if (input.IsOmitted && input.SharingMode.Value == ParameterSharingMode.ByValue)
-                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
+                    if (inputParameter.IsOmitted && inputParameter.SharingMode.Value == ParameterSharingMode.ByValue)
+                    {
+                        // Placing error on the token Omitted
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", inputParameter.Omitted.Token);
+                    }
                 }
             }
         }
@@ -311,7 +320,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (statement.TableToSearch == null) return; // syntax error
             if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea &&
-                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Count > 0)
+                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Length > 0)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(context));
             if (statement.TableToSearch.StorageArea?.ReferenceModifier != null)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier",

@@ -7,7 +7,6 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
@@ -101,33 +100,21 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var performCE = performProcedureNode.CodeElement;
 
-            if (performCE.Procedure != null)
-            {
-                var procedure = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.Procedure, _currentSection);
-                switch (procedure.Item1)
-                {
-                    case SymbolType.SectionName:
-                        performProcedureNode.ProcedureSectionSymbol = (SectionSymbol) procedure.Item2?.SemanticData;
-                        break;
-                    case SymbolType.ParagraphName:
-                        performProcedureNode.ProcedureParagraphSymbol = (ParagraphSymbol) procedure.Item2?.SemanticData;
-                        break;
-                }
-            }
+            (performProcedureNode.ProcedureParagraphSymbol, performProcedureNode.ProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.Procedure, _currentSection);
+            (performProcedureNode.ThroughProcedureParagraphSymbol, performProcedureNode.ThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.ThroughProcedure, _currentSection);
 
-            if (performCE.ThroughProcedure != null)
-            {
-                var throughProcedure = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure, _currentSection);
-                switch (throughProcedure.Item1)
-                {
-                    case SymbolType.SectionName:
-                        performProcedureNode.ThroughProcedureSectionSymbol = (SectionSymbol) throughProcedure.Item2?.SemanticData;
-                        break;
-                    case SymbolType.ParagraphName:
-                        performProcedureNode.ThroughProcedureParagraphSymbol = (ParagraphSymbol) throughProcedure.Item2?.SemanticData;
-                        break;
-                }
-            }
+            return true;
+        }
+
+        public override bool Visit(Sort sort)
+        {
+            var sortStatement = sort.CodeElement;
+
+            (sort.InputProcedureParagraphSymbol, sort.InputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.InputProcedure, _currentSection);
+            (sort.InputThroughProcedureParagraphSymbol, sort.InputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughInputProcedure, _currentSection);
+
+            (sort.OutputProcedureParagraphSymbol, sort.OutputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.OutputProcedure, _currentSection);
+            (sort.OutputThroughProcedureParagraphSymbol, sort.OutputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughOutputProcedure, _currentSection);
 
             return true;
         }
@@ -276,7 +263,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
                 // TODO : Handle the case of sub-tables
-                if (variableStorageArea?.Subscripts.Count == 1)
+                if (variableStorageArea?.Subscripts.Length == 1)
                 {
                     ////////// WHEN must use one of the declared keys (ascending or descending) //////////
                     var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
@@ -786,10 +773,90 @@ namespace TypeCobol.Compiler.Diagnostics
                     //TODO SemanticDomain: requires type expansion.
                 }
 
+                //Check subscripts
+                if (storageArea is DataOrConditionStorageArea dataOrConditionStorageArea)
+                {
+                    CheckSubscripts(node, dataOrConditionStorageArea, dataDefinitionFound);
+                }
+
                 return dataDefinitionFound;
             }
 
             return null;
+        }
+
+        private static void CheckSubscripts(Node node, DataOrConditionStorageArea dataOrConditionStorageArea, DataDefinition dataDefinition)
+        {
+            if (dataOrConditionStorageArea.IsPartOfFunctionArgument)
+            {
+                //Avoid checking uncertain subscripts, see issue #2001
+                return;
+            }
+
+            switch (node.CodeElement?.Type)
+            {
+                //Those have their own specific subscript checking
+                case CodeElementType.SearchStatement:
+                case CodeElementType.ProcedureStyleCall:
+                    return;
+            }
+
+            //Create a list of all parent OCCURS
+            var tableDefinitions = new List<DataDefinition>();
+            var tableDefinition = dataDefinition;
+            if (!dataDefinition.IsTableIndex) //An index cannot be subscripted
+            {
+                while (tableDefinition != null)
+                {
+                    //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
+                    if (tableDefinition.IsPartOfATypeDef) return;
+
+                    if (tableDefinition.IsTableOccurence) tableDefinitions.Add(tableDefinition);
+                    tableDefinition = tableDefinition.Parent as DataDefinition;
+                }
+            }
+
+            if (dataOrConditionStorageArea.Subscripts.Length < tableDefinitions.Count)
+            {
+                //Not enough subscripts
+                DiagnosticUtils.AddError(node, $"Not enough subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            if (dataOrConditionStorageArea.Subscripts.Length > tableDefinitions.Count)
+            {
+                //Too many subscripts
+                DiagnosticUtils.AddError(node, $"Too many subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
+            {
+                var subscript = dataOrConditionStorageArea.Subscripts[i];
+                tableDefinition = tableDefinitions[tableDefinitions.Count - 1 - i];//OCCURS are stored in reverse order
+
+                //Do not check expressions, only literal values are checked
+                if (!(subscript.NumericExpression is NumericVariableOperand subscriptNumeric)) continue;
+
+                //Do not check variables, only literal values are checked
+                System.Diagnostics.Debug.Assert(subscriptNumeric.NumericVariable == null);
+                System.Diagnostics.Debug.Assert(subscriptNumeric.IntegerVariable != null);
+                if (subscriptNumeric.IntegerVariable.Value == null) continue;
+
+                var subscriptLiteral = subscriptNumeric.IntegerVariable.Value;
+
+                //Check the value against the min
+                if (subscriptLiteral.Value < tableDefinition.MinOccurencesCount)
+                {
+                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' is below the minimum occurrence count '{tableDefinition.MinOccurencesCount}' of the table.", subscriptLiteral.Token);
+                }
+
+                //Check the value against the max
+                if (!tableDefinition.HasUnboundedNumberOfOccurences && subscriptLiteral.Value > tableDefinition.MaxOccurencesCount)
+                {
+                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' exceeds the maximum occurrence count '{tableDefinition.MaxOccurencesCount}' of the table.", subscriptLiteral.Token);
+                }
+            }
         }
 
         private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath,
@@ -981,60 +1048,56 @@ namespace TypeCobol.Compiler.Diagnostics
     static class SectionOrParagraphUsageChecker
     {
         /// <summary>
-        /// Disambiguate between Section or Paragraph reference.
+        /// Disambiguate between Paragraph or Section reference.
         /// </summary>
         /// <param name="callerNode">Node using the paragraph or the reference.</param>
-        /// <param name="target">A non-null Symbol reference to disambiguate.</param>
+        /// <param name="target">A Symbol reference to disambiguate.</param>
         /// <param name="currentSection">The node scope in which the perform statement is declared</param>
-        /// <returns>A tuple made of a SymbolType and a Node when the target has been correctly resolved.
-        /// The returned SymbolType is non-ambiguous if the type of the target has been determined.</returns>
+        /// <returns>A tuple corresponding to the paragraph OR section found.
+        /// The returned tuple has one null value and one filled value if the reference is non-ambiguous.</returns>
         /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
-        public static (SymbolType, Node) ResolveSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Section currentSection)
+        public static (ParagraphSymbol, SectionSymbol) ResolveParagraphOrSection(Node callerNode, SymbolReference target, Section currentSection)
         {
-            var candidates = callerNode.SymbolTable.GetSectionOrParagraph(target, currentSection);
-            IList<Section> sections = candidates.Item1;
-            IList<Paragraph> paragraphs = candidates.Item2;
+            if (target == null) return (null, null);
 
-            var symbolType = target.Type;
+            var (sections, paragraphs) = callerNode.SymbolTable.GetSectionOrParagraph(target, currentSection);
             if (paragraphs == null || paragraphs.Count == 0)
             {
                 if (sections == null || sections.Count == 0)
                 {
                     //Nothing found
                     DiagnosticUtils.AddError(callerNode, $"Symbol {target.Name} is not referenced", target, MessageCode.SemanticTCErrorInParser);
-                    return (symbolType, null);
+                    return (null, null);
                 }
 
                 //We know for sure it's a section but is it ambiguous ?
-                symbolType = SymbolType.SectionName;
                 if (sections.Count > 1)
                 {
                     DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to section {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                    return (symbolType, null);
+                    return (null, null);
                 }
 
                 //Return single section found
-                return (symbolType, sections[0]);
+                return (null, (SectionSymbol)sections[0].SemanticData);
             }
 
             //No section matches the name so it's a paragraph
             if (sections == null || sections.Count == 0)
             {
                 //Check if paragraph is ambiguous
-                symbolType = SymbolType.ParagraphName;
                 if (paragraphs.Count > 1)
                 {
                     DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                    return (symbolType, null);
+                    return (null, null);
                 }
 
                 //Return single paragraph found
-                return (symbolType, paragraphs[0]);
+                return ((ParagraphSymbol)paragraphs[0].SemanticData, null);
             }
 
             //The reference is ambiguous, we don't know what we're dealing with
             DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to procedure {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-            return (SymbolType.TO_BE_RESOLVED, null);
+            return (null, null);
         }
 
         private static void CheckIsNotEmpty<T>(string nodeTypeName, T node) where T : Node

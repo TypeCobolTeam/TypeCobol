@@ -114,7 +114,7 @@ public class GeneratedParameter: CallTargetParameter {
 
 	public static StorageArea CreateReceivingStorageArea(SymbolDefinition symbol) {
 		if (symbol == null) return null;
-		var storage = new DataOrConditionStorageArea(new SymbolReference(symbol));
+		var storage = new DataOrConditionStorageArea(new SymbolReference(symbol), false);
 		return storage;
 	}
 }
