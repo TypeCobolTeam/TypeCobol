@@ -32,7 +32,12 @@ namespace TypeCobol.Compiler.Types
             N
         }
 
-        //Does not handle CR, DB and CS
+        /// <summary>
+        /// Determines the Special Character for the single character given.
+        /// </summary>
+        /// <param name="c">Char encountered in the picture string.</param>
+        /// <returns>The corresponding SC instance.</returns>
+        /// <remarks>Does not handle CR, DB and CS.</remarks>
         private static SC Char2SC(char c)
         {
             switch (char.ToUpper(c))
@@ -78,7 +83,12 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
-        //For error messages
+        /// <summary>
+        /// Gives a textual representation of a Special Character.
+        /// </summary>
+        /// <param name="sc">Special Character to represent.</param>
+        /// <returns>Corresponding string instance.</returns>
+        /// <remarks>Use for error messages only.</remarks>
         private string SC2String(SC sc)
         {
             switch (sc)

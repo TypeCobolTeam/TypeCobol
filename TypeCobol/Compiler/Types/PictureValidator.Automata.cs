@@ -284,7 +284,7 @@ namespace TypeCobol.Compiler.Types
 
                 //If the last index precedes the DecimalPoint position so all characters including the decimal point
                 //that are not simple characters or the floating character must be part of the right most index
-                for (++i; i < sequence.Length; i++)
+                for (i = i + 1; i < sequence.Length; i++)
                 {
                     Character c = sequence[i];
                     if (!(IsSimpleInsertionCharacter(c.SpecialChar) || c.SpecialChar == floatChar))
