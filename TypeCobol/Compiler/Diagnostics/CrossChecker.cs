@@ -288,7 +288,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
                 // TODO : Handle the case of sub-tables
-                if (variableStorageArea?.Subscripts.Count == 1)
+                if (variableStorageArea?.Subscripts.Length == 1)
                 {
                     ////////// WHEN must use one of the declared keys (ascending or descending) //////////
                     var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
@@ -798,10 +798,90 @@ namespace TypeCobol.Compiler.Diagnostics
                     //TODO SemanticDomain: requires type expansion.
                 }
 
+                //Check subscripts
+                if (storageArea is DataOrConditionStorageArea dataOrConditionStorageArea)
+                {
+                    CheckSubscripts(node, dataOrConditionStorageArea, dataDefinitionFound);
+                }
+
                 return dataDefinitionFound;
             }
 
             return null;
+        }
+
+        private static void CheckSubscripts(Node node, DataOrConditionStorageArea dataOrConditionStorageArea, DataDefinition dataDefinition)
+        {
+            if (dataOrConditionStorageArea.IsPartOfFunctionArgument)
+            {
+                //Avoid checking uncertain subscripts, see issue #2001
+                return;
+            }
+
+            switch (node.CodeElement?.Type)
+            {
+                //Those have their own specific subscript checking
+                case CodeElementType.SearchStatement:
+                case CodeElementType.ProcedureStyleCall:
+                    return;
+            }
+
+            //Create a list of all parent OCCURS
+            var tableDefinitions = new List<DataDefinition>();
+            var tableDefinition = dataDefinition;
+            if (!dataDefinition.IsTableIndex) //An index cannot be subscripted
+            {
+                while (tableDefinition != null)
+                {
+                    //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
+                    if (tableDefinition.IsPartOfATypeDef) return;
+
+                    if (tableDefinition.IsTableOccurence) tableDefinitions.Add(tableDefinition);
+                    tableDefinition = tableDefinition.Parent as DataDefinition;
+                }
+            }
+
+            if (dataOrConditionStorageArea.Subscripts.Length < tableDefinitions.Count)
+            {
+                //Not enough subscripts
+                DiagnosticUtils.AddError(node, $"Not enough subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            if (dataOrConditionStorageArea.Subscripts.Length > tableDefinitions.Count)
+            {
+                //Too many subscripts
+                DiagnosticUtils.AddError(node, $"Too many subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
+            {
+                var subscript = dataOrConditionStorageArea.Subscripts[i];
+                tableDefinition = tableDefinitions[tableDefinitions.Count - 1 - i];//OCCURS are stored in reverse order
+
+                //Do not check expressions, only literal values are checked
+                if (!(subscript.NumericExpression is NumericVariableOperand subscriptNumeric)) continue;
+
+                //Do not check variables, only literal values are checked
+                System.Diagnostics.Debug.Assert(subscriptNumeric.NumericVariable == null);
+                System.Diagnostics.Debug.Assert(subscriptNumeric.IntegerVariable != null);
+                if (subscriptNumeric.IntegerVariable.Value == null) continue;
+
+                var subscriptLiteral = subscriptNumeric.IntegerVariable.Value;
+
+                //Check the value against the min
+                if (subscriptLiteral.Value < tableDefinition.MinOccurencesCount)
+                {
+                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' is below the minimum occurrence count '{tableDefinition.MinOccurencesCount}' of the table.", subscriptLiteral.Token);
+                }
+
+                //Check the value against the max
+                if (!tableDefinition.HasUnboundedNumberOfOccurences && subscriptLiteral.Value > tableDefinition.MaxOccurencesCount)
+                {
+                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' exceeds the maximum occurrence count '{tableDefinition.MaxOccurencesCount}' of the table.", subscriptLiteral.Token);
+                }
+            }
         }
 
         private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath,

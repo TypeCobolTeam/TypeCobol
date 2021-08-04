@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
@@ -11,6 +10,7 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Types;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -82,48 +82,43 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //Check Picture character string format
-            CheckPicture(data);
+            CheckPicture(data, context);
         }
 
-        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement)
+        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement, ParserRuleContextWithDiagnostics context)
         {
             if (codeElement.Picture == null) return;
 
-            var pictureToken = codeElement.Picture.Token;
-            // if there is not the same number of '(' than of ')'
-            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
+            /*
+             * Validate using PictureValidator
+             * We use the scan state of the first token in ANTLR context for this code element to retrieve special-names information,
+             * namely DecimalPointIsComma and the custom currency descriptors (if any).
+             */
+            bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
+            var specialNamesContext = (context?.Start as Token)?.TokensLine.ScanState.SpecialNames;
+            bool decimalPointIsComma = specialNamesContext?.DecimalPointIsComma ?? false;
+            var customCurrencyDescriptors = specialNamesContext?.CustomCurrencyDescriptors;
+            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate, decimalPointIsComma, customCurrencyDescriptors);
+            var pictureValidationResult = pictureValidator.Validate(out var validationMessages);
+
+            //Report validation errors as diagnostics
+            if (!pictureValidationResult.IsValid)
             {
-                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", pictureToken);
-            }
-            // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
-                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
-            {
-                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", pictureToken);
-            }
-            else
-            {
-                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
+                var pictureToken = codeElement.Picture.Token;
+                foreach (var validationMessage in validationMessages)
                 {
-                    try //Try catch is here because of the risk to parse a non numerical value
-                    {
-                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                    }
-                    catch (Exception)
-                    {
-                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(codeElement, m, pictureToken);
-                    }
+                    DiagnosticUtils.AddError(codeElement, validationMessage, pictureToken);
                 }
             }
+
+            //Store validation result for future usages
+            codeElement.PictureValidationResult = pictureValidationResult;
         }
 
         public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
         {
             TypeDefinitionEntryChecker.CheckRedefines(redefines, context);
-            CheckPicture(redefines);
+            CheckPicture(redefines, context);
         }
 
         /// <summary>
@@ -320,7 +315,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (statement.TableToSearch == null) return; // syntax error
             if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea &&
-                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Count > 0)
+                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Length > 0)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(context));
             if (statement.TableToSearch.StorageArea?.ReferenceModifier != null)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier",

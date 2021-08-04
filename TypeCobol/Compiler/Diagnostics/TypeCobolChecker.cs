@@ -335,7 +335,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.IsTableOccurence)
                     {
                         var subscriptedStorageArea = actual.StorageArea as DataOrConditionStorageArea;
-                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Count > 0)
+                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Length > 0)
                         {
                             //if there are subscripts
 
