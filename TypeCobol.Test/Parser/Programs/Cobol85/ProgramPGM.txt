@@ -7,6 +7,7 @@ Line 32[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID Of
 Line 32[36,42] <37, Warning, General> - Warning: Dot expected at the end of PROGRAM-ID declaration OffendingSymbol=[36,42:PROGRAM]<PROGRAM>
 Line 40[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
 Line 40[14,24] <37, Warning, General> - Warning: Dot expected at the end of PROGRAM-ID declaration OffendingSymbol=[14,24:allWithout2]<UserDefinedWord>
+Line 60[22,25] <27, Error, Syntax> - Syntax error : Currency symbol must be one single character.
 Line 79[4,4] <27, Error, Syntax> - Syntax error : Group item x cannot have a "PICTURE" OffendingSymbol=[4,4:x]<UserDefinedWord>
 Line 106[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'TYPE' expecting {symbol, special register, keyword} RuleStack=codeElement>moveStatement>moveSimple,  OffendingSymbol=[16,19:TYPE]<TYPE>
 Line 114[3,22] <27, Error, Syntax> - Syntax error : Cannot SEARCH in 'num', data item is not a table.

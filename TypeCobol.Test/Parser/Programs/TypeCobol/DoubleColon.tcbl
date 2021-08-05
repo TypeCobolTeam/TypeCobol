@@ -54,7 +54,7 @@ WORKING-STORAGE SECTION.
   05  T4-B2   PIC X.
 
 01 MyArray TYPEDEF STRICT.
-    05 MyValue PIC 2(9).
+    05 MyValue PIC 9(2).
 01 MyVar TYPE MyArray.
 
 01 MyLevel.
