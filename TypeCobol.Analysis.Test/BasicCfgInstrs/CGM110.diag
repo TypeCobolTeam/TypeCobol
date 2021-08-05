@@ -10,8 +10,10 @@ Line 28256[8,37] <37, Warning, General> - Warning: Paragraph 'CGBCALAK-SYSPUNCH-
 Line 28289[8,37] <37, Warning, General> - Warning: Paragraph 'CGBCALAK-SYSPUNCH-WSBA-SUITE' is empty
 Line 28327[8,32] <37, Warning, General> - Warning: Paragraph 'CGBCALAK-SYSPUNCH-SUITE' is empty
 Line 29421[13,18] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 29550[20,71] <37, Warning, General> - Warning: Moving alphanumeric 'WS-CMM010-CODE-CADRAGE-JJ' to numeric 'WS-CMM010-CADR-BIN' declared with an USAGE may lead to unexpected results.
 Line 29627[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 29628[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 29685[24,46] <37, Warning, General> - Warning: Moving alphanumeric 'WS-CMM010-CODE-CADRAGE-JJ' to numeric 'WS-CMM010-CADR-BIN' declared with an USAGE may lead to unexpected results.
 Line 29772[12,17] <37, Warning, General> - Warning: "end-if" is missing
 Line 29776[16,21] <37, Warning, General> - Warning: "end-if" is missing
 Line 31035[21,26] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
