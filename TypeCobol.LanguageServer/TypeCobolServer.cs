@@ -172,12 +172,12 @@ namespace TypeCobol.LanguageServer
                 missingCopiesParam.textDocument = textDocument;
 
 #if EUROINFO_RULES
-                ILookup<bool, string> lookup = copiesName.ToLookup<string, bool>(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
+                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
                 missingCopiesParam.Copies = lookup[false].ToList();
-                missingCopiesParam.cpyCopies = lookup[true].ToList();
+                missingCopiesParam.CpyCopies = lookup[true].ToList();
 #else
                 missingCopiesParam.Copies = copiesName;
-                missingCopiesParam.cpyCopies = new List<string>();
+                missingCopiesParam.CpyCopies = new List<string>();
 #endif
                 this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
             }
