@@ -87,8 +87,8 @@ namespace TypeCobol.Compiler.Symbols
 
             GroupType CreateDateComponent()
             {
-                var yyyyType = new PictureType(new PictureValidator("9(04)", false));
-                var mmType = new PictureType(new PictureValidator("9(02)", false));
+                var yyyyType = new PictureType(NumericValidationResult(4), false);
+                var mmType = new PictureType(NumericValidationResult(3), false);
                 var ddType = mmType;
 
                 Date.Level = 1;
@@ -101,9 +101,34 @@ namespace TypeCobol.Compiler.Symbols
                 recType.Fields.Enter(dd);
 
                 return recType;
+
+                PictureValidator.Result NumericValidationResult(int count)
+                {
+                    return new PictureValidator.Result(
+                        new[] { new PictureValidator.Character(PictureValidator.SC.NINE, count) },
+                        null,
+                        PictureCategory.Numeric,
+                        count,
+                        count,
+                        false,
+                        0,
+                        count);
+                }
             }
 
-            PictureType CreateCurrencyComponent() => new PictureType(new PictureValidator("X(03)", false));
+            PictureType CreateCurrencyComponent()
+            {
+                var validationResult = new PictureValidator.Result(
+                    new [] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    null,
+                    PictureCategory.Alphanumeric,
+                    0,
+                    0,
+                    false,
+                    0,
+                    3);
+                return new PictureType(validationResult, false);
+            }
         }
 
         internal static Type GetUsageType(Type.UsageFormat usage)
