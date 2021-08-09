@@ -232,8 +232,13 @@ namespace TypeCobol.LanguageServer
 
             if (potentialVariablesForCompletion == null) return completionItems;
 
-            foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
-                SearchVariableInTypesAndLevels(node, potentialVariable, fileCompiler.CompilerOptions, completionItems); //Add potential variables to completionItems*           
+            //Convert potential variables into actual CompletionItems
+            var variables = potentialVariablesForCompletion
+                .Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
+                .Distinct()
+                .SelectMany(d => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(d.Name)));
+            var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, fileCompiler.CompilerOptions);
+            completionItems.AddRange(items);
 
             CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
             Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
@@ -415,6 +420,7 @@ namespace TypeCobol.LanguageServer
 
                var possibleVariables = qualifiedName.Length > 0 ? node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName)) : null;
 
+                List<DataDefinition> childrenCandidates = new List<DataDefinition>();
                 if (possibleVariables != null && possibleVariables.Any()) 
                 {
                     //Get children of a type to get completion possibilities
@@ -440,14 +446,12 @@ namespace TypeCobol.LanguageServer
                             GetNextRelevantChildren(child, computedChildrenList);
                         }
 
-                        completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
-                            computedChildrenList.Where(
-                                    c => c.Name != null && c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                                .Select(child => child as DataDefinition), fileCompiler.CompilerOptions, false));
+                        FilterByUserText(computedChildrenList);
                     }
                 }
                 else
-                { //If no variables found, it's could be a children declared in a typedef..
+                {
+                    //If no variable found, it could be a child declared in a typedef.
                     var children = new List<Node>();
                     var potentialTypes =
                         node.SymbolTable.GetTypes(
@@ -460,20 +464,33 @@ namespace TypeCobol.LanguageServer
 
                     foreach (var nodeType in potentialTypes.SelectMany(t => t.Children).Where(c => c != null && c.Name != null && c.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)))
                     {
-
                         var nodeDataDef = nodeType as DataDefinition;
                         if (nodeDataDef == null) continue;
 
-                        var typeChildrens = GetTypeChildren(node.SymbolTable, nodeDataDef);
-                        if (typeChildrens != null)
-                            children.AddRange(typeChildrens);
+                        var typeChildren = GetTypeChildren(node.SymbolTable, nodeDataDef);
+                        if (typeChildren != null)
+                            children.AddRange(typeChildren);
                     }
 
-                    completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
-                        children.Where(
-                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            .Select(child => child as DataDefinition), fileCompiler.CompilerOptions, false));
+                    FilterByUserText(children);
                 }
+
+                void FilterByUserText(List<Node> nodes)
+                {
+                    foreach (var child in nodes)
+                    {
+                        System.Diagnostics.Debug.Assert(child is DataDefinition);
+                        var data = (DataDefinition) child;
+                        if (data.Name != null && data.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            childrenCandidates.Add(data);
+                        }
+                    }
+                }
+
+                var variables = childrenCandidates.Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
+                var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, fileCompiler.CompilerOptions, true);
+                completionItems.AddRange(items);
 
                 if (firstSignificantToken != null)
                 {
@@ -536,8 +553,8 @@ namespace TypeCobol.LanguageServer
             if (node == null)
                 return completionItems;
 
-            var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.Program);
-            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables, fileCompiler.CompilerOptions));
+            var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.Program).Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
+            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, fileCompiler.CompilerOptions));
 
             return completionItems;
         }
@@ -657,11 +674,11 @@ namespace TypeCobol.LanguageServer
                 potentialVariables = node.SymbolTable.GetVariables(variablePredicate,SymbolTable.Scope.Program);
             }
 
-            foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
-            {
-                if (potentialVariable.VisualQualifiedNameWithoutProgram.SequenceEqual(qualifiedNameParts)) continue;
-                SearchVariableInTypesAndLevels(node, potentialVariable, fileCompiler.CompilerOptions, completionItems);
-            }
+            var variables = potentialVariables
+                .Where(v => !v.VisualQualifiedNameWithoutProgram.SequenceEqual(qualifiedNameParts))
+                .SelectMany(v => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(v.Name)));
+            var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, fileCompiler.CompilerOptions);
+            completionItems.AddRange(items);
 
             return completionItems.Where(c => c.insertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
@@ -723,14 +740,14 @@ namespace TypeCobol.LanguageServer
         /// <param name="options">Current TypeCobolOptions</param>
         public static IEnumerable<CompletionItem> GetCompletionForAddressOf(Node node, Token contextToken, string userFilterText, TypeCobolOptions options)
         {
-            IEnumerable<DataDefinition> potentialVariable = null;
+            IEnumerable<DataDefinition> potentialVariables;
             if (node == null)
                 return new List<CompletionItem>();
 
             if (contextToken != null && contextToken.TokenType == TokenType.SET)
             {
                 //Get all the variables in Linkage section with Level 01 or 77 and starting by userFilterText. 
-                potentialVariable = node.SymbolTable.GetVariables(v => v != null
+                potentialVariables = node.SymbolTable.GetVariables(v => v != null
                                                 && v.IsFlagSet(Node.Flag.LinkageSectionNode)
                                                 && v.CodeElement is DataDefinitionEntry
                                                 && ((v.CodeElement).LevelNumber.Value == 1 || (v.CodeElement).LevelNumber.Value == 77)
@@ -740,7 +757,7 @@ namespace TypeCobol.LanguageServer
             else 
             {
                 //Get all the variables from any section with level 01 or 77 and starting by userFilterText.
-                potentialVariable = node.SymbolTable.GetVariables(
+                potentialVariables = node.SymbolTable.GetVariables(
                     v => v != null
                          && v.CodeElement is DataDefinitionEntry
                          && ((v.CodeElement).LevelNumber.Value == 1 ||
@@ -749,7 +766,8 @@ namespace TypeCobol.LanguageServer
                         SymbolTable.Scope.Program);
             }
 
-            return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable, options);
+            var variables = potentialVariables.Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
+            return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, options);
         }
 
 
@@ -769,7 +787,7 @@ namespace TypeCobol.LanguageServer
             var currentParent = currentVariable.Parent as DataDefinition;
             if (currentParent != null)
             {
-                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(currentParent, options));
+                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, currentParent, options, true));
             }
             return completionItems;
         }
@@ -791,54 +809,6 @@ namespace TypeCobol.LanguageServer
                     SymbolTable.Scope.Intrinsic).FirstOrDefault();
 
             return type?.Children;
-        }
-
-        private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, TypeCobolOptions options, List<CompletionItem> completionItems)
-        {
-            var symbolTable = node.SymbolTable;
-            if (!variable.IsPartOfATypeDef)  //Variable is not coming from a type. 
-            {
-                if (symbolTable.GetVariablesExplicit(new URI(variable.Name)).Any())   //Check if this variable is present locally. 
-                {
-                    completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(variable, options));
-                }
-            }
-            else
-            {
-                var type = variable.ParentTypeDefinition;
-                var typesReferences = symbolTable.TypesReferences;
-                if (type != null && typesReferences != null && typesReferences.TryGetValue(type, out var references)) //We are in a typedef, get references of this type
-                {
-                    foreach (var reference in references)
-                    {
-                        if (symbolTable.GetVariablesExplicit(new URI(reference.Name)).Any())  //Check if this variable is present locally. If not just ignore it
-                        {
-                            if (reference.ParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final variable
-                            {
-                                var referenceArrangedQualifiedName = string.Join("::", reference.VisualQualifiedNameWithoutProgram);
-                                var finalQualifiedName = $"{referenceArrangedQualifiedName}::{variable.VisualQualifiedName.Head}";
-                                var variableDisplay = $"{variable.Name} ({variable.DataType.Name}) ({finalQualifiedName})";
-                                completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName, kind = CompletionItemKind.Variable });
-                            }
-                            else //If the reference is still in a typedef, let's loop and ride up until we are in a final variable
-                            {
-                                var completionItemsForReference = new List<CompletionItem>();
-                                SearchVariableInTypesAndLevels(node, reference, options, completionItemsForReference);
-
-                                if (completionItemsForReference.Count > 0)
-                                {
-                                    foreach (var completionItem in completionItemsForReference)
-                                    {
-                                        completionItem.insertText += $"::{variable.VisualQualifiedName.Head}";
-                                        completionItem.label = $"{variable.Name} ({variable.DataType.Name}) ({completionItem.insertText})";
-                                        completionItems.Add(completionItem);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         private static void GetNextRelevantChildren(Node dataDefinition, List<Node> children)

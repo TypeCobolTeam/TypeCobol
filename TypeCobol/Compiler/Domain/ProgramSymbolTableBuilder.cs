@@ -425,11 +425,10 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="picture">Picture of the DataDefinition, must be non-null</param>
         /// <param name="usage">Usage of the DataDefinition, may be None to reflect the absence of usage clause</param>
         /// <returns>The Picture Type</returns>
-        private static PictureType CreatePictureType(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage)
+        private static PictureType CreatePictureType(DataDefinition dataDef, PictureValidator.Result picture, Type.UsageFormat usage)
         {
             System.Diagnostics.Debug.Assert(picture != null);
-            PictureValidator pictureValidator = new PictureValidator(picture.Value, dataDef.SignIsSeparate);
-            PictureType type = new PictureType(pictureValidator);
+            PictureType type = new PictureType(picture, dataDef.SignIsSeparate);
             //Use permissive Usage setter which allows COMP1 and COMP2
             type.Usage = usage;
             return type;
@@ -444,7 +443,7 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, PictureValidator.Result picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             Type type = CreatePictureType(dataDef, picture, usage);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
@@ -471,7 +470,7 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns></returns>
-        private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, PictureValidator.Result picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             //We create a group symbol having the group type
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out _)
@@ -684,7 +683,7 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataRedefinesEntry:                    
                         {
                             //Extract Picture and Usage once to avoid multiple redundant calls
-                            var picture = dataDef.Picture;
+                            var picture = dataDef.PictureValidationResult;
                             var dataUsage = dataDef.Usage;
                             var usage = dataUsage.HasValue ? Type.DataUsage2UsageFormat(dataUsage.Value) : Type.UsageFormat.None;
 

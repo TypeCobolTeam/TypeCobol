@@ -9,12 +9,12 @@ LOCAL-STORAGE SECTION.
 01 MyGlobalGroup GLOBAL.
   05 MGG1.
     10 MGG2 PIC X(5).
-  05 MGGDate Type Date.
+  05 MGGDate PIC 9(8).
 
 01 MyNotGlobalGroup.
   05 MNGG1.
     10 MNGG2 PIC X(5).
-  05 MNGGDate Type Date.
+  05 MNGGDate PIC 9(8).
 
 PROCEDURE DIVISION.
 

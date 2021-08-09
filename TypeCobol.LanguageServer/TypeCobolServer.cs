@@ -79,6 +79,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public List<string> CustomAnalyzerFiles { get; set; }
 
+        /// <summary>
+        /// No Copy and Dependency files watchers.
+        /// </summary>
+        public bool NoCopyDependencyWatchers { get; set; }
+
         private bool Logger(string message, Uri uri)
         {
             if (uri == null)
@@ -254,6 +259,8 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace.
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
+            if (!NoCopyDependencyWatchers)
+                this.Workspace.InitCopyDependencyWatchers();
 #if EUROINFO_RULES
             this.Workspace.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
 #endif
@@ -269,6 +276,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.ExceptionTriggered += ExceptionTriggered;
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
+            this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
             this.Workspace.LoadCustomAnalyzers(CustomAnalyzerFiles);
 
             // Return language server capabilities
@@ -287,6 +295,9 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnShutdown()
         {
+            this.Workspace.LoadingIssueEvent -= LoadingIssueDetected;
+            this.Workspace.ExceptionTriggered -= ExceptionTriggered;
+            this.Workspace.WarningTrigger -= WarningTrigger;
             this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
             this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
@@ -316,9 +327,6 @@ namespace TypeCobol.LanguageServer
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
             if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocumentContext(docContext.Uri, out _))
             {
-                //Subscribe to diagnostics event
-                this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
-
                 //Create a ILanguageServer instance for the document.
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, parameters.textDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
@@ -504,7 +512,6 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 this.Workspace.CloseSourceFile(objUri);
-                this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);

@@ -184,7 +184,7 @@ namespace TypeCobol.Compiler
             MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
-            cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
+            cacheKey += (scanState.SpecialNames.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
                         (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
             // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
             // because a COPY is always cleanly delimited at CodeElement boundaries.

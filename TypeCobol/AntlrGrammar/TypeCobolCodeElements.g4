@@ -144,13 +144,13 @@ functionDeclarationEnd: END_DECLARE PeriodSeparator;
 callStatement:  tcCallStatement | cobolCallStatement;
 
 cobolCallStatement:
-	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable
+	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable?
 		(USING callUsingParameters+)?
 		(RETURNING callReturningParameter)?;
 
 // TCRFUN_CALL_PARAMETER_ORDER
 tcCallStatement:
-	CALL procedurePointerOrFunctionPointerVariableOrfunctionNameReference=identifier?
+	CALL procedurePointerOrFunctionPointerVariableOrfunctionNameReference=identifier
 		(INPUT  callInputParameter+)?
 		(IN_OUT  callInoutParameter+)?
 		(OUTPUT callOutputParameter+)?

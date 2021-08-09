@@ -625,7 +625,19 @@ namespace TypeCobol.Compiler.Scanner
         private int currentIndex;
         private int lastIndex;
 
-        private TypeCobolOptions compilerOptions;
+        private readonly TypeCobolOptions compilerOptions;
+        private readonly CobolLanguageLevel targetLanguageLevel;
+
+        private bool InterpretDoubleColonAsQualifiedNameSeparator
+        {
+            get
+            {
+                var currentState = tokensLine.ScanState;
+                return !compilerOptions.IsCobolLanguage  //No QualifiedNameSeparator allowed in pure Cobol
+                       && !currentState.InsidePseudoText //In TypeCobol, no QualifiedNameSeparator allowed in pseudoText
+                       && !currentState.InsideCopy;      //In TypeCobol, no QualifiedNameSeparator allowed in copies 
+            }
+        }
 
         public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
         {
@@ -635,6 +647,7 @@ namespace TypeCobol.Compiler.Scanner
             this.lastIndex = lastIndex;
 
             this.compilerOptions = compilerOptions;
+            this.targetLanguageLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
 
             this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
         }
@@ -870,7 +883,7 @@ namespace TypeCobol.Compiler.Scanner
                 case ',':
                     //CommaSeparator=2,
                     // p46: A separator comma is composed of a comma followed by a space. 
-                    if (tokensLine.ScanState.DecimalPointIsComma)
+                    if (tokensLine.ScanState.SpecialNames.DecimalPointIsComma)
                     {
                         //IntegerLiteral = 27,
                         //DecimalLiteral = 28,
@@ -997,7 +1010,7 @@ namespace TypeCobol.Compiler.Scanner
                 case '.':
                     //PeriodSeparator=7,
                     // p46: A separator period is composed of a period followed by a space.
-                    if(tokensLine.ScanState.DecimalPointIsComma)
+                    if(tokensLine.ScanState.SpecialNames.DecimalPointIsComma)
                     {
                         return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
@@ -1011,10 +1024,7 @@ namespace TypeCobol.Compiler.Scanner
                 case ':':
                     // -- TypeCobol specific syntax --
                     // QualifiedNameSeparator => qualifierName::qualifiedName
-                    //if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
-                    if (!currentState.InsidePseudoText //No QualifiedNameSeparator allowed in pseudoText
-                        && (!currentState.InsideCopy) //No QualifiedNameSeparator allowed in COPY 
-                        && currentIndex < lastIndex && line[currentIndex + 1] == ':')
+                    if (currentIndex < lastIndex && line[currentIndex + 1] == ':' && InterpretDoubleColonAsQualifiedNameSeparator)
                     {
                         // consume two :: chars
                         currentIndex += 2;
@@ -1478,7 +1488,7 @@ namespace TypeCobol.Compiler.Scanner
                 return ScanNumericLiteral(startIndex);
             }
             else if((tokenType == TokenType.PlusOperator || tokenType == TokenType.MinusOperator) && 
-                    line[currentIndex + 1] == (tokensLine.ScanState.DecimalPointIsComma?',':'.'))
+                    line[currentIndex + 1] == (tokensLine.ScanState.SpecialNames.DecimalPointIsComma ? ',' : '.'))
             {
                 return ScanNumericLiteral(startIndex);
             }
@@ -1553,7 +1563,7 @@ namespace TypeCobol.Compiler.Scanner
       
             // Handle DECIMAL-POINT IS COMMA clause
             char decimalPoint = '.';
-            if(tokensLine.ScanState.DecimalPointIsComma)
+            if (tokensLine.ScanState.SpecialNames.DecimalPointIsComma)
             {
                 decimalPoint = ',';
             }
@@ -2148,7 +2158,7 @@ namespace TypeCobol.Compiler.Scanner
                 //   as a system-name.
 
                 // Try to match keyword text
-                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, compilerOptions.IsCobolLanguage);
+                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, targetLanguageLevel);
 
                 // Special cases of user defined words : 
                 // - symbolic characters
@@ -2159,16 +2169,16 @@ namespace TypeCobol.Compiler.Scanner
                     // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character.
                     // The same symbolic-character can appear only once in a SYMBOLIC CHARACTERS clause.
                     // The symbolic character can be a DBCS user-defined word.
-                    if (tokensLine.ScanState.InsideSymbolicCharacterDefinitions)
+                    if (tokensLine.ScanState.SpecialNames.InsideSymbolicCharacterDefinitions)
                     {
                         // Symbolic character definition
                         tokenType = TokenType.SymbolicCharacter;
-                        tokensLine.ScanState.AddSymbolicCharacter(tokenText);
+                        tokensLine.ScanState.SpecialNames.AddSymbolicCharacter(tokenText);
                     }
-                    else if (tokensLine.ScanState.SymbolicCharacters != null)
+                    else if (tokensLine.ScanState.SpecialNames.SymbolicCharacters != null)
                     {
                         // Try to match a previously defined SymbolicCharacter
-                        if (tokensLine.ScanState.SymbolicCharacters.Contains(tokenText))
+                        if (tokensLine.ScanState.SpecialNames.SymbolicCharacters.Contains(tokenText))
                         {
                             tokenType = TokenType.SymbolicCharacter;
                         }
@@ -2346,11 +2356,9 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         private bool CheckForPartialCobolWordPattern(int startIndex, out int patternEndIndex)
         {
-            MultilineScanState currentState = tokensLine.ScanState;
+            //This method is always called on a starting ':'
+            System.Diagnostics.Debug.Assert(line[startIndex] == ':');
             patternEndIndex = -1;
-
-            // minimum length
-            if(startIndex + 2 > lastIndex) return false;
 
             // match leading spaces if any
             int index = startIndex + 1;
@@ -2361,29 +2369,30 @@ namespace TypeCobol.Compiler.Scanner
             for (; index <= lastIndex && CobolChar.IsCobolWordChar(line[index]); index++) 
             { }
 
-            // no legal cobol word chars found 
-            if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index]))
-            {
-                //Empty partialCobolWord are only allowed inside pseudo text and copy
-                if (!(currentState.InsidePseudoText || currentState.InsideCopy))
-                {
-                    return false;
-                }
-            }
-
-            //match trailing spaces if any
+            // match trailing spaces if any
             for (; index <= lastIndex && line[index] == ' '; index++)
             { }
 
             // next character must be ':'
             if (line.Length > index && line[index] == ':')
             {
-                if (compilerOptions.IsCobolLanguage || !(line.Length > index + 1 && line[index + 1] == ':'))
-                {//For Cobol or if ':' is not followed by ':'. Because in TypeCobol we consider :: to be the qualifier symbol.
-                    patternEndIndex = index;
-                    return true;
+                // Empty tag, we only found '::'
+                if (index == startIndex + 1 && InterpretDoubleColonAsQualifiedNameSeparator)
+                {
+                    return false;
                 }
+
+                // character after is another ':'
+                if (line.Length > index + 1 && line[index + 1] == ':' && InterpretDoubleColonAsQualifiedNameSeparator)
+                {
+                    return false;
+                }
+
+                // Tag is properly closed
+                patternEndIndex = index;
+                return true;
             }
+
             return false;
         }
 

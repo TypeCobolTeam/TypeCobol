@@ -1,0 +1,27 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. tcFunctions.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var-date PIC X(21).
+       01 var-input PIC X(100).
+       01 var-output PIC 9(2).
+       PROCEDURE DIVISION.
+       main.
+Line 10[40,51] <48, Error, Syntax> - TypeCobol-only feature: using empty brackets is not allowed, use 'FUNCTION CURRENT-DATE'.
+           COMPUTE var-date = FUNCTION CURRENT-DATE()
+Line 11[42,51] <48, Error, Syntax> - TypeCobol-only feature: calling user-defined function is not supported.
+           COMPUTE var-output = FUNCTION myFunction(var-input)
+           GOBACK
+           .
+           
+Line 15[8,14] <48, Error, Syntax> - TypeCobol-only feature: defining custom functions/procedures is not supported.
+       DECLARE FUNCTION myFunction
+               INPUT s_string PIC X(100)
+               RETURNING s_length PIC 9(2).
+       END-DECLARE.
+       
+Line 20[8,14] <48, Error, Syntax> - TypeCobol-only feature: defining custom functions/procedures is not supported.
+       DECLARE PROCEDURE myProcedure.
+       END-DECLARE.
+           
+       END PROGRAM tcFunctions.

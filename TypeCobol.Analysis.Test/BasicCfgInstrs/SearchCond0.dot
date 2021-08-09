@@ -34,7 +34,7 @@ Block6 [
 label = "{Block6|                              next sentence\l}"
 ]
 Block3 [
-label = "{Block3|         AT END\l            MOVE 0 TO NUM\l}"
+label = "{Block3|         AT END\l            MOVE 0 TO NUM(IDX)\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2

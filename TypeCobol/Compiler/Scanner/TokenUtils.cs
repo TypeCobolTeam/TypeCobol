@@ -72,23 +72,21 @@ namespace TypeCobol.Compiler.Scanner
 
         private static IDictionary<string, TokenType> tokenTypeFromTokenString;
 
-        internal static TokenType GetTokenTypeFromTokenString(string tokenString, bool pureCobol)
+        internal static TokenType GetTokenTypeFromTokenString(string tokenString, CobolLanguageLevel targetLanguageLevel)
         {
             if (tokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
             {
-                //In TypeCobol context, return found type
-                if (!pureCobol) return tokenType;
+                if (targetLanguageLevel == CobolLanguageLevel.TypeCobol) return tokenType;
 
-                //In pure Cobol context, check token family
-                switch (GetTokenFamilyFromTokenType(tokenType))
+                var family = GetTokenFamilyFromTokenType(tokenType);
+                if (targetLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
-                    case TokenFamily.Cobol2002Keyword:
-                    case TokenFamily.TypeCobolKeyword:
-                        //Special case for TC-specific keywords
-                        return TokenType.UserDefinedWord;
-                    default:
-                        return tokenType;
+                    //Cobol2002 or Cobol2014 -> exclude TC keywords
+                    return family == TokenFamily.TypeCobolKeyword ? TokenType.UserDefinedWord : tokenType;
                 }
+
+                //Cobol85 -> exclude TC and 2002 keywords
+                return family == TokenFamily.TypeCobolKeyword || family == TokenFamily.Cobol2002Keyword ? TokenType.UserDefinedWord : tokenType;
             }
 
             return TokenType.UserDefinedWord;

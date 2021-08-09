@@ -211,8 +211,9 @@ codeElement:
 //	[TYPECOBOL]
 	| tcCodeElement;
 
-// what is here is not important as long as it is not epsilon
-tcCodeElement: PUBLIC | PRIVATE | UNSAFE;
+// dummy definition of TypeCobol code elements, not used but required by Antlr.
+// see TypeCobolCodeElements.g4 for the proper definition.
+tcCodeElement: UNSAFE;
 //	[/TYPECOBOL]
 
 
@@ -3842,13 +3843,13 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement: 
-	acceptDataTransfer | acceptSystemDateTime;
+	ACCEPT alphanumericStorageArea? (fromEnvironment | fromSystemDateTime)?;
 
-acceptDataTransfer:
-	ACCEPT alphanumericStorageArea (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
+fromEnvironment:
+	FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName;
 
-acceptSystemDateTime:
-	ACCEPT alphanumericStorageArea FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
+fromSystemDateTime:
+	FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
 
 
 yyyyMmDd: (
