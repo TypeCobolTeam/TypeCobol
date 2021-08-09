@@ -14,14 +14,14 @@ namespace TypeCobol.Compiler.CupPreprocessor
     /// </summary>
     public class CompilerDirectiveBuilder : ICompilerDirectiveBuilder
     {
-        public CompilerDirectiveBuilder(TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public CompilerDirectiveBuilder(CompilationDocument document)
         {
-            TypeCobolOptions = compilerOptions;
-            CopyTextNameVariations = copyTextNameVariations;
+            _document = document;
         }
 
-        public TypeCobolOptions TypeCobolOptions { get; set; }
-        public List<RemarksDirective.TextNameVariation> CopyTextNameVariations { get; set; }
+        private readonly CompilationDocument _document;
+        private TypeCobolOptions TypeCobolOptions => _document.CompilerOptions;
+        private List<RemarksDirective.TextNameVariation> CopyTextNameVariations => _document.CopyTextNamesVariations;
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
@@ -84,7 +84,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-            {                
+            {
 #if EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
@@ -128,6 +128,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         }
                     }
                 }
+                _document.CollectUsedCopy(copy);
 #endif
             }
             copy.LibraryName = GetName(qualifiedTextName.LibraryName);
