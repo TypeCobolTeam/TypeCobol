@@ -164,6 +164,25 @@ namespace TypeCobol.LanguageServer
             this.NotifyWarning(message);
         }
 
+        protected void MissingCopiesDetected(TextDocumentIdentifier textDocument, List<string> copiesName)
+        {
+            if (copiesName.Count > 0)
+            {
+                var missingCopiesParam = new MissingCopiesParams();
+                missingCopiesParam.textDocument = textDocument;
+
+#if EUROINFO_RULES
+                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
+                missingCopiesParam.Copies = lookup[false].ToList();
+                missingCopiesParam.CpyCopies = lookup[true].ToList();
+#else
+                missingCopiesParam.Copies = copiesName;
+                missingCopiesParam.CpyCopies = new List<string>();
+#endif
+                this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            }
+        }
+
         /// <summary>
         /// Event Method triggered when missing copies are detected.
         /// </summary>
@@ -175,10 +194,7 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            var missingCopiesParam = new MissingCopiesParams();
-            missingCopiesParam.Copies = missingCopiesEvent.Copies;
-            missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
-            this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            MissingCopiesDetected(new TextDocumentIdentifier(fileUri.ToString()), missingCopiesEvent.Copies);
         }
 
         /// <summary>
