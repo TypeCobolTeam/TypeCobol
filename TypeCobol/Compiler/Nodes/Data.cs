@@ -1038,7 +1038,8 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>List of parent tables. Maybe null if the data-item is part of a TC typedef,
         /// empty if the data-item does not belong to any table.</returns>
         /// <remarks>Returns empty list for a null starting DataDefinition.</remarks>
-        public static List<DataDefinition> GetParentTableDefinitions(this DataDefinition dataDefinition)
+        [CanBeNull]
+        public static List<DataDefinition> GetParentTableDefinitions([CanBeNull] this DataDefinition dataDefinition)
         {
             var result = new List<DataDefinition>();
             var tableDefinition = dataDefinition;

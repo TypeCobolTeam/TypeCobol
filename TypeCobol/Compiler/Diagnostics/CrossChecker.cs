@@ -23,6 +23,12 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         private readonly TypeCobolOptions _compilerOptions;
+
+        /// <summary>
+        /// For each encountered Search statement, stores target table and its parent table definitions.
+        /// If the target table could not be resolved or if it's actually not a table, no entry is added.
+        /// Every entry is either null (if table is part of a TC typedef) or not empty (the searched table itself is always part of the list).
+        /// </summary>
         private readonly Dictionary<Search, List<DataDefinition>> _searchTables;
 
         //Holds a reference to the last section node visited as to know in which current section we are
