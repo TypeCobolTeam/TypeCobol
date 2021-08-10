@@ -146,6 +146,8 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         private List<Sentence> AllSentences;
 
+        private Dictionary<Node, bool> AllStatements;
+
         /// <summary>
         /// Delegate to add a new Diagnostic to the root collection of diagnostics.
         /// </summary>
@@ -175,6 +177,7 @@ namespace TypeCobol.Analysis.Cfg
             this.Graphs = new List<ControlFlowGraph<Node, D>>();
             this.AddDiagnostic = DiagnosticList.Add;
             this.AllProcedures = new List<Procedure>();
+            this.AllStatements = new Dictionary<Node, bool>();
             this.ParentProgramCfgBuilder = null;
             this.ExtendPerformTargets = extendPerformTargets;
             this.UseEvaluateCascade = useEvaluateCascade;
@@ -193,6 +196,7 @@ namespace TypeCobol.Analysis.Cfg
             this.Graphs = builder.Graphs;
             this.AddDiagnostic = builder.AddDiagnostic;
             this.AllProcedures = new List<Procedure>();
+            this.AllStatements = new Dictionary<Node, bool>();
             this.ParentProgramCfgBuilder = asParent ? builder : null;
             this.ExtendPerformTargets = builder.ExtendPerformTargets;
             this.UseEvaluateCascade = builder.UseEvaluateCascade;
@@ -303,6 +307,7 @@ namespace TypeCobol.Analysis.Cfg
                 if (!this.CurrentProgramCfgBuilder.Cfg.IsInitialized)
                     return; //Not In Procedure DIVISION
                 this.CurrentProgramCfgBuilder.CheckStartSentence(node);
+                this.CurrentProgramCfgBuilder.AllStatements.Add(node, false);
             }
             if (node.CodeElement != null)
             {
@@ -871,7 +876,7 @@ namespace TypeCobol.Analysis.Cfg
                     Sentence sentence = next.Item2;
                     if (sentence.Number < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
                     {
-                        Sentence nextSentence = AllSentences[sentence.Number + 1];
+                        Sentence nextSentence = this.CurrentProgramCfgBuilder.AllSentences[sentence.Number + 1];
                         System.Diagnostics.Debug.Assert(nextSentence.FirstBlockIndex.HasValue);
                         int blockIndex = nextSentence.FirstBlockIndex.Value;
                         System.Diagnostics.Debug.Assert(!block.SuccessorEdges.Contains(blockIndex));
@@ -1327,12 +1332,68 @@ namespace TypeCobol.Analysis.Cfg
             }
         }
 
+        /// <summary>
+        /// Traverse the CFG to detect unreachable code blocks.
+        /// </summary>
+        private void DetectUnreachableCode()
+        {
+            //DFS to flag all reachable statements, the hashset is needed because we also traverse BasicBlockForNodeGroups
+            HashSet<int> visitedBlocks = new HashSet<int>();
+            this.CurrentProgramCfgBuilder.Cfg.DFS(FlagReachableStatements);
+
+            //Collect unreachable blocks from remaining unreachable statements
+            HashSet<int> unreachableBlocks = new HashSet<int>();
+            foreach (var statement in this.CurrentProgramCfgBuilder.AllStatements)
+            {
+                if (!statement.Value)
+                {
+                    //Statement is unreachable, collect block
+                    var block = this.CurrentProgramCfgBuilder.Cfg.BlockFor[statement.Key];
+                    unreachableBlocks.Add(block.Index);
+                }
+            }
+
+            //Create warnings on first instruction of every unreachable block
+            //TODO We should report unreachable ranges instead, waiting for #1846 to be solved first...
+            foreach (var unreachableBlock in unreachableBlocks)
+            {
+                var unreachableInstructions = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[unreachableBlock].Instructions;
+                var firstInstruction = unreachableInstructions.First.Value;
+                var diagnostic = new Diagnostic(MessageCode.Warning, firstInstruction.CodeElement.Position(), "Unreachable code detected");
+                AddDiagnostic(diagnostic);
+            }
+
+            this.CurrentProgramCfgBuilder.AllStatements = null;
+
+            bool FlagReachableStatements(BasicBlock<Node, D> block, int incomingEdge, BasicBlock<Node, D> predecessorBlock, ControlFlowGraph<Node, D> cfg)
+            {
+                //Avoid re-entrance
+                if (visitedBlocks.Contains(block.Index)) return false;
+                visitedBlocks.Add(block.Index);
+
+                //Mark all statements of the current block as reachable
+                foreach (var statement in block.Instructions)
+                {
+                    this.CurrentProgramCfgBuilder.AllStatements[statement] = true;
+                }
+
+                //Block is group => continue DFS inside subgraph
+                if (block is BasicBlockForNodeGroup group && group.Group.Count > 0)
+                {
+                    var first = group.Group.First.Value;
+                    this.CurrentProgramCfgBuilder.Cfg.DFS(first, FlagReachableStatements);
+                }
+
+                return true;
+            }
+        }
+
         private void CreateOptionalDiagnostics()
         {
             //BasicBlockGroupGoesBeyondTheLimit
-            if (_compilerOptions.CheckPerformPrematureExits.IsActive && this.Cfg.PrematurePerformExits != null)
+            if (_compilerOptions.CheckPerformPrematureExits.IsActive && this.CurrentProgramCfgBuilder.Cfg.PrematurePerformExits != null)
             {
-                foreach (var prematurePerformExit in this.Cfg.PrematurePerformExits)
+                foreach (var prematurePerformExit in this.CurrentProgramCfgBuilder.Cfg.PrematurePerformExits)
                 {
                     var perform = prematurePerformExit.Key;
                     foreach (var offendingInstruction in prematurePerformExit.Value)
@@ -1349,9 +1410,9 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             //BadPerformProcedureThru
-            if (_compilerOptions.CheckPerformThruOrder.IsActive && this.Cfg.WrongOrderPerformThrus != null)
+            if (_compilerOptions.CheckPerformThruOrder.IsActive && this.CurrentProgramCfgBuilder.Cfg.WrongOrderPerformThrus != null)
             {
-                foreach (var wrongOrderPerformThru in this.Cfg.WrongOrderPerformThrus)
+                foreach (var wrongOrderPerformThru in this.CurrentProgramCfgBuilder.Cfg.WrongOrderPerformThrus)
                 {
                     var procedure = wrongOrderPerformThru.Value.Item1;
                     var throughProcedure = wrongOrderPerformThru.Value.Item2;
@@ -1362,9 +1423,9 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             //RecursiveBlockOnPerformProcedure
-            if (_compilerOptions.CheckRecursivePerforms.IsActive && this.Cfg.RecursivePerforms != null)
+            if (_compilerOptions.CheckRecursivePerforms.IsActive && this.CurrentProgramCfgBuilder.Cfg.RecursivePerforms != null)
             {
-                foreach (var recursivePerform in this.Cfg.RecursivePerforms)
+                foreach (var recursivePerform in this.CurrentProgramCfgBuilder.Cfg.RecursivePerforms)
                 {
                     var perform = recursivePerform.Key;
                     SymbolReference procedureReference = perform.CodeElement.Procedure;
@@ -1405,6 +1466,8 @@ namespace TypeCobol.Analysis.Cfg
             ResolvePendingPERFORMProcedures();
             //Handle Iterative Perform Procedure Having an AFTER clause
             HandlePerformsWithTestAfter();
+            //DFS to detect unreachable code
+            DetectUnreachableCode();
             //Create optional diagnostics
             CreateOptionalDiagnostics();
 
