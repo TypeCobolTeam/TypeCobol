@@ -51,6 +51,7 @@
     <Compile Include="Graph\ControlFlowGraph.Dominator.cs" />
     <Compile Include="Graph\ICfgFileGenerator.cs" />
     <Compile Include="Graph\ICfgTransform.cs" />
+    <Compile Include="Graph\IMultiBranchContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report\ZCallPgmReport.cs" />
     <Compile Include="Resource.Designer.cs">
