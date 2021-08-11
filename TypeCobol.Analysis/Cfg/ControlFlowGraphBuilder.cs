@@ -1636,9 +1636,11 @@ namespace TypeCobol.Analysis.Cfg
             if (UseEvaluateCascade)
             {   //Pop each MultiBranchContextStack instance till to the EVALUATE one
                 //and close each one.
+                List<IMultiBranchContext<Node, D>> subContexts = new List<IMultiBranchContext<Node, D>>();
                 while (ctx.Instruction == null)
                 {
                     System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
+                    subContexts.Add(ctx);
 
                     bool branchToNext = ctx.Branches.Count == 1;//No Else
                                                                 //The next block.
@@ -1648,6 +1650,8 @@ namespace TypeCobol.Analysis.Cfg
 
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
                 }
+                subContexts.TrimExcess();
+                ctx.SubContexts = subContexts;
                 ctx.NextFlowBlock = this.CurrentProgramCfgBuilder.CurrentBasicBlock;
             }
             else
@@ -1966,10 +1970,11 @@ namespace TypeCobol.Analysis.Cfg
                 //and close each one.
                 bool bLastBranch = true;
                 int rootNodeIndex = ctx.RootBlockSuccessorIndex;
+                List<IMultiBranchContext<Node, D>> subContexts = new List<IMultiBranchContext<Node, D>>();
                 while (ctx.Instruction == null)
                 {
                     System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
-
+                    subContexts.Add(ctx);
                     bool branchToNext = ctx.Branches.Count == 1;//No Else
                                                                 //The next block.
                     var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
@@ -1988,10 +1993,12 @@ namespace TypeCobol.Analysis.Cfg
                     else
                     {
                         ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
-                    }
+                    }                    
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
                 }
+                subContexts.TrimExcess();
+                ctx.SubContexts = subContexts;
                 //If we have and AT Condition handle it
                 ctx.End(this.CurrentProgramCfgBuilder, ctx.Branches.Count == 0, ctx.RootBlock, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             }

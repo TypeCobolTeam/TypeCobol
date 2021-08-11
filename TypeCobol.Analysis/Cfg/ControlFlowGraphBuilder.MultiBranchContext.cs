@@ -47,7 +47,7 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             internal List<Node> ConditionNodes;
             /// <summary>
-            /// Next Flow Block calculated
+            /// Block of the next flow
             /// </summary>
             public BasicBlock<Node, D> NextFlowBlock { get; internal set; }
             /// <summary>

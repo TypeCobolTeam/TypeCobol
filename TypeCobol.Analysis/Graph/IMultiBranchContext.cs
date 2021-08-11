@@ -38,7 +38,7 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         IList<BasicBlock<N, D>> Terminals { get; }
         /// <summary>
-        /// Block of then flow
+        /// Block of the next flow
         /// </summary>
         BasicBlock<N, D> NextFlowBlock { get; }
         /// <summary>
