@@ -33,7 +33,8 @@ namespace TypeCobol.Analysis.Cfg
             internal int RootBlockSuccessorIndex;
             /// <summary>
             /// Terminals block associated to Multi branch Context if any.
-            /// Terminals blocks are block that have as successor NextFlowBlock.
+            /// Terminals blocks are block that have as successor NextFlowBlock or
+            /// a branching to the beginning of a loop instruction block.
             /// </summary>
             public IList<BasicBlock<Node, D>> Terminals { get; internal set; }
             /// <summary>
