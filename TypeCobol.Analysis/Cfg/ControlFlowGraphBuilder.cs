@@ -1355,10 +1355,12 @@ namespace TypeCobol.Analysis.Cfg
 
             //Create warnings on first instruction of every unreachable block
             //TODO We should report unreachable ranges instead, waiting for #1846 to be solved first...
-            foreach (var unreachableBlock in unreachableBlocks)
+            foreach (var unreachableBlockIndex in unreachableBlocks)
             {
-                var unreachableInstructions = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[unreachableBlock].Instructions;
-                var firstInstruction = unreachableInstructions.First.Value;
+                var unreachableBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[unreachableBlockIndex];
+                this.CurrentProgramCfgBuilder.Cfg.AddUnreachableBlock(unreachableBlock);
+
+                var firstInstruction = unreachableBlock.Instructions.First.Value;
                 var diagnostic = new Diagnostic(MessageCode.Warning, firstInstruction.CodeElement.Position(), "Unreachable code detected");
                 AddDiagnostic(diagnostic);
             }
