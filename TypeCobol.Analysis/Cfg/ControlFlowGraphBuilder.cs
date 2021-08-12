@@ -1214,6 +1214,8 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="group">Target group.</param>
         private void ExtendGroup(BasicBlockForNodeGroup group)
         {
+            // Assume PERFORM block group is not for a Multi Branch Context.
+            System.Diagnostics.Debug.Assert(group.Context == null);
             //Now we must handle Iterative Perform Procedure.
             if (group.IsIterativeGroup)
             {
@@ -1322,7 +1324,7 @@ namespace TypeCobol.Analysis.Cfg
             {
                 //Transform graph to replace edge in performs with test after.
                 //Transformation is directly applied to the graph, no new instance created.
-                ICfgTransform<Node, D> transform = new CfgAfterIterativePerformProcedureTransformer();
+                ICfgTransform<Node, D> transform = new CfgAfterIterativePerformProcedureTransformer(this.CurrentProgramCfgBuilder);
                 transform.Transform(this.CurrentProgramCfgBuilder.Cfg);
             }
         }

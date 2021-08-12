@@ -56,6 +56,8 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             public IList<IMultiBranchContext<Node, D>> SubContexts { get; internal set; }
 
+            private BasicBlock<Node, D> RootBlockForEnd;
+
             BasicBlock<Node, D> IMultiBranchContext<Node, D>.OriginBlock => this.OriginBlock;
 
             BasicBlock<Node, D> IMultiBranchContext<Node, D>.RootBlock => this.RootBlock;
@@ -126,7 +128,50 @@ namespace TypeCobol.Analysis.Cfg
                     rootBlock.SuccessorEdges.Add(nbIndex);
                     Terminals.Add(rootBlock);
                 }
+                RootBlockForEnd = rootBlock;
                 NextFlowBlock = nextBlock;                
+            }
+
+            /// <summary>
+            /// Change the successors
+            /// </summary>
+            /// <param name="currentSucc">The current Successor</param>
+            /// <param name="newSucc">The new Successor</param>
+            internal void ChangeSuccessor(ControlFlowGraphBuilder<D> builder, BasicBlock<Node, D> currentSucc, BasicBlock<Node, D> newSucc)
+            {
+                if (NextFlowBlock == currentSucc)
+                    NextFlowBlock = newSucc;
+                if (RootBlockForEnd != null)
+                {
+                    List<BasicBlock<Node, D>> branches = (List<BasicBlock<Node, D>>)Branches;
+                    List<int> branchIndices = (List<int>)BranchIndices;
+                    System.Diagnostics.Debug.Assert(branches.Count == branchIndices.Count);
+                    for (int i = 0; i < branches.Count; i++)
+                    {
+                        if (branches[i] == currentSucc)
+                        {
+                            System.Diagnostics.Debug.Assert(builder.Cfg.SuccessorEdges[branchIndices[i]] == currentSucc);
+                            branches[i] = newSucc;
+                            RootBlockForEnd.SuccessorEdges.Remove(branchIndices[i]);
+                            branchIndices[i] = builder.Cfg.SuccessorEdges.Count;
+                            RootBlockForEnd.SuccessorEdges.Add(builder.Cfg.SuccessorEdges.Count);
+                            builder.Cfg.SuccessorEdges.Add(newSucc);
+                            break;
+                        }
+                    }
+                }
+                if (Terminals != null)
+                {
+                    List<BasicBlock<Node, D>> terminals = (List<BasicBlock<Node, D>>)Terminals;
+                    for (int i = 0; i < terminals.Count; i++)
+                    {
+                        if (terminals[i] == currentSucc)
+                        {
+                            terminals[i] = newSucc;
+                            break;
+                        }
+                    }
+                }
             }
 
             /// <summary>

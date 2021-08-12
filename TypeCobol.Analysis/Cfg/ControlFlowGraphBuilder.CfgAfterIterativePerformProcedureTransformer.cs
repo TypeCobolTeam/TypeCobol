@@ -12,7 +12,16 @@ namespace TypeCobol.Analysis.Cfg
         private class CfgAfterIterativePerformProcedureTransformer : ICfgTransform<Node, D>
         {
             private HashSet<BasicBlockForNodeGroup> _visitedGroups;
+            private ControlFlowGraphBuilder<D> Builder;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="builder"></param>
+            public CfgAfterIterativePerformProcedureTransformer(ControlFlowGraphBuilder<D> builder)
+            {
+                this.Builder = builder;
+            }
             private bool Callback(BasicBlock<Node, D> block, int incomingEdge, BasicBlock<Node, D> predecessorBlock, ControlFlowGraph<Node, D> cfg)
             {
                 //Search for an iterative group (with after) among successors of the current block
@@ -39,7 +48,7 @@ namespace TypeCobol.Analysis.Cfg
                 //If an after iterative group has been found, we must break the edge pointing to the PERFORM
                 //and replace it with a new edge pointing to the first instruction of the group.
                 if (iterativeGroup != null)
-                {
+                {                    
                     //Remove incoming edge
                     block.SuccessorEdges.RemoveAt(removedIndex);
 
@@ -47,6 +56,10 @@ namespace TypeCobol.Analysis.Cfg
                     int entranceEdge = cfg.SuccessorEdges.Count;
                     cfg.SuccessorEdges.Add(iterativeGroup.Group.First.Value);
                     block.SuccessorEdges.Add(entranceEdge);
+                    if(block.Context != null)
+                    {
+                        ((MultiBranchContext)block.Context).ChangeSuccessor(Builder, iterativeGroup, iterativeGroup.Group.First.Value);
+                    }
                 }
 
                 //If the current block is a group, we must also traverse blocks of the group
