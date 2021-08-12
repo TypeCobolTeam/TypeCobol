@@ -168,13 +168,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
                 List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
                 copiesName.AddRange(dependenciesMissingCopies);
-                if (copiesName.Count > 0)
-                {
-                    var missingCopiesParam = new MissingCopiesParams();
-                    missingCopiesParam.textDocument = parameter.textDocument;
-                    missingCopiesParam.Copies = copiesName;
-                    this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
-                }
+                MissingCopiesDetected(parameter.textDocument, copiesName);
             }
         }
 

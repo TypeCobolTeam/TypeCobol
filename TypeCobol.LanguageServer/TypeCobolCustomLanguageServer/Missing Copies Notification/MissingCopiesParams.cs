@@ -15,5 +15,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// List of missing copies
         /// </summary>
         public List<string> Copies { get; set; }
+        /// <summary>
+        /// List of missing CPY copies
+        /// </summary>
+        public List<string> CpyCopies { get; set; }
     }
 }
