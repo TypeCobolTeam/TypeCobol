@@ -63,6 +63,13 @@ namespace TypeCobol.Compiler
         /// </summary>
         protected bool UseDirectCopyParsing { get; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// Collected CopyNames if -cpyr report is selected.
+        /// </summary>
+        public IDictionary<string, HashSet<string>> CollectedCopyNames { get; private set; }
+#endif
+
         /// <summary>
         /// Informations used to track the performance of each compilation step
         /// </summary>
@@ -778,5 +785,27 @@ namespace TypeCobol.Compiler
 
             return allDiagnostics;
         }
+
+#if EUROINFO_RULES
+        internal void CollectUsedCopy(CopyDirective copy)
+        {
+            if (CollectedCopyNames == null)
+            {
+                CollectedCopyNames = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            if (!CollectedCopyNames.TryGetValue(copy.TextName, out var suffixedNames))
+            {
+                suffixedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                CollectedCopyNames.Add(copy.TextName, suffixedNames);
+            }
+
+            if (copy.Suffix != null)
+            {
+                suffixedNames.Add(copy.TextName + copy.Suffix);
+            }
+        }
+#endif
+
     }
 }

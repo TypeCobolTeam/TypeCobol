@@ -13,6 +13,10 @@ namespace TypeCobol.Compiler.Directives
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
         public bool AutoRemarksEnable { get; set; }
+        /// <summary>
+        /// Path to generate collected used copy names
+        /// </summary>
+        public string ReportUsedCopyNamesPath { get; set; }
 #endif
         /// <summary>
         /// Option to create a missing copy file, it will stop the execution before semantic phase if a copy is missing
@@ -92,6 +96,7 @@ namespace TypeCobol.Compiler.Directives
 #if EUROINFO_RULES
             AutoRemarksEnable = config.AutoRemarks;
             CpyCopyNameMap = config.CpyCopyNameMap;
+            ReportUsedCopyNamesPath = config.ReportUsedCopyNamesPath;
 #endif
 
             CheckEndAlignment = config.CheckEndAlignment;

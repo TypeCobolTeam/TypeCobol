@@ -222,14 +222,39 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     return true;
                 }
+
+                var senderIsAlphanumeric = false;
+                DataDefinition senderDataDefinition = null;
+                if (moveSimple.SendingVariable?.StorageArea?.Kind == StorageAreaKind.DataOrCondition
+                    && move.StorageAreaReadsDataDefinition?.TryGetValue(moveSimple.SendingVariable.StorageArea, out senderDataDefinition) == true)
+                {
+                    senderIsAlphanumeric = senderDataDefinition.DataType == DataType.Alphanumeric;
+                }
+
                 foreach (var area in moveSimple.StorageAreaWrites)
                 {
                     var receiver = area.StorageArea;
-                    if (receiver is FunctionCallResult)
+                    if (receiver == null) continue;
+
+                    if (receiver.Kind == StorageAreaKind.FunctionCallResult)
+                    {
                         DiagnosticUtils.AddError(move, "MOVE: illegal <function call> after TO");
+                    }
+                    else if (senderIsAlphanumeric
+                              && receiver.Kind == StorageAreaKind.DataOrCondition
+                              && move.StorageAreaWritesDataDefinition != null
+                              && move.StorageAreaWritesDataDefinition.TryGetValue(receiver, out var receiverDataDefinition))
+                    {
+                        if (receiverDataDefinition.DataType == DataType.Numeric || receiverDataDefinition.DataType == DataType.NumericEdited)
+                        {
+                            if (receiverDataDefinition.Usage != null && receiverDataDefinition.Usage != DataUsage.None)
+                            {
+                                DiagnosticUtils.AddError(move, $"Moving alphanumeric '{senderDataDefinition.Name}' to numeric '{receiverDataDefinition.Name}' declared with an USAGE may lead to unexpected results.", code: MessageCode.Warning);
+                            }
+                        }
+                    }
                 }
             }
-
 
             return true;
         }

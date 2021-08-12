@@ -19,7 +19,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/missingCopies\",\"params\":{\"textDocument\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO04742822857809968410.cee\"},\"Copies\":[\"YDVZERL\",\"YSTIEM1\"]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/missingCopies\",\"params\":{\"textDocument\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO04742822857809968410.cee\"},\"Copies\":[\"YDVZERL\",\"YSTIEM1\"],\"CpyCopies\":[]}}"
     },
     {
       "category": 0,
@@ -27,7 +27,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/missingCopies\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO04742822857809968410.cee\"},\"Copies\":[\"YDVZERL\",\"YSTIEM1\"]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/missingCopies\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO04742822857809968410.cee\"},\"Copies\":[\"YDVZERL\",\"YSTIEM1\"],\"CpyCopies\":[]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO04742822857809968410.cee\"}}}",
