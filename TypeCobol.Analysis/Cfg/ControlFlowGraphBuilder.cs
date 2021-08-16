@@ -146,6 +146,10 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         private List<Sentence> AllSentences;
 
+        /// <summary>
+        /// Stores all node statements encountered during building. The associated bool indicates
+        /// whether the statement is reachable or not, <see cref="DetectUnreachableCode" />.
+        /// </summary>
         private Dictionary<Node, bool> AllStatements;
 
         /// <summary>
@@ -1348,21 +1352,18 @@ namespace TypeCobol.Analysis.Cfg
                 if (!statement.Value)
                 {
                     //Statement is unreachable, collect block
-                    var block = this.CurrentProgramCfgBuilder.Cfg.BlockFor[statement.Key];
-                    unreachableBlocks.Add(block.Index);
+                    var unreachableBlock = this.CurrentProgramCfgBuilder.Cfg.BlockFor[statement.Key];
+                    if (unreachableBlocks.Add(unreachableBlock.Index))
+                    {
+                        this.CurrentProgramCfgBuilder.Cfg.AddUnreachableBlock(unreachableBlock);
+
+                        //Create warning on first instruction of unreachable block
+                        //TODO We should report unreachable ranges instead, waiting for #1846 to be solved first...
+                        var firstInstruction = unreachableBlock.Instructions.First.Value;
+                        var diagnostic = new Diagnostic(MessageCode.Warning, firstInstruction.CodeElement.Position(), "Unreachable code detected");
+                        AddDiagnostic(diagnostic);
+                    }
                 }
-            }
-
-            //Create warnings on first instruction of every unreachable block
-            //TODO We should report unreachable ranges instead, waiting for #1846 to be solved first...
-            foreach (var unreachableBlockIndex in unreachableBlocks)
-            {
-                var unreachableBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[unreachableBlockIndex];
-                this.CurrentProgramCfgBuilder.Cfg.AddUnreachableBlock(unreachableBlock);
-
-                var firstInstruction = unreachableBlock.Instructions.First.Value;
-                var diagnostic = new Diagnostic(MessageCode.Warning, firstInstruction.CodeElement.Position(), "Unreachable code detected");
-                AddDiagnostic(diagnostic);
             }
 
             this.CurrentProgramCfgBuilder.AllStatements = null;
