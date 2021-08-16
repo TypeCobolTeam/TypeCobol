@@ -19,9 +19,17 @@ namespace TypeCobol.Compiler.Diagnostics
         public CrossCompleteChecker([NotNull]TypeCobolOptions compilerOptions)
         {
             _compilerOptions = compilerOptions;
+            _searchTables = new Dictionary<Search, List<DataDefinition>>();
         }
 
         private readonly TypeCobolOptions _compilerOptions;
+
+        /// <summary>
+        /// For each encountered Search statement, stores target table and its parent table definitions.
+        /// If the target table could not be resolved or if it's actually not a table, no entry is added.
+        /// Every entry is either null (if table is part of a TC typedef) or not empty (the searched table itself is always part of the list).
+        /// </summary>
+        private readonly Dictionary<Search, List<DataDefinition>> _searchTables;
 
         //Holds a reference to the last section node visited as to know in which current section we are
         private Section _currentSection;
@@ -251,81 +259,202 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public override bool Visit(WhenSearch whenSearch)
+        public override bool Visit(Search search)
         {
-            var search = whenSearch.Parent;
-            System.Diagnostics.Debug.Assert(search is Search);
-            if (search.CodeElement is SearchBinaryStatement)
+            var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
+            if (tableToSearch != null)
             {
-                var whenSearchVisitor = new WhenSearchVisitor(whenSearch);
-                whenSearch.CodeElement.Condition.AcceptASTVisitor(whenSearchVisitor);
-                if (whenSearchVisitor.IsInError)
+                var searchedTable = search.GetDataDefinitionFromStorageAreaDictionary(tableToSearch);
+                if (searchedTable != null)
                 {
-                    DiagnosticUtils.AddError(whenSearch, "When subscripting, first index declared for the table and at least one of declared keys must be used.");
+                    if (searchedTable.IsTableOccurence)
+                    {
+                        var parentTableDefinitions = searchedTable.GetParentTableDefinitions();
+                        _searchTables.Add(search, parentTableDefinitions);
+
+                        //Check keys and indexes for binary search
+                        if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
+                        {
+                            //Searched table must have at least one KEY
+                            var keys = searchedTable.GetTableSortingKeys();
+                            if (keys == null || keys.Length == 0)
+                            {
+                                DiagnosticUtils.AddError(search, $"Cannot use binary SEARCH on '{searchedTable.Name}' because it has no KEY.");
+                            }
+
+                            //Main table and all parent tables must have at least one index
+                            if (parentTableDefinitions != null)
+                            {
+                                foreach (var table in parentTableDefinitions)
+                                {
+                                    var indexes = table.GetIndexes();
+                                    if (indexes == null || indexes.Length == 0)
+                                    {
+                                        var message = table == searchedTable
+                                            ? $"Cannot use binary SEARCH on '{searchedTable.Name}' because it is not indexed."
+                                            : $"Cannot use binary SEARCH on '{searchedTable.Name}' because parent table '{table.Name}' is not indexed.";
+                                        DiagnosticUtils.AddError(search, message);
+                                    }
+                                }
+                            }
+                            //else TC not supported
+                        }
+                    }
+                    else
+                    {
+                        //Not a table
+                        DiagnosticUtils.AddError(search, $"Cannot SEARCH in '{searchedTable.Name}', data item is not a table.");
+                    }
                 }
+                //else undefined reference
             }
+            //else it's a syntax error
+
             return true;
         }
 
-        /// <summary>
-        /// Visit a WhenSearch and set a flag to true if either:
-        /// WHEN does not use one of the declared keys (ascending or descending)
-        /// WHEN does not use the first index declared for the table when subscripting
-        /// </summary>
-        private class WhenSearchVisitor : AbstractAstVisitor
+        public override bool Visit(WhenSearch whenSearch)
         {
-            private readonly WhenSearch _whenSearch;
-            public bool IsInError { get; private set; } = false;
+            System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
+            var search = (Search) whenSearch.Parent;
 
-
-            public WhenSearchVisitor(WhenSearch whenSearch)
+            if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
             {
-                _whenSearch = whenSearch;
-            }
+                //TC not supported
+                if (tableDefinitions == null) return true;
 
+                //Main table
+                System.Diagnostics.Debug.Assert(tableDefinitions.Count > 0);
+                var searchedTable = tableDefinitions[0];
 
-            public override bool Visit(NumericVariable numericVariable)
-            {
-                var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
-                // TODO : Handle the case of sub-tables
-                if (variableStorageArea?.Subscripts.Length == 1)
+                //Init a dictionary of used keys
+                Dictionary<string, bool> usedKeys = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+                var keys = searchedTable.GetTableSortingKeys();
+                if (keys != null)
                 {
-                    ////////// WHEN must use one of the declared keys (ascending or descending) //////////
-                    var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
-                    if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntryKey)
+                    foreach (var key in keys)
                     {
-                        if (tableDescriptionEntryKey.TableSortingKeys != null)
+                        if (key.SortDirection != null && key.SortDirection.Value != SortDirection.None)
                         {
-                            var existsName = tableDescriptionEntryKey.TableSortingKeys
-                                .Any(key => key.SortDirection?.Value != SortDirection.None && key.SortKey.Name.Equals(dataDefinitionKey.Name, StringComparison.OrdinalIgnoreCase));
-                            if (!existsName)
+                            usedKeys.Add(key.SortKey.Name, false);//Set initial status of the key to 'not used'
+                        }
+                    }
+                }
+
+                //Collect every first index of searched table and its parent tables (multidimensional search)
+                //Reverse order because parent tables are from child to parent but subscripts are from parent to child
+                var expectedIndexes = tableDefinitions.Select(table => table.GetIndexes()?.FirstOrDefault()).Reverse().ToArray();
+
+                //WHEN condition must use keys and first index of the table
+                if (!CheckCondition(whenSearch.CodeElement.Condition))
+                {
+                    return true;
+                }
+
+                //Check all keys are properly used
+                bool expectKeyUsed = true;
+                foreach (var isKeyUsed in usedKeys.Values)
+                {
+                    if (isKeyUsed)
+                    {
+                        if (expectKeyUsed) continue; //OK
+
+                        //KO all keys from first to "highest" used must be used
+                        DiagnosticUtils.AddError(whenSearch, "All the table keys that precede a referenced key must be used.");
+                        break;
+                    }
+
+                    if (expectKeyUsed)
+                    {
+                        //First time we see an unused key, so all following keys must not be used
+                        expectKeyUsed = false;
+                    }
+                }
+
+                //Check syntax of a whenSearchCondition (in a binary search)
+                bool CheckCondition(ConditionalExpression whenSearchCondition)
+                {
+                    switch (whenSearchCondition)
+                    {
+                        case ConditionNameConditionOrSwitchStatusCondition _:
+                            //TODO add check for condition names
+                            return true;
+
+                        case RelationCondition relationCondition:
+                            if (relationCondition.Operator?.SemanticOperator != RelationalOperatorSymbol.EqualTo)
                             {
-                                // error
-                                IsInError = true;
+                                DiagnosticUtils.AddError(whenSearch, "Invalid relational operator in WHEN SEARCH condition, EqualTo operator expected.");
+                                return false;
+                            }
+                            return CheckOperand(relationCondition.LeftOperand);
+
+                        case LogicalOperation logicalOperation:
+                            if (logicalOperation.Operator.Value != LogicalOperator.AND)
+                            {
+                                DiagnosticUtils.AddError(whenSearch, "Invalid logical operator in WHEN SEARCH condition, AND operator expected.");
+                            }
+                            return CheckCondition(logicalOperation.LeftOperand) && CheckCondition(logicalOperation.RightOperand);
+
+                        default:
+                            DiagnosticUtils.AddError(whenSearch, "Invalid condition in WHEN SEARCH, only condition-names and key to value comparison are allowed.");
+                            return false;
+                    }
+                }
+
+                bool CheckOperand(ConditionOperand operand)
+                {
+                    if (operand.ArithmeticExpression is NumericVariableOperand numericVariableOperand
+                        && numericVariableOperand.NumericVariable?.StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea
+                        && dataOrConditionStorageArea.Subscripts.Length > 0)
+                    {
+                        //Check indexes for every dimension
+                        if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
+                        {
+                            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
+                            {
+                                var expectedIndex = expectedIndexes[i];
+                                var subscript = dataOrConditionStorageArea.Subscripts[i];
+
+                                //Check use of first table index for the current dimension
+                                var usedIndexStorageArea = ((NumericVariableOperand) subscript.NumericExpression).IntegerVariable.StorageArea;
+                                var usedIndex = whenSearch.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
+                                if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    //Not the first index (or no index defined for the table)
+                                    DiagnosticUtils.AddError(whenSearch, "When subscripting, only first index declared for the table is allowed.");
+                                    return false;
+                                }
+                            }
+                        }
+                        //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
+
+                        //Collect used key
+                        var usedKey = whenSearch.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
+                        if (usedKey != null)
+                        {
+                            if (usedKeys.ContainsKey(usedKey.Name))
+                            {
+                                //Valid key, set key status to 'used'
+                                usedKeys[usedKey.Name] = true;
+                            }
+                            else
+                            {
+                                //Not a key
+                                DiagnosticUtils.AddError(whenSearch, $"'{usedKey.Name}' is not a sorting key of table '{searchedTable.Name}'.");
                                 return false;
                             }
                         }
+                        //else undefined reference
+
+                        return true;
                     }
 
-                    ////////// WHEN must use the first index declared for the table when subscripting //////////
-                    // Get the 1st subscript used
-                    var firstSubscriptStorageArea = ((NumericVariableOperand)variableStorageArea.Subscripts[0].NumericExpression).IntegerVariable.StorageArea;
-                    var dataDefinitionFirstSubscript = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(firstSubscriptStorageArea);
-                    // Ensure the subscript is the 1st declared
-                    var isFirstIndexDeclaredInTable = false;
-                    if (dataDefinitionFirstSubscript?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntrySubscript)
-                    {
-                        isFirstIndexDeclaredInTable = tableDescriptionEntrySubscript.Indexes[0].Name.Equals(dataDefinitionFirstSubscript.Name, StringComparison.OrdinalIgnoreCase);
-                    }
-                    if (!isFirstIndexDeclaredInTable)
-                    {
-                        // error
-                        IsInError = true;
-                        return false;
-                    }
+                    DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
+                    return false;
                 }
-                return true;
             }
+
+            return true;
         }
 
         public override bool Visit(Evaluate evaluate)
@@ -827,19 +956,9 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //Create a list of all parent OCCURS
-            var tableDefinitions = new List<DataDefinition>();
-            var tableDefinition = dataDefinition;
-            if (!dataDefinition.IsTableIndex) //An index cannot be subscripted
-            {
-                while (tableDefinition != null)
-                {
-                    //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
-                    if (tableDefinition.IsPartOfATypeDef) return;
-
-                    if (tableDefinition.IsTableOccurence) tableDefinitions.Add(tableDefinition);
-                    tableDefinition = tableDefinition.Parent as DataDefinition;
-                }
-            }
+            var tableDefinitions = dataDefinition.IsTableIndex ? new List<DataDefinition>() : dataDefinition.GetParentTableDefinitions();
+            //TC not supported
+            if (tableDefinitions == null) return;
 
             if (dataOrConditionStorageArea.Subscripts.Length < tableDefinitions.Count)
             {
@@ -858,7 +977,7 @@ namespace TypeCobol.Compiler.Diagnostics
             for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
             {
                 var subscript = dataOrConditionStorageArea.Subscripts[i];
-                tableDefinition = tableDefinitions[tableDefinitions.Count - 1 - i];//OCCURS are stored in reverse order
+                var tableDefinition = tableDefinitions[tableDefinitions.Count - 1 - i];//OCCURS are stored in reverse order
 
                 //Do not check expressions, only literal values are checked
                 if (!(subscript.NumericExpression is NumericVariableOperand subscriptNumeric)) continue;
