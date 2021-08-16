@@ -1024,4 +1024,62 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
+    /// <summary>
+    /// Helper class for manipulating table definitions (DataDescription or DataRedefines having an OCCURS clause).
+    /// </summary>
+    public static class TableDefinitionExtensions
+    {
+        /// <summary>
+        /// Collect all parent table definitions of the given data-item.
+        /// If the given DataDefinition is a table itself, it is included in the result.
+        /// Results are ordered from the given data item to its highest parent table.
+        /// </summary>
+        /// <param name="dataDefinition">Data definition to start from.</param>
+        /// <returns>List of parent tables. Maybe null if the data-item is part of a TC typedef,
+        /// empty if the data-item does not belong to any table.</returns>
+        /// <remarks>Returns empty list for a null starting DataDefinition.</remarks>
+        [CanBeNull]
+        public static List<DataDefinition> GetParentTableDefinitions([CanBeNull] this DataDefinition dataDefinition)
+        {
+            var result = new List<DataDefinition>();
+            var tableDefinition = dataDefinition;
+            while (tableDefinition != null)
+            {
+                //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
+                if (tableDefinition.IsPartOfATypeDef) return null;
+
+                if (tableDefinition.IsTableOccurence) result.Add(tableDefinition);
+                tableDefinition = tableDefinition.Parent as DataDefinition;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get the sorting keys of the given table.
+        /// </summary>
+        /// <param name="tableDefinition">Non-null DataDefinition instance, property IsTableOccurence must be true.</param>
+        /// <returns>Array of TableSortingKey, maybe null.</returns>
+        [CanBeNull]
+        public static TableSortingKey[] GetTableSortingKeys([NotNull] this DataDefinition tableDefinition)
+        {
+            System.Diagnostics.Debug.Assert(tableDefinition.CodeElement != null);
+            System.Diagnostics.Debug.Assert(tableDefinition.IsTableOccurence);
+            return ((CommonDataDescriptionAndDataRedefines) tableDefinition.CodeElement).TableSortingKeys;
+        }
+
+        /// <summary>
+        /// Get the indexes of the given table.
+        /// </summary>
+        /// <param name="tableDefinition">Non-null DataDefinition instance, property IsTableOccurence must be true.</param>
+        /// <returns>Array of SymbolDefinition, maybe null.</returns>
+        [CanBeNull]
+        public static SymbolDefinition[] GetIndexes([NotNull] this DataDefinition tableDefinition)
+        {
+            System.Diagnostics.Debug.Assert(tableDefinition.CodeElement != null);
+            System.Diagnostics.Debug.Assert(tableDefinition.IsTableOccurence);
+            return ((CommonDataDescriptionAndDataRedefines) tableDefinition.CodeElement).Indexes;
+        }
+    }
+
 } // end of namespace TypeCobol.Compiler.Nodes
