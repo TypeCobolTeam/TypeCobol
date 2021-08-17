@@ -693,14 +693,14 @@ namespace TypeCobol.Analysis.Test
         public void ExtendedPerformProc3Recursive0()
         {
             const string baseName = "PerformProc3Recursive0";
-            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+            TestTemplate(inputFileName: baseName, mode: CfgBuildingMode.Extended);
         }
 
         [TestMethod]
         public void ExtendedPerformProc4Recursive0()
         {
             const string baseName = "PerformProc4Recursive0";
-            TestTemplate(inputFileName:baseName, expectedDiagnosticsFileName:baseName, mode:CfgBuildingMode.Extended);
+            TestTemplate(inputFileName:baseName, mode:CfgBuildingMode.Extended);
         }
 
         [TestMethod]
