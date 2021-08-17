@@ -254,15 +254,16 @@ namespace TypeCobol.Compiler.Preprocessor
             // If the document is empty or after end of file, immediately return EndOfFile
             if (currentLine == null)
             {
-                currentPosition.CurrentToken = Token.END_OF_FILE;
-                return Token.END_OF_FILE;
+                var eof = Token.EndOfFile();
+                currentPosition.CurrentToken = eof;
+                return eof;
             }
 
             // If the iterator is positioned in an imported document, return the next imported token
             if(currentPosition.ImportedDocumentIterator != null)
             {
                 Token nextImportedToken = currentPosition.ImportedDocumentIterator.NextToken();
-                if(nextImportedToken == Token.END_OF_FILE)
+                if(nextImportedToken.TokenType == TokenType.EndOfFile)
                 {
                     currentPosition.ImportedDocumentIterator = null;
                     currentPosition.ImportedDocumentIteratorPosition = null;
@@ -297,8 +298,9 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         // return EndOfFile
                         currentLine = null;
-                        currentPosition.CurrentToken = Token.END_OF_FILE;
-                        return Token.END_OF_FILE;
+                        var eof = Token.EndOfFile();
+                        currentPosition.CurrentToken = eof;
+                        return eof;
                     }
                 }
                 // Check if the next token found matches the filter criteria or is a COPY compiler directive or is a REPLACE directive
@@ -322,7 +324,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
                     // No suitable next token found in the imported document
                     // -> get next token in the main document
-                    if (nextTokenCandidate == Token.END_OF_FILE)
+                    if (nextTokenCandidate.TokenType == TokenType.EndOfFile)
                     {
                         return NextToken();
                     }

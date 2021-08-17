@@ -61,7 +61,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         }
 
         /// <summary>
-        /// Start monitoring if the token stream reached a specific token which marks the end of an instersting section
+        /// Start monitoring if the token stream reached a specific token which marks the end of an interesting section
         /// </summary>
         public void StartLookingForStopToken(Token stopToken)
         {
@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             if (stopToken != null)
             {
                 StopToken = stopToken;
-                stopTokenReplacedByEOF = new ReplacedToken(Token.END_OF_FILE, stopToken);
+                stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
                 StreamReachedStopToken = false;
             }
         }
