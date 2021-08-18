@@ -286,7 +286,17 @@ namespace TypeCobol.Compiler
 
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<string, object> results = new Dictionary<string, object>();
-                    var analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
+                    IQualityAnalyzer[] analyzers = null;
+                    try
+                    {
+                        analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
+                    }
+                    catch (Exception exception)
+                    {
+                        var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, $"Error while creating quality analyzers with provider : {_analyzerProvider}", exception.Message, exception);
+                        diagnostics.Add(diagnostic);
+                    }
+
                     if (analyzers != null)
                     {
                         //Results from previous steps

@@ -70,14 +70,22 @@ namespace TypeCobol.Analysis
         {
             if (_providers != null && _providers.Count > 0)
             {
-                var result = _providers
-                    .Select(selector) //from provider to analyzers
-                    .Where(a => a != null) //providers may return null arrays so filter them out
-                    .SelectMany(a => a); //join all arrays into a single IEnumerable
-                if (fromBase != null)
+                var result = new List<TAnalyzer>();
+                if (fromBase != null) result.AddRange(fromBase);
+                foreach (var analyzerProvider in _providers)
                 {
-                    result = fromBase.Concat(result);
+                    try
+                    {
+                        var analyzers = selector(analyzerProvider);
+                        result.AddRange(analyzers);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
                 }
+                
                 return result.ToArray();
             }
 

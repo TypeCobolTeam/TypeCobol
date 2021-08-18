@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.Analysis
 {
@@ -17,19 +19,28 @@ namespace TypeCobol.Analysis
         /// </summary>
         /// <param name="compositeAnalyzerProvider">CompositeAnalyzerProvider instance into which the external analyzers should be added.</param>
         /// <param name="assemblyFilePaths">List of paths of .NET Assembly files.</param>
-        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths)
+        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths, Action<string, Diagnostic> writeDiagnostic)
         {
             if (compositeAnalyzerProvider == null || assemblyFilePaths == null) return;
 
             foreach (var assemblyFilePath in assemblyFilePaths)
             {
-                var provider = LoadProvider(assemblyFilePath);
-                compositeAnalyzerProvider.AddProvider(provider);
+                try
+                {
+                    var provider = LoadProvider(assemblyFilePath);
+                    compositeAnalyzerProvider.AddProvider(provider);
+                }
+                catch (Exception exception)
+                {
+                    var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, $"Failed to load analyzer provider on path {assemblyFilePath}", exception.Message, exception);
+                    writeDiagnostic(assemblyFilePath, diagnostic);
+                }
             }
         }
 
         /// <summary>
         /// Look for a suitable type into the assembly given and instantiate a new IAnalyzerProvider from it.
+        /// <remarks>Caller must catch potential exceptions.</remarks>
         /// </summary>
         /// <param name="assemblyFilePath">Path to the assembly.</param>
         /// <returns>A non-null instance of IAnalyzerProvider.</returns>

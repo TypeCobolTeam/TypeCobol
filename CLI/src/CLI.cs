@@ -126,7 +126,7 @@ namespace TypeCobol.Server
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
-            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles);
+            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles, _errorWriter.AddErrors);
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
