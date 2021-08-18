@@ -407,6 +407,58 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    internal class ReferenceModifierChecker
+    {
+        private static Diagnostic CreateDiagnostic(string message, IParseTree location)
+        {
+            var position = ParseTreeUtils.GetFirstToken(location).Position();
+            return new Diagnostic(MessageCode.SyntaxErrorInParser, position, message);
+        }
+
+        private static void AddError(ParserRuleContextWithDiagnostics context, string message)
+        {
+            context.AttachDiagnostic(CreateDiagnostic(message, context));
+        }
+
+        public static void Check(ReferenceModifier referenceModifier, CodeElementsParser.ReferenceModifierContext context)
+        {
+            if (referenceModifier.LeftmostCharacterPosition == null)
+            {
+                AddError(context, "The position modifier must be defined.");
+            }
+            else
+            {
+                ValidateModifierValue(referenceModifier.LeftmostCharacterPosition);
+            }
+
+            if (referenceModifier.Length != null)
+            {
+                ValidateModifierValue(referenceModifier.Length);
+            }
+
+            void ValidateModifierValue(ArithmeticExpression arithmeticExpression)
+            {
+                switch (arithmeticExpression.NodeType)
+                {
+                    case ExpressionNodeType.ArithmeticOperation:
+                        // Cannot do anything in that case
+                        break;
+                    case ExpressionNodeType.NumericVariable:
+                        var numericVariableOperand = (NumericVariableOperand)arithmeticExpression;
+                        var numericVariable = numericVariableOperand.NumericVariable;
+                        // Only negative literals are erroneous
+                        if (numericVariable?.Value?.Value <= 0)
+                        {
+                            AddError(context, "Reference modifiers should be positive non-zero values.");
+                        }
+                        break;
+                    default:
+                        throw new InvalidOperationException("Unexpected expression type: " + arithmeticExpression.NodeType);
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Create diagnostics for language level restricted elements used in a lower level parsing context
     /// (typically TypeCobol syntax used in Cobol85 code).

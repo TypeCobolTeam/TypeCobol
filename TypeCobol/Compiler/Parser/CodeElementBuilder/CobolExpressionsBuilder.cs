@@ -469,7 +469,9 @@ namespace TypeCobol.Compiler.Parser
 			{
 				length = CreateArithmeticExpression(context.length);
 			}
-			return new ReferenceModifier(leftmostCharacterPosition, length);
+            var referenceModifier = new ReferenceModifier(leftmostCharacterPosition, length);
+            ReferenceModifierChecker.Check(referenceModifier, context);
+			return referenceModifier;
 		}
 
 		internal StorageArea CreateIdentifierOrIndexName(CodeElementsParser.IdentifierOrIndexNameContext context)
