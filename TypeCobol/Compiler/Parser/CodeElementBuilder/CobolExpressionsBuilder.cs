@@ -469,8 +469,8 @@ namespace TypeCobol.Compiler.Parser
 			{
 				length = CreateArithmeticExpression(context.length);
 			}
-            var referenceModifier = new ReferenceModifier(leftmostCharacterPosition, length);
-            ReferenceModifierChecker.Check(referenceModifier, context);
+			var referenceModifier = new ReferenceModifier(leftmostCharacterPosition, length);
+			ReferenceModifierChecker.Check(referenceModifier, context);
 			return referenceModifier;
 		}
 
