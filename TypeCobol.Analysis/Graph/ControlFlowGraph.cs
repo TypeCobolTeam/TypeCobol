@@ -141,6 +141,11 @@ namespace TypeCobol.Analysis.Graph
         public Dictionary<PerformProcedure, List<N>> RecursivePerforms { get; private set; }
 
         /// <summary>
+        /// All unreachable blocks of this graph. The property may be null but not empty.
+        /// </summary>
+        public List<BasicBlock<N, D>> UnreachableBlocks { get; private set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="programOrFunctionNode">The program of function node of the graph.</param>
@@ -236,6 +241,20 @@ namespace TypeCobol.Analysis.Graph
             {
                 RecursivePerforms.Add(perform, new List<N>() { recursiveJump });
             }
+        }
+
+        /// <summary>
+        /// Register one unreachable block of this graph
+        /// </summary>
+        /// <param name="block">The unreachable block to add</param>
+        internal void AddUnreachableBlock(BasicBlock<N, D> block)
+        {
+            if (UnreachableBlocks == null)
+            {
+                UnreachableBlocks = new List<BasicBlock<N, D>>();
+            }
+
+            UnreachableBlocks.Add(block);
         }
 
         /// <summary>
