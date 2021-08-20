@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Tools.APIHelpers;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Analysis
 {
@@ -19,8 +19,8 @@ namespace TypeCobol.Analysis
         /// </summary>
         /// <param name="compositeAnalyzerProvider">CompositeAnalyzerProvider instance into which the external analyzers should be added.</param>
         /// <param name="assemblyFilePaths">List of paths of .NET Assembly files.</param>
-        /// <param name="addDiagnostic">Method to log a diagnostic linked to a file.</param>
-        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths, Action<string, Diagnostic> addDiagnostic)
+        /// <param name="logFilePath">Path of a non-null log file.</param>
+        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths, [NotNull] string logFilePath)
         {
             if (compositeAnalyzerProvider == null || assemblyFilePaths == null) return;
 
@@ -33,8 +33,7 @@ namespace TypeCobol.Analysis
                 }
                 catch (Exception exception)
                 {
-                    var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, $"Failed to load analyzer provider on path {assemblyFilePath}", exception.Message, exception);
-                    addDiagnostic(assemblyFilePath, diagnostic);
+                    File.AppendAllText(logFilePath, $"Failed to load analyzer provider on path {assemblyFilePath}\n{exception.Message}\n{exception}");
                 }
             }
         }
