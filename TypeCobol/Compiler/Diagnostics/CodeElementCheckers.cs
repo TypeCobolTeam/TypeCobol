@@ -444,7 +444,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         // Only negative literals are erroneous
                         if (numericVariable?.Value?.Value <= 0)
                         {
-                            AddError(context, "Reference modifiers should be positive non-zero values.");
+                            context.AttachDiagnostic(CreateDiagnostic("Reference modifiers should be positive non-zero values.", context));
                         }
                         break;
                     default:
