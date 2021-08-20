@@ -15,7 +15,7 @@
       * KO negative position
            MOVE item(-1:) TO part
       * KO by a previous step
-      *     MOVE item(:2) TO part
+           MOVE item(:2) TO part
       
       * KO zero position
            MOVE item(0:5) TO part

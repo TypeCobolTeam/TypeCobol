@@ -17,7 +17,8 @@ Line 14[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should b
 Line 16[22,23] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
            MOVE item(-1:) TO part
       * KO by a previous step
-      *     MOVE item(:2) TO part
+Line 18[21,21] <27, Error, Syntax> - Syntax error : mismatched input '(' expecting TO
+           MOVE item(:2) TO part
       
       * KO zero position
 Line 21[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.

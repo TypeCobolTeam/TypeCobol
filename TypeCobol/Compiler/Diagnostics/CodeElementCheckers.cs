@@ -407,7 +407,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    internal class ReferenceModifierChecker
+    internal static class ReferenceModifierChecker
     {
         private static Diagnostic CreateDiagnostic(string message, IParseTree location)
         {
@@ -415,16 +415,11 @@ namespace TypeCobol.Compiler.Diagnostics
             return new Diagnostic(MessageCode.SyntaxErrorInParser, position, message);
         }
 
-        private static void AddError(ParserRuleContextWithDiagnostics context, string message)
-        {
-            context.AttachDiagnostic(CreateDiagnostic(message, context));
-        }
-
         public static void Check(ReferenceModifier referenceModifier, CodeElementsParser.ReferenceModifierContext context)
         {
             if (referenceModifier.LeftmostCharacterPosition == null)
             {
-                AddError(context, "The position modifier must be defined.");
+                context.AttachDiagnostic(CreateDiagnostic("Left-most position of a reference modifier is required.", context));
             }
             else
             {
