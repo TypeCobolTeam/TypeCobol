@@ -18,6 +18,7 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
             return new IQualityAnalyzer[]
                    {
                        new DummyQualityAnalyzer(nameof(DummyQualityAnalyzer)),
+                       new DummyQualityAnalyzerErrorInAnalysis(nameof(DummyQualityAnalyzerErrorInAnalysis)),
                        new DummyQualityAnalyzerWithCfg(nameof(DummyQualityAnalyzerWithCfg))
                    };
         }

@@ -19,7 +19,8 @@ namespace TypeCobol.Analysis
         /// </summary>
         /// <param name="compositeAnalyzerProvider">CompositeAnalyzerProvider instance into which the external analyzers should be added.</param>
         /// <param name="assemblyFilePaths">List of paths of .NET Assembly files.</param>
-        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths, Action<string, Diagnostic> writeDiagnostic)
+        /// <param name="addDiagnostic">Method to log a diagnostic linked to a file.</param>
+        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths, Action<string, Diagnostic> addDiagnostic)
         {
             if (compositeAnalyzerProvider == null || assemblyFilePaths == null) return;
 
@@ -33,7 +34,7 @@ namespace TypeCobol.Analysis
                 catch (Exception exception)
                 {
                     var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, $"Failed to load analyzer provider on path {assemblyFilePath}", exception.Message, exception);
-                    writeDiagnostic(assemblyFilePath, diagnostic);
+                    addDiagnostic(assemblyFilePath, diagnostic);
                 }
             }
         }

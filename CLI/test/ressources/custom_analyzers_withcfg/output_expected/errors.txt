@@ -1,8 +1,9 @@
-ReturnCode=Warning_
-6 errors in "input\CustomAnalyzers.rdz.tcbl":
+ReturnCode=ParsingDiagnostics_
+7 errors in "input\CustomAnalyzers.rdz.tcbl":
 Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummySyntaxDrivenAnalyzer': starting AST building...
 Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummySyntaxDrivenAnalyzer': finished AST building.
 Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummyQualityAnalyzer': number of tokens (after preprocessing): 32
 Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummyQualityAnalyzer': number of code elements: 9
 Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummyQualityAnalyzer': source file has 1 program(s), main program is 'DVZZMFT0'.
+Line 0[0,0] <46, Error, CodeAnalysis> - CodeAnalysis: analyzer 'TypeCobol.Analysis.Test.CustomAnalyzers.DummyQualityAnalyzerErrorInAnalysis' failed. Exception message is 'Exception in AST analysis intended.'
 Line 2[20,27] <45, Warning, General> - Info: CFG/DFA analysis: control flow graphs contains 2 blocks.
