@@ -1,0 +1,83 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 item   PIC X(20).
+       01 part   PIC X(20).
+       01 var0   PIC 9 VALUE 0.
+       01 var1   PIC 9 VALUE 1.
+      
+       PROCEDURE DIVISION.
+      * OK this is a shorthand
+           MOVE item(2:) TO part
+      * KO zero position
+Line 14[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(0:) TO part
+      * KO negative position
+Line 16[22,23] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(-1:) TO part
+      * KO by a previous step
+Line 18[21,21] <27, Error, Syntax> - Syntax error : mismatched input '(' expecting TO
+           MOVE item(:2) TO part
+      
+      * KO zero position
+Line 21[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(0:5) TO part
+      * KO zero length
+Line 23[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(1:0) TO part
+      * KO*2 zero values
+Line 25[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+Line 25[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(0:0) TO part
+      * KO negative position
+Line 27[22,23] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(-1:5) TO part
+      * KO negative length
+Line 29[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(1:-5) TO part
+      * KO*2 negative values
+Line 31[22,23] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+Line 31[22,23] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(-1:-5) TO part
+      * OK
+           MOVE item(1.32:5) TO part
+      * OK
+           MOVE item(1:5.84) TO part
+      * OK
+           MOVE item(1.32:5.84) TO part
+      * KO zero position
+Line 39[22,24] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(0.0:5) TO part
+      * KO zero length
+Line 41[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(1:0.0) TO part
+      * KO*2 zero values
+Line 43[22,24] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+Line 43[22,24] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(0.0:0.0) TO part
+      * KO negative position
+Line 45[22,26] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(-1.32:5) TO part
+      * KO negative length
+Line 47[22,22] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(1:-5.84) TO part
+      * KO*2 negative values
+Line 49[22,26] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+Line 49[22,26] <27, Error, Syntax> - Syntax error : Reference modifiers should be positive non-zero values.
+           MOVE item(-1.32:-5.84) TO part
+      
+      * OK Variables are not checked
+           MOVE item(var0:) TO part
+           MOVE item(var1:) TO part
+           MOVE item(2:var0) TO part
+           MOVE item(2:var1) TO part
+      
+      * OK Expressions are not checked
+           MOVE item(2 * 3  : 4     ) TO part
+           MOVE item(2      : 4 * 2 ) TO part
+           MOVE item(2 * 2  : 4 * 2 ) TO part
+           MOVE item(-2 + 1 : 2     ) TO part
+           MOVE item(2      : 4 * -2) TO part
+           .
+       END PROGRAM Pgm.
