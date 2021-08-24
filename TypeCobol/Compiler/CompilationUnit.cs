@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using TypeCobol.Analysis;
@@ -207,7 +208,6 @@ namespace TypeCobol.Compiler
         /// Creates a temporary snapshot which contains element before the cross check phase
         /// Usefull to create a program symboltable without checking nodes.
         /// For instance : it's used to load all the symbols from every dependencies before running the cross check phase to resolve symbols.
-        /// <param name="useAntlrProgramParsing">Shall ANTLR be used to parse TypeCobol Program, otherwise it will be CUP</param>
         /// </summary>
         public void ProduceTemporarySemanticDocument()
         {
@@ -228,8 +228,18 @@ namespace TypeCobol.Compiler
 
                     List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
                     List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
-
-                    var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
+                    ISyntaxDrivenAnalyzer[] customAnalyzers = null;
+                    Diagnostic exceptionDiagnostic = null;
+                    try
+                    {
+                        customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.Assert(_analyzerProvider != null);
+                        // Create a diagnostic to register it later when possible
+                        exceptionDiagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, _analyzerProvider.GetType().FullName, exception.Message, exception);
+                    }
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CupParseProgramOrClass(
                         TextSourceInfo,
@@ -244,8 +254,24 @@ namespace TypeCobol.Compiler
                         out typedVariablesOutsideTypedef,
                         out typeThatNeedTypeLinking);
 
+                    if (exceptionDiagnostic != null) newDiagnostics.Add(exceptionDiagnostic);
                     //Capture the syntax-driven analyzers results
-                    var results = customAnalyzers?.ToDictionary(a => a.Identifier, a => a.GetResult()) ?? new Dictionary<string, object>();
+                    var results = new Dictionary<string, object>();
+                    if (customAnalyzers != null)
+                    {
+                        foreach (var analyzer in customAnalyzers)
+                        {
+                            try
+                            {
+                                results.Add(analyzer.Identifier, analyzer.GetResult());
+                            }
+                            catch (Exception exception)
+                            {
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer.Identifier, exception.Message, exception);
+                                newDiagnostics.Add(diagnostic);
+                            }
+                        }
+                    }
 
                     // Capture the produced results
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
@@ -286,18 +312,8 @@ namespace TypeCobol.Compiler
 
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<string, object> results = new Dictionary<string, object>();
-                    IQualityAnalyzer[] analyzers = null;
-                    try
-                    {
-                        analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
-                    }
-                    catch (Exception exception)
-                    {
-                        var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, $"Error while creating quality analyzers with provider : {_analyzerProvider}", exception.Message, exception);
-                        diagnostics.Add(diagnostic);
-                    }
-
-                    if (analyzers != null)
+                    
+                    if (TryCreateAnalyzers(out var analyzers))
                     {
                         //Results from previous steps
                         var temporarySemanticDocument = programClassDocument.PreviousStepSnapshot;
@@ -320,7 +336,7 @@ namespace TypeCobol.Compiler
                             }
                             catch (Exception exception)
                             {
-                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer, exception.Message, exception);
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer.Identifier, exception.Message, exception);
                                 diagnostics.Add(diagnostic);
                             }
                         }
@@ -331,6 +347,26 @@ namespace TypeCobol.Compiler
                     documentUpdated = true;
 
                     PerfStatsForCodeQualityCheck.OnStopRefresh();
+
+                    bool TryCreateAnalyzers(out IQualityAnalyzer[] createdAnalyzers)
+                    {
+                        if (_analyzerProvider != null)
+                        {
+                            try
+                            {
+                                createdAnalyzers = _analyzerProvider.CreateQualityAnalyzers(CompilerOptions);
+                                return true; // Analyzers have been created
+                            }
+                            catch (Exception exception)
+                            {
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, $"Error while creating quality analyzers with provider : {_analyzerProvider.GetType().FullName}", exception.Message, exception);
+                                diagnostics.Add(diagnostic);
+                            }
+                        }
+
+                        createdAnalyzers = null;
+                        return false; // No analyzer created
+                    }
                 }
 
                 bool CodeAnalysisDocumentNeedsUpdate(out int newVersion)

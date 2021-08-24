@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TypeCobol.Analysis.Test
 {
@@ -13,7 +14,7 @@ namespace TypeCobol.Analysis.Test
         protected override IAnalyzerProvider CreateAnalyzerProvider()
         {
             //Add analyzers
-            var analyzerProvider = new AnalyzerProvider();
+            var analyzerProvider = new AnalyzerProvider(str => throw new Exception(str));
             //CFG/DFA
             analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard, o));
             return analyzerProvider;

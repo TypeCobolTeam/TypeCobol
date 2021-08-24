@@ -129,7 +129,15 @@ namespace TypeCobol.Compiler.Parser
             {
                 foreach (var customAnalyzer in customAnalyzers)
                 {
-                    diagnostics.AddRange(customAnalyzer.Diagnostics);
+                    try
+                    {
+                        diagnostics.AddRange(customAnalyzer.Diagnostics);
+                    }
+                    catch (Exception exception)
+                    {
+                        var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, customAnalyzers.GetType().FullName, exception.Message, exception);
+                        diagnostics.Add(diagnostic);
+                    }
                 }
             }
 

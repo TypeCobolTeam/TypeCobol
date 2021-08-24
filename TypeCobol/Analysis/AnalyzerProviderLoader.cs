@@ -28,12 +28,12 @@ namespace TypeCobol.Analysis
             {
                 try
                 {
-                    var provider = LoadProvider(assemblyFilePath);
+                    var provider = UnsafeLoadProvider(assemblyFilePath);
                     compositeAnalyzerProvider.AddProvider(provider);
                 }
                 catch (Exception exception)
                 {
-                    File.AppendAllText(logFilePath, $"Failed to load analyzer provider on path {assemblyFilePath}\n{exception.Message}\n{exception}");
+                    File.AppendAllText(logFilePath, $"Failed to load analyzer provider from path {assemblyFilePath}{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace TypeCobol.Analysis
         /// </summary>
         /// <param name="assemblyFilePath">Path to the assembly.</param>
         /// <returns>A non-null instance of IAnalyzerProvider.</returns>
-        public static IAnalyzerProvider LoadProvider(string assemblyFilePath)
+        public static IAnalyzerProvider UnsafeLoadProvider(string assemblyFilePath)
         {
             var assembly = Assembly.LoadFrom(assemblyFilePath);
             var constructor = assembly

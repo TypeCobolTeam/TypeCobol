@@ -278,7 +278,7 @@ namespace TypeCobol.LanguageServer
             foreach(var f in customAnalyzerFiles) {
                 try
                 {
-                    list.Add(AnalyzerProviderLoader.LoadProvider(f));
+                    list.Add(AnalyzerProviderLoader.UnsafeLoadProvider(f));
                 }
                 catch(Exception e)
                 {
@@ -553,7 +553,7 @@ namespace TypeCobol.LanguageServer
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
             //Configure CFG/DFA analyzer(s) + external analyzers if any
-            var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
+            var compositeAnalyzerProvider = new CompositeAnalyzerProvider(str => _Logger(str, null));
             compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode, o));
             if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
             {

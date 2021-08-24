@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
@@ -15,21 +16,62 @@ namespace TypeCobol.Analysis
     {
         private List<Func<TypeCobolOptions, TextSourceInfo, ISyntaxDrivenAnalyzer>> _sdaActivators;
         private List<Func<TypeCobolOptions, IQualityAnalyzer>> _qaActivators;
+        protected readonly Action<string> Logger;
+
+        public AnalyzerProvider(Action<string> logger)
+        {
+            Logger = logger;
+        }
 
         public virtual ISyntaxDrivenAnalyzer[] CreateSyntaxDrivenAnalyzers(TypeCobolOptions options, TextSourceInfo textSourceInfo)
         {
-            return _sdaActivators?
-                .Select(sdaActivator => sdaActivator(options, textSourceInfo))
-                .Where(sda => sda != null)
-                .ToArray();
+            if (_sdaActivators == null) return new ISyntaxDrivenAnalyzer[]{};
+            var syntaxDrivenAnalyzers = new List<ISyntaxDrivenAnalyzer>();
+            foreach (var sdaActivator in _sdaActivators)
+            {
+                if (sdaActivator != null)
+                {
+                    try
+                    {
+                        var sda = sdaActivator(options, textSourceInfo);
+                        if (sda != null)
+                        {
+                            syntaxDrivenAnalyzers.Add(sda);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger($"Failed to create syntax driven analyzers from activator {sdaActivator.Method}.{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
+                    }
+                }
+            }
+            return syntaxDrivenAnalyzers.ToArray();
         }
+
 
         public virtual IQualityAnalyzer[] CreateQualityAnalyzers(TypeCobolOptions options)
         {
-            return _qaActivators?
-                .Select(qaActivator => qaActivator(options))
-                .Where(qa => qa != null)
-                .ToArray();
+            if (_qaActivators == null) return new IQualityAnalyzer[]{ };
+            var qualityAnalyzers = new List<IQualityAnalyzer>();
+            foreach (var qaActivator in _qaActivators)
+            {
+                if (qaActivator != null)
+                {
+                    try
+                    {
+                        var qa = qaActivator(options);
+                        if (qa != null)
+                        {
+                            qualityAnalyzers.Add(qa);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger($"Failed to create quality analyzers from activator {qaActivator.Method}.{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
+                    }
+                }
+            }
+            return qualityAnalyzers.ToArray();
         }
 
         /// <summary>
@@ -79,13 +121,11 @@ namespace TypeCobol.Analysis
                         var analyzers = selector(analyzerProvider);
                         result.AddRange(analyzers);
                     }
-                    catch (Exception e)
+                    catch (Exception exception)
                     {
-                        Console.WriteLine(e);
-                        throw;
+                        Logger($"Failed to create analyzers from analyzer provider {analyzerProvider.GetType().FullName}.{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
                     }
                 }
-                
                 return result.ToArray();
             }
 
@@ -115,6 +155,10 @@ namespace TypeCobol.Analysis
                 _providers = new List<IAnalyzerProvider>();
             }
             _providers.Add(provider);
+        }
+
+        public CompositeAnalyzerProvider(Action<string> logger) : base(logger)
+        {
         }
     }
 }

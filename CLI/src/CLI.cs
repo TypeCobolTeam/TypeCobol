@@ -122,7 +122,7 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new CompositeAnalyzerProvider();
+            var analyzerProvider = new CompositeAnalyzerProvider(str => File.AppendAllText(_configuration.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, str));
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers

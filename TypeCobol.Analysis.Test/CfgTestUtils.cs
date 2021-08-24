@@ -49,7 +49,7 @@ namespace TypeCobol.Analysis.Test
 
             void AddAnalyzerProvider(CfgBuildingMode mode)
             {
-                var analyzerProvider = new AnalyzerProvider();
+                var analyzerProvider = new AnalyzerProvider(str => throw new Exception(str));
                 analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(mode, o));
                 _AnalyzerProviders.Add(mode, analyzerProvider);
             }
