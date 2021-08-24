@@ -506,7 +506,7 @@ namespace TypeCobol.Test.Utils
 
         public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
-            var sortedDiags = compilationUnit.AllDiagnostics().OrderBy(d => d.Line).GetEnumerator();
+            var sortedDiags = compilationUnit.AllDiagnostics().OrderBy(d => d.LineStart).GetEnumerator();
 
             //Create result file
 
@@ -523,7 +523,7 @@ namespace TypeCobol.Test.Utils
                     linePos++;
 
 
-                    while (nextDiag != null && nextDiag.Line <= linePos)
+                    while (nextDiag != null && nextDiag.LineStart <= linePos)
                     {
                         resultBuilder.Append(nextDiag).Append("\n");
                         nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;

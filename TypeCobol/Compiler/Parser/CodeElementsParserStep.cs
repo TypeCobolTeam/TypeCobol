@@ -274,7 +274,7 @@ namespace TypeCobol.Compiler.Parser
                                 bool tokenHasBeenInjected = false;
 
                                 // Do not iterate on a list that will be modified ☻
-                                int stopLine = codeElement.ConsumedTokens.Last().Line - 1;
+                                int stopLine = codeElement.LineEnd - 1;
 
                                 for (int lineIndex = codeElement.ConsumedTokens[0].Line -1 ;
                                     lineIndex < stopLine && lineIndex < documentLines.Count;

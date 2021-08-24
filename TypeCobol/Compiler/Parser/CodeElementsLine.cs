@@ -117,7 +117,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 foreach (var parserDiagnostic in _ParserDiagnostics)
                 {
-                    parserDiagnostic.Line = LineIndex + 1;
+                    var nbLines = parserDiagnostic.LineEnd - parserDiagnostic.LineStart;
+                    parserDiagnostic.LineStart = LineIndex + 1;
+                    parserDiagnostic.LineEnd = parserDiagnostic.LineStart + nbLines;
                 }
             }
 
@@ -130,7 +132,9 @@ namespace TypeCobol.Compiler.Parser
                     {
                         foreach (var codeElementDiagnostic in codeElement.Diagnostics)
                         {
-                            codeElementDiagnostic.Line = LineIndex + 1;
+                            var nbLines = codeElementDiagnostic.LineEnd - codeElementDiagnostic.LineStart;
+                            codeElementDiagnostic.LineStart = LineIndex + 1;
+                            codeElementDiagnostic.LineEnd = codeElementDiagnostic.LineStart + nbLines;
                         }
                     }
                 }

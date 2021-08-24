@@ -111,7 +111,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
-            Diagnostic diag = new Diagnostic(messageCode, new Diagnostic.Position(LineIndex + 1, columnStart, columnEnd, null), messageArgs);
+            Diagnostic diag = new Diagnostic(messageCode, new Diagnostic.Position(LineIndex + 1, LineIndex + 1, columnStart, columnEnd, null), messageArgs);
             _ScannerDiagnostics.Add(diag);
         }
 

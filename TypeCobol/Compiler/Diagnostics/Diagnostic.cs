@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
@@ -13,34 +14,43 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public class Position
         {
-            public static readonly Position Default = new Position(0, 0, 0, null);
+            public static readonly Position Default = new Position(0, 0, 0, 0, null);
 
             private readonly string _messageAdapter;
 
-            public Position(int line, int columnStart, int columnEnd, CopyDirective includingDirective)
+            public Position(int lineStart, int lineEnd, int columnStart, int columnEnd, CopyDirective includingDirective)
             {
-                line = Math.Max(0, line);
                 if (includingDirective != null)
                 {
                     //Position diagnostic on including copy directive and adapt message
-                    Line = includingDirective.COPYToken.Line;
                     var startToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.FirstOrDefault()?.FirstOrDefault();
                     var endToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.LastOrDefault()?.LastOrDefault();
+                    LineStart = startToken?.Line ?? 0;
+                    LineEnd = endToken?.Line ?? LineStart;
                     ColumnStart = startToken?.Column ?? 0;
                     ColumnEnd = endToken?.EndColumn ?? ColumnStart;
-                    _messageAdapter = $"Error in copy '{includingDirective.TextName}' at line {line} : {{0}}";
+                    if (LineStart == LineEnd)
+                    {
+                        _messageAdapter = $"Error in copy '{includingDirective.TextName}' at line {lineStart} : {{0}}";
+                    }
+                    else
+                    {
+                        _messageAdapter = $"Error in copy '{includingDirective.TextName}' at lines {lineStart}-{lineEnd} : {{0}}";
+                    }
                 }
                 else
                 {
                     //Position diagnostic directly at specified location
-                    Line = line;
+                    LineStart = Math.Max(0, lineStart);
+                    LineEnd = Math.Max(lineStart, lineEnd);
                     ColumnStart = Math.Max(0, columnStart);
                     ColumnEnd = Math.Max(0, columnEnd);
                     _messageAdapter = null;
                 }
             }
 
-            public int Line { get; }
+            public int LineStart { get; }
+            public int LineEnd { get; }
             public int ColumnStart { get; }
             public int ColumnEnd { get; }
 
@@ -70,7 +80,8 @@ namespace TypeCobol.Compiler.Diagnostics
             System.Diagnostics.Debug.Assert(other != null);
 
             Info = other.Info;//DiagnosticMessage is a readonly class so it's ok to keep the same reference instead of creating a copy instance
-            Line = other.Line;
+            LineStart = other.LineStart;
+            LineEnd = other.LineEnd;
             ColumnStart = other.ColumnStart;
             ColumnEnd = other.ColumnEnd;
             Message = other.Message;
@@ -79,7 +90,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public DiagnosticMessage Info { get; }
 
-        public int Line
+        public int LineStart
+        {
+            get;
+            internal set;//Internal setter is required for incremental mode. When lines are inserted/removed, associated diagnostics are shifted up/down accordingly
+        }
+
+        public int LineEnd
         {
             get;
             internal set;//Internal setter is required for incremental mode. When lines are inserted/removed, associated diagnostics are shifted up/down accordingly
@@ -95,13 +112,16 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         public override string ToString()
         {
-            return $"Line {Line}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
+            if (LineStart == LineEnd)
+                return $"Line {LineStart}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
+            return $"Lines {LineStart}:{LineEnd}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
         }
 
         private void ApplyPosition([NotNull] Position position)
         {
             System.Diagnostics.Debug.Assert(position != null);
-            Line = position.Line;
+            LineStart = position.LineStart;
+            LineEnd = position.LineEnd;
             ColumnStart = position.ColumnStart;
             ColumnEnd = position.ColumnEnd;
             Message = position.AdaptMessage(Message);

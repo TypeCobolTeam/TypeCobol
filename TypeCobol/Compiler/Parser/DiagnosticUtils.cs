@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Parser
             if (token == null) return Diagnostic.Position.Default;
 
             var copyDirective = token is Preprocessor.ImportedToken importedToken ? importedToken.CopyDirective : null;
-            return new Diagnostic.Position(token.Line, token.Column, token.EndColumn, copyDirective);
+            return new Diagnostic.Position(token.Line, token.Line, token.Column, token.EndColumn, copyDirective);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace TypeCobol.Compiler.Parser
                 copyDirective = null;
             }
 
-            return new Diagnostic.Position(codeElement.Line, codeElement.StartIndex + 1, codeElement.StopIndex + 1, copyDirective);
+            return new Diagnostic.Position(codeElement.Line, codeElement.LineEnd, codeElement.StartIndex + 1, codeElement.StopIndex + 1, copyDirective);
         }
     }
 }
