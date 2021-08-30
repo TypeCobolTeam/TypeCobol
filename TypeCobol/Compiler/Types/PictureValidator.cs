@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Types
         private const string PARENTHESES_DO_NOT_MATCH = "Missing '(' or ')' in PICTURE string";
         private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
         private const string MULTIPLE_CURRENCIES_IN_SAME_PICTURE = "Cannot mix currency symbols in a PICTURE string: '{0}' symbol was not expected";
-        private const string INVALID_DATA_CATEGORY = "Invalid data category for PICTURE string '{0}'";
+        private const string INVALID_PICTURE_STRING = "Combination of symbols '{0}' was not recognized as a valid PICTURE string";
         private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
         private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
         private const string MULTIPLE_V = "V must appears only once in a PICTURE string";
@@ -60,6 +60,7 @@ namespace TypeCobol.Compiler.Types
             }
             _currencyDescriptor = null;
 
+            OriginalPicture = picture;
             _decimalPointIsComma = decimalPointIsComma;
             if (_decimalPointIsComma)
             {
@@ -92,7 +93,12 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Picture string, with comma and dot swapped if DECIMAL POINT IS COMMA is active.
+        /// The unaltered Picture string
+        /// </summary>
+        public string OriginalPicture { get; }
+
+        /// <summary>
+        /// The Picture string to validate, with comma and dot swapped if DECIMAL POINT IS COMMA is active.
         /// </summary>
         public string Picture { get; }
 
@@ -134,7 +140,7 @@ namespace TypeCobol.Compiler.Types
             var category = DeterminePictureCategory(sequence, symbolCounts);
             if (category == PictureCategory.Invalid)
             {
-                validationMessages.Add(string.Format(INVALID_DATA_CATEGORY, Picture));
+                validationMessages.Add(string.Format(INVALID_PICTURE_STRING, OriginalPicture));
             }
             else
             {
@@ -266,7 +272,7 @@ namespace TypeCobol.Compiler.Types
 
                 if (!match)
                 {
-                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, Picture, Picture[l], l + 1));
+                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, OriginalPicture, Picture[l], l + 1));
                     return null;
                 }
             }
