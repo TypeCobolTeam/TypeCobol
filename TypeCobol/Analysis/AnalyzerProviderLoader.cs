@@ -17,19 +17,19 @@ namespace TypeCobol.Analysis
         /// <summary>
         /// Add each AnalyzerProvider from the given assemblies.
         /// </summary>
-        /// <param name="compositeAnalyzerProvider">CompositeAnalyzerProvider instance into which the external analyzers should be added.</param>
+        /// <param name="analyzerProviderWrapper">AnalyzerProviderWrapper instance into which the external analyzers should be added.</param>
         /// <param name="assemblyFilePaths">List of paths of .NET Assembly files.</param>
         /// <param name="logFilePath">Path of a non-null log file.</param>
-        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths, [NotNull] string logFilePath)
+        public static void AddCustomProviders(this AnalyzerProviderWrapper analyzerProviderWrapper, IEnumerable<string> assemblyFilePaths, [NotNull] string logFilePath)
         {
-            if (compositeAnalyzerProvider == null || assemblyFilePaths == null) return;
+            if (analyzerProviderWrapper == null || assemblyFilePaths == null) return;
 
             foreach (var assemblyFilePath in assemblyFilePaths)
             {
                 try
                 {
                     var provider = UnsafeLoadProvider(assemblyFilePath);
-                    compositeAnalyzerProvider.AddProvider(provider);
+                    analyzerProviderWrapper.AddProvider(provider);
                 }
                 catch (Exception exception)
                 {

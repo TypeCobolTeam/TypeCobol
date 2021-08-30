@@ -15,7 +15,7 @@ namespace TypeCobol.Analysis.Test
         protected override IAnalyzerProvider CreateAnalyzerProvider()
         {
             //Add analyzers
-            var analyzerProvider = new AnalyzerProvider(str => throw new Exception(str));
+            var analyzerProvider = new AnalyzerProviderWrapper(str => throw new Exception(str));
             //CFG/DFA
             analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
             return analyzerProvider;

@@ -19,7 +19,7 @@ namespace TypeCobol.Analysis.Test
 {
     internal static class CfgTestUtils
     {
-        private static readonly Dictionary<CfgBuildingMode, AnalyzerProvider> _AnalyzerProviders;
+        private static readonly Dictionary<CfgBuildingMode, AnalyzerProviderWrapper> _AnalyzerProviders;
 
         //From TypeCobol.Test
         public static readonly string ThirdPartyDir;
@@ -32,7 +32,7 @@ namespace TypeCobol.Analysis.Test
 
         static CfgTestUtils()
         {
-            _AnalyzerProviders = new Dictionary<CfgBuildingMode, AnalyzerProvider>();
+            _AnalyzerProviders = new Dictionary<CfgBuildingMode, AnalyzerProviderWrapper>();
             AddAnalyzerProvider(CfgBuildingMode.Standard);
             AddAnalyzerProvider(CfgBuildingMode.Extended);
             AddAnalyzerProvider(CfgBuildingMode.WithDfa);
@@ -49,7 +49,7 @@ namespace TypeCobol.Analysis.Test
 
             void AddAnalyzerProvider(CfgBuildingMode mode)
             {
-                var analyzerProvider = new AnalyzerProvider(str => throw new Exception(str));
+                var analyzerProvider = new AnalyzerProviderWrapper(str => throw new Exception(str));
                 analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(mode, o));
                 _AnalyzerProviders.Add(mode, analyzerProvider);
             }

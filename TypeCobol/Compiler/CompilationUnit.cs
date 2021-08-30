@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
@@ -21,7 +19,7 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class CompilationUnit : CompilationDocument
     {
-        private readonly IAnalyzerProvider _analyzerProvider;
+        private readonly AnalyzerProviderWrapper _analyzerProvider;
 
         /// <summary>
         /// Initializes a new compilation document from a list of text lines.
@@ -37,7 +35,12 @@ namespace TypeCobol.Compiler
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
             PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
 
-            _analyzerProvider = analyzerProvider;
+            if (!(analyzerProvider is AnalyzerProviderWrapper analyzerProviderWrapper))
+            {
+                analyzerProviderWrapper = new AnalyzerProviderWrapper();
+                analyzerProviderWrapper.AddProvider(analyzerProvider);
+            }
+            _analyzerProvider = analyzerProviderWrapper;
         }
 
         /// <summary>
@@ -220,26 +223,9 @@ namespace TypeCobol.Compiler
                 {
                     // Start perf measurement
                     var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
+                    var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
-                    SourceFile root;
-                    List<Diagnostic> newDiagnostics;
-                    Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
-
-                    List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
-                    List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
-                    ISyntaxDrivenAnalyzer[] customAnalyzers = null;
-                    Diagnostic exceptionDiagnostic = null;
-                    try
-                    {
-                        customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
-                    }
-                    catch (Exception exception)
-                    {
-                        Debug.Assert(_analyzerProvider != null);
-                        // Create a diagnostic to register it later when possible
-                        exceptionDiagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, _analyzerProvider.GetType().FullName, exception.Message, exception);
-                    }
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CupParseProgramOrClass(
                         TextSourceInfo,
@@ -248,13 +234,12 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
-                        out root,
-                        out newDiagnostics,
-                        out nodeCodeElementLinkers,
-                        out typedVariablesOutsideTypedef,
-                        out typeThatNeedTypeLinking);
+                        out var root,
+                        out var newDiagnostics,
+                        out var nodeCodeElementLinkers,
+                        out var typedVariablesOutsideTypedef,
+                        out var typeThatNeedTypeLinking);
 
-                    if (exceptionDiagnostic != null) newDiagnostics.Add(exceptionDiagnostic);
                     //Capture the syntax-driven analyzers results
                     var results = new Dictionary<string, object>();
                     if (customAnalyzers != null)
@@ -312,8 +297,8 @@ namespace TypeCobol.Compiler
 
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<string, object> results = new Dictionary<string, object>();
-                    
-                    if (TryCreateAnalyzers(out var analyzers))
+                    var analyzers = _analyzerProvider.CreateQualityAnalyzers(CompilerOptions);
+                    if (analyzers != null)
                     {
                         //Results from previous steps
                         var temporarySemanticDocument = programClassDocument.PreviousStepSnapshot;
@@ -347,26 +332,6 @@ namespace TypeCobol.Compiler
                     documentUpdated = true;
 
                     PerfStatsForCodeQualityCheck.OnStopRefresh();
-
-                    bool TryCreateAnalyzers(out IQualityAnalyzer[] createdAnalyzers)
-                    {
-                        if (_analyzerProvider != null)
-                        {
-                            try
-                            {
-                                createdAnalyzers = _analyzerProvider.CreateQualityAnalyzers(CompilerOptions);
-                                return true; // Analyzers have been created
-                            }
-                            catch (Exception exception)
-                            {
-                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, $"Error while creating quality analyzers with provider : {_analyzerProvider.GetType().FullName}", exception.Message, exception);
-                                diagnostics.Add(diagnostic);
-                            }
-                        }
-
-                        createdAnalyzers = null;
-                        return false; // No analyzer created
-                    }
                 }
 
                 bool CodeAnalysisDocumentNeedsUpdate(out int newVersion)

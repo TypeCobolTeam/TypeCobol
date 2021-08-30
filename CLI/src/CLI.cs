@@ -122,7 +122,7 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new CompositeAnalyzerProvider(str => File.AppendAllText(_configuration.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, str));
+            var analyzerProvider = new AnalyzerProviderWrapper(str => File.AppendAllText(_configuration.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, str));
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
@@ -254,13 +254,13 @@ namespace TypeCobol.Server
             }
         }
 
-        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProvider analyzerProvider)
+        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProviderWrapper analyzerProviderWrapper)
         {
             var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
                 //All purpose CFG/DFA
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
+                analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
 
                 //CFG/DFA for ZCALL report
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
@@ -268,7 +268,7 @@ namespace TypeCobol.Server
                     if (_configuration.CfgBuildingMode != CfgBuildingMode.WithDfa)
                     {
                         //Need to create a dedicated CFG builder with DFA activated
-                        analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
+                        analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
                     }
 
                     string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);
@@ -279,7 +279,7 @@ namespace TypeCobol.Server
                 //CopyMoveInitializeReport
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
-                    analyzerProvider.AddActivator(
+                    analyzerProviderWrapper.AddActivator(
                         (o, t) =>
                         {
                             var report = new CopyMoveInitializeReport();

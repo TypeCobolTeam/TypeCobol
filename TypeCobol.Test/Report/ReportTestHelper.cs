@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Report;
-using TypeCobol.CustomExceptions;
 
 namespace TypeCobol.Test.Report
 {
@@ -42,7 +40,7 @@ namespace TypeCobol.Test.Report
             where T : IReport, ISyntaxDrivenAnalyzer, new()
         {
             T report = default;
-            var analyzerProvider = new AnalyzerProvider(str => throw new Exception(str));
+            var analyzerProvider = new AnalyzerProviderWrapper(str => throw new Exception(str));
             analyzerProvider.AddActivator((o, t) => report = new T());
 
             string input = Path.Combine(ROOT_INPUT, fileName);
