@@ -65,10 +65,10 @@ Line 27813[21,24] <37, Warning, General> - Warning: Unreachable code detected
 Line 27817[15,18] <37, Warning, General> - Warning: Unreachable code detected
 Line 27819[21,34] <37, Warning, General> - Warning: Unreachable code detected
 Line 27820[24,43] <37, Warning, General> - Warning: Unreachable code detected
-Lines 27846:27849[12,34] <37, Warning, General> - Warning: Unreachable code detected
+Range (27846, 12) -> (27849, 34) <37, Warning, General> - Warning: Unreachable code detected
 Line 27852[13,46] <37, Warning, General> - Warning: Unreachable code detected
 Line 27854[13,38] <37, Warning, General> - Warning: Unreachable code detected
-Lines 27856:27857[12,37] <37, Warning, General> - Warning: Unreachable code detected
+Range (27856, 12) -> (27857, 37) <37, Warning, General> - Warning: Unreachable code detected
 Line 27860[13,46] <37, Warning, General> - Warning: Unreachable code detected
 Line 27862[13,38] <37, Warning, General> - Warning: Unreachable code detected
 Line 27864[12,35] <37, Warning, General> - Warning: Unreachable code detected
@@ -79,7 +79,7 @@ Line 27872[13,47] <37, Warning, General> - Warning: Unreachable code detected
 Line 27876[12,67] <37, Warning, General> - Warning: Unreachable code detected
 Line 27878[12,57] <37, Warning, General> - Warning: Unreachable code detected
 Line 27879[13,47] <37, Warning, General> - Warning: Unreachable code detected
-Lines 27882:27883[12,37] <37, Warning, General> - Warning: Unreachable code detected
+Range (27882, 12) -> (27883, 37) <37, Warning, General> - Warning: Unreachable code detected
 Line 27884[18,39] <37, Warning, General> - Warning: Unreachable code detected
 Line 27885[14,17] <37, Warning, General> - Warning: Unreachable code detected
 Line 27888[18,39] <37, Warning, General> - Warning: Unreachable code detected
@@ -87,10 +87,10 @@ Line 27889[21,40] <37, Warning, General> - Warning: Unreachable code detected
 Line 27890[24,45] <37, Warning, General> - Warning: Unreachable code detected
 Line 27891[22,25] <37, Warning, General> - Warning: Unreachable code detected
 Line 27896[13,18] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
-Lines 27919:27922[12,34] <37, Warning, General> - Warning: Unreachable code detected
+Range (27919, 12) -> (27922, 34) <37, Warning, General> - Warning: Unreachable code detected
 Line 27925[13,46] <37, Warning, General> - Warning: Unreachable code detected
 Line 27927[13,38] <37, Warning, General> - Warning: Unreachable code detected
-Lines 27929:27930[12,37] <37, Warning, General> - Warning: Unreachable code detected
+Range (27929, 12) -> (27930, 37) <37, Warning, General> - Warning: Unreachable code detected
 Line 27933[13,46] <37, Warning, General> - Warning: Unreachable code detected
 Line 27935[13,38] <37, Warning, General> - Warning: Unreachable code detected
 Line 27937[12,35] <37, Warning, General> - Warning: Unreachable code detected
@@ -106,38 +106,38 @@ Line 27959[13,38] <37, Warning, General> - Warning: Unreachable code detected
 Line 27962[12,67] <37, Warning, General> - Warning: Unreachable code detected
 Line 27964[12,57] <37, Warning, General> - Warning: Unreachable code detected
 Line 27965[13,47] <37, Warning, General> - Warning: Unreachable code detected
-Lines 27968:27969[12,37] <37, Warning, General> - Warning: Unreachable code detected
+Range (27968, 12) -> (27969, 37) <37, Warning, General> - Warning: Unreachable code detected
 Line 27970[18,39] <37, Warning, General> - Warning: Unreachable code detected
 Line 27971[14,17] <37, Warning, General> - Warning: Unreachable code detected
 Line 27974[20,41] <37, Warning, General> - Warning: Unreachable code detected
 Line 27975[23,42] <37, Warning, General> - Warning: Unreachable code detected
 Line 27976[26,47] <37, Warning, General> - Warning: Unreachable code detected
 Line 27977[24,27] <37, Warning, General> - Warning: Unreachable code detected
-Lines 27999:28000[12,42] <37, Warning, General> - Warning: Unreachable code detected
+Range (27999, 12) -> (28000, 42) <37, Warning, General> - Warning: Unreachable code detected
 Line 28005[12,53] <37, Warning, General> - Warning: Unreachable code detected
 Line 28006[15,33] <37, Warning, General> - Warning: Unreachable code detected
 Line 28009[12,61] <37, Warning, General> - Warning: Unreachable code detected
 Line 28010[12,66] <37, Warning, General> - Warning: Unreachable code detected
 Line 28024[12,32] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28029:28031[12,45] <37, Warning, General> - Warning: Unreachable code detected
+Range (28029, 12) -> (28031, 45) <37, Warning, General> - Warning: Unreachable code detected
 Line 28032[14,21] <37, Warning, General> - Warning: Unreachable code detected
 Line 28035[12,31] <37, Warning, General> - Warning: Unreachable code detected
 Line 28036[15,34] <37, Warning, General> - Warning: Unreachable code detected
 Line 28039[19,55] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28042:28044[15,48] <37, Warning, General> - Warning: Unreachable code detected
+Range (28042, 15) -> (28044, 48) <37, Warning, General> - Warning: Unreachable code detected
 Line 28045[18,25] <37, Warning, General> - Warning: Unreachable code detected
 Line 28047[15,46] <37, Warning, General> - Warning: Unreachable code detected
 Line 28049[18,37] <37, Warning, General> - Warning: Unreachable code detected
 Line 28050[15,18] <37, Warning, General> - Warning: Unreachable code detected
 Line 28055[12,15] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28068:28070[12,44] <37, Warning, General> - Warning: Unreachable code detected
+Range (28068, 12) -> (28070, 44) <37, Warning, General> - Warning: Unreachable code detected
 Line 28071[14,21] <37, Warning, General> - Warning: Unreachable code detected
 Line 28074[12,31] <37, Warning, General> - Warning: Unreachable code detected
 Line 28075[14,33] <37, Warning, General> - Warning: Unreachable code detected
 Line 28078[12,15] <37, Warning, General> - Warning: Unreachable code detected
 Line 28083[12,29] <37, Warning, General> - Warning: Unreachable code detected
 Line 28086[14,37] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28090:28092[14,54] <37, Warning, General> - Warning: Unreachable code detected
+Range (28090, 14) -> (28092, 54) <37, Warning, General> - Warning: Unreachable code detected
 Line 28093[16,40] <37, Warning, General> - Warning: Unreachable code detected
 Line 28095[14,45] <37, Warning, General> - Warning: Unreachable code detected
 Line 28096[16,62] <37, Warning, General> - Warning: Unreachable code detected
@@ -149,11 +149,11 @@ Line 28112[22,54] <37, Warning, General> - Warning: Unreachable code detected
 Line 28113[20,23] <37, Warning, General> - Warning: Unreachable code detected
 Line 28121[12,29] <37, Warning, General> - Warning: Unreachable code detected
 Line 28123[14,37] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28142:28145[12,47] <37, Warning, General> - Warning: Unreachable code detected
+Range (28142, 12) -> (28145, 47) <37, Warning, General> - Warning: Unreachable code detected
 Line 28146[15,22] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28159:28160[12,36] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28168:28172[12,35] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28173:28174[14,44] <37, Warning, General> - Warning: Unreachable code detected
+Range (28159, 12) -> (28160, 36) <37, Warning, General> - Warning: Unreachable code detected
+Range (28168, 12) -> (28172, 35) <37, Warning, General> - Warning: Unreachable code detected
+Range (28173, 14) -> (28174, 44) <37, Warning, General> - Warning: Unreachable code detected
 Line 28175[14,37] <37, Warning, General> - Warning: Unreachable code detected
 Line 28176[12,15] <37, Warning, General> - Warning: Unreachable code detected
 Line 28181[16,46] <37, Warning, General> - Warning: Unreachable code detected
@@ -166,7 +166,7 @@ Line 28187[20,47] <37, Warning, General> - Warning: Unreachable code detected
 Line 28189[22,42] <37, Warning, General> - Warning: Unreachable code detected
 Line 28193[14,17] <37, Warning, General> - Warning: Unreachable code detected
 Line 28208[12,42] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28209:28210[15,39] <37, Warning, General> - Warning: Unreachable code detected
+Range (28209, 15) -> (28210, 39) <37, Warning, General> - Warning: Unreachable code detected
 Line 28213[17,37] <37, Warning, General> - Warning: Unreachable code detected
 Line 28214[15,18] <37, Warning, General> - Warning: Unreachable code detected
 Line 28219[18,38] <37, Warning, General> - Warning: Unreachable code detected
@@ -186,7 +186,7 @@ Line 28313[12,19] <37, Warning, General> - Warning: Unreachable code detected
 Line 28327[8,32] <37, Warning, General> - Warning: Paragraph 'CGBCALAK-SYSPUNCH-SUITE' is empty
 Line 28644[12,33] <37, Warning, General> - Warning: Unreachable code detected
 Line 28687[12,36] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28688:28689[13,32] <37, Warning, General> - Warning: Unreachable code detected
+Range (28688, 13) -> (28689, 32) <37, Warning, General> - Warning: Unreachable code detected
 Line 28690[14,33] <37, Warning, General> - Warning: Unreachable code detected
 Line 28691[15,38] <37, Warning, General> - Warning: Unreachable code detected
 Line 28692[16,37] <37, Warning, General> - Warning: Unreachable code detected
@@ -196,7 +196,7 @@ Line 28702[12,48] <37, Warning, General> - Warning: Unreachable code detected
 Line 28703[13,32] <37, Warning, General> - Warning: Unreachable code detected
 Line 28704[14,33] <37, Warning, General> - Warning: Unreachable code detected
 Line 28705[15,46] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28714:28715[12,44] <37, Warning, General> - Warning: Unreachable code detected
+Range (28714, 12) -> (28715, 44) <37, Warning, General> - Warning: Unreachable code detected
 Line 28717[15,34] <37, Warning, General> - Warning: Unreachable code detected
 Line 28719[18,36] <37, Warning, General> - Warning: Unreachable code detected
 Line 28777[12,34] <37, Warning, General> - Warning: Unreachable code detected
@@ -208,9 +208,9 @@ Line 28809[13,37] <37, Warning, General> - Warning: Unreachable code detected
 Line 28813[14,58] <37, Warning, General> - Warning: Unreachable code detected
 Line 28814[13,16] <37, Warning, General> - Warning: Unreachable code detected
 Line 28817[13,58] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28842:28843[12,36] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28851:28855[12,35] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28856:28857[14,44] <37, Warning, General> - Warning: Unreachable code detected
+Range (28842, 12) -> (28843, 36) <37, Warning, General> - Warning: Unreachable code detected
+Range (28851, 12) -> (28855, 35) <37, Warning, General> - Warning: Unreachable code detected
+Range (28856, 14) -> (28857, 44) <37, Warning, General> - Warning: Unreachable code detected
 Line 28858[14,37] <37, Warning, General> - Warning: Unreachable code detected
 Line 28859[12,15] <37, Warning, General> - Warning: Unreachable code detected
 Line 28863[16,46] <37, Warning, General> - Warning: Unreachable code detected
@@ -223,7 +223,7 @@ Line 28869[20,47] <37, Warning, General> - Warning: Unreachable code detected
 Line 28871[22,42] <37, Warning, General> - Warning: Unreachable code detected
 Line 28875[14,17] <37, Warning, General> - Warning: Unreachable code detected
 Line 28913[12,30] <37, Warning, General> - Warning: Unreachable code detected
-Lines 28914:28915[12,31] <37, Warning, General> - Warning: Unreachable code detected
+Range (28914, 12) -> (28915, 31) <37, Warning, General> - Warning: Unreachable code detected
 Line 28916[13,31] <37, Warning, General> - Warning: Unreachable code detected
 Line 28920[14,48] <37, Warning, General> - Warning: Unreachable code detected
 Line 28921[15,33] <37, Warning, General> - Warning: Unreachable code detected
@@ -236,7 +236,7 @@ Line 29421[13,18] <37, Warning, General> - Warning: a End statement is not align
 Line 29550[20,71] <37, Warning, General> - Warning: Moving alphanumeric 'WS-CMM010-CODE-CADRAGE-JJ' to numeric 'WS-CMM010-CADR-BIN' declared with an USAGE may lead to unexpected results.
 Line 29627[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 29628[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
-Lines 29685:29686[24,46] <37, Warning, General> - Warning: Moving alphanumeric 'WS-CMM010-CODE-CADRAGE-JJ' to numeric 'WS-CMM010-CADR-BIN' declared with an USAGE may lead to unexpected results.
-Lines 29772:29773[12,17] <37, Warning, General> - Warning: "end-if" is missing
-Lines 29776:29777[16,21] <37, Warning, General> - Warning: "end-if" is missing
+Range (29685, 24) -> (29686, 46) <37, Warning, General> - Warning: Moving alphanumeric 'WS-CMM010-CODE-CADRAGE-JJ' to numeric 'WS-CMM010-CADR-BIN' declared with an USAGE may lead to unexpected results.
+Range (29772, 12) -> (29773, 17) <37, Warning, General> - Warning: "end-if" is missing
+Range (29776, 16) -> (29777, 21) <37, Warning, General> - Warning: "end-if" is missing
 Line 31035[21,26] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement

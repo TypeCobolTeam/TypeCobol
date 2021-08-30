@@ -1,4 +1,4 @@
-Lines 11:12[8,28] <27, Error, Syntax> - Syntax error : "END PROGRAM" is missing.
+Range (11, 8) -> (12, 28) <27, Error, Syntax> - Syntax error : "END PROGRAM" is missing.
 --- Nodes ---
 ?
   Main

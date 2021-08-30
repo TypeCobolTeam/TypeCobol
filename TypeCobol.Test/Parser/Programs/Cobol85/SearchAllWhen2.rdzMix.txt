@@ -82,21 +82,21 @@ Line 72[15,42] <27, Error, Syntax> - Syntax error : Left side operand of a WHEN 
            END-SEARCH
       *KO all keys defined before any referenced key must be used
            SEARCH ALL tab4-2
-Lines 77:78[15,37] <27, Error, Syntax> - Syntax error : All the table keys that precede a referenced key must be used.
+Range (77, 15) -> (78, 37) <27, Error, Syntax> - Syntax error : All the table keys that precede a referenced key must be used.
               WHEN tab4-2-key-desc (tab4-idx1 tab4-1-idx1 tab4-2-idx1)
                    = some-key-value-1
                  DISPLAY 'Ok'
            END-SEARCH
       *KO must use equality
            SEARCH ALL tab4-2
-Lines 83:84[15,37] <27, Error, Syntax> - Syntax error : Invalid relational operator in WHEN SEARCH condition, EqualTo operator expected.
+Range (83, 15) -> (84, 37) <27, Error, Syntax> - Syntax error : Invalid relational operator in WHEN SEARCH condition, EqualTo operator expected.
               WHEN tab4-2-key-asc (tab4-idx1 tab4-1-idx1 tab4-2-idx1)
                    > some-key-value-1
                  DISPLAY 'Ok'
            END-SEARCH
       *KO must use AND
            SEARCH ALL tab4-2
-Lines 89:93[15,37] <27, Error, Syntax> - Syntax error : Invalid logical operator in WHEN SEARCH condition, AND operator expected.
+Range (89, 15) -> (93, 37) <27, Error, Syntax> - Syntax error : Invalid logical operator in WHEN SEARCH condition, AND operator expected.
               WHEN tab4-2-key-asc (tab4-idx1 tab4-1-idx1 tab4-2-idx1)
                    = some-key-value-1
                    OR
@@ -106,28 +106,28 @@ Lines 89:93[15,37] <27, Error, Syntax> - Syntax error : Invalid logical operator
            END-SEARCH
       *KO not a table item comparison
            SEARCH ALL tab4-2
-Lines 98:99[15,29] <27, Error, Syntax> - Syntax error : Invalid condition in WHEN SEARCH, only condition-names and key to value comparison are allowed.
+Range (98, 15) -> (99, 29) <27, Error, Syntax> - Syntax error : Invalid condition in WHEN SEARCH, only condition-names and key to value comparison are allowed.
               WHEN tab4-2-key-asc (tab4-idx1 tab4-1-idx1 tab4-2-idx1)
                    IS NUMERIC
                  DISPLAY 'Ok'
            END-SEARCH
       *KO must use first index
            SEARCH ALL tab4-2
-Lines 104:105[15,37] <27, Error, Syntax> - Syntax error : When subscripting, only first index declared for the table is allowed.
+Range (104, 15) -> (105, 37) <27, Error, Syntax> - Syntax error : When subscripting, only first index declared for the table is allowed.
               WHEN tab4-2-key-asc (tab4-idx1 tab4-1-idx2 tab4-2-idx3)
                    = some-key-value-1
                  DISPLAY 'Ok'
            END-SEARCH
       *KO must use proper keys
            SEARCH ALL tab4-2
-Lines 110:111[15,37] <27, Error, Syntax> - Syntax error : 'tab5-2-key' is not a sorting key of table 'tab4-2'.
+Range (110, 15) -> (111, 37) <27, Error, Syntax> - Syntax error : 'tab5-2-key' is not a sorting key of table 'tab4-2'.
               WHEN tab5-2-key (tab4-idx1 tab4-1-idx1 tab4-2-idx1)
                    = some-key-value-1
                  DISPLAY 'Ok'
            END-SEARCH
       *KO key must be on left side
            SEARCH ALL tab4-2
-Lines 116:117[15,71] <27, Error, Syntax> - Syntax error : Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.
+Range (116, 15) -> (117, 71) <27, Error, Syntax> - Syntax error : Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.
               WHEN some-key-value-1
                    = tab4-2-key-asc (tab4-idx1 tab4-1-idx1 tab4-2-idx1)
                  DISPLAY 'Ok'

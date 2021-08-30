@@ -1,9 +1,9 @@
 --- Diagnostics ---
 Line 11[29,35] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateJulian' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>
 Line 14[26,32] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateDB2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[26,32:TYPEDEF]<TYPEDEF>
-Lines 31:33[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
-Lines 39:41[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
-Lines 47:50[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
+Range (31, 8) -> (33, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
+Range (39, 8) -> (41, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
+Range (47, 8) -> (50, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
 
 --- Program ---
 PROGRAM: TCRFUN_NO_COPY_IN_PARAMETERS common:False initial:False recursive:False

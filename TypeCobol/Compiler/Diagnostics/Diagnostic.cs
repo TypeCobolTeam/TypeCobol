@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                     else
                     {
-                        _messageAdapter = $"Error in copy '{includingDirective.TextName}' at lines {lineStart}-{lineEnd} : {{0}}";
+                        _messageAdapter = $"Error in copy '{includingDirective.TextName}' from line {lineStart} to line {lineEnd} : {{0}}";
                     }
                 }
                 else
@@ -111,9 +111,19 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         public override string ToString()
         {
+            string location;
             if (LineStart == LineEnd)
-                return $"Line {LineStart}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
-            return $"Lines {LineStart}:{LineEnd}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
+            {
+                //Single line diagnostic
+                location = $"Line {LineStart}[{ColumnStart},{ColumnEnd}]";
+            }
+            else
+            {
+                //Multi-line diagnostic
+                location = $"Range ({LineStart}, {ColumnStart}) -> ({LineEnd}, {ColumnEnd})";
+            }
+
+            return $"{location} <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
         }
 
         private void ApplyPosition([NotNull] Position position)

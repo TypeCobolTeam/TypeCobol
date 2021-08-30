@@ -1,6 +1,6 @@
-Lines 66:68[12,50] <30, Error, Semantics> - Semantic error: Function not found 'Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
-Lines 71:73[12,50] <30, Error, Semantics> - Semantic error: Function not found 'PGM2.Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
-Lines 76:78[12,50] <30, Error, Semantics> - Semantic error: Function not found 'Pgm2.Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
+Range (66, 12) -> (68, 50) <30, Error, Semantics> - Semantic error: Function not found 'Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
+Range (71, 12) -> (73, 50) <30, Error, Semantics> - Semantic error: Function not found 'PGM2.Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
+Range (76, 12) -> (78, 50) <30, Error, Semantics> - Semantic error: Function not found 'Pgm2.Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
 --- Nodes ---
 ?
   PGM1

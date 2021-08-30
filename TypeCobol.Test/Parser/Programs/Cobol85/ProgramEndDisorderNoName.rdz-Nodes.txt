@@ -1,4 +1,4 @@
-Lines 4:5[8,27] <27, Error, Syntax> - Syntax error : "END PROGRAM" is missing.
+Range (4, 8) -> (5, 27) <27, Error, Syntax> - Syntax error : "END PROGRAM" is missing.
 Line 12[8,19] <27, Error, Syntax> - Syntax error : "PROGRAM END" should have a program name. "Nested1" was assumed.
 Line 14[8,19] <27, Error, Syntax> - Syntax error : Unexpected orphan "PROGRAM END".
 --- Nodes ---

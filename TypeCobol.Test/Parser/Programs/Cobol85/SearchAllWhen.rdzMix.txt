@@ -66,7 +66,7 @@ Line 50[15,48] <27, Error, Syntax> - Syntax error : Left side operand of a WHEN 
            SEARCH ALL DSRCE-TAB
               AT END
                  DISPLAY 'VALUE NOT FOUND'
-Lines 66:68[15,49] <27, Error, Syntax> - Syntax error : 'DSRCE-SRCE-VAL' is not a sorting key of table 'DSRCE-TAB'.
+Range (66, 15) -> (68, 49) <27, Error, Syntax> - Syntax error : 'DSRCE-SRCE-VAL' is not a sorting key of table 'DSRCE-TAB'.
               WHEN DSRCE-KEY-A (Idx) = WS-KEY
       *  Ko DSRCE-SRCE-VAL is not a key of the table searched
                AND DSRCE-SRCE-VAL (Idx) = WS-KEY2
@@ -94,7 +94,7 @@ Line 84[15,48] <27, Error, Syntax> - Syntax error : When subscripting, only firs
            SEARCH ALL DSRCE-TAB
               AT END
                  DISPLAY 'VALUE NOT FOUND'
-Lines 91:93[15,47] <27, Error, Syntax> - Syntax error : When subscripting, only first index declared for the table is allowed.
+Range (91, 15) -> (93, 47) <27, Error, Syntax> - Syntax error : When subscripting, only first index declared for the table is allowed.
               WHEN DSRCE-KEY-A (Idx) = WS-KEY
       *  Ko DSRCE-KEY-D is not indexed by the first index of DSRCE-TAB
                AND DSRCE-KEY-D (Idx2) = WS-KEY2
