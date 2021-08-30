@@ -552,7 +552,7 @@ namespace TypeCobol.Server
                         if (generationException.Logged)
                         {
                             string message = generationException.Message + Environment.NewLine + generationException.StackTrace;
-                            var position = new Diagnostic.Position(generationException.LineNumber, generationException.LineNumber, generationException.ColumnStartIndex, generationException.ColumnEndIndex, null);
+                            var position = new Diagnostic.Position(generationException.LineNumber, generationException.ColumnStartIndex, generationException.LineNumber, generationException.ColumnEndIndex, null);
                             Server.AddError(_errorWriter, generationException.Path, new Diagnostic(generationException.MessageCode, position, message));
                         }
                     }

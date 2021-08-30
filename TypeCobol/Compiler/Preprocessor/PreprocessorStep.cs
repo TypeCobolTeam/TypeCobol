@@ -316,7 +316,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             // Copy diagnostics from document
                             foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
                             {
-                                var position = new Diagnostic.Position(diagnostic.LineStart, diagnostic.LineEnd, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var position = new Diagnostic.Position(diagnostic.LineStart, diagnostic.ColumnStart, diagnostic.LineEnd, diagnostic.ColumnEnd, copyDirective);
                                 var copyDiagnostic = diagnostic.CopyAt(position);
                                 tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
                             }
@@ -632,7 +632,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             // Copy diagnostics from document
                             foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
                             {
-                                var position = new Diagnostic.Position(diagnostic.LineStart, diagnostic.LineEnd, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var position = new Diagnostic.Position(diagnostic.LineStart, diagnostic.ColumnStart, diagnostic.LineEnd, diagnostic.ColumnEnd, copyDirective);
                                 var copyDiagnostic = diagnostic.CopyAt(position);
                                 tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
                             }

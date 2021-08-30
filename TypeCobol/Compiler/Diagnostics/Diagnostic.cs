@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
@@ -18,7 +17,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             private readonly string _messageAdapter;
 
-            public Position(int lineStart, int lineEnd, int columnStart, int columnEnd, CopyDirective includingDirective)
+            public Position(int lineStart, int columnStart, int lineEnd, int columnEnd, CopyDirective includingDirective)
             {
                 if (includingDirective != null)
                 {
@@ -26,8 +25,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     var startToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.FirstOrDefault()?.FirstOrDefault();
                     var endToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.LastOrDefault()?.LastOrDefault();
                     LineStart = startToken?.Line ?? 0;
-                    LineEnd = endToken?.Line ?? LineStart;
                     ColumnStart = startToken?.Column ?? 0;
+                    LineEnd = endToken?.Line ?? LineStart;
                     ColumnEnd = endToken?.EndColumn ?? ColumnStart;
                     if (LineStart == LineEnd)
                     {
@@ -42,16 +41,16 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     //Position diagnostic directly at specified location
                     LineStart = Math.Max(0, lineStart);
-                    LineEnd = Math.Max(lineStart, lineEnd);
                     ColumnStart = Math.Max(0, columnStart);
+                    LineEnd = Math.Max(lineStart, lineEnd);
                     ColumnEnd = Math.Max(0, columnEnd);
                     _messageAdapter = null;
                 }
             }
 
             public int LineStart { get; }
-            public int LineEnd { get; }
             public int ColumnStart { get; }
+            public int LineEnd { get; }
             public int ColumnEnd { get; }
 
             internal string AdaptMessage(string message)
@@ -69,7 +68,7 @@ namespace TypeCobol.Compiler.Diagnostics
         protected Diagnostic(DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
         {
             Info = info;
-            messageArgs = messageArgs ?? new object[0];
+            messageArgs = messageArgs ?? Array.Empty<object>();
             Message = string.Format(Info.MessageTemplate, messageArgs);
             ApplyPosition(position);
             CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();

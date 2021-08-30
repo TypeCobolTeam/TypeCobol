@@ -1223,7 +1223,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 foreach (int lineNumber in ExceedLines.Keys)
                 {
-                    Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, new Diagnostic.Position(lineNumber, lineNumber, 0, 0, null));
+                    Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, new Diagnostic.Position(lineNumber, 0, lineNumber, 0, null));
                     AddDiagnostic(diag);
                 }
             }
