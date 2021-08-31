@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
@@ -56,12 +57,15 @@ namespace TypeCobol.Analysis
         /// </summary>
         /// <typeparam name="TAnalyzer">Type of IAnalyzer created.</typeparam>
         /// <param name="createAnalyzers">Function to create analyzers from a provider.</param>
-        /// <returns>Non-null array of created analyzers. Might be empty and can contain null values.</returns>
-        private TAnalyzer[] SecureCreateAnalyzersFromProviders<TAnalyzer>(Func<IAnalyzerProvider, TAnalyzer[]> createAnalyzers) where TAnalyzer : IAnalyzer
+        /// <returns>Non-null list of created analyzers. Might be empty and can contain null values.</returns>
+        private List<TAnalyzer> SecureCreateAnalyzersFromProviders<TAnalyzer>(Func<IAnalyzerProvider, TAnalyzer[]> createAnalyzers) where TAnalyzer : IAnalyzer
         {
+            if (_providers == null) return null;
+
             var analyzers = new List<TAnalyzer>();
             foreach (var analyzerProvider in _providers)
             {
+                Debug.Assert(analyzerProvider != null); // Because the adding method has NotNull
                 // Either the whole array is created, or the whole array fails and there is no analyzers of TAnalyzer type from this provider
                 try
                 {
@@ -72,29 +76,57 @@ namespace TypeCobol.Analysis
                     Logger($"Failed to create analyzers from analyzer provider {analyzerProvider.GetType().FullName}.{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
                 }
             }
-            return analyzers.ToArray();
+            return analyzers.Count == 0 ? null : analyzers;
+        }
+
+        /// <summary>
+        /// Merge the results of the creation of analyzers.
+        /// </summary>
+        /// <typeparam name="TAnalyzer">Type of IAnalyzer to merge lists.</typeparam>
+        /// <param name="list1">List of analyzers as base of the merge, can be null.</param>
+        /// <param name="list2">Enumeration of analyzers, can be null.</param>
+        /// <returns>Merged array of analyzers, may be empty, can be null if both parameters are null.</returns>
+        private TAnalyzer[] MergeAnalyzers<TAnalyzer>(List<TAnalyzer> list1, IEnumerable<TAnalyzer> list2) where TAnalyzer : IAnalyzer
+        {
+            if (list1 == null && list2 == null)
+            {
+                return null;
+            }
+
+            if (list1 != null && list2 != null)
+            {
+                list1.AddRange(list2);
+                return list1.ToArray();
+            }
+
+            if (list1 != null && list2 == null)
+            {
+                return list1.ToArray();
+            }
+            
+            return list2.ToArray();
         }
 
         public IQualityAnalyzer[] CreateQualityAnalyzers([NotNull] TypeCobolOptions options)
         {
             var qaFromProviders = SecureCreateAnalyzersFromProviders(analyzerProvider => analyzerProvider.CreateQualityAnalyzers(options));
 
-            return _qaActivators
+            var qaFromActivators = _qaActivators?
                 .Select(qaActivator => SecureCreateAnalyzer(() => qaActivator(options)))
-                .Concat(qaFromProviders) // Add analyzers from providers
-                .Where(qaAnalyzer => qaAnalyzer != null)
-                .ToArray();
+                .Where(qaAnalyzer => qaAnalyzer != null);
+
+            return MergeAnalyzers(qaFromProviders, qaFromActivators);
         }
 
         public ISyntaxDrivenAnalyzer[] CreateSyntaxDrivenAnalyzers([NotNull] TypeCobolOptions options, [NotNull] TextSourceInfo textSourceInfo)
         {
             var sdaFromProviders = SecureCreateAnalyzersFromProviders(analyzerProvider => analyzerProvider.CreateSyntaxDrivenAnalyzers(options, textSourceInfo));
 
-            return _sdaActivators
+            var sdaFromActivators = _sdaActivators?
                 .Select(sdaActivator => SecureCreateAnalyzer(() => sdaActivator(options, textSourceInfo)))
-                .Concat(sdaFromProviders) // Add analyzers from providers
-                .Where(sdaAnalyzer => sdaAnalyzer != null)
-                .ToArray();
+                .Where(sdaAnalyzer => sdaAnalyzer != null);
+
+            return MergeAnalyzers(sdaFromProviders, sdaFromActivators);
         }
 
         /// <summary>
@@ -129,6 +161,7 @@ namespace TypeCobol.Analysis
         /// <param name="provider">Instance of IAnalyzerProvider.</param>
         public void AddProvider([NotNull] IAnalyzerProvider provider)
         {
+            Debug.Assert(provider != null);
             if (_providers == null)
             {
                 _providers = new List<IAnalyzerProvider>();

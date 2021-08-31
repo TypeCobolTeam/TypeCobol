@@ -34,13 +34,16 @@ namespace TypeCobol.Compiler
             PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
             PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
-
-            if (!(analyzerProvider is AnalyzerProviderWrapper analyzerProviderWrapper))
+            if (analyzerProvider != null)
             {
-                analyzerProviderWrapper = new AnalyzerProviderWrapper();
-                analyzerProviderWrapper.AddProvider(analyzerProvider);
+                if (!(analyzerProvider is AnalyzerProviderWrapper analyzerProviderWrapper))
+                {
+                    analyzerProviderWrapper = new AnalyzerProviderWrapper();
+                    analyzerProviderWrapper.AddProvider(analyzerProvider);
+                }
+                _analyzerProvider = analyzerProviderWrapper;
             }
-            _analyzerProvider = analyzerProviderWrapper;
+
         }
 
         /// <summary>
@@ -297,7 +300,7 @@ namespace TypeCobol.Compiler
 
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<string, object> results = new Dictionary<string, object>();
-                    var analyzers = _analyzerProvider.CreateQualityAnalyzers(CompilerOptions);
+                    var analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
                     if (analyzers != null)
                     {
                         //Results from previous steps
