@@ -88,19 +88,8 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         public DiagnosticMessage Info { get; }
-
-        public int LineStart
-        {
-            get;
-            internal set;//Internal setter is required for incremental mode. When lines are inserted/removed, associated diagnostics are shifted up/down accordingly
-        }
-
-        public int LineEnd
-        {
-            get;
-            internal set;//Internal setter is required for incremental mode. When lines are inserted/removed, associated diagnostics are shifted up/down accordingly
-        }
-
+        public int LineStart { get; private set; }
+        public int LineEnd { get; private set; }
         public int ColumnStart { get; private set;  }
         public int ColumnEnd { get; private set; }
         public string Message { get; private set; }
@@ -141,6 +130,17 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <returns>Duplicate instance of this Diagnostic.</returns>
         protected virtual Diagnostic Duplicate() => new Diagnostic(this);
+
+        /// <summary>
+        /// Shift the diagnostic in source. Used in incremental mode to relocate a diagnostic
+        /// after a line has been inserted or removed.
+        /// </summary>
+        /// <param name="offset">Positive or negative number of lines</param>
+        internal void Shift(int offset)
+        {
+            LineStart += offset;
+            LineEnd += offset;
+        }
 
         /// <summary>
         /// Creates a copy of this diagnostic and position it on the new supplied location.
