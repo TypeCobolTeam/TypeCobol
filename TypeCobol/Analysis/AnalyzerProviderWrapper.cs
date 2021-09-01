@@ -141,7 +141,6 @@ namespace TypeCobol.Analysis
         /// <param name="provider">Instance of IAnalyzerProvider.</param>
         public void AddProvider([NotNull] IAnalyzerProvider provider)
         {
-            Debug.Assert(provider != null);
             if (_providers == null)
             {
                 _providers = new List<IAnalyzerProvider>();

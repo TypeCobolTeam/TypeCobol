@@ -34,14 +34,19 @@ namespace TypeCobol.Compiler
             PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
             PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
-            if (analyzerProvider != null)
+            if (analyzerProvider is AnalyzerProviderWrapper analyzerProviderWrapper)
             {
-                if (!(analyzerProvider is AnalyzerProviderWrapper analyzerProviderWrapper))
-                {
-                    analyzerProviderWrapper = new AnalyzerProviderWrapper();
-                    analyzerProviderWrapper.AddProvider(analyzerProvider);
-                }
                 _analyzerProvider = analyzerProviderWrapper;
+            }
+            else if (analyzerProvider != null)
+            {
+                // Wrap the given provider to secure it
+                _analyzerProvider = new AnalyzerProviderWrapper();
+                _analyzerProvider.AddProvider(analyzerProvider);
+            }
+            else
+            {
+                _analyzerProvider = null;
             }
 
         }
