@@ -17,19 +17,29 @@ namespace TypeCobol.Analysis
     /// </summary>
     public class AnalyzerProviderWrapper : IAnalyzerProvider
     {
-        private Action<string> _logger;
+        /// <summary>
+        /// Method used to log exceptions.
+        /// <remarks>Should not be used directly, use the accessor Logger instead.</remarks>
+        /// </summary>
+        [NotNull]
+        private Action<string> _logger = DoNothing;
+
+        /// <summary>
+        /// Method used to log exceptions.
+        /// </summary>
         protected Action<string> Logger
         {
-            get => _logger ?? DoNothing;
-            set => _logger = value;
+            get => _logger;
+            private set => _logger = value ?? DoNothing;
         }
+
         private List<Func<TypeCobolOptions, TextSourceInfo, ISyntaxDrivenAnalyzer>> _sdaActivators;
         private List<Func<TypeCobolOptions, IQualityAnalyzer>> _qaActivators;
         private List<IAnalyzerProvider> _providers;
 
         public AnalyzerProviderWrapper(Action<string> logger = null)
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         /// <summary>

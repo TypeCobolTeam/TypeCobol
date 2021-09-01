@@ -19,8 +19,8 @@ namespace TypeCobol.Analysis
         /// </summary>
         /// <param name="analyzerProviderWrapper">AnalyzerProviderWrapper instance into which the external analyzers should be added.</param>
         /// <param name="assemblyFilePaths">List of paths of .NET Assembly files.</param>
-        /// <param name="logFilePath">Path of a non-null log file.</param>
-        public static void AddCustomProviders(this AnalyzerProviderWrapper analyzerProviderWrapper, IEnumerable<string> assemblyFilePaths, [NotNull] string logFilePath)
+        /// <param name="logger">Method to log potential exceptions.</param>
+        public static void AddCustomProviders(this AnalyzerProviderWrapper analyzerProviderWrapper, IEnumerable<string> assemblyFilePaths, [NotNull] Action<string> logger)
         {
             if (analyzerProviderWrapper == null || assemblyFilePaths == null) return;
 
@@ -33,7 +33,7 @@ namespace TypeCobol.Analysis
                 }
                 catch (Exception exception)
                 {
-                    File.AppendAllText(logFilePath, $"Failed to load analyzer provider from path {assemblyFilePath}{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
+                    logger($"Failed to load analyzer provider from path {assemblyFilePath}{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
                 }
             }
         }

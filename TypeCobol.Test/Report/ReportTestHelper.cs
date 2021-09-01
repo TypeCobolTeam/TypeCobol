@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TypeCobol.Analysis;
@@ -40,7 +41,7 @@ namespace TypeCobol.Test.Report
             where T : IReport, ISyntaxDrivenAnalyzer, new()
         {
             T report = default;
-            var analyzerProvider = new AnalyzerProviderWrapper(str => throw new Exception(str));
+            var analyzerProvider = new AnalyzerProviderWrapper(str => Debug.Fail(str));
             analyzerProvider.AddActivator((o, t) => report = new T());
 
             string input = Path.Combine(ROOT_INPUT, fileName);
