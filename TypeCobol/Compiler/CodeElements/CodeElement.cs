@@ -405,7 +405,7 @@ namespace TypeCobol.Compiler.CodeElements
             get
             {
                 if (ConsumedTokens.Count < 1) return -1;
-                return ConsumedTokens.Last().Line;
+                return ConsumedTokens[ConsumedTokens.Count - 1].Line;
             }
         }
 

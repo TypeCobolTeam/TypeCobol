@@ -24,10 +24,29 @@ namespace TypeCobol.Compiler.Diagnostics
                     //Position diagnostic on including copy directive and adapt message
                     var startToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.FirstOrDefault()?.FirstOrDefault();
                     var endToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.LastOrDefault()?.LastOrDefault();
-                    LineStart = startToken?.Line ?? 0;
-                    ColumnStart = startToken?.Column ?? 0;
-                    LineEnd = endToken?.Line ?? LineStart;
-                    ColumnEnd = endToken?.EndColumn ?? ColumnStart;
+                    
+                    if (startToken != null)
+                    {
+                        LineStart = startToken.Line;
+                        ColumnStart = startToken.Column;
+                    }
+                    else
+                    {
+                        LineStart = 0;
+                        ColumnStart = 0;
+                    }
+
+                    if (endToken != null)
+                    {
+                        LineEnd = endToken.Line;
+                        ColumnEnd = endToken.EndColumn;
+                    }
+                    else
+                    {
+                        LineEnd = LineStart;
+                        ColumnEnd = ColumnStart;
+                    }
+
                     if (LineStart == LineEnd)
                     {
                         _messageAdapter = $"Error in copy '{includingDirective.TextName}' at line {lineStart} : {{0}}";
@@ -42,7 +61,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     //Position diagnostic directly at specified location
                     LineStart = Math.Max(0, lineStart);
                     ColumnStart = Math.Max(0, columnStart);
-                    LineEnd = Math.Max(lineStart, lineEnd);
+                    LineEnd = Math.Max(LineStart, lineEnd);
                     ColumnEnd = Math.Max(0, columnEnd);
                     _messageAdapter = null;
                 }
