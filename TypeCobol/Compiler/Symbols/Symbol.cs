@@ -181,6 +181,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="flag"></param>
         /// <param name="value"></param>
         /// <param name="propagate">true the flags must be propagated, false otherwise</param>
+        /// <remarks>Do not propagate flags before type expansion except for InsideTypedef which is allowed on initial symbol definitions.</remarks>
         internal virtual void SetFlag(Flags flag, bool value, bool propagate = false)
         {
             this.Flag = value ? (Flags)((ulong)this.Flag | (ulong)flag)

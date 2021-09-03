@@ -156,10 +156,10 @@ namespace TypeCobol.Compiler.Types
         public SemanticKinds SemanticKind => SemanticKinds.Type;
 
         /// <summary>
-        /// Propagate a Symbol flag to child symbols of this type (if any).
+        /// Propagate a Symbol flag to children symbols of this type (if any).
         /// </summary>
-        /// <param name="flag">Symbol flag</param>
-        /// <param name="value">True for an active flag, False otherwise</param>
+        /// <param name="flag">Symbol flag.</param>
+        /// <param name="value">True for an active flag, False otherwise.</param>
         internal virtual void PropagateSymbolFlag(Flags flag, bool value) => TypeComponent?.PropagateSymbolFlag(flag, value);
 
         public object Clone()
