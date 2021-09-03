@@ -141,14 +141,7 @@ namespace TypeCobol.Server {
             writer.WriteStartElement("MESSAGE");
             writer.WriteElementString("MSGNUMBER",
                 "TC-" + error.Info.Code.ToString().PadLeft(5, '0') + AsIBMSuffix((int) error.Info.Severity));
-            if (error.LineStart == error.LineEnd)
-            {
-                writer.WriteElementString("MSGLINE", error.LineStart.ToString());
-            }
-            else
-            {
-                writer.WriteElementString("MSGLINE", $"{error.LineStart}:{error.LineEnd}");
-            }
+            writer.WriteElementString("MSGLINE", error.LineStart.ToString());
             writer.WriteElementString("MSGFILE", id);
             writer.WriteElementString("MSGTEXT", error.Message);
             writer.WriteEndElement(); // MESSAGE
