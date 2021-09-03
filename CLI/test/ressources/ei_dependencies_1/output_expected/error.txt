@@ -1,3 +1,3 @@
-﻿ReturnCode=ParsingDiagnostics_
+ReturnCode=ParsingDiagnostics_
 1 error in "input\PGM3.rdz.tcbl":
-Line 28[12,39] <30, Error, Semantics> - Semantic error: Function not found 'MyPublicProcedure' input(DATE)
+Range (28, 12) -> (29, 39) <30, Error, Semantics> - Semantic error: Function not found 'MyPublicProcedure' input(DATE)

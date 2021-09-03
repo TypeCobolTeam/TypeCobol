@@ -91,7 +91,7 @@ namespace TypeCobol.Test.Utils
         {
             StringBuilder builder = new StringBuilder();
             //Sort diagnostics by line order
-            foreach (Diagnostic d in diagnostics.OrderBy(d => d.Line))
+            foreach (Diagnostic d in diagnostics.OrderBy(d => d.LineStart))
             {
                 string errmsg = null;
 
