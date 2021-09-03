@@ -133,4 +133,24 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
             }
         }
     }
+
+    /// <summary>
+    /// QualityAnalyzer to demonstrate how the parser handles exceptions during analysis
+    /// </summary>
+    internal class DummyQualityAnalyzerErrorInAnalysis : QualityAnalyzerBase
+    {
+        public override object GetResult()
+        {
+            return null;
+        }
+
+        public override void Inspect(ProgramClassDocument programClassDocument)
+        {
+            throw new AssertFailedException("Exception in AST analysis intended.");
+        }
+
+        public DummyQualityAnalyzerErrorInAnalysis(string identifier) : base(identifier)
+        {
+        }
+    }
 }

@@ -378,8 +378,8 @@ namespace CLI.Test
         [TestMethod]
         public void TestCustomAnalyzers()
         {
-            CLITestHelper.Test("custom_analyzers", ReturnCode.Warning);
-            CLITestHelper.Test("custom_analyzers_withcfg", ReturnCode.Warning);
+            CLITestHelper.Test("custom_analyzers", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("custom_analyzers_withcfg", ReturnCode.ParsingDiagnostics);
         }
 
 #if EUROINFO_RULES
