@@ -72,9 +72,8 @@ namespace TypeCobol.Compiler.Symbols
             HasATypedefType = 0x01L << 31,//The symbol has a type that comes from a TypeDef.
             Parameter = 0x01L << 32,//This a parameter variable.
             Returning = 0x01L << 33,//A Return variable.
-            BuiltinType = 0x01L << 34,//This is a Builtin Type.
-            InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition.
-            BuiltinSymbol = 0x01L << 36, //This is a Builtin symbol.
+            InsideTypedef = 0x01L << 34,//Flag of any symbol inside a Typedef definition.
+            BuiltinSymbol = 0x01L << 35, //This is a Builtin symbol.
             
             //Etc... (Max = 0x01L << 62)
         }
@@ -187,11 +186,9 @@ namespace TypeCobol.Compiler.Symbols
             this.Flag = value ? (Flags)((ulong)this.Flag | (ulong)flag)
                               : (Flags)((ulong)this.Flag & ~(ulong)flag);
             if (Type != null && propagate)
-            {//Propagate to types.                
-                if (!Type.HasFlag(flag))
-                {//We test HasFlag to avoid infinite recursion with cyclic Type.
-                    Type.SetFlag(flag, value);
-                }
+            {
+                //Propagate through types.
+                Type.PropagateSymbolFlag(flag, value);
             }
         }
 

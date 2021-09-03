@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeElements;
@@ -111,15 +110,6 @@ namespace TypeCobol.Compiler.Types
             this.Usage = usage;
         }
 
-        /// <summary>
-        /// Type's Flags.
-        /// </summary>
-        public Flags Flag
-        {
-            get;
-            internal set;
-        }
-
         public virtual UsageFormat Usage
         {
             get;
@@ -166,31 +156,11 @@ namespace TypeCobol.Compiler.Types
         public SemanticKinds SemanticKind => SemanticKinds.Type;
 
         /// <summary>
-        /// Set a set of flags to true or false.
+        /// Propagate a Symbol flag to child symbols of this type (if any).
         /// </summary>
-        /// <param name="flag">Flag or flags to set.</param>
-        /// <param name="value">Boolean value indicating whether the flags should be applied or removed.</param>
-        /// <param name="propagate">True to apply flags to child components, false otherwise. True is the default for types.</param>
-        internal virtual void SetFlag(Flags flag, bool value, bool propagate = true)
-        {
-            this.Flag = value
-                ? (Flags) ((ulong) this.Flag | (ulong) flag)
-                : (Flags) ((ulong) this.Flag & ~(ulong) flag);
-            if (propagate)
-            {
-                TypeComponent?.SetFlag(flag, value, true);
-            }
-        }
-
-        /// <summary>
-        /// Determines if the given flag is set.
-        /// </summary>
-        /// <param name="flag">The flag to be tested</param>
-        /// <returns>true if yes, false otherwise.</returns>
-        public bool HasFlag(Flags flag)
-        {
-            return ((ulong)this.Flag & (ulong)flag) != 0;
-        }
+        /// <param name="flag">Symbol flag</param>
+        /// <param name="value">True for an active flag, False otherwise</param>
+        internal virtual void PropagateSymbolFlag(Flags flag, bool value) => TypeComponent?.PropagateSymbolFlag(flag, value);
 
         public object Clone()
         {
@@ -198,18 +168,16 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// TypeComponent for example for Array, Pointer type or TypeDef.
+        /// TypeComponent for example for Array or TypeDef.
         /// For an array it is the type of an element of the array.
-        /// For a pointer it is the type of the pointed element.
         /// For a Typedef it is the type which is defined.
         /// </summary>
         public virtual Type TypeComponent => null;
 
         /// <summary>
         /// A Type may expand to a Cobol85 if it has a type component.
-        /// Or it is a builtin type.
         /// </summary>
-        public virtual bool MayExpand => HasFlag(Flags.BuiltinType) || TypeComponent != null;
+        public virtual bool MayExpand => TypeComponent != null;
 
         public override string ToString()
         {
@@ -223,23 +191,10 @@ namespace TypeCobol.Compiler.Types
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
             output.WriteLine($"(.NET Type={GetType().Name}, Tag={Tag})");
-            if (Flag != 0)
-            {
-                output.Write(indent);
-                output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
-            }
-
             if (Usage != UsageFormat.None)
             {
                 output.Write(indent);
                 output.WriteLine($"Usage: {Usage}");
-            }
-
-            IEnumerable<string> GetFlagsLabels()
-            {
-                foreach (Flags flag in Enum.GetValues(typeof(Flags)))
-                    if (Flag.HasFlag(flag))
-                        yield return flag.ToString();
             }
         }
 

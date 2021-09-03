@@ -16,18 +16,15 @@ Types:
   Owner: DVZFSCT0
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
-    Flags: [InsideTypedef]
     Symbol: DVZFSCT0::type1
     TargetType:
       (.NET Type=GroupType, Tag=Group)
-      Flags: [InsideTypedef]
       Fields:
         champ1 (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [Global, WORKING_STORAGE, InsideTypedef]
         Owner: DVZFSCT0::type1
         Type:
           (.NET Type=PictureType, Tag=Picture)
-          Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
         IsFiller: False
@@ -38,18 +35,15 @@ Types:
   Owner: DVZFSCT0
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
-    Flags: [InsideTypedef]
     Symbol: DVZFSCT0::type2
     TargetType:
       (.NET Type=GroupType, Tag=Group)
-      Flags: [InsideTypedef]
       Fields:
         champ1 (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [Global, WORKING_STORAGE, InsideTypedef]
         Owner: DVZFSCT0::type2
         Type:
           (.NET Type=PictureType, Tag=Picture)
-          Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
         IsFiller: False
@@ -66,18 +60,15 @@ Programs:
     Owner: DVZFSCT0::Nested
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: DVZFSCT0::Nested::type3
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [Global, WORKING_STORAGE, InsideTypedef]
           Owner: DVZFSCT0::Nested::type3
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False
@@ -88,18 +79,15 @@ Programs:
     Owner: DVZFSCT0::Nested
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: DVZFSCT0::Nested::type4
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [Global, WORKING_STORAGE, InsideTypedef]
           Owner: DVZFSCT0::Nested::type4
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False
@@ -118,18 +106,15 @@ Types:
   Owner: Stacked
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
-    Flags: [InsideTypedef]
     Symbol: Stacked::type5
     TargetType:
       (.NET Type=GroupType, Tag=Group)
-      Flags: [InsideTypedef]
       Fields:
         champ1 (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [Global, WORKING_STORAGE, InsideTypedef]
         Owner: Stacked::type5
         Type:
           (.NET Type=PictureType, Tag=Picture)
-          Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
         IsFiller: False
@@ -140,18 +125,15 @@ Types:
   Owner: Stacked
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
-    Flags: [InsideTypedef]
     Symbol: Stacked::type6
     TargetType:
       (.NET Type=GroupType, Tag=Group)
-      Flags: [InsideTypedef]
       Fields:
         champ1 (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [Global, WORKING_STORAGE, InsideTypedef]
         Owner: Stacked::type6
         Type:
           (.NET Type=PictureType, Tag=Picture)
-          Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
         IsFiller: False
