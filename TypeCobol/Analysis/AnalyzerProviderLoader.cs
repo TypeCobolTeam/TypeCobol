@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Analysis
 {
@@ -15,25 +17,34 @@ namespace TypeCobol.Analysis
         /// <summary>
         /// Add each AnalyzerProvider from the given assemblies.
         /// </summary>
-        /// <param name="compositeAnalyzerProvider">CompositeAnalyzerProvider instance into which the external analyzers should be added.</param>
+        /// <param name="analyzerProviderWrapper">AnalyzerProviderWrapper instance into which the external analyzers should be added.</param>
         /// <param name="assemblyFilePaths">List of paths of .NET Assembly files.</param>
-        public static void AddCustomProviders(this CompositeAnalyzerProvider compositeAnalyzerProvider, IEnumerable<string> assemblyFilePaths)
+        /// <param name="logger">Method to log potential exceptions.</param>
+        public static void AddCustomProviders(this AnalyzerProviderWrapper analyzerProviderWrapper, IEnumerable<string> assemblyFilePaths, [NotNull] Action<string> logger)
         {
-            if (compositeAnalyzerProvider == null || assemblyFilePaths == null) return;
+            if (analyzerProviderWrapper == null || assemblyFilePaths == null) return;
 
             foreach (var assemblyFilePath in assemblyFilePaths)
             {
-                var provider = LoadProvider(assemblyFilePath);
-                compositeAnalyzerProvider.AddProvider(provider);
+                try
+                {
+                    var provider = UnsafeLoadProvider(assemblyFilePath);
+                    analyzerProviderWrapper.AddProvider(provider);
+                }
+                catch (Exception exception)
+                {
+                    logger($"Failed to load analyzer provider from path {assemblyFilePath}{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}");
+                }
             }
         }
 
         /// <summary>
         /// Look for a suitable type into the assembly given and instantiate a new IAnalyzerProvider from it.
+        /// <remarks>Caller must catch potential exceptions.</remarks>
         /// </summary>
         /// <param name="assemblyFilePath">Path to the assembly.</param>
         /// <returns>A non-null instance of IAnalyzerProvider.</returns>
-        public static IAnalyzerProvider LoadProvider(string assemblyFilePath)
+        public static IAnalyzerProvider UnsafeLoadProvider(string assemblyFilePath)
         {
             var assembly = Assembly.LoadFrom(assemblyFilePath);
             var constructor = assembly

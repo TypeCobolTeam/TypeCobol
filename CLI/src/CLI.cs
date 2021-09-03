@@ -41,8 +41,7 @@ namespace TypeCobol.Server
                 debugLine += Path.GetFileName(config.InputFiles[0]);
             }
             debugLine += "\n";
-            //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
+            Logger(config, debugLine);
             Console.WriteLine(debugLine);
             TextWriter textWriter = config.ErrorFile == null ?  Console.Error : File.CreateText(config.ErrorFile);
             AbstractErrorWriter errorWriter;
@@ -84,8 +83,7 @@ namespace TypeCobol.Server
 
             stopWatch.Stop();
             debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
-            //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
+            Logger(config, debugLine);
             Console.WriteLine(debugLine);
 
             AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds);
@@ -122,11 +120,11 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new CompositeAnalyzerProvider();
+            var analyzerProvider = new AnalyzerProviderWrapper(str => Logger(_configuration, str));
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
-            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles);
+            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles, str => Logger(_configuration, str));
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
@@ -206,6 +204,17 @@ namespace TypeCobol.Server
             return AddErrorsAndComputeReturnCode();
         }
 
+        /// <summary>
+        /// Log a string in the LogFile provided by the configuration.
+        /// </summary>
+        /// <param name="config">Configuration containing the log file.</param>
+        /// <param name="message">String to log.</param>
+        private static void Logger(TypeCobolConfiguration config, string message)
+        {
+            //Use user-defined log path if -log option used, otherwise use default location for log file
+            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, message);
+        }
+
         private SymbolTable LoadIntrinsicsAndDependencies()
         {
             var intrinsicsAndDependenciesParser = new Parser();
@@ -254,13 +263,13 @@ namespace TypeCobol.Server
             }
         }
 
-        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProvider analyzerProvider)
+        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProviderWrapper analyzerProviderWrapper)
         {
             var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
                 //All purpose CFG/DFA
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
+                analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
 
                 //CFG/DFA for ZCALL report
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
@@ -268,7 +277,7 @@ namespace TypeCobol.Server
                     if (_configuration.CfgBuildingMode != CfgBuildingMode.WithDfa)
                     {
                         //Need to create a dedicated CFG builder with DFA activated
-                        analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
+                        analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
                     }
 
                     string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);
@@ -279,7 +288,7 @@ namespace TypeCobol.Server
                 //CopyMoveInitializeReport
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
-                    analyzerProvider.AddActivator(
+                    analyzerProviderWrapper.AddActivator(
                         (o, t) =>
                         {
                             var report = new CopyMoveInitializeReport();
