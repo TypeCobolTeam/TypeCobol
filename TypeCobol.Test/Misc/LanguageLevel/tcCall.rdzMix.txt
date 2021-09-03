@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. tcCall.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
@@ -11,7 +11,7 @@
            CALL var-program-name USING var-input var-inout var-output.
       *KO procedure-style CALL
 Line 13[34,38] <48, Error, Syntax> - TypeCobol-only feature: 'INPUT' keyword is not supported in a Cobol CALL.
-Line 13[12,50] <30, Error, Semantics> - Semantic error: Function not found 'var-program-name' input(Alphanumeric, ?, Alphanumeric) output(Alphanumeric)
+Range (13, 12) -> (15, 50) <30, Error, Semantics> - Semantic error: Function not found 'var-program-name' input(Alphanumeric, ?, Alphanumeric) output(Alphanumeric)
            CALL var-program-name INPUT var-input 
 Line 14[34,39] <30, Error, Semantics> - Semantic error: Symbol IN-OUT is not referenced
                                  IN-OUT var-inout

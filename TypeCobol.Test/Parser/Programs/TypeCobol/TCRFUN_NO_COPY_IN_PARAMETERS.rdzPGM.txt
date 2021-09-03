@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-Line 31[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
-Line 39[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
-Line 47[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
+Range (31, 8) -> (33, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
+Range (39, 8) -> (41, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
+Range (47, 8) -> (50, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
 
 --- Program ---
 PROGRAM: TCRFUN_NO_COPY_IN_PARAMETERS common:False initial:False recursive:False

@@ -549,7 +549,7 @@ namespace TypeCobol.Compiler.Text
         /// in a snapshot of the document at a given point in time.
         /// When a line is created outside of a document, LineIndex = -1.
         /// </summary>
-        public int LineIndex { get; set; }
+        public int LineIndex { get; protected set; }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document
