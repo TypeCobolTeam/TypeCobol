@@ -1,18 +1,18 @@
 --- Diagnostics ---
-Line 227[12,39] <30, Error, Semantics> - Semantic error: Function not found 'case2' input(DATE, Alphanumeric) output(BOOL)
-Line 233[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' only takes 3 parameter(s)
-Line 233[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
-Line 233[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
-Line 233[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
-Line 233[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'result' of type BOOL and received 'fakeDate' of type Alphanumeric 
-Line 238[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case4' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Range (227, 12) -> (228, 39) <30, Error, Semantics> - Semantic error: Function not found 'case2' input(DATE, Alphanumeric) output(BOOL)
+Range (233, 12) -> (234, 48) <27, Error, Syntax> - Syntax error : Function 'case3' only takes 3 parameter(s)
+Range (233, 12) -> (234, 48) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Range (233, 12) -> (234, 48) <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
+Range (233, 12) -> (234, 48) <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
+Range (233, 12) -> (234, 48) <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'result' of type BOOL and received 'fakeDate' of type Alphanumeric 
+Range (238, 12) -> (239, 48) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case4' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
 Line 249[12,22] <27, Error, Syntax> - Syntax error : Call to 'case61'(no arguments) is ambigous. 'case61' is defined 3 times
 Line 251[12,22] <27, Error, Syntax> - Syntax error : Call to 'case62'(no arguments) is ambigous. 'case62' is defined 4 times
 Line 253[12,22] <27, Error, Syntax> - Syntax error : Call to 'case63'(no arguments) is ambigous. 'case63' is defined 5 times
 Line 256[12,21] <27, Error, Syntax> - Syntax error : No function or variable found for 'case7'(no arguments)
 Line 262[12,21] <27, Error, Syntax> - Syntax error : Call to 'case9'(no arguments) is ambigous. 'case9' is defined 2 times
-Line 266[12,48] <27, Error, Syntax> - Syntax error : Function 'case10' only takes 0 parameter(s)
-Line 266[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case10' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Range (266, 12) -> (267, 48) <27, Error, Syntax> - Syntax error : Function 'case10' only takes 0 parameter(s)
+Range (266, 12) -> (267, 48) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case10' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
 Line 271[12,22] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'case11'
 Line 274[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12'(no arguments) is ambigous. 'case12' is defined 3 times
 Line 277[12,22] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case13(no arguments)'
