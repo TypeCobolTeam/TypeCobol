@@ -73,7 +73,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
             StringBuilder sbTokens = new StringBuilder();
             ITokensLinesIterator tokens = processedDoc.GetProcessedTokensIterator();
             Token token = tokens.NextToken();
-            if (token != Token.END_OF_FILE)
+            if (token.TokenType != TokenType.EndOfFile)
             {
                 string documentPath = null;
                 int lineIndex = -1;
@@ -91,7 +91,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
                     }
                     sbTokens.AppendLine(token.ToString());
                 }
-                while ((token = tokens.NextToken()) != Token.END_OF_FILE);
+                while ((token = tokens.NextToken()).TokenType != TokenType.EndOfFile);
             }
 
             // Errors
