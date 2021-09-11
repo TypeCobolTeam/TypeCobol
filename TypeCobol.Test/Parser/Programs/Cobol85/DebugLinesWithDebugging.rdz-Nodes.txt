@@ -1,12 +1,12 @@
 Line 5[38,46] <37, Warning, General> - Warning: Debugging mode is active
-Line 14[12,20] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 22[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 27[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 32[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 38[12,18] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 43[12,17] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 53[12,25] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 58[12,20] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (14, 12) -> (15, 20) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (22, 12) -> (24, 19) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (27, 12) -> (29, 19) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (32, 12) -> (35, 19) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (38, 12) -> (40, 18) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (43, 12) -> (46, 17) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (53, 12) -> (54, 25) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (58, 12) -> (59, 20) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
 --- Nodes ---
 ?
   Pgm

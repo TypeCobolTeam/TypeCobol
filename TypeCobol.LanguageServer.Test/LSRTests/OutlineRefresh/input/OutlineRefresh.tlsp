@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "OutlineRefresh.tlsp",
   "session": "C:\\Users\\BALLMA\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2019_04_26_11_44_08_589\\TestSuite_2019_04_26_11_44_08_589.slsp",
   "user": "BALLMA",
@@ -147,7 +147,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":44,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'WriteName' only takes 2 parameter(s)\"},{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":44,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'WriteName' input(User) in-out(Numeric) output(Numeric)\"},{\"range\":{\"start\":{\"line\":58,\"character\":18},\"end\":{\"line\":58,\"character\":19}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any function parameter: tw\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":46,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'WriteName' only takes 2 parameter(s)\"},{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":46,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'WriteName' input(User) in-out(Numeric) output(Numeric)\"},{\"range\":{\"start\":{\"line\":58,\"character\":18},\"end\":{\"line\":58,\"character\":19}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any function parameter: tw\"}]}}"
     },
     {
       "category": 1,

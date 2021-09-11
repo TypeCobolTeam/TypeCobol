@@ -209,7 +209,7 @@ namespace TypeCobol.LanguageServer
 
             foreach (var diag in diagnosticEvent.Diagnostics)
             {
-                diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd),
+                diagList.Add(new Diagnostic(new Range(diag.LineStart, diag.ColumnStart, diag.LineEnd, diag.ColumnEnd),
                     diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(),
                     diag.Info.ReferenceText));
             }
@@ -621,7 +621,7 @@ namespace TypeCobol.LanguageServer
             if (message != string.Empty)
             {
                 resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
-                    matchingCodeElement.Line,
+                    matchingCodeElement.LineEnd,
                     matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
                     new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };

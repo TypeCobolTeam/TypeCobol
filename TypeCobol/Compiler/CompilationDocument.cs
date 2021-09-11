@@ -296,8 +296,7 @@ namespace TypeCobol.Compiler
                                 if (!encounteredCodeElement)
                                     lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
 
-                                lineToUpdate.LineIndex++;
-                                lineToUpdate.UpdateDiagnositcsLine();
+                                lineToUpdate.ShiftDown();
                                  
                                 if (lineToUpdate.CodeElements != null)
                                     encounteredCodeElement = true;
@@ -339,8 +338,7 @@ namespace TypeCobol.Compiler
                                 if (!encounteredCodeElement)
                                     lineToUpdate.ResetDiagnostics();
 
-                                lineToUpdate.LineIndex--;
-                                lineToUpdate.UpdateDiagnositcsLine();
+                                lineToUpdate.ShiftUp();
 
                                 if (lineToUpdate.CodeElements != null)
                                     encounteredCodeElement = true; 

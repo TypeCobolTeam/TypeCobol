@@ -400,6 +400,15 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
+        public int LineEnd
+        {
+            get
+            {
+                if (ConsumedTokens.Count < 1) return -1;
+                return ConsumedTokens[ConsumedTokens.Count - 1].Line;
+            }
+        }
+
         public int Channel
         {
             get

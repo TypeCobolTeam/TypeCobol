@@ -296,7 +296,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                         // Iterate over tokens AFTER preprocessing
                         ITokensLinesIterator processedTokensIterator = compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokensIterator();
                         Token processedToken = null;
-                        while ((processedToken = processedTokensIterator.NextToken()) != Token.END_OF_FILE)
+                        while ((processedToken = processedTokensIterator.NextToken()).TokenType != TokenType.EndOfFile)
                         {
                             tokensCounter.OnElement((int)processedToken.TokenType);
                             ReplacedToken replacedToken = processedToken as ReplacedToken;

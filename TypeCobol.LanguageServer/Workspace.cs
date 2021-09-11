@@ -45,7 +45,7 @@ namespace TypeCobol.LanguageServer
 
         internal CompilationProject CompilationProject { get; private set; }
 
-        private List<FileCompiler> _fileCompilerWaittingForNodePhase;
+        private List<FileCompiler> _fileCompilerWaitingForNodePhase;
         public TypeCobolConfiguration Configuration { get; private set; }
         public event EventHandler<DiagnosticEvent> DiagnosticsEvent;
         public event EventHandler<EventArgs> DocumentModifiedEvent;
@@ -162,7 +162,7 @@ namespace TypeCobol.LanguageServer
             MessagesActionsQueue = messagesActionsQueue;
             Configuration = new TypeCobolConfiguration();
             _openedDocuments = new Dictionary<Uri, DocumentContext>();
-            _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
+            _fileCompilerWaitingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
 
             this._rootDirectoryFullName = rootDirectoryFullName;
@@ -234,11 +234,6 @@ namespace TypeCobol.LanguageServer
 #else
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, CompilationProject);
 #endif
-            //Set Any Language Server Connection Options.
-            docContext.FileCompiler = fileCompiler;
-            docContext.LanguageServerConnection(true);
-
-            fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
             lock (_lockForOpenedDocuments)
             {
@@ -246,10 +241,15 @@ namespace TypeCobol.LanguageServer
                     CloseSourceFile(docContext.Uri); //Close and remove the previous opened file.
 
                 _openedDocuments.Add(docContext.Uri, docContext);
-                fileCompiler.CompilationResultsForProgram.CodeAnalysisCompleted += FinalCompilationStepCompleted;
             }
 
+            //Set Any Language Server Connection Options.
+            docContext.FileCompiler = fileCompiler;
+            docContext.LanguageServerConnection(true);
+
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
+            fileCompiler.CompilationResultsForProgram.CodeAnalysisCompleted += FinalCompilationStepCompleted;
+            fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
             if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
             {
@@ -278,7 +278,7 @@ namespace TypeCobol.LanguageServer
             foreach(var f in customAnalyzerFiles) {
                 try
                 {
-                    list.Add(AnalyzerProviderLoader.LoadProvider(f));
+                    list.Add(AnalyzerProviderLoader.UnsafeLoadProvider(f));
                 }
                 catch(Exception e)
                 {
@@ -325,14 +325,14 @@ namespace TypeCobol.LanguageServer
                 {
                     if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
                     {
-                        lock (_fileCompilerWaittingForNodePhase)
+                        lock (_fileCompilerWaitingForNodePhase)
                         {
-                            if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
-                                _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
+                            if (!_fileCompilerWaitingForNodePhase.Contains(fileCompilerToUpdate))
+                                _fileCompilerWaitingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
                         }
 
                         _semanticUpdaterTimer = new System.Timers.Timer(750);
-                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(fileUri);
                         _semanticUpdaterTimer.Start();
                     }
                 }
@@ -392,15 +392,14 @@ namespace TypeCobol.LanguageServer
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
         /// <param name="fileCompiler"></param>
-        private void TimerEvent(object sender, ElapsedEventArgs eventArgs, FileCompiler fileCompiler)
+        private void TimerEvent(Uri fileUri)
         {
             try
             {
                 _semanticUpdaterTimer.Stop();
-                Action nodeRefreshAction = () => { RefreshSyntaxTree(fileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck); };
                 lock (MessagesActionsQueue)
                 {
-                    MessagesActionsQueue.Enqueue(new MessageActionWrapper(nodeRefreshAction));
+                    MessagesActionsQueue.Enqueue(new MessageActionWrapper(Refresh));
                 }
             }
             catch (Exception e)
@@ -408,7 +407,14 @@ namespace TypeCobol.LanguageServer
                 //In case Timer Thread crash
                 ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
             }
-           
+
+            void Refresh()
+            {
+                if (TryGetOpenedDocumentContext(fileUri, out var docContext))
+                {
+                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck);
+                }
+            }
         }
 
         /// <summary>
@@ -446,12 +452,12 @@ namespace TypeCobol.LanguageServer
         {
             if (refreshLevel == SyntaxTreeRefreshLevel.NoRefresh) return; //nothing to do
 
-            lock (_fileCompilerWaittingForNodePhase)
+            lock (_fileCompilerWaitingForNodePhase)
             {
-                var fileCompilerNeedsRefresh = _fileCompilerWaittingForNodePhase.Contains(fileCompiler);
+                var fileCompilerNeedsRefresh = _fileCompilerWaitingForNodePhase.Contains(fileCompiler);
                 if (fileCompilerNeedsRefresh)
                 {
-                    _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
+                    _fileCompilerWaitingForNodePhase.Remove(fileCompiler);
                 }
                 else
                 {
@@ -495,16 +501,27 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public void CloseSourceFile(Uri fileUri)
         {
+            FileCompiler fileCompilerToClose = null;
+
+            //Remove from opened documents dictionary
             lock (_lockForOpenedDocuments)
             {
-                if (_openedDocuments.ContainsKey(fileUri))
+                if (_openedDocuments.TryGetValue(fileUri, out var contextToClose))
                 {
-                    var contextToClose = _openedDocuments[fileUri];
-                    FileCompiler fileCompilerToClose = contextToClose.FileCompiler;
+                    fileCompilerToClose = contextToClose.FileCompiler;
                     _openedDocuments.Remove(fileUri);
                     fileCompilerToClose.CompilationResultsForProgram.CodeAnalysisCompleted -= FinalCompilationStepCompleted;
                 }
-            }            
+            }
+
+            //Remove from pending semantic analysis list
+            if (fileCompilerToClose != null)
+            {
+                lock (_fileCompilerWaitingForNodePhase)
+                {
+                    _fileCompilerWaitingForNodePhase.Remove(fileCompilerToClose);
+                }
+            }
         }
 
         /// <summary>
@@ -553,19 +570,19 @@ namespace TypeCobol.LanguageServer
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
             //Configure CFG/DFA analyzer(s) + external analyzers if any
-            var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode, o));
+            var analyzerProviderWrapper = new AnalyzerProviderWrapper(str => _Logger(str, null));
+            analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode, o));
             if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
             {
-                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard, o));
+                analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard, o));
             }
             System.Diagnostics.Debug.Assert(this._customAnalyzerProviders != null);
             foreach (var a in this._customAnalyzerProviders)
             {
-                compositeAnalyzerProvider.AddProvider(a);
+                analyzerProviderWrapper.AddProvider(a);
             }
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProviderWrapper);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {

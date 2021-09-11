@@ -233,7 +233,7 @@ namespace TypeCobol.Compiler.CupCommon
         public void ConsumeNextTokenOnTheSameLine(TokenType nextTokenType)
         {
             Token currentToken = base.CurrentToken;
-            if (currentToken == Token.END_OF_FILE)
+            if (currentToken != null && currentToken.TokenType == TokenType.EndOfFile)
                 return;//Ignore if end of file
             Token nextToken = base.NextToken();
             if (nextToken != null && currentToken != null &&
@@ -259,21 +259,6 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
-        /// Enter in the Stop Scanning Mode if the current is not of the given type
-        /// </summary>
-        /// <param name="tokenType">The Token type to check</param>
-        public void EnterStopScanningModeIfNotToken(TokenType tokenType)
-        {
-            Token currentToken = base.CurrentToken;
-            if (currentToken == null)
-                return;
-            if (currentToken == Token.END_OF_FILE)
-                return;//Ignore if end of file
-            if (currentToken.TokenType != tokenType)
-                EnterStopScanningMode();
-        }
-
-        /// <summary>
         /// Enter in the Stop Scanning Mode if the next is not of the given type
         /// </summary>
         /// <param name="nextTokenType"></param>
@@ -282,7 +267,7 @@ namespace TypeCobol.Compiler.CupCommon
             Token currentToken = base.CurrentToken;
             if (currentToken == null)
                 return;
-            if (currentToken == Token.END_OF_FILE)
+            if (currentToken.TokenType == TokenType.EndOfFile)
                 return;//Ignore if end of file
             Token nextToken = base.NextToken();
             base.PreviousToken();
@@ -326,11 +311,12 @@ namespace TypeCobol.Compiler.CupCommon
         /// </summary>
         /// <param name="expected">The expected next token</param>
         /// <param name="resulting">The resulting token if matching</param>
-        /// <param name="defaultToken">The defualt token if no matching</param>
+        /// <param name="defaultToken">The default token if no matching</param>
         /// <returns></returns>
         private int TryMatchNextToken(TokenType expected, int resulting, int defaultToken)
         {
-            if (base.CurrentToken == Token.END_OF_FILE)
+            var currentToken = base.CurrentToken;
+            if (currentToken != null && currentToken.TokenType == TokenType.EndOfFile)
                 return defaultToken;
             Token nextToken = base.NextToken();
             if (nextToken != null)
@@ -350,11 +336,11 @@ namespace TypeCobol.Compiler.CupCommon
         /// </summary>
         /// <param name="expected">The expected next token</param>
         /// <param name="resulting">The resulting token if matching</param>
-        /// <param name="defaultToken">The defualt token if no matching</param>
+        /// <param name="defaultToken">The default token if no matching</param>
         /// <returns></returns>
         private int TryMatchPrevToken(TokenType expected, int resulting, int defaultToken)
         {
-            if (base.CurrentToken == Token.END_OF_FILE)
+            if (base.CurrentToken == null)
                 return defaultToken;
             Token prevToken = base.PreviousToken();
             if (prevToken != null)
@@ -436,7 +422,7 @@ namespace TypeCobol.Compiler.CupCommon
             FirstToken = null;
             LastToken = null;            
             Token token = null;
-            while ((token = base.NextToken()) != Token.END_OF_FILE)
+            while ((token = base.NextToken()).TokenType != TokenType.EndOfFile)
             {
                 if (FirstToken == null)
                 {
