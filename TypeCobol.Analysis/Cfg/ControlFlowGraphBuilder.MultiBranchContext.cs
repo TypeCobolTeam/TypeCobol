@@ -85,6 +85,7 @@ namespace TypeCobol.Analysis.Cfg
             internal void Start(BasicBlockForNode originBlock)
             {
                 this.OriginBlock = originBlock;
+                this.OriginBlock.Context = this;
             }
 
             /// <summary>
@@ -135,9 +136,10 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Change the successors
             /// </summary>
+            /// <param name="cfg">The target CFG graph</param>
             /// <param name="currentSucc">The current Successor</param>
             /// <param name="newSucc">The new Successor</param>
-            internal void ChangeSuccessor(ControlFlowGraphBuilder<D> builder, BasicBlock<Node, D> currentSucc, BasicBlock<Node, D> newSucc)
+            internal void ChangeSuccessor(ControlFlowGraph<Node, D> cfg, BasicBlock<Node, D> currentSucc, BasicBlock<Node, D> newSucc)
             {
                 if (NextFlowBlock == currentSucc)
                     NextFlowBlock = newSucc;
@@ -150,12 +152,12 @@ namespace TypeCobol.Analysis.Cfg
                     {
                         if (branches[i] == currentSucc)
                         {
-                            System.Diagnostics.Debug.Assert(builder.Cfg.SuccessorEdges[branchIndices[i]] == currentSucc);
+                            System.Diagnostics.Debug.Assert(cfg.SuccessorEdges[branchIndices[i]] == currentSucc);
                             branches[i] = newSucc;
                             RootBlockForEnd.SuccessorEdges.Remove(branchIndices[i]);
-                            branchIndices[i] = builder.Cfg.SuccessorEdges.Count;
-                            RootBlockForEnd.SuccessorEdges.Add(builder.Cfg.SuccessorEdges.Count);
-                            builder.Cfg.SuccessorEdges.Add(newSucc);
+                            branchIndices[i] = cfg.SuccessorEdges.Count;
+                            RootBlockForEnd.SuccessorEdges.Add(cfg.SuccessorEdges.Count);
+                            cfg.SuccessorEdges.Add(newSucc);
                             break;
                         }
                     }

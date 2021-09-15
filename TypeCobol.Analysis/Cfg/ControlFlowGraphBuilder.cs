@@ -1333,7 +1333,7 @@ namespace TypeCobol.Analysis.Cfg
             {
                 //Transform graph to replace edge in performs with test after.
                 //Transformation is directly applied to the graph, no new instance created.
-                ICfgTransform<Node, D> transform = new CfgAfterIterativePerformProcedureTransformer(this.CurrentProgramCfgBuilder);
+                ICfgTransform<Node, D> transform = new CfgAfterIterativePerformProcedureTransformer(this.CurrentProgramCfgBuilder.Cfg);
                 transform.Transform(this.CurrentProgramCfgBuilder.Cfg);
             }
         }
@@ -1733,7 +1733,7 @@ namespace TypeCobol.Analysis.Cfg
                 var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
                 ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
-            }            
+            }
         }
 
         /// <summary>
@@ -2061,7 +2061,7 @@ namespace TypeCobol.Analysis.Cfg
                     else
                     {
                         ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
-                    }                    
+                    }
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
                 }
@@ -2081,7 +2081,7 @@ namespace TypeCobol.Analysis.Cfg
                 var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
                 ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
-            }            
+            }
         }
 
         /// <summary>
