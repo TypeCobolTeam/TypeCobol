@@ -46,6 +46,5 @@ namespace TypeCobol.Analysis.Graph
         /// For instance in COBOL EVALUATE Context has all WHEN and WHENOTHER as sub contexts.
         /// </summary>
         IList<IMultiBranchContext<N, D>> SubContexts { get; }
-
     }
 }

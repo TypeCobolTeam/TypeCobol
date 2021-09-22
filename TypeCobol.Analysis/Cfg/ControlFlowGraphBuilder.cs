@@ -1333,7 +1333,7 @@ namespace TypeCobol.Analysis.Cfg
             {
                 //Transform graph to replace edge in performs with test after.
                 //Transformation is directly applied to the graph, no new instance created.
-                ICfgTransform<Node, D> transform = new CfgAfterIterativePerformProcedureTransformer(this.CurrentProgramCfgBuilder.Cfg);
+                ICfgTransform<Node, D> transform = new CfgAfterIterativePerformProcedureTransformer();
                 transform.Transform(this.CurrentProgramCfgBuilder.Cfg);
             }
         }

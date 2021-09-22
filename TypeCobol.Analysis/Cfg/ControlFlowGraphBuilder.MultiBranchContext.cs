@@ -18,11 +18,11 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// List of multi branch blocks
             /// </summary>
-            internal List<BasicBlock<Node, D>> Branches;
+            public IList<BasicBlock<Node, D>> Branches { get; internal set; }
             /// <summary>
             /// Indices in the SuccessorEdges of all blocks in Branches
             /// </summary>
-            internal List<int> BranchIndices;
+            public IList<int> BranchIndices { get; internal set; }
             /// <summary>
             /// Root Block of the multi branches
             /// </summary>
@@ -61,10 +61,6 @@ namespace TypeCobol.Analysis.Cfg
             BasicBlock<Node, D> IMultiBranchContext<Node, D>.OriginBlock => this.OriginBlock;
 
             BasicBlock<Node, D> IMultiBranchContext<Node, D>.RootBlock => this.RootBlock;
-
-            IList<BasicBlock<Node, D>> IMultiBranchContext<Node, D>.Branches => this.Branches;
-
-            IList<int> IMultiBranchContext<Node, D>.BranchIndices => this.BranchIndices;
 
             /// <summary>
             /// Constructor

@@ -12,15 +12,12 @@ namespace TypeCobol.Analysis.Cfg
         private class CfgAfterIterativePerformProcedureTransformer : ICfgTransform<Node, D>
         {
             private HashSet<BasicBlockForNodeGroup> _visitedGroups;
-            private ControlFlowGraph<Node, D> _cfg;
 
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="builder"></param>
-            public CfgAfterIterativePerformProcedureTransformer(ControlFlowGraph<Node, D> cfg)
+            public CfgAfterIterativePerformProcedureTransformer()
             {
-                this._cfg = cfg;
             }
             private bool Callback(BasicBlock<Node, D> block, int incomingEdge, BasicBlock<Node, D> predecessorBlock, ControlFlowGraph<Node, D> cfg)
             {
@@ -57,7 +54,7 @@ namespace TypeCobol.Analysis.Cfg
                     cfg.SuccessorEdges.Add(iterativeGroup.Group.First.Value);
                     block.SuccessorEdges.Add(entranceEdge);
                     System.Diagnostics.Debug.Assert(block.Context == null);
-                    //If the assert above fails (it should not be case), then it will be necessay to exeute the commented code bellow.
+                    //If the assert above fails (it should not be case), then it will be necessary to exeute the commented code below.
                     //if(block.Context != null)
                     //{
                     //    ((MultiBranchContext)block.Context).ChangeSuccessor(_cfg, iterativeGroup, iterativeGroup.Group.First.Value);
