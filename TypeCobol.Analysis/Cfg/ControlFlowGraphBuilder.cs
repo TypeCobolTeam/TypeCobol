@@ -1281,7 +1281,7 @@ namespace TypeCobol.Analysis.Cfg
                 LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
                 MultiBranchContext ctx = new MultiBranchContext(null);
                 List<BasicBlock<Node, D>> terminals = new List<BasicBlock<Node, D>>();
-                ctx.GetTerminalSuccessorEdges(this.CurrentProgramCfgBuilder, (BasicBlockForNode)first.Value, terminals);
+                ctx.GetTerminalSuccessorEdges(this.CurrentProgramCfgBuilder.Cfg, (BasicBlockForNode)first.Value, terminals);
                 group.TerminalBlocks = terminals;
             }
         }
@@ -1628,7 +1628,7 @@ namespace TypeCobol.Analysis.Cfg
             bool branchToNext = ctx.Branches.Count == 1;//No Else
             //The next block.
             var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
+            ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
         }
 
@@ -1713,7 +1713,7 @@ namespace TypeCobol.Analysis.Cfg
                     bool branchToNext = ctx.Branches.Count == 1;//No Else
                                                                 //The next block.
                     var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                    ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
+                    ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
 
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
@@ -1731,7 +1731,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 //The next block.
                 var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
+                ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
             }
         }
@@ -2049,7 +2049,7 @@ namespace TypeCobol.Analysis.Cfg
                     if (bLastBranch)
                     {//This is the last branch of the cascade, next block is the SearchBlock, thus the root.
                         bLastBranch = false;
-                        ctx.End(this.CurrentProgramCfgBuilder, false, nextBlock);
+                        ctx.End(this.CurrentProgramCfgBuilder.Cfg, false, nextBlock);
                         //Branch this terminal block to the search block
                         if (rootNodeIndex == -1)
                         {
@@ -2060,7 +2060,7 @@ namespace TypeCobol.Analysis.Cfg
                     }
                     else
                     {
-                        ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
+                        ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                     }
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
@@ -2068,7 +2068,7 @@ namespace TypeCobol.Analysis.Cfg
                 subContexts.TrimExcess();
                 ctx.SubContexts = subContexts;
                 //If we have and AT Condition handle it
-                ctx.End(this.CurrentProgramCfgBuilder, ctx.Branches.Count == 0, ctx.RootBlock, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+                ctx.End(this.CurrentProgramCfgBuilder.Cfg, ctx.Branches.Count == 0, ctx.RootBlock, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             }
             else
             {
@@ -2079,7 +2079,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 //The next block.
                 var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
+                ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
             }
         }
@@ -2193,7 +2193,7 @@ namespace TypeCobol.Analysis.Cfg
 
             //First Get here all terminals blocks of the loop body
             List<BasicBlock<Node,D>> terminals = new List<BasicBlock<Node, D>>();
-            ctx.GetTerminalSuccessorEdges(this.CurrentProgramCfgBuilder, (BasicBlockForNode)ctx.Branches[1], terminals);
+            ctx.GetTerminalSuccessorEdges(this.CurrentProgramCfgBuilder.Cfg, (BasicBlockForNode)ctx.Branches[1], terminals);
             ctx.Terminals = terminals;
 
             int performBlockIndex = ctx.BranchIndices[0];
@@ -2607,7 +2607,7 @@ namespace TypeCobol.Analysis.Cfg
 
                     //The next block.
                     var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                    ctx.End(this.CurrentProgramCfgBuilder, branchToNext, nextBlock);
+                    ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                 }
             }

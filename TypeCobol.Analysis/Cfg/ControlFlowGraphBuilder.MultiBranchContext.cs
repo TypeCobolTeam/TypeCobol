@@ -87,38 +87,38 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// End the multi branching.
             /// </summary>
-            /// <param name="builder">The related CFG Builder</param>
+            /// <param name="cfg">The related CFG Graph</param>
             /// <param name="branchToNext">True if the CurrentBlock must be linked to the next branch also, false otherwise</param>
             /// <param name="nextBlock">The next block for all branches</param>
-            internal void End(ControlFlowGraphBuilder<D> builder, bool branchToNext, BasicBlockForNode nextBlock)
+            internal void End(ControlFlowGraph<Node, D> cfg, bool branchToNext, BasicBlockForNode nextBlock)
             {
-                End(builder, branchToNext, OriginBlock, nextBlock);
+                End(cfg, branchToNext, OriginBlock, nextBlock);
             }
             /// <summary>
             /// End the multi branching.
             /// </summary>
-            /// <param name="builder">The related CFG Builder</param>
+            /// <param name="cfg">The related CFG Graph</param>
             /// <param name="branchToNext">True if the CurrentBlock must be linked to the next branch also, false otherwise</param>
             /// <param name="rootBlock">Root block of the multi branch</param>
             /// <param name="nextBlock">The next block for all branches</param>
-            internal void End(ControlFlowGraphBuilder<D> builder, bool branchToNext, BasicBlockForNode rootBlock, BasicBlockForNode nextBlock)
+            internal void End(ControlFlowGraph<Node, D> cfg, bool branchToNext, BasicBlockForNode rootBlock, BasicBlockForNode nextBlock)
             {
                 System.Diagnostics.Debug.Assert(rootBlock != null);
                 System.Diagnostics.Debug.Assert(nextBlock != null);
 
                 Terminals = new List<BasicBlock<Node, D>>();
                 //Add the next block to the successors.
-                int nbIndex = builder.Cfg.SuccessorEdges.Count;
-                builder.Cfg.SuccessorEdges.Add(nextBlock);
+                int nbIndex = cfg.SuccessorEdges.Count;
+                cfg.SuccessorEdges.Add(nextBlock);
                 //Link current block to all branches.
                 foreach (var b in Branches)
                 {
                     //Add branch to the successors
-                    BranchIndices.Add(builder.Cfg.SuccessorEdges.Count);
-                    rootBlock.SuccessorEdges.Add(builder.Cfg.SuccessorEdges.Count);
-                    builder.Cfg.SuccessorEdges.Add(b);
+                    BranchIndices.Add(cfg.SuccessorEdges.Count);
+                    rootBlock.SuccessorEdges.Add(cfg.SuccessorEdges.Count);
+                    cfg.SuccessorEdges.Add(b);
                     //Next Block is a successor of the branch.
-                    AddTerminalSuccessorEdge(builder, b, nbIndex);
+                    AddTerminalSuccessorEdge(cfg, b, nbIndex);
                 }
                 if (branchToNext)
                 {
@@ -184,11 +184,11 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Add to all terminal block, from a given block b, a given successor index.
             /// </summary>
-            /// <param name="builder">The related CFG Builder</param>
+            /// <param name="cfg">The related CFG Graph</param>
             /// <param name="b">The starting block</param>
             /// <param name="nbIndex">The terminal successor index</param>
             /// <param name="visitedBlockIndex">Set of already visited Block Index</param>
-            internal void AddTerminalSuccessorEdge(ControlFlowGraphBuilder<D> builder, BasicBlock<Node, D> b, int nbIndex, HashSet<int> visitedBlockIndex = null)
+            internal void AddTerminalSuccessorEdge(ControlFlowGraph<Node, D> cfg, BasicBlock<Node, D> b, int nbIndex, HashSet<int> visitedBlockIndex = null)
             {
                 if (visitedBlockIndex == null)
                 {
@@ -203,7 +203,7 @@ namespace TypeCobol.Analysis.Cfg
                     //Ending block has no successors.
                     if (!b.HasFlag(BasicBlock<Node, D>.Flags.Ending))
                     {
-                        if (b != builder.Cfg.SuccessorEdges[nbIndex])
+                        if (b != cfg.SuccessorEdges[nbIndex])
                         {//Don't create recursion to ourselves
                             b.SuccessorEdges.Add(nbIndex);
                             Terminals?.Add(b);
@@ -214,7 +214,7 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     foreach (var s in b.SuccessorEdges)
                     {
-                        AddTerminalSuccessorEdge(builder, (BasicBlockForNode)builder.Cfg.SuccessorEdges[s], nbIndex, visitedBlockIndex);
+                        AddTerminalSuccessorEdge(cfg, (BasicBlockForNode)cfg.SuccessorEdges[s], nbIndex, visitedBlockIndex);
                     }
                 }
             }
@@ -222,11 +222,11 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Get all terminal blocks from the given block.
             /// </summary>
-            /// <param name="builder">The related CFG Builder</param>
+            /// <param name="cfg">The related CFG Graph</param>
             /// <param name="b">The starting block</param>
             /// <param name="accumulator">Accumulator of  terminal blocks</param>
             /// <param name="visitedBlockIndex">Set of already visited Block Index</param>
-            internal void GetTerminalSuccessorEdges(ControlFlowGraphBuilder<D> builder, BasicBlockForNode b, List<BasicBlock<Node, D>> accumulator, HashSet<int> visitedBlockIndex = null)
+            internal void GetTerminalSuccessorEdges(ControlFlowGraph<Node, D> cfg, BasicBlockForNode b, List<BasicBlock<Node, D>> accumulator, HashSet<int> visitedBlockIndex = null)
             {
                 if (visitedBlockIndex == null)
                 {
@@ -241,7 +241,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 else foreach (var s in b.SuccessorEdges)
                 {
-                    GetTerminalSuccessorEdges(builder, (BasicBlockForNode)builder.Cfg.SuccessorEdges[s], accumulator, visitedBlockIndex);
+                    GetTerminalSuccessorEdges(cfg, (BasicBlockForNode)cfg.SuccessorEdges[s], accumulator, visitedBlockIndex);
                 }
             }
 
