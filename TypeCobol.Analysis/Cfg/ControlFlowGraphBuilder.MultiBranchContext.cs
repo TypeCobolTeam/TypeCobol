@@ -218,33 +218,6 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
             }
-
-            /// <summary>
-            /// Get all terminal blocks from the given block.
-            /// </summary>
-            /// <param name="cfg">The related CFG Graph</param>
-            /// <param name="b">The starting block</param>
-            /// <param name="accumulator">Accumulator of  terminal blocks</param>
-            /// <param name="visitedBlockIndex">Set of already visited Block Index</param>
-            internal void GetTerminalSuccessorEdges(ControlFlowGraph<Node, D> cfg, BasicBlockForNode b, List<BasicBlock<Node, D>> accumulator, HashSet<int> visitedBlockIndex = null)
-            {
-                if (visitedBlockIndex == null)
-                {
-                    visitedBlockIndex = new HashSet<int>();
-                }
-                if (visitedBlockIndex.Contains(b.Index))
-                    return;
-                visitedBlockIndex.Add(b.Index);
-                if (b.SuccessorEdges.Count == 0)
-                {
-                    accumulator.Add(b);
-                }
-                else foreach (var s in b.SuccessorEdges)
-                {
-                    GetTerminalSuccessorEdges(cfg, (BasicBlockForNode)cfg.SuccessorEdges[s], accumulator, visitedBlockIndex);
-                }
-            }
-
         }
     }
 }

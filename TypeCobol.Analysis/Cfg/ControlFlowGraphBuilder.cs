@@ -1281,7 +1281,7 @@ namespace TypeCobol.Analysis.Cfg
                 LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
                 MultiBranchContext ctx = new MultiBranchContext(null);
                 List<BasicBlock<Node, D>> terminals = new List<BasicBlock<Node, D>>();
-                ctx.GetTerminalSuccessorEdges(this.CurrentProgramCfgBuilder.Cfg, (BasicBlockForNode)first.Value, terminals);
+                this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(first.Value, terminals);
                 group.TerminalBlocks = terminals;
             }
         }
@@ -2193,7 +2193,7 @@ namespace TypeCobol.Analysis.Cfg
 
             //First Get here all terminals blocks of the loop body
             List<BasicBlock<Node,D>> terminals = new List<BasicBlock<Node, D>>();
-            ctx.GetTerminalSuccessorEdges(this.CurrentProgramCfgBuilder.Cfg, (BasicBlockForNode)ctx.Branches[1], terminals);
+            this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(ctx.Branches[1], terminals);
             ctx.Terminals = terminals;
 
             int performBlockIndex = ctx.BranchIndices[0];

@@ -13,12 +13,6 @@ namespace TypeCobol.Analysis.Cfg
         {
             private HashSet<BasicBlockForNodeGroup> _visitedGroups;
 
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            public CfgAfterIterativePerformProcedureTransformer()
-            {
-            }
             private bool Callback(BasicBlock<Node, D> block, int incomingEdge, BasicBlock<Node, D> predecessorBlock, ControlFlowGraph<Node, D> cfg)
             {
                 //Search for an iterative group (with after) among successors of the current block
