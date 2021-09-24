@@ -380,5 +380,34 @@ namespace TypeCobol.Analysis.Graph
             if (RootBlock != null)
                 DFS(RootBlock, callback);
         }
+
+        /// <summary>
+        /// Get all terminal blocks from the given block.
+        /// </summary>
+        /// <param name="block">The starting block</param>
+        /// <param name="accumulator">Target list to accumulate terminal blocks</param>
+        internal void GetTerminalSuccessorEdges(BasicBlock<N, D> block, List<BasicBlock<N, D>> accumulator)
+        {
+            var visitedBlocks = new HashSet<int>();
+            Accumulate(block);
+
+            void Accumulate(BasicBlock<N, D> currentBlock)
+            {
+                if (visitedBlocks.Contains(currentBlock.Index))
+                    return;
+
+                visitedBlocks.Add(currentBlock.Index);
+
+                if (currentBlock.SuccessorEdges.Count == 0)
+                {
+                    accumulator.Add(currentBlock);
+                }
+                else foreach (var successorIndex in currentBlock.SuccessorEdges)
+                {
+                    var successor = SuccessorEdges[successorIndex];
+                    Accumulate(successor);
+                }
+            }
+        }
     }
 }

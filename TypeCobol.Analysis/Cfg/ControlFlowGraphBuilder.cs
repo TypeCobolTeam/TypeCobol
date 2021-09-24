@@ -1223,6 +1223,8 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="group">Target group.</param>
         private void ExtendGroup(BasicBlockForNodeGroup group)
         {
+            // Assume PERFORM block group is not for a Multi Branch Context.
+            System.Diagnostics.Debug.Assert(group.Context == null);
             //Now we must handle Iterative Perform Procedure.
             if (group.IsIterativeGroup)
             {
@@ -1277,9 +1279,9 @@ namespace TypeCobol.Analysis.Cfg
             if (group.Group.Count > 0 && group.TerminalBlocks == null)
             {
                 LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
-                List<BasicBlockForNode> terminals = new List<BasicBlockForNode>();
-                ctx.GetTerminalSuccessorEdges((BasicBlockForNode)first.Value, terminals);
+                MultiBranchContext ctx = new MultiBranchContext(null);
+                List<BasicBlock<Node, D>> terminals = new List<BasicBlock<Node, D>>();
+                this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(first.Value, terminals);
                 group.TerminalBlocks = terminals;
             }
         }
@@ -1594,7 +1596,7 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void EnterIf(If _if)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, _if);
+            MultiBranchContext ctx = new MultiBranchContext(_if);
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
@@ -1626,7 +1628,7 @@ namespace TypeCobol.Analysis.Cfg
             bool branchToNext = ctx.Branches.Count == 1;//No Else
             //The next block.
             var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            ctx.End(branchToNext, nextBlock);
+            ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
         }
 
@@ -1674,7 +1676,7 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void EnterEvaluate(Evaluate evaluate)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, evaluate);
+            MultiBranchContext ctx = new MultiBranchContext(evaluate);
             //Create a list of node of contextual When and WhenOther nodes.
             ctx.ConditionNodes = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
@@ -1702,18 +1704,23 @@ namespace TypeCobol.Analysis.Cfg
             if (UseEvaluateCascade)
             {   //Pop each MultiBranchContextStack instance till to the EVALUATE one
                 //and close each one.
+                List<IMultiBranchContext<Node, D>> subContexts = new List<IMultiBranchContext<Node, D>>();
                 while (ctx.Instruction == null)
                 {
                     System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
+                    subContexts.Add(ctx);
 
                     bool branchToNext = ctx.Branches.Count == 1;//No Else
                                                                 //The next block.
                     var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                    ctx.End(branchToNext, nextBlock);
+                    ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
 
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
                 }
+                subContexts.TrimExcess();
+                ctx.SubContexts = subContexts;
+                ctx.NextFlowBlock = this.CurrentProgramCfgBuilder.CurrentBasicBlock;
             }
             else
             {
@@ -1724,7 +1731,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 //The next block.
                 var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                ctx.End(branchToNext, nextBlock);
+                ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
             }
         }
@@ -1826,7 +1833,7 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             //Create Whens context
-            MultiBranchContext ctxWhens = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
+            MultiBranchContext ctxWhens = new MultiBranchContext(null);
             ctxWhens.ConditionNodes = new List<Node>();
             //Push and start the Whens context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctxWhens);
@@ -1883,7 +1890,7 @@ namespace TypeCobol.Analysis.Cfg
         public virtual void EnterSearch(Search node)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node);
+            MultiBranchContext ctx = new MultiBranchContext(node);
             //Create a list of node of contextual When or AtEnd nodes.
             ctx.ConditionNodes = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
@@ -1969,7 +1976,7 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.CurrentBasicBlock = ctx.OriginBlock;
                     }
                     //Create Whens context
-                    MultiBranchContext ctxWhens = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
+                    MultiBranchContext ctxWhens = new MultiBranchContext(null);
                     ctxWhens.ConditionNodes = new List<Node>();
                     ctxWhens.RootBlock = ctx.RootBlock;
                     ctxWhens.RootBlockSuccessorIndex = ctx.RootBlockSuccessorIndex;
@@ -2031,17 +2038,18 @@ namespace TypeCobol.Analysis.Cfg
                 //and close each one.
                 bool bLastBranch = true;
                 int rootNodeIndex = ctx.RootBlockSuccessorIndex;
+                List<IMultiBranchContext<Node, D>> subContexts = new List<IMultiBranchContext<Node, D>>();
                 while (ctx.Instruction == null)
                 {
                     System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
-
+                    subContexts.Add(ctx);
                     bool branchToNext = ctx.Branches.Count == 1;//No Else
                                                                 //The next block.
                     var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
                     if (bLastBranch)
                     {//This is the last branch of the cascade, next block is the SearchBlock, thus the root.
                         bLastBranch = false;
-                        ctx.End(false, nextBlock);
+                        ctx.End(this.CurrentProgramCfgBuilder.Cfg, false, nextBlock);
                         //Branch this terminal block to the search block
                         if (rootNodeIndex == -1)
                         {
@@ -2052,13 +2060,15 @@ namespace TypeCobol.Analysis.Cfg
                     }
                     else
                     {
-                        ctx.End(branchToNext, nextBlock);
+                        ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                     }
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
                 }
+                subContexts.TrimExcess();
+                ctx.SubContexts = subContexts;
                 //If we have and AT Condition handle it
-                ctx.End(ctx.Branches.Count == 0, ctx.RootBlock, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+                ctx.End(this.CurrentProgramCfgBuilder.Cfg, ctx.Branches.Count == 0, ctx.RootBlock, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             }
             else
             {
@@ -2069,7 +2079,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 //The next block.
                 var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                ctx.End(branchToNext, nextBlock);
+                ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
             }
         }
@@ -2105,7 +2115,7 @@ namespace TypeCobol.Analysis.Cfg
         public virtual void EnterPerformLoop(Perform perform)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, perform);
+            MultiBranchContext ctx = new MultiBranchContext(perform);
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
@@ -2181,9 +2191,10 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.Branches.Count == 2);
             System.Diagnostics.Debug.Assert(ctx.BranchIndices.Count == 2);
 
-            //First Get here all terminal blocks of the loop body
-            List<BasicBlockForNode> terminals = new List<BasicBlockForNode>();
-            ctx.GetTerminalSuccessorEdges(ctx.Branches[1], terminals);
+            //First Get here all terminals blocks of the loop body
+            List<BasicBlock<Node,D>> terminals = new List<BasicBlock<Node, D>>();
+            this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(ctx.Branches[1], terminals);
+            ctx.Terminals = terminals;
 
             int performBlockIndex = ctx.BranchIndices[0];
             System.Diagnostics.Debug.Assert(performBlockIndex >= 0);
@@ -2216,6 +2227,7 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+            ctx.NextFlowBlock = this.CurrentProgramCfgBuilder.CurrentBasicBlock;
         }
 
         /// <summary>
@@ -2398,7 +2410,7 @@ namespace TypeCobol.Analysis.Cfg
                 //Create or reuse the context
                 if (currentCtx == null || currentCtx.Instruction != node.Parent)
                 {
-                    currentCtx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node.Parent);
+                    currentCtx = new MultiBranchContext(node.Parent);
                     if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
                     {
                         this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
@@ -2595,7 +2607,7 @@ namespace TypeCobol.Analysis.Cfg
 
                     //The next block.
                     var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                    ctx.End(branchToNext, nextBlock);
+                    ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                 }
             }

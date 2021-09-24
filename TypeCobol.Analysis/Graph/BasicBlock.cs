@@ -20,6 +20,10 @@ namespace TypeCobol.Analysis.Graph
             protected internal set;
         }
         /// <summary>
+        /// The associated multi branch context if any, null otherwise
+        /// </summary>
+        public IMultiBranchContext<N,D> Context { get; internal set; }
+        /// <summary>
         /// Instructions making up this block.
         /// </summary>
         public LinkedList<N> Instructions

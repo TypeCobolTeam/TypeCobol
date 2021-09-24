@@ -47,6 +47,12 @@ namespace TypeCobol.Analysis.Cfg
                     int entranceEdge = cfg.SuccessorEdges.Count;
                     cfg.SuccessorEdges.Add(iterativeGroup.Group.First.Value);
                     block.SuccessorEdges.Add(entranceEdge);
+                    System.Diagnostics.Debug.Assert(block.Context == null);
+                    //If the assert above fails (it should not be case), then it will be necessary to exeute the commented code below.
+                    //if(block.Context != null)
+                    //{
+                    //    ((MultiBranchContext)block.Context).ChangeSuccessor(_cfg, iterativeGroup, iterativeGroup.Group.First.Value);
+                    //}
                 }
 
                 //If the current block is a group, we must also traverse blocks of the group
