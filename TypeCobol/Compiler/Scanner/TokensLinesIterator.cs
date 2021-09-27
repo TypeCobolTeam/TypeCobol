@@ -199,7 +199,7 @@ namespace TypeCobol.Compiler.Scanner
             // If document is empty, immediately return EndOfFile
             if (currentLine == null)
             {
-                return Token.END_OF_FILE;
+                return Token.EndOfFile();
             }
 
             // While we can find a next token
@@ -224,7 +224,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // return EndOfFile
                         currentLine = null;
-                        return Token.END_OF_FILE;
+                        return Token.EndOfFile();
                     }
                 }
                 // Check if the next token found matches the filter criteria

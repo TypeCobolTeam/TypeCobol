@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Get next token or EndOfFile
         /// </summary>
-            Token NextToken();
+        Token NextToken();
 
         /// <summary>
         /// Get null (before the first call to NextToken()), current token, or EndOfFile

@@ -101,10 +101,6 @@
     {
       "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1103830253336368444.cee\",\"diagnostics\":[]}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1103830253336368444.cee\",\"diagnostics\":[]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15875638528558720039.cee\"}}}",
