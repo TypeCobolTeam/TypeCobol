@@ -2130,7 +2130,7 @@ namespace TypeCobol.Compiler.Scanner
             // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
             // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR |
             // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
-            if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.COBOL_INTRINSIC_FUNCTIONS.IsMatch(tokenText))
+            if (tokensLine.ScanState.AfterFUNCTION && Functions.IntrinsicFunction.TryGet(tokenText, out _))
             {
                 tokenType = TokenType.IntrinsicFunctionName;
             }

@@ -92,6 +92,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool BeginCodeElement([NotNull] CodeElement codeElement);
         void EndCodeElement([NotNull] CodeElement codeElement);
 
+        bool BeginExpression([NotNull] Expression expression);
+        void EndExpression([NotNull] Expression expression);
 
         bool Visit([NotNull] AcceptStatement acceptStatement);
         bool Visit([NotNull] AcceptFromInputDeviceStatement acceptFromInputDeviceStatement);
@@ -409,6 +411,14 @@ namespace TypeCobol.Compiler.CodeElements
 
         public virtual void EndCodeElement(CodeElement codeElement) {
             
+        }
+
+        public virtual bool BeginExpression(Expression expression) {
+            return true;
+        }
+
+        public virtual void EndExpression(Expression expression) {
+
         }
 
         public virtual bool Visit(AcceptStatement acceptStatement) {

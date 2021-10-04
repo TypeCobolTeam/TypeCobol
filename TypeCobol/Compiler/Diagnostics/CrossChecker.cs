@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Functions;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
 
@@ -20,6 +21,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             _compilerOptions = compilerOptions;
             _searchTables = new Dictionary<Search, List<DataDefinition>>();
+            _expressions = new Stack<Expression>();
         }
 
         private readonly TypeCobolOptions _compilerOptions;
@@ -31,10 +33,18 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         private readonly Dictionary<Search, List<DataDefinition>> _searchTables;
 
+        /// <summary>
+        /// Keeps track of current visited expression and all its parent expressions.
+        /// </summary>
+        private readonly Stack<Expression> _expressions;
+
         //Holds a reference to the last section node visited as to know in which current section we are
         private Section _currentSection;
 
         private Node CurrentNode { get; set; }
+
+        private bool InsideArithmeticExpression => _expressions.Any(exp =>
+            exp.NodeType == ExpressionNodeType.NumericVariable || exp.NodeType == ExpressionNodeType.ArithmeticOperation);
 
         public override bool BeginNode(Node node)
         {
@@ -67,6 +77,18 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool BeginExpression(Expression expression)
+        {
+            _expressions.Push(expression);
+            return true;
+        }
+
+        public override void EndExpression(Expression expression)
+        {
+            System.Diagnostics.Debug.Assert(_expressions.Count > 0);
+            System.Diagnostics.Debug.Assert(_expressions.Peek() == expression);
+            _expressions.Pop();
+        }
 
         public override bool Visit(GlobalStorageSection globalStorageSection)
         {
@@ -77,7 +99,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool BeginCodeElement(CodeElement codeElement)
         {
             //This checker is only for Node after the full AST has been created
-            return false;
+            return true;
         }
 
         public override bool Visit(FunctionDeclaration functionDeclaration)
@@ -677,6 +699,37 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             DataDefinitionChecker.OnNode(dataDefinition);
+
+            return true;
+        }
+
+        private readonly HashSet<IntrinsicFunctionCall> _checkedIntrinsicFunctionCalls = new HashSet<IntrinsicFunctionCall>();
+
+        public override bool Visit(IntrinsicFunctionCall intrinsicFunctionCall)
+        {
+            if (_checkedIntrinsicFunctionCalls.Add(intrinsicFunctionCall))
+            {
+                var intrinsicFunction = IntrinsicFunction.Get(intrinsicFunctionCall.FunctionName);
+                switch (intrinsicFunction.FunctionType)
+                {
+                    case Functions.FunctionType.Alphanumeric:
+                    case Functions.FunctionType.National:
+                        //Text-functions are not allowed inside arithmetic expressions
+                        if (InsideArithmeticExpression)
+                        {
+                            DiagnosticUtils.AddError(CurrentNode, $"Non-numeric function '{intrinsicFunction.Name}' cannot be used in an arithmetic expression.");
+                        }
+                        break;
+                    case Functions.FunctionType.Numeric:
+                    case Functions.FunctionType.Integer:
+                        //Number-functions are allowed only inside arithmetic expressions
+                        if (!InsideArithmeticExpression)
+                        {
+                            DiagnosticUtils.AddError(CurrentNode, $"Numeric function '{intrinsicFunction.Name}' cannot be used here.");
+                        }
+                        break;
+                }
+            }
 
             return true;
         }
