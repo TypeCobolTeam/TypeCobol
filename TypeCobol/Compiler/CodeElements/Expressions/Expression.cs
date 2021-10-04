@@ -569,9 +569,11 @@ namespace TypeCobol.Compiler.CodeElements
 	public class NumericVariableOperand: ArithmeticExpression {
 		public NumericVariableOperand(IntegerVariable variable): base(ExpressionNodeType.NumericVariable) { IntegerVariable = variable; }
 		public NumericVariableOperand(NumericVariable variable): base(ExpressionNodeType.NumericVariable) { NumericVariable = variable; }
+		public NumericVariableOperand(FunctionCallResult integerOrNumericFunctionCallResult): base(ExpressionNodeType.NumericVariable) { FunctionCallResult = integerOrNumericFunctionCallResult; }
 
-		public IntegerVariable IntegerVariable { get; private set; }
-		public NumericVariable NumericVariable { get; private set; }
+		public IntegerVariable IntegerVariable { get; }
+		public NumericVariable NumericVariable { get; }
+		public FunctionCallResult FunctionCallResult { get; }
 
         protected override bool CheckEquivalence(Expression other)
         {
@@ -579,7 +581,8 @@ namespace TypeCobol.Compiler.CodeElements
             var otherNumericVariableOperand = (NumericVariableOperand) other;
             
             return string.Equals(IntegerVariable?.ToString(), otherNumericVariableOperand.IntegerVariable?.ToString(), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(NumericVariable?.ToString(), otherNumericVariableOperand.NumericVariable?.ToString(), StringComparison.OrdinalIgnoreCase);
+                   && string.Equals(NumericVariable?.ToString(), otherNumericVariableOperand.NumericVariable?.ToString(), StringComparison.OrdinalIgnoreCase)
+                   && string.Equals(FunctionCallResult?.ToString(), otherNumericVariableOperand.FunctionCallResult?.ToString(), StringComparison.OrdinalIgnoreCase);
         }
 
         public override (Expression, Expression) GetOperands()
@@ -590,12 +593,13 @@ namespace TypeCobol.Compiler.CodeElements
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
-                && this.ContinueVisitToChildren(astVisitor, IntegerVariable, NumericVariable);
+                && this.ContinueVisitToChildren(astVisitor, IntegerVariable, NumericVariable, FunctionCallResult);
         }
 
         public override string ToString() {
 			if (IntegerVariable != null) return IntegerVariable.ToString();
-			return NumericVariable.ToString();
+            if (NumericVariable != null) return NumericVariable.ToString();
+			return FunctionCallResult.ToString();
 		}
 	}
 

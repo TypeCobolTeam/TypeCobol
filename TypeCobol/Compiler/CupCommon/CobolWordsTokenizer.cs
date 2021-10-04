@@ -575,7 +575,8 @@ namespace TypeCobol.Compiler.CupCommon
 
                 // Symbols
                 case TokenType.SectionParagraphName:
-                case TokenType.IntrinsicFunctionName:
+                case TokenType.IntrinsicTextFunctionName:
+                case TokenType.IntrinsicNumericFunctionName:
                 case TokenType.ExecTranslatorName:
                 case TokenType.PartialCobolWord:
                 case TokenType.UserDefinedWord:

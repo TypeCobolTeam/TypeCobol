@@ -242,7 +242,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.PictureCharacterString:
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
-                    case TokenType.IntrinsicFunctionName:
+                    case TokenType.IntrinsicTextFunctionName:
+                    case TokenType.IntrinsicNumericFunctionName:
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
@@ -328,7 +329,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.PictureCharacterString:
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
-                    case TokenType.IntrinsicFunctionName:
+                    case TokenType.IntrinsicTextFunctionName:
+                    case TokenType.IntrinsicNumericFunctionName:
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
@@ -379,7 +381,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.PictureCharacterString:
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
-                    case TokenType.IntrinsicFunctionName:
+                    case TokenType.IntrinsicTextFunctionName:
+                    case TokenType.IntrinsicNumericFunctionName:
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
@@ -513,7 +516,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens :
     /// UserDefinedWord
-    /// IntrinsicFunctionName | LENGTH | RANDOM | WHEN_COMPILED
+    /// IntrinsicFunctionName (text or numeric) | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
     /// </summary>
     public class EnumeratedValue : AlphanumericValue
@@ -526,7 +529,8 @@ namespace TypeCobol.Compiler.CodeElements
             switch (Token.TokenType)
             {
                 case TokenType.UserDefinedWord:
-                case TokenType.IntrinsicFunctionName:
+                case TokenType.IntrinsicTextFunctionName:
+                case TokenType.IntrinsicNumericFunctionName:
                 case TokenType.LENGTH:
                 case TokenType.RANDOM:
                 case TokenType.WHEN_COMPILED:

@@ -90,7 +90,8 @@ terminal TypeCobol.Compiler.Scanner.Token CommentEntry;
 terminal TypeCobol.Compiler.Scanner.Token ExecStatementText;
 // Symbols
 terminal TypeCobol.Compiler.Scanner.Token SectionParagraphName;
-terminal TypeCobol.Compiler.Scanner.Token IntrinsicFunctionName;
+terminal TypeCobol.Compiler.Scanner.Token IntrinsicTextFunctionName;
+terminal TypeCobol.Compiler.Scanner.Token IntrinsicNumericFunctionName;
 terminal TypeCobol.Compiler.Scanner.Token ExecTranslatorName;
 terminal TypeCobol.Compiler.Scanner.Token PartialCobolWord;
 terminal TypeCobol.Compiler.Scanner.Token UserDefinedWord;
@@ -723,7 +724,6 @@ non terminal TypeCobol.Compiler.Scanner.Token libraryName;
 non terminal TypeCobol.Compiler.CupCommon.QualifiedTextName qualifiedTextName;
 non terminal TypeCobol.Compiler.Scanner.Token assignmentName;
 non terminal TypeCobol.Compiler.Scanner.Token assignmentNameOrFileNameReference;
-//non terminal TypeCobol.Compiler.Scanner.Token intrinsicFunctionName;
 non terminal TypeCobol.Compiler.Scanner.Token execTranslatorName;
 non terminal TypeCobol.Compiler.Scanner.Token controlCblOption;
 non terminal TypeCobol.Compiler.Scanner.Token recordingMode;

@@ -579,28 +579,33 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        public void Check(CodeElementsParser.FunctionIdentifierContext context)
+        public void Check(CodeElementsParser.UserDefinedFunctionCallContext context)
         {
             if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
 
-            //User-defined function call
-            if (context.userDefinedFunctionCall() != null)
-            {
-                AddError(context.userDefinedFunctionCall().functionNameReference(), "calling user-defined function is not supported.");
-            }
+            //User-defined functions not allowed
+            AddError(context.functionNameReference(), "calling user-defined function is not supported.");
+        }
 
+        public void Check(CodeElementsParser.IntrinsicTextFunctionCallContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+            CheckEmptyBracketsSyntax(context.LeftParenthesisSeparator(), context.argument(), context.RightParenthesisSeparator(), context, context.IntrinsicTextFunctionName());
+        }
+
+        public void Check(CodeElementsParser.IntrinsicNumericFunctionCallContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+            CheckEmptyBracketsSyntax(context.LeftParenthesisSeparator(), context.argument(), context.RightParenthesisSeparator(), context, context.IntrinsicNumericFunctionName());
+        }
+
+        private void CheckEmptyBracketsSyntax(ITerminalNode leftParenthesis, CodeElementsParser.ArgumentContext[] arguments, ITerminalNode rightParenthesis, ParserRuleContextWithDiagnostics callContext, ITerminalNode intrinsicFunctionName)
+        {
             //Use of 'FUNCTION func1()' instead of 'FUNCTION func1'
-            //Do not check for user-defined function calls as they would already get an error
-            if (context.intrinsicFunctionCall() != null)
+            if (leftParenthesis != null && rightParenthesis != null && arguments.Length == 0)
             {
-                var intrinsicFunctionCall = context.intrinsicFunctionCall();
-                if (intrinsicFunctionCall.LeftParenthesisSeparator() != null
-                    && intrinsicFunctionCall.RightParenthesisSeparator() != null
-                    && intrinsicFunctionCall.argument().Length == 0)
-                {
-                    var name = intrinsicFunctionCall.IntrinsicFunctionName().GetText();
-                    AddError(intrinsicFunctionCall, $"using empty brackets is not allowed, use 'FUNCTION {name}'.", intrinsicFunctionCall.IntrinsicFunctionName());
-                }
+                var name = intrinsicFunctionName.GetText();
+                AddError(callContext, $"using empty brackets is not allowed, use 'FUNCTION {name}'.", intrinsicFunctionName);
             }
         }
 

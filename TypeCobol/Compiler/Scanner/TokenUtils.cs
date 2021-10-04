@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Scanner
 {
     internal static class TokenUtils
     {
-
         static TokenUtils()
         {
             // Map token types to token families
@@ -137,8 +133,6 @@ namespace TypeCobol.Compiler.Scanner
             return tokenType;
         }
 
-        public static Regex COBOL_INTRINSIC_FUNCTIONS = new Regex("^(ACOS|ANNUITY|ASIN|ATAN|CHAR|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|FACTORIAL|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|ORD|ORD-MAX|ORD-MIN|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         public static string GetDisplayNameForTokenFamily(TokenFamily tokenFamily)
         {
             switch (tokenFamily)
@@ -264,7 +258,8 @@ namespace TypeCobol.Compiler.Scanner
                         return "exec statement text";
                     case TokenType.SectionParagraphName:
                         return "section or pargraph name";
-                    case TokenType.IntrinsicFunctionName:
+                    case TokenType.IntrinsicTextFunctionName:
+                    case TokenType.IntrinsicNumericFunctionName:
                         return "intrinsic function name";
                     case TokenType.ExecTranslatorName:
                         return "exec translator name";

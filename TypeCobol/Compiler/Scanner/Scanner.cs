@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,6 +9,7 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Functions;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -2118,21 +2120,27 @@ namespace TypeCobol.Compiler.Scanner
                 }
             }
 
-            // Compute token type : keyword, intrinsic fonction name, symbolic character or user defined word ?
-            TokenType tokenType = TokenType.UserDefinedWord;
+            // Compute token type : keyword, intrinsic function name, symbolic character or user defined word ?
+            TokenType tokenType;
             string tokenText = line.Substring(startIndex, endIndex - startIndex + 1);
 
-            //IntrinsicFunctionName = 34,
+            //IntrinsicTextFunctionName = 36 and IntrinsicNumericFunctionName = 37
             // p477: function-name-1 must be one of the intrinsic function names.
-            // ACOS | ANNUITY | ASIN | ATAN | CHAR | COS | CURRENT_DATE | DATE_OF_INTEGER | DATE_TO_YYYYMMDD |
-            // DAY_OF_INTEGER | DAY_TO_YYYYDDD | DISPLAY_OF | FACTORIAL | INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY |
-            // INTEGER_PART | LENGTH | LOG | LOG10 | LOWER_CASE | MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
-            // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
-            // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR |
-            // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
-            if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.COBOL_INTRINSIC_FUNCTIONS.IsMatch(tokenText))
+            if (tokensLine.ScanState.AfterFUNCTION && IntrinsicFunction.TryGet(tokenText, out var intrinsicFunction))
             {
-                tokenType = TokenType.IntrinsicFunctionName;
+                switch (intrinsicFunction.FunctionType)
+                {
+                    case FunctionType.Alphanumeric:
+                    case FunctionType.National:
+                        tokenType = TokenType.IntrinsicTextFunctionName;
+                        break;
+                    case FunctionType.Numeric:
+                    case FunctionType.Integer:
+                        tokenType = TokenType.IntrinsicNumericFunctionName;
+                        break;
+                    default:
+                        throw new NotSupportedException($"Function type '{intrinsicFunction.FunctionType}' is unknown.");
+                }
             }
             else if (tokensLine.ScanState.InsideFormalizedComment)
             {

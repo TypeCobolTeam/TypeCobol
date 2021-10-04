@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -264,22 +265,50 @@ namespace TypeCobol.Compiler.Parser
 
 		// - 3. Function calls (allocate a storage area for the result) -
 
-        internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
+        internal FunctionCallResult CreateFunctionIdentifier(CodeElementsParser.AlphanumericOrNationalFunctionIdentifierContext context)
         {
-            // Create function call
             FunctionCall functionCall;
             SymbolReference callTargetReference;
-            if (context.intrinsicFunctionCall() != null)
+            if (context.intrinsicTextFunctionCall() != null)
             {
-                functionCall = CreateIntrinsicFunctionCall(context.intrinsicFunctionCall());
-                callTargetReference = null;  //TODO : define symbol reference for IntrinsicFunctionName ?
+                functionCall = CreateIntrinsicTextFunctionCall(context.intrinsicTextFunctionCall());
+                callTargetReference = new SymbolReference(Functions.IntrinsicFunction.Get(functionCall.FunctionName));
+				LanguageLevelChecker.Check(context.intrinsicTextFunctionCall());
+			}
+            else
+            {
+				Debug.Assert(context.userDefinedFunctionCall() != null);
+				functionCall = CreateUserDefinedFunctionCall(context.userDefinedFunctionCall());
+                callTargetReference = ((UserDefinedFunctionCall) functionCall).UserDefinedFunctionName;
+				LanguageLevelChecker.Check(context.userDefinedFunctionCall());
+			}
+
+            return CreateFunctionIdentifier(functionCall, callTargetReference);
+        }
+
+        internal FunctionCallResult CreateFunctionIdentifier(CodeElementsParser.NumericOrIntegerFunctionIdentifierContext context)
+        {
+            FunctionCall functionCall;
+            SymbolReference callTargetReference;
+            if (context.intrinsicNumericFunctionCall() != null)
+            {
+                functionCall = CreateIntrinsicNumericFunctionCall(context.intrinsicNumericFunctionCall());
+				callTargetReference = new SymbolReference(Functions.IntrinsicFunction.Get(functionCall.FunctionName));
+				LanguageLevelChecker.Check(context.intrinsicNumericFunctionCall());
             }
             else
             {
+                Debug.Assert(context.userDefinedFunctionCall() != null);
                 functionCall = CreateUserDefinedFunctionCall(context.userDefinedFunctionCall());
                 callTargetReference = ((UserDefinedFunctionCall) functionCall).UserDefinedFunctionName;
+                LanguageLevelChecker.Check(context.userDefinedFunctionCall());
             }
 
+            return CreateFunctionIdentifier(functionCall, callTargetReference);
+		}
+
+        private FunctionCallResult CreateFunctionIdentifier(FunctionCall functionCall, SymbolReference callTargetReference)
+        {
             // Register call parameters (shared storage areas) information at the CodeElement level
             var callSite = new CallSite()
                            {
@@ -287,9 +316,6 @@ namespace TypeCobol.Compiler.Parser
                                Parameters = functionCall.Arguments
                            };
             this.callSites.Add(callSite);
-
-            //Check allowed syntax
-            LanguageLevelChecker.Check(context);
 
             // Create storage area for result
             if (functionCall.FunctionName != null && functionCall.FunctionNameToken != null)
@@ -303,16 +329,25 @@ namespace TypeCobol.Compiler.Parser
             }
 
             return null;
-        }
-
-        [NotNull]
-        internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
-			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicFunctionName());
-			return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
 		}
 
         [NotNull]
-        internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context) {
+        internal IntrinsicFunctionCall CreateIntrinsicTextFunctionCall(CodeElementsParser.IntrinsicTextFunctionCallContext context)
+        {
+            var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicTextFunctionName());
+            return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
+		}
+
+        [NotNull]
+        internal IntrinsicFunctionCall CreateIntrinsicNumericFunctionCall(CodeElementsParser.IntrinsicNumericFunctionCallContext context)
+        {
+            var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicNumericFunctionName());
+            return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
+		}
+
+        [NotNull]
+        internal UserDefinedFunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context)
+        {
 			var name = CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference());
 			return new UserDefinedFunctionCall(name, CreateArguments(context.argument()));
 		}
@@ -369,7 +404,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 			else
 			{
-				return CreateFunctionIdentifier(context.functionIdentifier());
+				return CreateFunctionIdentifier(context.alphanumericOrNationalFunctionIdentifier());
 			}
 		}
 
@@ -521,6 +556,12 @@ namespace TypeCobol.Compiler.Parser
 				return new NumericVariableOperand(
 					CreateNumericVariable(context.numericVariable3()));
 			}
+
+            if (context.numericOrIntegerFunctionIdentifier() != null)
+            {
+                return new NumericVariableOperand(
+                    CreateFunctionIdentifier(context.numericOrIntegerFunctionIdentifier()));
+            }
 
 			SyntaxProperty<ArithmeticOperator> arithmeticOperator = null;
 			if (context.PlusOperator() != null)

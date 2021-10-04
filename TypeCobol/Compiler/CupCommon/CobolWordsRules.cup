@@ -1333,7 +1333,7 @@ assignmentNameOrFileNameReference ::= externalNameOrSymbolReference5:n
 	{: RESULT = n; :}
 	;
 
-/*
+
 // ** Runtime functions **
 
 // NB : Because FunctionNames are not reserved words,
@@ -1366,10 +1366,6 @@ assignmentNameOrFileNameReference ::= externalNameOrSymbolReference5:n
 //	WHEN_COMPILED |
 //	YEAR_TO_YYYY;
 
-intrinsicFunctionName ::= IntrinsicFunctionName:n
-	{: RESULT = n; :}
-	;
-*/
 
 // IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf
 // p423: To communicate with DB2, do these steps:

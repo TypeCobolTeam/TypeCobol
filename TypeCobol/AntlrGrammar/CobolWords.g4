@@ -84,7 +84,8 @@ tokens
     ExecStatementText,
     // Symbols
     SectionParagraphName,
-    IntrinsicFunctionName,
+    IntrinsicTextFunctionName,
+    IntrinsicNumericFunctionName,
     ExecTranslatorName,
     PartialCobolWord,
     UserDefinedWord,
@@ -1531,7 +1532,6 @@ assignmentNameOrFileNameReference : externalNameOrSymbolReference5;
 //	WHEN_COMPILED |
 //	YEAR_TO_YYYY;
 
-intrinsicFunctionName: IntrinsicFunctionName;
 */
 // IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf
 // p423: To communicate with DB2, do these steps:
@@ -1631,7 +1631,8 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 
     // Symbols
     SectionParagraphName |
-    IntrinsicFunctionName |
+    IntrinsicTextFunctionName |
+    IntrinsicNumericFunctionName |
     ExecTranslatorName |
     PartialCobolWord |
     UserDefinedWord |

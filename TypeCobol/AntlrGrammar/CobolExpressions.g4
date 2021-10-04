@@ -249,8 +249,14 @@ lengthOfSpecialRegister:
 
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
-functionIdentifier: 
-	FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+// We distinguish text functions from numeric functions directly in the grammar
+// because numeric functions are allowed only in arithmetic expressions
+alphanumericOrNationalFunctionIdentifier:
+	FUNCTION IntrinsicTextFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+	
+numericOrIntegerFunctionIdentifier:
+	FUNCTION IntrinsicNumericFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
@@ -284,7 +290,7 @@ storageAreaReference:
 otherStorageAreaReference: 
 	  specialRegisterReference
 	| autoAllocatedDataItemReference /* LINAGE-COUNTER, ADDRESS OF, LENGTH OF special registers */
-	| functionIdentifier;
+	| alphanumericOrNationalFunctionIdentifier;
 
 // [Type ambiguity] : storageAreaReference and conditionReference cannot be distinguished at this parsing stage
 storageAreaReferenceOrConditionReference:
@@ -525,6 +531,7 @@ arithmeticExpression:
 	|<assoc=right> arithmeticExpression PowerOperator arithmeticExpression
 	|  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression
 	|  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression
+	|  numericOrIntegerFunctionIdentifier
 	|  numericVariable3;
 
 

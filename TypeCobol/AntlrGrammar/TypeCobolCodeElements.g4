@@ -79,9 +79,11 @@ libraryCopy: SERVICE ID? IS? qualifiedTextName PeriodSeparator?; // TCRFUN_LIBRA
 
 
 // rules modified to support user defined functions (of arity 0..n)
-functionIdentifier: intrinsicFunctionCall | userDefinedFunctionCall;
-intrinsicFunctionCall: FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?; // argument* instead of argument+ to enable good error messages
-userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
+alphanumericOrNationalFunctionIdentifier: intrinsicTextFunctionCall    | userDefinedFunctionCall;
+numericOrIntegerFunctionIdentifier:       intrinsicNumericFunctionCall | userDefinedFunctionCall;
+intrinsicTextFunctionCall:    FUNCTION IntrinsicTextFunctionName    (LeftParenthesisSeparator argument* RightParenthesisSeparator)?; // argument* instead of argument+ to enable good error messages
+intrinsicNumericFunctionCall: FUNCTION IntrinsicNumericFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?; // argument* instead of argument+ to enable good error messages
+userDefinedFunctionCall:      FUNCTION functionNameReference        (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 
 // - TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
 // - TCRFUN_DOTS

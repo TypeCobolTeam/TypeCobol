@@ -155,10 +155,10 @@ namespace TypeCobol.Compiler.Parser
         }
 
         [CanBeNull]
-        internal EnumeratedValue CreateEnumeratedValue(ITerminalNode intrinsicFunctionName, Type enumType)
+        internal EnumeratedValue CreateEnumeratedValue(ITerminalNode nameTerminalNode, Type enumType)
         {
-            if (intrinsicFunctionName == null) return null;
-            Token valueToken = ParseTreeUtils.GetTokenFromTerminalNode(intrinsicFunctionName);
+            if (nameTerminalNode == null) return null;
+            Token valueToken = ParseTreeUtils.GetTokenFromTerminalNode(nameTerminalNode);
             return valueToken != null ? new EnumeratedValue(valueToken, enumType) : null;
         }
 
@@ -417,9 +417,9 @@ namespace TypeCobol.Compiler.Parser
         }
         
         [CanBeNull]
-        internal ExternalName CreateExternalName(ITerminalNode intrinsicFunctionName, SymbolType symbolType, Type enumType)
+        internal ExternalName CreateExternalName(ITerminalNode nameTerminalNode, SymbolType symbolType, Type enumType)
         {
-            AlphanumericValue nameLiteral = CreateEnumeratedValue(intrinsicFunctionName, enumType);
+            AlphanumericValue nameLiteral = CreateEnumeratedValue(nameTerminalNode, enumType);
             return CreateExternalName(nameLiteral, symbolType);
         }
 
