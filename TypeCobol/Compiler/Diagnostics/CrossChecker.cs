@@ -989,10 +989,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 var subscriptLiteral = subscriptNumeric.IntegerVariable.Value;
 
-                //Check the value against the min
-                if (subscriptLiteral.Value < tableDefinition.MinOccurencesCount)
+                //Check the value against the first allowed index
+                if (subscriptLiteral.Value < 1)
                 {
-                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' is below the minimum occurrence count '{tableDefinition.MinOccurencesCount}' of the table.", subscriptLiteral.Token);
+                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' is invalid. Subscript must be a strictly positive integer.", subscriptLiteral.Token);
                 }
 
                 //Check the value against the max

@@ -13,6 +13,10 @@
        01 tab3.
           05 oc1 occurs unbounded.
              10 item PIC X.
+       01 tab4.
+          05 max-val pic 99.
+          05 oc1 occurs 3 to 10 depending on max-val.
+             10 item PIC X.
        01 notATable.
           05 group1.
              10 item PIC X.
@@ -26,6 +30,7 @@
            MOVE item OF tab2 (10, 20, 30) TO elt
            MOVE item OF tab2 (10 20 30)   TO elt
            MOVE item OF tab3 (9999999999) TO elt
+           MOVE item OF tab4 (1)          TO elt
       *KO
            MOVE item OF tab1 (0)          TO elt
            MOVE item OF tab1 (-20)        TO elt
@@ -36,6 +41,7 @@
            MOVE item of tab2 (1)          TO elt
            MOVE item of tab1 (1 2)        TO elt
            MOVE item of tab2 (1 2 3 4)    TO elt
+           MOVE item OF tab4 (20)          TO elt
            GOBACK
            .
        END PROGRAM Subscripts.
