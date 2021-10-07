@@ -39,7 +39,7 @@
     },
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":29,\"character\":8},\"end\":{\"line\":29,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: a End statement is not aligned with the matching opening statement\"}]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[]}}"
     },
     {
         "category": 0,
@@ -51,7 +51,7 @@
     },
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":8},\"end\":{\"line\":30,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: a End statement is not aligned with the matching opening statement\"}]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[]}}"
     },
     {
         "category": 0,
@@ -63,7 +63,7 @@
     },
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":8},\"end\":{\"line\":30,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: a End statement is not aligned with the matching opening statement\"}]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[]}}"
     },
     {
         "category": 0,
@@ -75,7 +75,7 @@
     },
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":31,\"character\":8},\"end\":{\"line\":31,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: a End statement is not aligned with the matching opening statement\"}]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52983195727914253385.cee\",\"diagnostics\":[]}}"
     },
     {
         "category": 0,

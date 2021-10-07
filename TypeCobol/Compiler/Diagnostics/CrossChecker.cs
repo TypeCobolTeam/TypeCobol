@@ -699,7 +699,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 CodeElement parentCodeElement = end.Parent.CodeElement; ;
                 if (parentCodeElement?.IsInsideCopy() == false && end.IsInsideCopy() == false)
                 {
-                    CheckEndNode(parentCodeElement, end.CodeElement);
+                    CheckEndNode(parentCodeElement, end);
                 }
             }
             return true;
@@ -714,7 +714,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
                 {
                     Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
-                    CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
+                    CheckEndNode(openingDeclareToken, functionEnd);
                 }
             }
             return true;
@@ -1129,13 +1129,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
-        private void CheckEndNode([CanBeNull]IToken openingToken, CodeElement endCodeElement)
+        private void CheckEndNode([CanBeNull]IToken openingToken, Node endNode)
         {
+            System.Diagnostics.Debug.Assert(endNode is End || endNode is FunctionEnd);
+            System.Diagnostics.Debug.Assert(endNode.CodeElement != null);
+
             // Check end statement is aligned with the matching opening statement
+            var endCodeElement = endNode.CodeElement;
             if (openingToken != null && openingToken.Line != endCodeElement.Line &&
                 openingToken.StartIndex != endCodeElement.StartIndex)
             {
-                DiagnosticUtils.AddError(endCodeElement,
+                DiagnosticUtils.AddError(endNode,
                     "a End statement is not aligned with the matching opening statement",
                     _compilerOptions.CheckEndAlignment.GetMessageCode());
             }
