@@ -55,6 +55,11 @@ namespace TypeCobol.Analysis.Cfg
             /// For instance in COBOL EVALUATE Context has all WHEN and WHENOTHER as sub contexts.
             /// </summary>
             public IList<IMultiBranchContext<Node, D>> SubContexts { get; internal set; }
+            /// <summary>
+            /// The Iso Cloned RElocated BlockNode Map: Map Original Block Index to their Cloned and relocated Block Index, for instance block of
+            /// target Paragraph cloned and relocated for a PERFORM instruction target.
+            /// </summary>
+            internal IDictionary<int, int> IsoClonedRelocatedMap { get; set; }
 
             private BasicBlock<Node, D> RootBlockForEnd;
 
@@ -217,6 +222,21 @@ namespace TypeCobol.Analysis.Cfg
                         AddTerminalSuccessorEdge(cfg, (BasicBlockForNode)cfg.SuccessorEdges[s], nbIndex, visitedBlockIndex);
                     }
                 }
+            }
+
+            /// <summary>
+            /// <inheritdoc/>
+            /// </summary>
+            public int GetRelocatedBlockIndex(int initialIndex)
+            {
+                if (this.IsoClonedRelocatedMap != null)
+                {
+                    if (this.IsoClonedRelocatedMap.TryGetValue(initialIndex, out var duplicateIndex))
+                    {
+                        return duplicateIndex;
+                    }
+                }
+                return -1;
             }
         }
     }

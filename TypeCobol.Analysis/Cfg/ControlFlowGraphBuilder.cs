@@ -1158,6 +1158,10 @@ namespace TypeCobol.Analysis.Cfg
                     clonedBlock.SuccessorEdges.Add(clonedEdge);
                 }
 
+                if (clonedBlock.Context != null)
+                {
+                    ((MultiBranchContext)clonedBlock.Context).IsoClonedRelocatedMap = clonedBlocksIndexMap;
+                }
                 if (blockGoesBeyondGroupLimit)
                 {
                     Node offendingInstruction = clonedBlock.Instructions.Last.Value;

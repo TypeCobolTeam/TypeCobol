@@ -46,5 +46,13 @@ namespace TypeCobol.Analysis.Graph
         /// For instance in COBOL EVALUATE Context has all WHEN and WHENOTHER as sub contexts.
         /// </summary>
         IList<IMultiBranchContext<N, D>> SubContexts { get; }
+        /// <summary>
+        /// Get the relocated block index created from the given initial block index.
+        /// A relocated block index is the block index of a duplicated block node, where the initial block node was part
+        /// of a BasicBlockForNode corresponding to a target paragraph or section of a PERFORM instruction.
+        /// </summary>
+        /// <param name="initialIndex">The initial Block Index</param>
+        /// <returns>The block index after relocation if any -1 otherwise</returns>
+        int GetRelocatedBlockIndex(int initialIndex);
     }
 }
