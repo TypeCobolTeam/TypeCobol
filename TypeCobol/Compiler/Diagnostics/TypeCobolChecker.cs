@@ -637,7 +637,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (functions.Count > 1)
             {
                 Token nameToken = header.FunctionName.NameLiteral.Token;
-                DiagnosticUtils.AddError(header,
+                DiagnosticUtils.AddError(functionDeclaration,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
                     headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
             }
