@@ -54,5 +54,10 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="initialIndex">The initial Block Index</param>
         /// <returns>The block index after relocation if any -1 otherwise</returns>
         int GetRelocatedBlockIndex(int initialIndex);
+        /// <summary>
+        /// Get the collection of all original block indexes that have been relocated in this contexet.
+        /// </summary>
+        /// <returns>The collection if any, null otherwise</returns>
+        ICollection<int> GetOriginalRelocatedBlockIndexes();
     }
 }

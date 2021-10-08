@@ -1160,7 +1160,8 @@ namespace TypeCobol.Analysis.Cfg
 
                 if (clonedBlock.Context != null)
                 {
-                    ((MultiBranchContext)clonedBlock.Context).IsoClonedRelocatedMap = clonedBlocksIndexMap;
+                    clonedBlock.Context = (IMultiBranchContext<Node, D>)((MultiBranchContext)clonedBlock.Context).Clone();
+                    ((MultiBranchContext)clonedBlock.Context).ClonedRelocatedMap = clonedBlocksIndexMap;
                 }
                 if (blockGoesBeyondGroupLimit)
                 {

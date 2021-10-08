@@ -9,7 +9,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The context of a Multi Branch instruction like IF or Evaluate.
         /// </summary>
-        internal class MultiBranchContext : IMultiBranchContext<Node, D>
+        internal class MultiBranchContext : IMultiBranchContext<Node, D>, System.ICloneable
         {
             /// <summary>
             /// Origin block before multi branches
@@ -56,10 +56,10 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             public IList<IMultiBranchContext<Node, D>> SubContexts { get; internal set; }
             /// <summary>
-            /// The Iso Cloned RElocated BlockNode Map: Map Original Block Index to their Cloned and relocated Block Index, for instance block of
+            /// The Iso Cloned Relocated BlockNode Map: Map Original Block Index to their Cloned and relocated Block Index, for instance block of
             /// target Paragraph cloned and relocated for a PERFORM instruction target.
             /// </summary>
-            internal IDictionary<int, int> IsoClonedRelocatedMap { get; set; }
+            internal IDictionary<int, int> ClonedRelocatedMap { get; set; }
 
             private BasicBlock<Node, D> RootBlockForEnd;
 
@@ -229,14 +229,27 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             public int GetRelocatedBlockIndex(int initialIndex)
             {
-                if (this.IsoClonedRelocatedMap != null)
+                if (this.ClonedRelocatedMap != null)
                 {
-                    if (this.IsoClonedRelocatedMap.TryGetValue(initialIndex, out var duplicateIndex))
+                    if (this.ClonedRelocatedMap.TryGetValue(initialIndex, out var duplicateIndex))
                     {
                         return duplicateIndex;
                     }
                 }
                 return -1;
+            }
+
+            /// <summary>
+            /// <inheritdoc/>
+            /// </summary>
+            public ICollection<int> GetOriginalRelocatedBlockIndexes()
+            {
+                return this.ClonedRelocatedMap?.Keys;
+            }
+
+            public object Clone()
+            {
+                return base.MemberwiseClone();
             }
         }
     }
