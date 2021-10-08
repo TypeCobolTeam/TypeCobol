@@ -692,16 +692,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public override bool Visit(SourceComputer sourceComputer)
-        {
-            if (sourceComputer.CodeElement.DebuggingMode?.Value == true)
-            {
-                Token token = sourceComputer.CodeElement.DebuggingMode.Token;
-                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning);
-            }
-            return true;
-        }
-
         /// <summary>
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>

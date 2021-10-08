@@ -1,4 +1,6 @@
 ﻿--- Diagnostics ---
+Line 22[33,41] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[33,41:DEBUGGING]<DEBUGGING>
+Line 23[38,46] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[38,46:DEBUGGING]<DEBUGGING>
 Line 55[22,23] <27, Error, Syntax> - Syntax error : Empty string cannot be used as currency symbol.
 Line 56[43,44] <27, Error, Syntax> - Syntax error : Empty string cannot be used as currency symbol.
 Line 57[17,27] <27, Error, Syntax> - Syntax error : Currency symbol must be one single character.

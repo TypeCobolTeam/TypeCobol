@@ -315,9 +315,11 @@ namespace TypeCobol.Compiler.Parser
 			}
 
 			if (context.DEBUGGING() != null)
-			{
-				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
+            {
+                var debuggingToken = ParseTreeUtils.GetFirstToken(context.DEBUGGING());
+				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, debuggingToken);
 				IsDebuggingModeEnabled = true;
+				DiagnosticUtils.AddError(paragraph, "Debugging mode is active", debuggingToken, null, MessageCode.Warning);
 			}
 
 			Context = context;
