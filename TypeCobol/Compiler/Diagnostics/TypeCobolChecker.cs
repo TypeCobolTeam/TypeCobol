@@ -629,7 +629,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             CheckNoGlobalOrExternal(functionDeclaration.Get<DataDivision>("data-division"));
             CheckNoLinkageItemIsAParameter(functionDeclaration.Get<LinkageSection>("linkage"), header.Profile);
-
+            CheckNoUsingProcedureDiv(functionDeclaration.Get<ProcedureDivision>("procedure-division"));
             CheckParameters(header.Profile, functionDeclaration);
 
             var headerNameURI = new URI(header.Name);
@@ -717,6 +717,17 @@ namespace TypeCobol.Compiler.Diagnostics
                     continue;
                 }
             }
+        }
+
+        /// <summary>
+        /// TCRFUN_DECLARATION_NO_USING
+        /// </summary>
+        private static void CheckNoUsingProcedureDiv(ProcedureDivision node)
+        {
+            if (node == null) return; //No procedure division
+
+            if (node.CodeElement.UsingParameters != null && node.CodeElement.UsingParameters.Count > 0)
+                DiagnosticUtils.AddError(node, "TypeCobol procedure cannot declare parameters on its procedure division.");
         }
 
         private static void AddEntries(List<DataDefinition> linkage, LinkageSection node)
