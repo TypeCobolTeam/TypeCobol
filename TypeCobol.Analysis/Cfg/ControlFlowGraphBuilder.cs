@@ -1088,6 +1088,11 @@ namespace TypeCobol.Analysis.Cfg
                         //Each block is cloned before being entered in the group
                         //because each group is tied to a specific PERFORM.
                         var clonedBlock = (BasicBlockForNode) block.Clone();
+                        if (clonedBlock.Context != null)
+                        { //Clone any MultiBranchContext instance and set associated Cloned Block Indexes map.
+                            clonedBlock.Context = (IMultiBranchContext<Node, D>)((MultiBranchContext)clonedBlock.Context).Clone();
+                            ((MultiBranchContext)clonedBlock.Context).ClonedRelocatedMap = clonedBlocksIndexMap;
+                        }
                         group.AddBlock(clonedBlock);
                         clonedBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
                         this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(clonedBlock);
@@ -1158,11 +1163,6 @@ namespace TypeCobol.Analysis.Cfg
                     clonedBlock.SuccessorEdges.Add(clonedEdge);
                 }
 
-                if (clonedBlock.Context != null)
-                {
-                    clonedBlock.Context = (IMultiBranchContext<Node, D>)((MultiBranchContext)clonedBlock.Context).Clone();
-                    ((MultiBranchContext)clonedBlock.Context).ClonedRelocatedMap = clonedBlocksIndexMap;
-                }
                 if (blockGoesBeyondGroupLimit)
                 {
                     Node offendingInstruction = clonedBlock.Instructions.Last.Value;
