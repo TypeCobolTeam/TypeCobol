@@ -488,27 +488,30 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //Check if Strict Typedef declaration uses Sync clause
-            if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.InsideTypedef) &&
-                dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+            if (dataDefinition.SemanticData != null)
             {
-                //Typedef instruction => check if it's marked Strict
-                if (dataDefinition.SemanticData.Kind == Symbol.Kinds.Typedef && dataDefinition.SemanticData.HasFlag(Symbol.Flags.Strict))
+                if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.InsideTypedef) &&
+                    dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
                 {
-                    DiagnosticUtils.AddError(dataDefinition, $"Cannot declare Type definition {dataDefinition.Name} with Sync clause because it is Strict.");
-                }
-                //Variable inside Typedef => check if parent typedef is marked Strict
-                else if (dataDefinition.SemanticData.NearestParent(Symbol.Kinds.Typedef).HasFlag(Symbol.Flags.Strict))
-                {
-                    DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} is part of a declaration using Sync clause in Strict Type definition {dataDefinition.ParentTypeDefinition?.Name}.");
-                }
+                    //Typedef instruction => check if it's marked Strict
+                    if (dataDefinition.SemanticData.Kind == Symbol.Kinds.Typedef && dataDefinition.SemanticData.HasFlag(Symbol.Flags.Strict))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition, $"Cannot declare Type definition {dataDefinition.Name} with Sync clause because it is Strict.");
+                    }
+                    //Variable inside Typedef => check if parent typedef is marked Strict
+                    else if (dataDefinition.SemanticData.NearestParent(Symbol.Kinds.Typedef).HasFlag(Symbol.Flags.Strict))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} is part of a declaration using Sync clause in Strict Type definition {dataDefinition.ParentTypeDefinition?.Name}.");
+                    }
 
-            }
-            //Check if variable of user defined Strict Type is declared or has a parent declared with Sync clause (flag is inherited so no need to iterate through parents)
-            else if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.HasATypedefType) && 
-                dataDefinition.TypeDefinition?.RestrictionLevel == RestrictionLevel.STRICT &&
-                dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
-            {
-                DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} cannot be declared or have a parent declared with Sync clause because its Type definition {dataDefinition.DataType.Name} is Strict.");
+                }
+                //Check if variable of user defined Strict Type is declared or has a parent declared with Sync clause (flag is inherited so no need to iterate through parents)
+                else if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.HasATypedefType) &&
+                    dataDefinition.TypeDefinition?.RestrictionLevel == RestrictionLevel.STRICT &&
+                    dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} cannot be declared or have a parent declared with Sync clause because its Type definition {dataDefinition.DataType.Name} is Strict.");
+                }
             }
 
             if (HasChildrenThatDeclareData(dataDefinition))

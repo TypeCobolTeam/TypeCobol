@@ -1203,7 +1203,7 @@ namespace TypeCobol.Compiler.Parser
         [CanBeNull]
         internal EnumeratedValue CreateRecordingMode(CodeElementsParser.RecordingModeContext context)
         {
-            return CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum));
+            return context != null ? CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum)) : null;
         }
 
         #endregion

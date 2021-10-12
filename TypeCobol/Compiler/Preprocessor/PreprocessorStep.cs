@@ -294,6 +294,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Iterate over all COPY directives found on one updated line
                     foreach (CopyDirective copyDirective in tokensLineWithCopyDirective.ImportedDocuments.Keys.Where(c => c.TextName != null || c.COPYToken.TokenType == TokenType.EXEC).ToArray())
                     {
+                        if (copyDirective.TextName == null)
+                            continue;
                         try
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
@@ -602,6 +604,8 @@ namespace TypeCobol.Compiler.Preprocessor
                         tokensLineWithCopyDirective.ImportedDocuments.Keys.Where(
                             c => c.TextName != null || c.COPYToken.TokenType == TokenType.EXEC).ToArray())
                     {
+                        if (copyDirective.TextName == null)
+                            continue;
                         try
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
