@@ -173,8 +173,16 @@ namespace TypeCobol.LanguageServer
 
 #if EUROINFO_RULES
                 ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
-                missingCopiesParam.Copies = lookup[false].ToList();
-                missingCopiesParam.CpyCopies = lookup[true].ToList();
+                //----------------------------------------------------------
+                // We need to review this mechanism with RTC.
+                // Because actually it produces bad results and it will
+                // be clarified with RTC specifications. (see TFS 117645)
+                //----------------------------------------------------------
+                //missingCopiesParam.Copies = lookup[false].ToList();
+                //missingCopiesParam.CpyCopies = lookup[true].ToList();
+                //----------------------------------------------------------
+                missingCopiesParam.Copies = copiesName;
+                missingCopiesParam.CpyCopies = new List<string>();
 #else
                 missingCopiesParam.Copies = copiesName;
                 missingCopiesParam.CpyCopies = new List<string>();
