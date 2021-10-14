@@ -1,0 +1,21 @@
+﻿Entering block : 0
+Leaving block : 0
+Entering block : 4
+Leaving block : 4
+Entering block : 5
+DISPLAY "TOTO"
+Leaving block : 5
+Entering block : 1
+    USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 1
+Entering block : 2
+       display DEBUG-NAME
+Leaving block : 2
+Entering block : 3
+    EXIT
+Leaving block : 3
+
+=======
+METRICS
+=======
+{EdgeCount=5; NodeCount=6; ControlSubgraphCount=0; HighCyclomaticComplexity=1; HighEssentialComplexityPath=1}

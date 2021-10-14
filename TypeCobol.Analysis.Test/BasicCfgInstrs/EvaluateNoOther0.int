@@ -1,0 +1,39 @@
+﻿Entering block : 0
+    EVALUATE menu-input
+      WHEN "0"
+Entering block : 1
+        DISPLAY "OPTION 0"
+Leaving block : 1
+Entering block : 2
+      WHEN "1" THRU "9"
+Entering block : 3
+        DISPLAY "OPTION 1-9"
+Leaving block : 3
+Entering block : 4
+      WHEN "R"
+Entering block : 5
+        DISPLAY "OPTION R"
+Leaving block : 5
+Entering block : 6
+      WHEN "X"
+Entering block : 7
+        DISPLAY "OPTION X"
+Leaving block : 7
+Leaving block : 6
+Entering block : 8
+Leaving block : 8
+Leaving block : 4
+Entering block : 9
+Leaving block : 9
+Leaving block : 2
+Entering block : 10
+Leaving block : 10
+Leaving block : 0
+Entering block : 11
+    DISPLAY "MAYBE NO OPTIONS"
+Leaving block : 11
+
+=======
+METRICS
+=======
+{EdgeCount=15; NodeCount=12; ControlSubgraphCount=4; HighCyclomaticComplexity=5; HighEssentialComplexityPath=1}

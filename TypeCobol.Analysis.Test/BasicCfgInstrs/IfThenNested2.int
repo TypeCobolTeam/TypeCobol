@@ -1,0 +1,33 @@
+﻿Entering block : 0
+    IF A = 10 THEN
+Entering block : 1
+      DISPLAY "A = 10"
+      DISPLAY "RIGHT ?"
+      IF B = 20 THEN
+Entering block : 2
+         DISPLAY "B = 20"
+         DISPLAY "INSIDE A"
+         IF C = 30 THEN
+Entering block : 3
+             DISPLAY "C = 30"
+             DISPLAY "INSIDE B"
+Leaving block : 3
+Leaving block : 2
+Entering block : 4
+         DISPLAY "TEST C DONE"
+Leaving block : 4
+Leaving block : 1
+Entering block : 5
+      DISPLAY "TEST B DONE"
+Leaving block : 5
+Leaving block : 0
+Entering block : 6
+Leaving block : 6
+Entering block : 7
+    DISPLAY "TEST A DONE"
+Leaving block : 7
+
+=======
+METRICS
+=======
+{EdgeCount=10; NodeCount=8; ControlSubgraphCount=3; HighCyclomaticComplexity=4; HighEssentialComplexityPath=1}

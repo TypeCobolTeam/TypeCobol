@@ -1,0 +1,173 @@
+﻿Entering block : 0
+    open i-o VUE
+Leaving block : 0
+Entering block : 1
+    move zero to fct1 fct2 zres
+Leaving block : 1
+Entering block : 2
+Leaving block : 2
+Entering block : 3
+    perform affichage
+Leaving block : 3
+Entering block : 4
+Leaving block : 4
+Entering block : 5
+    move ef to ind(40)
+Entering block : 6
+    perform until ind(03) = ef
+Leaving block : 6
+Entering block : 7
+      evaluate opt
+      when "+"
+Entering block : 8
+               if ind(08) = ef
+Entering block : 9
+                  compute zres = (fct1 + ((fct1 * fct2) / 100))
+Entering block : 10
+                  on size error
+                                move ef to ind(31)
+Leaving block : 10
+Leaving block : 9
+Entering block : 11
+Leaving block : 11
+Entering block : 12
+               else
+                  compute zres = (fct1 + fct2)
+Entering block : 13
+                  on size error
+                                move ef to ind(31)
+Leaving block : 13
+Leaving block : 12
+Entering block : 14
+Leaving block : 14
+Leaving block : 8
+Entering block : 15
+Leaving block : 15
+Entering block : 16
+      when "-"
+Entering block : 17
+               if ind(08) = ef
+Entering block : 18
+                  compute zres = (fct1 - ((fct1 * fct2) / 100))
+Entering block : 19
+                  on size error
+                                move ef to ind(31)
+Leaving block : 19
+Leaving block : 18
+Entering block : 20
+Leaving block : 20
+Entering block : 21
+               else
+                  compute zres = (fct1 - fct2)
+Entering block : 22
+                  on size error
+                                move ef to ind(31)
+Leaving block : 22
+Leaving block : 21
+Entering block : 23
+Leaving block : 23
+Leaving block : 17
+Entering block : 24
+Leaving block : 24
+Entering block : 25
+      when "*"
+Entering block : 26
+               if ind(08) = ef
+Entering block : 27
+                  move ef to ind(30)
+Leaving block : 27
+Entering block : 28
+               else
+                  compute zres = (fct1 * fct2)
+Entering block : 29
+                  on size error
+                                move ef to ind(31)
+Leaving block : 29
+Leaving block : 28
+Entering block : 30
+Leaving block : 30
+Leaving block : 26
+Entering block : 31
+Leaving block : 31
+Entering block : 32
+      when "/"
+Entering block : 33
+               if ind(08) = ef
+Entering block : 34
+                  move ef to ind(30)
+Leaving block : 34
+Entering block : 35
+               else
+                  compute zres = (fct1 / fct2)
+Entering block : 36
+                  on size error
+                                move ef to ind(31)
+Leaving block : 36
+Leaving block : 35
+Entering block : 37
+Leaving block : 37
+Leaving block : 33
+Entering block : 38
+Leaving block : 38
+Entering block : 39
+      when "P"
+Entering block : 40
+               if ind(08) = ef
+Entering block : 41
+                  move ef to ind(30)
+Leaving block : 41
+Entering block : 42
+               else
+                  move fct1 to zres
+                  move zero to fct3
+Entering block : 43
+                  perform varying fct3 from 1 by 1
+                   until fct3 = fct2  or ind(31) = ef
+Leaving block : 43
+Entering block : 44
+                      compute zres = (zres * fct1)
+Entering block : 45
+                      on size error
+                                    move ef to ind(31)
+Leaving block : 45
+Leaving block : 44
+Entering block : 46
+Leaving block : 46
+Leaving block : 42
+Entering block : 47
+Leaving block : 47
+Leaving block : 40
+Entering block : 48
+Leaving block : 48
+Leaving block : 39
+Entering block : 49
+Leaving block : 49
+Leaving block : 32
+Entering block : 50
+Leaving block : 50
+Leaving block : 25
+Entering block : 51
+Leaving block : 51
+Leaving block : 16
+Entering block : 52
+Leaving block : 52
+Leaving block : 7
+Entering block : 53
+Leaving block : 53
+Entering block : 54
+    perform affichage
+Leaving block : 54
+Entering block : 55
+Leaving block : 55
+Leaving block : 5
+Entering block : 56
+Leaving block : 56
+Entering block : 57
+    close VUE
+              goback
+Leaving block : 57
+
+=======
+METRICS
+=======
+{EdgeCount=78; NodeCount=58; ControlSubgraphCount=19; HighCyclomaticComplexity=22; HighEssentialComplexityPath=3}

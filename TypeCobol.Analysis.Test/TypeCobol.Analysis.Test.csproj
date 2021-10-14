@@ -32,6 +32,7 @@
     <None Include="**\*.dot" />
     <None Include="**\*.diag" />
     <None Include="**\*.csv" />
+    <Compile Include="BasicAbstractInterpretationTest.cs" />
     <Compile Include="BasicCfgProgramTest.cs" />
     <Compile Include="BasicControlFlowInstructionTest.cs" />
     <Compile Include="BitSetTest.cs" />
@@ -63,6 +64,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="BasicCfgInstrs\ComplexGotoPara0.int" />
+    <None Include="BasicCfgInstrs\Declaratives0.int" />
+    <None Include="BasicCfgInstrs\Declaratives1.int" />
+    <None Include="BasicCfgInstrs\Evaluate0.int" />
+    <None Include="BasicCfgInstrs\EvaluateMultiWhen0.int" />
+    <None Include="BasicCfgInstrs\EvaluateNoOther0.int" />
+    <None Include="BasicCfgInstrs\IfThen0.int" />
+    <None Include="BasicCfgInstrs\IfThenElse0.int" />
+    <None Include="BasicCfgInstrs\IfThenElseCascade0.int" />
+    <None Include="BasicCfgInstrs\IfThenElseNested1.int" />
+    <None Include="BasicCfgInstrs\IfThenElseNextSentence0.int" />
+    <None Include="BasicCfgInstrs\IfThenElseNextSentence1.int" />
+    <None Include="BasicCfgInstrs\IfThenElseNextSentence2.int" />
+    <None Include="BasicCfgInstrs\IfThenNested0.int" />
+    <None Include="BasicCfgInstrs\IfThenNested1.int" />
+    <None Include="BasicCfgInstrs\IfThenNested2.int" />
+    <None Include="BasicCfgInstrs\IfThenNextSentence0.int" />
+    <None Include="BasicCfgInstrs\MixPerformEvaluateIf0.int" />
     <None Include="BasicCfgPrograms\HanoiPrg.doms" />
     <None Include="BasicCfgPrograms\HanoiPrg.idoms" />
     <None Include="packages.config" />

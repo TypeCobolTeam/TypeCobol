@@ -1,0 +1,37 @@
+﻿Entering block : 0
+    EVALUATE menu-input
+      WHEN 'A'
+      WHEN 'B'
+      WHEN 'C'
+      WHEN 'D'
+Entering block : 1
+        DISPLAY "OPTION [A-B]"
+Leaving block : 1
+Entering block : 2
+      WHEN "E"
+Entering block : 3
+        DISPLAY "OPTION E"
+Leaving block : 3
+Entering block : 4
+      WHEN "F"
+      WHEN "G"
+Entering block : 5
+        DISPLAY "OPTION F and G"
+Leaving block : 5
+Entering block : 6
+         DISPLAY "BAD OPTION"
+Leaving block : 6
+Leaving block : 4
+Entering block : 7
+Leaving block : 7
+Leaving block : 2
+Entering block : 8
+Leaving block : 8
+Leaving block : 0
+Entering block : 9
+Leaving block : 9
+
+=======
+METRICS
+=======
+{EdgeCount=12; NodeCount=10; ControlSubgraphCount=3; HighCyclomaticComplexity=4; HighEssentialComplexityPath=1}

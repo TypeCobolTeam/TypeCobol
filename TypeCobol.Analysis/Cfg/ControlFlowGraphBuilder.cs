@@ -604,7 +604,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
 
 #if DEBUG
-                //Check current MultiBranchContext if any: the corresponding instruction must be amongst parents of the exited node.
+                //Check current MultiBranchContext<Node, D> if any: the corresponding instruction must be amongst parents of the exited node.
                 var currentMultiBranchContext = this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0
                     ? this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek()
                     : null;
@@ -1088,6 +1088,11 @@ namespace TypeCobol.Analysis.Cfg
                         //Each block is cloned before being entered in the group
                         //because each group is tied to a specific PERFORM.
                         var clonedBlock = (BasicBlockForNode) block.Clone();
+                        if (clonedBlock.Context != null)
+                        { //Clone any MultiBranchContext instance and set associated Cloned Block Indexes map.
+                            clonedBlock.Context = (MultiBranchContext<Node,D>)clonedBlock.Context.Clone();
+                            clonedBlock.Context.ClonedRelocatedMap = clonedBlocksIndexMap;
+                        }
                         group.AddBlock(clonedBlock);
                         clonedBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
                         this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(clonedBlock);
@@ -1279,7 +1284,7 @@ namespace TypeCobol.Analysis.Cfg
             if (group.Group.Count > 0 && group.TerminalBlocks == null)
             {
                 LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                MultiBranchContext ctx = new MultiBranchContext(null);
+                MultiBranchContext<Node, D> ctx = new MultiBranchContext<Node, D>(null);
                 List<BasicBlock<Node, D>> terminals = new List<BasicBlock<Node, D>>();
                 this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(first.Value, terminals);
                 group.TerminalBlocks = terminals;
@@ -1578,7 +1583,7 @@ namespace TypeCobol.Analysis.Cfg
         /// The Multi Branch Stack during Graph Construction.
         ///  Used for IF-THEN-ELSE or EVALUATE
         /// </summary>
-        internal Stack<MultiBranchContext> MultiBranchContextStack
+        internal Stack<MultiBranchContext<Node, D>> MultiBranchContextStack
         {
             get;
             set;
@@ -1596,10 +1601,10 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void EnterIf(If _if)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(_if);
+            MultiBranchContext<Node, D> ctx = new MultiBranchContext<Node, D>(_if);
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext<Node, D>>();
             }
             //Push and start the if context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
@@ -1621,7 +1626,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
             System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
 
@@ -1640,7 +1645,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             //So the current block is now the Else
             var elseBlock = this.CurrentProgramCfgBuilder.CreateBlock(_else, true);
             ctx.AddBranch(elseBlock);
@@ -1676,12 +1681,12 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void EnterEvaluate(Evaluate evaluate)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(evaluate);
+            MultiBranchContext<Node, D> ctx = new MultiBranchContext<Node, D>(evaluate);
             //Create a list of node of contextual When and WhenOther nodes.
             ctx.ConditionNodes = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext<Node, D>>();
             }
             //Push and start the Evaluate context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
@@ -1698,13 +1703,13 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
 
             if (UseEvaluateCascade)
-            {   //Pop each MultiBranchContextStack instance till to the EVALUATE one
+            {   //Pop each MultiBranchContext<Node, D>Stack instance till to the EVALUATE one
                 //and close each one.
-                List<IMultiBranchContext<Node, D>> subContexts = new List<IMultiBranchContext<Node, D>>();
+                List<MultiBranchContext<Node, D>> subContexts = new List<MultiBranchContext<Node, D>>();
                 while (ctx.Instruction == null)
                 {
                     System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
@@ -1745,7 +1750,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(node != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
             ctx.ConditionNodes.Add(node);
@@ -1769,7 +1774,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(node != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
             
             ctx.ConditionNodes.Add(node);
@@ -1797,7 +1802,7 @@ namespace TypeCobol.Analysis.Cfg
             {
                 System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
                 System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+                MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
                 System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
                 var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
@@ -1826,14 +1831,14 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             if (!(ctx.Instruction != null && ctx.Instruction.CodeElement.Type == CodeElementType.EvaluateStatement))
             {  //Create the else alternatives
                 EnterElse(null);
             }
 
             //Create Whens context
-            MultiBranchContext ctxWhens = new MultiBranchContext(null);
+            MultiBranchContext<Node, D> ctxWhens = new MultiBranchContext<Node, D>(null);
             ctxWhens.ConditionNodes = new List<Node>();
             //Push and start the Whens context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctxWhens);
@@ -1863,7 +1868,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
             var whenOtherCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
@@ -1890,12 +1895,12 @@ namespace TypeCobol.Analysis.Cfg
         public virtual void EnterSearch(Search node)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(node);
+            MultiBranchContext<Node, D> ctx = new MultiBranchContext<Node, D>(node);
             //Create a list of node of contextual When or AtEnd nodes.
             ctx.ConditionNodes = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext<Node, D>>();
             }
             if (UseSearchCascade)
             {
@@ -1942,7 +1947,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
             if (UseSearchCascade)
@@ -1973,10 +1978,10 @@ namespace TypeCobol.Analysis.Cfg
                     }
                     else if (ctx.Branches.Count == 1)
                     {//We had an At END Condition ==> So the Current basic block is the Search Block
-                        this.CurrentProgramCfgBuilder.CurrentBasicBlock = ctx.OriginBlock;
+                        this.CurrentProgramCfgBuilder.CurrentBasicBlock = (BasicBlockForNode)ctx.OriginBlock;
                     }
                     //Create Whens context
-                    MultiBranchContext ctxWhens = new MultiBranchContext(null);
+                    MultiBranchContext<Node, D> ctxWhens = new MultiBranchContext<Node, D>(null);
                     ctxWhens.ConditionNodes = new List<Node>();
                     ctxWhens.RootBlock = ctx.RootBlock;
                     ctxWhens.RootBlockSuccessorIndex = ctx.RootBlockSuccessorIndex;
@@ -2030,15 +2035,15 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
             if (UseSearchCascade)
             {
-                //Pop each MultiBranchContextStack instance till to the SEARCH one
+                //Pop each MultiBranchContext<Node, D>Stack instance till to the SEARCH one
                 //and close each one.
                 bool bLastBranch = true;
                 int rootNodeIndex = ctx.RootBlockSuccessorIndex;
-                List<IMultiBranchContext<Node, D>> subContexts = new List<IMultiBranchContext<Node, D>>();
+                List<MultiBranchContext<Node, D>> subContexts = new List<MultiBranchContext<Node, D>>();
                 while (ctx.Instruction == null)
                 {
                     System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
@@ -2093,7 +2098,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(node != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
             ctx.ConditionNodes.Add(node);
@@ -2115,10 +2120,10 @@ namespace TypeCobol.Analysis.Cfg
         public virtual void EnterPerformLoop(Perform perform)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(perform);
+            MultiBranchContext<Node, D> ctx = new MultiBranchContext<Node, D>(perform);
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext<Node, D>>();
             }
             //Push and start the Perform context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
@@ -2186,7 +2191,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+            MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
             System.Diagnostics.Debug.Assert(ctx.Branches.Count == 2);
             System.Diagnostics.Debug.Assert(ctx.BranchIndices.Count == 2);
@@ -2395,7 +2400,7 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0 &&
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek().Instruction.CodeElement.Type == CodeElementType.SearchStatement)
             {//So in this case just think that it is a null condition
-                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+                MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
                 ctx.ConditionNodes.Add(node);
                 //Call StartWhenSearchConditionClause with null, this will mean AT END condition.
                 StartWhenSearchConditionClause(null);
@@ -2410,10 +2415,10 @@ namespace TypeCobol.Analysis.Cfg
                 //Create or reuse the context
                 if (currentCtx == null || currentCtx.Instruction != node.Parent)
                 {
-                    currentCtx = new MultiBranchContext(node.Parent);
+                    currentCtx = new MultiBranchContext<Node, D>(node.Parent);
                     if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
                     {
-                        this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                        this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext<Node, D>>();
                     }
                     //Push and start the Exception condition context.
                     this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(currentCtx);
@@ -2538,7 +2543,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0)
             {
-                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+                MultiBranchContext<Node, D> ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
                 System.Diagnostics.Debug.Assert(ctx.Branches != null);
                 System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
 

@@ -1,0 +1,48 @@
+﻿Entering block : 0
+    IF A = 10 THEN
+Entering block : 1
+      DISPLAY "A = 10"
+      DISPLAY "RIGHT ?"
+         IF B = 20 THEN
+Entering block : 2
+             DISPLAY "B = 20"
+             DISPLAY "RIGHT ?"
+Leaving block : 2
+Entering block : 3
+         ELSE
+             DISPLAY "B <> 20"
+             DISPLAY "???"
+Leaving block : 3
+Leaving block : 1
+Entering block : 4
+      DISPLAY "AFTER NESTED B"
+Leaving block : 4
+Entering block : 5
+    ELSE
+      DISPLAY "A <> 10"
+      DISPLAY "???"
+         IF C = 30 THEN
+Entering block : 6
+             DISPLAY "C = 30"
+             DISPLAY "RIGHT ?"
+Leaving block : 6
+Entering block : 7
+         ELSE
+             DISPLAY "C <> 30"
+             DISPLAY "???"
+Leaving block : 7
+Leaving block : 5
+Entering block : 8
+      DISPLAY "AFTER NESTED C"
+Leaving block : 8
+Leaving block : 0
+Entering block : 9
+Leaving block : 9
+Entering block : 10
+    DISPLAY "AFTER A"
+Leaving block : 10
+
+=======
+METRICS
+=======
+{EdgeCount=13; NodeCount=11; ControlSubgraphCount=3; HighCyclomaticComplexity=4; HighEssentialComplexityPath=1}

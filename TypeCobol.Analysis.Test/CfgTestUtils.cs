@@ -9,6 +9,7 @@ using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Analysis.Util;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
@@ -71,7 +72,7 @@ namespace TypeCobol.Analysis.Test
             var graphs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
             var dfaResults = new DfaTestResults(graphs);
 
-            if (expectedLivenessFilePath !=  null)
+            if (expectedLivenessFilePath != null)
             {
                 //Perform variable liveness (and UseDefs) data comparison
 
@@ -131,7 +132,7 @@ namespace TypeCobol.Analysis.Test
                     analyzerProvider.AddActivator(activator);
                 }
             }
-            
+
             var parser = Parser.Parse(sourceFilePath, false, new TypeCobolOptions(), DocumentFormat.RDZReferenceFormat, analyzerProvider: analyzerProvider);
             var results = parser.Results;
 
@@ -184,9 +185,9 @@ namespace TypeCobol.Analysis.Test
         {
             //Create a Dot File Generator            
             CfgDotFileForNodeGenerator<D> dotGen = new CfgDotFileForNodeGenerator<D>(cfg)
-                                                   {
-                                                       FullInstruction = fullInstruction,
-                                                   };
+            {
+                FullInstruction = fullInstruction,
+            };
             dotGen.Report(writer);
         }
 
@@ -333,6 +334,61 @@ namespace TypeCobol.Analysis.Test
                     }
                 }
             }
+        }
+
+        private class AbstractInterpretObserver<D> : CfgAbstractInterpretation<Node, D>.IObserver
+        {
+            private StringWriter _writer;
+            private bool _fullInstruction;
+            public AbstractInterpretObserver(bool fullInstruction = false)
+            {
+                _writer = new StringWriter();
+                _fullInstruction = fullInstruction;
+            }
+            public void EnterBlock(BasicBlock<Node, D> block, CfgAbstractInterpretation<Node, D>.Environment env)
+            {
+                _writer.WriteLine($"Entering block : {block.Index}");                
+            }
+
+            public void LeaveBlock(BasicBlock<Node, D> block, CfgAbstractInterpretation<Node, D>.Environment env)
+            {
+                _writer.WriteLine($"Leaving block : {block.Index}");
+            }
+
+            public void OnInstruction(Node instr, BasicBlock<Node, D> block, CfgAbstractInterpretation<Node, D>.Environment env)
+            {
+                _writer.WriteLine(_fullInstruction
+                    ? instr.CodeElement.SourceText
+                    : System.Enum.GetName(typeof(CodeElementType), instr.CodeElement.Type));
+            }
+
+            public override string ToString()
+            {
+                return _writer.ToString();
+            }
+
+        }
+
+        /// <summary>
+        /// Generate the abstract interpretation sequence corresponding to Cfg and compare it with the expected file.
+        /// </summary>
+        /// <param name="cfg">The actual Control Flow Graph instance.</param>
+        /// <param name="testPath">Path of the original Cobol/TypeCobol source file.</param>
+        /// <param name="expectedFile">The expected file.</param>
+        /// <param name="bFullInstruction">true if full instruction must be displayed, false otherwise</param>
+        public static void GenAbstractInterpretCfgAndCompare<D>(ControlFlowGraph<Node, D> cfg, string testPath, string expectedDotFile, bool bFullInstruction)
+        {            
+            AbstractInterpretObserver<D> observer = new AbstractInterpretObserver<D>(bFullInstruction);
+            var metrics = CfgAbstractInterpretation<Node, D>.Run(cfg, new List<CfgAbstractInterpretation<Node, D>.IObserver>() { observer });
+            // compare with expected result
+            StringBuilder result = new StringBuilder(observer.ToString());
+            result.AppendLine();
+            result.AppendLine("=======");
+            result.AppendLine("METRICS");
+            result.AppendLine("=======");
+            result.AppendLine(metrics.ToString());
+            string expected = File.ReadAllText(expectedDotFile);
+            TestUtils.compareLines(testPath, result.ToString(), expected, expectedDotFile);
         }
     }
 }

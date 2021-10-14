@@ -1,0 +1,17 @@
+﻿Entering block : 0
+    IF A = 10 THEN
+Entering block : 1
+      NEXT SENTENCE
+Leaving block : 1
+Entering block : 4
+    DISPLAY "CONTINUE"
+Leaving block : 4
+Leaving block : 0
+Entering block : 3
+    DISPLAY "AFTER"
+Leaving block : 3
+
+=======
+METRICS
+=======
+{EdgeCount=4; NodeCount=4; ControlSubgraphCount=1; HighCyclomaticComplexity=2; HighEssentialComplexityPath=1}
