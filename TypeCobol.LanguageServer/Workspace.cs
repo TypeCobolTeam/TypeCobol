@@ -405,7 +405,8 @@ namespace TypeCobol.LanguageServer
             catch (Exception e)
             {
                 //In case Timer Thread crash
-                ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
+                if (ExceptionTriggered != null)
+                    ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
             }
 
             void Refresh()
@@ -696,7 +697,8 @@ namespace TypeCobol.LanguageServer
                 if (diagDetected)
                 {
                     var message = "An error occured while trying to load Intrinsics or Dependencies files.";
-                    LoadingIssueEvent(null, new LoadingIssueEvent() {Message = message}); //Send notification to client
+                    if (LoadingIssueEvent!= null)
+                        LoadingIssueEvent(null, new LoadingIssueEvent() {Message = message}); //Send notification to client
 
                     var sb = new StringBuilder();
                     sb.AppendLine(message);
@@ -709,16 +711,19 @@ namespace TypeCobol.LanguageServer
                             sb.AppendLine(" - " + diagText); //Add associated diagnostics
                         }
                     }
-                    WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
+                    if (WarningTrigger != null)
+                        WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
                 }
                 else
                 {//Send an LoadingIssueEvent with an empty message to tell the client that there are no issues.
-                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
+                    if (LoadingIssueEvent != null)
+                        LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
                 }
             }
             catch (TypeCobolException typeCobolException)
             {
-                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
+                if (LoadingIssueEvent != null)
+                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
 
@@ -727,7 +732,8 @@ namespace TypeCobol.LanguageServer
             }
             catch (Exception e)
             {
-                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
+                if (LoadingIssueEvent != null)
+                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 AnalyticsWrapper.Telemetry.TrackException(e, null);
                 AnalyticsWrapper.Telemetry.SendMail(e, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
