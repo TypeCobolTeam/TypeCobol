@@ -647,7 +647,10 @@ namespace TypeCobol.Compiler
                 else
                 {
                     ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>) tokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, _documentImporter, perfStatsForParserInvocation, out missingCopies);
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = 
+                        this.CompilerOptions.UseAntlrProgramParsing 
+                        ? PreprocessorStep.ProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, _documentImporter, perfStatsForParserInvocation, out missingCopies)
+                        : PreprocessorStep.CupProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
