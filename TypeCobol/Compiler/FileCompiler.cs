@@ -213,7 +213,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void CompileOnce()
         {
-            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy, CompilerOptions.UseAntlrProgramParsing);
+            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy);
         }
 
         /// <summary>
@@ -221,8 +221,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <param name="exec2Step">The execution step</param>
         /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
-        /// <param name="useAntlrProgramParsing">Shall Antlr be used to parse the program</param>
-        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy, bool useAntlrProgramParsing)
+        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
         {
             if (exec2Step == null)
                 exec2Step = ExecutionStep.CrossCheck;
