@@ -9,7 +9,7 @@ namespace TypeCobol.Analysis.Graph
     /// <summary>
     /// The context of a Multi Branch instruction like IF or Evaluate.
     /// </summary>
-    internal class MultiBranchContext<N, D> : System.ICloneable
+    public class MultiBranchContext<N, D> : System.ICloneable
     {
         /// <summary>
         /// Origin block before multi branches
