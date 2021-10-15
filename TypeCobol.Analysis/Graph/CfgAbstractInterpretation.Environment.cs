@@ -98,7 +98,16 @@ namespace TypeCobol.Analysis.Graph
                         }
                         else
                         {
-                            DFSStack.Push(nextFlowBlock);                            
+                            DFSStack.Push(nextFlowBlock);
+                            // If the multi branch context instruction has a successor
+                            // to the next flow block, add one edge.
+                            foreach (var edge in block.SuccessorEdges)
+                            {
+                                if (Cfg.SuccessorEdges[edge] == nextFlowBlock)
+                                {
+                                    Metrics.EdgeCount++;
+                                }
+                            }
                         }
                     }
                 }
@@ -184,8 +193,6 @@ namespace TypeCobol.Analysis.Graph
                         Metrics.EdgeCount++;
                         Run(CheckRelocatedBlock(block.Context, b), CheckRelocatedBlock(block.Context, block.Context.NextFlowBlock));
                     }
-                    // Special case exemple IF THEN Without and ELSE => add virtual else to next block
-                    Metrics.EdgeCount += block.Context.Branches.Count == 1 ? 1 : 0;
                 }
 
                 System.Diagnostics.Debug.Assert(this.InterpretationStack.Count > 0 &&
