@@ -24,17 +24,13 @@ namespace TypeCobol.Analysis.Test
         /// <remarks>
         /// All parameters are optional, by default :
         /// - input is BasicCfgInstrs\[CallerMethod].cbl
-        /// - expected diagnostics is DotOutput\[CallerMethod].diag
-        /// - expected result is DotOutput\[CallerMethod].dot
+        /// - expected result is BasicCfgInstrs\[CallerMethod].int
         /// - CFG building mode is Standard
         /// - fullInstruction is True
         /// </remarks>
         /// <param name="inputDirectoryPath">Full path to the directory containing the input source file.</param>
         /// <param name="inputFileName">Name of the input source file without extension.</param>
         /// <param name="inputExtension">Extension of the input source file including the '.'.</param>
-        /// <param name="expectedDiagnosticsDirectoryPath">Full path to the directory containing the expected diagnostics file.</param>
-        /// <param name="expectedDiagnosticsFileName">Name of the expected diagnostics file without extension.</param>
-        /// <param name="expectedDiagnosticsExtension">Extension of the expected diagnostics file including the '.'.</param>
         /// <param name="expectedResultDirectoryPath">Full path to the directory containing the expected result file.</param>
         /// <param name="expectedResultFileName">Name of the expected result file without extension.</param>
         /// <param name="expectedResultExtension">Extension of the expected result file including the '.'.</param>
