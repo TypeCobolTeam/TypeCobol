@@ -379,7 +379,7 @@ namespace TypeCobol.Analysis.Test
         public static void GenAbstractInterpretCfgAndCompare<D>(ControlFlowGraph<Node, D> cfg, string testPath, string expectedDotFile, bool bFullInstruction)
         {            
             AbstractInterpretObserver<D> observer = new AbstractInterpretObserver<D>(bFullInstruction);
-            var metrics = CfgAbstractInterpretation<Node, D>.Run(cfg, new List<CfgAbstractInterpretation<Node, D>.IObserver>() { observer });
+            var metrics = CfgAbstractInterpretation<Node, D>.Run(cfg, observer);
             // compare with expected result
             StringBuilder result = new StringBuilder(observer.ToString());
             result.AppendLine();

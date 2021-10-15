@@ -1707,7 +1707,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
 
             if (UseEvaluateCascade)
-            {   //Pop each MultiBranchContext<Node, D>Stack instance till to the EVALUATE one
+            {   //Pop each MultiBranchContextStack instance till to the EVALUATE one
                 //and close each one.
                 List<MultiBranchContext<Node, D>> subContexts = new List<MultiBranchContext<Node, D>>();
                 while (ctx.Instruction == null)
@@ -2039,7 +2039,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
             if (UseSearchCascade)
             {
-                //Pop each MultiBranchContext<Node, D>Stack instance till to the SEARCH one
+                //Pop each MultiBranchContextStack instance till to the SEARCH one
                 //and close each one.
                 bool bLastBranch = true;
                 int rootNodeIndex = ctx.RootBlockSuccessorIndex;

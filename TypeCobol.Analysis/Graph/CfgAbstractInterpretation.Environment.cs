@@ -16,7 +16,7 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// The Abstract Interpretation Stack
             /// </summary>
-            internal Stack<BasicBlock<N, D>> InterpretationStack { get; private set; }
+            private Stack<BasicBlock<N, D>> InterpretationStack { get; set; }
 
             /// <summary>
             /// The current execution stack
@@ -26,23 +26,23 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// The DFS Run stack
             /// </summary>
-            internal Stack<BasicBlock<N, D>> DFSStack { get; private set; }
+            private Stack<BasicBlock<N, D>> DFSStack;
 
             /// <summary>
             /// Already Visited Block
             /// </summary>
-            internal System.Collections.BitArray Visited { get; private set; }
+            private System.Collections.BitArray Visited;
 
             /// <summary>
             /// Current CFG being run.
             /// </summary>
-            public ControlFlowGraph<N, D> Cfg { get; private set; }
-            private IReadOnlyList<IObserver> _observers;
+            public readonly ControlFlowGraph<N, D> Cfg;
+            private IObserver[] _observers;
             /// <summary>
             /// Some metrics calculated.
             /// </summary>
-            public Metrics Metrics { get; internal set; }
-            public Environment(ControlFlowGraph<N, D> cfg, IReadOnlyList<IObserver> observers)
+            public readonly Metrics Metrics;
+            public Environment(ControlFlowGraph<N, D> cfg, params IObserver[] observers)
             {
                 this.Cfg = cfg;
                 this._observers = observers;
@@ -53,7 +53,7 @@ namespace TypeCobol.Analysis.Graph
                 this.Metrics = new Metrics();
             }
 
-            public void Run()
+            public virtual void Run()
             {
                 Run(Cfg.RootBlock, null);
             }
@@ -62,8 +62,8 @@ namespace TypeCobol.Analysis.Graph
             /// Run a sub branch
             /// </summary>
             /// <param name="startBlock">The beginning branch</param>
-            /// <param name="stopBlock">The stopping branch which il not be executed.</param>
-            protected void Run(BasicBlock<N, D> startBlock, BasicBlock<N, D> stopBlock)
+            /// <param name="stopBlock">The stopping branch which will not be executed.</param>
+            protected virtual void Run(BasicBlock<N, D> startBlock, BasicBlock<N, D> stopBlock)
             {
                 if (Visited.Get(startBlock.Index))
                     return;
@@ -110,7 +110,7 @@ namespace TypeCobol.Analysis.Graph
             /// <param name="block"></param>
             private void IterateBlock(BasicBlock<N, D> block)
             {
-                if (_observers != null && block.Instructions != null)
+                if (_observers != null)
                 {
                     foreach (var i in block.Instructions)
                     {
@@ -126,7 +126,7 @@ namespace TypeCobol.Analysis.Graph
             /// <param name="block"></param>
             private void EnterBlock(BasicBlock<N, D> block)
             {
-                if (_observers != null && block.Instructions != null)
+                if (_observers != null)
                 {
                     foreach (var observer in _observers)
                         observer.EnterBlock(block, this);
@@ -139,7 +139,7 @@ namespace TypeCobol.Analysis.Graph
             /// <param name="block"></param>
             public void LeaveBlock(BasicBlock<N, D> block)
             {
-                if (_observers != null && block.Instructions != null)
+                if (_observers != null)
                 {
                     foreach (var observer in _observers)
                         observer.LeaveBlock(block, this);
