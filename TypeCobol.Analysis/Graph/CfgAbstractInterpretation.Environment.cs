@@ -26,22 +26,21 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// The DFS Run stack
             /// </summary>
-            private Stack<BasicBlock<N, D>> _dFSStack;
+            private Stack<BasicBlock<N, D>> _dfsStack;
 
             /// <summary>
             /// Already Visited Block
             /// </summary>
             private System.Collections.BitArray _visited;
-
             /// <summary>
             /// Current CFG being run.
             /// </summary>
             public ControlFlowGraph<N, D> Cfg { get; private set; }
-            private IObserver[] _observers;
+            private readonly IObserver[] _observers;
             /// <summary>
             /// Some metrics calculated.
             /// </summary>
-            public Metrics Metrics { get; private set; }
+            private Metrics _metrics;
             public Environment(params IObserver[] observers)
             {
                 this._observers = observers;
@@ -50,13 +49,17 @@ namespace TypeCobol.Analysis.Graph
             public virtual Metrics Run(ControlFlowGraph<N, D> cfg)
             {
                 this.Cfg = cfg;
-                _interpretationStack = new Stack<BasicBlock<N, D>>();
+                if (_interpretationStack == null)
+                    _interpretationStack = new Stack<BasicBlock<N, D>>();
                 // We use an iterative DFS algorithm.
-                _visited = new System.Collections.BitArray(Cfg.AllBlocks.Count);
-                _dFSStack = new Stack<BasicBlock<N, D>>();
-                this.Metrics = new Metrics();
-                Run(Cfg.RootBlock, null);                
-                return this.Metrics;
+                _visited = new System.Collections.BitArray(cfg.AllBlocks.Count);
+                if (_dfsStack == null)
+                    _dfsStack = new Stack<BasicBlock<N, D>>();
+                this._metrics = new Metrics();
+                Run(cfg.RootBlock, null);
+                System.Diagnostics.Debug.Assert(_interpretationStack.Count == 0);
+                System.Diagnostics.Debug.Assert(_dfsStack.Count == 0);
+                return this._metrics;
             }
 
             /// <summary>
@@ -68,31 +71,31 @@ namespace TypeCobol.Analysis.Graph
             {
                 if (_visited.Get(startBlock.Index))
                     return;
-                _dFSStack.Push(startBlock);
-                while (_dFSStack.Count > 0)
+                _dfsStack.Push(startBlock);
+                while (_dfsStack.Count > 0)
                 {
-                    BasicBlock<N, D> block = _dFSStack.Pop();
+                    BasicBlock<N, D> block = _dfsStack.Pop();
                     if (block == stopBlock)
                         return;
                     if (!_visited[block.Index])
                     {
                         _visited.Set(block.Index, true);
-                        Metrics.NodeCount++;
+                        _metrics.NodeCount++;
                         EnterBlock(block);
                         IterateBlock(block);
                         BasicBlock<N, D> nextFlowBlock = InterpretContext(block); ;
-                        Metrics.EdgeCount += block.SuccessorEdges.Count;
+                        _metrics.EdgeCount += block.SuccessorEdges.Count;
                         LeaveBlock(block);                        
                         if (nextFlowBlock == null)
                         {
                             foreach (var edge in block.SuccessorEdges)
                             {
-                                _dFSStack.Push(Cfg.SuccessorEdges[edge]);
+                                _dfsStack.Push(Cfg.SuccessorEdges[edge]);
                             }
                         }
                         else
                         {
-                            _dFSStack.Push(nextFlowBlock);
+                            _dfsStack.Push(nextFlowBlock);
                         }
                     }
                 }
@@ -149,7 +152,7 @@ namespace TypeCobol.Analysis.Graph
             private BasicBlock<N, D> CheckRelocatedBlock(MultiBranchContext<N, D> ctx, BasicBlock<N, D> fromBlock)
             {
                 var relocIndex = ctx.GetRelocatedBlockIndex(fromBlock.Index);
-                return relocIndex >= 0 ? this.Cfg.AllBlocks[relocIndex] : fromBlock;
+                return relocIndex >= 0 ? Cfg.AllBlocks[relocIndex] : fromBlock;
             }
 
             /// <summary>
@@ -167,7 +170,7 @@ namespace TypeCobol.Analysis.Graph
 
                 _interpretationStack.Push(block);
 
-                Metrics.ControlSubgraphCount++;
+                _metrics.ControlSubgraphCount++;
                 if (block.Context.SubContexts != null)
                 {                    
                     //Instruction with sub context : run all sub context.
