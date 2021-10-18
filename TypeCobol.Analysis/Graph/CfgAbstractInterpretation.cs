@@ -21,9 +21,8 @@ namespace TypeCobol.Analysis.Graph
         /// <returns>Metrics collected during abstract interpretation</returns>
         public static Metrics Run(ControlFlowGraph<N, D> cfg, params IObserver[] observers)
         {
-            Environment env = new Environment(cfg, observers);
-            env.Run();
-            return env.Metrics;
+            Environment env = new Environment(observers);
+            return env.Run(cfg);
         }
     }
 }

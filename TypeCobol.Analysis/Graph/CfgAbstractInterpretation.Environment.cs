@@ -16,46 +16,47 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// The Abstract Interpretation Stack
             /// </summary>
-            private Stack<BasicBlock<N, D>> InterpretationStack { get; set; }
+            private Stack<BasicBlock<N, D>> _interpretationStack;        
 
             /// <summary>
             /// The current execution stack
             /// </summary>
-            public IReadOnlyCollection<BasicBlock<N, D>> ExecutionStack => InterpretationStack;
+            public IReadOnlyCollection<BasicBlock<N, D>> ExecutionStack => _interpretationStack;
 
             /// <summary>
             /// The DFS Run stack
             /// </summary>
-            private Stack<BasicBlock<N, D>> DFSStack;
+            private Stack<BasicBlock<N, D>> _dFSStack;
 
             /// <summary>
             /// Already Visited Block
             /// </summary>
-            private System.Collections.BitArray Visited;
+            private System.Collections.BitArray _visited;
 
             /// <summary>
             /// Current CFG being run.
             /// </summary>
-            public readonly ControlFlowGraph<N, D> Cfg;
+            public ControlFlowGraph<N, D> Cfg { get; private set; }
             private IObserver[] _observers;
             /// <summary>
             /// Some metrics calculated.
             /// </summary>
-            public readonly Metrics Metrics;
-            public Environment(ControlFlowGraph<N, D> cfg, params IObserver[] observers)
+            public Metrics Metrics { get; private set; }
+            public Environment(params IObserver[] observers)
             {
-                this.Cfg = cfg;
                 this._observers = observers;
-                InterpretationStack = new Stack<BasicBlock<N, D>>();
-                // We use an iterative DFS algorithm.
-                Visited = new System.Collections.BitArray(cfg.AllBlocks.Count);
-                DFSStack = new Stack<BasicBlock<N, D>>();
-                this.Metrics = new Metrics();
             }
 
-            public virtual void Run()
+            public virtual Metrics Run(ControlFlowGraph<N, D> cfg)
             {
-                Run(Cfg.RootBlock, null);
+                this.Cfg = cfg;
+                _interpretationStack = new Stack<BasicBlock<N, D>>();
+                // We use an iterative DFS algorithm.
+                _visited = new System.Collections.BitArray(Cfg.AllBlocks.Count);
+                _dFSStack = new Stack<BasicBlock<N, D>>();
+                this.Metrics = new Metrics();
+                Run(Cfg.RootBlock, null);                
+                return this.Metrics;
             }
 
             /// <summary>
@@ -65,17 +66,17 @@ namespace TypeCobol.Analysis.Graph
             /// <param name="stopBlock">The stopping branch which will not be executed.</param>
             protected virtual void Run(BasicBlock<N, D> startBlock, BasicBlock<N, D> stopBlock)
             {
-                if (Visited.Get(startBlock.Index))
+                if (_visited.Get(startBlock.Index))
                     return;
-                DFSStack.Push(startBlock);
-                while (DFSStack.Count > 0)
+                _dFSStack.Push(startBlock);
+                while (_dFSStack.Count > 0)
                 {
-                    BasicBlock<N, D> block = DFSStack.Pop();
+                    BasicBlock<N, D> block = _dFSStack.Pop();
                     if (block == stopBlock)
                         return;
-                    if (!Visited[block.Index])
+                    if (!_visited[block.Index])
                     {
-                        Visited.Set(block.Index, true);
+                        _visited.Set(block.Index, true);
                         Metrics.NodeCount++;
                         EnterBlock(block);
                         IterateBlock(block);
@@ -86,28 +87,18 @@ namespace TypeCobol.Analysis.Graph
                         {                            
                             nextFlowBlock = InterpretContext(block);
                         }
-
-                        LeaveBlock(block);
+                        Metrics.EdgeCount += block.SuccessorEdges.Count;
+                        LeaveBlock(block);                        
                         if (nextFlowBlock == null)
                         {
                             foreach (var edge in block.SuccessorEdges)
                             {
-                                DFSStack.Push(Cfg.SuccessorEdges[edge]);
-                                Metrics.EdgeCount++;
+                                _dFSStack.Push(Cfg.SuccessorEdges[edge]);
                             }
                         }
                         else
                         {
-                            DFSStack.Push(nextFlowBlock);
-                            // If the multi branch context instruction has a successor
-                            // to the next flow block, add one edge.
-                            foreach (var edge in block.SuccessorEdges)
-                            {
-                                if (Cfg.SuccessorEdges[edge] == nextFlowBlock)
-                                {
-                                    Metrics.EdgeCount++;
-                                }
-                            }
+                            _dFSStack.Push(nextFlowBlock);
                         }
                     }
                 }
@@ -119,7 +110,7 @@ namespace TypeCobol.Analysis.Graph
             /// <param name="block"></param>
             private void IterateBlock(BasicBlock<N, D> block)
             {
-                if (_observers != null)
+                if (_observers != null && block.Instructions != null)
                 {
                     foreach (var i in block.Instructions)
                     {
@@ -174,7 +165,7 @@ namespace TypeCobol.Analysis.Graph
             /// <returns>The next block</returns>
             private BasicBlock<N, D> InterpretContext(BasicBlock<N, D> block)
             {
-                InterpretationStack.Push(block);
+                _interpretationStack.Push(block);
 
                 Metrics.ControlSubgraphCount++;
                 if (block.Context.SubContexts != null)
@@ -182,7 +173,6 @@ namespace TypeCobol.Analysis.Graph
                     //Instruction with sub context : run all sub context.
                     foreach (var ctx in block.Context.SubContexts)
                     {
-                        Metrics.EdgeCount++;
                         Run(CheckRelocatedBlock(ctx, ctx.OriginBlock), CheckRelocatedBlock(ctx, ctx.NextFlowBlock));
                     }
                 }
@@ -190,14 +180,13 @@ namespace TypeCobol.Analysis.Graph
                 {
                     foreach (var b in block.Context.Branches)
                     {
-                        Metrics.EdgeCount++;
                         Run(CheckRelocatedBlock(block.Context, b), CheckRelocatedBlock(block.Context, block.Context.NextFlowBlock));
                     }
                 }
 
-                System.Diagnostics.Debug.Assert(this.InterpretationStack.Count > 0 &&
-                                                this.InterpretationStack.Peek() == block);
-                this.InterpretationStack.Pop();
+                System.Diagnostics.Debug.Assert(this._interpretationStack.Count > 0 &&
+                                                this._interpretationStack.Peek() == block);
+                this._interpretationStack.Pop();
                 return CheckRelocatedBlock(block.Context, block.Context.NextFlowBlock);
             }
 

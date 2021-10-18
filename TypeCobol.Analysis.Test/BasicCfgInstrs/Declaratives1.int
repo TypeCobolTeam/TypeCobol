@@ -71,4 +71,4 @@ Leaving block : 4
 =======
 METRICS
 =======
-{EdgeCount=27; NodeCount=24; ControlSubgraphCount=1; HighCyclomaticComplexity=5; HighEssentialComplexityPath=4}
+{EdgeCount=28; NodeCount=24; ControlSubgraphCount=1; HighCyclomaticComplexity=6; HighEssentialComplexityPath=5}
