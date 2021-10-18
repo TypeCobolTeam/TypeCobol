@@ -80,13 +80,7 @@ namespace TypeCobol.Analysis.Graph
                         Metrics.NodeCount++;
                         EnterBlock(block);
                         IterateBlock(block);
-                        BasicBlock<N, D> nextFlowBlock = null;
-
-                        // Track Branching blocks
-                        if (block.Context != null)
-                        {                            
-                            nextFlowBlock = InterpretContext(block);
-                        }
+                        BasicBlock<N, D> nextFlowBlock = InterpretContext(block); ;
                         Metrics.EdgeCount += block.SuccessorEdges.Count;
                         LeaveBlock(block);                        
                         if (nextFlowBlock == null)
@@ -165,6 +159,12 @@ namespace TypeCobol.Analysis.Graph
             /// <returns>The next block</returns>
             private BasicBlock<N, D> InterpretContext(BasicBlock<N, D> block)
             {
+                // Track Branching blocks
+                if (block.Context == null)
+                {
+                    return null;
+                }
+
                 _interpretationStack.Push(block);
 
                 Metrics.ControlSubgraphCount++;
