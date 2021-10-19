@@ -24,16 +24,26 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         internal static void ProcessDocument(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
         {
-            if (document.CompilerOptions.UseAntlrProgramParsing)
-            {
-                ProcessTokensLinesChanges(document, documentLines, null, null,
+            ProcessChanges(document, documentLines, null, null, documentImporter, perfStatsForParserInvocation, out missingCopies);
+        }
+
+        /// <summary>
+        /// Incremental preprocessing
+        /// </summary>
+        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessChanges(CompilationDocument document,
+            ISearchableReadOnlyList<ProcessedTokensLine> documentLines,
+            IList<DocumentChange<ITokensLine>> tokensLinesChanges,
+            PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter,
+            PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
+        {
+            return document.CompilerOptions.UseAntlrProgramParsing
+                //ANTLR preprocessing
+                ? ProcessTokensLinesChanges(document, documentLines, tokensLinesChanges, prepareDocumentLineForUpdate,
+                    documentImporter, perfStatsForParserInvocation, out missingCopies)
+                //CUP preprocessing
+                : CupProcessTokensLinesChanges(document, documentLines, tokensLinesChanges,
+                    prepareDocumentLineForUpdate,
                     documentImporter, perfStatsForParserInvocation, out missingCopies);
-            }
-            else
-            {
-                CupProcessTokensLinesChanges(document, documentLines, null, null,
-                    documentImporter, perfStatsForParserInvocation, out missingCopies);
-            }
         }
 
         // When not null, optionnaly used to gather Antlr performance profiling information
@@ -52,7 +62,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
+        private static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
         {
             var textSourceInfo = document.TextSourceInfo;
 
@@ -305,6 +315,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Iterate over all COPY directives found on one updated line
                     foreach (CopyDirective copyDirective in tokensLineWithCopyDirective.ImportedDocuments.Keys.Where(c => c.TextName != null || c.COPYToken.TokenType == TokenType.EXEC).ToArray())
                     {
+                        if (copyDirective.TextName == null)
+                            continue;
                         try
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
@@ -397,7 +409,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> CupProcessTokensLinesChanges(
+        private static IList<DocumentChange<IProcessedTokensLine>> CupProcessTokensLinesChanges(
             CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines,
             IList<DocumentChange<ITokensLine>> tokensLinesChanges,
             PrepareDocumentLineForUpdate prepareDocumentLineForUpdate,
@@ -621,6 +633,8 @@ namespace TypeCobol.Compiler.Preprocessor
                         tokensLineWithCopyDirective.ImportedDocuments.Keys.Where(
                             c => c.TextName != null || c.COPYToken.TokenType == TokenType.EXEC).ToArray())
                     {
+                        if (copyDirective.TextName == null)
+                            continue;
                         try
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive

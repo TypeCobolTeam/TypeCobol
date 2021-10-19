@@ -253,7 +253,7 @@ namespace TypeCobol.LanguageServer
 
             if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
             {
-                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy, fileCompiler.CompilerOptions.UseAntlrProgramParsing); //Let's parse file for the first time after opening. 
+                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
             }
 
             return fileCompiler;
@@ -317,7 +317,7 @@ namespace TypeCobol.LanguageServer
                                                           //further it's for semantic, which is handle by NodeRefresh method
 
 
-                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy, fileCompilerToUpdate.CompilerOptions.UseAntlrProgramParsing);
+                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy);
                 fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
                 
 
@@ -405,7 +405,8 @@ namespace TypeCobol.LanguageServer
             catch (Exception e)
             {
                 //In case Timer Thread crash
-                ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
+                if (ExceptionTriggered != null)
+                    ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
             }
 
             void Refresh()
@@ -687,7 +688,7 @@ namespace TypeCobol.LanguageServer
                 _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
                 _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, _customSymbols, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
 
-                if (missingCopies.Count > 0)
+                if (MissingCopiesEvent != null && missingCopies.Count > 0)
                 {
                     MissingCopiesEvent(missingCopies.First().Key, new MissingCopiesEvent() { Copies = missingCopies.SelectMany(c => c.Value).Distinct().ToList() });
                     return;//Do not report diagnostics if copies are missing
@@ -696,7 +697,8 @@ namespace TypeCobol.LanguageServer
                 if (diagDetected)
                 {
                     var message = "An error occured while trying to load Intrinsics or Dependencies files.";
-                    LoadingIssueEvent(null, new LoadingIssueEvent() {Message = message}); //Send notification to client
+                    if (LoadingIssueEvent!= null)
+                        LoadingIssueEvent(null, new LoadingIssueEvent() {Message = message}); //Send notification to client
 
                     var sb = new StringBuilder();
                     sb.AppendLine(message);
@@ -709,16 +711,19 @@ namespace TypeCobol.LanguageServer
                             sb.AppendLine(" - " + diagText); //Add associated diagnostics
                         }
                     }
-                    WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
+                    if (WarningTrigger != null)
+                        WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
                 }
                 else
                 {//Send an LoadingIssueEvent with an empty message to tell the client that there are no issues.
-                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
+                    if (LoadingIssueEvent != null)
+                        LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
                 }
             }
             catch (TypeCobolException typeCobolException)
             {
-                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
+                if (LoadingIssueEvent != null)
+                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
 
@@ -727,7 +732,8 @@ namespace TypeCobol.LanguageServer
             }
             catch (Exception e)
             {
-                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
+                if (LoadingIssueEvent != null)
+                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 AnalyticsWrapper.Telemetry.TrackException(e, null);
                 AnalyticsWrapper.Telemetry.SendMail(e, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
@@ -768,10 +774,11 @@ namespace TypeCobol.LanguageServer
                     diags = diags.Any() ? diags.Concat(group) : group;
                 }
             }
-            
-            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
 
-            if (compilationUnit?.MissingCopies.Count > 0)
+            if (DiagnosticsEvent != null)
+                DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
+
+            if (MissingCopiesEvent != null && compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = new List<string>(compilationUnit.MissingCopies) });
 
             DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
