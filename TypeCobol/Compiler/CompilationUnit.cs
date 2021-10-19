@@ -129,6 +129,11 @@ namespace TypeCobol.Compiler
                     codeElementsLinesChanged(this, documentChangedEvent);
                 }
             }
+
+#if DEBUG
+            //Update CE diag count for future checks
+            _codeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+#endif
         }
 
         /// <summary>
@@ -146,6 +151,23 @@ namespace TypeCobol.Compiler
         /// Performance stats for the RefreshCodeElementsDocumentSnapshot method
         /// </summary>
         public PerfStatsForParsingStep PerfStatsForCodeElementsParser { get; private set; }
+
+#if DEBUG
+        private int _codeElementDiagnosticCount;
+
+        /// <summary>
+        /// Debug-only check to avoid creation of diagnostics on CodeElements after they have been created/refreshed.
+        /// Must be called at the end of each compilation step defined after <see cref="RefreshCodeElementsDocumentSnapshot"/>.
+        /// </summary>
+        private void CheckCodeElementDiagnostics()
+        {
+            var actualCodeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            if (actualCodeElementDiagnosticCount != _codeElementDiagnosticCount)
+            {
+                System.Diagnostics.Debug.Fail("CodeElement diagnostics should not be created after CE phase !");
+            }
+        }
+#endif
 
         public string AntlrResult {
             get
@@ -213,6 +235,10 @@ namespace TypeCobol.Compiler
             {
                 programClassNotChanged(this, new ProgramClassEvent() { Version = ProgramClassDocumentSnapshot.CurrentVersion });
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>
@@ -287,6 +313,10 @@ namespace TypeCobol.Compiler
                     PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
                 }
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>
@@ -369,6 +399,10 @@ namespace TypeCobol.Compiler
             {
                 codeAnalysisCompleted(this, new ProgramClassEvent() { Version = CodeAnalysisDocumentSnapshot.CurrentVersion });
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>

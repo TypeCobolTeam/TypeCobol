@@ -83,7 +83,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(FunctionDeclaration functionDeclaration)
         {
             FunctionDeclarationChecker.OnNode(functionDeclaration);
-            CheckMultipleFormComParam(functionDeclaration.CodeElement);
+            FormalizedCommentsChecker.CheckFunctionComments(functionDeclaration);
             return true;
         }
 
@@ -138,13 +138,6 @@ namespace TypeCobol.Compiler.Diagnostics
             LibraryChecker.CheckLibrary(procedureDivision);
             //initializing the current section to null
             _currentSection = null;
-            ProcedureDivisionHeader ce = procedureDivision.CodeElement as ProcedureDivisionHeader;
-            if (ce?.FormalizedCommentDocumentation != null && procedureDivision.Parent is FunctionDeclaration)
-            {
-                DiagnosticUtils.AddError(ce,
-                    "Formalized Comments can be placed above Procedure Division only for Programs",
-                    MessageCode.ErrorFormalizedCommentMissplaced);
-            }
             return true;
         }
 
@@ -501,7 +494,7 @@ namespace TypeCobol.Compiler.Diagnostics
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
-            CheckMultipleFormComParam(typeDefinition.CodeElement);
+            FormalizedCommentsChecker.CheckTypeComments(typeDefinition);
             return true;
         }
 
@@ -509,58 +502,8 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             // Check that program has a closing end
             CheckEndProgram(program);
-
-            //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
-
-            ProcedureDivisionHeader procedureDivision =
-                program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
-            var formCom = procedureDivision?.FormalizedCommentDocumentation;
-
-            if (formCom != null && procedureDivision.UsingParameters != null)
-            {
-                CheckMultipleFormComParam(procedureDivision);
-                // Get the parameters inside the Formalized Comment that are not inside the program parameters
-                var formComParamOrphan = formCom.Parameters.Keys.Except(
-                                             procedureDivision.UsingParameters.Select(p =>
-                                                 p.StorageArea.SymbolReference?.Name)) ?? Enumerable.Empty<string>();
-
-                // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
-                foreach (var orphan in formComParamOrphan)
-                {
-                    var tokens =
-                        procedureDivision.ConsumedTokens.Where(t =>
-                            t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
-                    foreach (var token in tokens)
-                    {
-                        DiagnosticUtils.AddError(procedureDivision,
-                            "Parameter name does not match to any program parameter: " + orphan,
-                            token, code: MessageCode.Warning);
-                    }
-                }
-
-
-                // Get the parameters inside the program parameters that are not inside the Formalized Comment
-                var sameParameters = procedureDivision.UsingParameters.Where(p =>
-                    formCom.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
-
-                var programParamWithoutDesc = procedureDivision.UsingParameters.Except(sameParameters);
-
-                // For each of them, place a warning on the parameter definition
-                foreach (var param in programParamWithoutDesc)
-                {
-                    var tokens = procedureDivision.ConsumedTokens.Where(t =>
-                        t.TokenType == TokenType.UserDefinedWord &&
-                        t.Text == param.StorageArea.SymbolReference?.Name);
-                    foreach (var token in tokens)
-                    {
-                        DiagnosticUtils.AddError(procedureDivision,
-                            "Parameter does not have any description inside the formalized comments: " +
-                            param.StorageArea.SymbolReference?.Name,
-                            token, code: MessageCode.Warning);
-                    }
-                }
-            }
-
+            
+            FormalizedCommentsChecker.CheckProgramComments(program);
             return true;
         }
 
@@ -702,7 +645,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 CodeElement parentCodeElement = end.Parent.CodeElement; ;
                 if (parentCodeElement?.IsInsideCopy() == false && end.IsInsideCopy() == false)
                 {
-                    CheckEndNode(parentCodeElement, end.CodeElement);
+                    CheckEndNode(parentCodeElement, end);
                 }
             }
             return true;
@@ -717,7 +660,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
                 {
                     Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
-                    CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
+                    CheckEndNode(openingDeclareToken, functionEnd);
                 }
             }
             return true;
@@ -749,16 +692,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            return true;
-        }
-
-        public override bool Visit(SourceComputer sourceComputer)
-        {
-            if (sourceComputer.CodeElement.DebuggingMode?.Value == true)
-            {
-                Token token = sourceComputer.CodeElement.DebuggingMode.Token;
-                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning);
-            }
             return true;
         }
 
@@ -1101,26 +1034,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        /// <summary>
-        /// Add a warning if a Field is set more than one time
-        /// </summary>
-        private static void CheckMultipleFormComParam(CodeElement codeElement)
-        {
-            var tokenGroups = codeElement.ConsumedTokens.GroupBy(t => t.TokenType);
-            foreach (var tokenGroup in tokenGroups)
-            {
-                if ((int) tokenGroup.Key >= 513 && (int) tokenGroup.Key <= 520 && tokenGroup.Count() > 1)
-                {
-                    foreach (var token in tokenGroup)
-                    {
-                        DiagnosticUtils.AddError(codeElement,
-                            "Formalized comment field is declared more than once : " + token.Text,
-                            token, code: MessageCode.Warning);
-                    }
-                }
-            }
-        }
-
         private static void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
             DataDefinitionPath dataDefinitionPath)
         {
@@ -1132,13 +1045,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
-        private void CheckEndNode([CanBeNull]IToken openingToken, CodeElement endCodeElement)
+        private void CheckEndNode([CanBeNull]IToken openingToken, Node endNode)
         {
+            System.Diagnostics.Debug.Assert(endNode is End || endNode is FunctionEnd);
+            System.Diagnostics.Debug.Assert(endNode.CodeElement != null);
+
             // Check end statement is aligned with the matching opening statement
+            var endCodeElement = endNode.CodeElement;
             if (openingToken != null && openingToken.Line != endCodeElement.Line &&
                 openingToken.StartIndex != endCodeElement.StartIndex)
             {
-                DiagnosticUtils.AddError(endCodeElement,
+                DiagnosticUtils.AddError(endNode,
                     "a End statement is not aligned with the matching opening statement",
                     _compilerOptions.CheckEndAlignment.GetMessageCode());
             }

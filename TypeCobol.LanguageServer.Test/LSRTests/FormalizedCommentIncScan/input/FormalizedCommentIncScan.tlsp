@@ -15,7 +15,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54976774298083657321.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54976774298083657321.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":10,\"character\":18},\"end\":{\"line\":10,\"character\":22}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any program parameter: bDate\"},{\"range\":{\"start\":{\"line\":11,\"character\":18},\"end\":{\"line\":11,\"character\":22}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any program parameter: bTime\"}]}}"
     },
     {
       "category": 0,
@@ -35,7 +35,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54976774298083657321.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54976774298083657321.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":10,\"character\":18},\"end\":{\"line\":10,\"character\":22}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any program parameter: bDate\"},{\"range\":{\"start\":{\"line\":11,\"character\":18},\"end\":{\"line\":11,\"character\":22}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any program parameter: bTime\"}]}}"
     },
     {
       "category": 0,
@@ -59,7 +59,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54976774298083657321.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54976774298083657321.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":10,\"character\":18},\"end\":{\"line\":10,\"character\":22}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any program parameter: bDate\"},{\"range\":{\"start\":{\"line\":11,\"character\":18},\"end\":{\"line\":11,\"character\":22}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any program parameter: bTime\"}]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54976774298083657321.cee\"}}}",
