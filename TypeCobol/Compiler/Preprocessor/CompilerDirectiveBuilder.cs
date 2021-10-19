@@ -155,11 +155,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
 
 #if EUROINFO_RULES
-                if(this.TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
+                if (copy.TextName != null)
                 {
-                    if (copy.TextName != null)
+                    if (this.TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                     {
-
                         // Find the list of copy text names variations declared by previous REMARKS compiler directives
                         var variations = CopyTextNameVariations;
                         if (TypeCobolOptions.AutoRemarksEnable &&
@@ -195,11 +194,9 @@ namespace TypeCobol.Compiler.Preprocessor
                                 }
                             }
                         }
-
-
                     }
+                    _document.CollectUsedCopy(copy);
                 }
-                _document.CollectUsedCopy(copy);
 #endif
 
                 copy.LibraryName = GetLibraryName(ctxt.libraryName());
