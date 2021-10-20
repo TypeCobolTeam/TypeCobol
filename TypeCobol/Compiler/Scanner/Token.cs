@@ -413,8 +413,14 @@ namespace TypeCobol.Compiler.Scanner
             get { return -1; }
         }
 
-        // Common token for End of file
-        public static Token END_OF_FILE = new Token(TokenType.EndOfFile, 0, -1, TypeCobol.Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, String.Empty));
+        /// <summary>
+        /// Creates a new instance of special end-of-file Token.
+        /// </summary>
+        /// <returns>New Token instance with EndOfFile TokenType</returns>
+        public static Token EndOfFile()
+        {
+            return new Token(TokenType.EndOfFile, 0, -1, Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, string.Empty));
+        }
 
         // --- Token comparison for REPLACE directive ---
 

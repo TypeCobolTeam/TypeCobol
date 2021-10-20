@@ -32,7 +32,7 @@ namespace TypeCobol.Test.Utils
                 documentFormat, new TypeCobolOptions(), null);
 
             FileCompiler compiler = new FileCompiler(null, textName, documentFormat.ColumnsLayout, isCopy, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
-            compiler.CompileOnce(ExecutionStep.Preprocessor, false, false);
+            compiler.CompileOnce(ExecutionStep.Preprocessor, false);
 
             return compiler.CompilationResultsForProgram;
         }
@@ -91,7 +91,7 @@ namespace TypeCobol.Test.Utils
         {
             StringBuilder builder = new StringBuilder();
             //Sort diagnostics by line order
-            foreach (Diagnostic d in diagnostics.OrderBy(d => d.Line))
+            foreach (Diagnostic d in diagnostics.OrderBy(d => d.LineStart))
             {
                 string errmsg = null;
 

@@ -30,7 +30,7 @@
            SEARCH ALL DSRCE-TAB
               AT END
                  DISPLAY 'VALUE NOT FOUND'
-      *  Ok
+      *  Ko DSRCE-KEY-A (Idx) must appear on left side
               WHEN WS-KEY = DSRCE-KEY-A (Idx)
                  DISPLAY 'VALUE FOUND'
            END-SEARCH

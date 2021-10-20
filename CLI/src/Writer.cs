@@ -141,7 +141,7 @@ namespace TypeCobol.Server {
             writer.WriteStartElement("MESSAGE");
             writer.WriteElementString("MSGNUMBER",
                 "TC-" + error.Info.Code.ToString().PadLeft(5, '0') + AsIBMSuffix((int) error.Info.Severity));
-            writer.WriteElementString("MSGLINE", error.Line.ToString());
+            writer.WriteElementString("MSGLINE", error.LineStart.ToString());
             writer.WriteElementString("MSGFILE", id);
             writer.WriteElementString("MSGTEXT", error.Message);
             writer.WriteEndElement(); // MESSAGE
@@ -246,9 +246,9 @@ namespace TypeCobol.Server {
 
                     //range
                     _xmlWriter.WriteStartElement("range");
-                    _xmlWriter.WriteAttributeString("line-start", diagnostic.Line.ToString());
+                    _xmlWriter.WriteAttributeString("line-start", diagnostic.LineStart.ToString());
                     _xmlWriter.WriteAttributeString("column-start", diagnostic.ColumnStart.ToString());
-                    _xmlWriter.WriteAttributeString("line-end", diagnostic.Line.ToString());
+                    _xmlWriter.WriteAttributeString("line-end", diagnostic.LineEnd.ToString());
                     _xmlWriter.WriteAttributeString("column-end", diagnostic.ColumnEnd.ToString());
                     _xmlWriter.WriteEndElement();
 

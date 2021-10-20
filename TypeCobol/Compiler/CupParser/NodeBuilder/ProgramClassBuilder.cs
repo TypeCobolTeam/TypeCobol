@@ -809,9 +809,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFunctionProcedureDivision(ProcedureDivisionHeader header)
         {
-            if (header.UsingParameters != null && header.UsingParameters.Count > 0)
-                DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
-
             Enter(new ProcedureDivision(header), header);
             Dispatcher.StartFunctionProcedureDivision(header);
         }

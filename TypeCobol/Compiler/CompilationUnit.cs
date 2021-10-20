@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
@@ -20,7 +19,7 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class CompilationUnit : CompilationDocument
     {
-        private readonly IAnalyzerProvider _analyzerProvider;
+        private readonly AnalyzerProviderWrapper _analyzerProvider;
 
         /// <summary>
         /// Initializes a new compilation document from a list of text lines.
@@ -35,8 +34,21 @@ namespace TypeCobol.Compiler
             PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
             PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
+            if (analyzerProvider is AnalyzerProviderWrapper analyzerProviderWrapper)
+            {
+                _analyzerProvider = analyzerProviderWrapper;
+            }
+            else if (analyzerProvider != null)
+            {
+                // Wrap the given provider to secure it
+                _analyzerProvider = new AnalyzerProviderWrapper();
+                _analyzerProvider.AddProvider(analyzerProvider);
+            }
+            else
+            {
+                _analyzerProvider = null;
+            }
 
-            _analyzerProvider = analyzerProvider;
         }
 
         /// <summary>
@@ -117,6 +129,11 @@ namespace TypeCobol.Compiler
                     codeElementsLinesChanged(this, documentChangedEvent);
                 }
             }
+
+#if DEBUG
+            //Update CE diag count for future checks
+            _codeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+#endif
         }
 
         /// <summary>
@@ -134,6 +151,23 @@ namespace TypeCobol.Compiler
         /// Performance stats for the RefreshCodeElementsDocumentSnapshot method
         /// </summary>
         public PerfStatsForParsingStep PerfStatsForCodeElementsParser { get; private set; }
+
+#if DEBUG
+        private int _codeElementDiagnosticCount;
+
+        /// <summary>
+        /// Debug-only check to avoid creation of diagnostics on CodeElements after they have been created/refreshed.
+        /// Must be called at the end of each compilation step defined after <see cref="RefreshCodeElementsDocumentSnapshot"/>.
+        /// </summary>
+        private void CheckCodeElementDiagnostics()
+        {
+            var actualCodeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            if (actualCodeElementDiagnosticCount != _codeElementDiagnosticCount)
+            {
+                System.Diagnostics.Debug.Fail("CodeElement diagnostics should not be created after CE phase !");
+            }
+        }
+#endif
 
         public string AntlrResult {
             get
@@ -201,13 +235,16 @@ namespace TypeCobol.Compiler
             {
                 programClassNotChanged(this, new ProgramClassEvent() { Version = ProgramClassDocumentSnapshot.CurrentVersion });
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>
         /// Creates a temporary snapshot which contains element before the cross check phase
         /// Usefull to create a program symboltable without checking nodes.
         /// For instance : it's used to load all the symbols from every dependencies before running the cross check phase to resolve symbols.
-        /// <param name="useAntlrProgramParsing">Shall ANTLR be used to parse TypeCobol Program, otherwise it will be CUP</param>
         /// </summary>
         public void ProduceTemporarySemanticDocument()
         {
@@ -220,16 +257,9 @@ namespace TypeCobol.Compiler
                 {
                     // Start perf measurement
                     var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
+                    var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
-                    SourceFile root;
-                    List<Diagnostic> newDiagnostics;
-                    Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
-
-                    List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
-                    List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
-
-                    var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CupParseProgramOrClass(
                         TextSourceInfo,
@@ -238,14 +268,29 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
-                        out root,
-                        out newDiagnostics,
-                        out nodeCodeElementLinkers,
-                        out typedVariablesOutsideTypedef,
-                        out typeThatNeedTypeLinking);
+                        out var root,
+                        out var newDiagnostics,
+                        out var nodeCodeElementLinkers,
+                        out var typedVariablesOutsideTypedef,
+                        out var typeThatNeedTypeLinking);
 
                     //Capture the syntax-driven analyzers results
-                    var results = customAnalyzers?.ToDictionary(a => a.Identifier, a => a.GetResult()) ?? new Dictionary<string, object>();
+                    var results = new Dictionary<string, object>();
+                    if (customAnalyzers != null)
+                    {
+                        foreach (var analyzer in customAnalyzers)
+                        {
+                            try
+                            {
+                                results.Add(analyzer.Identifier, analyzer.GetResult());
+                            }
+                            catch (Exception exception)
+                            {
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer.Identifier, exception.Message, exception);
+                                newDiagnostics.Add(diagnostic);
+                            }
+                        }
+                    }
 
                     // Capture the produced results
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
@@ -268,6 +313,10 @@ namespace TypeCobol.Compiler
                     PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
                 }
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>
@@ -310,7 +359,7 @@ namespace TypeCobol.Compiler
                             }
                             catch (Exception exception)
                             {
-                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer, exception.Message, exception);
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer.Identifier, exception.Message, exception);
                                 diagnostics.Add(diagnostic);
                             }
                         }
@@ -350,6 +399,10 @@ namespace TypeCobol.Compiler
             {
                 codeAnalysisCompleted(this, new ProgramClassEvent() { Version = CodeAnalysisDocumentSnapshot.CurrentVersion });
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>

@@ -79,6 +79,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public List<string> CustomAnalyzerFiles { get; set; }
 
+        /// <summary>
+        /// No Copy and Dependency files watchers.
+        /// </summary>
+        public bool NoCopyDependencyWatchers { get; set; }
+
         private bool Logger(string message, Uri uri)
         {
             if (uri == null)
@@ -159,6 +164,33 @@ namespace TypeCobol.LanguageServer
             this.NotifyWarning(message);
         }
 
+        protected void MissingCopiesDetected(TextDocumentIdentifier textDocument, List<string> copiesName)
+        {
+            if (copiesName.Count > 0)
+            {
+                var missingCopiesParam = new MissingCopiesParams();
+                missingCopiesParam.textDocument = textDocument;
+
+#if EUROINFO_RULES
+                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
+                //----------------------------------------------------------
+                // We need to review this mechanism with RTC.
+                // Because actually it produces bad results and it will
+                // be clarified with RTC specifications. (see TFS 117645)
+                //----------------------------------------------------------
+                //missingCopiesParam.Copies = lookup[false].ToList();
+                //missingCopiesParam.CpyCopies = lookup[true].ToList();
+                //----------------------------------------------------------
+                missingCopiesParam.Copies = copiesName;
+                missingCopiesParam.CpyCopies = new List<string>();
+#else
+                missingCopiesParam.Copies = copiesName;
+                missingCopiesParam.CpyCopies = new List<string>();
+#endif
+                this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            }
+        }
+
         /// <summary>
         /// Event Method triggered when missing copies are detected.
         /// </summary>
@@ -170,10 +202,7 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            var missingCopiesParam = new MissingCopiesParams();
-            missingCopiesParam.Copies = missingCopiesEvent.Copies;
-            missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
-            this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            MissingCopiesDetected(new TextDocumentIdentifier(fileUri.ToString()), missingCopiesEvent.Copies);
         }
 
         /// <summary>
@@ -188,7 +217,7 @@ namespace TypeCobol.LanguageServer
 
             foreach (var diag in diagnosticEvent.Diagnostics)
             {
-                diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd),
+                diagList.Add(new Diagnostic(new Range(diag.LineStart, diag.ColumnStart, diag.LineEnd, diag.ColumnEnd),
                     diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(),
                     diag.Info.ReferenceText));
             }
@@ -238,6 +267,8 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace.
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
+            if (!NoCopyDependencyWatchers)
+                this.Workspace.InitCopyDependencyWatchers();
 #if EUROINFO_RULES
             this.Workspace.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
 #endif
@@ -253,6 +284,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.ExceptionTriggered += ExceptionTriggered;
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
+            this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
             this.Workspace.LoadCustomAnalyzers(CustomAnalyzerFiles);
 
             // Return language server capabilities
@@ -271,6 +303,9 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnShutdown()
         {
+            this.Workspace.LoadingIssueEvent -= LoadingIssueDetected;
+            this.Workspace.ExceptionTriggered -= ExceptionTriggered;
+            this.Workspace.WarningTrigger -= WarningTrigger;
             this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
             this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
@@ -300,9 +335,6 @@ namespace TypeCobol.LanguageServer
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
             if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocumentContext(docContext.Uri, out _))
             {
-                //Subscribe to diagnostics event
-                this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
-
                 //Create a ILanguageServer instance for the document.
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, parameters.textDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
@@ -488,7 +520,6 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 this.Workspace.CloseSourceFile(objUri);
-                this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
@@ -598,7 +629,7 @@ namespace TypeCobol.LanguageServer
             if (message != string.Empty)
             {
                 resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
-                    matchingCodeElement.Line,
+                    matchingCodeElement.LineEnd,
                     matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
                     new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };

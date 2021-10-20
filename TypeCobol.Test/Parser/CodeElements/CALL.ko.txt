@@ -7,8 +7,10 @@ Line 7[8,8] <27, Error, Syntax> - Syntax error : extraneous input 'g' expecting 
 Line 7[1,4] <27, Error, Syntax> - Syntax error : mismatched input 'CALL' expecting {symbol, special register, keyword} RuleStack=codeElement>callStatement>cobolCallStatement>callReturningParameter>sharedStorageArea1>identifier>storageAreaReferenceOrConditionReference,  OffendingSymbol=[1,4:CALL]<CALL>
 Line 8[20,20] <27, Error, Syntax> - Syntax error : extraneous input 'y' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[20,20:y]<UserDefinedWord>
 Line 11[17,21] <27, Error, Syntax> - Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'MALUS' RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters,  OffendingSymbol=[17,21:MALUS]<UserDefinedWord>
-Line 13[14,21] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal function identifier RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters,  OffendingSymbol=[14,21:FUNCTION]<FUNCTION>
-Line 14[14,19] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters,  OffendingSymbol=[14,19:LENGTH]<LENGTH>
+Line 13[23,28] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal function identifier OffendingSymbol=[23,28:RANDOM]<IntrinsicFunctionName>
+Line 14[14,19] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase OffendingSymbol=[14,19:LENGTH]<LENGTH>
+Line 17[27,32] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase OffendingSymbol=[27,32:length]<LENGTH>
+Line 19[23,29] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal OMITTED in BY VALUE phrase OffendingSymbol=[23,29:OMITTED]<OMITTED>
 --- Code Elements ---
 [[CallStatement]] [1,4:CALL]<CALL> --> [12,12:x]<UserDefinedWord>
 
@@ -30,5 +32,11 @@ Line 14[14,19] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGT
 
 [[CallStatement]] [1,4:CALL]<CALL> --> [24,24:x]<UserDefinedWord>
 
+[[CallStatement]] [1,4:CALL]<CALL> --> [37,37:c]<UserDefinedWord>
+
+[[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
+
 [[CallStatement]] [1,4:CALL]<CALL> --> [32,32:x]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [23,29:OMITTED]<OMITTED>
 

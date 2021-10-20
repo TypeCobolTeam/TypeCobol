@@ -14,14 +14,14 @@ namespace TypeCobol.Compiler.CupPreprocessor
     /// </summary>
     public class CompilerDirectiveBuilder : ICompilerDirectiveBuilder
     {
-        public CompilerDirectiveBuilder(TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public CompilerDirectiveBuilder(CompilationDocument document)
         {
-            TypeCobolOptions = compilerOptions;
-            CopyTextNameVariations = copyTextNameVariations;
+            _document = document;
         }
 
-        public TypeCobolOptions TypeCobolOptions { get; set; }
-        public List<RemarksDirective.TextNameVariation> CopyTextNameVariations { get; set; }
+        private readonly CompilationDocument _document;
+        private TypeCobolOptions TypeCobolOptions => _document.CompilerOptions;
+        private List<RemarksDirective.TextNameVariation> CopyTextNameVariations => _document.CopyTextNamesVariations;
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
@@ -84,52 +84,49 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-            {                
 #if EUROINFO_RULES
+            if (copy.TextName != null)
+            {
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
-                    if (copy.TextName != null)
+                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                    var variations = CopyTextNameVariations;
+                    if (TypeCobolOptions.AutoRemarksEnable &&
+                        (variations == null ||
+                            !variations.Any(
+                                v =>
+                                    string.Equals(v.TextNameWithSuffix, copy.TextName,
+                                        StringComparison.InvariantCultureIgnoreCase))))
+                    //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
                     {
-
-                        // Find the list of copy text names variations declared by previous REMARKS compiler directives
-                        var variations = CopyTextNameVariations;
-                        if (TypeCobolOptions.AutoRemarksEnable &&
-                            (variations == null ||
-                             !variations.Any(
-                                 v =>
-                                     string.Equals(v.TextNameWithSuffix, copy.TextName,
-                                         StringComparison.InvariantCultureIgnoreCase))))
-                        //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
-                        {
-                            variations = new List<RemarksDirective.TextNameVariation>
+                        variations = new List<RemarksDirective.TextNameVariation>
                         {
                             new RemarksDirective.TextNameVariation(copy.TextName)
                         };
+                        CopyTextNameVariations.AddRange(variations);
+                    }
 
-                            CopyTextNameVariations.AddRange(variations);
-                        }
-
-                        if (variations != null)
+                    if (variations != null)
+                    {
+                        var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
+                                        StringComparison.InvariantCultureIgnoreCase));
+                        if (declaration != null && this.TypeCobolOptions.HasCpyCopy(declaration.TextName))
                         {
-                            var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
-                                            StringComparison.InvariantCultureIgnoreCase));
-                            if (declaration != null && this.TypeCobolOptions.HasCpyCopy(declaration.TextName))
+                            // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
+                            copy.RemoveFirst01Level = true;
+                            if (declaration.HasSuffix)
                             {
-                                // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
-                                copy.RemoveFirst01Level = true;
-                                if (declaration.HasSuffix)
-                                {
-                                    copy.TextName = declaration.TextName;
-                                    copy.InsertSuffixChar = true;
-                                    copy.Suffix = declaration.Suffix;
-                                    copy.PreSuffix = declaration.PreSuffix;
-                                }
+                                copy.TextName = declaration.TextName;
+                                copy.InsertSuffixChar = true;
+                                copy.Suffix = declaration.Suffix;
+                                copy.PreSuffix = declaration.PreSuffix;
                             }
                         }
                     }
                 }
-#endif
+                _document.CollectUsedCopy(copy);
             }
+#endif
             copy.LibraryName = GetName(qualifiedTextName.LibraryName);
             copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
 

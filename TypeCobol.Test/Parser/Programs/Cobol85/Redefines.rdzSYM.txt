@@ -58,7 +58,6 @@ WorkingStorageData:
           Owner: RedefinesTest::MyRedifines::one
           Type:
             (.NET Type=Type, Tag=DataCondition)
-            Flags: [BuiltinType]
           Level: 88
           IsFiller: False
       Level: 5
@@ -85,7 +84,6 @@ WorkingStorageData:
           Owner: RedefinesTest::MyRedifines2::one
           Type:
             (.NET Type=Type, Tag=DataCondition)
-            Flags: [BuiltinType]
           Level: 88
           IsFiller: False
       Level: 5
@@ -112,7 +110,6 @@ WorkingStorageData:
           Owner: RedefinesTest::MyRedifines3::one
           Type:
             (.NET Type=Type, Tag=DataCondition)
-            Flags: [BuiltinType]
           Level: 88
           IsFiller: False
       Level: 5
@@ -139,7 +136,6 @@ WorkingStorageData:
           Owner: RedefinesTest::MyRedifines4::one
           Type:
             (.NET Type=Type, Tag=DataCondition)
-            Flags: [BuiltinType]
           Level: 88
           IsFiller: False
       Level: 5

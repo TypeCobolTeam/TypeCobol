@@ -101,8 +101,8 @@ namespace TypeCobol.Compiler.AntlrUtils
             if (tokensCountIterator != null)
             {
                 ITokensLine lastLine = null;
-                Token token = null;
-                while ((token = tokensCountIterator.NextToken()) != Token.END_OF_FILE)
+                Token token;
+                while ((token = tokensCountIterator.NextToken()).TokenType != TokenType.EndOfFile)
                 {
                     CurrentFileInfo.TokensCount++;
                     if (token.TokensLine != lastLine)

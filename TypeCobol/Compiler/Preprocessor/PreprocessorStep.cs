@@ -24,16 +24,26 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         internal static void ProcessDocument(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
         {
-            if (document.CompilerOptions.UseAntlrProgramParsing)
-            {
-                ProcessTokensLinesChanges(document, documentLines, null, null,
+            ProcessChanges(document, documentLines, null, null, documentImporter, perfStatsForParserInvocation, out missingCopies);
+        }
+
+        /// <summary>
+        /// Incremental preprocessing
+        /// </summary>
+        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessChanges(CompilationDocument document,
+            ISearchableReadOnlyList<ProcessedTokensLine> documentLines,
+            IList<DocumentChange<ITokensLine>> tokensLinesChanges,
+            PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter,
+            PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
+        {
+            return document.CompilerOptions.UseAntlrProgramParsing
+                //ANTLR preprocessing
+                ? ProcessTokensLinesChanges(document, documentLines, tokensLinesChanges, prepareDocumentLineForUpdate,
+                    documentImporter, perfStatsForParserInvocation, out missingCopies)
+                //CUP preprocessing
+                : CupProcessTokensLinesChanges(document, documentLines, tokensLinesChanges,
+                    prepareDocumentLineForUpdate,
                     documentImporter, perfStatsForParserInvocation, out missingCopies);
-            }
-            else
-            {
-                CupProcessTokensLinesChanges(document, documentLines, null, null,
-                    documentImporter, perfStatsForParserInvocation, out missingCopies);
-            }
         }
 
         // When not null, optionnaly used to gather Antlr performance profiling information
@@ -52,7 +62,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
+        private static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
         {
             var textSourceInfo = document.TextSourceInfo;
 
@@ -127,7 +137,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
-            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder(document.CompilerOptions, document.CopyTextNamesVariations);
+            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder(document);
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
             foreach (Token compilerDirectiveStartingToken in documentLines
@@ -170,6 +180,17 @@ namespace TypeCobol.Compiler.Preprocessor
                 perfStatsForParserInvocation.OnStartTreeBuilding();
                 // 4. Visit the parse tree to build a first class object representing the compiler directive
                 walker.Walk(directiveBuilder, directiveParseTree);
+
+#if EUROINFO_RULES
+                if (document.CompilerOptions.ReportUsedCopyNamesPath != null && document.CompilerOptions.ExecToStep <= ExecutionStep.Preprocessor)
+                {
+                    //HACK ! Skipping the rest of preprocessing to gain speed.
+                    //However the resulting document is broken so this is designed for users only interested in copy extraction
+                    perfStatsForParserInvocation.OnStopTreeBuilding();
+                    continue;
+                }
+#endif
+
                 CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
                 bool errorFoundWhileParsingDirective = compilerDirective == null || compilerDirective.Diagnostics != null || directiveParseTree.Diagnostics != null;
 
@@ -294,6 +315,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Iterate over all COPY directives found on one updated line
                     foreach (CopyDirective copyDirective in tokensLineWithCopyDirective.ImportedDocuments.Keys.Where(c => c.TextName != null || c.COPYToken.TokenType == TokenType.EXEC).ToArray())
                     {
+                        if (copyDirective.TextName == null)
+                            continue;
                         try
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
@@ -305,7 +328,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             // Copy diagnostics from document
                             foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
                             {
-                                var position = new Diagnostic.Position(diagnostic.Line, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var position = new Diagnostic.Position(diagnostic.LineStart, diagnostic.ColumnStart, diagnostic.LineEnd, diagnostic.ColumnEnd, copyDirective);
                                 var copyDiagnostic = diagnostic.CopyAt(position);
                                 tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
                             }
@@ -386,7 +409,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> CupProcessTokensLinesChanges(
+        private static IList<DocumentChange<IProcessedTokensLine>> CupProcessTokensLinesChanges(
             CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines,
             IList<DocumentChange<ITokensLine>> tokensLinesChanges,
             PrepareDocumentLineForUpdate prepareDocumentLineForUpdate,
@@ -435,7 +458,7 @@ namespace TypeCobol.Compiler.Preprocessor
             CupCobolErrorStrategy cupCobolErrorStrategy = new CupPreprocessor.CompilerDirectiveErrorStrategy();
 
             // Prepare to analyze the parse tree            
-            TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder(document.CompilerOptions, document.CopyTextNamesVariations);
+            TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder(document);
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
             foreach (Token compilerDirectiveStartingToken in documentLines
@@ -467,13 +490,21 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 // 3. Try to parse a compiler directive starting with the current token
                 perfStatsForParserInvocation.OnStartParsing();
-
                 TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser directivesParser =
                     new TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator);
                 directivesParser.ErrorReporter = cupCobolErrorStrategy;
                 directivesParser.Builder = directiveBuilder;
-
                 TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
+                perfStatsForParserInvocation.OnStopParsing(0, 0);
+
+#if EUROINFO_RULES
+                if (document.CompilerOptions.ReportUsedCopyNamesPath != null && document.CompilerOptions.ExecToStep <= ExecutionStep.Preprocessor)
+                {
+                    //HACK ! Skipping the rest of preprocessing to gain speed.
+                    //However the resulting document is broken so this is designed for users only interested in copy extraction
+                    continue;
+                }
+#endif
 
                 perfStatsForParserInvocation.OnStartTreeBuilding();
                 // 4. Visit the parse tree to build a first class object representing the compiler directive
@@ -602,6 +633,8 @@ namespace TypeCobol.Compiler.Preprocessor
                         tokensLineWithCopyDirective.ImportedDocuments.Keys.Where(
                             c => c.TextName != null || c.COPYToken.TokenType == TokenType.EXEC).ToArray())
                     {
+                        if (copyDirective.TextName == null)
+                            continue;
                         try
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
@@ -613,7 +646,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             // Copy diagnostics from document
                             foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
                             {
-                                var position = new Diagnostic.Position(diagnostic.Line, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var position = new Diagnostic.Position(diagnostic.LineStart, diagnostic.ColumnStart, diagnostic.LineEnd, diagnostic.ColumnEnd, copyDirective);
                                 var copyDiagnostic = diagnostic.CopyAt(position);
                                 tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
                             }

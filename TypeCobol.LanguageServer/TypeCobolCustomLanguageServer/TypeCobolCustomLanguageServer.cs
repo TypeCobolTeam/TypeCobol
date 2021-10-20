@@ -124,7 +124,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         /// <summary>
         /// The Missing copies notification is sent from the client to the server
-        /// when the client failed to load copies, it send back a list of missing copies to the server.
+        /// when the client has finished to load copies, it send back a list of missing copies that it fails to load to the server.
+        /// The list can be empty if all copies has been loaded.
         /// </summary>
         protected virtual void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
         {
@@ -167,13 +168,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
                 List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
                 copiesName.AddRange(dependenciesMissingCopies);
-                if (copiesName.Count > 0)
-                {
-                    var missingCopiesParam = new MissingCopiesParams();
-                    missingCopiesParam.textDocument = parameter.textDocument;
-                    missingCopiesParam.Copies = copiesName;
-                    this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
-                }
+                MissingCopiesDetected(parameter.textDocument, copiesName);
             }
         }
 

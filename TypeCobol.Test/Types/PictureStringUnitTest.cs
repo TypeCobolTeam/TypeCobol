@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Types;
+
 using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Test.Types
@@ -10,13 +10,21 @@ namespace TypeCobol.Test.Types
     [TestClass]
     public class PictureStringUnitTest
     {
+        private static IDictionary<char, PictureValidator.CurrencyDescriptor> CurrencyDescriptor(char symbol) => CurrencyDescriptor(symbol, symbol.ToString());
+
+        private static IDictionary<char, PictureValidator.CurrencyDescriptor> CurrencyDescriptor(char symbol, string sign)
+        {
+            return new Dictionary<char, PictureValidator.CurrencyDescriptor>()
+                   {
+                       { symbol, new PictureValidator.CurrencyDescriptor(symbol, sign) }
+                   };
+        }
+
         [TestMethod]
         public void PictureStringRegExpValidationTest()
         {
-            TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator("$99(45)99.99CRV");
-            Assert.IsTrue(!psv.IsValid());
-            //psv = new TypeCobol.Compiler.Types.PictureStringValidator("ZZZ.Z9");
-            //Assert.IsTrue(!psv.IsValid());
+            PictureValidator.Result result = (new PictureValidator("$99(45)99.99CRV")).Validate(out _);
+            Assert.IsTrue(!result.IsValid);
 
             //Numeric
             string[] numerics = { "9999",
@@ -27,8 +35,8 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < numerics.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(numerics[i]);
-                Assert.IsTrue(psv.IsValid());
+                result = (new PictureValidator(numerics[i])).Validate(out _);
+                Assert.IsTrue(result.IsValid);
             }
 
 
@@ -48,8 +56,8 @@ namespace TypeCobol.Test.Types
                         "$,$$$,$$$.99DB"};
             for (int i = 0; i < valids.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(valids[i]);
-                Assert.IsTrue(psv.IsValid());
+                result = (new PictureValidator(valids[i])).Validate(out _);
+                Assert.IsTrue(result.IsValid);
             }
 
             Tuple<string, int, int, bool>[] pics = {
@@ -65,15 +73,17 @@ namespace TypeCobol.Test.Types
 
             for (int i = 0; i < pics.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
-                Assert.AreEqual(psv.ValidationContext.RealDigits - psv.ValidationContext.Scale, pics[i].Item2);
-                Assert.AreEqual(psv.ValidationContext.Scale, pics[i].Item3);
-                Assert.AreEqual(psv.ValidationContext.HaveSign, pics[i].Item4);
+                result = (new PictureValidator(pics[i].Item1)).Validate(out _);
+                Assert.IsTrue(result.IsValid);
+                Assert.AreEqual(pics[i].Item2, result.RealDigits - result.Scale);
+                Assert.AreEqual(pics[i].Item3, result.Scale);
+                Assert.AreEqual(pics[i].Item4, result.IsSigned);
             }
 
             string[] ifp_pics =
             {
+                "9(5)-",
+                "9(5)+",
                 "-ZZ9.99",
                 "-ZZ9.99",
                 "Z,ZZ9-",
@@ -100,24 +110,24 @@ namespace TypeCobol.Test.Types
 
             for (int i = 0; i < ifp_pics.Length; i++)
             {
-                psv = new TypeCobol.Compiler.Types.PictureValidator(ifp_pics[i]);
-                Assert.IsTrue(psv.IsValid());
+                result = (new PictureValidator(ifp_pics[i])).Validate(out _);
+                Assert.IsTrue(result.IsValid);
             }
 
             string ex_float_pic = "-9v9(9)E-99";
-            psv = new TypeCobol.Compiler.Types.PictureValidator(ex_float_pic);
-            Assert.IsTrue(psv.IsValid());
-            Assert.IsTrue(psv.ValidationContext.IsExternalFloatSequence());
+            result = (new PictureValidator(ex_float_pic)).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloatingPoint);
 
             ex_float_pic = "-99(9).E-99";
-            psv = new TypeCobol.Compiler.Types.PictureValidator(ex_float_pic);
-            Assert.IsTrue(psv.IsValid());
-            Assert.IsTrue(psv.ValidationContext.IsExternalFloatSequence());
+            result = (new PictureValidator(ex_float_pic)).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloatingPoint);
 
             ex_float_pic = "+VE-99";
-            psv = new TypeCobol.Compiler.Types.PictureValidator(ex_float_pic);
-            Assert.IsTrue(psv.IsValid());
-            Assert.IsTrue(!psv.ValidationContext.IsExternalFloatSequence());
+            result = (new PictureValidator(ex_float_pic)).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(result.Category == PictureCategory.ExternalFloatingPoint);
         }
 
         /// <summary>
@@ -137,11 +147,12 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
-                PictureType type = new PictureType(psv);
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate(out _);
+                Assert.IsTrue(result.IsValid);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item2);
+                Assert.AreEqual(pics[i].Item2, len);
             }
         }
 
@@ -159,11 +170,12 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
-                PictureType type = new PictureType(psv);
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate(out _);
+                Assert.IsTrue(result.IsValid);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item2);
+                Assert.AreEqual(pics[i].Item2, len);
             }
         }
 
@@ -178,16 +190,17 @@ namespace TypeCobol.Test.Types
             {
                 new Tuple<string,int>("****.**", 7),
                 new Tuple<string,int>("*,***.**+", 9),
-                new Tuple<string,int>("$Z,ZZZ,ZZZ.ZZCR", 16),
+                new Tuple<string,int>("$Z,ZZZ,ZZZ.ZZCR", 15),
                 new Tuple<string,int>("$B*,***,***.**BBDB", 18),
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
-                PictureType type = new PictureType(psv);
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate(out _);
+                Assert.IsTrue(result.IsValid);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item2);
+                Assert.AreEqual(pics[i].Item2, len);
             }
         }
 
@@ -210,12 +223,13 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < pics.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(pics[i].Item1);
-                Assert.IsTrue(psv.IsValid());
-                PictureType type = new PictureType(psv);
+                PictureValidator psv = new PictureValidator(pics[i].Item1);
+                PictureValidator.Result result = psv.Validate(out _);
+                Assert.IsTrue(result.IsValid);
+                PictureType type = new PictureType(result, psv.IsSeparateSign);
                 type.Usage = pics[i].Item2;
                 int len = type.Length;
-                Assert.AreEqual(len, pics[i].Item3);
+                Assert.AreEqual(pics[i].Item3, len);
             }
         }
 
@@ -253,38 +267,142 @@ namespace TypeCobol.Test.Types
             };
             for (int i = 0; i < invalids.Length; i++)
             {
-                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(invalids[i]);
-                Assert.IsFalse(psv.IsValid());
+                PictureValidator.Result result = (new PictureValidator(invalids[i])).Validate(out _);
+                Assert.IsFalse(result.IsValid);
             }
 
             //Change other currency symbol than $
-            TypeCobol.Compiler.Types.PictureValidator psv1 = new TypeCobol.Compiler.Types.PictureValidator("$,$$$.99");
-            psv1.CurrencySymbol = "€";
-            Assert.IsFalse(psv1.IsValid());
+            PictureValidator.Result result1 = (new PictureValidator("$,$$$.99", currencyDescriptors: CurrencyDescriptor('€'))).Validate(out _);
+            Assert.IsFalse(result1.IsValid);
+
+            invalids = new[]
+                       {
+                           "$v",
+                           ",,.",
+                           ",/.",
+                           "zzzbb+zz-",
+                           "aa9b+",
+                           "$-***9b",
+                           "b9b$",
+                           "*9v-99",
+                           "9/0*",
+                           "$+"
+                       };
+            for (int i = 0; i < invalids.Length; i++)
+            {
+                PictureValidator.Result result = (new PictureValidator(invalids[i])).Validate(out _);
+                Assert.IsFalse(result.IsValid);
+            }
         }
 
         /// <summary>
         /// Test Picture String Syntax with various Currency Symbols
         /// </summary>
         [TestMethod]
-        public void StrangeCurrencyPictureStringTest()
+        public void CurrenciesPictureStringTest()
         {
             //EURO
-            TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator("€Z,ZZZ,ZZZ.ZZCR");
-            psv.CurrencySymbol = "€";
-            Assert.IsTrue(psv.IsValid());
+            PictureValidator.Result result = (new PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('€'))).Validate(out _);
+            Assert.IsTrue(result.IsValid);
 
-            //SUISSE
-            psv = new TypeCobol.Compiler.Types.PictureValidator("CHFZ,ZZZ,ZZZ.ZZCR");
-            psv.CurrencySymbol = "CHF";
-            Assert.IsTrue(psv.IsValid());
+            //Swiss franc
+            result = (new PictureValidator("HZ,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('H', "CHF"))).Validate(out _);
+            Assert.IsTrue(result.IsValid);
 
             //Hong Kong Dollar
-            psv = new TypeCobol.Compiler.Types.PictureValidator("HK$Z,ZZZ,ZZZ.ZZCR");
-            psv.CurrencySymbol = "HK$";
-            Assert.IsTrue(psv.IsValid());
+            result = (new PictureValidator("hZ,ZZZ,ZZZ.ZZCR", currencyDescriptors: CurrencyDescriptor('h', "HK$"))).Validate(out _);
+            Assert.IsTrue(result.IsValid);
 
+            //Mixed
+            var dollar = PictureValidator.CurrencyDescriptor.Default;
+            var currencyDescriptors = CurrencyDescriptor('€', "EUR");
+            currencyDescriptors.Add(dollar.Symbol, dollar);
+            result = (new PictureValidator("$€99", currencyDescriptors: currencyDescriptors)).Validate(out var messages);
+            Assert.IsFalse(result.IsValid);
+            Assert.IsTrue(messages.Count == 1);
+            Assert.AreEqual("Cannot mix currency symbols in a PICTURE string: '€' symbol was not expected", messages[0]);
+        }
+
+        /// <summary>
+        /// Test interpretation of DecimalPoint and NumericSeparator chars, based on decimalPointIsComma parameter
+        /// </summary>
+        [TestMethod]
+        public void DecimalPointIsComma()
+        {
+            PictureValidator.Result result = (new PictureValidator("99.999")).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(3, result.Scale);
+
+            result = (new PictureValidator("99,999")).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(0, result.Scale);
+
+            result = (new PictureValidator("99.999", decimalPointIsComma: true)).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(0, result.Scale);
+
+            result = (new PictureValidator("99,999", decimalPointIsComma: true)).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(3, result.Scale);
+        }
+
+        /// <summary>
+        /// Basic type length tests
+        /// </summary>
+        [TestMethod]
+        public void DataItemLength()
+        {
+            var dollar = PictureValidator.CurrencyDescriptor.Default;
+            var currencyDescriptors = CurrencyDescriptor('€', "EUR");
+            currencyDescriptors.Add(dollar.Symbol, dollar);
+            List<(string, bool, Type.UsageFormat, int)> data = new List<(string, bool, Type.UsageFormat, int)>()
+                                                               {
+                                                                   ("S99", false, Type.UsageFormat.Display, 2),
+                                                                   ("S99", true, Type.UsageFormat.Display, 3),
+                                                                   ("99CR", false, Type.UsageFormat.Display, 4),
+                                                                   ("99DB", false, Type.UsageFormat.Display, 4),
+                                                                   ("+99", false, Type.UsageFormat.Display, 3),
+                                                                   ("-99", false, Type.UsageFormat.Display, 3),
+                                                                   ("$99", false, Type.UsageFormat.Display, 3),
+                                                                   ("$$$$99", false, Type.UsageFormat.Display, 6),
+                                                                   ("€99", false, Type.UsageFormat.Display, 5),
+                                                                   ("€€€€99", false, Type.UsageFormat.Display, 8),
+                                                                   ("GG", false, Type.UsageFormat.Display1, 4),
+                                                                   ("NN", false, Type.UsageFormat.National, 4),
+                                                                   ("XX", false, Type.UsageFormat.Display, 2),
+                                                                   ("X(20)", false, Type.UsageFormat.Display, 20)
+                                                               };
+            foreach (var item in data)
+            {
+                string picture = item.Item1;
+                bool signIsSeparate = item.Item2;
+                Type.UsageFormat usage = item.Item3;
+                int expectedLength = item.Item4;
+
+                PictureValidator validator = new PictureValidator(picture, signIsSeparate, false, currencyDescriptors);
+                var result = validator.Validate(out _);
+                Assert.IsTrue(result.IsValid);
+
+                PictureType type = new PictureType(result, validator.IsSeparateSign) { Usage = usage };
+                int actualLength = type.Length;
+                Assert.AreEqual(expectedLength, actualLength);
+            }
+        }
+
+        /// <summary>
+        /// Test about Character-string representation
+        /// </summary>
+        [TestMethod]
+        public void PictureRepresentation()
+        {
+            PictureValidator.Result result = (new PictureValidator("$+")).Validate(out _);
+            Assert.IsFalse(result.IsValid);
+            result = (new PictureValidator("$$")).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            result = (new PictureValidator("$++")).Validate(out _);
+            Assert.IsTrue(result.IsValid);
+            result = (new PictureValidator("$v")).Validate(out _);
+            Assert.IsFalse(result.IsValid);
         }
     }
 }
-

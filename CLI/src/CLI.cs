@@ -41,8 +41,7 @@ namespace TypeCobol.Server
                 debugLine += Path.GetFileName(config.InputFiles[0]);
             }
             debugLine += "\n";
-            //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
+            Logger(config, debugLine);
             Console.WriteLine(debugLine);
             TextWriter textWriter = config.ErrorFile == null ?  Console.Error : File.CreateText(config.ErrorFile);
             AbstractErrorWriter errorWriter;
@@ -84,8 +83,7 @@ namespace TypeCobol.Server
 
             stopWatch.Stop();
             debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
-            //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
+            Logger(config, debugLine);
             Console.WriteLine(debugLine);
 
             AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds);
@@ -122,11 +120,11 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new CompositeAnalyzerProvider();
+            var analyzerProvider = new AnalyzerProviderWrapper(str => Logger(_configuration, str));
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
-            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles);
+            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles, str => Logger(_configuration, str));
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
@@ -199,8 +197,22 @@ namespace TypeCobol.Server
             //Write used and missing copies files
             WriteCopiesFile(_configuration.ExtractedCopiesFilePath, _usedCopies);
             WriteCopiesFile(_configuration.HaltOnMissingCopyFilePath, _missingCopies);
+#if EUROINFO_RULES
+            WriteUsedCopiesFile();
+#endif
 
             return AddErrorsAndComputeReturnCode();
+        }
+
+        /// <summary>
+        /// Log a string in the LogFile provided by the configuration.
+        /// </summary>
+        /// <param name="config">Configuration containing the log file.</param>
+        /// <param name="message">String to log.</param>
+        private static void Logger(TypeCobolConfiguration config, string message)
+        {
+            //Use user-defined log path if -log option used, otherwise use default location for log file
+            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, message);
         }
 
         private SymbolTable LoadIntrinsicsAndDependencies()
@@ -251,13 +263,13 @@ namespace TypeCobol.Server
             }
         }
 
-        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProvider analyzerProvider)
+        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProviderWrapper analyzerProviderWrapper)
         {
             var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
                 //All purpose CFG/DFA
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode));
+                analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
 
                 //CFG/DFA for ZCALL report
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
@@ -265,7 +277,7 @@ namespace TypeCobol.Server
                     if (_configuration.CfgBuildingMode != CfgBuildingMode.WithDfa)
                     {
                         //Need to create a dedicated CFG builder with DFA activated
-                        analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa));
+                        analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
                     }
 
                     string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);
@@ -276,7 +288,7 @@ namespace TypeCobol.Server
                 //CopyMoveInitializeReport
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
-                    analyzerProvider.AddActivator(
+                    analyzerProviderWrapper.AddActivator(
                         (o, t) =>
                         {
                             var report = new CopyMoveInitializeReport();
@@ -461,6 +473,42 @@ namespace TypeCobol.Server
             }
         }
 
+#if EUROINFO_RULES
+        private void WriteUsedCopiesFile()
+        {
+            if (_configuration.ReportUsedCopyNamesPath != null)
+            {
+                using (var output = File.CreateText(_configuration.ReportUsedCopyNamesPath))
+                {
+                    foreach (var parserResult in _parserResults)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(parserResult.Key);
+                        var usedCopies = parserResult.Value.CollectedCopyNames;
+
+                        if (usedCopies == null)
+                        {
+                            output.WriteLine(fileName);
+                            continue;
+                        }
+
+                        foreach (var usedCopy in usedCopies)
+                        {
+                            output.Write(fileName);
+                            output.Write(';');
+                            output.Write(usedCopy.Key);
+                            foreach (var suffixedName in usedCopy.Value)
+                            {
+                                output.Write(';');
+                                output.Write(suffixedName);
+                            }
+                            output.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+#endif
+
         private ReturnCode AddErrorsAndComputeReturnCode()
         {
             /*
@@ -513,7 +561,7 @@ namespace TypeCobol.Server
                         if (generationException.Logged)
                         {
                             string message = generationException.Message + Environment.NewLine + generationException.StackTrace;
-                            var position = new Diagnostic.Position(generationException.LineNumber, generationException.ColumnStartIndex, generationException.ColumnEndIndex, null);
+                            var position = new Diagnostic.Position(generationException.LineNumber, generationException.ColumnStartIndex, generationException.LineNumber, generationException.ColumnEndIndex, null);
                             Server.AddError(_errorWriter, generationException.Path, new Diagnostic(generationException.MessageCode, position, message));
                         }
                     }
@@ -524,7 +572,20 @@ namespace TypeCobol.Server
             CheckExternalDiagnostics(_dependenciesDiagnostics);
             CheckExternalDiagnostics(_intrinsicsDiagnostics);
 
-            //Always return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
+            //Avoid returning MissingCopy for users who are only interested in copies extraction
+            if (_configuration.ExecToStep <= ExecutionStep.Preprocessor)
+            {
+	            if (_configuration.ExtractedCopiesFilePath != null
+#if EUROINFO_RULES
+	                || _configuration.ReportUsedCopyNamesPath != null
+#endif
+	               )
+	            {
+		            return returnCode;
+	            }
+            }
+
+            //Return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
             if (_missingCopies.Count > 0)
             {
                 returnCode = ReturnCode.MissingCopy;

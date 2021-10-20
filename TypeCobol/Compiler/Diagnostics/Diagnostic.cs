@@ -13,35 +13,63 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public class Position
         {
-            public static readonly Position Default = new Position(0, 0, 0, null);
+            public static readonly Position Default = new Position(0, 0, 0, 0, null);
 
             private readonly string _messageAdapter;
 
-            public Position(int line, int columnStart, int columnEnd, CopyDirective includingDirective)
+            public Position(int lineStart, int columnStart, int lineEnd, int columnEnd, CopyDirective includingDirective)
             {
-                line = Math.Max(0, line);
                 if (includingDirective != null)
                 {
                     //Position diagnostic on including copy directive and adapt message
-                    Line = includingDirective.COPYToken.Line;
                     var startToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.FirstOrDefault()?.FirstOrDefault();
                     var endToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.LastOrDefault()?.LastOrDefault();
-                    ColumnStart = startToken?.Column ?? 0;
-                    ColumnEnd = endToken?.EndColumn ?? ColumnStart;
-                    _messageAdapter = $"Error in copy '{includingDirective.TextName}' at line {line} : {{0}}";
+                    
+                    if (startToken != null)
+                    {
+                        LineStart = startToken.Line;
+                        ColumnStart = startToken.Column;
+                    }
+                    else
+                    {
+                        LineStart = 0;
+                        ColumnStart = 0;
+                    }
+
+                    if (endToken != null)
+                    {
+                        LineEnd = endToken.Line;
+                        ColumnEnd = endToken.EndColumn;
+                    }
+                    else
+                    {
+                        LineEnd = LineStart;
+                        ColumnEnd = ColumnStart;
+                    }
+
+                    if (LineStart == LineEnd)
+                    {
+                        _messageAdapter = $"Error in copy '{includingDirective.TextName}' at line {lineStart} : {{0}}";
+                    }
+                    else
+                    {
+                        _messageAdapter = $"Error in copy '{includingDirective.TextName}' from line {lineStart} to line {lineEnd} : {{0}}";
+                    }
                 }
                 else
                 {
                     //Position diagnostic directly at specified location
-                    Line = line;
+                    LineStart = Math.Max(0, lineStart);
                     ColumnStart = Math.Max(0, columnStart);
+                    LineEnd = Math.Max(LineStart, lineEnd);
                     ColumnEnd = Math.Max(0, columnEnd);
                     _messageAdapter = null;
                 }
             }
 
-            public int Line { get; }
+            public int LineStart { get; }
             public int ColumnStart { get; }
+            public int LineEnd { get; }
             public int ColumnEnd { get; }
 
             internal string AdaptMessage(string message)
@@ -59,7 +87,7 @@ namespace TypeCobol.Compiler.Diagnostics
         protected Diagnostic(DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
         {
             Info = info;
-            messageArgs = messageArgs ?? new object[0];
+            messageArgs = messageArgs ?? Array.Empty<object>();
             Message = string.Format(Info.MessageTemplate, messageArgs);
             ApplyPosition(position);
             CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();
@@ -70,7 +98,8 @@ namespace TypeCobol.Compiler.Diagnostics
             System.Diagnostics.Debug.Assert(other != null);
 
             Info = other.Info;//DiagnosticMessage is a readonly class so it's ok to keep the same reference instead of creating a copy instance
-            Line = other.Line;
+            LineStart = other.LineStart;
+            LineEnd = other.LineEnd;
             ColumnStart = other.ColumnStart;
             ColumnEnd = other.ColumnEnd;
             Message = other.Message;
@@ -78,13 +107,8 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         public DiagnosticMessage Info { get; }
-
-        public int Line
-        {
-            get;
-            internal set;//Internal setter is required for incremental mode. When lines are inserted/removed, associated diagnostics are shifted up/down accordingly
-        }
-
+        public int LineStart { get; private set; }
+        public int LineEnd { get; private set; }
         public int ColumnStart { get; private set;  }
         public int ColumnEnd { get; private set; }
         public string Message { get; private set; }
@@ -95,13 +119,26 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         public override string ToString()
         {
-            return $"Line {Line}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
+            string location;
+            if (LineStart == LineEnd)
+            {
+                //Single line diagnostic
+                location = $"Line {LineStart}[{ColumnStart},{ColumnEnd}]";
+            }
+            else
+            {
+                //Multi-line diagnostic
+                location = $"Range ({LineStart}, {ColumnStart}) -> ({LineEnd}, {ColumnEnd})";
+            }
+
+            return $"{location} <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
         }
 
         private void ApplyPosition([NotNull] Position position)
         {
             System.Diagnostics.Debug.Assert(position != null);
-            Line = position.Line;
+            LineStart = position.LineStart;
+            LineEnd = position.LineEnd;
             ColumnStart = position.ColumnStart;
             ColumnEnd = position.ColumnEnd;
             Message = position.AdaptMessage(Message);
@@ -112,6 +149,17 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <returns>Duplicate instance of this Diagnostic.</returns>
         protected virtual Diagnostic Duplicate() => new Diagnostic(this);
+
+        /// <summary>
+        /// Shift the diagnostic in source. Used in incremental mode to relocate a diagnostic
+        /// after a line has been inserted or removed.
+        /// </summary>
+        /// <param name="offset">Positive or negative number of lines</param>
+        internal void Shift(int offset)
+        {
+            LineStart += offset;
+            LineEnd += offset;
+        }
 
         /// <summary>
         /// Creates a copy of this diagnostic and position it on the new supplied location.

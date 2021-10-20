@@ -39,56 +39,50 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         static Builtins()
         {
-            NoType = new Type(Type.Tags.Usage, Type.UsageFormat.None); //No need to flag this one because it represents the absence of type.
-            FlagType(CompType = new Type(Type.Tags.Usage, Type.UsageFormat.Comp));
-            FlagType(Comp1Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp1));
-            FlagType(Comp2Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp2));
-            FlagType(Comp3Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp3));
-            FlagType(Comp5Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp5));
-            FlagType(DisplayType = new Type(Type.Tags.Usage, Type.UsageFormat.Display));
-            FlagType(Display1Type = new Type(Type.Tags.Usage, Type.UsageFormat.Display1));
-            FlagType(IndexType = new Type(Type.Tags.Usage, Type.UsageFormat.Index));
-            FlagType(NationalType = new Type(Type.Tags.Usage, Type.UsageFormat.National));
-            FlagType(ObjectReferenceType = new Type(Type.Tags.Usage, Type.UsageFormat.ObjectReference));
-            FlagType(PointerType = new Type(Type.Tags.Usage, Type.UsageFormat.Pointer));
-            FlagType(ProcedurePointerType = new Type(Type.Tags.Usage, Type.UsageFormat.ProcedurePointer));
-            FlagType(FunctionPointerType = new Type(Type.Tags.Usage, Type.UsageFormat.FunctionPointer));
+            NoType = new Type(Type.Tags.Usage);
+            CompType = new Type(Type.Tags.Usage, Type.UsageFormat.Comp);
+            Comp1Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp1);
+            Comp2Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp2);
+            Comp3Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp3);
+            Comp5Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp5);
+            DisplayType = new Type(Type.Tags.Usage, Type.UsageFormat.Display);
+            Display1Type = new Type(Type.Tags.Usage, Type.UsageFormat.Display1);
+            IndexType = new Type(Type.Tags.Usage, Type.UsageFormat.Index);
+            NationalType = new Type(Type.Tags.Usage, Type.UsageFormat.National);
+            ObjectReferenceType = new Type(Type.Tags.Usage, Type.UsageFormat.ObjectReference);
+            PointerType = new Type(Type.Tags.Usage, Type.UsageFormat.Pointer);
+            ProcedurePointerType = new Type(Type.Tags.Usage, Type.UsageFormat.ProcedurePointer);
+            FunctionPointerType = new Type(Type.Tags.Usage, Type.UsageFormat.FunctionPointer);
 
-            FlagType(DataConditionType = new Type(Type.Tags.DataCondition));
+            DataConditionType = new Type(Type.Tags.DataCondition);
 
             Boolean = new TypedefSymbol(string.Intern("Bool"));
             Boolean.Type = new TypedefType(Boolean, new Type(Type.Tags.Boolean));
-            Boolean.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(Boolean);
 
             Date = new TypedefSymbol(string.Intern("Date"));
             Date.Type = new TypedefType(Date, CreateDateComponent());
-            Date.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(Date);
 
             Currency = new TypedefSymbol(string.Intern("Currency"));
             Currency.Type = new TypedefType(Currency, CreateCurrencyComponent());
-            Currency.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(Currency);
 
             String = new TypedefSymbol(string.Intern("String"));
             String.Type = new TypedefType(String, new Type(Type.Tags.String));
-            String.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(String);
-
-            void FlagType(Type type) => type.SetFlag(Symbol.Flags.BuiltinType, true);
 
             void FlagSymbol(TypedefSymbol typedef)
             {
-                FlagType(typedef.Type);
+                typedef.SetFlag(Symbol.Flags.Strong, true);
                 typedef.SetFlag(Symbol.Flags.BuiltinSymbol, true);
                 typedef.SetFlag(Symbol.Flags.InsideTypedef, true, true);
             }
 
             GroupType CreateDateComponent()
             {
-                var yyyyType = new PictureType(new PictureValidator("9(04)", false));
-                var mmType = new PictureType(new PictureValidator("9(02)", false));
+                var yyyyType = new PictureType(NumericValidationResult(4), false);
+                var mmType = new PictureType(NumericValidationResult(3), false);
                 var ddType = mmType;
 
                 Date.Level = 1;
@@ -101,9 +95,34 @@ namespace TypeCobol.Compiler.Symbols
                 recType.Fields.Enter(dd);
 
                 return recType;
+
+                PictureValidator.Result NumericValidationResult(int count)
+                {
+                    return new PictureValidator.Result(
+                        new[] { new PictureValidator.Character(PictureValidator.SC.NINE, count) },
+                        null,
+                        PictureCategory.Numeric,
+                        count,
+                        count,
+                        false,
+                        0,
+                        count);
+                }
             }
 
-            PictureType CreateCurrencyComponent() => new PictureType(new PictureValidator("X(03)", false));
+            PictureType CreateCurrencyComponent()
+            {
+                var validationResult = new PictureValidator.Result(
+                    new [] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    null,
+                    PictureCategory.Alphanumeric,
+                    0,
+                    0,
+                    false,
+                    0,
+                    3);
+                return new PictureType(validationResult, false);
+            }
         }
 
         internal static Type GetUsageType(Type.UsageFormat usage)

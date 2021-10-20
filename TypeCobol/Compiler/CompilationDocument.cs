@@ -63,6 +63,13 @@ namespace TypeCobol.Compiler
         /// </summary>
         protected bool UseDirectCopyParsing { get; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// Collected CopyNames if -cpyr report is selected.
+        /// </summary>
+        public IDictionary<string, HashSet<string>> CollectedCopyNames { get; private set; }
+#endif
+
         /// <summary>
         /// Informations used to track the performance of each compilation step
         /// </summary>
@@ -289,8 +296,7 @@ namespace TypeCobol.Compiler
                                 if (!encounteredCodeElement)
                                     lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
 
-                                lineToUpdate.LineIndex++;
-                                lineToUpdate.UpdateDiagnositcsLine();
+                                lineToUpdate.ShiftDown();
                                  
                                 if (lineToUpdate.CodeElements != null)
                                     encounteredCodeElement = true;
@@ -332,8 +338,7 @@ namespace TypeCobol.Compiler
                                 if (!encounteredCodeElement)
                                     lineToUpdate.ResetDiagnostics();
 
-                                lineToUpdate.LineIndex--;
-                                lineToUpdate.UpdateDiagnositcsLine();
+                                lineToUpdate.ShiftUp();
 
                                 if (lineToUpdate.CodeElements != null)
                                     encounteredCodeElement = true; 
@@ -642,7 +647,9 @@ namespace TypeCobol.Compiler
                 else
                 {
                     ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>) tokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, _documentImporter, perfStatsForParserInvocation, out missingCopies);
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessChanges(this,
+                        processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate,
+                        _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
@@ -778,5 +785,27 @@ namespace TypeCobol.Compiler
 
             return allDiagnostics;
         }
+
+#if EUROINFO_RULES
+        internal void CollectUsedCopy(CopyDirective copy)
+        {
+            if (CollectedCopyNames == null)
+            {
+                CollectedCopyNames = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            if (!CollectedCopyNames.TryGetValue(copy.TextName, out var suffixedNames))
+            {
+                suffixedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                CollectedCopyNames.Add(copy.TextName, suffixedNames);
+            }
+
+            if (copy.Suffix != null)
+            {
+                suffixedNames.Add(copy.TextName + copy.Suffix);
+            }
+        }
+#endif
+
     }
 }

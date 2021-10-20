@@ -1,4 +1,14 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+Line 22[33,41] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[33,41:DEBUGGING]<DEBUGGING>
+Line 23[38,46] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[38,46:DEBUGGING]<DEBUGGING>
+Line 55[22,23] <27, Error, Syntax> - Syntax error : Empty string cannot be used as currency symbol.
+Line 56[43,44] <27, Error, Syntax> - Syntax error : Empty string cannot be used as currency symbol.
+Line 57[17,27] <27, Error, Syntax> - Syntax error : Currency symbol must be one single character.
+Line 58[44,48] <27, Error, Syntax> - Syntax error : Currency symbol must be one single character.
+Line 59[17,19] <27, Error, Syntax> - Syntax error : Character 'A' is not allowed as currency symbol.
+Line 60[44,46] <27, Error, Syntax> - Syntax error : Character '0' is not allowed as currency symbol.
+Line 61[44,46] <27, Error, Syntax> - Syntax error : Duplicate currency symbol 'Y'.
+--- Code Elements ---
 [[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [23,23+:.]<PeriodSeparator>
 
 [[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [32,32+:.]<PeriodSeparator>
@@ -45,7 +55,7 @@
 
 [[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [63,63+:.]<PeriodSeparator>
 
-[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [54,54+:.]<PeriodSeparator>
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [47,47+:.]<PeriodSeparator>
 
 [[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [30,30+:.]<PeriodSeparator>
 

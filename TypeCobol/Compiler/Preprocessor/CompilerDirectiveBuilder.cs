@@ -3,17 +3,12 @@ using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor.Generated;
 using TypeCobol.Compiler.Scanner;
-using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -23,14 +18,14 @@ namespace TypeCobol.Compiler.Preprocessor
     internal class CompilerDirectiveBuilder : CobolCompilerDirectivesBaseListener
     {
 
-        public CompilerDirectiveBuilder(TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public CompilerDirectiveBuilder(CompilationDocument document)
         {
-            TypeCobolOptions = compilerOptions;
-            CopyTextNameVariations = copyTextNameVariations;
+            _document = document;
         }
 
-        public TypeCobolOptions TypeCobolOptions { get; set; }
-        public List<RemarksDirective.TextNameVariation> CopyTextNameVariations { get; set; }
+        private readonly CompilationDocument _document;
+        private TypeCobolOptions TypeCobolOptions => _document.CompilerOptions;
+        private List<RemarksDirective.TextNameVariation> CopyTextNameVariations => _document.CopyTextNamesVariations;
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
@@ -160,11 +155,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
 
 #if EUROINFO_RULES
-                if(this.TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
+                if (copy.TextName != null)
                 {
-                    if (copy.TextName != null)
+                    if (this.TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                     {
-
                         // Find the list of copy text names variations declared by previous REMARKS compiler directives
                         var variations = CopyTextNameVariations;
                         if (TypeCobolOptions.AutoRemarksEnable &&
@@ -200,9 +194,8 @@ namespace TypeCobol.Compiler.Preprocessor
                                 }
                             }
                         }
-
-
                     }
+                    _document.CollectUsedCopy(copy);
                 }
 #endif
 

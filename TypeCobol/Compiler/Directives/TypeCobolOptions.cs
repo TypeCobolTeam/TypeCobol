@@ -13,6 +13,10 @@ namespace TypeCobol.Compiler.Directives
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
         public bool AutoRemarksEnable { get; set; }
+        /// <summary>
+        /// Path to generate collected used copy names
+        /// </summary>
+        public string ReportUsedCopyNamesPath { get; set; }
 #endif
         /// <summary>
         /// Option to create a missing copy file, it will stop the execution before semantic phase if a copy is missing
@@ -67,6 +71,21 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public TypeCobolCheckOption CheckEndProgram { get; set; }
 
+        /// <summary>
+        /// Check that perform statements always return to caller, requires CFG.
+        /// </summary>
+        public TypeCobolCheckOption CheckPerformPrematureExits { get; set; }
+
+        /// <summary>
+        /// Check procedure order of declaration against order of call in PERFORM THRU statements, requires CFG. 
+        /// </summary>
+        public TypeCobolCheckOption CheckPerformThruOrder { get; set; }
+
+        /// <summary>
+        /// Check that perform statement are not recursive, requires CFG.
+        /// </summary>
+        public TypeCobolCheckOption CheckRecursivePerforms { get; set; }
+
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
@@ -77,11 +96,15 @@ namespace TypeCobol.Compiler.Directives
 #if EUROINFO_RULES
             AutoRemarksEnable = config.AutoRemarks;
             CpyCopyNameMap = config.CpyCopyNameMap;
+            ReportUsedCopyNamesPath = config.ReportUsedCopyNamesPath;
 #endif
 
             CheckEndAlignment = config.CheckEndAlignment;
             this.IsCobolLanguage = config.IsCobolLanguage;
             CheckEndProgram = config.CheckEndProgram;
+            CheckPerformPrematureExits = config.CheckPerformPrematureExits;
+            CheckPerformThruOrder = config.CheckPerformThruOrder;
+            CheckRecursivePerforms = config.CheckRecursivePerforms;
         }
 
         public TypeCobolOptions()
