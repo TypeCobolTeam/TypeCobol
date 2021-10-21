@@ -723,5 +723,12 @@ namespace TypeCobol.Analysis.Test
             const string baseName = "PerformProcIterativeAfterRecursive2";
             TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
         }
+
+        [TestMethod]
+        public void CyclicPerformRecursive()
+        {
+            const string baseName = "CyclicPerformRecursive";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);            
+        }
     }
 }

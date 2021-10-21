@@ -1,2 +1,14 @@
 --- Diagnostics ---
+Line 8[12,26] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.
+Line 8[12,26] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec3'.
+Line 8[12,26] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec'.
+Line 8[12,26] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.
+Line 16[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec2', recursive instruction is '       perform pararec'.
+Line 16[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec2', recursive instruction is '       perform pararec2'.
+Line 16[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec2', recursive instruction is '       perform pararec3'.
+Line 16[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec2', recursive instruction is '       perform pararec2'.
+Line 20[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec3', recursive instruction is '       perform pararec2'.
+Line 20[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec3', recursive instruction is '       perform pararec'.
+Line 20[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec3', recursive instruction is '       perform pararec2'.
+Line 20[15,30] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec3', recursive instruction is '       perform pararec3'.
 Line 28[15,29] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.

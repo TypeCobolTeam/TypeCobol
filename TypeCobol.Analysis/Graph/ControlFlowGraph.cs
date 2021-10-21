@@ -226,7 +226,7 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         /// <param name="perform">Perform node</param>
         /// <param name="recursiveJump">Recursive jump node</param>
-        internal void AddRecursivePerform(PerformProcedure perform, N recursiveJump)
+        internal void AddRecursivePerform(PerformProcedure perform, List<N> recursiveJump)
         {
             if (RecursivePerforms == null)
             {
@@ -235,11 +235,11 @@ namespace TypeCobol.Analysis.Graph
 
             if (RecursivePerforms.TryGetValue(perform, out var nodes))
             {
-                nodes.Add(recursiveJump);
+                nodes.AddRange(recursiveJump);
             }
             else
             {
-                RecursivePerforms.Add(perform, new List<N>() { recursiveJump });
+                RecursivePerforms.Add(perform, recursiveJump);
             }
         }
 
