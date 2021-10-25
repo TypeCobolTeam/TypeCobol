@@ -36,13 +36,13 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         /// <summary>
         /// Advance the stream to one specific token.
-        /// Throw an exception if the token is not found.
+        /// <return>false if the token is not found, true otherwise</return>
         /// </summary>
-        public void SeekToToken(IToken searchedToken)
+        public bool SeekToToken(IToken searchedToken)
         {
             Reset();
             ResetStopTokenLookup();
-
+            int mark = Mark();
             // TO DO : optimize this naive implementation
             // Not easy because of the underlying Copy and Replace iterators            
             if (searchedToken != null)
@@ -55,13 +55,14 @@ namespace TypeCobol.Compiler.AntlrUtils
                 }
                 if (!currentToken.Equals(searchedToken) && searchedToken.Type != TokenConstants.Eof)
                 {
-                    // See GitHub #2053: I think we should let the parsing fail itsels in a bad token context
-                    // Just assert here the problem in debug mode.
-                    // Avoid to throw an uncaught exception in a bad context.
-                    // This issue arise in an editor context.
+                    // See GitHub #2053:
+                    // Assert here the problem in debug mode.
+                    // Avoid to throw an uncaught exception in a bad context, return false
                     System.Diagnostics.Debug.Assert(false, "Token not found in this stream");
+                    return false;
                 }
             }
+            return true;
         }
 
         /// <summary>
