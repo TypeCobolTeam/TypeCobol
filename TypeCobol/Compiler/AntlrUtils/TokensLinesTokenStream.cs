@@ -55,7 +55,11 @@ namespace TypeCobol.Compiler.AntlrUtils
                 }
                 if (!currentToken.Equals(searchedToken) && searchedToken.Type != TokenConstants.Eof)
                 {
-                    throw new InvalidOperationException("Token not found in this stream");
+                    // See GitHub #2053: I think we should let the parsing fail itsels in a bad token context
+                    // Just assert here the problem in debug mode.
+                    // Avoid to throw an uncaught exception in a bad context.
+                    // This issue arise in an editor context.
+                    System.Diagnostics.Debug.Assert(false, "Token not found in this stream");
                 }
             }
         }
