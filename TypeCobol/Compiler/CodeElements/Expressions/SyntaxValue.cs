@@ -255,7 +255,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.CURRENCY: // <= TYPECOBOL : TYPE CURRENCY
                         return false;
                     default:
-                        throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
+                        System.Diagnostics.Debug.Assert(false, "Unexpected literal value: " + Token.TokenType);
+                        return false;
                 }
             }
         }
