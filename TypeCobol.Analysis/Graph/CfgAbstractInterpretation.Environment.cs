@@ -9,7 +9,11 @@ namespace TypeCobol.Analysis.Graph
     public partial class CfgAbstractInterpretation<N,D>
     {
         /// <summary>
-        /// Abstract interpretation execution environment
+        /// Abstract interpretation execution environment.
+        /// The default execution performed is based on a dfs algorithm, with exception that
+        /// branching instructions are handled specifically.
+        /// Thus not all execution paths are applied, but all nodes are visited using dfs like algorithm if they are accessible.
+        /// A node cannot be visited twice.
         /// </summary>
         public class Environment
         {
