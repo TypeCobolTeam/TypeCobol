@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             Reset();
             ResetStopTokenLookup();
-            int mark = Mark();
+
             // TO DO : optimize this naive implementation
             // Not easy because of the underlying Copy and Replace iterators            
             if (searchedToken != null)
@@ -57,7 +57,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                 {
                     // See GitHub #2053:
                     // Assert here the problem in debug mode.
-                    // Avoid to throw an uncaught exception in a bad context, return false
+                    // Avoid to throw an uncaught exception in a bad context, return false.
                     System.Diagnostics.Debug.Assert(false, "Token not found in this stream");
                     return false;
                 }
