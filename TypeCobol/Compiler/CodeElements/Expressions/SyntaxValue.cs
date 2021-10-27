@@ -254,6 +254,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.DATE:     // <= TYPECOBOL : TYPE DATE
                     case TokenType.CURRENCY: // <= TYPECOBOL : TYPE CURRENCY
                         return false;
+                    case TokenType.IntegerLiteral:
                     default:
                         System.Diagnostics.Debug.Assert(false, "Unexpected literal value: " + Token.TokenType);
                         return false;
