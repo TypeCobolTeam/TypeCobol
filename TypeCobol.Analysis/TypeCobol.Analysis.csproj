@@ -68,6 +68,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cfg\ControlFlowGraphBuilder.PerformTarget.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

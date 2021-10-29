@@ -18,6 +18,11 @@ namespace TypeCobol.Analysis.Cfg
             public int? FirstBlockIndex { get; }
 
             /// <summary>
+            /// The associated procedure
+            /// </summary>
+            internal Procedure Procedure { get; set; }
+
+            /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="number">Order number of appearance of the sentence.</param>
