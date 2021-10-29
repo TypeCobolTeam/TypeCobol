@@ -40,7 +40,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         public bool SeekToToken(IToken searchedToken)
         {
-            Reset();
+            Seek(0);
             ResetStopTokenLookup();
 
             // TO DO : optimize this naive implementation

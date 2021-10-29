@@ -162,7 +162,6 @@ namespace TypeCobol.Compiler.Parser
             int IncrementalLineLimit = -1;//Original limit of the incremental section
             if (largestRefreshParseSection != null)
             {
-                int mark = tokenStream.Mark(); //Save the current mark in case of full reparsing
                 // Seek just before the next code element starting token
                 if (tokenStream.SeekToToken(largestRefreshParseSection.StartToken))
                 {
@@ -181,13 +180,11 @@ namespace TypeCobol.Compiler.Parser
                 else
                 {
                     // Fail to find a starting point ==> Reparse all.
-                    tokenStream.Seek(mark);
-                    tokenStream.Reset();
+                    tokenStream.Seek(0);
                     tokenStream.ResetStopTokenLookup();
                     largestRefreshParseSection = null;
                     refreshParseSections = null;
                 }
-                tokenStream.Release(mark);
             }
           
             // Reset parsing error diagnostics
