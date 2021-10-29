@@ -159,7 +159,7 @@ namespace TypeCobol.Compiler.Parser
             // So we maintains a set of CodeElementsLine to be reseted.
             //-------------------------------------------------------------------------------------
             HashSet<CodeElementsLine> ResetedCodeElementsLines = null;//Set of new incremental lines to reseted
-            int IncrementalLineLimit = -1;//Original limit of the incremental section            
+            int IncrementalLineLimit = -1;//Original limit of the incremental section
             if (largestRefreshParseSection != null)
             {
                 int mark = tokenStream.Mark(); //Save the current mark in case of full reparsing
