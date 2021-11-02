@@ -1036,12 +1036,10 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="callRelation">CALL Relation</param>
         /// <param name="callPerformRelationDomain">The domain of the call relation</param>
-        /// <param name="reportedProcedures">Already reported recursif procedures</param>
-        private void TransitiveClosureCallRelation(Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callRelation, HashSet<Procedure> callPerformRelationDomain,
-            HashSet<PerformProcedure> reportedProcedures)
+        private void TransitiveClosureCallRelation(Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callRelation, HashSet<Procedure> callPerformRelationDomain)
         {
             Stack <Procedure> S = new Stack<Procedure>();
-            // The dictionary is used for three purposes
+            // The dictionary N is used for three purposes
             // 1) To record unmarked procedures (N[p] == 0).
             // 2) To associate a positive number value with procedures that are active consideration (0 < N[p] < Infnity).
             // 3) To mark Infinity Procedures whose cycles have already been found
@@ -1056,12 +1054,9 @@ namespace TypeCobol.Analysis.Cfg
             // Report all cyclic procedure.
             foreach (var item in callRelation)
             {
-                if (!reportedProcedures.Contains(item.Value.Item1))
+                if (item.Value.Item3.Contains(item.Key))
                 {
-                    if (item.Value.Item3.Contains(item.Key))
-                    {
-                        this.Cfg.AddRecursivePerform(item.Value.Item1, item.Value.Item2);
-                    }
+                    this.Cfg.AddRecursivePerform(item.Value.Item1, item.Value.Item2);
                 }
             }
 
@@ -1099,7 +1094,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 var na = Visited(a);
                 if (na == d)
-                {   // a is an entry point of a calculated component
+                {   // a is an entry point of a calculated component, that is to say the start procedure of a cycle.
                     do
                     {
                         N[S.Peek()] = Int32.MaxValue; // The Node(The procedure) is terminated
@@ -1149,10 +1144,8 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="clonedPerforms">List of new PERFORMs cloned during the resolve process.</param>
         /// <param name="callPerformRelation">The Call relation.</param>
         /// <param name="callPerformRelationDomain">The Call relation domain.</param>
-        /// <param name="reportedProcedures">Already reported recursif procedures</param>
         private void ResolvePendingPERFORMProcedure(Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup> perform, List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>> clonedPerforms,
-            Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callPerformRelation, HashSet<Procedure> callPerformRelationDomain,
-            HashSet<PerformProcedure> reportedProcedures)
+            Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callPerformRelation, HashSet<Procedure> callPerformRelationDomain)
         {
             PerformProcedure p = perform.Item1;
             SectionNode sectionNode = perform.Item2;
@@ -1181,17 +1174,6 @@ namespace TypeCobol.Analysis.Cfg
                         {
                             isPerform = true; //To avoid a second dynamic cast
                             AddDirectCallPerformRelation(p, currentProcedure, (PerformProcedure)group0.Instructions.Last.Value, callPerformRelation, callPerformRelationDomain);
-
-                            //Is there a recursion in the graph ?
-                            if (group.RecursivityGroupSet.Get(group0.GroupIndex) && !group0.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
-                            {
-                                //Flag group and store recursive perform
-                                group0.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
-                                Node offendingInstruction = group0.Instructions.Last.Value;
-                                System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                                this.Cfg.AddRecursivePerform(p, new List<Node>() { offendingInstruction });
-                                reportedProcedures.Add(p);
-                            }
 
                             var clonedGroup0 = clonedPerforms
                                 .Select(t => t.Item3)
@@ -1303,14 +1285,13 @@ namespace TypeCobol.Analysis.Cfg
                 Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callRelation =
                     new Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>>();
                 HashSet<Procedure> callPerformRelationDomain = new HashSet<Procedure>();
-                HashSet<PerformProcedure> reportedProcedures = new HashSet<PerformProcedure>();
                 var clonedPerforms = new List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>>();
                 //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
                     item.Item3.RecursivityGroupSet = new BitArray(GroupCounter + 1);
                     item.Item3.RecursivityGroupSet.Set(item.Item3.GroupIndex, true);
-                    ResolvePendingPERFORMProcedure(item, clonedPerforms, callRelation, callPerformRelationDomain, reportedProcedures);
+                    ResolvePendingPERFORMProcedure(item, clonedPerforms, callRelation, callPerformRelationDomain);
                 }
 
                 //Second pass: resolve cloned groups created during first pass
@@ -1318,11 +1299,11 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     //We are using a regular for instead of foreach because new groups may also be created during this second pass.
                     //New groups/performs to resolve are added at tail and all are processed during this second pass
-                    ResolvePendingPERFORMProcedure(clonedPerforms[i], clonedPerforms, callRelation, callPerformRelationDomain, reportedProcedures);
+                    ResolvePendingPERFORMProcedure(clonedPerforms[i], clonedPerforms, callRelation, callPerformRelationDomain);
                 }
 
                 // Report Cyclic PERFORM call
-                TransitiveClosureCallRelation(callRelation, callPerformRelationDomain, reportedProcedures);
+                TransitiveClosureCallRelation(callRelation, callPerformRelationDomain);
 
                 //Index groups by their GroupIndex, keep only the final instance of each group after all resolve have been done
                 var groupOrder = new Dictionary<int, BasicBlockForNodeGroup>();
@@ -1575,7 +1556,7 @@ namespace TypeCobol.Analysis.Cfg
                         System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
                         string offendingStatement = offendingInstruction.CodeElement.SourceText;
                         Diagnostic d = new Diagnostic(_compilerOptions.CheckRecursivePerforms.GetMessageCode(), perform.CodeElement.Position(),
-                            string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
+                            string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement, offendingInstruction.CodeElement.Line));
                         AddDiagnostic(d);
                     }
                 }
