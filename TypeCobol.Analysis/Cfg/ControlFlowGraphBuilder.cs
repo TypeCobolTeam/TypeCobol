@@ -987,13 +987,13 @@ namespace TypeCobol.Analysis.Cfg
         #endregion
 
         /// <summary>
-        /// Add a Direct Call Peform to the Call Perform Relation. 
-        /// For a PERFORM THRU all intermediate procedure are added to the relation.
+        /// Add a Direct Call Perform to the Call Perform Relation. 
+        /// For a PERFORM THRU all intermediate procedures are added to the relation.
         /// </summary>
         /// <param name="caller">The caller of the PERFOM procedure</param>
-        /// <param name="callee">The PERFOM procedure called</param>
-        /// <param name="callPerformRelation">CALL Relation</param>
-        /// <param name="callPerformRelationDomain">The domain of the call relation</param>
+        /// <param name="callee">The PERFORM procedure called</param>
+        /// <param name="callPerformRelation">Call Perform Relation</param>
+        /// <param name="callPerformRelationDomain">The domain of the call perform relation</param>
         private void AddDirectCallPerformRelation(PerformProcedure performCaller, Procedure caller, PerformProcedure callee, 
             Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callPerformRelation,
             HashSet<Procedure> callPerformRelationDomain)
@@ -1010,22 +1010,19 @@ namespace TypeCobol.Analysis.Cfg
             }
             callPerformRelationDomain.Add(caller);
 
-            void addToRelation(Procedure _calleeProcedure)
+            void addToRelation(Procedure procedure)
             {
                 if (!callPerformRelation.TryGetValue(caller, out var callees))
                 {
                     callees = new Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>(performCaller, new List<Node>(), new HashSet<Procedure>());
-                    callPerformRelation[caller] = callees;
+                    callPerformRelation.Add(caller, callees);
                 }
-                if (!callees.Item3.Contains(_calleeProcedure))
-                {
-                    callees.Item3.Add(_calleeProcedure);                    
-                }
+                callees.Item3.Add(procedure);                    
                 if (!callees.Item2.Contains(callee))
                 {
                     callees.Item2.Add(callee);
                 }
-                callPerformRelationDomain.Add(_calleeProcedure);
+                callPerformRelationDomain.Add(procedure);
             }
         }
 
@@ -1034,10 +1031,11 @@ namespace TypeCobol.Analysis.Cfg
         /// We browse the the graph represented using the Call Relation, then we found during the visit cycles.
         /// In the same time we compute the call chain.
         /// </summary>
-        /// <param name="callRelation">CALL Relation</param>
-        /// <param name="callPerformRelationDomain">The domain of the call relation</param>
-        private void TransitiveClosureCallRelation(Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callRelation, HashSet<Procedure> callPerformRelationDomain)
+        /// <param name="callPerformRelation">Call Perform Relation</param>
+        /// <param name="callPerformRelationDomain">The domain of the call perform relation</param>
+        private void TransitiveClosureCallRelation(Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callPerformRelation, HashSet<Procedure> callPerformRelationDomain)
         {
+            // The dfs stack of all procedures in active consideration.
             Stack <Procedure> S = new Stack<Procedure>();
             // The dictionary N is used for three purposes
             // 1) To record unmarked procedures (N[p] == 0).
@@ -1052,7 +1050,7 @@ namespace TypeCobol.Analysis.Cfg
                     dfs(a);
             }
             // Report all cyclic procedure.
-            foreach (var item in callRelation)
+            foreach (var item in callPerformRelation)
             {
                 if (item.Value.Item3.Contains(item.Key))
                 {
@@ -1079,43 +1077,24 @@ namespace TypeCobol.Analysis.Cfg
                         var fb = f(b);
                         // f(a) = f(a) U f(b)
                         // We update the call chain
-                        foreach (var p in fb.Item2)
-                        {
-                            if (!fa.Item2.Contains(p))
-                            {
-                                fa.Item2.Add(p);
-                            }
-                        }
-                        foreach (var pb in fb.Item3)
-                        {
-                            fa.Item3.Add(pb);
-                        }
+                        UpdatePerformCallChain(fb, fa);
                     }
                 }
                 var na = Visited(a);
                 if (na == d)
-                {   // a is an entry point of a calculated component, that is to say the start procedure of a cycle.
+                {   // 'a' is an entry point of a calculated component, that is to say the start procedure of a cycle.
+                    // because if na != d then 'a' has been included in another cycle whose root is not 'a'.
                     do
                     {
                         N[S.Peek()] = Int32.MaxValue; // The Node(The procedure) is terminated
-                        if (callRelation.TryGetValue(S.Peek(), out var top))
+                        if (callPerformRelation.TryGetValue(S.Peek(), out var top))
                         {
-                            foreach (var pp in fa.Item2)
-                            {
-                                if (!top.Item2.Contains(pp))
-                                {
-                                    top.Item2.Add(pp);
-                                }
-                            }
-                            foreach (var pb in fa.Item3)
-                            {
-                                top.Item3.Add(pb);
-                            }
+                            UpdatePerformCallChain(fa, top);
                         }
                         else
                         {
-                            callRelation[S.Peek()] = new Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>(
-                                fa.Item1, new List<Node>(fa.Item2), new HashSet<Procedure>(fa.Item3));
+                            callPerformRelation.Add(S.Peek(), new Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>(
+                                fa.Item1, new List<Node>(fa.Item2), new HashSet<Procedure>(fa.Item3)));
                         }
                     } while (S.Count > 0 && S.Pop() != a);
                 }
@@ -1129,10 +1108,25 @@ namespace TypeCobol.Analysis.Cfg
             }
             Tuple<PerformProcedure, List<Node>, HashSet<Procedure>> f(Procedure a)
             {
-                if (callRelation.TryGetValue(a, out var v))
+                if (callPerformRelation.TryGetValue(a, out var v))
                     return v;
                 else
                     return new Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>(null, new List<Node>(), new HashSet<Procedure>());
+            }
+            void UpdatePerformCallChain(Tuple<PerformProcedure, List<Node>, HashSet<Procedure>> from,
+                Tuple<PerformProcedure, List<Node>, HashSet<Procedure>> to)
+            {
+                foreach (var p in from.Item2)
+                {
+                    if (!to.Item2.Contains(p))
+                    {
+                        to.Item2.Add(p);
+                    }
+                }
+                foreach (var p in from.Item3)
+                {
+                    to.Item3.Add(p);
+                }
             }
         }
 
