@@ -85,7 +85,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
 #if EUROINFO_RULES
-            if (copy.TextName != null)
+            if (copy.TextName != null && copy.Type != CompilerDirectiveType.EXEC_SQL_INCLUDE)
             {
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {

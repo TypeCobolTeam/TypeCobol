@@ -155,7 +155,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
 
 #if EUROINFO_RULES
-                if (copy.TextName != null)
+                if (copy.TextName != null && copy.Type != CompilerDirectiveType.EXEC_SQL_INCLUDE)
                 {
                     if (this.TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                     {
