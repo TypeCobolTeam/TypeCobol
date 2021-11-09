@@ -2125,12 +2125,14 @@ namespace TypeCobol.Analysis.Cfg
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext<Node, D>>();
             }
+
             //Push and start the Perform context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             //Create a Perform standalone instruction block.
             var performBlock = this.CurrentProgramCfgBuilder.CreateBlock(perform, true);
             ctx.AddBranch(performBlock);
+
             //Add a branch for the Loop Body
             var bodyBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             ctx.AddBranch(bodyBlock);
@@ -2200,6 +2202,14 @@ namespace TypeCobol.Analysis.Cfg
             List<BasicBlock<Node,D>> terminals = new List<BasicBlock<Node, D>>();
             this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(ctx.Branches[1], terminals);
             ctx.Terminals = terminals;
+            //Create the real perform block context for abstract interpretation
+            //This is not the context of the perform block.
+            ctx.OriginBlock.Context = null;
+            MultiBranchContext<Node, D> ctxPerform = new MultiBranchContext<Node, D>(perform);
+            ctxPerform.Start(ctx.Branches[0]); //Branches[0] is the perfom block
+            ctxPerform.AddBranch(ctx.Branches[1]); //Branches[1] i sthe perform body block
+            ctxPerform.BranchIndices.Add(ctx.BranchIndices[1]); //BranchIndices[1] is index in the SuccessorEdge of the perfomr body block.
+            ctxPerform.Terminals = terminals;
 
             int performBlockIndex = ctx.BranchIndices[0];
             System.Diagnostics.Debug.Assert(performBlockIndex >= 0);
@@ -2233,6 +2243,7 @@ namespace TypeCobol.Analysis.Cfg
 
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
             ctx.NextFlowBlock = this.CurrentProgramCfgBuilder.CurrentBasicBlock;
+            ctxPerform.NextFlowBlock = this.CurrentProgramCfgBuilder.CurrentBasicBlock;
         }
 
         /// <summary>

@@ -30,6 +30,24 @@ Leaving block : 15
 Entering block : 16
 EXIT
 Leaving block : 16
+Entering block : 17
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 17
+Entering block : 18
+Leaving block : 18
+Entering block : 19
+PERFORM COMP-FOOT-CALC
+VARYING IDX FROM +1 BY +1
+UNTIL IDX > +6
+Leaving block : 19
+Entering block : 20
+Leaving block : 20
+Entering block : 21
+GO TO COMP-FOOT-EXIT
+Leaving block : 21
+Entering block : 25
+EXIT
+Leaving block : 25
 Entering block : 9
                        USE FOR DEBUGGING ON ALL PROCEDURES.
 Leaving block : 9
@@ -42,6 +60,36 @@ Leaving block : 11
 Entering block : 12
 EXIT
 Leaving block : 12
+Entering block : 13
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 13
+Entering block : 14
+MOVE NUM(3) TO NBJ(3)
+Leaving block : 14
+Entering block : 15
+MOVE NBJ(4) TO NUM(4)
+Leaving block : 15
+Entering block : 16
+EXIT
+Leaving block : 16
+Entering block : 17
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 17
+Entering block : 18
+Leaving block : 18
+Entering block : 19
+PERFORM COMP-FOOT-CALC
+VARYING IDX FROM +1 BY +1
+UNTIL IDX > +6
+Leaving block : 19
+Entering block : 20
+Leaving block : 20
+Entering block : 21
+GO TO COMP-FOOT-EXIT
+Leaving block : 21
+Entering block : 25
+EXIT
+Leaving block : 25
 Entering block : 26
 Leaving block : 26
 Entering block : 1
@@ -61,12 +109,104 @@ Leaving block : 7
 Entering block : 8
 EXIT
 Leaving block : 8
+Entering block : 9
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 9
+Entering block : 10
+MOVE NUM(1) TO NBJ(1)
+Leaving block : 10
+Entering block : 11
+MOVE NBJ(2) TO NUM(2)
+Leaving block : 11
+Entering block : 12
+EXIT
+Leaving block : 12
+Entering block : 13
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 13
+Entering block : 14
+MOVE NUM(3) TO NBJ(3)
+Leaving block : 14
+Entering block : 15
+MOVE NBJ(4) TO NUM(4)
+Leaving block : 15
+Entering block : 16
+EXIT
+Leaving block : 16
+Entering block : 17
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 17
+Entering block : 18
+Leaving block : 18
+Entering block : 19
+PERFORM COMP-FOOT-CALC
+VARYING IDX FROM +1 BY +1
+UNTIL IDX > +6
+Leaving block : 19
+Entering block : 20
+Leaving block : 20
+Entering block : 21
+GO TO COMP-FOOT-EXIT
+Leaving block : 21
+Entering block : 25
+EXIT
+Leaving block : 25
 Entering block : 4
            when NBJ(IDX) = 28
 Entering block : 5
            display NUM(IDX) "/" LIB(IDX)
 Leaving block : 5
 Leaving block : 4
+Entering block : 6
+Leaving block : 6
+Entering block : 7
+    display "--------------------------------------"
+Leaving block : 7
+Entering block : 8
+EXIT
+Leaving block : 8
+Entering block : 9
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 9
+Entering block : 10
+MOVE NUM(1) TO NBJ(1)
+Leaving block : 10
+Entering block : 11
+MOVE NBJ(2) TO NUM(2)
+Leaving block : 11
+Entering block : 12
+EXIT
+Leaving block : 12
+Entering block : 13
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 13
+Entering block : 14
+MOVE NUM(3) TO NBJ(3)
+Leaving block : 14
+Entering block : 15
+MOVE NBJ(4) TO NUM(4)
+Leaving block : 15
+Entering block : 16
+EXIT
+Leaving block : 16
+Entering block : 17
+                       USE FOR DEBUGGING ON ALL PROCEDURES.
+Leaving block : 17
+Entering block : 18
+Leaving block : 18
+Entering block : 19
+PERFORM COMP-FOOT-CALC
+VARYING IDX FROM +1 BY +1
+UNTIL IDX > +6
+Leaving block : 19
+Entering block : 20
+Leaving block : 20
+Entering block : 21
+GO TO COMP-FOOT-EXIT
+Leaving block : 21
+Entering block : 25
+EXIT
+Leaving block : 25
 
 =======
 METRICS

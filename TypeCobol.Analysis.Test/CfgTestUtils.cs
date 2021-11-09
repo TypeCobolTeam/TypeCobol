@@ -373,13 +373,15 @@ namespace TypeCobol.Analysis.Test
         /// Generate the abstract interpretation sequence corresponding to Cfg and compare it with the expected file.
         /// </summary>
         /// <param name="cfg">The actual Control Flow Graph instance.</param>
+        /// <param name="cyclicExecThresold">Number of maximum cyclic execution by block</param>
         /// <param name="testPath">Path of the original Cobol/TypeCobol source file.</param>
         /// <param name="expectedFile">The expected file.</param>
         /// <param name="bFullInstruction">true if full instruction must be displayed, false otherwise</param>
-        public static void GenAbstractInterpretCfgAndCompare<D>(ControlFlowGraph<Node, D> cfg, string testPath, string expectedDotFile, bool bFullInstruction)
+        public static void GenAbstractInterpretCfgAndCompare<D>(ControlFlowGraph<Node, D> cfg, int cyclicExecThresold,
+            string testPath, string expectedDotFile, bool bFullInstruction)
         {            
             AbstractInterpretObserver<D> observer = new AbstractInterpretObserver<D>(bFullInstruction);
-            var metrics = CfgAbstractInterpretation<Node, D>.Run(cfg, observer);
+            var metrics = CfgAbstractInterpretation<Node, D>.Run(cfg, cyclicExecThresold, observer);
             // compare with expected result
             StringBuilder result = new StringBuilder(observer.ToString());
             result.AppendLine();

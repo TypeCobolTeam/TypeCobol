@@ -58,7 +58,7 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(cfg.ParentGraph);
             Assert.IsTrue(cfg.ProgramOrFunctionNode is Program);
             Assert.IsNull(cfg.NestedGraphs);
-            GenAbstractInterpretCfgAndCompare(cfg, inputFilePath, expectedResultFilePath, fullInstruction);
+            GenAbstractInterpretCfgAndCompare(cfg, 1, inputFilePath, expectedResultFilePath, fullInstruction);
         }
 
         [TestMethod]
@@ -106,6 +106,9 @@ namespace TypeCobol.Analysis.Test
         public void MixPerformEvaluateIf0() => TestTemplate();
         [TestMethod]
         public void ComplexGotoPara0() => TestTemplate();
+
+        [TestMethod]
+        public void ComplexCyclicGotoPara0() => TestTemplate();
 
         [TestMethod]
         public void Declaratives0() => TestTemplate();

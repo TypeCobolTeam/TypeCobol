@@ -64,6 +64,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="BasicCfgInstrs\ComplexCyclicGotoPara0.int" />
     <None Include="BasicCfgInstrs\ComplexGotoPara0.int" />
     <None Include="BasicCfgInstrs\Declaratives0.int" />
     <None Include="BasicCfgInstrs\Declaratives1.int" />

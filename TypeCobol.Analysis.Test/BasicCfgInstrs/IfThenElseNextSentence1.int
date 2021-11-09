@@ -25,6 +25,9 @@ Leaving block : 3
 Entering block : 7
     ADD WS-A TO WS-C
 Leaving block : 7
+Entering block : 8
+    DISPLAY 'WS-C value ', WS-C
+Leaving block : 8
 
 =======
 METRICS
