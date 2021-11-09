@@ -193,8 +193,9 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
         /// Thread-safe : this method can be called from any thread.
+        /// <param name="options">Desired option on sending ProgramClass events</param>
         /// </summary>
-        public void RefreshProgramClassDocumentSnapshot()
+        public void RefreshProgramClassDocumentSnapshot(ProgramClassEvent.Option options)
         {
             // Make sure two threads don't try to update this snapshot at the same time
             bool snapshotWasUpdated = false;
@@ -229,11 +230,11 @@ namespace TypeCobol.Compiler
             EventHandler<ProgramClassEvent> programClassNotChanged = ProgramClassNotChanged;
             if (snapshotWasUpdated && programClassChanged != null)
             {
-                programClassChanged(this, new ProgramClassEvent() { Version= ProgramClassDocumentSnapshot.CurrentVersion});
+                programClassChanged(this, new ProgramClassEvent() { Version= ProgramClassDocumentSnapshot.CurrentVersion, Options = options});
             }
             else if (!snapshotWasUpdated && programClassNotChanged != null)
             {
-                programClassNotChanged(this, new ProgramClassEvent() { Version = ProgramClassDocumentSnapshot.CurrentVersion });
+                programClassNotChanged(this, new ProgramClassEvent() { Version = ProgramClassDocumentSnapshot.CurrentVersion, Options = options });
             }
 
 #if DEBUG
@@ -322,8 +323,9 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Launch AST analyzers to perform code quality analysis.
         /// Update the list of quality-check diagnostics.
+        /// <param name="options">Desired option on sending ProgramClass events</param>
         /// </summary>
-        public void RefreshCodeAnalysisDocumentSnapshot()
+        public void RefreshCodeAnalysisDocumentSnapshot(ProgramClassEvent.Option options)
         {
             bool documentUpdated = false;
             lock (lockObjectForCodeAnalysisDocumentSnapshot)
@@ -397,7 +399,7 @@ namespace TypeCobol.Compiler
             EventHandler<ProgramClassEvent> codeAnalysisCompleted = CodeAnalysisCompleted;
             if (documentUpdated && codeAnalysisCompleted != null)
             {
-                codeAnalysisCompleted(this, new ProgramClassEvent() { Version = CodeAnalysisDocumentSnapshot.CurrentVersion });
+                codeAnalysisCompleted(this, new ProgramClassEvent() { Version = CodeAnalysisDocumentSnapshot.CurrentVersion, Options = options });
             }
 
 #if DEBUG
@@ -549,9 +551,17 @@ namespace TypeCobol.Compiler
 
         #endregion
     }
-
+    
     public class ProgramClassEvent : EventArgs
     {
+        [Flags]
+        public enum Option
+        {
+            None = 0,
+            DisableDiagnosticsEvent = 0x01,
+            DisableMissingCopiesEvent = 0x01 << 1
+        }
         public int Version { get; set; }
+        public Option Options { get; set; }
     }
 }

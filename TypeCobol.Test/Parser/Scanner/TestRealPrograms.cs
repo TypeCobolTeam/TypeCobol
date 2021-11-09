@@ -34,7 +34,7 @@ namespace TypeCobol.Test.Parser.Scanner
                 try
                 {
                     //chrono.Start();
-                    compiler.CompileOnce();
+                    compiler.CompileOnce(ProgramClassEvent.Option.None);
                     //chrono.Stop();
                 }
                 catch(Exception e)

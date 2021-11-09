@@ -183,7 +183,7 @@ namespace TypeCobol.LanguageServer
         internal void InitCopyDependencyWatchers()
         {
             // Create the refresh action that will be used by file watchers
-            Action refreshAction = RefreshOpenedFiles;
+            Action refreshAction = () => { RefreshOpenedFiles(ProgramClassEvent.Option.None); } ;
             _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
             _CopyWatcher = new CopyWatcher(this, refreshAction);
         }
@@ -194,9 +194,9 @@ namespace TypeCobol.LanguageServer
         /// <param name="docContext">The Document context</param>
         /// <param name="sourceText">The source text</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText) => OpenTextDocument(docContext, sourceText, LsrTestOptions);
+        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, ProgramClassEvent.Option options) => OpenTextDocument(docContext, sourceText, LsrTestOptions, options);
 
-        private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
+        private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions, ProgramClassEvent.Option options)
         {
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
@@ -253,7 +253,7 @@ namespace TypeCobol.LanguageServer
 
             if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
             {
-                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
+                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy, options); //Let's parse file for the first time after opening. 
             }
 
             return fileCompiler;
@@ -317,7 +317,7 @@ namespace TypeCobol.LanguageServer
                                                           //further it's for semantic, which is handle by NodeRefresh method
 
 
-                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy);
+                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy, ProgramClassEvent.Option.None);
                 fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
                 
 
@@ -413,7 +413,7 @@ namespace TypeCobol.LanguageServer
             {
                 if (TryGetOpenedDocumentContext(fileUri, out var docContext))
                 {
-                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck);
+                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck, ProgramClassEvent.Option.None);
                 }
             }
         }
@@ -449,7 +449,8 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
         /// <param name="refreshLevel">Desired level of refresh</param>
-        public void RefreshSyntaxTree(FileCompiler fileCompiler, SyntaxTreeRefreshLevel refreshLevel)
+        /// <param name="options">Desired option on sending ProgramClass events</param>
+        public void RefreshSyntaxTree(FileCompiler fileCompiler, SyntaxTreeRefreshLevel refreshLevel, ProgramClassEvent.Option options)
         {
             if (refreshLevel == SyntaxTreeRefreshLevel.NoRefresh) return; //nothing to do
 
@@ -487,13 +488,13 @@ namespace TypeCobol.LanguageServer
             {
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
                 fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
-                fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
+                fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(options); //Do a Node phase
             }
 
             void RefreshCodeAnalysisResults()
             {
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrCodeAnalysisTesting) return;
-                fileCompiler.CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //Do a Quality check
+                fileCompiler.CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(options); //Do a Quality check
             }
         }
 
@@ -596,7 +597,7 @@ namespace TypeCobol.LanguageServer
             }
 
             if (!IsEmpty)
-                RefreshOpenedFiles();
+                RefreshOpenedFiles(ProgramClassEvent.Option.None);
             else
                 RefreshCustomSymbols();
 
@@ -634,14 +635,14 @@ namespace TypeCobol.LanguageServer
         {
             if (_CopyWatcher == null)
             {// No Copy Watcher ==> Refresh ourself opened file.
-                RefreshOpenedFiles();
+                RefreshOpenedFiles(ProgramClassEvent.Option.DisableMissingCopiesEvent);
             }
         }
 
         /// <summary>
         /// Refresh all opened files' parser.
         /// </summary>
-        public void RefreshOpenedFiles()
+        public void RefreshOpenedFiles(ProgramClassEvent.Option options)
         {
             RefreshCustomSymbols();
 
@@ -659,7 +660,7 @@ namespace TypeCobol.LanguageServer
                     //Disconnect previous LanguageServer connection
                     docContext.LanguageServerConnection(false);                    
 
-                    OpenTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
+                    OpenTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting, options);
                 }
             }
         }
@@ -759,27 +760,33 @@ namespace TypeCobol.LanguageServer
             }
 
             // No document found
-            if (fileUri == null)  return;
+            if (fileUri == null) return;
 
-            // Need to handle the groups instead of the diagnostics, so the order of appearance will be the same within the groups
-            // This is meant to avoid the modification of the LSR tests
-            IEnumerable<Diagnostic> diags = new List<Diagnostic>();
-            var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
-
-            if (severityGroups != null)
+            if ((programEvent.Options & ProgramClassEvent.Option.DisableDiagnosticsEvent) == 0)
             {
-                foreach (var group in severityGroups.OrderBy(d => d.Key))
+                // Need to handle the groups instead of the diagnostics, so the order of appearance will be the same within the groups
+                // This is meant to avoid the modification of the LSR tests
+                IEnumerable<Diagnostic> diags = new List<Diagnostic>();
+                var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
+
+                if (severityGroups != null)
                 {
-                    // Add Errors first, then Warnings, then Infos
-                    diags = diags.Any() ? diags.Concat(group) : group;
+                    foreach (var group in severityGroups.OrderBy(d => d.Key))
+                    {
+                        // Add Errors first, then Warnings, then Infos
+                        diags = diags.Any() ? diags.Concat(group) : group;
+                    }
                 }
+
+                if (DiagnosticsEvent != null)
+                    DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
             }
 
-            if (DiagnosticsEvent != null)
-                DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
-
-            if (MissingCopiesEvent != null && compilationUnit?.MissingCopies.Count > 0)
-                MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = new List<string>(compilationUnit.MissingCopies) });
+            if ((programEvent.Options & ProgramClassEvent.Option.DisableMissingCopiesEvent) == 0)
+            {
+                if (MissingCopiesEvent != null && compilationUnit?.MissingCopies.Count > 0)
+                    MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = new List<string>(compilationUnit.MissingCopies) });
+            }
 
             DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }

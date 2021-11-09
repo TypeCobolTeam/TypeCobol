@@ -247,7 +247,7 @@ namespace TypeCobol.Test.Parser.Performance
         private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText)
         {
             // Execute a first (complete) compilation
-            compiler.CompileOnce();
+            compiler.CompileOnce(ProgramClassEvent.Option.None);
             //Iterate multiple times over an incremental change
             stats.IterationNumber = 40;
             for (int i = 0; i < stats.IterationNumber; i++)
@@ -261,7 +261,7 @@ namespace TypeCobol.Test.Parser.Performance
                 compiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
 
                 // Execute a second (incremental) compilation
-                compiler.CompileOnce();
+                compiler.CompileOnce(ProgramClassEvent.Option.None);
                 //Be sure that there is no error, otherwise parsing can be incomplete
                 CheckThatThereIsNoError(compiler.CompilationResultsForProgram);
 

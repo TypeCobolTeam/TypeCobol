@@ -211,9 +211,9 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Synchronous one-time compilation of the current file
         /// </summary>
-        public void CompileOnce()
+        public void CompileOnce(ProgramClassEvent.Option options)
         {
-            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy);
+            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy, options);
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <param name="exec2Step">The execution step</param>
         /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
-        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
+        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy, ProgramClassEvent.Option options)
         {
             if (exec2Step == null)
                 exec2Step = ExecutionStep.CrossCheck;
@@ -250,12 +250,12 @@ namespace TypeCobol.Compiler
 
                 if (!(exec2Step > ExecutionStep.SemanticCheck)) return;
 
-                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
+                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(options); //Cross Check step
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CrossCheck });
 
                 if (!(exec2Step > ExecutionStep.CrossCheck)) return;
 
-                CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //QualityCheck step
+                CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(options); //QualityCheck step
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.QualityCheck });
             }
             else

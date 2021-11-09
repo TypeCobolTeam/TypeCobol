@@ -92,7 +92,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                     {
                         // Compile program
                         FileCompiler fileCompiler = new FileCompiler(null, textName, project.ColumnsLayout, false, project.SourceFileProvider, project, project.CompilationOptions.Clone(), null, project);
-                        fileCompiler.CompileOnce();
+                        fileCompiler.CompileOnce(ProgramClassEvent.Option.None);
                         CompilationUnit compilationResult = fileCompiler.CompilationResultsForProgram;
                         programCopiesNotFound = 0;
 
