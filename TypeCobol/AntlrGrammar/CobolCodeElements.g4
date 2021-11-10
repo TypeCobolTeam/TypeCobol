@@ -4360,8 +4360,8 @@ comparisonLHSExpression:
 	variableOrExpression2 | booleanValueOrExpression;
 
 whenCondition:
-	WHEN LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*;
+	WHEN (LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
+  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*)?;
 
 comparisonRHSExpression: 
 	ANY | booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);

@@ -1435,7 +1435,12 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
-			statement.SelectionObjects = BuildObjectArrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
+			var rhsExprs = context.comparisonRHSExpression();
+			statement.SelectionObjects = BuildObjectArrayFromParserRules(rhsExprs, ctx => CreateEvaluateSelectionObject(ctx));
+			if (rhsExprs.Length == 0)
+			{
+				DiagnosticUtils.AddError(statement, "Missing condition in \"when\" clause", context);
+			}
 			return statement;
 		}
 
