@@ -211,7 +211,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Synchronous one-time compilation of the current file
         /// </summary>
-        public void CompileOnce(ProgramClassEvent.Option options)
+        public void CompileOnce(ProgramClassEvent.Option options = ProgramClassEvent.Option.None)
         {
             CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy, options);
         }
@@ -221,7 +221,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <param name="exec2Step">The execution step</param>
         /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
-        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy, ProgramClassEvent.Option options)
+        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy, ProgramClassEvent.Option options = ProgramClassEvent.Option.None)
         {
             if (exec2Step == null)
                 exec2Step = ExecutionStep.CrossCheck;

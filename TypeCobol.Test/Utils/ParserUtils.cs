@@ -32,7 +32,7 @@ namespace TypeCobol.Test.Utils
                 documentFormat, new TypeCobolOptions(), null);
 
             FileCompiler compiler = new FileCompiler(null, textName, documentFormat.ColumnsLayout, isCopy, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
-            compiler.CompileOnce(ExecutionStep.Preprocessor, false, ProgramClassEvent.Option.None);
+            compiler.CompileOnce(ExecutionStep.Preprocessor, false);
 
             return compiler.CompilationResultsForProgram;
         }
@@ -52,7 +52,7 @@ namespace TypeCobol.Test.Utils
                 localDirectory.FullName, new string[] { ".cpy", ".cbl" },
                 documentFormat, options, null);
             FileCompiler compiler = new FileCompiler(null, textName, documentFormat.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, null, project);
-            compiler.CompileOnce(ProgramClassEvent.Option.None);
+            compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
         }
@@ -68,7 +68,7 @@ namespace TypeCobol.Test.Utils
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
 
             var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, project);
-            compiler.CompileOnce(ProgramClassEvent.Option.None);
+            compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
         }

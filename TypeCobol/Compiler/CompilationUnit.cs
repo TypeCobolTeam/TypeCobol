@@ -195,7 +195,7 @@ namespace TypeCobol.Compiler
         /// Thread-safe : this method can be called from any thread.
         /// <param name="options">Desired option on sending ProgramClass events</param>
         /// </summary>
-        public void RefreshProgramClassDocumentSnapshot(ProgramClassEvent.Option options)
+        public void RefreshProgramClassDocumentSnapshot(ProgramClassEvent.Option options = ProgramClassEvent.Option.None)
         {
             // Make sure two threads don't try to update this snapshot at the same time
             bool snapshotWasUpdated = false;
@@ -325,7 +325,7 @@ namespace TypeCobol.Compiler
         /// Update the list of quality-check diagnostics.
         /// <param name="options">Desired option on sending ProgramClass events</param>
         /// </summary>
-        public void RefreshCodeAnalysisDocumentSnapshot(ProgramClassEvent.Option options)
+        public void RefreshCodeAnalysisDocumentSnapshot(ProgramClassEvent.Option options = ProgramClassEvent.Option.None)
         {
             bool documentUpdated = false;
             lock (lockObjectForCodeAnalysisDocumentSnapshot)

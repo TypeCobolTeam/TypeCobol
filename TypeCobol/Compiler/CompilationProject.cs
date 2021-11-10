@@ -205,7 +205,7 @@ namespace TypeCobol.Compiler
                 bool wasAlreadyInsideCopy = scanState.InsideCopy;
                 scanState.InsideCopy = true;
                 FileCompiler fileCompiler = new FileCompiler(libraryName, textName, ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this, copyTextNameVariations);
-                fileCompiler.CompileOnce(ProgramClassEvent.Option.None);
+                fileCompiler.CompileOnce();
                 scanState.InsideCopy = wasAlreadyInsideCopy;
 
                 resultDocument = fileCompiler.CompilationResultsForCopy;

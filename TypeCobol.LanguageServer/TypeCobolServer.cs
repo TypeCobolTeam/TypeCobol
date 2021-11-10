@@ -247,7 +247,7 @@ namespace TypeCobol.LanguageServer
             {
                 System.Diagnostics.Debug.Assert(context.FileCompiler != null);
                 //Refresh context
-                this.Workspace.RefreshSyntaxTree(context.FileCompiler, refreshLevel, ProgramClassEvent.Option.None);
+                this.Workspace.RefreshSyntaxTree(context.FileCompiler, refreshLevel);
                 return context;
             }
 
@@ -343,7 +343,7 @@ namespace TypeCobol.LanguageServer
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, text, ProgramClassEvent.Option.None);
+                this.Workspace.OpenTextDocument(docContext, text);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
@@ -387,7 +387,7 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        this.Workspace.OpenTextDocument(docContext, contentChange.text, ProgramClassEvent.Option.None);
+                        this.Workspace.OpenTextDocument(docContext, contentChange.text);
                         return;
                     }
                     catch (Exception e)

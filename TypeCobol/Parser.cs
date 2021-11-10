@@ -74,7 +74,7 @@ namespace TypeCobol
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
             else if (e != null) Compiler.CompilationResultsForProgram.UpdateTextLines(e);
 
-            try { Compiler.CompileOnce(ProgramClassEvent.Option.None); }
+            try { Compiler.CompileOnce(); }
 			catch(Exception ex) {
                 throw new ParsingException(MessageCode.SyntaxErrorInParser, ex.Message, path, ex, true, true);
 			}

@@ -42,7 +42,7 @@ namespace TypeCobol.Tools.CommandLine
                     try
                     {
                         FileCompiler fileCompiler = new FileCompiler(null, textName, ColumnsLayout.CobolReferenceFormat, false, project.SourceFileProvider, project, compilerOptions.Clone(), null, project);
-                        fileCompiler.CompileOnce(ProgramClassEvent.Option.None);
+                        fileCompiler.CompileOnce();
                         Console.WriteLine(" OK");
                     }
                     catch(Exception e)

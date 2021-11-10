@@ -68,7 +68,7 @@ namespace TypeCobol.Test.Utils
 #if EUROINFO_RULES
                 Compiler.CompilerOptions.CpyCopyNameMap = Comparator.GetCopyNameMap();
 #endif
-                Compiler.CompileOnce(ProgramClassEvent.Option.None);
+                Compiler.CompileOnce();
             }
             catch (Exception e)
             {

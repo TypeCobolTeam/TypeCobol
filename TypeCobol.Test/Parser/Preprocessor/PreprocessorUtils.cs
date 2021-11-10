@@ -18,7 +18,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         private static ProcessedTokensDocument GetProcessedTokensDocument(CompilationProject currentProject, string testName)
         {
             FileCompiler fileCompiler = new FileCompiler(currentProject, testName, false);
-            fileCompiler.CompileOnce(ExecutionStep.Preprocessor, false, ProgramClassEvent.Option.None);
+            fileCompiler.CompileOnce(ExecutionStep.Preprocessor, false);
             return fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot;
         }
 

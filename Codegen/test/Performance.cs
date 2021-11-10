@@ -62,7 +62,7 @@ namespace TypeCobol.Codegen
                 new TypeCobolOptions(),
                 null);
             FileCompiler fileCompiler = new FileCompiler(compilationProject, fileName, false);
-            fileCompiler.CompileOnce(ProgramClassEvent.Option.None);
+            fileCompiler.CompileOnce();
 
             // Generator.
             StringBuilder destination = new StringBuilder();
@@ -79,7 +79,7 @@ namespace TypeCobol.Codegen
                 {
                     // Full Compile.
                     fileCompiler = new FileCompiler(compilationProject, fileName, false);
-                    fileCompiler.CompileOnce(ProgramClassEvent.Option.None);
+                    fileCompiler.CompileOnce();
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace TypeCobol.Codegen
                     TextChangedEvent textChangedEvent = new TextChangedEvent();
                     textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, newLine.LineIndex, newLine));
                     fileCompiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
-                    fileCompiler.CompileOnce(ProgramClassEvent.Option.None);
+                    fileCompiler.CompileOnce();
                 }
 
                 // Generate and write stats.

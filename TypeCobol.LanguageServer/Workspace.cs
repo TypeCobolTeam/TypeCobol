@@ -183,7 +183,7 @@ namespace TypeCobol.LanguageServer
         internal void InitCopyDependencyWatchers()
         {
             // Create the refresh action that will be used by file watchers
-            Action refreshAction = () => { RefreshOpenedFiles(ProgramClassEvent.Option.None); } ;
+            Action refreshAction = () => { RefreshOpenedFiles(); } ;
             _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
             _CopyWatcher = new CopyWatcher(this, refreshAction);
         }
@@ -194,7 +194,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="docContext">The Document context</param>
         /// <param name="sourceText">The source text</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, ProgramClassEvent.Option options) => OpenTextDocument(docContext, sourceText, LsrTestOptions, options);
+        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, ProgramClassEvent.Option options = ProgramClassEvent.Option.None) => OpenTextDocument(docContext, sourceText, LsrTestOptions, options);
 
         private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions, ProgramClassEvent.Option options)
         {
@@ -317,7 +317,7 @@ namespace TypeCobol.LanguageServer
                                                           //further it's for semantic, which is handle by NodeRefresh method
 
 
-                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy, ProgramClassEvent.Option.None);
+                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy);
                 fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
                 
 
@@ -413,7 +413,7 @@ namespace TypeCobol.LanguageServer
             {
                 if (TryGetOpenedDocumentContext(fileUri, out var docContext))
                 {
-                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck, ProgramClassEvent.Option.None);
+                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck);
                 }
             }
         }
@@ -450,7 +450,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
         /// <param name="refreshLevel">Desired level of refresh</param>
         /// <param name="options">Desired option on sending ProgramClass events</param>
-        public void RefreshSyntaxTree(FileCompiler fileCompiler, SyntaxTreeRefreshLevel refreshLevel, ProgramClassEvent.Option options)
+        public void RefreshSyntaxTree(FileCompiler fileCompiler, SyntaxTreeRefreshLevel refreshLevel, ProgramClassEvent.Option options = ProgramClassEvent.Option.None)
         {
             if (refreshLevel == SyntaxTreeRefreshLevel.NoRefresh) return; //nothing to do
 
@@ -642,7 +642,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all opened files' parser.
         /// </summary>
-        public void RefreshOpenedFiles(ProgramClassEvent.Option options)
+        public void RefreshOpenedFiles(ProgramClassEvent.Option options = ProgramClassEvent.Option.None)
         {
             RefreshCustomSymbols();
 
