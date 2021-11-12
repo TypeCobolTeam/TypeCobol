@@ -634,18 +634,15 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Link this sentence to the current section or paragraph if any.
         /// </summary>
-        /// <param name="sentence">The sentence to link.</param>
+        /// <param name="sentence">The sentence to link.</param>       
         private void LinkBlockSentenceToCurrentSectionParagraph(Sentence sentence)
         {
-            var currentProcedure = (Procedure) this.CurrentProgramCfgBuilder.CurrentParagraph ??
-                                   this.CurrentProgramCfgBuilder.CurrentSection;
-
-            if (currentProcedure != null)
+            if (sentence.Procedure != null)
             {
-                currentProcedure.AddSentence(sentence);
+                sentence.Procedure.AddSentence(sentence);
                 
                 //Give to this block the name of its paragraph/section as tag.
-                sentence.FirstBlock.Tag = currentProcedure.Name;
+                sentence.FirstBlock.Tag = sentence.Procedure.Name;
             }
         }
 
@@ -666,7 +663,11 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(firstBlockIndex.Value);
                 this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(firstBlock);
             }
-            Sentence sentence = new Sentence(number, firstBlock, firstBlockIndex);
+
+            Procedure currentProcedure = (Procedure)this.CurrentProgramCfgBuilder.CurrentParagraph ??
+                                   this.CurrentProgramCfgBuilder.CurrentSection;
+
+            Sentence sentence = new Sentence(number, firstBlock, firstBlockIndex, currentProcedure);
             this.CurrentProgramCfgBuilder.AllSentences.Add(sentence);
 
             this.CurrentProgramCfgBuilder.CurrentSentence = sentence;
@@ -1001,7 +1002,7 @@ namespace TypeCobol.Analysis.Cfg
             var item = PendingPERFORMProcedures.FirstOrDefault(i => i.Item1 == callee);
             if (item == null)
                 return;
-            PerformTarget performTarget = ComputePerformTarget(callee, item.Item2);
+            PerformTarget performTarget = GetPerformTarget(callee, item.Item2);
             if (performTarget == null)
                 return;
             foreach (Procedure calleeProcedure in performTarget.Procedures)
@@ -1145,7 +1146,7 @@ namespace TypeCobol.Analysis.Cfg
             SectionNode sectionNode = perform.Item2;
             BasicBlockForNodeGroup group = perform.Item3;
 
-            PerformTarget performTarget = ComputePerformTarget(p, sectionNode);
+            PerformTarget performTarget = GetPerformTarget(p, sectionNode);
             if (performTarget == null)
                 return;
             var clonedBlocksIndexMap = new Dictionary<int, int>();

@@ -8,18 +8,18 @@ namespace TypeCobol.Analysis.Cfg
     public partial class ControlFlowGraphBuilder<D>
     {
         /// <summary>
-        /// PerfomrTarget class to capture target sentences and procedures from a PERFORM instruction.
+        /// PerformTarget class to capture target sentences and procedures from a PERFORM instruction.
         /// </summary>
         private class PerformTarget
         {
             /// <summary>
             /// All target sentences
             /// </summary>
-            internal List<Sentence> Sentences { get; private set; }
+            internal List<Sentence> Sentences { get; set; }
             /// <summary>
             /// All target procedures.
             /// </summary>
-            internal List<Procedure> Procedures { get; private set; }
+            internal List<Procedure> Procedures { get; set; }
 
             public PerformTarget(List<Sentence> sentences, List<Procedure> procedures)
             {
@@ -32,11 +32,12 @@ namespace TypeCobol.Analysis.Cfg
         /// Cache of PerformTarget instances already calculated for a Perform procedure 
         /// </summary>
         private Dictionary<PerformProcedure, PerformTarget> _performTargetCache;
-        private PerformTarget ComputePerformTarget(PerformProcedure p, SectionNode sectionNode)
+        private PerformTarget GetPerformTarget(PerformProcedure p, SectionNode sectionNode)
         {
             if (_performTargetCache == null)
                 _performTargetCache = new Dictionary<PerformProcedure, PerformTarget>();
-            if (_performTargetCache.TryGetValue(p, out var target)) {
+            if (_performTargetCache.TryGetValue(p, out var target)) 
+            {
                 return target;
             }
 
@@ -65,7 +66,6 @@ namespace TypeCobol.Analysis.Cfg
                 }
 
                 //Accumulate sentences located between the two procedures
-                int n = 0;
                 int currentProcedureNumber = procedure.Number;
                 while (currentProcedureNumber <= throughProcedure.Number)
                 {
@@ -73,18 +73,14 @@ namespace TypeCobol.Analysis.Cfg
                     currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
                     currentProcedureNumber = lastProcedure.Number + 1;
                     procedures.Add(currentProcedure);
-                    while (n < sentences.Count)
-                    {
-                        sentences[n++].Procedure = currentProcedure;
-                    }
                 }
-            } else 
+            } 
+            else 
             {
                 procedures.Add(procedure);
                 foreach (var sentence in procedure)
                 {
                     sentences.Add(sentence);
-                    sentence.Procedure = procedure;                    
                 }
             }
             target = new PerformTarget(sentences, procedures);
