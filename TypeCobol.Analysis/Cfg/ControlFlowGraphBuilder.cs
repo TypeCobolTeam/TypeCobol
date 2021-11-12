@@ -2206,9 +2206,9 @@ namespace TypeCobol.Analysis.Cfg
             //This is not the context of the perform block.
             ctx.OriginBlock.Context = null;
             MultiBranchContext<Node, D> ctxPerform = new MultiBranchContext<Node, D>(perform);
-            ctxPerform.Start(ctx.Branches[0]); //Branches[0] is the perfom block
-            ctxPerform.AddBranch(ctx.Branches[1]); //Branches[1] i sthe perform body block
-            ctxPerform.BranchIndices.Add(ctx.BranchIndices[1]); //BranchIndices[1] is index in the SuccessorEdge of the perfomr body block.
+            ctxPerform.Start(ctx.Branches[0]); //Branches[0] is the perform block
+            ctxPerform.AddBranch(ctx.Branches[1]); //Branches[1] is the perform body block
+            ctxPerform.BranchIndices.Add(ctx.BranchIndices[1]); //BranchIndices[1] is index in the SuccessorEdge of the perform body block.
             ctxPerform.Terminals = terminals;
 
             int performBlockIndex = ctx.BranchIndices[0];

@@ -37,17 +37,17 @@ namespace TypeCobol.Analysis.Graph
             /// </summary>
             private System.Collections.BitArray _metricUpdated;
             /// <summary>
-            /// Current Cyclic execution Thresold by block index.
+            /// Current Cyclic execution Threshold by block index.
             /// </summary>
             private Dictionary<int,int> _cyclicThreshold;
             /// <summary>
-            /// The Cyclic relation from one block index to another block index
+            /// The Cyclic transition from one block index to another block index
             /// </summary>
-            private Dictionary<int, HashSet<int> >_cyclicRelation;
+            private Dictionary<int, HashSet<int> >_cyclicTransition;
             /// <summary>
             /// Number maximal of cyclic execution for a block index.
             /// </summary>
-            private int _cyclicExecutionThresold ;
+            private int _cyclicExecutionThreshold ;
             /// <summary>
             /// Current CFG being run.
             /// </summary>
@@ -63,9 +63,9 @@ namespace TypeCobol.Analysis.Graph
             }
 
             /// <summary>
-            /// Intialize internal data structures.
+            /// Reset internal data structures.
             /// </summary>
-            private void Initialize()
+            private void Reset()
             {
                 if (_interpretationStack == null)
                     _interpretationStack = new Stack<BasicBlock<N, D>>();
@@ -76,10 +76,10 @@ namespace TypeCobol.Analysis.Graph
                     _cyclicThreshold = new Dictionary<int, int>();
                 else
                     _cyclicThreshold.Clear();
-                if (_cyclicRelation == null)
-                    _cyclicRelation = new Dictionary<int, HashSet<int>>();
+                if (_cyclicTransition == null)
+                    _cyclicTransition = new Dictionary<int, HashSet<int>>();
                 else
-                    _cyclicRelation.Clear();
+                    _cyclicTransition.Clear();
             }
 
             /// <summary>
@@ -91,9 +91,9 @@ namespace TypeCobol.Analysis.Graph
             public virtual Metrics Run(ControlFlowGraph<N, D> cfg, int cyclicExecutionThreshold = 0)
             {
                 this.Cfg = cfg;
-                this._cyclicExecutionThresold = cyclicExecutionThreshold;
-                Initialize();
-                SetCyclicityThresold();
+                this._cyclicExecutionThreshold = cyclicExecutionThreshold;
+                Reset();
+                SetCyclicityThreshold();
                 this._metrics = new Metrics();                
                 Run(cfg.RootBlock, null);
                 System.Diagnostics.Debug.Assert(_interpretationStack.Count == 0);
@@ -102,9 +102,9 @@ namespace TypeCobol.Analysis.Graph
             }
 
             /// <summary>
-            /// Set the Cyclicity Thresold for cyclic blocks of the graph.
+            /// Set the Cyclicity Threshold for cyclic blocks of the graph.
             /// </summary>
-            public void SetCyclicityThresold()
+            public void SetCyclicityThreshold()
             {
                 BitSet _domain = new BitSet();
                 Dictionary<int, int> _N = new Dictionary<int, int>();
@@ -142,11 +142,11 @@ namespace TypeCobol.Analysis.Graph
                         _nb = Visited(b);
                         if (_nb < _na)
                         {
-                            _cyclicThreshold[b] = _cyclicExecutionThresold;
-                            if (!_cyclicRelation.TryGetValue(a, out var set))
+                            _cyclicThreshold[b] = _cyclicExecutionThreshold;
+                            if (!_cyclicTransition.TryGetValue(a, out var set))
                             {
                                 set = new HashSet<int>();
-                                _cyclicRelation.Add(a, set);
+                                _cyclicTransition.Add(a, set);
                             }
                             set.Add(b);
                         }
@@ -209,6 +209,13 @@ namespace TypeCobol.Analysis.Graph
                     }
                 }
 
+                /// <summary>
+                /// CanExecute is used during execution to check for a block that contributes to a cycle,
+                /// if can be executed, that is to say if its cyclic threshold is not consumed.
+                /// Other blocks are always executed.
+                /// </summary>
+                /// <param name="b">The block to be checked</param>
+                /// <returns>Return true if yes, false otherwise.</returns>
                 bool CanExecute(BasicBlock<N, D> b)
                 {
                     if (_cyclicThreshold.TryGetValue(b.Index, out int t))
@@ -217,37 +224,50 @@ namespace TypeCobol.Analysis.Graph
                     }
                     return true;
                 }
-            }
-
-            private bool IsCyclic(BasicBlock<N, D> from, BasicBlock<N, D> to)
-            {
-                if (_cyclicRelation.TryGetValue(from.Index, out var toindices))
+                /// <summary>
+                /// Checks if the transition from one block to another can lead to a cycle.
+                /// </summary>
+                /// <param name="from"></param>
+                /// <param name="to"></param>
+                /// <returns>Return true if yes, false otherwise.</returns>
+                bool IsCyclic(BasicBlock<N, D> from, BasicBlock<N, D> to)
                 {
-                    return toindices.Contains(to.Index);
-                }
-                return false;
-            }
-
-            private bool CanAddExecution(BasicBlock<N, D> from, BasicBlock<N, D> to)
-            {
-                if (IsCyclic(from, to))
-                {
-                    if (!_cyclicThreshold.TryGetValue(to.Index, out int t))
+                    if (_cyclicTransition.TryGetValue(from.Index, out var toindices))
                     {
-                        t = 0;
-                    }
-                    if (t >= 0 && t <= _cyclicExecutionThresold)
-                    {
-                        _cyclicThreshold[to.Index] = t - 1;
-                        return true;
+                        return toindices.Contains(to.Index);
                     }
                     return false;
                 }
-                return true;
+
+                /// <summary>
+                /// CanAddExecution Checks if a transition from one block to another can be pushed as to be executed.
+                /// For a transition that can lead to a cycle, the cyclic threshold value is decreased, if the threshold
+                /// is consumed the transition cannot be executed.
+                /// </summary>
+                /// <param name="from"></param>
+                /// <param name="to"></param>
+                /// <returns>True if the transition can be added, false otherwise.</returns>
+                bool CanAddExecution(BasicBlock<N, D> from, BasicBlock<N, D> to)
+                {
+                    if (IsCyclic(from, to))
+                    {
+                        if (!_cyclicThreshold.TryGetValue(to.Index, out int t))
+                        {
+                            t = 0;
+                        }
+                        if (t >= 0 && t <= _cyclicExecutionThreshold)
+                        {
+                            _cyclicThreshold[to.Index] = t - 1;
+                            return true;
+                        }
+                        return false;
+                    }
+                    return true;
+                }
             }
 
             /// <summary>
-            /// Iterate over all instruction in the given block.
+            /// Iterate over all instructions in the given block.
             /// </summary>
             /// <param name="block"></param>
             private void IterateBlock(BasicBlock<N, D> block)
