@@ -45,7 +45,7 @@ namespace TypeCobol.LanguageServer
             {
                 return node;
             }
-            return codeElementToNode.FirstOrDefault(t => t.Key.Equals(codeElement)).Value;
+            return null;
         }
 
         public static IEnumerable<string> AggregateTokens(IEnumerable<Token> tokensToAggregate)

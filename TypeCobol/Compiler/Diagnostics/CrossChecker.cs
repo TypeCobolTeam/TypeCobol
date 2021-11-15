@@ -634,10 +634,6 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (end.CodeElement.Type == CodeElementType.ProgramEnd && !(end.Parent is Program))
                 {
-                    if (!this._compilerOptions.IsTestMode)
-                    {
-                        System.Diagnostics.Debug.Assert(end.Parent is SourceFile);
-                    }
                     DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\".", _compilerOptions.CheckEndProgram.GetMessageCode());
                 }
             }

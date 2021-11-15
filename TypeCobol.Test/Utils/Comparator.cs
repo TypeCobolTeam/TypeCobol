@@ -207,7 +207,6 @@ namespace TypeCobol.Test.Utils
                     unit.Compiler.CompilerOptions.AutoRemarksEnable = autoRemarks;
 #endif
                     unit.Compiler.CompilerOptions.IsCobolLanguage = isCobolLanguage;
-                    unit.Compiler.CompilerOptions.IsTestMode = true;
                     unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {

@@ -86,11 +86,6 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public TypeCobolCheckOption CheckRecursivePerforms { get; set; }
 
-        /// <summary>
-        /// Use to set that these options are used by some tests.
-        /// </summary>
-        public bool IsTestMode { get; set; }
-
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
