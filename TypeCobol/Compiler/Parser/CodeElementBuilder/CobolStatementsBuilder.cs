@@ -430,16 +430,10 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		internal CodeElement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
+		internal GotoConditionalStatement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
 			var statement = new GotoConditionalStatement();
 			statement.ProcedureNames = BuildObjectArrayFromParserRules(context.procedureName(), ctx => CobolWordsBuilder.CreateProcedureName(ctx));
 			statement.DependingOn = CobolExpressionsBuilder.CreateVariable(context.variable1());
-			if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
-				DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
-			if (statement.ProcedureNames.Length < 1 && statement.DependingOn != null)
-				DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
-			if (statement.ProcedureNames.Length > 255)
-				DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
 			return statement;
 		}
 
@@ -1433,14 +1427,9 @@ namespace TypeCobol.Compiler.Parser
         // WHEN EVALUATE CONDITION //
         /////////////////////////////
 
-        internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
+        internal WhenCondition CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
-			var rhsExprs = context.comparisonRHSExpression();
-			statement.SelectionObjects = BuildObjectArrayFromParserRules(rhsExprs, ctx => CreateEvaluateSelectionObject(ctx));
-			if (rhsExprs.Length == 0)
-			{
-				DiagnosticUtils.AddError(statement, "Missing condition in \"when\" clause", context);
-			}
+			statement.SelectionObjects = BuildObjectArrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
 			return statement;
 		}
 

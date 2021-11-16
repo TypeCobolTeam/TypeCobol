@@ -1341,22 +1341,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndWhenConditionClause()
         {
-            if (SyntaxTree.CurrentNode.ChildrenCount == 0)
-            {
-                System.Diagnostics.Debug.Assert(SyntaxTree.CurrentNode.Parent.ChildrenCount >= 2);
-                // -1 is the Then node
-                // -2 is the When group
-                var whenGroup = SyntaxTree.CurrentNode.Parent.Children[SyntaxTree.CurrentNode.Parent.ChildrenCount - 2];
-                System.Diagnostics.Debug.Assert(whenGroup.ChildrenCount > 0);
-
-                var whenNode = whenGroup.Children[whenGroup.ChildrenCount - 1];
-                System.Diagnostics.Debug.Assert(whenNode.CodeElement != null);
-                System.Diagnostics.Debug.Assert(whenNode.CodeElement.Type == CodeElementType.WhenCondition ||
-                    whenNode.CodeElement.Type == CodeElementType.WhenSearchCondition);
-
-                //Syntax error.
-                DiagnosticUtils.AddError(whenNode, "Missing statement in \"when\" clause");
-            }
+            WhenConditionNodeChecker.OnNode(SyntaxTree.CurrentNode);
             Exit();// exit THEN
             Dispatcher.EndWhenConditionClause();
         }
