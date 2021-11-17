@@ -911,9 +911,8 @@ namespace TypeCobol.Analysis.Cfg
                         case StatementType.GotoSimpleStatement:
                             {
                                 GotoSimpleStatement simpleGoto = (GotoSimpleStatement)@goto.CodeElement;
-                                HashSet<SymbolReference> alteredSymbolRefs = null;
                                 //Check if we have altered GOTOs to take in account.
-                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out alteredSymbolRefs))
+                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out HashSet<SymbolReference> alteredSymbolRefs))
                                 {
                                     int i = 0;
                                     target = new SymbolReference[alteredSymbolRefs.Count + 1];
@@ -990,143 +989,49 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Add a Direct Call Perform to the Call Perform Relation. 
         /// For a PERFORM THRU all intermediate procedures are added to the relation.
+        /// Example of code:
+        ///        main.
+        ///             perform a
+        ///             goback
+        ///             .
+        ///        a.
+        ///             perform b
+        ///        .
+        /// The relation is: a => b
         /// </summary>
-        /// <param name="caller">The caller of the PERFOM procedure</param>
-        /// <param name="callee">The PERFORM procedure called</param>
-        /// <param name="callPerformRelation">Call Perform Relation</param>
-        /// <param name="callPerformRelationDomain">The domain of the call perform relation</param>
-        private void AddDirectCallPerformRelation(PerformProcedure performCaller, Procedure caller, PerformProcedure callee, 
-            Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callPerformRelation,
-            HashSet<Procedure> callPerformRelationDomain)
+        /// <param name="performCaller">PERFORM procedure caller, source instruction: in the example (perform a)</param>
+        /// <param name="caller">The Procedure of the performCaller: in the example 'a' </param>
+        /// <param name="performCallee">The PERFORM procedure called, target instruction: in the example (perform b)</param>
+        /// <param name="performCallRelation">Call Perform Relation</param>
+        private void AddDirectCallPerformRelation(PerformProcedure performCaller, Procedure caller, PerformProcedure performCallee, 
+            PerformCallRelation performCallRelation)
         {
-            var item = PendingPERFORMProcedures.FirstOrDefault(i => i.Item1 == callee);
+            var item = PendingPERFORMProcedures.FirstOrDefault(i => i.Item1 == performCallee);
             if (item == null)
                 return;
-            PerformTarget performTarget = GetPerformTarget(callee, item.Item2);
+            PerformTarget performTarget = GetPerformTarget(performCallee, item.Item2);
             if (performTarget == null)
                 return;
             foreach (Procedure calleeProcedure in performTarget.Procedures)
             {
-                addToRelation(calleeProcedure);
-            }
-            callPerformRelationDomain.Add(caller);
-
-            void addToRelation(Procedure procedure)
-            {
-                if (!callPerformRelation.TryGetValue(caller, out var callees))
-                {
-                    callees = new Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>(performCaller, new List<Node>(), new HashSet<Procedure>());
-                    callPerformRelation.Add(caller, callees);
-                }
-                callees.Item3.Add(procedure);                    
-                if (!callees.Item2.Contains(callee))
-                {
-                    callees.Item2.Add(callee);
-                }
-                callPerformRelationDomain.Add(procedure);
+                performCallRelation.AddToRelation(performCaller, caller, performCallee, calleeProcedure);
             }
         }
 
         /// <summary>
-        /// Compute the transitive closure of the CALL relation.
-        /// We browse the the graph represented using the Call Relation, then we found during the visit cycles.
-        /// In the same time we compute the call chain.
+        /// Report Recursive Perform Call diagnostics
         /// </summary>
-        /// <param name="callPerformRelation">Call Perform Relation</param>
-        /// <param name="callPerformRelationDomain">The domain of the call perform relation</param>
-        private void TransitiveClosureCallRelation(Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callPerformRelation, HashSet<Procedure> callPerformRelationDomain)
+        /// <param name="performCallRelation">Call Perform Relation</param>       
+        private void ReportRecursivePerformCall(PerformCallRelation performCallRelation)
         {
-            // The dfs stack of all procedures in active consideration.
-            Stack <Procedure> S = new Stack<Procedure>();
-            // The dictionary N is used for three purposes
-            // 1) To record unmarked procedures (N[p] == 0).
-            // 2) To associate a positive number value with procedures that are active consideration (0 < N[p] < Infnity).
-            // 3) To mark Infinity Procedures whose cycles have already been found
-            Dictionary<Procedure, int> N = new Dictionary<Procedure, int>();
-
-            foreach(var a in callPerformRelationDomain)
-            {
-                var na = Visited(a);
-                if (na == 0)
-                    dfs(a);
-            }
+            // First Compute the transitive closure of the relation.
+            performCallRelation.TransitiveClosure();
             // Report all cyclic procedure.
-            foreach (var item in callPerformRelation)
+            foreach (var item in performCallRelation)
             {
-                if (item.Value.Item3.Contains(item.Key))
+                if (item.Value.Procedures.Contains(item.Key))
                 {
-                    this.Cfg.AddRecursivePerform(item.Value.Item1, item.Value.Item2);
-                }
-            }
-
-            void dfs(Procedure a)
-            {
-                S.Push(a);
-                int d = S.Count;
-                N[a] = d;
-                var fa = f(a);
-                if (fa.Item3 != null)
-                {   //For all procedure b called by a
-                    foreach (var b in fa.Item3.ToArray())
-                    {
-                        int nb = Visited(b);
-                        if (nb == 0)
-                            dfs(b);//Procedure not visited yet
-                        int _na = Visited(a);
-                        int _nb = Visited(b);
-                        N[a] = Math.Min(_na, _nb); // N[b] < N[a] : we find a cycle
-                        var fb = f(b);
-                        // f(a) = f(a) U f(b)
-                        // We update the call chain
-                        UpdatePerformCallChain(fb, fa);
-                    }
-                }
-                var na = Visited(a);
-                if (na == d)
-                {   // 'a' is an entry point of a calculated component, that is to say the start procedure of a cycle.
-                    // because if na != d then 'a' has been included in another cycle whose root is not 'a'.
-                    do
-                    {
-                        N[S.Peek()] = Int32.MaxValue; // The Node(The procedure) is terminated
-                        if (callPerformRelation.TryGetValue(S.Peek(), out var top))
-                        {
-                            UpdatePerformCallChain(fa, top);
-                        }
-                        else
-                        {
-                            callPerformRelation.Add(S.Peek(), new Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>(
-                                fa.Item1, new List<Node>(fa.Item2), new HashSet<Procedure>(fa.Item3)));
-                        }
-                    } while (S.Count > 0 && S.Pop() != a);
-                }
-            }
-
-            int Visited(Procedure a)
-            {
-                if (N.TryGetValue(a, out var na))
-                    return na;
-                return 0;
-            }
-            Tuple<PerformProcedure, List<Node>, HashSet<Procedure>> f(Procedure a)
-            {
-                if (callPerformRelation.TryGetValue(a, out var v))
-                    return v;
-                else
-                    return new Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>(null, new List<Node>(), new HashSet<Procedure>());
-            }
-            void UpdatePerformCallChain(Tuple<PerformProcedure, List<Node>, HashSet<Procedure>> from,
-                Tuple<PerformProcedure, List<Node>, HashSet<Procedure>> to)
-            {
-                foreach (var p in from.Item2)
-                {
-                    if (!to.Item2.Contains(p))
-                    {
-                        to.Item2.Add(p);
-                    }
-                }
-                foreach (var p in from.Item3)
-                {
-                    to.Item3.Add(p);
+                    this.Cfg.AddRecursivePerform(item.Value.PerformCaller, item.Value.PerformCallees);
                 }
             }
         }
@@ -1137,10 +1042,9 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="perform">A Tuple made of the PerformProcedure node, the section in which the PERFORM appears
         /// and the Basic Block Group associated to the Perform Procedure.</param>
         /// <param name="clonedPerforms">List of new PERFORMs cloned during the resolve process.</param>
-        /// <param name="callPerformRelation">The Call relation.</param>
-        /// <param name="callPerformRelationDomain">The Call relation domain.</param>
+        /// <param name="performCallRelation">The Perform Call relation.</param>
         private void ResolvePendingPERFORMProcedure(Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup> perform, List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>> clonedPerforms,
-            Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callPerformRelation, HashSet<Procedure> callPerformRelationDomain)
+            PerformCallRelation performCallRelation)
         {
             PerformProcedure p = perform.Item1;
             SectionNode sectionNode = perform.Item2;
@@ -1168,7 +1072,7 @@ namespace TypeCobol.Analysis.Cfg
                         if (block is BasicBlockForNodeGroup group0)
                         {
                             isPerform = true; //To avoid a second dynamic cast
-                            AddDirectCallPerformRelation(p, currentProcedure, (PerformProcedure)group0.Instructions.Last.Value, callPerformRelation, callPerformRelationDomain);
+                            AddDirectCallPerformRelation(p, currentProcedure, (PerformProcedure)group0.Instructions.Last.Value, performCallRelation);
 
                             var clonedGroup0 = clonedPerforms
                                 .Select(t => t.Item3)
@@ -1277,16 +1181,14 @@ namespace TypeCobol.Analysis.Cfg
         {
             if (this.CurrentProgramCfgBuilder.PendingPERFORMProcedures != null)
             {
-                Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>> callRelation =
-                    new Dictionary<Procedure, Tuple<PerformProcedure, List<Node>, HashSet<Procedure>>>();
-                HashSet<Procedure> callPerformRelationDomain = new HashSet<Procedure>();
+                PerformCallRelation performCallRelation = new PerformCallRelation();
                 var clonedPerforms = new List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>>();
                 //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
                     item.Item3.RecursivityGroupSet = new BitArray(GroupCounter + 1);
                     item.Item3.RecursivityGroupSet.Set(item.Item3.GroupIndex, true);
-                    ResolvePendingPERFORMProcedure(item, clonedPerforms, callRelation, callPerformRelationDomain);
+                    ResolvePendingPERFORMProcedure(item, clonedPerforms, performCallRelation);
                 }
 
                 //Second pass: resolve cloned groups created during first pass
@@ -1294,11 +1196,11 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     //We are using a regular for instead of foreach because new groups may also be created during this second pass.
                     //New groups/performs to resolve are added at tail and all are processed during this second pass
-                    ResolvePendingPERFORMProcedure(clonedPerforms[i], clonedPerforms, callRelation, callPerformRelationDomain);
+                    ResolvePendingPERFORMProcedure(clonedPerforms[i], clonedPerforms, performCallRelation);
                 }
 
-                // Report Cyclic PERFORM call
-                TransitiveClosureCallRelation(callRelation, callPerformRelationDomain);
+                // Report Recursive PERFORM call
+                ReportRecursivePerformCall(performCallRelation);
 
                 //Index groups by their GroupIndex, keep only the final instance of each group after all resolve have been done
                 var groupOrder = new Dictionary<int, BasicBlockForNodeGroup>();
@@ -1387,7 +1289,6 @@ namespace TypeCobol.Analysis.Cfg
             if (group.Group.Count > 0 && group.TerminalBlocks == null)
             {
                 LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                MultiBranchContext ctx = new MultiBranchContext(null);
                 List<BasicBlock<Node, D>> terminals = new List<BasicBlock<Node, D>>();
                 this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(first.Value, terminals);
                 group.TerminalBlocks = terminals;
@@ -2315,7 +2216,7 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(nextBlock);
 
 
-            int transBlockIndex = -1;
+            int transBlockIndex;
             if (IsIterative(perform.CodeElement))
             {   //For an Iterative perform, body transition is the perform instruction
                 //the next block is a transition for the perform. 

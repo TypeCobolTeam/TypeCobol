@@ -34,6 +34,7 @@
     <Compile Include="Cfg\ControlFlowGraphBuilder.DeclarativesContext.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.MultiBranchContext.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Paragraph.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.PerformCallRelation.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Procedure.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.ProcedureDivisionRegion.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Section.cs" />
