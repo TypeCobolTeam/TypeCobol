@@ -245,6 +245,8 @@ Leaving block : 28
 Entering block : 30
 Leaving block : 30
 Leaving block : 26
+Entering block : 31
+Leaving block : 31
 Entering block : 32
       when "/"
 Entering block : 33
@@ -263,6 +265,8 @@ Leaving block : 35
 Entering block : 37
 Leaving block : 37
 Leaving block : 33
+Entering block : 38
+Leaving block : 38
 Entering block : 39
       when "P"
 Entering block : 40
@@ -282,6 +286,8 @@ Leaving block : 39
 Entering block : 49
 Leaving block : 49
 Leaving block : 32
+Entering block : 50
+Leaving block : 50
 Leaving block : 25
 Entering block : 51
 Leaving block : 51
@@ -289,6 +295,13 @@ Leaving block : 16
 Entering block : 52
 Leaving block : 52
 Leaving block : 7
+Entering block : 53
+Leaving block : 53
+Entering block : 54
+    perform affichage
+Leaving block : 54
+Entering block : 55
+Leaving block : 55
 Leaving block : 6
 Leaving block : 6
 Entering block : 56

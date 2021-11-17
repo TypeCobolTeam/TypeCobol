@@ -118,30 +118,36 @@ namespace TypeCobol.Analysis.Graph
                         dfs(i);
                 }
 
+                // Visit mark of a block 'a'
+                // 0 : Block not visited
+                // > 0 : Block in active consideration
+                // Infinity : the cycle to which belongs the block has been considered.
                 int Visited(int a)
                 {
                     if (_N.TryGetValue(a, out var na))
                         return na;
                     return 0;
                 }
+
+                // Travserse of all transition from block 'a'
                 void dfs(int a)
                 {
                     _stack.Push(a);
                     int d = _stack.Count;
                     _N[a] = d;
                     foreach (var s in Cfg.AllBlocks[a].SuccessorEdges)
-                    {
+                    {   // For each transition from block 'a' to block 'b'
                         var sb = Cfg.SuccessorEdges[s];
                         int b = sb.Index;
                         int _nb = Visited(b);
                         if (_nb == 0)
-                        {
+                        {   // Block 'b' is not visited yet => traverse it
                             dfs(b);
                         }
                         int _na = Visited(a);
                         _nb = Visited(b);
                         if (_nb < _na)
-                        {
+                        {   // This mean that the transition from block 'a' to block 'b' leads to a cycle.
                             _cyclicThreshold[b] = _cyclicExecutionThreshold;
                             if (!_cyclicTransition.TryGetValue(a, out var set))
                             {
@@ -154,9 +160,10 @@ namespace TypeCobol.Analysis.Graph
                     int na = Visited(a);
                     if (na == d)
                     {
-                        while (_stack.Count > 0 && _stack.Pop() != a)
-                        {
-                        }
+                        do
+                        {   // Close any block that belongs to a cycle from block 'a' has considered.
+                            _N[_stack.Peek()] = Int32.MaxValue;
+                        } while (_stack.Count > 0 && _stack.Pop() != a);
                     }
                 }
             }
