@@ -511,7 +511,7 @@ namespace TypeCobol.Compiler.Preprocessor
         private static T[] RescanReplacedTokenTypes<T>(Func<Token, T> creator, Token firstOriginalToken, params Token[] replacementTokens)
             where T : Token
         {
-            MultilineScanState scanState = firstOriginalToken.ScanStateSnapshot;
+            MultilineScanState scanState = firstOriginalToken?.ScanStateSnapshot;
             if (scanState != null && replacementTokens.Any(MultilineScanState.IsScanStateDependent))
             {
                 int i = 0;
