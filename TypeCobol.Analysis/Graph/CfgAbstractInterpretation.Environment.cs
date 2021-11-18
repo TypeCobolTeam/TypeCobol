@@ -11,10 +11,8 @@ namespace TypeCobol.Analysis.Graph
     {
         /// <summary>
         /// Abstract interpretation execution environment.
-        /// The default execution performed is based on a dfs algorithm, with exception that
-        /// branching instructions are handled specifically.
-        /// Thus not all execution paths are applied, but all nodes are visited using dfs like algorithm if they are accessible.
-        /// A node cannot be visited twice.
+        /// The default execution performed is based on a dfs algorithm with an execution threshold on cyclic transition.
+        /// This method only works on CFG graph emitted with an Extended or WithDfa mode.
         /// </summary>
         public class Environment
         {
@@ -31,7 +29,7 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// The DFS Run stack
             /// </summary>
-            private Stack<BasicBlock<N, D>> _dfsStack;            
+            private Stack<BasicBlock<N, D>> _dfsStack;
             /// <summary>
             /// Bit Vector to check if metric values have been taken in account for a block index.
             /// </summary>
@@ -39,7 +37,7 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// Current Cyclic execution Threshold by block index.
             /// </summary>
-            private Dictionary<int,int> _cyclicThreshold;
+            private Dictionary<int, int> _cyclicThreshold;
             /// <summary>
             /// The Cyclic transition from one block index to another block index
             /// </summary>
@@ -143,9 +141,9 @@ namespace TypeCobol.Analysis.Graph
                         if (_nb == 0)
                         {   // Block 'b' is not visited yet => traverse it
                             dfs(b);
+                            _nb = Visited(b);
                         }
-                        int _na = Visited(a);
-                        _nb = Visited(b);
+                        int _na = Visited(a);                        
                         if (_nb < _na)
                         {   // This mean that the transition from block 'a' to block 'b' leads to a cycle.
                             _cyclicThreshold[b] = _cyclicExecutionThreshold;
@@ -161,7 +159,7 @@ namespace TypeCobol.Analysis.Graph
                     if (na == d)
                     {
                         do
-                        {   // Close any block that belongs to a cycle from block 'a' has considered.
+                        {   // Close any block that belongs to a cycle from block 'a' as considered.
                             _N[_stack.Peek()] = Int32.MaxValue;
                         } while (_stack.Count > 0 && _stack.Pop() != a);
                     }
