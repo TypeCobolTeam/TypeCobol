@@ -1054,11 +1054,11 @@ namespace TypeCobol.Analysis.Cfg
             if (performTarget == null)
                 return;
             var clonedBlocksIndexMap = new Dictionary<int, int>();
-            StoreSentences(performTarget);
+            StoreSentences();
             //And finally relocate the Graph.
             RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlocksIndexMap);
 
-            void StoreSentences(PerformTarget target)
+            void StoreSentences()
             {
                 foreach (var sentence in performTarget.Sentences)
                 {
@@ -1108,9 +1108,6 @@ namespace TypeCobol.Analysis.Cfg
                             var clonedGroup = (BasicBlockForNodeGroup) clonedBlock;
                             clonedGroup.Group = new LinkedList<BasicBlock<Node, D>>();
                             clonedGroup.TerminalBlocks = null;
-
-                            group.RecursivityGroupSet.Set(clonedGroup.GroupIndex, true);
-                            clonedGroup.RecursivityGroupSet = new BitArray(group.RecursivityGroupSet);
 
                             var originalPerform = this.CurrentProgramCfgBuilder.PendingPERFORMProcedures
                                 .Single(t => t.Item3 == block);
@@ -1186,8 +1183,6 @@ namespace TypeCobol.Analysis.Cfg
                 //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
-                    item.Item3.RecursivityGroupSet = new BitArray(GroupCounter + 1);
-                    item.Item3.RecursivityGroupSet.Set(item.Item3.GroupIndex, true);
                     ResolvePendingPERFORMProcedure(item, clonedPerforms, performCallRelation);
                 }
 
@@ -1208,13 +1203,11 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
                 foreach (var item in clonedPerforms)
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
 
                 //Extend groups according to the current building mode

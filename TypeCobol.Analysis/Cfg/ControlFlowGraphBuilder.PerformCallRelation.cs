@@ -100,81 +100,83 @@ namespace TypeCobol.Analysis.Cfg
 
             /// <summary>
             /// Compute the transitive closure of the PERFORM CALL relation.
-            /// We browse the the graph represented using the Call Relation, then we found during the visit cycles.
+            /// We browse the graph represented using the Call Relation, then we found during the visit cycles.
             /// In the same time we compute the call chain.
             /// </summary>
             internal void TransitiveClosure()
             {
                 // The dfs stack of all procedures in active consideration.
-                Stack<Procedure> S = new Stack<Procedure>();
-                // The dictionary N is used for three purposes
-                // 1) To record unmarked procedures (N[p] == 0).
-                // 2) To associate a positive number value with procedures that are active consideration (0 < N[p] < Infnity).
+                Stack<Procedure> dfsStack = new Stack<Procedure>();
+                // The dictionary dfsMark is used for three purposes
+                // 1) To record unmarked procedures (dfsMark[p] == 0).
+                // 2) To associate a positive number value with procedures that are active consideration (0 < dfsMark[p] < Infnity).
                 // 3) To mark Infinity Procedures whose cycles have already been found
-                Dictionary<Procedure, int> N = new Dictionary<Procedure, int>();
+                Dictionary<Procedure, int> dfsMark = new Dictionary<Procedure, int>();
 
                 // For each procedure in the relation's domain
-                foreach (var a in Domain)
-                { // For each procedure 'a' not yet considered, treat it.
-                    var na = Visited(a);
-                    if (na == 0)
-                        dfs(a);
+                foreach (var procedure in Domain)
+                { // For each procedure not yet visted, treat it.
+                    var proc_visitMark = Visited(procedure);
+                    if (proc_visitMark == 0)
+                        dfs(procedure);
                 }
 
                 // Depth First Search Traversal.
-                void dfs(Procedure a)
+                void dfs(Procedure proc_a)
                 {
-                    S.Push(a);
-                    int d = S.Count;
-                    N[a] = d;
-                    var fa = GetPerformCallChain(a);
-                    if (fa.Procedures != null)
+                    dfsStack.Push(proc_a);
+                    int depth = dfsStack.Count;
+                    dfsMark[proc_a] = depth;
+                    var proca_callChain = GetPerformCallChain(proc_a);
+                    if (proca_callChain.Procedures != null)
                     {   //For all procedure b called by a
-                        foreach (var b in fa.Procedures.ToArray())
+                        foreach (var proc_b in proca_callChain.Procedures.ToArray())
                         {
-                            int nb = Visited(b);
-                            if (nb == 0)
-                                dfs(b);//Procedure not visited yet
-                            int _na = Visited(a);
-                            int _nb = Visited(b);
-                            N[a] = Math.Min(_na, _nb); // N[b] < N[a] : we find a cycle
-                            var fb = GetPerformCallChain(b);
-                            // f(a) = f(a) U f(b)
+                            int procb_VisitMark = Visited(proc_b);
+                            if (procb_VisitMark == 0)
+                            {
+                                dfs(proc_b);//Procedure not visited yet
+                                procb_VisitMark = Visited(proc_b); ;
+                            }
+                            int proca_VisitMark = Visited(proc_a);
+                            dfsMark[proc_a] = Math.Min(proca_VisitMark, procb_VisitMark); // N[b] < N[a] : we find a cycle
+                            var procb_callChain = GetPerformCallChain(proc_b);
+                            // proca_callChain = proca_callChain U procb_callChain
                             // We update the call chain
-                            UpdatePerformCallChain(fb, fa);
+                            UpdatePerformCallChain(procb_callChain, proca_callChain);
                         }
                     }
-                    var na = Visited(a);
-                    if (na == d)
+                    var proca_visitMark = Visited(proc_a);
+                    if (proca_visitMark == depth)
                     {   // 'a' is an entry point of a calculated component, that is to say the start procedure of a cycle.
                         // because if na != d then 'a' has been included in another cycle whose root is not 'a'.
                         do
                         {
-                            N[S.Peek()] = Int32.MaxValue; // The Node(The procedure) is terminated
-                            if (TryGetValue(S.Peek(), out var top))
+                            dfsMark[dfsStack.Peek()] = Int32.MaxValue; // The Node(The procedure) is terminated
+                            if (TryGetValue(dfsStack.Peek(), out var top))
                             {
-                                UpdatePerformCallChain(fa, top);
+                                UpdatePerformCallChain(proca_callChain, top);
                             }
                             else
                             {
-                                Add(S.Peek(), new PerformCallChain(
-                                    fa.PerformCaller, new List<Node>(fa.PerformCallees), new HashSet<Procedure>(fa.Procedures)));
+                                Add(dfsStack.Peek(), new PerformCallChain(
+                                    proca_callChain.PerformCaller, new List<Node>(proca_callChain.PerformCallees), new HashSet<Procedure>(proca_callChain.Procedures)));
                             }
-                        } while (S.Count > 0 && S.Pop() != a);
+                        } while (dfsStack.Count > 0 && dfsStack.Pop() != proc_a);
                     }
                 }
-                // Get the visited mark of the procedure a
-                int Visited(Procedure a)
+                // Get the visited mark of the procedure
+                int Visited(Procedure procedure)
                 {
-                    if (N.TryGetValue(a, out var na))
-                        return na;
+                    if (dfsMark.TryGetValue(procedure, out var visitMark))
+                        return visitMark;
                     return 0;
                 }
                 // Get the PerformCallChain value of the procedure a
-                PerformCallChain GetPerformCallChain(Procedure a)
+                PerformCallChain GetPerformCallChain(Procedure procedure)
                 {
-                    if (TryGetValue(a, out var v))
-                        return v;
+                    if (TryGetValue(procedure, out var callChain))
+                        return callChain;
                     else
                         return new PerformCallChain(null, new List<Node>(), new HashSet<Procedure>());
                 }
@@ -183,16 +185,16 @@ namespace TypeCobol.Analysis.Cfg
                 // also called by 'to'
                 void UpdatePerformCallChain(PerformCallChain from, PerformCallChain to)
                 {
-                    foreach (var p in from.PerformCallees)
+                    foreach (var perform in from.PerformCallees)
                     {
-                        if (!to.PerformCallees.Contains(p))
+                        if (!to.PerformCallees.Contains(perform))
                         {
-                            to.PerformCallees.Add(p);
+                            to.PerformCallees.Add(perform);
                         }
                     }
-                    foreach (var p in from.Procedures)
+                    foreach (var procedure in from.Procedures)
                     {
-                        to.Procedures.Add(p);
+                        to.Procedures.Add(procedure);
                     }
                 }
             }

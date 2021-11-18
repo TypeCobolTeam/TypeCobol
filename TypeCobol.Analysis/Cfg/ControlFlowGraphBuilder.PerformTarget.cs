@@ -46,7 +46,10 @@ namespace TypeCobol.Analysis.Cfg
 
             Node procedureNode = ResolveProcedure(p, sectionNode, procedureReference);
             if (procedureNode == null)
+            {
+                _performTargetCache[p] = null;
                 return null;
+            }
 
             Procedure procedure = _nodeToProcedure[procedureNode];
             List<Sentence> sentences = new List<Sentence>();
