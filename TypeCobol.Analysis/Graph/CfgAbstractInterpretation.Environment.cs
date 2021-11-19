@@ -104,64 +104,65 @@ namespace TypeCobol.Analysis.Graph
             /// </summary>
             public void SetCyclicityThreshold()
             {
-                BitSet _domain = new BitSet();
-                Dictionary<int, int> _N = new Dictionary<int, int>();
-                Stack<int> _stack = new Stack<int>();
+                // Domain : all blocks of the cfg graph.
+                BitSet domain = new BitSet();
+                Dictionary<int, int> dfsMark = new Dictionary<int, int>();
+                Stack<int> dfsStack = new Stack<int>();
 
                 //Compute the domain
-                Cfg.DFS((block, incomingEdge, predecessorBlock, graph) => { _domain.Set(block.Index); return true; });
-                for (int i = _domain.NextSetBit(0); i >= 0; i = _domain.NextSetBit(i + 1))
+                Cfg.DFS((block, incomingEdge, predecessorBlock, graph) => { domain.Set(block.Index); return true; });
+                for (int blockIndex = domain.NextSetBit(0); blockIndex >= 0; blockIndex = domain.NextSetBit(blockIndex + 1))
                 {
-                    if (Visited(i) == 0)
-                        dfs(i);
+                    if (Visited(blockIndex) == 0)
+                        dfs(blockIndex);
                 }
 
                 // Visit mark of a block 'a'
                 // 0 : Block not visited
                 // > 0 : Block in active consideration
                 // Infinity : the cycle to which belongs the block has been considered.
-                int Visited(int a)
+                int Visited(int blockIndex)
                 {
-                    if (_N.TryGetValue(a, out var na))
-                        return na;
+                    if (dfsMark.TryGetValue(blockIndex, out var blockIndexMark))
+                        return blockIndexMark;
                     return 0;
                 }
 
-                // Travserse of all transition from block 'a'
-                void dfs(int a)
+                // Travserse of all transitions from block 'a'
+                void dfs(int blockIndex_a)
                 {
-                    _stack.Push(a);
-                    int d = _stack.Count;
-                    _N[a] = d;
-                    foreach (var s in Cfg.AllBlocks[a].SuccessorEdges)
+                    dfsStack.Push(blockIndex_a);
+                    int depth = dfsStack.Count;
+                    dfsMark[blockIndex_a] = depth;
+                    foreach (var s in Cfg.AllBlocks[blockIndex_a].SuccessorEdges)
                     {   // For each transition from block 'a' to block 'b'
                         var sb = Cfg.SuccessorEdges[s];
-                        int b = sb.Index;
-                        int _nb = Visited(b);
-                        if (_nb == 0)
+                        int blockIndex_b = sb.Index;
+                        int mark_b = Visited(blockIndex_b);
+                        if (mark_b == 0)
                         {   // Block 'b' is not visited yet => traverse it
-                            dfs(b);
-                            _nb = Visited(b);
+                            dfs(blockIndex_b);
+                            mark_b = Visited(blockIndex_b);
                         }
-                        int _na = Visited(a);                        
-                        if (_nb < _na)
+                        var mark_a = Visited(blockIndex_a);                        
+                        if (mark_b < mark_a)
                         {   // This mean that the transition from block 'a' to block 'b' leads to a cycle.
-                            _cyclicThreshold[b] = _cyclicExecutionThreshold;
-                            if (!_cyclicTransition.TryGetValue(a, out var set))
+                            _cyclicThreshold[blockIndex_b] = _cyclicExecutionThreshold;
+                            if (!_cyclicTransition.TryGetValue(blockIndex_a, out var transitions))
                             {
-                                set = new HashSet<int>();
-                                _cyclicTransition.Add(a, set);
+                                transitions = new HashSet<int>();
+                                _cyclicTransition.Add(blockIndex_a, transitions);
                             }
-                            set.Add(b);
+                            transitions.Add(blockIndex_b);
                         }
                     }
-                    int na = Visited(a);
-                    if (na == d)
+                    int mark = Visited(blockIndex_a);
+                    if (mark == depth)
                     {
                         do
                         {   // Close any block that belongs to a cycle from block 'a' as considered.
-                            _N[_stack.Peek()] = Int32.MaxValue;
-                        } while (_stack.Count > 0 && _stack.Pop() != a);
+                            dfsMark[dfsStack.Peek()] = Int32.MaxValue;
+                        } while (dfsStack.Count > 0 && dfsStack.Pop() != blockIndex_a);
                     }
                 }
             }
@@ -232,8 +233,8 @@ namespace TypeCobol.Analysis.Graph
                 /// <summary>
                 /// Checks if the transition from one block to another can lead to a cycle.
                 /// </summary>
-                /// <param name="from"></param>
-                /// <param name="to"></param>
+                /// <param name="from">Souce block</param>
+                /// <param name="to">Target block</param>
                 /// <returns>Return true if yes, false otherwise.</returns>
                 bool IsCyclic(BasicBlock<N, D> from, BasicBlock<N, D> to)
                 {
@@ -249,8 +250,8 @@ namespace TypeCobol.Analysis.Graph
                 /// For a transition that can lead to a cycle, the cyclic threshold value is decreased, if the threshold
                 /// is consumed the transition cannot be executed.
                 /// </summary>
-                /// <param name="from"></param>
-                /// <param name="to"></param>
+                /// <param name="from">Source block</param>
+                /// <param name="to">Target block</param>
                 /// <returns>True if the transition can be added, false otherwise.</returns>
                 bool CanAddExecution(BasicBlock<N, D> from, BasicBlock<N, D> to)
                 {
