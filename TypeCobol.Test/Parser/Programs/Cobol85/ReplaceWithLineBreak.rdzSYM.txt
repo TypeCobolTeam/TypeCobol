@@ -1,0 +1,67 @@
+﻿--- Program ---
+TCOFM117 (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  W-IdcStr (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TCOFM117
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(2)
+  Level: 1
+  IsFiller: False
+  W-Tab (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TCOFM117
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      W-COD1 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TCOFM117::W-Tab
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 30
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 10
+      IsFiller: False
+      W-COD2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TCOFM117::W-Tab
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 30
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 10
+      IsFiller: False
+      W-COD3 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TCOFM117::W-Tab
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 30
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 10
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TCOFM117
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+IsNested: False
+

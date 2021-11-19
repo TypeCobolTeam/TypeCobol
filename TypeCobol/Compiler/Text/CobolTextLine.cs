@@ -429,11 +429,18 @@ namespace TypeCobol.Compiler.Text
                     break;
             }
 
-            // Detect blank lines
-            if ((Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation) &&
-               (Source.IsEmpty || String.IsNullOrWhiteSpace(SourceText)))
+            if (Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation)
             {
-                Type = CobolTextLineType.Blank;
+                // Detect blank lines
+                if (Source.IsEmpty || string.IsNullOrWhiteSpace(SourceText))
+                {
+                    Type = CobolTextLineType.Blank;
+                }
+                // Hack: this is a pseudo continuation line, it allows splitting of PartialCobolWords in REPLACE without marking continuation explicitly
+                else if (Type != CobolTextLineType.Continuation && SourceText.TrimStart().StartsWith(":=="))
+                {
+                    Type = CobolTextLineType.Continuation;
+                }
             }
         }
 
