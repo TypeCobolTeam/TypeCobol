@@ -40,14 +40,13 @@ namespace TypeCobol.Analysis.Cfg
             {
                 return target;
             }
-
+            _performTargetCache[p] = null;//By default
             SymbolReference procedureReference = p.CodeElement.Procedure;
             SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
 
             Node procedureNode = ResolveProcedure(p, sectionNode, procedureReference);
             if (procedureNode == null)
             {
-                _performTargetCache[p] = null;
                 return null;
             }
 
@@ -58,7 +57,9 @@ namespace TypeCobol.Analysis.Cfg
             {
                 Node throughProcedureNode = ResolveProcedure(p, sectionNode, throughProcedureReference);
                 if (throughProcedureNode == null)
+                {
                     return null;
+                }
                 
                 Procedure throughProcedure = _nodeToProcedure[throughProcedureNode];
                 if (procedure.Number > throughProcedure.Number)
