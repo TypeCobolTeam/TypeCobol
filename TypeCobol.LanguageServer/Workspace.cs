@@ -644,6 +644,7 @@ namespace TypeCobol.LanguageServer
         public void RefreshOpenedFiles()
         {
             RefreshCustomSymbols();
+            this.CompilationProject?.ClearImportedCompilationDocumentsCache();
 
             lock (_lockForOpenedDocuments)
             {
