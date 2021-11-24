@@ -520,7 +520,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 foreach (var t in replacementTokens)
                 {
                     columns[i++] = sb.Length;
-                    sb.Append(t.Text);                    
+                    sb.Append(t.Text);
                 }
                 columns[i] = sb.Length;
                 string tokenText = sb.ToString();
@@ -552,19 +552,19 @@ namespace TypeCobol.Compiler.Preprocessor
                 int  CreateReplacedToken()
                 {
                     tokens.Clear();
-                    for (int j = startTokIdx; j < replacementTokens.Length; j++)
+                    for (endTokIdx = startTokIdx; endTokIdx < replacementTokens.Length && columns[endTokIdx] < rescannedToken.EndColumn; endTokIdx++)
                     {
-                        if (columns[j] >= rescannedToken.EndColumn )
+                        if (replacementTokens[endTokIdx].TokenFamily != TokenFamily.Whitespace &&
+                            replacementTokens[endTokIdx].TokenFamily != TokenFamily.Comments)
                         {
-                            endTokIdx = j;
-                            break;
+                            tokens.Add(replacementTokens[endTokIdx]);
                         }
-                        tokens.Add(replacementTokens[j]);
                     }
-                    bool isGroup = (endTokIdx - startTokIdx) > 1;
+                    System.Diagnostics.Debug.Assert(tokens.Count >= 1);
+                    bool isGroup = tokens.Count > 1;
                     T replacedToken = isGroup
-                        ? replacedToken = creator(new TokensGroup(rescannedToken.TokenType, new List<Token>(tokens)))
-                        : replacedToken = creator(tokens[0]);
+                        ? creator(new TokensGroup(rescannedToken.TokenType, new List<Token>(tokens)))
+                        : creator(tokens[0]);
                     replacedToken.TokenType = rescannedToken.TokenType;
                     newReplacedTokens.Add(replacedToken);
                     return endTokIdx;

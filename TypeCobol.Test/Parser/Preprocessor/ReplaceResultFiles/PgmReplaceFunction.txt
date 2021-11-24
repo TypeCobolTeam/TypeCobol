@@ -4,14 +4,14 @@
 [8,21:CCTERR-FCT-CRE-INN]<UserDefinedWord>
 [8,21:to]<TO>
 [8,21:true]<TRUE>
-[8,21:   call]<CALL>
+[8,21:call]<CALL>
 [8,21:'CREATE-ERROR']<AlphanumericLiteral>(',Y,Y){CREATE-ERROR}
 [8,21:using]<USING>
 [8,21:CCTERR]<UserDefinedWord>
 [8,21:CCTEXT]<UserDefinedWord>
 [8,21:CCTFAL]<UserDefinedWord>
 [8,21:CCTZON]<UserDefinedWord>
-[8,21:                             ]<UserDefinedWord>
+[8,21:CCTFRE]<UserDefinedWord>
 [22,33:CErr-Rc1-xxx]<UserDefinedWord>
 [36,45:Secondaire]<UserDefinedWord>
 [47,49:omitted]<OMITTED>
@@ -22,7 +22,7 @@
 [11,16:CCTLOG-LVL-I]<UserDefinedWord>
 [11,16:or]<OR>
 [11,16:TRC-I]<UserDefinedWord>
-[11,16:  call]<CALL>
+[11,16:call]<CALL>
 [11,16:'ZCALLPGM']<AlphanumericLiteral>(',Y,Y){ZCALLPGM}
 [11,16:using]<USING>
 [11,16:CCTZXLOG]<UserDefinedWord>
