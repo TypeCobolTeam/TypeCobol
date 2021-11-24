@@ -23,9 +23,6 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     static class ProgramClassParserStep
     {
-        // When not null, optionnaly used to gather Antlr performance profiling information
-        public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
-
         private static bool CupPrepared = false;
         /// <summary>
         /// This static prepare the parser generated method CUP_TypeCobolProgramParser_do_action.
