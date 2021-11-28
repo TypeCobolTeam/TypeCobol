@@ -55,6 +55,10 @@ namespace TypeCobol.Analysis.Graph
             /// Some metrics calculated.
             /// </summary>
             private Metrics _metrics;
+            /// <summary>
+            /// Constructeur
+            /// </summary>
+            /// <param name="observers">Array of execution observers if any, null otherwise</param>
             public Environment(params IObserver[] observers)
             {
                 this._observers = observers;
@@ -102,7 +106,7 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// Set the Cyclicity Threshold for cyclic blocks of the graph.
             /// </summary>
-            public void SetCyclicityThreshold()
+            private void SetCyclicityThreshold()
             {
                 // Domain : all blocks of the cfg graph.
                 BitSet domain = new BitSet();
@@ -158,6 +162,7 @@ namespace TypeCobol.Analysis.Graph
                     }
                     int mark = Visited(blockIndex_a);
                     if (mark == depth)
+
                     {
                         do
                         {   // Close any block that belongs to a cycle from block 'a' as considered.
