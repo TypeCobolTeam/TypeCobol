@@ -427,7 +427,7 @@ namespace TypeCobol.Compiler.Scanner
                             {
                                 if (format == ColumnsLayout.CobolReferenceFormat 
                                     ? (((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter) &&
-                                    (lastTokenOfConcatenatedLineSoFar.EndColumn + 8) != 73)
+                                    (lastTokenOfConcatenatedLineSoFar.EndColumn + CobolFormatAreas.Indicator) != CobolFormatAreas.End_B)
                                     : ((startOfContinuationIndex + 1) > lastIndex || line[startOfContinuationIndex + 1] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter))
                                 {
                                     continuationLine.AddDiagnostic(MessageCode.InvalidFirstTwoCharsForContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter,
@@ -436,10 +436,11 @@ namespace TypeCobol.Compiler.Scanner
                                         : "at the last column");
                                     // Use the first quotation mark to avoid a complete mess while scanning the rest of the line
                                     offsetForLiteralContinuation = 0;
-                                } else
+                                }
+                                else
                                 {
                                     bool isQuoteInsertedInString = (((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter) &&
-                                        (format == ColumnsLayout.CobolReferenceFormat ? ((lastTokenOfConcatenatedLineSoFar.EndColumn + 8) == 73) : true));
+                                        (format == ColumnsLayout.CobolReferenceFormat ? ((lastTokenOfConcatenatedLineSoFar.EndColumn + CobolFormatAreas.Indicator) == CobolFormatAreas.End_B) : true));
                                     if (!isQuoteInsertedInString)
                                     { // This is a multi string concatenation, so remember concatenation position in the whole string
                                         multiStringConcatPositions.Add(concatenatedLine.Length);
@@ -496,7 +497,7 @@ namespace TypeCobol.Compiler.Scanner
             if (multiStringConcatPositions.Count > 0)
             {
                 multiStringConcatBitPosition = new BitArray(concatenatedLine.Length);
-                foreach(int pos in multiStringConcatPositions)
+                foreach (int pos in multiStringConcatPositions)
                 {
                     multiStringConcatBitPosition.Set(pos, true);
                 }
@@ -666,7 +667,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Bit array of Multi String concatenation positions if any.
         /// </summary>
-        private BitArray multiStringConcatBitPosition;
+        private readonly BitArray multiStringConcatBitPosition;
 
         private bool InterpretDoubleColonAsQualifiedNameSeparator
         {

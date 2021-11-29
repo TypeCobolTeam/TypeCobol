@@ -35,7 +35,7 @@ Line 32[12,35] <27, Error, Syntax> - Syntax error : extraneous input ''TAXONOMY:
       * Ko: was accepted by US and not IBM because ' is not colum 72
        01 CONSTPARM2             PIC X(78) VALUE
            'WYYYYYY PROV RANGE 01: YYYYYYY THRU YYYYYYY'
-Line 36[11,12] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters '' only and only if the alphanumeric literal on the previous line ended with a delimiter ' in column 72
+Line 36[11,12] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters '' only if the alphanumeric literal on the previous line ended with a delimiter ' in column 72
 Line 36[14,21] <27, Error, Syntax> - Syntax error : extraneous input 'TAXONOMY' expecting {separator, statement starting keyword, keyword}
       -    ''TAXONOMY: YYYYYYYYYYYY'.
       * accepted by US and IBM because ' is colum 72
