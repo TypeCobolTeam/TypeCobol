@@ -274,7 +274,7 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 }
             }
-            // Positions in the concatainedLine string where multi strings must be applied.
+            // Positions in the concatenatedLine string where multi strings must be applied.
             List<int> multiStringConcatPositions = new List<int>(lastContinuationLineIndex - firstSourceLineIndex);
 
             // Iterate over the continuation lines (some blank lines or comment lines may come in-between)
@@ -441,7 +441,7 @@ namespace TypeCobol.Compiler.Scanner
                                     bool isQuoteInsertedInString = (((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter) &&
                                         (format == ColumnsLayout.CobolReferenceFormat ? ((lastTokenOfConcatenatedLineSoFar.EndColumn + 8) == 73) : true));
                                     if (!isQuoteInsertedInString)
-                                    { // This is a multi string concatenation, so remenber concatenation position in the whole string
+                                    { // This is a multi string concatenation, so remember concatenation position in the whole string
                                         multiStringConcatPositions.Add(concatenatedLine.Length);
                                         // Here also use the first quotation mark.
                                         offsetForLiteralContinuation = 0;
