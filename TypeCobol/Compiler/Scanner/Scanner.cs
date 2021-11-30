@@ -439,8 +439,7 @@ namespace TypeCobol.Compiler.Scanner
                                 }
                                 else
                                 {
-                                    bool isQuoteInsertedInString = (((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter) &&
-                                        (format == ColumnsLayout.CobolReferenceFormat ? ((lastTokenOfConcatenatedLineSoFar.EndColumn + CobolFormatAreas.Indicator) == CobolFormatAreas.End_B) : true));
+                                    bool isQuoteInsertedInString = continuationStartsWithTwoDelimiters && (format == ColumnsLayout.CobolReferenceFormat ? !previousDelimiterIsNotAtEnd : true);
                                     if (!isQuoteInsertedInString)
                                     { // This is a multi string concatenation, so remember concatenation position in the whole string
                                         multiStringConcatPositions.Add(concatenatedLine.Length);
