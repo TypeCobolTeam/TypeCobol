@@ -6,12 +6,13 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     #region NodeCheckers
 
-    class WhenConditionNodeChecker
+    static class WhenConditionNodeChecker
     {
         public static void OnNode(Node node)
         {
             if (node.ChildrenCount == 0)
             {
+                System.Diagnostics.Debug.Assert(node is Then);
                 System.Diagnostics.Debug.Assert(node.Parent.ChildrenCount >= 2);
                 // -1 is the Then node
                 // -2 is the When group
