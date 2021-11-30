@@ -47,21 +47,7 @@
     <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs">
       <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesBaseListener.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesBaseVisitor.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseVisitor.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesListener.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesParser.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesParser.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesVisitor.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesVisitor.cs</Link>
-    </Compile>
+
     <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
@@ -87,10 +73,6 @@
     <Antlr4 Include="AntlrGrammar\CobolCodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="AntlrGrammar\CobolCompilerDirectives.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
     </Antlr4>
     <None Include="AntlrGrammar\CobolExpressions.g4" />
     <None Include="AntlrGrammar\CobolWords.g4" />
