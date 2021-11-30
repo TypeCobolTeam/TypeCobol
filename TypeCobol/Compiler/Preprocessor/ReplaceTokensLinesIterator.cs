@@ -531,7 +531,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 tempTokensLine.InitializeScanState(scanState);
                 var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), true);
                 Token rescannedToken = null;
-                List<Token> tokens = new List<Token>((replacementTokens.Length >> 1) + 1);
+                List<Token> tokens = new List<Token>((replacementTokens.Length / 2) + 1);
                 while ((rescannedToken = tempScanner.GetNextToken()) != null)
                 {
                     tempTokensLine.AddToken(rescannedToken);
