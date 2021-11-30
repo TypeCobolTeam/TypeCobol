@@ -425,10 +425,10 @@ namespace TypeCobol.Compiler.Scanner
                             // In ColumnsLayout.CobolReferenceFormat we just check that the quotation mark is the last character of the line.
                             if (lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                             {
-                                if (format == ColumnsLayout.CobolReferenceFormat 
-                                    ? (((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter) &&
-                                    (lastTokenOfConcatenatedLineSoFar.EndColumn + CobolFormatAreas.Indicator) != CobolFormatAreas.End_B)
-                                    : ((startOfContinuationIndex + 1) > lastIndex || line[startOfContinuationIndex + 1] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter))
+                                bool continuationStartsWithTwoDelimiters = ((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                                bool previousDelimiterIsNotAtEnd = (lastTokenOfConcatenatedLineSoFar.EndColumn + CobolFormatAreas.Indicator) != CobolFormatAreas.End_B;
+
+                                if (format == ColumnsLayout.CobolReferenceFormat ? continuationStartsWithTwoDelimiters && previousDelimiterIsNotAtEnd : !continuationStartsWithTwoDelimiters)
                                 {
                                     continuationLine.AddDiagnostic(MessageCode.InvalidFirstTwoCharsForContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter,
                                         format == ColumnsLayout.CobolReferenceFormat
