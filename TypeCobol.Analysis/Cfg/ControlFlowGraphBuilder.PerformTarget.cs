@@ -82,10 +82,7 @@ namespace TypeCobol.Analysis.Cfg
             else 
             {
                 procedures.Add(procedure);
-                foreach (var sentence in procedure)
-                {
-                    sentences.Add(sentence);
-                }
+                sentences.AddRange(procedure);
             }
             target = new PerformTarget(sentences, procedures);
             _performTargetCache[p] = target;
