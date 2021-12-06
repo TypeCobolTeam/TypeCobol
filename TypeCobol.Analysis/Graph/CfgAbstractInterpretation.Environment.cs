@@ -108,12 +108,13 @@ namespace TypeCobol.Analysis.Graph
             /// </summary>
             private void SetCyclicityThreshold()
             {
-                // Domain : all blocks of the cfg graph.
+                // Domain : all blocks of the cfg graph that are traversable.
                 BitSet domain = new BitSet();
                 Dictionary<int, int> dfsMark = new Dictionary<int, int>();
                 Stack<int> dfsStack = new Stack<int>();
 
-                //Compute the domain
+                // Compute the domain, that is to say all blocks traversable in the graph, excluding those blocks
+                // that are use as source blocks for cloning target perform blocks.
                 Cfg.DFS((block, incomingEdge, predecessorBlock, graph) => { domain.Set(block.Index); return true; });
                 for (int blockIndex = domain.NextSetBit(0); blockIndex >= 0; blockIndex = domain.NextSetBit(blockIndex + 1))
                 {
