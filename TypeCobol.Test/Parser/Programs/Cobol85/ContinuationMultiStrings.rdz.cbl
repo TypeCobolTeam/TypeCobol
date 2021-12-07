@@ -50,6 +50,13 @@
                  "AAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCDDDDDDDEEEEEEEEEE"
       -          "GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
       -          "LLLLLLLLLLMMMMMMMMMMM".
+
+      * Ko: continuation < Area B.
+       01 J PIC X(200).
+           88 JJ VALUE
+                 "AAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCDDDDDDDEEEEEEEEE"
+      -"GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
+      -"LLLLLLLLLLMMMMMMMMMMM".      
        Procedure Division.
       * Ok: was not accepted by US.
            DISPLAY 'A sample text 1 '

@@ -445,6 +445,17 @@ namespace TypeCobol.Compiler.Scanner
                                         multiStringConcatPositions.Add(concatenatedLine.Length);
                                         // Here also use the first quotation mark.
                                         offsetForLiteralContinuation = 0;
+                                        // Check error cases
+                                        if ((startOfContinuationIndex + 1) == (int)CobolFormatAreas.Begin_A && format == ColumnsLayout.CobolReferenceFormat)
+                                        { // A blank is missing before character """ in column 8. A blank is assumed                                            
+                                            continuationLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace,
+                                                startOfContinuationIndex, startOfContinuationIndex + 1,
+                                                lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter, (int)CobolFormatAreas.Begin_A);
+                                        }
+                                        if ((startOfContinuationIndex + 1) < (int)CobolFormatAreas.Begin_B && format == ColumnsLayout.CobolReferenceFormat)
+                                        { // The literal must be in Area B
+                                            continuationLine.AddDiagnostic(MessageCode.AreaAOfContinuationLineMustBeBlank, startOfContinuationIndex, startOfContinuationIndex + 1);
+                                        }
                                     }
                                 }
                             }

@@ -55,6 +55,17 @@ Line 36[14,21] <27, Error, Syntax> - Syntax error : extraneous input 'TAXONOMY' 
 Line 51[18,62] <27, Error, Syntax> - Syntax error : extraneous input '"GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"' expecting {separator, statement starting keyword, keyword}
       -          "GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
       -          "LLLLLLLLLLMMMMMMMMMMM".
+
+      * Ko: continuation < Area B.
+       01 J PIC X(200).
+           88 JJ VALUE
+                 "AAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCDDDDDDDEEEEEEEEE"
+Line 58[7,8] <12, Warning, Tokens> - A blank was missing before character """ in column 8. A blank was assumed.
+Line 58[7,8] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+      -"GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
+Line 59[7,8] <12, Warning, Tokens> - A blank was missing before character """ in column 8. A blank was assumed.
+Line 59[7,8] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+      -"LLLLLLLLLLMMMMMMMMMMM".      
        Procedure Division.
       * Ok: was not accepted by US.
            DISPLAY 'A sample text 1 '
