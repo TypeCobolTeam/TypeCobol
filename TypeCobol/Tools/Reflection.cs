@@ -1,73 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
-namespace TypeCobol.Tools {
+namespace TypeCobol.Tools
+{
+    public static class Reflection
+    {
+        public static bool IsTypeOf(Type type, Type targetType)
+        {
+            if (!targetType.IsGenericType)
+            {
+                return targetType.IsAssignableFrom(type);
+            }
+            
+            if (type.IsGenericType && targetType.IsGenericType)
+            {
+                Type instType = type.MakeGenericType(targetType.GetGenericArguments());
+                return targetType.IsAssignableFrom(instType);
+            }
 
-public class Reflection {
+            return false;
+        }
 
-	public static bool IsTypeOf(Type type, Type iface) {
-	    if (!iface.IsGenericType)
-	    {
-	        return iface.IsAssignableFrom(type);
-	    }
-	    else if (type.IsGenericType && iface.IsGenericType)
-	    {
-	        System.Type instType = type.MakeGenericType(iface.GetGenericArguments());
-	        return iface.IsAssignableFrom(instType);
-	    }
-	    else
-	    {
-	        return false;
-	    }
-	}
+        public static IEnumerable<TInterface> Activate<TInterface>(this Assembly assembly, params object[] parameters)
+            where TInterface : class
+        {
+            Type targetType = typeof(TInterface);
 
-	public static List<Type> GetTypesInNamespace(string nspace, Assembly assembly = null) {
-		var types = new List<Type>();
-		if (assembly == null) assembly = Assembly.GetExecutingAssembly();
-		foreach(var type in assembly.GetTypes()) {
-			if (type.Namespace == null) continue;
-			if (type.Namespace.StartsWith(nspace)) {
-				types.Add(type);
-			}
-		}
-		return types;
-	}
+            if (!targetType.IsInterface)
+            {
+                throw new ArgumentException($"Target type '{targetType.FullName}' must be an interface type.");
+            }
 
-	public static List<Type> GetTypesInNamespace<T>(string nspace, Assembly assembly = null) {
-		var types = new List<Type>();
-		if (assembly == null) assembly = Assembly.GetExecutingAssembly();
-		foreach(var type in assembly.GetTypes()) {
-			if (type.Namespace == null) continue;
-			if (type.Namespace.StartsWith(nspace)) {
-				if (IsTypeOf(type, typeof(T))) types.Add(type);
-			}
-		}
-		return types;
-	}
+            if (targetType.IsGenericType)
+            {
+                throw new NotSupportedException("Activation of generic types is not supported.");
+            }
 
-	public static List<T> GetInstances<T>(Assembly assembly, string nspace) {
-		var instances = new List<T>();
-		var types = GetTypesInNamespace<T>(nspace, assembly);
-	    System.Type iface = typeof(T);
-		foreach (var type in types) {
-			if (type.IsAbstract) continue;//cannot instanciate abstract types
-		    if (!type.IsGenericType && !iface.IsGenericType)
-		    {
-		        instances.Add((T) System.Activator.CreateInstance(type));
-		    }
-            else if (type.IsGenericType && iface.IsGenericType)
-		    {
-                System.Type instType = type.MakeGenericType(iface.GetGenericArguments());
-                instances.Add((T)System.Activator.CreateInstance(instType));
+            if (assembly == null) yield break;
+
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsPublic && type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(targetType))
+                {
+                    yield return (TInterface) Activator.CreateInstance(type, parameters);
+                }
             }
         }
-		return instances;
-	}
-
-	public static IEnumerable<T> GetValues<T>() {
-		return (T[])Enum.GetValues(typeof(T));
-	}
-}
-
+    }
 }
