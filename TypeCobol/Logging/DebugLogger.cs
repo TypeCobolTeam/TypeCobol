@@ -4,6 +4,9 @@ using System.Diagnostics;
 
 namespace TypeCobol.Logging
 {
+    /// <summary>
+    /// Writes everything to the .NET Debug utility.
+    /// </summary>
     public class DebugLogger : ILogger
     {
         public virtual void LogMessage(LogLevel level, string message, IDictionary<string, object> contextData)

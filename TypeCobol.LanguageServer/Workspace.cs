@@ -276,7 +276,7 @@ namespace TypeCobol.LanguageServer
         internal void LoadCustomAnalyzers(ExtensionManager extensionManager)
         {
             System.Diagnostics.Debug.Assert(extensionManager != null);
-            this._customAnalyzerProviders = extensionManager.Create<IAnalyzerProvider>().ToArray();
+            this._customAnalyzerProviders = extensionManager.Activate<IAnalyzerProvider>().ToArray();
         }
 
         /// <summary>

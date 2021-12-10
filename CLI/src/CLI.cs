@@ -128,7 +128,7 @@ namespace TypeCobol.Server
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
-            foreach (var customAnalyzerProvider in _extensionManager.Create<IAnalyzerProvider>())
+            foreach (var customAnalyzerProvider in _extensionManager.Activate<IAnalyzerProvider>())
             {
                 analyzerProvider.AddProvider(customAnalyzerProvider);
             }

@@ -27,14 +27,23 @@ namespace TypeCobol.Tools
         }
     }
 
+    /// <summary>
+    /// Provides methods to help working with custom parser extensions.
+    /// </summary>
     public class ExtensionManager
     {
         private readonly List<Assembly> _loadedExtensions;
 
+        /// <summary>
+        /// Creates a new ExtensionManager. All extensions are dynamically loaded during
+        /// the call. Errors are traced into LoggingSystem so a basic logger has to be registered
+        /// prior calling this constructor.
+        /// </summary>
+        /// <param name="extensions">A non-null list of assembly file paths.</param>
         public ExtensionManager([NotNull] List<string> extensions)
         {
             Debug.Assert(extensions != null);
-            _loadedExtensions = new List<Assembly>();
+            _loadedExtensions = new List<Assembly>(extensions.Count);
             foreach (var extension in extensions)
             {
                 try
@@ -49,7 +58,13 @@ namespace TypeCobol.Tools
             }
         }
 
-        public List<TInterface> Create<TInterface>(params object[] parameters)
+        /// <summary>
+        /// Creates all instances of implementations found in parser extensions for the given interface type.
+        /// </summary>
+        /// <typeparam name="TInterface">Non-generic interface type.</typeparam>
+        /// <param name="parameters">Constructor parameters to use at instantiation time.</param>
+        /// <returns>List of new instances.</returns>
+        public List<TInterface> Activate<TInterface>(params object[] parameters)
             where TInterface : class
         {
             Type targetType = typeof(TInterface);

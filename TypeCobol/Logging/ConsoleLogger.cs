@@ -3,10 +3,17 @@ using System.Collections.Generic;
 
 namespace TypeCobol.Logging
 {
+    /// <summary>
+    /// Writes messages and exceptions to the Console (metrics are ignored).
+    /// </summary>
 	public class ConsoleLogger : ILogger
     {
         private readonly int _threshold;
 
+        /// <summary>
+        /// Creates a new ConsoleLogger.
+        /// </summary>
+        /// <param name="level">Trace level, use null to log exceptions only.</param>
         public ConsoleLogger(LogLevel? level)
         {
             _threshold = level.HasValue ? (int) level.Value : int.MaxValue; //MaxValue -> do not display any message
