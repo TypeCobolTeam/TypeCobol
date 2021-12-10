@@ -58,6 +58,8 @@ namespace TypeCobol.Server {
                     return 0;
                 }
 
+                //TODO #2091 Register loggers according to config (ConsoleLogger, FileLogger and external loggers)
+
                 if (config.Telemetry)
                 {
                     AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
@@ -70,7 +72,8 @@ namespace TypeCobol.Server {
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
                     config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
 
-                var returnCode = CLI.runOnce(config, new ExtensionManager(config.Extensions));
+                var extensionManager = new ExtensionManager(config.Extensions); //TODO #2091 errors happening here won't be traced until some loggers are registered
+                var returnCode = CLI.runOnce(config, extensionManager); 
                 if (returnCode != ReturnCode.Success)
                     return exit(returnCode, "Operation failed");
             }
@@ -78,6 +81,8 @@ namespace TypeCobol.Server {
                 AnalyticsWrapper.Telemetry.TrackException(e, null);
                 return exit(ReturnCode.FatalError, e.Message);
 			}
+
+            //TODO #2091 LoggingSystem.Shutdown()
 
             return exit((int)ReturnCode.Success, "Success");
 		}

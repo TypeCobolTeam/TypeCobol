@@ -258,6 +258,8 @@ namespace TypeCobol.LanguageServer
                 return 0;
             }
 
+            //TODO #2091 Register loggers according to config (FileLogger or DebugLogger, external loggers)
+
             TextWriter logWriter = null;
             if (LogFile != null)
             {
@@ -318,7 +320,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
-                typeCobolServer.ExtensionManager = new ExtensionManager(Extensions);
+                typeCobolServer.ExtensionManager = new ExtensionManager(Extensions); //TODO #2091 errors happening here won't be traced until some loggers are registered
                 typeCobolServer.NoCopyDependencyWatchers = NoCopyDependencyWatchers;
 #if EUROINFO_RULES
                 typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
@@ -332,6 +334,7 @@ namespace TypeCobol.LanguageServer
             }
             finally
             {
+                //TODO #2091 LoggingSystem.Shutdown()
                 if (logWriter != System.Console.Error)
                 {
                     logWriter.Close();
