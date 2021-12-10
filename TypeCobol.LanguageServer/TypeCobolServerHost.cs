@@ -10,6 +10,7 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
 {
@@ -317,7 +318,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
-                typeCobolServer.Extensions = Extensions;
+                typeCobolServer.ExtensionManager = new ExtensionManager(Extensions);
                 typeCobolServer.NoCopyDependencyWatchers = NoCopyDependencyWatchers;
 #if EUROINFO_RULES
                 typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;

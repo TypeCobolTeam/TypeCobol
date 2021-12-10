@@ -16,6 +16,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
+using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
 {
@@ -75,9 +76,9 @@ namespace TypeCobol.LanguageServer
         public bool TimerDisabledOption { get; set; }
 
         /// <summary>
-        /// Custom Analyzers Dll Paths
+        /// Extension manager
         /// </summary>
-        public List<string> Extensions { get; set; }
+        internal ExtensionManager ExtensionManager { get; set; }
 
         /// <summary>
         /// No Copy and Dependency files watchers.
@@ -285,7 +286,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
             this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
-            this.Workspace.LoadCustomAnalyzers(Extensions);
+            this.Workspace.LoadCustomAnalyzers(ExtensionManager);
 
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);

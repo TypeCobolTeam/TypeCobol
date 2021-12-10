@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.CLI.CustomExceptions;
@@ -33,7 +32,7 @@ namespace TypeCobol.Server
         /// runOnce method to parse the input file(s).
         /// </summary>
         /// <param name="config">Config</param>
-        internal static ReturnCode runOnce(TypeCobolConfiguration config)
+        internal static ReturnCode runOnce(TypeCobolConfiguration config, ExtensionManager extensionManager)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -64,7 +63,7 @@ namespace TypeCobol.Server
             ReturnCode returnCode;
             try
             {
-                CLI cli = new CLI(config, errorWriter);
+                CLI cli = new CLI(config, extensionManager, errorWriter);
                 returnCode = cli.Compile();
             }
             catch (Exception unexpected)
@@ -94,6 +93,7 @@ namespace TypeCobol.Server
         }
 
         private readonly TypeCobolConfiguration _configuration;
+        private readonly ExtensionManager _extensionManager;
         private readonly AbstractErrorWriter _errorWriter;
         private readonly List<DiagnosticsErrorEvent> _intrinsicsDiagnostics;
         private readonly List<DiagnosticsErrorEvent> _dependenciesDiagnostics;
@@ -103,9 +103,10 @@ namespace TypeCobol.Server
         private readonly HashSet<string> _missingCopies;
         private readonly Dictionary<string, List<GenerationException>> _generationExceptions;
 
-        private CLI(TypeCobolConfiguration configuration, AbstractErrorWriter errorWriter)
+        private CLI(TypeCobolConfiguration configuration, ExtensionManager extensionManager, AbstractErrorWriter errorWriter)
         {
             _configuration = configuration;
+            _extensionManager = extensionManager;
             _errorWriter = errorWriter;
             _intrinsicsDiagnostics = new List<DiagnosticsErrorEvent>();
             _dependenciesDiagnostics = new List<DiagnosticsErrorEvent>();
@@ -127,19 +128,9 @@ namespace TypeCobol.Server
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
-            foreach (var extension in _configuration.Extensions)
+            foreach (var customAnalyzerProvider in _extensionManager.Create<IAnalyzerProvider>())
             {
-                try
-                {
-                    var assembly = Assembly.LoadFrom(extension);
-                    var customAnalyzerProvider = assembly.Activate<IAnalyzerProvider>().Single();
-                    analyzerProvider.AddProvider(customAnalyzerProvider);
-                }
-                catch (Exception exception)
-                {
-                    string message = $"Failed to load parser extension from path {extension}{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}";
-                    logger(message);
-                }
+                analyzerProvider.AddProvider(customAnalyzerProvider);
             }
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase

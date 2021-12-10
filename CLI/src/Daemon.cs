@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
 using Analytics;
+using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server {
@@ -69,7 +70,7 @@ namespace TypeCobol.Server {
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
                     config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
 
-                var returnCode = CLI.runOnce(config);
+                var returnCode = CLI.runOnce(config, new ExtensionManager(config.Extensions));
                 if (returnCode != ReturnCode.Success)
                     return exit(returnCode, "Operation failed");
             }

@@ -272,26 +272,11 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Load Custom Analyzers
         /// </summary>
-        /// <param name="customAnalyzerFiles"></param>
-        internal void LoadCustomAnalyzers(List<string> customAnalyzerFiles)
+        /// <param name="extensionManager"></param>
+        internal void LoadCustomAnalyzers(ExtensionManager extensionManager)
         {
-            System.Diagnostics.Debug.Assert(customAnalyzerFiles != null);
-            List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
-            foreach (var f in customAnalyzerFiles)
-            {
-                try
-                {
-                    var assembly = Assembly.LoadFrom(f);
-                    var customAnalyzerProvider = assembly.Activate<IAnalyzerProvider>().Single();
-                    list.Add(customAnalyzerProvider);
-                }
-                catch (Exception e)
-                {
-                    _Logger(e.Message, null);
-                }
-            }
-
-            this._customAnalyzerProviders = list.ToArray();
+            System.Diagnostics.Debug.Assert(extensionManager != null);
+            this._customAnalyzerProviders = extensionManager.Create<IAnalyzerProvider>().ToArray();
         }
 
         /// <summary>

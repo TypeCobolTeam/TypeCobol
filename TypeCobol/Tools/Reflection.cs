@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
+using TypeCobol.Logging;
 
 namespace TypeCobol.Tools
 {
@@ -22,8 +25,31 @@ namespace TypeCobol.Tools
 
             return false;
         }
+    }
 
-        public static IEnumerable<TInterface> Activate<TInterface>(this Assembly assembly, params object[] parameters)
+    public class ExtensionManager
+    {
+        private readonly List<Assembly> _loadedExtensions;
+
+        public ExtensionManager([NotNull] List<string> extensions)
+        {
+            Debug.Assert(extensions != null);
+            _loadedExtensions = new List<Assembly>();
+            foreach (var extension in extensions)
+            {
+                try
+                {
+                    var assembly = Assembly.LoadFrom(extension);
+                    _loadedExtensions.Add(assembly);
+                }
+                catch (Exception exception)
+                {
+                    LoggingSystem.LogException(exception);
+                }
+            }
+        }
+
+        public List<TInterface> Create<TInterface>(params object[] parameters)
             where TInterface : class
         {
             Type targetType = typeof(TInterface);
@@ -38,15 +64,27 @@ namespace TypeCobol.Tools
                 throw new NotSupportedException("Activation of generic types is not supported.");
             }
 
-            if (assembly == null) yield break;
-
-            foreach (var type in assembly.GetTypes())
+            List<TInterface> result = new List<TInterface>();
+            foreach (var extension in _loadedExtensions)
             {
-                if (type.IsPublic && type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(targetType))
+                foreach (var type in extension.GetTypes())
                 {
-                    yield return (TInterface) Activator.CreateInstance(type, parameters);
+                    if (type.IsPublic && type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(targetType))
+                    {
+                        try
+                        {
+                            var instance = (TInterface) Activator.CreateInstance(type, parameters);
+                            result.Add(instance);
+                        }
+                        catch (Exception exception)
+                        {
+                            LoggingSystem.LogException(exception);
+                        }
+                    }
                 }
             }
+
+            return result;
         }
     }
 }
