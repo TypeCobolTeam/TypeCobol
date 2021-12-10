@@ -77,7 +77,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Custom Analyzers Dll Paths
         /// </summary>
-        public List<string> CustomAnalyzerFiles { get; set; }
+        public List<string> Extensions { get; set; }
 
         /// <summary>
         /// No Copy and Dependency files watchers.
@@ -285,7 +285,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
             this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
-            this.Workspace.LoadCustomAnalyzers(CustomAnalyzerFiles);
+            this.Workspace.LoadCustomAnalyzers(Extensions);
 
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Timers;
@@ -18,6 +19,7 @@ using TypeCobol.CustomExceptions;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.LanguageServer
@@ -275,16 +277,20 @@ namespace TypeCobol.LanguageServer
         {
             System.Diagnostics.Debug.Assert(customAnalyzerFiles != null);
             List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
-            foreach(var f in customAnalyzerFiles) {
+            foreach (var f in customAnalyzerFiles)
+            {
                 try
                 {
-                    list.Add(AnalyzerProviderLoader.UnsafeLoadProvider(f));
+                    var assembly = Assembly.LoadFrom(f);
+                    var customAnalyzerProvider = assembly.Activate<IAnalyzerProvider>().Single();
+                    list.Add(customAnalyzerProvider);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     _Logger(e.Message, null);
-                }                    
+                }
             }
+
             this._customAnalyzerProviders = list.ToArray();
         }
 

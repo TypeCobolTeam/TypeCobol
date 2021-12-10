@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.CLI.CustomExceptions;
@@ -15,6 +16,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 using TypeCobol.Tools.Options_Config;
 
@@ -120,11 +122,25 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new AnalyzerProviderWrapper(str => Logger(_configuration, str));
+            Action<string> logger = str => Logger(_configuration, str);
+            var analyzerProvider = new AnalyzerProviderWrapper(logger);
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
-            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles, str => Logger(_configuration, str));
+            foreach (var extension in _configuration.Extensions)
+            {
+                try
+                {
+                    var assembly = Assembly.LoadFrom(extension);
+                    var customAnalyzerProvider = assembly.Activate<IAnalyzerProvider>().Single();
+                    analyzerProvider.AddProvider(customAnalyzerProvider);
+                }
+                catch (Exception exception)
+                {
+                    string message = $"Failed to load parser extension from path {extension}{Environment.NewLine}{exception.GetType().FullName} has been thrown.{Environment.NewLine}{exception.Message}";
+                    logger(message);
+                }
+            }
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
