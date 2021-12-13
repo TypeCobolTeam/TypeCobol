@@ -94,6 +94,48 @@ parser code {:
 		ErrorReporter.SyntaxError(this, getParserStack(), ((CobolWordsTokenizer)getScanner()).LastStopSymbol);
 	}
 
+    /// <summary>
+    /// Here is the new Hack for issue #2062 until we can write a preprocessor that run before or
+    /// during the Lexical Analysis phase (Scanner).
+    /// Issue #2062 is also about Partial Cobol Words broken on several lines.
+    /// Here we want to recognize such Partial Cobol Words, that are comparison tokens of a
+	/// REPLACE directive.
+    /// </summary>
+    /// <param name="operandTokens">The list of tokens</param>
+	/// <return>true if it was a PartialCobolWord, false otherwise</return>
+    private bool HackMultiLinePartialCobolWord(TokenList operandTokens)
+    {
+        if (operandTokens.Count >= 3 && 
+            operandTokens[0].TokenType == TokenType.ColonSeparator &&
+            operandTokens[operandTokens.Count - 1].TokenType == TokenType.ColonSeparator &&
+            operandTokens[0].TokensLine != operandTokens[operandTokens.Count - 1].TokensLine)          
+        {
+			TokenList result = new TokenList();
+			result.Add(operandTokens[0]);
+			TokenList innerTokens = TrimLeftRightSpaceTokens(operandTokens, 1, operandTokens.Count - 2, result);
+			result.Add(operandTokens[operandTokens.Count - 1]);
+            Token t = new TokensGroup(TokenType.PartialCobolWord, new List<Token>(result));
+			string text = t.Text;
+			int endPosition;
+			if (ScannerUtils.CheckForPartialCobolWordPattern(text, 0, text.Length-1, false, out endPosition) && endPosition == text.Length-1)
+			{
+				operandTokens.Clear();
+				operandTokens.Add(t);
+				return true;
+			}
+        }
+		return false;
+    }
+    /// <summary>
+    /// Normalize REPLACE comparisons token, by first checking for PartialCobolWord Hack
+    /// and otherwise removing all space tokens.
+    /// </summary>
+    /// <param name="operandTokens">The list of tokens</param>
+	/// <return>The list of noramlized tokens</return>
+	internal TokenList NormalizeComparisonTokens(TokenList from)
+	{
+		return !HackMultiLinePartialCobolWord(from) ? RemoveSpaceTokens(from) : from;
+	}
 	internal TokenList RemoveSpaceTokens(TokenList from)
 	{
 		TokenList result = new TokenList();
@@ -108,16 +150,18 @@ parser code {:
 
 	internal TokenList TrimLeftRightSpaceTokens(TokenList from)
 	{
-		TokenList result = new TokenList();
-		int i = 0;
-        for(i = 0; i < from.Count; i++)
+		return TrimLeftRightSpaceTokens(from, 0, from.Count - 1);
+	}
+	internal TokenList TrimLeftRightSpaceTokens(TokenList from, int i, int j, TokenList result = null)
+	{
+		result = result??new TokenList();
+        for(; i < from.Count; i++)
         {
             if (from[i].TokenFamily != TokenFamily.Whitespace &&
                 from[i].TokenFamily != TokenFamily.Comments)
 				break;
         }
-		int j = 0;
-		for(j = from.Count - 1; j >= 0; j--)
+		for(; j >= 0; j--)
 		{
             if (from[j].TokenFamily != TokenFamily.Whitespace &&
                 from[j].TokenFamily != TokenFamily.Comments)
@@ -674,9 +718,9 @@ copyReplacingOperands ::=
 	 copyReplacingOperand:from 
 	 replacing_by 	 
 	 copyReplacingOperand:by
-	{:  RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.RemoveSpaceTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; :}
+	{:  RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; :}
 | copyReplacingOperands:operands copyReplacingOperand:from replacing_by copyReplacingOperand:by
-	{: operands.Add(new Tuple<List<Token>, List<Token>>(my_parser.RemoveSpaceTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = operands; :}
+	{: operands.Add(new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = operands; :}
 ;
 
 copyReplacingOperand ::= pseudoText:tokens
@@ -994,9 +1038,9 @@ replaceCompilerStatement ::= replaceToken:r
 
 
 pseudoTextReplaces ::= pseudoText:from BY pseudoText:by
-	{: RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.RemoveSpaceTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; :}
+	{: RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; :}
 | pseudoTextReplaces:replaces pseudoText:from BY pseudoText:by
-	{: replaces.Add(new Tuple<List<Token>, List<Token>>(my_parser.RemoveSpaceTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = replaces; :}
+	{: replaces.Add(new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = replaces; :}
 ;
 
 // p544: SERVICE LABEL statement

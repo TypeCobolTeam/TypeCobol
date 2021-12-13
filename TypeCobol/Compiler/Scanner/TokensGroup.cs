@@ -77,5 +77,30 @@ namespace TypeCobol.Compiler.Scanner
             }
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Text returned to the parser :
+        /// - Token.SourceText if the token is not a PartialCobolWord
+        /// - The concatenation of ToString() of all OriginalTokens.
+        /// </summary>
+        public override string SourceText
+        {
+            get
+            {
+                if (this.TokenType != TokenType.PartialCobolWord)
+                    return base.SourceText;
+                else 
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (Token token in OriginalTokens)
+                    {
+                        sb.Append(token.SourceText);
+                    }
+                    String t = sb.ToString();
+                    return t;
+                }
+            }
+        }
+
     }
 }
