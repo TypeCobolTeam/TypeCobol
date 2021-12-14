@@ -630,8 +630,17 @@ namespace TypeCobol.Compiler.Scanner
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext);
 
-            Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
-            Token candidateToken = tempScanner.GetNextToken();
+            Token candidateToken;
+            if (tokenText.Length > 0)
+            {
+                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
+                candidateToken = tempScanner.GetNextToken();
+            }
+            else
+            {
+                //Create an empty SpaceSeparator token.
+                candidateToken = new Token(TokenType.SpaceSeparator, 0, -1, tempTokensLine);
+            }
 
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
             {

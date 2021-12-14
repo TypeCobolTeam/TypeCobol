@@ -115,6 +115,7 @@ namespace TypeCobol.Test {
             TestReplaceDirective.CheckReplaceNested();
             TestReplaceDirective.CheckReplaceFunction();
             TestReplaceDirective.CheckEmptyPartialWordReplace();
+            TestReplaceDirective.CheckEmptyPartialWordReplace2();
         }
 
         [TestMethod]
