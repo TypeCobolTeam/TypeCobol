@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Analysis.Util;
+﻿using System.Collections.Generic;
 
 namespace TypeCobol.Analysis.Graph
 {
@@ -19,7 +14,7 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// The Abstract Interpretation Stack
             /// </summary>
-            private Stack<BasicBlock<N, D>> _interpretationStack;        
+            private readonly Stack<BasicBlock<N, D>> _interpretationStack;
 
             /// <summary>
             /// The current execution stack
@@ -29,39 +24,45 @@ namespace TypeCobol.Analysis.Graph
             /// <summary>
             /// The DFS Run stack
             /// </summary>
-            private Stack<BasicBlock<N, D>> _dfsStack;
+            private readonly Stack<BasicBlock<N, D>> _dfsStack;
+
             /// <summary>
             /// Bit Vector to check if metric values have been taken in account for a block index.
             /// </summary>
             private System.Collections.BitArray _metricUpdated;
+
             /// <summary>
             /// Current Cyclic execution Threshold by block index.
             /// </summary>
-            private Dictionary<int, int> _cyclicThreshold;
-            /// <summary>
-            /// The Cyclic transition from one block index to another block index
-            /// </summary>
-            private Dictionary<int, HashSet<int> >_cyclicTransition;
+            private readonly Dictionary<int, int> _cyclicThreshold;
+
             /// <summary>
             /// Number maximal of cyclic execution for a block index.
             /// </summary>
-            private int _cyclicExecutionThreshold ;
+            private int _cyclicExecutionThreshold;
+
             /// <summary>
             /// Current CFG being run.
             /// </summary>
             public ControlFlowGraph<N, D> Cfg { get; private set; }
-            private readonly IObserver[] _observers;
+
             /// <summary>
             /// Some metrics calculated.
             /// </summary>
             private Metrics _metrics;
+
+            private readonly IObserver[] _observers;
+
             /// <summary>
-            /// Constructeur
+            /// Constructor
             /// </summary>
             /// <param name="observers">Array of execution observers if any, null otherwise</param>
             public Environment(params IObserver[] observers)
             {
-                this._observers = observers;
+                _interpretationStack = new Stack<BasicBlock<N, D>>();
+                _dfsStack = new Stack<BasicBlock<N, D>>();
+                _cyclicThreshold = new Dictionary<int, int>();
+                _observers = observers;
             }
 
             /// <summary>
@@ -69,19 +70,10 @@ namespace TypeCobol.Analysis.Graph
             /// </summary>
             private void Reset()
             {
-                if (_interpretationStack == null)
-                    _interpretationStack = new Stack<BasicBlock<N, D>>();
-                if (_dfsStack == null)
-                    _dfsStack = new Stack<BasicBlock<N, D>>();
+                System.Diagnostics.Debug.Assert(_interpretationStack.Count == 0);
+                System.Diagnostics.Debug.Assert(_dfsStack.Count == 0);
                 _metricUpdated = new System.Collections.BitArray(Cfg.AllBlocks.Count);
-                if (_cyclicThreshold == null)
-                    _cyclicThreshold = new Dictionary<int, int>();
-                else
-                    _cyclicThreshold.Clear();
-                if (_cyclicTransition == null)
-                    _cyclicTransition = new Dictionary<int, HashSet<int>>();
-                else
-                    _cyclicTransition.Clear();
+                _cyclicThreshold.Clear();
             }
 
             /// <summary>
@@ -108,67 +100,54 @@ namespace TypeCobol.Analysis.Graph
             /// </summary>
             private void SetCyclicityThreshold()
             {
-                // Domain : all blocks of the cfg graph that are traversable.
-                BitSet domain = new BitSet();
                 Dictionary<int, int> dfsMark = new Dictionary<int, int>();
                 Stack<int> dfsStack = new Stack<int>();
+                Traverse(Cfg.RootBlock.Index);
 
-                // Compute the domain, that is to say all blocks traversable in the graph, excluding those blocks
-                // that are use as source blocks for cloning target perform blocks.
-                Cfg.DFS((block, incomingEdge, predecessorBlock, graph) => { domain.Set(block.Index); return true; });
-                for (int blockIndex = domain.NextSetBit(0); blockIndex >= 0; blockIndex = domain.NextSetBit(blockIndex + 1))
-                {
-                    if (Visited(blockIndex) == 0)
-                        dfs(blockIndex);
-                }
-
-                // Visit mark of a block 'a'
+                // Visit mark of a block
                 // 0 : Block not visited
                 // > 0 : Block in active consideration
                 // Infinity : the cycle to which belongs the block has been considered.
-                int Visited(int blockIndex)
-                {
-                    if (dfsMark.TryGetValue(blockIndex, out var blockIndexMark))
-                        return blockIndexMark;
-                    return 0;
-                }
+                int GetMark(int blockIndex) => dfsMark.TryGetValue(blockIndex, out var blockIndexMark) ? blockIndexMark : 0;
 
-                // Travserse of all transitions from block 'a'
-                void dfs(int blockIndex_a)
+                // Traverse all transitions from current block
+                void Traverse(int blockIndex)
                 {
-                    dfsStack.Push(blockIndex_a);
+                    dfsStack.Push(blockIndex);
                     int depth = dfsStack.Count;
-                    dfsMark[blockIndex_a] = depth;
-                    foreach (var s in Cfg.AllBlocks[blockIndex_a].SuccessorEdges)
-                    {   // For each transition from block 'a' to block 'b'
-                        var sb = Cfg.SuccessorEdges[s];
-                        int blockIndex_b = sb.Index;
-                        int mark_b = Visited(blockIndex_b);
-                        if (mark_b == 0)
-                        {   // Block 'b' is not visited yet => traverse it
-                            dfs(blockIndex_b);
-                            mark_b = Visited(blockIndex_b);
+                    dfsMark[blockIndex] = depth;
+
+                    int mark;
+                    foreach (var successorEdge in Cfg.AllBlocks[blockIndex].SuccessorEdges)
+                    {
+                        // For each transition from current block to its successors
+                        var successorBlock = Cfg.SuccessorEdges[successorEdge];
+                        int successorBlockIndex = successorBlock.Index;
+                        int successorMark = GetMark(successorBlockIndex);
+                        if (successorMark == 0)
+                        {
+                            // Successor block has not been visited yet => traverse it and update its mark
+                            Traverse(successorBlockIndex);
+                            successorMark = GetMark(successorBlockIndex);
                         }
-                        var mark_a = Visited(blockIndex_a);                        
-                        if (mark_b < mark_a)
-                        {   // This mean that the transition from block 'a' to block 'b' leads to a cycle.
-                            _cyclicThreshold[blockIndex_b] = _cyclicExecutionThreshold;
-                            if (!_cyclicTransition.TryGetValue(blockIndex_a, out var transitions))
-                            {
-                                transitions = new HashSet<int>();
-                                _cyclicTransition.Add(blockIndex_a, transitions);
-                            }
-                            transitions.Add(blockIndex_b);
+
+                        mark = GetMark(blockIndex);
+                        if (successorMark < mark)
+                        {
+                            // This mean that the transition from current block to successorBlock leads to a cycle.
+                            _cyclicThreshold[successorBlockIndex] = _cyclicExecutionThreshold;
                         }
                     }
-                    int mark = Visited(blockIndex_a);
+                    
+                    mark = GetMark(blockIndex);
                     if (mark == depth)
-
                     {
                         do
-                        {   // Close any block that belongs to a cycle from block 'a' as considered.
-                            dfsMark[dfsStack.Peek()] = Int32.MaxValue;
-                        } while (dfsStack.Count > 0 && dfsStack.Pop() != blockIndex_a);
+                        {
+                            // Close any block that belongs to a cycle from current considered block.
+                            dfsMark[dfsStack.Peek()] = int.MaxValue;
+                        }
+                        while (dfsStack.Count > 0 && dfsStack.Pop() != blockIndex);
                     }
                 }
             }
@@ -205,75 +184,24 @@ namespace TypeCobol.Analysis.Graph
                             foreach (var edge in block.SuccessorEdges)
                             {
                                 var b = Cfg.SuccessorEdges[edge];
-                                if (CanAddExecution(block, b))
-                                {
-                                    _dfsStack.Push(b);
-                                }
+                                _dfsStack.Push(b);
                             }
                         }
                         else
                         {
-                            if (CanAddExecution(block, nextFlowBlock))
-                            {
-                                _dfsStack.Push(nextFlowBlock);
-                            }
+                            _dfsStack.Push(nextFlowBlock);
                         }
                     }
                 }
 
-                /// <summary>
-                /// CanExecute is used during execution to check for a block that contributes to a cycle,
-                /// if can be executed, that is to say if its cyclic threshold is not consumed.
-                /// Other blocks are always executed.
-                /// </summary>
-                /// <param name="b">The block to be checked</param>
-                /// <returns>Return true if yes, false otherwise.</returns>
                 bool CanExecute(BasicBlock<N, D> b)
                 {
                     if (_cyclicThreshold.TryGetValue(b.Index, out int t))
                     {
+                        _cyclicThreshold[b.Index]--;//Block belongs to a cycle, consume 1 jump
                         return t >= 0;
                     }
-                    return true;
-                }
-                /// <summary>
-                /// Checks if the transition from one block to another can lead to a cycle.
-                /// </summary>
-                /// <param name="from">Souce block</param>
-                /// <param name="to">Target block</param>
-                /// <returns>Return true if yes, false otherwise.</returns>
-                bool IsCyclic(BasicBlock<N, D> from, BasicBlock<N, D> to)
-                {
-                    if (_cyclicTransition.TryGetValue(from.Index, out var toindices))
-                    {
-                        return toindices.Contains(to.Index);
-                    }
-                    return false;
-                }
 
-                /// <summary>
-                /// CanAddExecution Checks if a transition from one block to another can be pushed as to be executed.
-                /// For a transition that can lead to a cycle, the cyclic threshold value is decreased, if the threshold
-                /// is consumed the transition cannot be executed.
-                /// </summary>
-                /// <param name="from">Source block</param>
-                /// <param name="to">Target block</param>
-                /// <returns>True if the transition can be added, false otherwise.</returns>
-                bool CanAddExecution(BasicBlock<N, D> from, BasicBlock<N, D> to)
-                {
-                    if (IsCyclic(from, to))
-                    {
-                        if (!_cyclicThreshold.TryGetValue(to.Index, out int t))
-                        {
-                            t = 0;
-                        }
-                        if (t >= 0 && t <= _cyclicExecutionThreshold)
-                        {
-                            _cyclicThreshold[to.Index] = t - 1;
-                            return true;
-                        }
-                        return false;
-                    }
                     return true;
                 }
             }
@@ -328,8 +256,8 @@ namespace TypeCobol.Analysis.Graph
             /// <returns>The relocated block if the block has been relocated, the same block otherwise</returns>
             private BasicBlock<N, D> CheckRelocatedBlock(MultiBranchContext<N, D> ctx, BasicBlock<N, D> fromBlock)
             {
-                var relocIndex = ctx.GetRelocatedBlockIndex(fromBlock.Index);
-                return relocIndex >= 0 ? Cfg.AllBlocks[relocIndex] : fromBlock;
+                var relocatedBlockIndex = ctx.GetRelocatedBlockIndex(fromBlock.Index);
+                return relocatedBlockIndex >= 0 ? Cfg.AllBlocks[relocatedBlockIndex] : fromBlock;
             }
 
             /// <summary>
