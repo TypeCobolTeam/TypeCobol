@@ -6,7 +6,7 @@ namespace TypeCobol.Logging
     /// <summary>
     /// Writes messages and exceptions to the Console (metrics are ignored).
     /// </summary>
-	public class ConsoleLogger : ILogger
+    public class ConsoleLogger : ILogger
     {
         private readonly int _threshold;
 

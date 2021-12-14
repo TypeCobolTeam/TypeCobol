@@ -8,7 +8,7 @@ namespace TypeCobol.Logging
     /// <summary>
     /// Helper class to format data when used with LoggingSystem.
     /// </summary>
-	public static class LoggingSystemExtensions
+    public static class LoggingSystemExtensions
     {
         private const string NULL = "!NULL!";
 
@@ -67,5 +67,5 @@ namespace TypeCobol.Logging
 
             return builder.ToString();
         }
-	}
+    }
 }

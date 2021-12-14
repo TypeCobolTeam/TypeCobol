@@ -6,7 +6,7 @@ namespace TypeCobol.Logging
     /// <summary>
     /// Defines a suitable logger for TypeCobol.
     /// </summary>
-	public interface ILogger
+    public interface ILogger
     {
         /// <summary>
         /// Log a custom string.
