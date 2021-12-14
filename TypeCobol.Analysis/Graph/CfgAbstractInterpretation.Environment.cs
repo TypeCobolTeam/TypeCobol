@@ -207,31 +207,18 @@ namespace TypeCobol.Analysis.Graph
             }
 
             /// <summary>
-            /// Determines if the given block is an anchor for cyclic execution.
-            /// </summary>
-            /// <param name="block">The block to be tested</param>
-            /// <returns>true if yes, false otherwise</returns>
-            public bool IsAnchorCyclic(BasicBlock<N, D> block)
-            {
-                return _cyclicThreshold.ContainsKey(block.Index);
-            }
-
-            /// <summary>
-            /// Get the current cyclic execution threshold of anchor cyclic block.
+            /// Try to Get the current cyclic execution threshold value of anchor cyclic block.
             /// For an anchor block of a cyclic execution, this is the remaining cyclic execution threshold after entering the block. 
             /// For a block which is anchor of cyclic execution this value is >= 0 if it is still executable, 
             /// thus this value + 1 represents the cyclic threshold of the block before entering the block.            
-            /// For a block which is not anchor of cyclic execution the return value is null.            
+            /// For a block which is not anchor of cyclic execution the value is 0.            
             /// </summary>
-            /// <remarks>If needed, method IsAnchorCyclic(block) can be used to check if a block is cyclic anchor.</remarks>
             /// <param name="block">The block to get the current cyclic execution threshold value</param>
-            /// <returns>The current cyclic execution threshold of an anchor cyclic block, null otherwise</returns>
-            public int? GetCurrentCyclicExecutionThreshold(BasicBlock<N, D> block)
+            /// <param name="threshold">Out cyclic execution threshold value</param>
+            /// <returns>true if the block is an anchor for cyclic execution, false otherwise</returns>
+            public bool TryGetCurrentCyclicExecutionThreshold(BasicBlock<N, D> block, out int threshold)
             {
-                if (_cyclicThreshold.TryGetValue(block.Index, out int t))
-                    return t;
-                else
-                    return null;
+                return _cyclicThreshold.TryGetValue(block.Index, out threshold);
             }
 
             /// <summary>
