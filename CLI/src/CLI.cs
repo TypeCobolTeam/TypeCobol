@@ -15,6 +15,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Logging;
 using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 using TypeCobol.Tools.Options_Config;
@@ -68,8 +69,7 @@ namespace TypeCobol.Server
             }
             catch (Exception unexpected)
             {
-                var typeCobolException = new ParsingException(MessageCode.GenerationFailled, null, config.InputFiles.FirstOrDefault(), unexpected);
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
+                LoggingSystem.LogException(unexpected); //TODO add more context data ?
                 AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 string message = unexpected.Message + Environment.NewLine + unexpected.StackTrace;
@@ -526,10 +526,12 @@ namespace TypeCobol.Server
 
             foreach (var inputFilePath in _configuration.InputFiles)
             {
+                var parserResult = _parserResults[inputFilePath];
+
                 //Update the diagnostics cache
                 if (!_inputsDiagnosticsCache.TryGetValue(inputFilePath, out var diagnostics))
                 {
-                    diagnostics = _parserResults[inputFilePath].AllDiagnostics();
+                    diagnostics = parserResult.AllDiagnostics();
                 }
 
                 //Do not output more diagnostics than allowed
@@ -538,14 +540,14 @@ namespace TypeCobol.Server
                     : _configuration.MaximumDiagnostics);
                 _errorWriter.AddErrors(inputFilePath, trimmedDiagnostics);
 
-                //Analytics
+                //Logging
+                var context = new Dictionary<string, object>() { { LoggingSystem.ContextKeys.TextSourceName , parserResult.TextSourceInfo.Name } };
                 foreach (var diagnostic in diagnostics)
                 {
                     if (diagnostic.CaughtException != null)
                     {
-                        AnalyticsWrapper.Telemetry.TrackException(diagnostic.CaughtException, inputFilePath);
-                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles,
-                            _configuration.CopyFolders, _configuration.CommandLine);
+                        LoggingSystem.LogException(diagnostic.CaughtException, context);
+                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles, _configuration.CopyFolders, _configuration.CommandLine);
                     }
                 }
 
@@ -557,7 +559,7 @@ namespace TypeCobol.Server
 
                     foreach (var generationException in generationExceptions)
                     {
-                        AnalyticsWrapper.Telemetry.TrackException(generationException, generationException.Path);
+                        LoggingSystem.LogException(generationException, context);
 
                         if (generationException.NeedMail)
                         {

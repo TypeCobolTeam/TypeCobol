@@ -9,7 +9,7 @@ namespace TypeCobol.Logging
     /// Single point of logging in the TypeCobol solution.
     /// Allows to register loggers and provide methods to log exceptions, messages and metrics.
     /// </summary>
-    public static class LoggingSystem
+    public static partial class LoggingSystem
     {
         /// <summary>
         /// Wraps a thread to asynchronously dispatch logging actions to actual loggers.
