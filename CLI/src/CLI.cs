@@ -87,7 +87,7 @@ namespace TypeCobol.Server
             Logger(config, debugLine);
             Console.WriteLine(debugLine);
 
-            AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds);
+            LoggingSystem.LogMetric("ExecutionTime", stopWatch.Elapsed.TotalMilliseconds, "ms");
 
             return returnCode;
         }
