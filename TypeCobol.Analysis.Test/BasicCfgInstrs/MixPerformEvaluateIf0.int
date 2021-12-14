@@ -14,7 +14,7 @@ Leaving block : 4
 Entering block : 5
     move ef to ind(40)
 Leaving block : 5
-Entering block : 6
+Entering block : 6 with Cyclic Execution Threshold = 1
     perform until ind(03) = ef
 Entering block : 7
       evaluate opt
@@ -121,7 +121,7 @@ Entering block : 42
                   move fct1 to zres
                   move zero to fct3
 Leaving block : 42
-Entering block : 43
+Entering block : 43 with Cyclic Execution Threshold = 1
                   perform varying fct3 from 1 by 1
                    until fct3 = fct2  or ind(31) = ef
 Entering block : 44
@@ -133,7 +133,7 @@ Leaving block : 45
 Leaving block : 44
 Entering block : 46
 Leaving block : 46
-Entering block : 43
+Entering block : 43 with Cyclic Execution Threshold = 0
                   perform varying fct3 from 1 by 1
                    until fct3 = fct2  or ind(31) = ef
 Entering block : 44
@@ -145,8 +145,8 @@ Leaving block : 45
 Leaving block : 44
 Entering block : 46
 Leaving block : 46
-Leaving block : 43
-Leaving block : 43
+Leaving block : 43 with Cyclic Execution Threshold = -2
+Leaving block : 43 with Cyclic Execution Threshold = -2
 Entering block : 47
 Leaving block : 47
 Leaving block : 40
@@ -172,7 +172,7 @@ Entering block : 54
 Leaving block : 54
 Entering block : 55
 Leaving block : 55
-Entering block : 6
+Entering block : 6 with Cyclic Execution Threshold = 0
     perform until ind(03) = ef
 Entering block : 7
       evaluate opt
@@ -302,8 +302,8 @@ Entering block : 54
 Leaving block : 54
 Entering block : 55
 Leaving block : 55
-Leaving block : 6
-Leaving block : 6
+Leaving block : 6 with Cyclic Execution Threshold = -2
+Leaving block : 6 with Cyclic Execution Threshold = -2
 Entering block : 56
 Leaving block : 56
 Entering block : 57

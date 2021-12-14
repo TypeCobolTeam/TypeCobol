@@ -98,9 +98,9 @@ Leaving block : 1
 Entering block : 2
     SET IDX to 1
 Leaving block : 2
-Entering block : 3
+Entering block : 3 with Cyclic Execution Threshold = 1
     SEARCH ELEM
-Leaving block : 3
+Leaving block : 3 with Cyclic Execution Threshold = 0
 Entering block : 6
 Leaving block : 6
 Entering block : 7

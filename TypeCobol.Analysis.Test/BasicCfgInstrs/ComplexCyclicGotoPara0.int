@@ -4,9 +4,9 @@ Entering block : 1
 DISPLAY 'IN PARA-A'
 GO TO PARA-C
 Leaving block : 1
-Entering block : 4
+Entering block : 4 with Cyclic Execution Threshold = 1
 DISPLAY 'IN PARA-C '
-Leaving block : 4
+Leaving block : 4 with Cyclic Execution Threshold = 0
 Entering block : 5
 GO TO PARA-E PARA-F PARA-G DEPENDING ON m
 Leaving block : 5
@@ -31,9 +31,9 @@ Leaving block : 8
 Entering block : 9
 GO TO PARA-C
 Leaving block : 9
-Entering block : 4
+Entering block : 4 with Cyclic Execution Threshold = 0
 DISPLAY 'IN PARA-C '
-Leaving block : 4
+Leaving block : 4 with Cyclic Execution Threshold = -1
 Entering block : 5
 GO TO PARA-E PARA-F PARA-G DEPENDING ON m
 Leaving block : 5

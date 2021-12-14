@@ -347,12 +347,12 @@ namespace TypeCobol.Analysis.Test
             }
             public void EnterBlock(BasicBlock<Node, D> block, CfgAbstractInterpretation<Node, D>.Environment env)
             {
-                _writer.WriteLine($"Entering block : {block.Index}");                
+                _writer.WriteLine($"Entering block : {block.Index}" + (env.IsAnchorCyclic(block) ? $" with Cyclic Execution Threshold = {env.GetCurrentCyclicExecutionThreshold(block) + 1}" : ""));                
             }
 
             public void LeaveBlock(BasicBlock<Node, D> block, CfgAbstractInterpretation<Node, D>.Environment env)
             {
-                _writer.WriteLine($"Leaving block : {block.Index}");
+                _writer.WriteLine($"Leaving block : {block.Index}" + (env.IsAnchorCyclic(block) ? $" with Cyclic Execution Threshold = {env.GetCurrentCyclicExecutionThreshold(block)}" : ""));
             }
 
             public void OnInstruction(Node instr, BasicBlock<Node, D> block, CfgAbstractInterpretation<Node, D>.Environment env)
