@@ -673,7 +673,6 @@ namespace TypeCobol.LanguageServer
 
                 if (lastSignificantToken != null)
                 {
-                    AnalyticsWrapper.Telemetry.TrackEvent(EventType.Completion, lastSignificantToken.TokenType.ToString(), LogType.Completion);
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
@@ -827,7 +826,6 @@ namespace TypeCobol.LanguageServer
 
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
             var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
@@ -952,8 +950,6 @@ namespace TypeCobol.LanguageServer
 
         protected override Definition OnDefinition(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Definition, "Definition event",
-                LogType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var docContext))
