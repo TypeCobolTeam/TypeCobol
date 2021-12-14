@@ -218,17 +218,20 @@ namespace TypeCobol.Analysis.Graph
 
             /// <summary>
             /// Get the current cyclic execution threshold of anchor cyclic block.
-            /// For a anchor block of a cyclic execution, this is the remaining cyclic execution threshold after entering the block. 
-            /// Use method IsAnchorCyclic(block) to check if the block is cyclic anchor.
+            /// For an anchor block of a cyclic execution, this is the remaining cyclic execution threshold after entering the block. 
             /// For a block which is anchor of cyclic execution this value is >= 0 if it is still executable, 
             /// thus this value + 1 represents the cyclic threshold of the block before entering the block.            
-            /// For a block which is not anchor of cyclic execution this value is always 0.            
+            /// For a block which is not anchor of cyclic execution the return value is null.            
             /// </summary>
+            /// <remarks>If needed, method IsAnchorCyclic(block) can be used to check if a block is cyclic anchor.</remarks>
             /// <param name="block">The block to get the current cyclic execution threshold value</param>
-            /// <returns>The current cyclic execution threshold of the block</returns>
-            public int GetCurrentCyclicExecutionThreshold(BasicBlock<N, D> block)
-            {                
-                return IsAnchorCyclic(block) ? _cyclicThreshold[block.Index] : 0;
+            /// <returns>The current cyclic execution threshold of an anchor cyclic block, null otherwise</returns>
+            public int? GetCurrentCyclicExecutionThreshold(BasicBlock<N, D> block)
+            {
+                if (_cyclicThreshold.TryGetValue(block.Index, out int t))
+                    return t;
+                else
+                    return null;
             }
 
             /// <summary>
