@@ -30,7 +30,7 @@ namespace TypeCobol.Logging
             public LoggerThread()
             {
                 _work = new ConcurrentQueue<Action<ILogger>>();
-                _thread = new Thread(Log);
+                _thread = new Thread(Log) { IsBackground = true };
                 _waitLock = new object();
                 _stop = false;
                 _thread.Start();

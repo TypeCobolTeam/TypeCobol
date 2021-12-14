@@ -59,12 +59,12 @@ namespace TypeCobol.Tools
         }
 
         /// <summary>
-        /// Creates all instances of implementations found in parser extensions for the given interface type.
+        /// Creates instances of implementations found in parser extensions for the given interface type.
         /// </summary>
         /// <typeparam name="TInterface">Non-generic interface type.</typeparam>
         /// <param name="parameters">Constructor parameters to use at instantiation time.</param>
-        /// <returns>List of new instances.</returns>
-        public List<TInterface> Activate<TInterface>(params object[] parameters)
+        /// <returns>Deferred enumeration of new instances.</returns>
+        public IEnumerable<TInterface> Activate<TInterface>(params object[] parameters)
             where TInterface : class
         {
             Type targetType = typeof(TInterface);
@@ -79,27 +79,29 @@ namespace TypeCobol.Tools
                 throw new NotSupportedException("Activation of generic types is not supported.");
             }
 
-            List<TInterface> result = new List<TInterface>();
             foreach (var extension in _loadedExtensions)
             {
                 foreach (var type in extension.GetTypes())
                 {
                     if (type.IsPublic && type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(targetType))
                     {
+                        TInterface instance = null;
                         try
                         {
-                            var instance = (TInterface) Activator.CreateInstance(type, parameters);
-                            result.Add(instance);
+                            instance = (TInterface) Activator.CreateInstance(type, parameters);
                         }
                         catch (Exception exception)
                         {
                             LoggingSystem.LogException(exception);
                         }
+
+                        if (instance != null)
+                        {
+                            yield return instance;
+                        }
                     }
                 }
             }
-
-            return result;
         }
     }
 }

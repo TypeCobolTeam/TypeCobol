@@ -123,8 +123,7 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            Action<string> logger = str => Logger(_configuration, str);
-            var analyzerProvider = new AnalyzerProviderWrapper(logger);
+            var analyzerProvider = new AnalyzerProviderWrapper(str => Logger(_configuration, str));
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers

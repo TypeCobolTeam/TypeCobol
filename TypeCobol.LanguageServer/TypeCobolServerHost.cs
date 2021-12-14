@@ -10,6 +10,7 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Logging;
 using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
@@ -239,6 +240,7 @@ namespace TypeCobol.LanguageServer
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
+                { "ca|customanalyzer=", "OBSOLETE - Use 'ext' option instead.", v => Extensions.Add(v) },
                 { "ext|extension=", "{PATH} to a custom DLL file containing parser extension(s). This option can be specified more than once.", v => Extensions.Add(v) },
                 { "now|nowatchers",  "No Copy and Dependency files watchers.", _ => NoCopyDependencyWatchers = true}
             };
@@ -258,7 +260,14 @@ namespace TypeCobol.LanguageServer
                 return 0;
             }
 
-            //TODO #2091 Register loggers according to config (FileLogger or DebugLogger, external loggers)
+            //TODO #2091 Add DebugLogger and FileLogger
+
+            //External loggers if extensions have been provided
+            var extensionManager = new ExtensionManager(Extensions);
+            foreach (var externalLogger in extensionManager.Activate<ILogger>())
+            {
+                LoggingSystem.RegisterLogger(externalLogger);
+            }
 
             TextWriter logWriter = null;
             if (LogFile != null)
@@ -320,7 +329,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
-                typeCobolServer.ExtensionManager = new ExtensionManager(Extensions); //TODO #2091 errors happening here won't be traced until some loggers are registered
+                typeCobolServer.ExtensionManager = extensionManager;
                 typeCobolServer.NoCopyDependencyWatchers = NoCopyDependencyWatchers;
 #if EUROINFO_RULES
                 typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
@@ -334,7 +343,6 @@ namespace TypeCobol.LanguageServer
             }
             finally
             {
-                //TODO #2091 LoggingSystem.Shutdown()
                 if (logWriter != System.Console.Error)
                 {
                     logWriter.Close();

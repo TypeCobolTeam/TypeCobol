@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
 using Analytics;
+using TypeCobol.Logging;
 using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
 
@@ -27,6 +28,7 @@ namespace TypeCobol.Server {
             p.Add("h|help", "Output a usage message and exit.", v => help = (v != null));
             p.Add("V|version", "Output the version number of " + PROGNAME + " and exit.", v => version = (v != null));
             p.Add("1|once", "Parse one set of files and exit. DEPRECATED : CLI always uses Once mode so the option is not evaluated.", v => {});
+            p.Add("ca|customanalyzer=", "OBSOLETE - Use 'ext' option instead.", v => config.Extensions.Add(v));
             p.Add("ext|extension=", "{PATH} to a custom DLL file containing parser extension(s). This option can be specified more than once.", v => config.Extensions.Add(v));
 #if EUROINFO_RULES
             string cpyCopyNamesMapFilePath = null;
@@ -58,7 +60,14 @@ namespace TypeCobol.Server {
                     return 0;
                 }
 
-                //TODO #2091 Register loggers according to config (ConsoleLogger, FileLogger and external loggers)
+                //TODO #2091 Add ConsoleLogger and FileLogger
+
+                //External loggers if extensions have been provided
+                var extensionManager = new ExtensionManager(config.Extensions);
+                foreach (var externalLogger in extensionManager.Activate<ILogger>())
+                {
+                    LoggingSystem.RegisterLogger(externalLogger);
+                }
 
                 if (config.Telemetry)
                 {
@@ -72,17 +81,15 @@ namespace TypeCobol.Server {
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
                     config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
 
-                var extensionManager = new ExtensionManager(config.Extensions); //TODO #2091 errors happening here won't be traced until some loggers are registered
-                var returnCode = CLI.runOnce(config, extensionManager); 
+                var returnCode = CLI.runOnce(config, extensionManager);
                 if (returnCode != ReturnCode.Success)
                     return exit(returnCode, "Operation failed");
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 AnalyticsWrapper.Telemetry.TrackException(e, null);
                 return exit(ReturnCode.FatalError, e.Message);
-			}
-
-            //TODO #2091 LoggingSystem.Shutdown()
+            }
 
             return exit((int)ReturnCode.Success, "Success");
 		}
