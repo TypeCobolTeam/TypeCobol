@@ -38,10 +38,5 @@ namespace TypeCobol.Logging
         {
             //Do not display metrics
         }
-
-        public virtual void Dispose()
-        {
-            //Nothing to dispose
-        }
     }
 }

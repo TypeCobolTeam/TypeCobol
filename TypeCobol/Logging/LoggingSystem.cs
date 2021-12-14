@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -16,23 +17,22 @@ namespace TypeCobol.Logging
         private class LoggerThread
         {
             //Check queue every...
-            private static readonly TimeSpan _Period = TimeSpan.FromSeconds(1);
+            private static readonly TimeSpan _Period = TimeSpan.FromMilliseconds(1500);
 
             //Allowed time to flush remaining actions before ending the process.
             private static readonly TimeSpan _StopTimeout = TimeSpan.FromMilliseconds(500);
 
-            private readonly Queue<Action<ILogger>> _work;
-            private Thread _thread;
-            private readonly object _syncLock;
+            private readonly ConcurrentQueue<Action<ILogger>> _work;
+            private readonly Thread _thread;
+            private readonly object _waitLock;
             private bool _stop;
 
             public LoggerThread()
             {
-                _work = new Queue<Action<ILogger>>();
+                _work = new ConcurrentQueue<Action<ILogger>>();
                 _thread = new Thread(Log);
-                _syncLock = new object();
+                _waitLock = new object();
                 _stop = false;
-
                 _thread.Start();
             }
 
@@ -40,12 +40,11 @@ namespace TypeCobol.Logging
             {
                 while (!_stop)
                 {
-                    lock (_syncLock)
+                    lock (_waitLock)
                     {
-                        Monitor.Wait(_syncLock, _Period); //Wait until pulsed or polling period expires
-                        while (_work.Count > 0)
+                        Monitor.Wait(_waitLock, _Period); //Wait until pulsed or polling period expires
+                        while (_work.TryDequeue(out var action))
                         {
-                            var action = _work.Dequeue();
                             //Dispatch to loggers
                             foreach (var logger in _Loggers)
                             {
@@ -70,14 +69,13 @@ namespace TypeCobol.Logging
                 _stop = true;
 
                 //Pulse the thread to end as soon as possible
-                lock (_syncLock)
+                lock (_waitLock)
                 {
-                    Monitor.Pulse(_syncLock);
+                    Monitor.Pulse(_waitLock);
                 }
 
                 //Wait for last actions to be processed
                 _thread.Join(_StopTimeout);
-                _thread = null;
 
                 System.Diagnostics.Debug.Assert(_work.Count == 0);
             }
@@ -90,6 +88,29 @@ namespace TypeCobol.Logging
         {
             _LoggerThread = new LoggerThread();
             _Loggers = new List<ILogger>();
+
+            var appDomain = AppDomain.CurrentDomain;
+            appDomain.UnhandledException += OnUnhandledException;
+            if (AppDomain.CurrentDomain.IsDefaultAppDomain())
+            {
+                //'Normal' event for .NET application exit
+                appDomain.ProcessExit += OnApplicationExit;
+            }
+            else
+            {
+                //Used when loaded in a manually created AppDomain
+                appDomain.DomainUnload += OnApplicationExit;
+            }
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs args)
+        {
+            LogException((Exception) args.ExceptionObject);
+        }
+
+        private static void OnApplicationExit(object sender, EventArgs args)
+        {
+            _LoggerThread.Stop();
         }
 
         /// <summary>
@@ -132,20 +153,6 @@ namespace TypeCobol.Logging
         public static void LogMetric(string name, double value, string unit = null, IDictionary<string, object> contextData = null)
         {
             _LoggerThread.AddWork(logger => logger.LogMetric(name, value, unit, contextData));
-        }
-
-        /// <summary>
-        /// Process every remaining logging operations and close all loggers.
-        /// </summary>
-        /// <remarks>Do not use LoggingSystem after calling this !</remarks>
-        public static void Shutdown()
-        {
-            _LoggerThread.Stop();
-            foreach (var logger in _Loggers)
-            {
-                logger.Dispose();
-            }
-            _Loggers.Clear();
         }
     }
 }

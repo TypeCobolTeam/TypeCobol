@@ -24,10 +24,5 @@ namespace TypeCobol.Logging
         {
             Debug.WriteLine($"{name} = {value} ({unit}) {contextData.ToText()}");
         }
-
-        public virtual void Dispose()
-        {
-            //Nothing to dispose
-        }
     }
 }

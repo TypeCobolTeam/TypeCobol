@@ -9,7 +9,7 @@ namespace TypeCobol.Logging
     /// Implements ILogger by writing to a text file.
     /// Does not support metrics.
     /// </summary>
-	public class FileLogger : ILogger
+	public class FileLogger : ILogger, IDisposable
     {
         public static readonly string DefaultTimestampFormat = "yyyy-MM-dd_HH-mm-ss";
 
