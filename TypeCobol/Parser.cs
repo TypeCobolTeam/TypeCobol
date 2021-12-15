@@ -20,16 +20,16 @@ namespace TypeCobol
 {
 	public class Parser
 	{
-		public static readonly string Version;
+        public static readonly string Version;
 
-		static Parser()
-		{
-			//Read current version from TypeCobol.dll App.config
-			var appConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
-			Version = appConfig.AppSettings.Settings["TypeCobolVersion"].Value;
+        static Parser()
+        {
+            //Read current version from TypeCobol.dll App.config
+            var appConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
+            Version = appConfig.AppSettings.Settings["TypeCobolVersion"].Value;
         }
 
-		public IEnumerable<string> MissingCopys { get; private set; }
+        public IEnumerable<string> MissingCopys { get; private set; }
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
