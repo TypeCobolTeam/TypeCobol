@@ -237,7 +237,7 @@ namespace TypeCobol.LanguageServer
             get
             {
                 //TypeCobol version
-                return new Tuple<string, object>[] { new Tuple<string, object>("version", AnalyticsWrapper.Telemetry.TypeCobolVersion) };
+                return new Tuple<string, object>[] { new Tuple<string, object>("version", Parser.Version) };
             }
         }
 

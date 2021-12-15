@@ -401,7 +401,7 @@ namespace TypeCobol.Server
                 bool needLineMap = _configuration.LineMapFiles.Count > fileIndex;
                 var generator = GeneratorFactoryManager.Instance.Create(_configuration.OutputFormat.ToString(),
                     compilationUnit,
-                    sb, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
+                    sb, Parser.Version, needLineMap);
                 if (generator == null)
                 {
                     throw new GenerationException("Unknown OutputFormat=" + _configuration.OutputFormat + "_", inputFilePath);
