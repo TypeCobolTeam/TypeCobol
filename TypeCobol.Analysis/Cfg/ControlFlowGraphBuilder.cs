@@ -634,22 +634,6 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Link this sentence to the current section or paragraph if any.
-        /// </summary>
-        /// <param name="sentence">The sentence to link.</param>
-        private void LinkBlockSentenceToCurrentSectionParagraph(ControlFlowGraph<Node, D>.Sentence sentence)
-        {
-            var currentProcedure = (ControlFlowGraph<Node, D>.Procedure) this.CurrentProgramCfgBuilder.CurrentParagraph ?? this.CurrentProgramCfgBuilder.CurrentSection;
-            if (currentProcedure != null)
-            {
-                currentProcedure.AddSentence(sentence);
-                
-                //Give to this block the name of its paragraph/section as tag.
-                sentence.FirstBlock.Tag = currentProcedure.Name;
-            }
-        }
-
-        /// <summary>
         /// Starts a new Block Sentence
         /// </summary>
         private void StartBlockSentence()
@@ -667,14 +651,12 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(firstBlock);
             }
 
-            var sentence = new ControlFlowGraph<Node, D>.Sentence(number, firstBlock, firstBlockIndex);
+            var currentProcedure = (ControlFlowGraph<Node, D>.Procedure) this.CurrentProgramCfgBuilder.CurrentParagraph ?? this.CurrentProgramCfgBuilder.CurrentSection;
+            var sentence = new ControlFlowGraph<Node, D>.Sentence(number, firstBlock, firstBlockIndex, currentProcedure);
             this.CurrentProgramCfgBuilder.AllSentences.Add(sentence);
 
             this.CurrentProgramCfgBuilder.CurrentSentence = sentence;
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = firstBlock;
-
-            //Link this Sentence to its section or paragraph if any.
-            this.CurrentProgramCfgBuilder.LinkBlockSentenceToCurrentSectionParagraph(sentence);
         }
 
         /// <summary>

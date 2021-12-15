@@ -18,18 +18,33 @@ namespace TypeCobol.Analysis.Graph
             public int? FirstBlockIndex { get; }
 
             /// <summary>
+            /// The procedure in which this sentence appears.
+            /// </summary>
+            public Procedure ParentProcedure { get; }
+
+            /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="number">Order number of appearance of the sentence.</param>
             /// <param name="firstBlock">First block of the sentence.</param>
             /// <param name="firstBlockIndex">Index of the first block the global SuccessorEdges list.
             /// Pass null if the first block is a root block and consequently has no index in successors list.</param>
-            internal Sentence(int number, BasicBlock<N, D> firstBlock, int? firstBlockIndex)
+            /// <param name="parentProcedure">Parent procedure.</param>
+            internal Sentence(int number, BasicBlock<N, D> firstBlock, int? firstBlockIndex, Procedure parentProcedure)
                 : base(number)
             {
 	            _blocks = new LinkedList<BasicBlock<N, D>>();
                 _blocks.AddLast(firstBlock);
                 FirstBlockIndex = firstBlockIndex;
+                ParentProcedure = parentProcedure;
+
+                if (parentProcedure != null) //See issue #2081
+                {
+	                parentProcedure.AddSentence(this);
+
+	                //Give to the first block the name of its paragraph/section as tag.
+	                firstBlock.Tag = parentProcedure.Name;
+                }
             }
 
             /// <summary>
