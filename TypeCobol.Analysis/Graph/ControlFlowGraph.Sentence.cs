@@ -52,12 +52,6 @@ namespace TypeCobol.Analysis.Graph
             {
                 yield return this;
             }
-
-            internal override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
-            {
-                sentences.Add(this);
-                last = null;
-            }
         }
     }
 }

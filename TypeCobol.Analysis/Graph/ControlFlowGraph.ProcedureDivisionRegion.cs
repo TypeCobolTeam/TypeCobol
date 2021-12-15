@@ -30,20 +30,6 @@ namespace TypeCobol.Analysis.Graph
             {
                 return GetEnumerator();
             }
-
-            /// <summary>
-            /// Custom sentence enumeration mechanism used in PERFORM THRU resolution.
-            /// This method accumulates sentences from this region into the given list
-            /// up to a given end procedure.
-            /// </summary>
-            /// <param name="sentences">Accumulator list of sentences.</param>
-            /// <param name="end">End procedure, sentences from end are included but iteration won't go further.</param>
-            /// <param name="last">Last included procedure. For sentence it is null, for paragraph it is the paragraph
-            /// itself and for sections, it is either :
-            /// - the last paragraph of the section if the iteration went over the whole section
-            /// - the end procedure if the iteration did not go over the whole section
-            /// - the section itself if it is empty or made only of sentences.</param>
-            internal abstract void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last);
         }
     }
 }
