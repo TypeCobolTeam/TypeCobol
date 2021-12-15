@@ -182,6 +182,28 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         public bool IsInitialized => ProcedureDivisionNode != null;
 
+        //Set by builder after resolving all Performs and Gotos
+        internal Dictionary<Node, JumpTarget> JumpTargets;
+
+        private JumpTarget GetTarget(Node node)
+        {
+	        if (node == null)
+	        {
+		        throw new ArgumentNullException(nameof(node), "Jump node is required.");
+	        }
+
+	        if (JumpTargets.TryGetValue(node, out var target))
+	        {
+		        return target;
+	        }
+
+            //All gotos or performs of the current graph must have an entry in the dictionary, so it means we received a node from another program
+	        throw new ArgumentException("Jump node must belong to current graph.", nameof(node));
+        }
+
+        public JumpTarget GetTargetOf(Goto @goto) => GetTarget(@goto);
+        public JumpTarget GetTargetOf(PerformProcedure performProcedure) => GetTarget(performProcedure);
+
         /// <summary>
         /// Register an instruction that make a perform statement go out of its boundaries.
         /// </summary>

@@ -893,9 +893,8 @@ namespace TypeCobol.Analysis.Cfg
                         case StatementType.GotoSimpleStatement:
                             {
                                 GotoSimpleStatement simpleGoto = (GotoSimpleStatement)@goto.CodeElement;
-                                HashSet<SymbolReference> alteredSymbolRefs = null;
                                 //Check if we have altered GOTOs to take in account.
-                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out alteredSymbolRefs))
+                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out var alteredSymbolRefs))
                                 {
                                     int i = 0;
                                     target = new SymbolReference[alteredSymbolRefs.Count + 1];
@@ -969,6 +968,73 @@ namespace TypeCobol.Analysis.Cfg
 
         #endregion
 
+        private readonly Dictionary<Node, ControlFlowGraph<Node, D>.JumpTarget> _jumpTargets = new Dictionary<Node, ControlFlowGraph<Node, D>.JumpTarget>();
+
+        private ControlFlowGraph<Node, D>.JumpTarget ResolvePerformTarget(PerformProcedure performProcedure, SectionNode sectionNode)
+        {
+	        if (_jumpTargets.TryGetValue(performProcedure, out var target))
+            {
+                //Already computed, maybe null if unresolved
+                return target;
+            }
+            
+            SymbolReference procedureReference = performProcedure.CodeElement.Procedure;
+            SymbolReference throughProcedureReference = performProcedure.CodeElement.ThroughProcedure;
+
+            Node procedureNode = ResolveProcedure(performProcedure, sectionNode, procedureReference);
+            if (procedureNode == null)
+            {
+                //Cannot resolve starting procedure
+                return Unresolved();
+            }
+
+            var procedure = _nodeToProcedure[procedureNode];
+            var sentences = new List<ControlFlowGraph<Node, D>.Sentence>();
+            var procedures = new List<ControlFlowGraph<Node, D>.Procedure>();
+            if (throughProcedureReference != null)
+            {
+                Node throughProcedureNode = ResolveProcedure(performProcedure, sectionNode, throughProcedureReference);
+                if (throughProcedureNode == null)
+                {
+                    //Cannot resolve ending procedure
+                    return Unresolved();
+                }
+
+                var throughProcedure = _nodeToProcedure[throughProcedureNode];
+                if (procedure.Number > throughProcedure.Number)
+                {
+                    //The second procedure name is declared before the first one.
+                    this.Cfg.AddWrongOrderPerformThru(performProcedure, procedureNode, throughProcedureNode);
+                    return Unresolved();
+                }
+
+                //Accumulate sentences located between the two procedures
+                int currentProcedureNumber = procedure.Number;
+                while (currentProcedureNumber <= throughProcedure.Number)
+                {
+                    var currentProcedure = this.CurrentProgramCfgBuilder.AllProcedures[currentProcedureNumber];
+                    currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
+                    currentProcedureNumber = lastProcedure.Number + 1;
+                    procedures.Add(currentProcedure);
+                }
+            }
+            else
+            {
+                procedures.Add(procedure);
+                sentences.AddRange(procedure);
+            }
+
+            target = new ControlFlowGraph<Node, D>.JumpTarget(sentences, procedures);
+            _jumpTargets.Add(performProcedure, target);
+            return target;
+
+            ControlFlowGraph<Node, D>.JumpTarget Unresolved()
+            {
+	            _jumpTargets.Add(performProcedure, null);
+	            return null;
+            }
+        }
+
         /// <summary>
         /// Resolve a pending PERFORM procedure
         /// </summary>
@@ -981,54 +1047,18 @@ namespace TypeCobol.Analysis.Cfg
             SectionNode sectionNode = perform.Item2;
             BasicBlockForNodeGroup group = perform.Item3;
 
-            SymbolReference procedureReference = p.CodeElement.Procedure;
-            SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
+            var performTarget = ResolvePerformTarget(p, sectionNode);
+            if (performTarget == null) return;
 
-            Node procedureNode = ResolveProcedure(p, sectionNode, procedureReference);
-            if (procedureNode == null)
-                return;
-
-            var procedure = _nodeToProcedure[procedureNode];
             var clonedBlocksIndexMap = new Dictionary<int, int>();
-            if (throughProcedureReference != null)
-            {
-                Node throughProcedureNode = ResolveProcedure(p, sectionNode, throughProcedureReference);
-                if (throughProcedureNode == null)
-                    return;
-
-                var throughProcedure = _nodeToProcedure[throughProcedureNode];
-                if (procedure.Number > throughProcedure.Number)
-                {
-                    // the second procedure name is declared before the first one.
-                    this.Cfg.AddWrongOrderPerformThru(p, procedureNode, throughProcedureNode);
-                    return;
-                }
-
-                //Accumulate sentences located between the two procedures
-                var sentences = new List<ControlFlowGraph<Node, D>.Sentence>();
-                int currentProcedureNumber = procedure.Number;
-                while (currentProcedureNumber <= throughProcedure.Number)
-                {
-                    var currentProcedure = this.CurrentProgramCfgBuilder.AllProcedures[currentProcedureNumber];
-                    currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
-                    currentProcedureNumber = lastProcedure.Number + 1;
-                }
-
-                //Store sentences into the group
-                StoreSentences(sentences);
-            }
-            else
-            {
-                //Store all sentences from the procedure into the group
-                StoreSentences(procedure);
-            }
+            StoreSentences();
 
             //And finally relocate the Graph.
             RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlocksIndexMap);
 
-            void StoreSentences(IEnumerable<ControlFlowGraph<Node, D>.Sentence> sentences)
+            void StoreSentences()
             {
-                foreach (var sentence in sentences)
+                foreach (var sentence in performTarget.Sentences)
                 {
                     foreach (var block in sentence.Blocks)
                     {
@@ -1452,6 +1482,8 @@ namespace TypeCobol.Analysis.Cfg
             ResolvePendingGOTOs();
             //Resolve Pending PERFORMs Procedure
             ResolvePendingPERFORMProcedures();
+            //Copy perform/goto targets into result graph
+            this.CurrentProgramCfgBuilder.Cfg.JumpTargets = this.CurrentProgramCfgBuilder._jumpTargets;
             //Handle Iterative Perform Procedure Having an AFTER clause
             HandlePerformsWithTestAfter();
             //DFS to detect unreachable code
@@ -1478,11 +1510,9 @@ namespace TypeCobol.Analysis.Cfg
                 if (targetProcedureNode == null) continue;
 
                 var targetProcedure = _nodeToProcedure[targetProcedureNode];
-                if (!targetProcedures.Contains(targetProcedure))
+                if (targetProcedures.Add(targetProcedure))
                 {
-                    targetProcedures.Add(targetProcedure);
-
-                    //Link block to target
+	                //Link block to target
                     int? targetBlockIndex = targetProcedure.FirstOrDefault()?.FirstBlockIndex;
                     if (targetBlockIndex.HasValue)
                     {
@@ -1493,6 +1523,16 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
             }
+
+            //Create the JumpTarget instance and store it
+            ControlFlowGraph<Node, D>.JumpTarget gotoTarget = null;
+            if (targetProcedures.Count > 0)
+            {
+	            var sentences = targetProcedures.SelectMany(p => p).ToList();
+	            gotoTarget = new ControlFlowGraph<Node, D>.JumpTarget(sentences, targetProcedures.ToList());
+            }
+            //Else: no target could be resolved, store a null value
+            _jumpTargets.Add(@goto, gotoTarget);
         }
 
         /// <summary>
