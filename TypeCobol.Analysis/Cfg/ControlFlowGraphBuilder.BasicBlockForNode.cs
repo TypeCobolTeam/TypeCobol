@@ -12,16 +12,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <typeparam name="D"></typeparam>
         public class BasicBlockForNode : BasicBlock<Node, D>
         {
-            /// <summary>
-            /// Any tag associated to this Node.
-            /// </summary>
-            public object Tag
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
+	        /// <summary>
             /// Set whether full instruction must be generated are not.
             /// If not only the instruction name will be generated.
             /// </summary>

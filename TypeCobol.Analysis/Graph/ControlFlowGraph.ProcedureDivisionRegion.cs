@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace TypeCobol.Analysis.Cfg
+namespace TypeCobol.Analysis.Graph
 {
-    public partial class ControlFlowGraphBuilder<D>
+	public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// Base class for Procedure and Sentence.
@@ -12,14 +12,14 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <remarks>As a convenience, it is also an IEnumerable of Sentence.
         /// A sentence would only return itself and a Procedure would return its own sentences</remarks>
-        private abstract class ProcedureDivisionRegion : IEnumerable<Sentence>
+        public abstract class ProcedureDivisionRegion : IEnumerable<Sentence>
         {
             /// <summary>
             /// Order number of appearance in the ProcedureDivision of a program or function.
             /// </summary>
             public int Number { get; }
 
-            protected ProcedureDivisionRegion(int number)
+            internal ProcedureDivisionRegion(int number)
             {
                 Number = number;
             }
@@ -43,7 +43,7 @@ namespace TypeCobol.Analysis.Cfg
             /// - the last paragraph of the section if the iteration went over the whole section
             /// - the end procedure if the iteration did not go over the whole section
             /// - the section itself if it is empty or made only of sentences.</param>
-            public abstract void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last);
+            internal abstract void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last);
         }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace TypeCobol.Analysis.Cfg
+namespace TypeCobol.Analysis.Graph
 {
-    public partial class ControlFlowGraphBuilder<D>
+	public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// A Section used by CFG : it contains sentences and paragraphs in order of appearance.
         /// </summary>
-        private class Section : Procedure
+        public class Section : Procedure
         {
             private List<ProcedureDivisionRegion> _regions;
 
@@ -16,7 +16,7 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             /// <param name="number">Order number of appearance of the section.</param>
             /// <param name="name">Name of the section.</param>
-            public Section(int number, string name)
+            internal Section(int number, string name)
                 : base(number, name)
             {
                 _regions = null;
@@ -35,13 +35,13 @@ namespace TypeCobol.Analysis.Cfg
             /// Add a sentence to this section.
             /// </summary>
             /// <param name="sentence">The sentence to be added.</param>
-            public override void AddSentence(Sentence sentence) => AddRegion(sentence);
+            internal override void AddSentence(Sentence sentence) => AddRegion(sentence);
 
             /// <summary>
             /// Add a paragraph to this section.
             /// </summary>
             /// <param name="paragraph">The paragraph to be added.</param>
-            public void AddParagraph(Paragraph paragraph) => AddRegion(paragraph);
+            internal void AddParagraph(Paragraph paragraph) => AddRegion(paragraph);
 
             public override IEnumerator<Sentence> GetEnumerator()
             {
@@ -58,7 +58,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
             }
 
-            public override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
+            internal override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
             {
                 last = null;
                 if (_regions != null)

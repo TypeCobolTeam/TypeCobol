@@ -19,10 +19,21 @@ namespace TypeCobol.Analysis.Graph
             get;
             protected internal set;
         }
+
+        /// <summary>
+        /// Any tag associated to this block.
+        /// </summary>
+        public object Tag
+        {
+	        get;
+	        set;
+        }
+
         /// <summary>
         /// The associated multi branch context if any, null otherwise
         /// </summary>
         public IMultiBranchContext<N,D> Context { get; internal set; }
+
         /// <summary>
         /// Instructions making up this block.
         /// </summary>
@@ -118,6 +129,7 @@ namespace TypeCobol.Analysis.Graph
         {
             return instruction == null ? "<null>" : instruction.ToString();
         }
+
         /// <summary>
         /// String representation of a block.
         /// </summary>

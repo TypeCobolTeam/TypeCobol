@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using TypeCobol.Analysis.Graph;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Analysis.Cfg
 {
@@ -17,7 +19,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// All sections inside this Declaratives.
             /// </summary>
-            private LinkedList<Section> _sections;
+            private LinkedList<ControlFlowGraph<Node, D>.Section> _sections;
 
             /// <summary>
             /// The related CFG builder
@@ -30,7 +32,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="currentProgramCfgBuilder">The related CFG Builder</param>
             internal DeclarativesContext(ControlFlowGraphBuilder<D> currentProgramCfgBuilder)
             {
-                _sections = new LinkedList<Section>();
+                _sections = new LinkedList<ControlFlowGraph<Node, D>.Section>();
                 _builder = currentProgramCfgBuilder;
             }
 
@@ -43,7 +45,7 @@ namespace TypeCobol.Analysis.Cfg
                 _originBlock = originBlock;
             }
 
-            public void AddSection(Section section)
+            public void AddSection(ControlFlowGraph<Node, D>.Section section)
             {
                 _sections.AddLast(section);
             }
