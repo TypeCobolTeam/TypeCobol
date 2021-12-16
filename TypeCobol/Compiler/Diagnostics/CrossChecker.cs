@@ -1223,14 +1223,35 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            //Get all paragraphs with the same name and having the same section name
-            var paragraphs = paragraph.SymbolTable.GetParagraphs(p => p.Name.Equals(paragraph.Name, StringComparison.OrdinalIgnoreCase) && p.SemanticData.Owner == paragraph.SemanticData.Owner).ToList();
-
-            //Paragraphs can't have the same name within the same section
-            if (paragraphs.Count > 1)
+            Scopes.Domain<ParagraphSymbol> paragraphs = null;
+            // Get the Owner's Paragraph Domain
+            switch (paragraph.SemanticData.Owner.Kind)
+            {
+                case Symbol.Kinds.Program:
+                case Symbol.Kinds.Function:
+                    {
+                        ScopeSymbol owner = (ScopeSymbol)paragraph.SemanticData.Owner;
+                        paragraphs = owner.Paragraphs;
+                    }
+                    break;
+                case Symbol.Kinds.Section:
+                    {
+                        SectionSymbol section = (SectionSymbol)paragraph.SemanticData.Owner;
+                        paragraphs = section.Paragraphs;
+                    }
+                    break;
+                default:
+                    System.Diagnostics.Debug.Assert(paragraph.SemanticData.Owner.Kind == Symbol.Kinds.Program ||
+                        paragraph.SemanticData.Owner.Kind == Symbol.Kinds.Function ||
+                        paragraph.SemanticData.Owner.Kind == Symbol.Kinds.Section);
+                    break;
+            }
+            // Look for the paragraph in the domain
+            Scopes.Container<ParagraphSymbol>.Entry entry = paragraphs.Lookup(paragraph.Name);
+            if (entry.Count > 1)
             {
                 //Get the name of the scope to display in diagnostic message
-                var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name ;
+                var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name;
                 DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}", MessageCode.Warning);
             }
 
