@@ -1241,13 +1241,12 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                     break;
                 default:
-                    System.Diagnostics.Debug.Assert(paragraph.SemanticData.Owner.Kind == Symbol.Kinds.Program ||
-                        paragraph.SemanticData.Owner.Kind == Symbol.Kinds.Function ||
-                        paragraph.SemanticData.Owner.Kind == Symbol.Kinds.Section);
+                    System.Diagnostics.Debug.Fail("A Program, a Function or a Section was expected as paragraph's owner.");
                     break;
             }
             // Look for the paragraph in the domain
             Scopes.Container<ParagraphSymbol>.Entry entry = paragraphs.Lookup(paragraph.Name);
+            System.Diagnostics.Debug.Assert(entry != null);
             if (entry.Count > 1)
             {
                 //Get the name of the scope to display in diagnostic message
