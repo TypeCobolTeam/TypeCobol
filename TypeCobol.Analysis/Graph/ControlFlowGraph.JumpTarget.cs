@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Analysis.Graph
 {
-	public partial class ControlFlowGraph<N, D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// Represents the target of a jump instruction, that is either a PERFORM or a GO TO.
@@ -15,24 +15,24 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         public class JumpTarget
         {
-	        private readonly List<Sentence> _sentences;
-	        private readonly List<Procedure> _procedures;
+            private readonly List<Sentence> _sentences;
+            private readonly List<Procedure> _procedures;
 
-	        internal JumpTarget(List<Sentence> sentences, List<Procedure> procedures)
-	        {
-		        _sentences = sentences;
-		        _procedures = procedures;
-	        }
+            internal JumpTarget(List<Sentence> sentences, List<Procedure> procedures)
+            {
+                _sentences = sentences;
+                _procedures = procedures;
+            }
 
-	        /// <summary>
-	        /// All target sentences
-	        /// </summary>
-			public IEnumerable<Sentence> Sentences => _sentences;
+            /// <summary>
+            /// All target sentences
+            /// </summary>
+            public IEnumerable<Sentence> Sentences => _sentences;
 
-	        /// <summary>
-	        /// All target procedures
-	        /// </summary>
-			public IEnumerable<Procedure> Procedures => _procedures;
+            /// <summary>
+            /// All target procedures
+            /// </summary>
+            public IEnumerable<Procedure> Procedures => _procedures;
         }
     }
 }

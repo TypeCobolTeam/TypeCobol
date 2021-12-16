@@ -9,10 +9,9 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// BasicBlock which instruction are Nodes.
         /// </summary>
-        /// <typeparam name="D"></typeparam>
         public class BasicBlockForNode : BasicBlock<Node, D>
         {
-	        /// <summary>
+            /// <summary>
             /// Set whether full instruction must be generated are not.
             /// If not only the instruction name will be generated.
             /// </summary>

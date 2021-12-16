@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TypeCobol.Analysis.Graph
 {
-	public partial class ControlFlowGraph<N, D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// Base class for Procedure and Sentence.

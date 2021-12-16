@@ -25,8 +25,8 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         public object Tag
         {
-	        get;
-	        set;
+            get;
+            set;
         }
 
         /// <summary>

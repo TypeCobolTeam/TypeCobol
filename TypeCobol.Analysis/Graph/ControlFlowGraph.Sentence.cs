@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Analysis.Graph
 {
-	public partial class ControlFlowGraph<N, D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// A Cobol sentence used by CFG, a sentence is made of one or several basic blocks.
@@ -33,17 +33,17 @@ namespace TypeCobol.Analysis.Graph
             internal Sentence(int number, BasicBlock<N, D> firstBlock, int? firstBlockIndex, Procedure parentProcedure)
                 : base(number)
             {
-	            _blocks = new LinkedList<BasicBlock<N, D>>();
+                _blocks = new LinkedList<BasicBlock<N, D>>();
                 _blocks.AddLast(firstBlock);
                 FirstBlockIndex = firstBlockIndex;
                 ParentProcedure = parentProcedure;
 
                 if (parentProcedure != null) //See issue #2081
                 {
-	                parentProcedure.AddSentence(this);
+                    parentProcedure.AddSentence(this);
 
-	                //Give to the first block the name of its paragraph/section as tag.
-	                firstBlock.Tag = parentProcedure.Name;
+                    //Give to the first block the name of its paragraph/section as tag.
+                    firstBlock.Tag = parentProcedure.Name;
                 }
             }
 

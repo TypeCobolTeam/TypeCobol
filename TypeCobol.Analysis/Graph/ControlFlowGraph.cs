@@ -187,18 +187,18 @@ namespace TypeCobol.Analysis.Graph
 
         private JumpTarget GetTarget(Node node)
         {
-	        if (node == null)
-	        {
-		        throw new ArgumentNullException(nameof(node), "Jump node is required.");
-	        }
+            if (node == null)
+            {
+                throw new ArgumentNullException(nameof(node), "Jump node is required.");
+            }
 
-	        if (JumpTargets.TryGetValue(node, out var target))
-	        {
-		        return target;
-	        }
+            if (JumpTargets.TryGetValue(node, out var target))
+            {
+                return target;
+            }
 
             //All gotos or performs of the current graph must have an entry in the dictionary, so it means we received a node from another program
-	        throw new ArgumentException("Jump node must belong to current graph.", nameof(node));
+            throw new ArgumentException("Jump node must belong to current graph.", nameof(node));
         }
 
         public JumpTarget GetTargetOf(Goto @goto) => GetTarget(@goto);

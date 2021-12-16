@@ -972,7 +972,7 @@ namespace TypeCobol.Analysis.Cfg
 
         private ControlFlowGraph<Node, D>.JumpTarget ResolvePerformTarget(PerformProcedure performProcedure, SectionNode sectionNode)
         {
-	        if (_jumpTargets.TryGetValue(performProcedure, out var target))
+            if (_jumpTargets.TryGetValue(performProcedure, out var target))
             {
                 //Already computed, maybe null if unresolved
                 return target;
@@ -1030,8 +1030,8 @@ namespace TypeCobol.Analysis.Cfg
 
             ControlFlowGraph<Node, D>.JumpTarget Unresolved()
             {
-	            _jumpTargets.Add(performProcedure, null);
-	            return null;
+                _jumpTargets.Add(performProcedure, null);
+                return null;
             }
         }
 
@@ -1512,7 +1512,7 @@ namespace TypeCobol.Analysis.Cfg
                 var targetProcedure = _nodeToProcedure[targetProcedureNode];
                 if (targetProcedures.Add(targetProcedure))
                 {
-	                //Link block to target
+                    //Link block to target
                     int? targetBlockIndex = targetProcedure.FirstOrDefault()?.FirstBlockIndex;
                     if (targetBlockIndex.HasValue)
                     {
@@ -1528,8 +1528,8 @@ namespace TypeCobol.Analysis.Cfg
             ControlFlowGraph<Node, D>.JumpTarget gotoTarget = null;
             if (targetProcedures.Count > 0)
             {
-	            var sentences = targetProcedures.SelectMany(p => p).ToList();
-	            gotoTarget = new ControlFlowGraph<Node, D>.JumpTarget(sentences, targetProcedures.ToList());
+                var sentences = targetProcedures.SelectMany(p => p).ToList();
+                gotoTarget = new ControlFlowGraph<Node, D>.JumpTarget(sentences, targetProcedures.ToList());
             }
             //Else: no target could be resolved, store a null value
             _jumpTargets.Add(@goto, gotoTarget);

@@ -3,15 +3,15 @@ using System.Linq;
 
 namespace TypeCobol.Analysis.Graph
 {
-	public partial class ControlFlowGraph<N, D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// A Section used by CFG : it contains sentences and paragraphs in order of appearance.
         /// </summary>
         public class Section : Procedure
         {
-	        private List<Sentence> _preambleSentences;
-	        private List<Paragraph> _paragraphs;
+            private List<Sentence> _preambleSentences;
+            private List<Paragraph> _paragraphs;
 
             /// <summary>
             /// Constructor.
@@ -21,8 +21,8 @@ namespace TypeCobol.Analysis.Graph
             internal Section(int number, string name)
                 : base(number, name)
             {
-	            _preambleSentences = null;
-	            _paragraphs = null;
+                _preambleSentences = null;
+                _paragraphs = null;
             }
 
             /// <summary>
@@ -42,10 +42,10 @@ namespace TypeCobol.Analysis.Graph
             internal override void AddSentence(Sentence sentence)
             {
                 System.Diagnostics.Debug.Assert(_paragraphs == null); //Cannot add sentence if a paragraph is already 'opened'
-	            if (_preambleSentences == null)
-	            {
-		            _preambleSentences = new List<Sentence>();
-	            }
+                if (_preambleSentences == null)
+                {
+                    _preambleSentences = new List<Sentence>();
+                }
                 _preambleSentences.Add(sentence);
             }
 
@@ -55,52 +55,52 @@ namespace TypeCobol.Analysis.Graph
             /// <param name="paragraph">The paragraph to be added.</param>
             internal void AddParagraph(Paragraph paragraph)
             {
-	            if (_paragraphs == null)
-	            {
-		            _paragraphs = new List<Paragraph>();
-	            }
+                if (_paragraphs == null)
+                {
+                    _paragraphs = new List<Paragraph>();
+                }
                 _paragraphs.Add(paragraph);
             }
 
             public override IEnumerator<Sentence> GetEnumerator()
             {
-	            //Iterate over preamble sentences,
-	            if (_preambleSentences != null)
-	            {
-		            foreach (var preambleSentence in _preambleSentences)
-		            {
-			            yield return preambleSentence;
-		            }
-	            }
+                //Iterate over preamble sentences,
+                if (_preambleSentences != null)
+                {
+                    foreach (var preambleSentence in _preambleSentences)
+                    {
+                        yield return preambleSentence;
+                    }
+                }
 
                 //and then over paragraphs.
                 if (_paragraphs != null)
-	            {
-		            foreach (var paragraph in _paragraphs)
-		            {
-			            foreach (var sentence in paragraph)
-			            {
-				            yield return sentence;
-			            }
-		            }
+                {
+                    foreach (var paragraph in _paragraphs)
+                    {
+                        foreach (var sentence in paragraph)
+                        {
+                            yield return sentence;
+                        }
+                    }
                 }
             }
 
             internal override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
             {
-	            foreach (var preambleSentence in PreambleSentences)
-	            {
-		            sentences.Add(preambleSentence);
-	            }
+                foreach (var preambleSentence in PreambleSentences)
+                {
+                    sentences.Add(preambleSentence);
+                }
 
                 last = null;
                 foreach (var paragraph in Paragraphs)
                 {
-	                paragraph.AccumulateSentencesThrough(sentences, end, out last);
-	                if (paragraph == end)
-	                {
-		                break;
-	                }
+                    paragraph.AccumulateSentencesThrough(sentences, end, out last);
+                    if (paragraph == end)
+                    {
+                        break;
+                    }
                 }
 
                 if (last == null)

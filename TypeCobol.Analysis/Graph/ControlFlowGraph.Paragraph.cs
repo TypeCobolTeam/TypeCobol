@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Analysis.Graph
 {
-	public partial class ControlFlowGraph<N, D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// A Paragraph used by a CFG, it contains sentences.
