@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Analysis.Graph;
@@ -1070,16 +1069,6 @@ namespace TypeCobol.Analysis.Cfg
                         {
                             isPerform = true; //To avoid a second dynamic cast
 
-                            //Is there a recursion in the graph ?
-                            if (group.RecursivityGroupSet.Get(group0.GroupIndex) && !group0.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
-                            {
-                                //Flag group and store recursive perform
-                                group0.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
-                                Node offendingInstruction = group0.Instructions.Last.Value;
-                                System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                                this.Cfg.AddRecursivePerform(p, offendingInstruction);
-                            }
-
                             var clonedGroup0 = clonedPerforms
                                 .Select(t => t.Item3)
                                 .SingleOrDefault(g => g.GroupIndex == group0.GroupIndex);
@@ -1114,9 +1103,6 @@ namespace TypeCobol.Analysis.Cfg
                             var clonedGroup = (BasicBlockForNodeGroup) clonedBlock;
                             clonedGroup.Group = new LinkedList<BasicBlock<Node, D>>();
                             clonedGroup.TerminalBlocks = null;
-
-                            group.RecursivityGroupSet.Set(clonedGroup.GroupIndex, true);
-                            clonedGroup.RecursivityGroupSet = new BitArray(group.RecursivityGroupSet);
 
                             var originalPerform = this.CurrentProgramCfgBuilder.PendingPERFORMProcedures
                                 .Single(t => t.Item3 == block);
@@ -1192,8 +1178,6 @@ namespace TypeCobol.Analysis.Cfg
                 //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
-                    item.Item3.RecursivityGroupSet = new BitArray(GroupCounter + 1);
-                    item.Item3.RecursivityGroupSet.Set(item.Item3.GroupIndex, true);
                     ResolvePendingPERFORMProcedure(item, clonedPerforms);
                 }
 
@@ -1211,13 +1195,11 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
                 foreach (var item in clonedPerforms)
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
 
                 //Extend groups according to the current building mode
@@ -1437,28 +1419,6 @@ namespace TypeCobol.Analysis.Cfg
                     Diagnostic d = new Diagnostic(_compilerOptions.CheckPerformThruOrder.GetMessageCode(), wrongOrderPerformThru.Key.CodeElement.Position(),
                         string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
                     AddDiagnostic(d);
-                }
-            }
-
-            //RecursiveBlockOnPerformProcedure
-            if (_compilerOptions.CheckRecursivePerforms.IsActive && this.CurrentProgramCfgBuilder.Cfg.RecursivePerforms != null)
-            {
-                foreach (var recursivePerform in this.CurrentProgramCfgBuilder.Cfg.RecursivePerforms)
-                {
-                    var perform = recursivePerform.Key;
-                    SymbolReference procedureReference = perform.CodeElement.Procedure;
-                    SymbolReference throughProcedureReference = perform.CodeElement.ThroughProcedure;
-                    foreach (var offendingInstruction in recursivePerform.Value)
-                    {
-                        string performTarget = throughProcedureReference != null
-                            ? $"{procedureReference} THRU {throughProcedureReference}"
-                            : procedureReference.ToString();
-                        System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
-                        string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                        Diagnostic d = new Diagnostic(_compilerOptions.CheckRecursivePerforms.GetMessageCode(), perform.CodeElement.Position(),
-                            string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
-                        AddDiagnostic(d);
-                    }
                 }
             }
         }

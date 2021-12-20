@@ -135,12 +135,6 @@ namespace TypeCobol.Analysis.Graph
         public Dictionary<PerformProcedure, Tuple<N, N>> WrongOrderPerformThrus { get; private set; }
 
         /// <summary>
-        /// All recursive PERFORMs found in the program. Null if no such perform found.
-        /// Key is the recursive PERFORM statement, value is the list of all detected instructions that lead to recursion.
-        /// </summary>
-        public Dictionary<PerformProcedure, List<N>> RecursivePerforms { get; private set; }
-
-        /// <summary>
         /// All unreachable blocks of this graph. The property may be null but not empty.
         /// </summary>
         public List<BasicBlock<N, D>> UnreachableBlocks { get; private set; }
@@ -241,28 +235,6 @@ namespace TypeCobol.Analysis.Graph
 
             System.Diagnostics.Debug.Assert(!WrongOrderPerformThrus.ContainsKey(performThru));
             WrongOrderPerformThrus.Add(performThru, new Tuple<N, N>(procedure, throughProcedure));
-        }
-
-        /// <summary>
-        /// Register a recursive jump for a perform statement.
-        /// </summary>
-        /// <param name="perform">Perform node</param>
-        /// <param name="recursiveJump">Recursive jump node</param>
-        internal void AddRecursivePerform(PerformProcedure perform, N recursiveJump)
-        {
-            if (RecursivePerforms == null)
-            {
-                RecursivePerforms = new Dictionary<PerformProcedure, List<N>>();
-            }
-
-            if (RecursivePerforms.TryGetValue(perform, out var nodes))
-            {
-                nodes.Add(recursiveJump);
-            }
-            else
-            {
-                RecursivePerforms.Add(perform, new List<N>() { recursiveJump });
-            }
         }
 
         /// <summary>
