@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,6 +7,7 @@ using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Test.Utils;
 
@@ -263,7 +265,7 @@ namespace TypeCobol.Test.Parser.Performance
                 // Execute a second (incremental) compilation
                 compiler.CompileOnce();
                 //Be sure that there is no error, otherwise parsing can be incomplete
-                CheckThatThereIsNoError(compiler.CompilationResultsForProgram);
+                var diagnosticCollectionTime = CheckThatThereIsNoError(compiler.CompilationResultsForProgram);
 
                 //Accumulate results
                 stats.AverageTextUpdateTime += compiler.CompilationResultsForProgram.PerfStatsForText.LastRefreshTime;
@@ -273,6 +275,7 @@ namespace TypeCobol.Test.Parser.Performance
                 stats.AverateTemporarySemanticsParserTime += compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.LastRefreshTime;
                 stats.AverageCrossCheckerParserTime += compiler.CompilationResultsForProgram.PerfStatsForProgramCrossCheck.LastRefreshTime;
                 stats.AverageQualityCheckerParserTime += compiler.CompilationResultsForProgram.PerfStatsForCodeQualityCheck.LastRefreshTime;
+                stats.AverageDiagnosticCollectionTime += (float)diagnosticCollectionTime.TotalMilliseconds;
             }
             //Compute average time needed for each phase
             stats.AverageTextUpdateTime = (int)stats.AverageTextUpdateTime / stats.IterationNumber;
@@ -282,13 +285,15 @@ namespace TypeCobol.Test.Parser.Performance
             stats.AverateTemporarySemanticsParserTime = (int)stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
             stats.AverageCrossCheckerParserTime = (int)stats.AverageCrossCheckerParserTime / stats.IterationNumber;
             stats.AverageQualityCheckerParserTime = (int)stats.AverageQualityCheckerParserTime / stats.IterationNumber;
+            stats.AverageDiagnosticCollectionTime = (int)stats.AverageDiagnosticCollectionTime / stats.IterationNumber;
             stats.AverageTotalProcessingTime = stats.AverageTextUpdateTime +
                                                stats.AverageScannerTime +
                                                stats.AveragePreprocessorTime +
                                                stats.AverageCodeElementParserTime +
                                                stats.AverateTemporarySemanticsParserTime +
                                                stats.AverageCrossCheckerParserTime +
-                                               stats.AverageQualityCheckerParserTime;
+                                               stats.AverageQualityCheckerParserTime +
+                                               stats.AverageDiagnosticCollectionTime;
         }
 
 
@@ -405,11 +410,12 @@ namespace TypeCobol.Test.Parser.Performance
             //Warmup
             documentWarmup = ParseDocument(fullPath, options, format, copiesFolder);
             //Be sure that there is no error, otherwise parsing can be incomplete
-            CheckThatThereIsNoError(documentWarmup.Results);
+            CheckThatThereIsNoError(documentWarmup.Results); //Discard diagnostics collection time for this warmup run
 
             for (int i = 0; i < stats.IterationNumber; i++)
             {
                 var document = ParseDocument(fullPath, options, format, copiesFolder);
+                AllDiagnostics(document.Results, out var diagnosticCollectionTime);
 
                 stats.AverageTextUpdateTime += document.Results.PerfStatsForText.FirstCompilationTime;
                 stats.AverageScannerTime += document.Results.PerfStatsForScanner.FirstCompilationTime;
@@ -418,6 +424,7 @@ namespace TypeCobol.Test.Parser.Performance
                 stats.AverateTemporarySemanticsParserTime += document.Results.PerfStatsForTemporarySemantic.FirstCompilationTime;
                 stats.AverageCrossCheckerParserTime += document.Results.PerfStatsForProgramCrossCheck.FirstCompilationTime;
                 stats.AverageQualityCheckerParserTime += document.Results.PerfStatsForCodeQualityCheck.FirstCompilationTime;
+                stats.AverageDiagnosticCollectionTime += (float)diagnosticCollectionTime.TotalMilliseconds;
             }
 
             //Compute average time needed for each phase
@@ -428,14 +435,15 @@ namespace TypeCobol.Test.Parser.Performance
             stats.AverateTemporarySemanticsParserTime = (int)stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
             stats.AverageCrossCheckerParserTime = (int)stats.AverageCrossCheckerParserTime / stats.IterationNumber;
             stats.AverageQualityCheckerParserTime = (int)stats.AverageQualityCheckerParserTime / stats.IterationNumber;
-
+            stats.AverageDiagnosticCollectionTime = (int)stats.AverageDiagnosticCollectionTime / stats.IterationNumber;
             stats.AverageTotalProcessingTime = stats.AverageTextUpdateTime +
                                                stats.AverageScannerTime +
                                                stats.AveragePreprocessorTime +
                                                stats.AverageCodeElementParserTime +
                                                stats.AverateTemporarySemanticsParserTime +
                                                stats.AverageCrossCheckerParserTime +
-                                               stats.AverageQualityCheckerParserTime;
+                                               stats.AverageQualityCheckerParserTime +
+                                               stats.AverageDiagnosticCollectionTime;
             stats.Line = documentWarmup.Results.CobolTextLines.Count;
             stats.TotalCodeElements = documentWarmup.Results.CodeElementsDocumentSnapshot.CodeElements.Count();
 
@@ -449,12 +457,23 @@ namespace TypeCobol.Test.Parser.Performance
         ///We want to be sure that all steps of the parsing are done correctly, otherwise performance
         ///cannot be compared
         /// </summary>
-        private void CheckThatThereIsNoError(CompilationUnit compilationUnit)
+        private TimeSpan CheckThatThereIsNoError(CompilationUnit compilationUnit)
         {
-            if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Severity.Error))
+            var diags = AllDiagnostics(compilationUnit, out var duration);
+            if (diags.Any(d => d.Info.Severity == Severity.Error))
             {
                 throw new Exception("Error diagnostics Detected");
             }
+
+            return duration;
+        }
+
+        private static IList<Diagnostic> AllDiagnostics(CompilationUnit compilationUnit, out TimeSpan duration)
+        {
+            var start = DateTime.Now;
+            var result = compilationUnit.AllDiagnostics();
+            duration = DateTime.Now - start;
+            return result;
         }
     }
 }

@@ -137,6 +137,7 @@ namespace TypeCobol.Test
             FormatLine(stats.AverateTemporarySemanticsParserTime, stats.AverageTotalProcessingTime, "temporary semantic class parser");
             FormatLine(stats.AverageCrossCheckerParserTime, stats.AverageTotalProcessingTime, "cross check class parser");
             FormatLine(stats.AverageQualityCheckerParserTime, stats.AverageTotalProcessingTime, "quality check class parser");
+            FormatLine(stats.AverageDiagnosticCollectionTime, stats.AverageTotalProcessingTime, "diagnostics collection time");
 
             report.AppendLine("Total average time: " + stats.AverageTotalProcessingTime.ToString("##0.00") + " ms");
 
@@ -173,6 +174,7 @@ namespace TypeCobol.Test
                 AverateTemporarySemanticsParserTime = 0;
                 AverageCrossCheckerParserTime = 0;
                 AverageQualityCheckerParserTime = 0;
+                AverageDiagnosticCollectionTime = 0;
                 AverageTotalProcessingTime = 0;
                 Line = 0;
                 TotalCodeElements = 0;
@@ -185,6 +187,7 @@ namespace TypeCobol.Test
             public float AverateTemporarySemanticsParserTime { get; set; }
             public float AverageCrossCheckerParserTime { get; set; }
             public float AverageQualityCheckerParserTime { get; set; }
+            public float AverageDiagnosticCollectionTime { get; set; }
             public float AverageTotalProcessingTime { get; set; }
             //Number of lines in Cobol file
             public int Line { get; set; }
