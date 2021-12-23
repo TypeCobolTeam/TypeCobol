@@ -48,6 +48,7 @@ namespace TypeCobol.Compiler.Parser
             PerfStatsForParserInvocation perfStatsForParserInvocation,
             ISyntaxDrivenAnalyzer[] customAnalyzers,
             out SourceFile root,
+            out List<Node> nodes,
             out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
             out List<DataDefinition> typedVariablesOutsideTypedef,
@@ -108,6 +109,7 @@ namespace TypeCobol.Compiler.Parser
             System.Diagnostics.Debug.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
 #endif
             root = builder.SyntaxTree.Root; //Set output root node
+            nodes = builder.SyntaxTree.Nodes;
 
             perfStatsForParserInvocation.OnStartTreeBuilding();
 
@@ -136,14 +138,18 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public static void CrossCheckPrograms(SourceFile root, TemporarySemanticDocument temporarySemanticDocument, TypeCobolOptions compilerOptions)
+        public static void CrossCheckPrograms(TemporarySemanticDocument temporarySemanticDocument, TypeCobolOptions compilerOptions)
         {
             //Create link between data definition an Types, will be stored in SymbolTable
             TypeCobolLinker.LinkedTypedVariables(temporarySemanticDocument.TypedVariablesOutsideTypedef, 
                 temporarySemanticDocument.TypeThatNeedTypeLinking);
 
-            //Complete some information on Node and run checker that need a full AST
-            root.AcceptASTVisitor(new CrossCompleteChecker(compilerOptions));
+            var crossChecker = new CrossCompleteChecker(compilerOptions);
+            foreach (var node in temporarySemanticDocument.Nodes)
+            {
+                crossChecker.BeginNode(node);
+                node.VisitNode(crossChecker);
+            }
         }
 
     }

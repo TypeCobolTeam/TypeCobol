@@ -206,7 +206,7 @@ namespace TypeCobol.Compiler
                     SourceFile root = temporarySnapshot.Root;
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
-                    ProgramClassParserStep.CrossCheckPrograms(root, temporarySnapshot, this.CompilerOptions);
+                    ProgramClassParserStep.CrossCheckPrograms(temporarySnapshot, this.CompilerOptions);
               
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
@@ -263,6 +263,7 @@ namespace TypeCobol.Compiler
                         perfStatsForParserInvocation,
                         customAnalyzers,
                         out var root,
+                        out var nodes,
                         out var newDiagnostics,
                         out var nodeCodeElementLinkers,
                         out var typedVariablesOutsideTypedef,
@@ -287,7 +288,7 @@ namespace TypeCobol.Compiler
                     }
 
                     // Capture the produced results
-                    TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
+                    TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines, root, nodes, newDiagnostics, nodeCodeElementLinkers,
                         typedVariablesOutsideTypedef, typeThatNeedTypeLinking, results);
 
                     //Direct copy parsing : remove redundant root 01 level if any.
@@ -300,6 +301,7 @@ namespace TypeCobol.Compiler
                         if (firstDataDefinition.ChildrenCount == 0)
                         {
                             firstDataDefinition.Remove();
+                            TemporaryProgramClassDocumentSnapshot.Nodes.Remove(firstDataDefinition);
                         }
                     }
 
