@@ -204,14 +204,13 @@ namespace TypeCobol.Compiler
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root = temporarySnapshot.Root;
-                    List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
                     ProgramClassParserStep.CrossCheckPrograms(temporarySnapshot, this.CompilerOptions);
               
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
                         temporarySnapshot, ProgramClassDocumentSnapshot?.CurrentVersion + 1 ?? 0,
-                        root, diagnostics, nodeCodeElementLinkers);
+                        root, nodeCodeElementLinkers);
                     snapshotWasUpdated = true;;
 
                     PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
@@ -480,9 +479,6 @@ namespace TypeCobol.Compiler
                     {
                         //Get all nodes diagnostics using visitor. 
                         ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
-
-                        if (ProgramClassDocumentSnapshot.Diagnostics != null)
-                            allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
                     }
                 }
             }
