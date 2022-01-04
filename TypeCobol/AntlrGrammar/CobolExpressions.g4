@@ -915,7 +915,7 @@ abbreviatedExpression:
 	|  NOT abbreviatedExpression
 	|  abbreviatedExpression AND abbreviatedExpression
 	|  abbreviatedExpression OR abbreviatedExpression
-	|  relationalOperator conditionOperand
+	|  relationalOperator abbreviatedExpression
 	|  conditionOperand;
 
 relationalOperator:
