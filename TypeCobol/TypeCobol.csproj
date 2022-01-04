@@ -16,6 +16,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup>
+    <Antlr4UseCSharpGenerator>true</Antlr4UseCSharpGenerator>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
