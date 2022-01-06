@@ -1,0 +1,13 @@
+--- Program ---
+PROGRAM: TCOJCM01 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+-- PARAGRAPHS --
+  EACGAPEL-C0001-TRACE
+  EACGAPEL-C0001
+  EACGAPEL-C0002
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

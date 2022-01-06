@@ -1963,7 +1963,7 @@ recordClause:
 // record description entry associated with the file.
 
 labelRecordsClause:
-    LABEL ((RECORD IS?) | (RECORDS ARE?)) ((STANDARD | OMITTED) | dataNameReference*);
+    LABEL (RECORD | RECORDS) (IS | ARE)? ((STANDARD | OMITTED) | dataNameReference*);
 
 // p180: The VALUE OF clause describes an item in the label records associated with the
 // file.
@@ -1988,7 +1988,7 @@ valueOfClause:
 // with the same name.
 
 dataRecordsClause:
-    DATA ((RECORD IS?) | (RECORDS ARE?)) dataNameReference+;
+    DATA (RECORD | RECORDS) (IS | ARE)? dataNameReference+;
 
 // p180: The LINAGE clause specifies the depth of a logical page in number of lines.
 // Optionally, it also specifies the line number at which the footing area begins and
