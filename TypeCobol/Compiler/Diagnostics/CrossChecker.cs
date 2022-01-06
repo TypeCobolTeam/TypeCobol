@@ -452,9 +452,45 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Evaluate evaluate)
         {
-            if (evaluate.GetChildren<WhenOther>().Count == 0)
+            int count = evaluate.ChildrenCount;
+            bool hasEnd = count > 1 && evaluate.Children[count - 1] is End;
+            Node lastNode = null;
+            if (hasEnd && count >= 2)
+                lastNode = evaluate.Children[count - 2];
+            else if (count >= 1)
+                lastNode = evaluate.Children[count - 1];
+            bool hasWhenOther = lastNode is WhenOther;
+            if (!hasWhenOther)
                 DiagnosticUtils.AddError(evaluate,
                     "\"when other\" is missing", MessageCode.Warning);
+            
+            if (hasWhenOther)
+            {
+                // Try to report an empty when clause just before a whenother
+                WhenGroup whenGRoup = lastWhenGroup();
+                if (whenGRoup != null)
+                    WhenConditionNodeChecker.OnNode(whenGRoup);
+
+                WhenGroup lastWhenGroup()
+                {
+                    // Compute a delta position depending on the presence of an END or not.
+                    int delta = 0;
+                    if (hasEnd)
+                        delta = count >= 4 ? 4 : -1;
+                    else
+                        delta = count >= 3 ? 3 : -1;
+
+                    // Take in account the end node and the empty Then node 
+                    if (delta > 0 && evaluate.Children[count - (delta - 2)] is WhenOther &&
+                        evaluate.Children[count - (delta - 1)] is Then thenNode &&
+                        thenNode.ChildrenCount == 0 &&
+                        evaluate.Children[count - delta] is WhenGroup whenGroup1)
+                    {
+                        return whenGroup1;
+                    }
+                    return null;
+                }
+            }
             return true;
         }
 

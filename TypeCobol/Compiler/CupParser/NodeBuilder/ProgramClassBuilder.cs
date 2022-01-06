@@ -1341,7 +1341,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndWhenConditionClause()
         {
-            WhenConditionNodeChecker.OnNode(SyntaxTree.CurrentNode);
             Exit();// exit THEN
             Dispatcher.EndWhenConditionClause();
         }
