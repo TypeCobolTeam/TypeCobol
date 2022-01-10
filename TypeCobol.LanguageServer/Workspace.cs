@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Timers;
 using Analytics;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
@@ -18,6 +17,7 @@ using TypeCobol.CustomExceptions;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.LanguageServer
@@ -270,22 +270,11 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Load Custom Analyzers
         /// </summary>
-        /// <param name="customAnalyzerFiles"></param>
-        internal void LoadCustomAnalyzers(List<string> customAnalyzerFiles)
+        /// <param name="extensionManager"></param>
+        internal void LoadCustomAnalyzers(ExtensionManager extensionManager)
         {
-            System.Diagnostics.Debug.Assert(customAnalyzerFiles != null);
-            List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
-            foreach(var f in customAnalyzerFiles) {
-                try
-                {
-                    list.Add(AnalyzerProviderLoader.UnsafeLoadProvider(f));
-                }
-                catch(Exception e)
-                {
-                    _Logger(e.Message, null);
-                }                    
-            }
-            this._customAnalyzerProviders = list.ToArray();
+            System.Diagnostics.Debug.Assert(extensionManager != null);
+            this._customAnalyzerProviders = extensionManager.Activate<IAnalyzerProvider>().ToArray();
         }
 
         /// <summary>
