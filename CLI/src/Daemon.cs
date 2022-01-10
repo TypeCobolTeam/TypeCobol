@@ -87,7 +87,7 @@ namespace TypeCobol.Server {
             }
             catch (Exception e)
             {
-                AnalyticsWrapper.Telemetry.TrackException(e, null);
+                LoggingSystem.LogException(e);
                 return exit(ReturnCode.FatalError, e.Message);
             }
 
@@ -114,17 +114,15 @@ namespace TypeCobol.Server {
             string errmsg = "Code: " + (int)code + " " + PROGNAME + ": " + message + Environment.NewLine;
             errmsg += "Try " + PROGNAME + " --help for usage information.";
             Console.WriteLine(errmsg);
-
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.ReturnCode, string.Format("{0} : {1}", code.ToString(), message), LogType.Genration);
             return (int)code;
         }
+
         static int exit(Dictionary<ReturnCode, string> errors)
         {
             string errmsg = Environment.NewLine;
             foreach (var error in errors)
             {
                 errmsg += "Code: " + (int)error.Key + " " + PROGNAME + ": " + error.Value + Environment.NewLine;
-                AnalyticsWrapper.Telemetry.TrackEvent(EventType.ReturnCode, string.Format("{0} : {1}", error.Key.ToString(), error.Value), LogType.Genration);
             }
             errmsg += "Try " + PROGNAME + " --help for usage information.";
             Console.WriteLine(errmsg);

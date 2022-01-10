@@ -269,7 +269,6 @@ namespace TypeCobol.Codegen
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                AnalyticsWrapper.Telemetry.TrackEvent(EventType.Generation, "Diagnostics Detected", LogType.Genration);
                 throw new GenerationException("Unable to generate because of error diagnostics", compilationUnit.TextSourceInfo.Name, null, false, false);
             }
 

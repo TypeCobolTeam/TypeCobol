@@ -7,9 +7,9 @@ namespace TypeCobol.Logging
 {
     /// <summary>
     /// Single point of logging in the TypeCobol solution.
-    /// Allows to register loggers and provide methods to log exceptions, messages and metrics.
+    /// Allows to register loggers and provides methods to log exceptions, messages and metrics.
     /// </summary>
-    public static class LoggingSystem
+    public static partial class LoggingSystem
     {
         /// <summary>
         /// Wraps a thread to asynchronously dispatch logging actions to actual loggers.
@@ -19,7 +19,7 @@ namespace TypeCobol.Logging
             //Check queue every...
             private static readonly TimeSpan _Period = TimeSpan.FromMilliseconds(1500);
 
-            //Allowed time to flush remaining actions before ending the process.
+            //Allotted time to flush remaining actions before ending the process.
             private static readonly TimeSpan _StopTimeout = TimeSpan.FromMilliseconds(500);
 
             private readonly ConcurrentQueue<Action<ILogger>> _work;
