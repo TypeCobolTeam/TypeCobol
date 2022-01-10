@@ -277,7 +277,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         tokensLineWithCopyDirective.ImportedDocuments.Keys.Where(
                             c => c.TextName != null || c.COPYToken.TokenType == TokenType.EXEC).ToArray())
                     {
-                        if (copyDirective.TextName == null)
+                        if (copyDirective.TextName == null || tokensLineWithCopyDirective.ScanStateBeforeCOPYToken == null)
                             continue;
                         try
                         {

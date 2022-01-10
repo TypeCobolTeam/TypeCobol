@@ -96,8 +96,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
-            if (textLine.Type == CobolTextLineType.Comment ||
-                (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
+            if (textLine.Type == CobolTextLineType.Comment || (tokensLine.Type == CobolTextLineType.Debug && !IsDebugLineActive(tokensLine)))
             {
                 if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
                 {
@@ -221,6 +220,33 @@ namespace TypeCobol.Compiler.Scanner
         }
 #endif
 
+        private static bool IsDebugLineActive(ITokensLine tokensLine)
+        {
+            System.Diagnostics.Debug.Assert(tokensLine.Type == CobolTextLineType.Debug);
+
+            if (!tokensLine.ScanState.WithDebuggingMode)
+            {
+                /*
+                 * DebuggingMode is inactive but REPLACE directives are a special case.
+                 * As replacing should happen before scanning, debug indicators are irrelevant
+                 * and REPLACE directives are active no matter what.
+                 *
+                 * So an inactive debug line has to be parsed as regular source if it participates
+                 * in a REPLACE directive.
+                 */
+                return tokensLine.ScanState.InsideReplaceDirective || StartsWithReplace();
+            }
+
+            //DebuggingMode is active, debug line is considered as regular source line.
+            return true;
+
+            bool StartsWithReplace()
+            {
+                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
+                return tokensLine.SourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
         /// <summary>
         /// Scan a group of continuation lines
         /// </summary>
@@ -244,7 +270,7 @@ namespace TypeCobol.Compiler.Scanner
             for (; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine line = continuationLinesGroup[i];
-                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && scanState.WithDebuggingMode))
+                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && IsDebugLineActive(line)))
                 {
                     hasSource = true;
                     break;
@@ -651,8 +677,17 @@ namespace TypeCobol.Compiler.Scanner
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext);
 
-            Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
-            Token candidateToken = tempScanner.GetNextToken();
+            Token candidateToken;
+            if (tokenText.Length > 0)
+            {
+                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
+                candidateToken = tempScanner.GetNextToken();
+            }
+            else
+            {
+                //Create an empty SpaceSeparator token.
+                candidateToken = new Token(TokenType.SpaceSeparator, 0, -1, tempTokensLine);
+            }
 
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
             {
