@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Analytics;
 using TypeCobol.LanguageServer.JsonRPC;
+using TypeCobol.Logging;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
@@ -75,7 +76,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public virtual void NotifyException(Exception e)
         {
             this.RemoteWindow.ShowErrorMessage(e.Message + "\n" + e.StackTrace);
-            AnalyticsWrapper.Telemetry.TrackException(e, null);            
+            LoggingSystem.LogException(e);
             AnalyticsWrapper.Telemetry.SendMail(e, null, null, null);
         }
 
