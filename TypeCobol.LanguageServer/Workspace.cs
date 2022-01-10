@@ -17,6 +17,7 @@ using TypeCobol.CustomExceptions;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Logging;
 using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 
@@ -710,23 +711,13 @@ namespace TypeCobol.LanguageServer
                         LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
                 }
             }
-            catch (TypeCobolException typeCobolException)
+            catch (Exception exception)
             {
                 if (LoadingIssueEvent != null)
                     LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
-
-                if (typeCobolException.NeedMail)
-                    AnalyticsWrapper.Telemetry.SendMail(typeCobolException, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
-            }
-            catch (Exception e)
-            {
-                if (LoadingIssueEvent != null)
-                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
-
-                AnalyticsWrapper.Telemetry.TrackException(e, null);
-                AnalyticsWrapper.Telemetry.SendMail(e, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
+                LoggingSystem.LogException(exception);
+                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
             }
 
         }
