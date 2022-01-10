@@ -452,44 +452,36 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Evaluate evaluate)
         {
-            int count = evaluate.ChildrenCount;
-            bool hasEnd = count > 1 && evaluate.Children[count - 1] is End;
-            Node lastNode = null;
-            if (hasEnd && count >= 2)
-                lastNode = evaluate.Children[count - 2];
-            else if (count >= 1)
-                lastNode = evaluate.Children[count - 1];
-            bool hasWhenOther = lastNode is WhenOther;
-            if (!hasWhenOther)
-                DiagnosticUtils.AddError(evaluate,
-                    "\"when other\" is missing", MessageCode.Warning);
-            
-            if (hasWhenOther)
+            bool whenOtherSeen = false;
+            //Start to loop on children from the end because:
+            //- Grammar enforce that there is 0 to 1 "whenOther" and that it's the last element of an "evaluate"
+            //- Invalid empty "when" can only be the last "when"
+            for (int i = evaluate.ChildrenCount - 1; i >= 0; i--)
             {
-                // Try to report an empty when clause just before a whenother
-                WhenGroup whenGRoup = lastWhenGroup();
-                if (whenGRoup != null)
-                    WhenConditionNodeChecker.OnNode(whenGRoup);
-
-                WhenGroup lastWhenGroup()
+                if (evaluate.Children[i] is WhenOther)
                 {
-                    // Compute a delta position depending on the presence of an END or not.
-                    int delta = 0;
-                    if (hasEnd)
-                        delta = count >= 4 ? 4 : -1;
-                    else
-                        delta = count >= 3 ? 3 : -1;
-
-                    // Take in account the end node and the empty Then node 
-                    if (delta > 0 && evaluate.Children[count - (delta - 2)] is WhenOther &&
-                        evaluate.Children[count - (delta - 1)] is Then thenNode &&
-                        thenNode.ChildrenCount == 0 &&
-                        evaluate.Children[count - delta] is WhenGroup whenGroup1)
-                    {
-                        return whenGroup1;
-                    }
-                    return null;
+                    whenOtherSeen = true;
                 }
+                else if (evaluate.Children[i] is Then then)
+                {
+                    if (then.ChildrenCount == 0)
+                    {
+                        // i is the Then node
+                        // i-1 is the When group
+                        var whenGroup = then.Parent.Children[i - 1];
+                        System.Diagnostics.Debug.Assert(whenGroup.ChildrenCount > 0);
+                        //Get the last When of the WhenGroup. This is the invalid empty When
+                        var whenNode = whenGroup.Children[whenGroup.ChildrenCount - 1];
+                        System.Diagnostics.Debug.Assert(whenNode.CodeElement?.Type == CodeElementType.WhenCondition);
+                        //Syntax error.
+                        DiagnosticUtils.AddError(whenNode, "Missing statement in \"when\" clause");
+                    }
+                    break; //Previous "when" are allowed to have no instructions (#1593)
+                }
+            }
+            if (!whenOtherSeen)
+            {
+                DiagnosticUtils.AddError(evaluate, "\"when other\" is missing", MessageCode.Warning);
             }
             return true;
         }
