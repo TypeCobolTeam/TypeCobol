@@ -1223,31 +1223,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            Scopes.Domain<ParagraphSymbol> paragraphs = null;
-            // Get the Owner's Paragraph Domain
-            switch (paragraph.SemanticData.Owner.Kind)
-            {
-                case Symbol.Kinds.Program:
-                case Symbol.Kinds.Function:
-                    {
-                        ScopeSymbol owner = (ScopeSymbol)paragraph.SemanticData.Owner;
-                        paragraphs = owner.Paragraphs;
-                    }
-                    break;
-                case Symbol.Kinds.Section:
-                    {
-                        SectionSymbol section = (SectionSymbol)paragraph.SemanticData.Owner;
-                        paragraphs = section.Paragraphs;
-                    }
-                    break;
-                default:
-                    System.Diagnostics.Debug.Fail("A Program, a Function or a Section was expected as paragraph's owner.");
-                    break;
-            }
-            // Look for the paragraph in the domain
-            Scopes.Container<ParagraphSymbol>.Entry entry = paragraphs.Lookup(paragraph.Name);
-            System.Diagnostics.Debug.Assert(entry != null);
-            if (entry.Count > 1)
+            //Get all paragraphs with the same name and having the same parent
+            var paragraphs = paragraph.SymbolTable.GetParagraphs(paragraph.Name, paragraph.Parent);
+            if (paragraphs?.Count() > 1)
             {
                 //Get the name of the scope to display in diagnostic message
                 var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name;
