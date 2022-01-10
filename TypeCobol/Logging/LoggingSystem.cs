@@ -19,7 +19,7 @@ namespace TypeCobol.Logging
             //Check queue every...
             private static readonly TimeSpan _Period = TimeSpan.FromMilliseconds(1500);
 
-            //Allowed time to flush remaining actions before ending the process.
+            //Allotted time to flush remaining actions before ending the process.
             private static readonly TimeSpan _StopTimeout = TimeSpan.FromMilliseconds(500);
 
             private readonly ConcurrentQueue<Action<ILogger>> _work;

@@ -74,6 +74,14 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public Encoding EncodingForAlphanumericLiterals { get; }
 
+        // Used to track the end of a REPLACE directive.
+        private bool _afterReplacementPseudoText;
+
+        /// <summary>
+        /// True if we are scanning inside a REPLACE directive.
+        /// </summary>
+        public bool InsideReplaceDirective { get; private set; }
+
 #if EUROINFO_RULES
         /// <summary>
         /// True when we are existing a remarks directive. 
@@ -94,15 +102,16 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false, bool insideCopy = false) :
-            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals)
+            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, SpecialNamesContext specialNamesContext, 
-                bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField,
-                bool withDebuggingMode, bool insideCopy, Encoding encodingForAlphanumericLiterals)
+        private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText,
+            SpecialNamesContext specialNamesContext, bool insideFormalizedComment, bool insideMultilineComments,
+            bool insideParamsField, bool withDebuggingMode, bool insideCopy,
+            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -114,6 +123,8 @@ namespace TypeCobol.Compiler.Scanner
             WithDebuggingMode = withDebuggingMode;
             InsideCopy = insideCopy;
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
+            _afterReplacementPseudoText = afterReplacementPseudoText;
+            InsideReplaceDirective = insideReplaceDirective;
         }
 
         /// <summary>
@@ -123,7 +134,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, SpecialNames.Clone(),
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals);
+                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
 
@@ -186,6 +197,11 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.PseudoTextDelimiter:
                     // Register the start or the end of a pseudo text section
                     InsidePseudoText = !InsidePseudoText;
+                    if (!InsidePseudoText && BeforeLastSignificantToken?.TokenType == TokenType.BY)
+                    {
+                        // Leaving a PseudoText located after the 'BY' keyword -> we are after a replacement pseudo text
+                        _afterReplacementPseudoText = true;
+                    }
                     break;
                 case TokenType.COPY:
                     // Register the end of a pseudo text section (COPY not allowed in pseudo text)
@@ -258,6 +274,16 @@ namespace TypeCobol.Compiler.Scanner
                     if (SpecialNames.InsideCurrencySignDefinitions)
                     {
                         SpecialNames.OnAlphanumericLiteralToken(newToken);
+                    }
+                    break;
+                case TokenType.REPLACE:
+                    InsideReplaceDirective = true;
+                    break;
+                case TokenType.PeriodSeparator:
+                    if (_afterReplacementPseudoText)
+                    {
+                        _afterReplacementPseudoText = false;
+                        InsideReplaceDirective = false;
                     }
                     break;
             }
@@ -550,7 +576,9 @@ namespace TypeCobol.Compiler.Scanner
                    // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
 #endif
                    WithDebuggingMode == otherScanState.WithDebuggingMode &&
-                   EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals;
+                   EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
+                   _afterReplacementPseudoText == otherScanState._afterReplacementPseudoText &&
+                   InsideReplaceDirective == otherScanState.InsideReplaceDirective;
         }
 
         /// <summary>
@@ -576,6 +604,8 @@ namespace TypeCobol.Compiler.Scanner
 #endif
                 hash = hash * 23 + WithDebuggingMode.GetHashCode();
                 hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();
+                hash = hash * 23 + _afterReplacementPseudoText.GetHashCode();
+                hash = hash * 23 + InsideReplaceDirective.GetHashCode();
                 return hash;
             }
         }

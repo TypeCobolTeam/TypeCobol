@@ -1,0 +1,30 @@
+﻿--- Nodes ---
+?
+  TCOMFL06
+    procedure-division
+      sentence-0
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [12,18:"test1"]<AlphanumericLiteral>(",Y,Y){test1}
+- variables = :test1:
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [12,18:"test2"]<AlphanumericLiteral>(",Y,Y){test2}
+- variables = :test2:
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [12,18:"test3"]<AlphanumericLiteral>(",Y,Y){test3}
+- variables = :test3:
+
+        [[DisplayStatement]] [12,19:DISPLAY]<DISPLAY> --> [12,19:"test4a"]<AlphanumericLiteral>(",Y,Y){test4a}
+- variables = :test4a:
+
+        [[DisplayStatement]] [12,19:DISPLAY]<DISPLAY> --> [12,19:"test4b"]<AlphanumericLiteral>(",Y,Y){test4b}
+- variables = :test4b:
+
+        [[DisplayStatement]] [12,19:DISPLAY]<DISPLAY> --> [12,19:"test5a"]<AlphanumericLiteral>(",Y,Y){test5a}
+- variables = :test5a:
+
+        [[DisplayStatement]] [12,19:DISPLAY]<DISPLAY> --> [12,19:"test5b"]<AlphanumericLiteral>(",Y,Y){test5b}
+- variables = :test5b:
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
