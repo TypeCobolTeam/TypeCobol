@@ -15,6 +15,8 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Logging;
+using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 using TypeCobol.Tools.Options_Config;
 
@@ -31,7 +33,7 @@ namespace TypeCobol.Server
         /// runOnce method to parse the input file(s).
         /// </summary>
         /// <param name="config">Config</param>
-        internal static ReturnCode runOnce(TypeCobolConfiguration config)
+        internal static ReturnCode runOnce(TypeCobolConfiguration config, ExtensionManager extensionManager)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -62,13 +64,12 @@ namespace TypeCobol.Server
             ReturnCode returnCode;
             try
             {
-                CLI cli = new CLI(config, errorWriter);
+                CLI cli = new CLI(config, extensionManager, errorWriter);
                 returnCode = cli.Compile();
             }
             catch (Exception unexpected)
             {
-                var typeCobolException = new ParsingException(MessageCode.GenerationFailled, null, config.InputFiles.FirstOrDefault(), unexpected);
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
+                LoggingSystem.LogException(unexpected); //TODO add more context data ?
                 AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 string message = unexpected.Message + Environment.NewLine + unexpected.StackTrace;
@@ -86,12 +87,13 @@ namespace TypeCobol.Server
             Logger(config, debugLine);
             Console.WriteLine(debugLine);
 
-            AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds);
+            LoggingSystem.LogMetric("ExecutionTime", stopWatch.Elapsed.TotalMilliseconds, "ms");
 
             return returnCode;
         }
 
         private readonly TypeCobolConfiguration _configuration;
+        private readonly ExtensionManager _extensionManager;
         private readonly AbstractErrorWriter _errorWriter;
         private readonly List<DiagnosticsErrorEvent> _intrinsicsDiagnostics;
         private readonly List<DiagnosticsErrorEvent> _dependenciesDiagnostics;
@@ -101,9 +103,10 @@ namespace TypeCobol.Server
         private readonly HashSet<string> _missingCopies;
         private readonly Dictionary<string, List<GenerationException>> _generationExceptions;
 
-        private CLI(TypeCobolConfiguration configuration, AbstractErrorWriter errorWriter)
+        private CLI(TypeCobolConfiguration configuration, ExtensionManager extensionManager, AbstractErrorWriter errorWriter)
         {
             _configuration = configuration;
+            _extensionManager = extensionManager;
             _errorWriter = errorWriter;
             _intrinsicsDiagnostics = new List<DiagnosticsErrorEvent>();
             _dependenciesDiagnostics = new List<DiagnosticsErrorEvent>();
@@ -124,7 +127,10 @@ namespace TypeCobol.Server
             var reports = RegisterAnalyzers(analyzerProvider);
 
             //Add external analyzers
-            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles, str => Logger(_configuration, str));
+            foreach (var customAnalyzerProvider in _extensionManager.Activate<IAnalyzerProvider>())
+            {
+                analyzerProvider.AddProvider(customAnalyzerProvider);
+            }
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
@@ -395,7 +401,7 @@ namespace TypeCobol.Server
                 bool needLineMap = _configuration.LineMapFiles.Count > fileIndex;
                 var generator = GeneratorFactoryManager.Instance.Create(_configuration.OutputFormat.ToString(),
                     compilationUnit,
-                    sb, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
+                    sb, Parser.Version, needLineMap);
                 if (generator == null)
                 {
                     throw new GenerationException("Unknown OutputFormat=" + _configuration.OutputFormat + "_", inputFilePath);
@@ -520,10 +526,12 @@ namespace TypeCobol.Server
 
             foreach (var inputFilePath in _configuration.InputFiles)
             {
+                var parserResult = _parserResults[inputFilePath];
+
                 //Update the diagnostics cache
                 if (!_inputsDiagnosticsCache.TryGetValue(inputFilePath, out var diagnostics))
                 {
-                    diagnostics = _parserResults[inputFilePath].AllDiagnostics();
+                    diagnostics = parserResult.AllDiagnostics();
                 }
 
                 //Do not output more diagnostics than allowed
@@ -532,14 +540,14 @@ namespace TypeCobol.Server
                     : _configuration.MaximumDiagnostics);
                 _errorWriter.AddErrors(inputFilePath, trimmedDiagnostics);
 
-                //Analytics
+                //Logging
+                var context = new Dictionary<string, object>() { { LoggingSystem.ContextKeys.TextSourceName , parserResult.TextSourceInfo.Name } };
                 foreach (var diagnostic in diagnostics)
                 {
                     if (diagnostic.CaughtException != null)
                     {
-                        AnalyticsWrapper.Telemetry.TrackException(diagnostic.CaughtException, inputFilePath);
-                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles,
-                            _configuration.CopyFolders, _configuration.CommandLine);
+                        LoggingSystem.LogException(diagnostic.CaughtException, context);
+                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles, _configuration.CopyFolders, _configuration.CommandLine);
                     }
                 }
 
@@ -551,7 +559,7 @@ namespace TypeCobol.Server
 
                     foreach (var generationException in generationExceptions)
                     {
-                        AnalyticsWrapper.Telemetry.TrackException(generationException, generationException.Path);
+                        LoggingSystem.LogException(generationException, context);
 
                         if (generationException.NeedMail)
                         {
