@@ -36,10 +36,9 @@ Line 27[12,21] <27, Error, Syntax> - Syntax error : extraneous input 'end-search
            end-search
            evaluate true
                 when bool1 display "evaluate"
-      *KO missing statement in "when other" clause
                 when other
            move "hi" to var1
            goback.
-Line 34[8,28] <27, Error, Syntax> - Syntax error : Unexpected orphan "PROGRAM END".
-Line 34[8,28] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 33[8,28] <27, Error, Syntax> - Syntax error : Unexpected orphan "PROGRAM END".
+Line 33[8,28] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
        END PROGRAM WhenTest.
