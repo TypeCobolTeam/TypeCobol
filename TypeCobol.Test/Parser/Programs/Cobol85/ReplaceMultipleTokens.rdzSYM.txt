@@ -1,0 +1,23 @@
+﻿--- Program ---
+MyPGM (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  W-TAB-ENT (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: MyPGM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+       (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: MyPGM::W-TAB-ENT
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(70)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

@@ -247,7 +247,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Returns the substring of raw source text comprised between the starting and ending column of the token.
         /// </summary>
-        public string SourceText
+        public virtual string SourceText
         {
             get
             {
