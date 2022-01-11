@@ -163,17 +163,27 @@ namespace TypeCobol.Compiler.Parser
             if (largestRefreshParseSection != null)
             {
                 // Seek just before the next code element starting token
-                tokenStream.SeekToToken(largestRefreshParseSection.StartToken);
-                tokenStream.StartLookingForStopToken(largestRefreshParseSection.StopToken);
-
-                //Remove all the code elements for the future line to parse.
-                IncrementalLineLimit = (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
-                        ? largestRefreshParseSection.StopLineIndex + 1
-                        : largestRefreshParseSection.StopLineIndex);
-                for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
+                if (tokenStream.SeekToToken(largestRefreshParseSection.StartToken))
                 {
-                    if (documentLines[i].CodeElements != null)
-                        documentLines[i].ResetCodeElements();
+                    tokenStream.StartLookingForStopToken(largestRefreshParseSection.StopToken);
+
+                    //Remove all the code elements for the future line to parse.
+                    IncrementalLineLimit = (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
+                            ? largestRefreshParseSection.StopLineIndex + 1
+                            : largestRefreshParseSection.StopLineIndex);
+                    for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
+                    {
+                        if (documentLines[i].CodeElements != null)
+                            documentLines[i].ResetCodeElements();
+                    }
+                }
+                else
+                {
+                    // Fail to find a starting point ==> Reparse all.
+                    tokenStream.Seek(0);
+                    tokenStream.ResetStopTokenLookup();
+                    largestRefreshParseSection = null;
+                    refreshParseSections = null;
                 }
             }
           

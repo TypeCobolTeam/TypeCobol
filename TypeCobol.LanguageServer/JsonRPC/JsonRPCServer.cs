@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TypeCobol.LanguageServer.StdioHttp;
 using Analytics;
+using TypeCobol.Logging;
 
 namespace TypeCobol.LanguageServer.JsonRPC
 {
@@ -277,8 +278,10 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// </summary>
         public void WriteServerLog(string trace)
         {
+            //TODO #2091 May produce duplicate traces, remove or use LoggingSystem instead of logWriter in StdioHttpServer
+            LoggingSystem.LogMessage(LogLevel.Error, trace);
+
             messageServer.WriteServerLog(trace);
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Diagnostic, trace, LogType.Completion);
-        }       
+        }
     }
 }

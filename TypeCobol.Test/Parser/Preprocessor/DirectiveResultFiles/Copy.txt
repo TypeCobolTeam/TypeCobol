@@ -202,7 +202,7 @@ Line 36[46,53] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be u
 [8,7:]<SpaceSeparator>
 
 -- Line 47 --
-*** DIRECTIVE COPY TEST1.OF(LIBRARY1) <REPLACE[MultipleTokens] :,createError,(,: BY set,CCTERR-FCT-CRE-INN,to,true,call,CREATE-ERROR,using,CCTERR,CCTEXT,CCTFAL,CCTZON,CCTFRE> <REPLACE[MultipleTokens] :,),: BY omitted,end-call> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,17:TEST1]<UserDefinedWord>[18,18: ]<SpaceSeparator>[19,20:OF]<OF>[21,21: ]<SpaceSeparator>[22,29:LIBRARY1]<UserDefinedWord>) ***
+*** DIRECTIVE COPY TEST1.OF(LIBRARY1) <REPLACE[MultipleTokens] :,createError,(,: BY set, ,CCTERR-FCT-CRE-INN, ,to, ,true,                           ,       ,call, ,CREATE-ERROR, ,using, ,CCTERR, ,CCTEXT, ,CCTFAL, ,CCTZON, ,                                    ,CCTFRE> <REPLACE[MultipleTokens] :,),: BY omitted, ,end-call> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,17:TEST1]<UserDefinedWord>[18,18: ]<SpaceSeparator>[19,20:OF]<OF>[21,21: ]<SpaceSeparator>[22,29:LIBRARY1]<UserDefinedWord>) ***
 
 -- Line 48 --
 +++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,16:replacing]<REPLACING>[17,72:                                                        ]<SpaceSeparator>) +++
@@ -237,7 +237,7 @@ Line 36[46,53] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be u
 [17,17: ]<SpaceSeparator>
 [18,21:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 [22,23:. ]<PeriodSeparator>
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEST2.OF(LIBRARY2) <REPLACE[SingleToMultipleTokens] :TRAC: BY CCTLOG-LVL-I,or,TRC-I,call,ZCALLPGM,using,CCTZXLOG,CCTEXT,CCTFAL,CCTZON,CCTFRE,CCTLOG> <REPLACE[SingleToMultipleTokens] :FIN-LOG: BY omitted,end-call,end-if> ([24,27:COPY]<COPY>[28,28: ]<SpaceSeparator>[29,33:TEST2]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,36:IN]<IN>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEST2.OF(LIBRARY2) <REPLACE[SingleToMultipleTokens] :TRAC: BY CCTLOG-LVL-I, ,or, ,TRC-I,                                  ,          ,call, ,ZCALLPGM, ,using, ,CCTZXLOG, ,CCTEXT, ,CCTFAL, ,CCTZON,                                ,CCTFRE, ,CCTLOG> <REPLACE[SingleToMultipleTokens] :FIN-LOG: BY omitted,                                       ,             ,end-call,                                         ,             ,end-if> ([24,27:COPY]<COPY>[28,28: ]<SpaceSeparator>[29,33:TEST2]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,36:IN]<IN>) ***
 Line 58[17,24] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 58 --

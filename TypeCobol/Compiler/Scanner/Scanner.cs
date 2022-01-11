@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +29,13 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan a line of a document
         /// </summary>
-        public static void ScanTokensLine(TokensLine tokensLine, MultilineScanState initialScanState, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        /// <param name="tokensLine"></param>
+        /// <param name="initialScanState"></param>
+        /// <param name="compilerOptions"></param>
+        /// <param name="copyTextNameVariations"></param>
+        /// <param name="multiStringConcatBitPosition">Bit array of Multi String concatenation positions</param>
+        public static void ScanTokensLine(TokensLine tokensLine, MultilineScanState initialScanState, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations,
+            BitArray multiStringConcatBitPosition = null)
         {
             // Updates are forbidden after a snapshot of a specific version of a line
             if(!tokensLine.CanStillBeUpdatedBy(CompilationStep.Scanner))
@@ -89,8 +96,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
-            if (textLine.Type == CobolTextLineType.Comment ||
-                (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
+            if (textLine.Type == CobolTextLineType.Comment || (tokensLine.Type == CobolTextLineType.Debug && !IsDebugLineActive(tokensLine)))
             {
                 if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
                 {
@@ -148,7 +154,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // Create a stateful line scanner, and iterate over the tokens
-            Scanner scanner = new Scanner(line, startIndex, lastIndex, tokensLine, compilerOptions);
+            Scanner scanner = new Scanner(line, startIndex, lastIndex, tokensLine, compilerOptions, true, multiStringConcatBitPosition);
             Token nextToken = null;
             while((nextToken = scanner.GetNextToken()) != null)
             {
@@ -214,6 +220,33 @@ namespace TypeCobol.Compiler.Scanner
         }
 #endif
 
+        private static bool IsDebugLineActive(ITokensLine tokensLine)
+        {
+            System.Diagnostics.Debug.Assert(tokensLine.Type == CobolTextLineType.Debug);
+
+            if (!tokensLine.ScanState.WithDebuggingMode)
+            {
+                /*
+                 * DebuggingMode is inactive but REPLACE directives are a special case.
+                 * As replacing should happen before scanning, debug indicators are irrelevant
+                 * and REPLACE directives are active no matter what.
+                 *
+                 * So an inactive debug line has to be parsed as regular source if it participates
+                 * in a REPLACE directive.
+                 */
+                return tokensLine.ScanState.InsideReplaceDirective || StartsWithReplace();
+            }
+
+            //DebuggingMode is active, debug line is considered as regular source line.
+            return true;
+
+            bool StartsWithReplace()
+            {
+                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
+                return tokensLine.SourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
         /// <summary>
         /// Scan a group of continuation lines
         /// </summary>
@@ -237,7 +270,7 @@ namespace TypeCobol.Compiler.Scanner
             for (; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine line = continuationLinesGroup[i];
-                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && scanState.WithDebuggingMode))
+                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && IsDebugLineActive(line)))
                 {
                     hasSource = true;
                     break;
@@ -267,6 +300,8 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 }
             }
+            // Positions in the concatenatedLine string where multi strings must be applied.
+            List<int> multiStringConcatPositions = new List<int>(lastContinuationLineIndex - firstSourceLineIndex);
 
             // Iterate over the continuation lines (some blank lines or comment lines may come in-between)
             // => build a character string representing the complete continuation text along the way
@@ -413,13 +448,41 @@ namespace TypeCobol.Compiler.Scanner
 
                             // If an alphanumeric literal that is to be continued on the next line has as its last character a quotation mark in column 72, 
                             // the continuation line must start with two consecutive quotation marks.
+                            // In ColumnsLayout.CobolReferenceFormat we just check that the quotation mark is the last character of the line.
                             if (lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                             {
-                                if ((startOfContinuationIndex + 1) > lastIndex || line[startOfContinuationIndex + 1] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
+                                bool continuationStartsWithTwoDelimiters = ((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                                bool previousDelimiterIsNotAtEnd = (lastTokenOfConcatenatedLineSoFar.EndColumn + CobolFormatAreas.Indicator) != CobolFormatAreas.End_B;
+
+                                if (format == ColumnsLayout.CobolReferenceFormat ? continuationStartsWithTwoDelimiters && previousDelimiterIsNotAtEnd : !continuationStartsWithTwoDelimiters)
                                 {
-                                    continuationLine.AddDiagnostic(MessageCode.InvalidFirstTwoCharsForContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                                    continuationLine.AddDiagnostic(MessageCode.InvalidFirstTwoCharsForContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter,
+                                        format == ColumnsLayout.CobolReferenceFormat
+                                        ? "in column 72"
+                                        : "at the last column");
                                     // Use the first quotation mark to avoid a complete mess while scanning the rest of the line
                                     offsetForLiteralContinuation = 0;
+                                }
+                                else
+                                {
+                                    bool isQuoteInsertedInString = continuationStartsWithTwoDelimiters && (format == ColumnsLayout.CobolReferenceFormat ? !previousDelimiterIsNotAtEnd : true);
+                                    if (!isQuoteInsertedInString)
+                                    { // This is a multi string concatenation, so remember concatenation position in the whole string
+                                        multiStringConcatPositions.Add(concatenatedLine.Length);
+                                        // Here also use the first quotation mark.
+                                        offsetForLiteralContinuation = 0;
+                                        // Check error cases
+                                        if ((startOfContinuationIndex + 1) == (int)CobolFormatAreas.Begin_A && format == ColumnsLayout.CobolReferenceFormat)
+                                        { // A blank is missing before character """ in column 8. A blank is assumed                                            
+                                            continuationLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace,
+                                                startOfContinuationIndex, startOfContinuationIndex + 1,
+                                                lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter, (int)CobolFormatAreas.Begin_A);
+                                        }
+                                        if ((startOfContinuationIndex + 1) < (int)CobolFormatAreas.Begin_B && format == ColumnsLayout.CobolReferenceFormat)
+                                        { // The literal must be in Area B
+                                            continuationLine.AddDiagnostic(MessageCode.AreaAOfContinuationLineMustBeBlank, startOfContinuationIndex, startOfContinuationIndex + 1);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -465,7 +528,17 @@ namespace TypeCobol.Compiler.Scanner
 
             // Scan the complete continuation text as a whole
             TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine);
-            Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
+            // Create a BitArray of Multi String Positions based on the length of the concatenated line.
+            BitArray multiStringConcatBitPosition = null;
+            if (multiStringConcatPositions.Count > 0)
+            {
+                multiStringConcatBitPosition = new BitArray(concatenatedLine.Length);
+                foreach (int pos in multiStringConcatPositions)
+                {
+                    multiStringConcatBitPosition.Set(pos, true);
+                }
+            }
+            Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations, multiStringConcatBitPosition);
 
             // Then attribute each token and diagnostic to its corresponding tokens line
             i = firstSourceLineIndex;
@@ -604,8 +677,17 @@ namespace TypeCobol.Compiler.Scanner
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext);
 
-            Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
-            Token candidateToken = tempScanner.GetNextToken();
+            Token candidateToken;
+            if (tokenText.Length > 0)
+            {
+                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
+                candidateToken = tempScanner.GetNextToken();
+            }
+            else
+            {
+                //Create an empty SpaceSeparator token.
+                candidateToken = new Token(TokenType.SpaceSeparator, 0, -1, tempTokensLine);
+            }
 
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
             {
@@ -627,6 +709,10 @@ namespace TypeCobol.Compiler.Scanner
 
         private readonly TypeCobolOptions compilerOptions;
         private readonly CobolLanguageLevel targetLanguageLevel;
+        /// <summary>
+        /// Bit array of Multi String concatenation positions if any.
+        /// </summary>
+        private readonly BitArray multiStringConcatBitPosition;
 
         private bool InterpretDoubleColonAsQualifiedNameSeparator
         {
@@ -639,7 +725,17 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="startIndex"></param>
+        /// <param name="lastIndex"></param>
+        /// <param name="tokensLine"></param>
+        /// <param name="compilerOptions"></param>
+        /// <param name="beSmartWithLevelNumber"></param>
+        /// <param name="multiStringConcatBitPosition">Bit array of Multi String concatenation positions</param>
+        public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true, BitArray multiStringConcatBitPosition = null)
         {
             this.tokensLine = tokensLine;
             this.line = line;
@@ -650,6 +746,7 @@ namespace TypeCobol.Compiler.Scanner
             this.targetLanguageLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
 
             this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
+            this.multiStringConcatBitPosition = multiStringConcatBitPosition;
         }
 
         public Token GetNextToken()
@@ -1034,7 +1131,7 @@ namespace TypeCobol.Compiler.Scanner
                     // The COPY statement with REPLACING phrase can be used to replace parts of words. 
                     // By inserting a dummy operand delimited by colons into the program text, the compiler will replace the dummy operand with the desired text. 
                     int patternEndIndex;
-                    if (CheckForPartialCobolWordPattern(startIndex, out patternEndIndex))
+                    if (ScannerUtils.CheckForPartialCobolWordPattern(line, startIndex, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex))
                     {
                         return ScanPartialCobolWord(startIndex, patternEndIndex);
                     }
@@ -1821,7 +1918,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (currentIndex < lastIndex)
                 {
                     // continue in case of a double delimiter
-                    if (line[currentIndex + 1] == delimiter)
+                    if (line[currentIndex + 1] == delimiter && !(multiStringConcatBitPosition?.Get(currentIndex + 1)??false))
                     {
                         // consume the two delimiters
                         currentIndex += 2;
@@ -1989,7 +2086,8 @@ namespace TypeCobol.Compiler.Scanner
             {                
                 var patternEndIndex = endIndex;
                 var replaceStartIndex = line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex;
-                if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && CheckForPartialCobolWordPattern(replaceStartIndex, out patternEndIndex)) 
+                if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && 
+                    ScannerUtils.CheckForPartialCobolWordPattern(line, replaceStartIndex, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex)) 
                 { //Check if there is cobol partial word inside the picture declaration. 
                     //Match the whole PictureCharecterString token as a partial cobol word. 
                     var picToken = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
@@ -2112,7 +2210,7 @@ namespace TypeCobol.Compiler.Scanner
             if(endIndex + 3 <= lastIndex && line[endIndex + 1] == ':')
             {
                 int patternEndIndex;
-                if(CheckForPartialCobolWordPattern(endIndex + 1, out patternEndIndex))
+                if(ScannerUtils.CheckForPartialCobolWordPattern(line, endIndex + 1, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex))
                 {
                     return ScanPartialCobolWord(startIndex, patternEndIndex);
                 }
@@ -2351,51 +2449,6 @@ namespace TypeCobol.Compiler.Scanner
             return new Token(tokenType, startIndex, end, tokensLine);
         }
         
-        /// <summary>
-        /// Look for pattern ':' (cobol word chars)+ ':'
-        /// </summary>
-        private bool CheckForPartialCobolWordPattern(int startIndex, out int patternEndIndex)
-        {
-            //This method is always called on a starting ':'
-            System.Diagnostics.Debug.Assert(line[startIndex] == ':');
-            patternEndIndex = -1;
-
-            // match leading spaces if any
-            int index = startIndex + 1;
-            for (; index <= lastIndex && line[index] == ' '; index++)
-            { }
-
-            // match all legal cobol word chars
-            for (; index <= lastIndex && CobolChar.IsCobolWordChar(line[index]); index++) 
-            { }
-
-            // match trailing spaces if any
-            for (; index <= lastIndex && line[index] == ' '; index++)
-            { }
-
-            // next character must be ':'
-            if (line.Length > index && line[index] == ':')
-            {
-                // Empty tag, we only found '::'
-                if (index == startIndex + 1 && InterpretDoubleColonAsQualifiedNameSeparator)
-                {
-                    return false;
-                }
-
-                // character after is another ':'
-                if (line.Length > index + 1 && line[index + 1] == ':' && InterpretDoubleColonAsQualifiedNameSeparator)
-                {
-                    return false;
-                }
-
-                // Tag is properly closed
-                patternEndIndex = index;
-                return true;
-            }
-
-            return false;
-        }
-
         // :PREFIX:-NAME or NAME-:SUFFIX: or :TAG:
         private Token ScanPartialCobolWord(int startIndex, int patternEndIndex)
         {
@@ -2416,7 +2469,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (searchIndex + 3 <= lastIndex && line[searchIndex + 1] == ':')
                 {
                     int otherPatternEndIndex;
-                    if (CheckForPartialCobolWordPattern(searchIndex + 1, out otherPatternEndIndex))
+                    if (ScannerUtils.CheckForPartialCobolWordPattern(line, searchIndex + 1, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out otherPatternEndIndex))
                     {
                         endIndex = otherPatternEndIndex;
                     }

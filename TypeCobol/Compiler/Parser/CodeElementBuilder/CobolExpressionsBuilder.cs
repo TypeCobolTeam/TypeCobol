@@ -750,12 +750,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.conditionOperand() != null)
 			{
 				ConditionOperand objectOperand = CreateConditionOperand(context.conditionOperand());
-				RelationalOperator relationalOperator = distributedRelationalOperator;
-				if (context.relationalOperator() != null)
-				{
-					relationalOperator = CreateRelationalOperator(context.relationalOperator());
-				}
-				return new RelationCondition(subjectOperand, relationalOperator, objectOperand);
+				return new RelationCondition(subjectOperand, distributedRelationalOperator, objectOperand);
 			}
 			else
 			{
@@ -779,12 +774,17 @@ namespace TypeCobol.Compiler.Parser
 					   ParseTreeUtils.GetFirstToken(context.OR()));
 				}
 
-			    var abbreviateExpressionArray = context.abbreviatedExpression();
-                if (logicalOperator == null && abbreviateExpressionArray != null && abbreviateExpressionArray.Length > 0)
+				var abbreviateExpressionArray = context.abbreviatedExpression();
+				if (logicalOperator == null && abbreviateExpressionArray != null && abbreviateExpressionArray.Length > 0)
 				{
-					return CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, abbreviateExpressionArray[0]);
+					RelationalOperator relationalOperator = distributedRelationalOperator;
+					if (context.relationalOperator() != null)
+					{
+						relationalOperator = CreateRelationalOperator(context.relationalOperator());
+					}
+					return CreateAbbreviatedExpression(subjectOperand, relationalOperator, abbreviateExpressionArray[0]);
 				}
-				else if(abbreviateExpressionArray != null && abbreviateExpressionArray.Length > 0)
+				else if (abbreviateExpressionArray != null && abbreviateExpressionArray.Length > 0)
 				{
 					if (abbreviateExpressionArray.Length == 1)
 					{
@@ -798,8 +798,8 @@ namespace TypeCobol.Compiler.Parser
 						return new LogicalOperation(leftOperand, logicalOperator, rightOperand);
 					}
 				}
-                else
-                    return null;
+				else
+					return null;
 			}
 		}
 
