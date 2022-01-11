@@ -638,5 +638,30 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    class WhenConditionStatementChecker
+    {
+        public static void OnCodeElement(WhenCondition statement, CodeElementsParser.WhenConditionContext context)
+        {
+            var rhsExprs = context.comparisonRHSExpression();
+            if (rhsExprs.Length == 0)
+            {
+                DiagnosticUtils.AddError(statement, "Missing condition in \"when\" clause", context);
+            }
+        }
+    }
+
+    class GotoConditionalStatementChecker
+    {
+        public static void OnCodeElement(GotoConditionalStatement statement, CodeElementsParser.GotoConditionalContext context)
+        {
+            if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
+                DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
+            if (statement.ProcedureNames.Length < 1 && statement.DependingOn != null)
+                DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
+            if (statement.ProcedureNames.Length > 255)
+                DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
+        }
+    }
+
     #endregion
 }

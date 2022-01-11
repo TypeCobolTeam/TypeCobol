@@ -791,6 +791,19 @@ namespace TypeCobol.Compiler.CodeModel
             return Paragraphs.Values.SelectMany(p => p).AsQueryable().Where(predicate).Distinct();
         }
 
+        /// <summary>
+        /// Get all paragraphs with the given name and declared as a child of the specified node
+        /// </summary>
+        /// <returns>The collection of paragraph</returns>
+        public IEnumerable<Paragraph> GetParagraphs(string paragraphName, Node owner)
+        {
+            if (Paragraphs.TryGetValue(paragraphName, out var paragraphs))
+            {
+                return paragraphs.Where(p => p.Parent == owner);
+            }
+            return null;
+        }
+
         #endregion
 
         /// <summary>

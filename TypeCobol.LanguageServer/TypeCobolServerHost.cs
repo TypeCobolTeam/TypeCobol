@@ -10,6 +10,8 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Logging;
+using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
 {
@@ -141,9 +143,9 @@ namespace TypeCobol.LanguageServer
         public static System.Diagnostics.Process Process;
 
         /// <summary>
-        /// Custom Analyzers Dll Paths
+        /// Custom extensions Dll Paths
         /// </summary>
-        public static List<string> CustomAnalyzerFiles = new List<string>();
+        public static List<string> Extensions = new List<string>();
 
         /// <summary>
         /// Run the Lsr Process
@@ -238,7 +240,8 @@ namespace TypeCobol.LanguageServer
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
-                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => CustomAnalyzerFiles.Add(v) },
+                { "ca|customanalyzer=", "OBSOLETE - Use 'ext' option instead.", v => Extensions.Add(v) },
+                { "ext|extension=", "{PATH} to a custom DLL file containing parser extension(s). This option can be specified more than once.", v => Extensions.Add(v) },
                 { "now|nowatchers",  "No Copy and Dependency files watchers.", _ => NoCopyDependencyWatchers = true}
             };
 
@@ -255,6 +258,15 @@ namespace TypeCobol.LanguageServer
             {
                 System.Console.WriteLine(Version);
                 return 0;
+            }
+
+            //TODO #2091 Add DebugLogger and FileLogger
+
+            //External loggers if extensions have been provided
+            var extensionManager = new ExtensionManager(Extensions);
+            foreach (var externalLogger in extensionManager.Activate<ILogger>())
+            {
+                LoggingSystem.RegisterLogger(externalLogger);
             }
 
             TextWriter logWriter = null;
@@ -317,7 +329,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
-                typeCobolServer.CustomAnalyzerFiles = CustomAnalyzerFiles;
+                typeCobolServer.ExtensionManager = extensionManager;
                 typeCobolServer.NoCopyDependencyWatchers = NoCopyDependencyWatchers;
 #if EUROINFO_RULES
                 typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;

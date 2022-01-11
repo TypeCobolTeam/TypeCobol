@@ -1881,7 +1881,9 @@ namespace TypeCobol.Compiler.Parser
 				CodeElement = CobolStatementsBuilder.CreateGotoStatement(context.gotoSimple());
 			}
 			if (context.gotoConditional() != null) {
-				CodeElement = CobolStatementsBuilder.CreateGotoConditionalStatement(context.gotoConditional());
+				var statement = CobolStatementsBuilder.CreateGotoConditionalStatement(context.gotoConditional());
+				CodeElement = statement;
+				GotoConditionalStatementChecker.OnCodeElement(statement, context.gotoConditional());
 			}
 		}
 
@@ -2173,7 +2175,9 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateWhenCondition(context);
+			var whenCondition = CobolStatementsBuilder.CreateWhenCondition(context); ;
+			CodeElement = whenCondition;
+			WhenConditionStatementChecker.OnCodeElement(whenCondition, context);
 		}
 		public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context) {
 			Context = context;

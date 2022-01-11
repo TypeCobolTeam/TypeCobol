@@ -21,7 +21,7 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,16:"toto  ""and titi3"]<AlphanumericLiteral>(",Y,Y){toto  "and titi3}
 [17,17+:.]<PeriodSeparator>
-Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previous line ended with a delimiter " in the last column,  this continuation line must start with two delimiters ""
+Line 0[5,6] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters "" only if the alphanumeric literal on the previous line ended with a delimiter " at the last column
 
 -- Line 7 --
 [1,8:"toto  "]<AlphanumericLiteral>(",Y,Y){toto  }
@@ -92,7 +92,7 @@ Line 0[5,6] <21, Error, Tokens> - The delimiter character of this continuation l
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,17:'toto''and titi11']<AlphanumericLiteral>(',Y,Y){toto'and titi11}
 [18,18: ]<SpaceSeparator>
-Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previous line ended with a delimiter ' in the last column,  this continuation line must start with two delimiters ''
+Line 0[5,6] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters '' only if the alphanumeric literal on the previous line ended with a delimiter ' at the last column
 
 -- Line 24 --
 =>continued:[1,6:'toto''and titi11b']<AlphanumericLiteral>(',Y,Y){toto'and titi11b}

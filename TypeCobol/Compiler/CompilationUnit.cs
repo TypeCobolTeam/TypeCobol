@@ -180,12 +180,6 @@ namespace TypeCobol.Compiler
                     builder.Append(CodeElementsParserStep.AntlrPerformanceProfiler.WriteInfoToString());
                 }
 
-                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForTemporarySemantic.ActivateDetailedAntlrPofiling)
-                {
-                    builder.Append("\n\n---PROGRAM CLASS PARSER STEP---\n");
-                    builder.Append(ProgramClassParserStep.AntlrPerformanceProfiler.WriteInfoToString());
-                }
-
                 return builder.ToString();
             }
         }
