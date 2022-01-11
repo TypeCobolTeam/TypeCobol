@@ -436,11 +436,6 @@ namespace TypeCobol.Compiler.Text
                 {
                     Type = CobolTextLineType.Blank;
                 }
-                // Hack: this is a pseudo continuation line, it allows splitting of PartialCobolWords in REPLACE without marking continuation explicitly
-                else if (Type != CobolTextLineType.Continuation && SourceText.TrimStart().StartsWith(":=="))
-                {
-                    Type = CobolTextLineType.Continuation;
-                }
             }
         }
 

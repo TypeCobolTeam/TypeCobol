@@ -452,9 +452,37 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Evaluate evaluate)
         {
-            if (evaluate.GetChildren<WhenOther>().Count == 0)
-                DiagnosticUtils.AddError(evaluate,
-                    "\"when other\" is missing", MessageCode.Warning);
+            bool whenOtherSeen = false;
+            //Start to loop on children from the end because:
+            //- Grammar enforce that there is 0 to 1 "whenOther" and that it's the last element of an "evaluate"
+            //- Invalid empty "when" can only be the last "when"
+            for (int i = evaluate.ChildrenCount - 1; i >= 0; i--)
+            {
+                if (evaluate.Children[i] is WhenOther)
+                {
+                    whenOtherSeen = true;
+                }
+                else if (evaluate.Children[i] is Then then)
+                {
+                    if (then.ChildrenCount == 0)
+                    {
+                        // i is the Then node
+                        // i-1 is the When group
+                        var whenGroup = then.Parent.Children[i - 1];
+                        System.Diagnostics.Debug.Assert(whenGroup.ChildrenCount > 0);
+                        //Get the last When of the WhenGroup. This is the invalid empty When
+                        var whenNode = whenGroup.Children[whenGroup.ChildrenCount - 1];
+                        System.Diagnostics.Debug.Assert(whenNode.CodeElement?.Type == CodeElementType.WhenCondition);
+                        //Syntax error.
+                        DiagnosticUtils.AddError(whenNode, "Missing statement in \"when\" clause");
+                    }
+                    break; //Previous "when" are allowed to have no instructions (#1593)
+                }
+            }
+            if (!whenOtherSeen)
+            {
+                DiagnosticUtils.AddError(evaluate, "\"when other\" is missing", MessageCode.Warning);
+            }
             return true;
         }
 
@@ -634,7 +662,6 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (end.CodeElement.Type == CodeElementType.ProgramEnd && !(end.Parent is Program))
                 {
-                    System.Diagnostics.Debug.Assert(end.Parent is SourceFile);
                     DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\".", _compilerOptions.CheckEndProgram.GetMessageCode());
                 }
             }

@@ -391,10 +391,12 @@ namespace TypeCobol.Compiler.CupCommon
                 case AnyTokenCategory.PseudoText:
                 {
                     if (!BasicAnyTokenMode(token, symbol))
+                    {
                         if (token.TokenType == TokenType.PseudoTextDelimiter)
                         {//Enter again in the any token mode
                             EnterAnyTokenMode(TokenType.PseudoTextDelimiter, TokenType.PseudoTextDelimiter, TokenType.COPY);
                         }
+                    }
                     if (token.TokenType == TokenType.END_EXEC && symbol.sym == TokenType2CupTokenType(TokenType.END_EXEC))
                     {
                         symbol.sym = TryMatchNextToken(TokenType.PeriodSeparator, END_EXEC_PERIOD_SEPARATOR, symbol.sym);
@@ -422,7 +424,7 @@ namespace TypeCobol.Compiler.CupCommon
             FirstToken = null;
             LastToken = null;            
             Token token = null;
-            while ((token = base.NextToken()).TokenType != TokenType.EndOfFile)
+            while ((token = base.NextToken(!IsAnyTokenMode)).TokenType != TokenType.EndOfFile)
             {
                 if (FirstToken == null)
                 {

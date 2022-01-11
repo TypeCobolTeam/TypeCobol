@@ -45,7 +45,6 @@ namespace TypeCobol.LanguageServer
             {
                 return node;
             }
-
             return null;
         }
 
