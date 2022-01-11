@@ -50,7 +50,6 @@
     <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs">
       <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
     </Compile>
-
     <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
