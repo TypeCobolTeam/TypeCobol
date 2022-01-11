@@ -1131,7 +1131,7 @@ namespace TypeCobol.Compiler.Scanner
                     // The COPY statement with REPLACING phrase can be used to replace parts of words. 
                     // By inserting a dummy operand delimited by colons into the program text, the compiler will replace the dummy operand with the desired text. 
                     int patternEndIndex;
-                    if (CheckForPartialCobolWordPattern(startIndex, out patternEndIndex))
+                    if (ScannerUtils.CheckForPartialCobolWordPattern(line, startIndex, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex))
                     {
                         return ScanPartialCobolWord(startIndex, patternEndIndex);
                     }
@@ -2086,7 +2086,8 @@ namespace TypeCobol.Compiler.Scanner
             {                
                 var patternEndIndex = endIndex;
                 var replaceStartIndex = line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex;
-                if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && CheckForPartialCobolWordPattern(replaceStartIndex, out patternEndIndex)) 
+                if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && 
+                    ScannerUtils.CheckForPartialCobolWordPattern(line, replaceStartIndex, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex)) 
                 { //Check if there is cobol partial word inside the picture declaration. 
                     //Match the whole PictureCharecterString token as a partial cobol word. 
                     var picToken = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
@@ -2209,7 +2210,7 @@ namespace TypeCobol.Compiler.Scanner
             if(endIndex + 3 <= lastIndex && line[endIndex + 1] == ':')
             {
                 int patternEndIndex;
-                if(CheckForPartialCobolWordPattern(endIndex + 1, out patternEndIndex))
+                if(ScannerUtils.CheckForPartialCobolWordPattern(line, endIndex + 1, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex))
                 {
                     return ScanPartialCobolWord(startIndex, patternEndIndex);
                 }
@@ -2448,51 +2449,6 @@ namespace TypeCobol.Compiler.Scanner
             return new Token(tokenType, startIndex, end, tokensLine);
         }
         
-        /// <summary>
-        /// Look for pattern ':' (cobol word chars)+ ':'
-        /// </summary>
-        private bool CheckForPartialCobolWordPattern(int startIndex, out int patternEndIndex)
-        {
-            //This method is always called on a starting ':'
-            System.Diagnostics.Debug.Assert(line[startIndex] == ':');
-            patternEndIndex = -1;
-
-            // match leading spaces if any
-            int index = startIndex + 1;
-            for (; index <= lastIndex && line[index] == ' '; index++)
-            { }
-
-            // match all legal cobol word chars
-            for (; index <= lastIndex && CobolChar.IsCobolWordChar(line[index]); index++) 
-            { }
-
-            // match trailing spaces if any
-            for (; index <= lastIndex && line[index] == ' '; index++)
-            { }
-
-            // next character must be ':'
-            if (line.Length > index && line[index] == ':')
-            {
-                // Empty tag, we only found '::'
-                if (index == startIndex + 1 && InterpretDoubleColonAsQualifiedNameSeparator)
-                {
-                    return false;
-                }
-
-                // character after is another ':'
-                if (line.Length > index + 1 && line[index + 1] == ':' && InterpretDoubleColonAsQualifiedNameSeparator)
-                {
-                    return false;
-                }
-
-                // Tag is properly closed
-                patternEndIndex = index;
-                return true;
-            }
-
-            return false;
-        }
-
         // :PREFIX:-NAME or NAME-:SUFFIX: or :TAG:
         private Token ScanPartialCobolWord(int startIndex, int patternEndIndex)
         {
@@ -2513,7 +2469,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (searchIndex + 3 <= lastIndex && line[searchIndex + 1] == ':')
                 {
                     int otherPatternEndIndex;
-                    if (CheckForPartialCobolWordPattern(searchIndex + 1, out otherPatternEndIndex))
+                    if (ScannerUtils.CheckForPartialCobolWordPattern(line, searchIndex + 1, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out otherPatternEndIndex))
                     {
                         endIndex = otherPatternEndIndex;
                     }
