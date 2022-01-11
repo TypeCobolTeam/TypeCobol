@@ -77,5 +77,24 @@ namespace TypeCobol.Compiler.Scanner
             }
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Text returned to the parser :
+        /// - The concatenation of SourceText of all OriginalTokens.
+        /// </summary>
+        public override string SourceText
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (Token token in OriginalTokens)
+                {
+                    sb.Append(token.SourceText);
+                }
+                String t = sb.ToString();
+                return t;
+            }
+        }
+
     }
 }
