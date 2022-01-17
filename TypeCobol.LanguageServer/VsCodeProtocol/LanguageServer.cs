@@ -39,6 +39,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             rpcServer.RegisterNotificationMethod(DidCloseTextDocumentNotification.Type, CallDidCloseTextDocument);
             rpcServer.RegisterNotificationMethod(DidOpenTextDocumentNotification.Type, CallDidOpenTextDocument);
             rpcServer.RegisterNotificationMethod(DidSaveTextDocumentNotification.Type, CallDidSaveTextDocument);
+            rpcServer.RegisterNotificationMethod(InitializedNotification.Type, CallClientInitialized);
 
             RemoteConsole = new RemoteConsole(rpcServer);
             RemoteWindow = new RemoteWindow(rpcServer);
@@ -479,6 +480,19 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
+        private void CallClientInitialized(NotificationType notificationType, object parameters)
+        {
+            try
+            {
+                OnClientInitialized((InitializedParams) parameters);
+            }
+            catch (Exception e)
+            {
+                NotifyException(e);
+                RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+            }
+        }
+
         // --- Fully typed methods to overload in derived classes ---
 
         /// <summary>
@@ -584,6 +598,13 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The document save notification is sent from the client to the server when the document for saved in the client.
         /// </summary>
         protected virtual void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        { }
+
+        /// <summary>
+        /// The client signals is fully initialized and is now ready to receive notifications/requests.
+        /// </summary>
+        /// <param name="parameters">Notification params, it is an empty class.</param>
+        protected virtual void OnClientInitialized(InitializedParams parameters)
         { }
 
         /// <summary>
