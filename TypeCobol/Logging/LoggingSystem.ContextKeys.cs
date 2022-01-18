@@ -16,6 +16,11 @@
             /// Informational version number of the TypeCobol assembly
             /// </summary>
             public static readonly string ParserVersion = "ParserVersion";
+
+            /// <summary>
+            /// Command line for current process
+            /// </summary>
+            public static readonly string EnvironmentCommandLine = "EnvironmentCommandLine";
         }
     }
 }

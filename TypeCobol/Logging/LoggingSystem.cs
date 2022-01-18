@@ -124,8 +124,9 @@ namespace TypeCobol.Logging
 
         private static IDictionary<string, object> AddMinimalContext(IDictionary<string, object> contextData)
         {
-            var result = contextData ?? new Dictionary<string, object>(1);
+            var result = contextData ?? new Dictionary<string, object>(2);
             result[ContextKeys.ParserVersion] = Parser.Version;
+            result[ContextKeys.EnvironmentCommandLine] = Environment.CommandLine;
             return result;
         }
 

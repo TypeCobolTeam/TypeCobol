@@ -717,7 +717,7 @@ namespace TypeCobol.LanguageServer
                     LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 LoggingSystem.LogException(exception);
-                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
+                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles, Configuration.CopyFolders, Environment.CommandLine);
             }
 
         }

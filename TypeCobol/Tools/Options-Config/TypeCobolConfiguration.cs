@@ -17,7 +17,6 @@ namespace TypeCobol.Tools.Options_Config
     /// </summary>
     public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
-        public string CommandLine { get; set; }
         public DocumentFormat Format;
         public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
