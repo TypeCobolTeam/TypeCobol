@@ -23,19 +23,24 @@
       * Ko for US and IBM as not used for a level 88
         01 G PIC X(200) VALUE
                   "AAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCDDDDDDD"
+Line 26[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
 Line 26[18,62] <27, Error, Syntax> - Syntax error : extraneous input '"GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"' expecting {separator, statement starting keyword, keyword}
       -          "GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
+Line 27[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
       -          "LLLLLLLLLLMMMMMMMMMMM".
       
       * Ko: Was accepted by US and not IBM but only in DATA DIVISION
         01 CONSTPARM2             PIC X(78) VALUE
             'WYYYYYY PROV RANGE 01: YYYYYYY THRU YYYYYYY'
+Line 32[11,12] <12, Warning, Tokens> - A blank was missing before character "'" in column 12. A blank was assumed.
 Line 32[12,35] <27, Error, Syntax> - Syntax error : extraneous input ''TAXONOMY: YYYYYYYYYYYY'' expecting {separator, statement starting keyword, keyword}
       -    'TAXONOMY: YYYYYYYYYYYY'.
       * Ko: was accepted by US and not IBM because ' is not colum 72
        01 CONSTPARM2             PIC X(78) VALUE
            'WYYYYYY PROV RANGE 01: YYYYYYY THRU YYYYYYY'
 Line 36[11,12] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters '' only if the alphanumeric literal on the previous line ended with a delimiter ' in column 72
+Line 36[14,21] <12, Warning, Tokens> - A blank was missing before character "T" in column 14. A blank was assumed.
+Line 36[36,37] <12, Warning, Tokens> - A blank was missing before character "'" in column 36. A blank was assumed.
 Line 36[14,21] <27, Error, Syntax> - Syntax error : extraneous input 'TAXONOMY' expecting {separator, statement starting keyword, keyword}
       -    ''TAXONOMY: YYYYYYYYYYYY'.
       * accepted by US and IBM because ' is colum 72
@@ -46,14 +51,18 @@ Line 36[14,21] <27, Error, Syntax> - Syntax error : extraneous input 'TAXONOMY' 
        01 H PIC X(200).
            88 HH VALUE
                  "AAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCDDDDDDDEEEEEEEEEE"
+Line 45[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
       -          "GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
+Line 46[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
       -          "LLLLLLLLLLMMMMMMMMMMM".
       
       * Ko it is not for a 88 level.
        01 I PIC X(200) VALUE
                  "AAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCDDDDDDDEEEEEEEEEE"
+Line 51[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
 Line 51[18,62] <27, Error, Syntax> - Syntax error : extraneous input '"GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"' expecting {separator, statement starting keyword, keyword}
       -          "GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
+Line 52[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
       -          "LLLLLLLLLLMMMMMMMMMMM".
 
       * Ko: continuation < Area B.
@@ -69,14 +78,17 @@ Line 59[7,8] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuat
        Procedure Division.
       * Ok: was not accepted by US.
            DISPLAY 'A sample text 1 '
+Line 63[19,20] <12, Warning, Tokens> - A blank was missing before character "'" in column 20. A blank was assumed.
       -            '(foo 1) : ' W-Var1
            DISPLAY 'A sample text 2 '
       -            "(foo 2) : " W-Var1
            DISPLAY "A sample text 3 "
+Line 67[19,20] <12, Warning, Tokens> - A blank was missing before character """ in column 20. A blank was assumed.
       -            "(foo 3) : " W-Var1
            DISPLAY "A sample text 4 "
       -            '(foo 4) : ' W-Var1
            DISPLAY 'W89JSXX PROV RANGE 01: XXXXXXX THRU XXXXXXX   '
+Line 71[19,20] <12, Warning, Tokens> - A blank was missing before character "'" in column 20. A blank was assumed.
       -            'TAXONOMY: XXXXXXXXXX'.
       
       * Ok accepted by US and IBM
@@ -98,7 +110,9 @@ Line 59[7,8] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuat
       * Ok: was Ko for US but Ok for IBM
            DISPLAY
                  "AAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCDDDDDDD"
+Line 92[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
       -          "GGGGGGGGGGHHHHHHHHHHHHHHHHHHHHKKKKKKKKKKKKJ"
+Line 93[17,18] <12, Warning, Tokens> - A blank was missing before character """ in column 18. A blank was assumed.
       -          "LLLLLLLLLLMMMMMMMMMMM".
       
            move A to B

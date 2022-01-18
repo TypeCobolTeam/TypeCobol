@@ -14,6 +14,19 @@ namespace TypeCobol.Compiler.Scanner
             Token = token;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="usePredefinedArguments">True if predefined arguments are used, false otherwise</param>
+        /// <param name="messageCode">Message's code</param>
+        /// <param name="token">The associate dtoken</param>
+        /// <param name="messageArgs">Message arguments</param>
+        internal TokenDiagnostic(bool usePredefinedArguments, MessageCode messageCode, Token token, params object[] messageArgs)
+            : base(usePredefinedArguments, messageCode, token.Position(), messageArgs)
+        {
+            Token = token;
+        }
+
         private TokenDiagnostic(TokenDiagnostic other)
             : base(other)
         {

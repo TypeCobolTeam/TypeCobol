@@ -13,6 +13,7 @@
 [40,43:prud]<UserDefinedWord>
 [44,48:'hon']<AlphanumericLiteral>(',Y,Y){hon}
 [49,50:==]<PseudoTextDelimiter>
+Line 0[44,48] <12, Warning, Tokens> - A blank was missing before character "'" in column 44. A blank was assumed.
 
 -- Line 3 --
 [1,9:123ABC-01]<UserDefinedWord>

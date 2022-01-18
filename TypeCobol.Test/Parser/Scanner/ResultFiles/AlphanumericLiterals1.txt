@@ -43,6 +43,9 @@ Line 0[0,0] <27, Error, Syntax> - Syntax error : Literal is not correctly delimi
 [31,32:""]<AlphanumericLiteral>(",Y,Y){}
 [33,34:'']<AlphanumericLiteral>(',Y,Y){}
 [35,35+:.]<PeriodSeparator>
+Line 0[7,12] <12, Warning, Tokens> - A blank was missing before character "'" in column 7. A blank was assumed.
+Line 0[22,29] <12, Warning, Tokens> - A blank was missing before character "'" in column 22. A blank was assumed.
+Line 0[33,34] <12, Warning, Tokens> - A blank was missing before character "'" in column 33. A blank was assumed.
 
 -- Line 7 --
 [1,8:"to""to"]<AlphanumericLiteral>(",Y,Y){to"to}

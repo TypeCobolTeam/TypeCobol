@@ -55,4 +55,74 @@ public static class ScannerUtils
 
         return false;
     }
+
+    /// <summary>
+    /// Determines if the given token corresponds to a literal-1 or an identifier according to the following grammar:
+    /// literal-1-or-identifier:
+    ///     identifier 
+    /// |   numericValue 
+    /// |   alphanumericValue3;
+    /// 
+    /// numericValue: 
+    ///    numericLiteralToken | numericFigurativeConstant;
+    /// 
+    /// numericLiteralToken:
+    ///    (IntegerLiteral | DecimalLiteral | FloatingPointLiteral);
+    /// 
+    /// numericFigurativeConstant: (ZERO | ZEROS | ZEROES);
+    /// 
+    /// alphanumericValue3:
+    ///    alphanumericOrNationalLiteralToken | figurativeConstant;
+    /// 
+    /// alphanumericOrNationalLiteralToken:
+    ///    (AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral |
+    ///         DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
+    ///         
+    /// figurativeConstant: (HIGH_VALUE | HIGH_VALUES |
+    /// LOW_VALUE  | LOW_VALUES |
+    /// QUOTE | QUOTES |
+    /// SPACE | SPACES |
+    /// ZERO  | ZEROS  | ZEROES) |
+    /// symbolicCharacterReference;
+    /// 
+    /// symbolicCharacterReference: standardCollatingSequenceReference | SymbolicCharacter;
+    /// standardCollatingSequenceReference: STANDARD_1 | STANDARD_2 | NATIVE;
+    /// 
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    internal static bool IsIdentifierOrLiteral1(Token token)
+    {
+        switch (token.TokenType)
+        {
+            case TokenType.UserDefinedWord:
+            case TokenType.IntegerLiteral:
+            case TokenType.DecimalLiteral:
+            case TokenType.FloatingPointLiteral:
+            case TokenType.ZERO:
+            case TokenType.ZEROS:
+            case TokenType.ZEROES:
+            case TokenType.AlphanumericLiteral:
+            case TokenType.HexadecimalAlphanumericLiteral:
+            case TokenType.NullTerminatedAlphanumericLiteral:
+            case TokenType.DBCSLiteral:
+            case TokenType.NationalLiteral:
+            case TokenType.HexadecimalNationalLiteral:
+            case TokenType.HIGH_VALUE:
+            case TokenType.HIGH_VALUES:
+            case TokenType.LOW_VALUE:
+            case TokenType.LOW_VALUES:
+            case TokenType.QUOTE:
+            case TokenType.QUOTES:
+            case TokenType.SPACE:
+            case TokenType.SPACES:
+            case TokenType.SymbolicCharacter:
+            case TokenType.STANDARD_1:
+            case TokenType.STANDARD_2:
+            case TokenType.NATIVE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

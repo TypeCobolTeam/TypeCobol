@@ -1,0 +1,166 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       data division.
+       working-storage section.
+      
+       01 W-Var1      pic X(02) value "v1".
+       01 ab        pic X(02) value 'ab'.
+       01 param2    pic X(02) value 'p2'.
+      
+      
+       01 str       pic X(05).
+          88 str1    value '123'
+Line 13[27,28] <12, Warning, Tokens> - A blank was missing before character "'" in column 28. A blank was assumed.
+      -                    '45'.
+      
+      
+       PROCEDURE DIVISION.
+      
+      *OK, equivalent to move Var1 to ab
+           move W-Var1 to a
+      -         b
+           move "ab"
+      -      to  ab
+      
+      *Ok call with 2 parameters
+           call "Sub" using ab
+                          param2
+      
+      *Ok call with 2 parameters
+      *equivalent to call Sub using ab param2
+           call "Sub" using a
+      -     b
+                          param2
+      
+      *Ok call with 2 parameters
+      *equivalent to call Sub using by content "a1" "b2"
+      *Warning a blank was missing before character '"' in column 13.
+      *A blank was assumed
+           call "Sub" using by content "a1"
+Line 39[12,13] <12, Warning, Tokens> - A blank was missing before character """ in column 13. A blank was assumed.
+      -     "b2"
+      
+      
+      
+           set str1 to true
+           display "str=" str "_"
+      
+           move "12345" to str
+           if str1
+              display "str1 is true with 12345"
+           end-if
+           move "123" to str
+           if str1
+              display "str1 is true with 123"
+           end-if
+           move "45" to str
+           if str1
+              display "str1 is true with 45"
+           end-if
+      
+      *Warning a blank was missing before character '"' in column 26.
+      *A blank was assumed
+Line 61[26,28] <12, Warning, Tokens> - A blank was missing before character "s" in column 26. A blank was assumed.
+           display "str="str
+           display "str="
+      -       str
+      
+      *Warning a blank was missing before character "'" in column 23.
+      *A blank was assumed
+Line 67[23,28] <12, Warning, Tokens> - A blank was missing before character "'" in column 23. A blank was assumed.
+           display str'str='
+           display str
+      *Warning a blank was missing before character '"' in column 15.
+      *A blank was assumed
+Line 71[15,20] <12, Warning, Tokens> - A blank was missing before character "'" in column 15. A blank was assumed.
+      -       'str='
+      
+      *Warning a blank was missing before character '"' in column 23.
+      *A blank was assumed
+Line 75[23,28] <12, Warning, Tokens> - A blank was missing before character """ in column 23. A blank was assumed.
+           display str"str="
+           display str
+      *Warning a blank was missing before character '"' in column 15.
+      *A blank was assumed
+Line 79[15,20] <12, Warning, Tokens> - A blank was missing before character """ in column 15. A blank was assumed.
+      -       "str="
+      
+      *Warning a blank was missing before character '"' in column 26.
+      *A blank was assumed
+Line 83[26,28] <12, Warning, Tokens> - A blank was missing before character "s" in column 26. A blank was assumed.
+           display 'str='str
+           display 'str='
+      -       str
+      
+      
+           display "str="
+      -       str
+      *Warning a blank was missing before character '"' in column 16.
+      *A blank was assumed
+Line 92[16,18] <12, Warning, Tokens> - A blank was missing before character """ in column 16. A blank was assumed.
+      -        "_"
+      
+           display 'str='
+      -       str
+      *Warning a blank was missing before character '"' in column 16.
+      *A blank was assumed
+Line 98[16,18] <12, Warning, Tokens> - A blank was missing before character "'" in column 16. A blank was assumed.
+      -        '_'
+      
+      
+           display "str="
+      *Warning a blank was missing before character '"' in column 16.
+      *A blank was assumed
+Line 104[15,16] <12, Warning, Tokens> - A blank was missing before character """ in column 16. A blank was assumed.
+      -        "_"
+      
+           display 'str='
+      *Warning a blank was missing before character '"' in column 16.
+      *A blank was assumed
+Line 109[15,16] <12, Warning, Tokens> - A blank was missing before character "'" in column 16. A blank was assumed.
+      -        '_'
+            
+      
+      *    OK and no warning
+           DISPLAY 'A sample text '
+      *Warning a blank was missing before character "'" in column 20.
+      *A blank was assumed
+Line 116[19,20] <12, Warning, Tokens> - A blank was missing before character "'" in column 20. A blank was assumed.
+      -            '(foo) : ' W-Var1
+      *    OK and no warning
+      *Warning a blank was missing before character '"' in column 36.
+      *A blank was assumed
+Line 120[36,45] <12, Warning, Tokens> - A blank was missing before character """ in column 36. A blank was assumed.
+           DISPLAY 'A sample text '"(foo) : " W-Var1
+           DISPLAY 'A sample text '
+      -            "(foo) : " W-Var1
+      *    OK and no warning
+           DISPLAY "A sample text "
+      *Warning a blank was missing before character '"' in column 20.
+      *A blank was assumed
+Line 127[19,20] <12, Warning, Tokens> - A blank was missing before character """ in column 20. A blank was assumed.
+      -            "(foo) : " W-Var1
+      *    OK and no warning
+      *Warning a blank was missing before character '"' in column 36.
+      *A blank was assumed
+Line 131[36,45] <12, Warning, Tokens> - A blank was missing before character "'" in column 36. A blank was assumed.
+           DISPLAY "A sample text "'(foo) : ' W-Var1
+           DISPLAY "A sample text "
+      -            '(foo) : ' W-Var1
+      
+      
+           goback.
+       ID DIVISION.
+       PROGRAM-ID. Sub.
+       data division.
+       linkage section.
+       01 Arg1 pic X(02).
+       01 Arg2 pic X(02).
+       procedure division using Arg1 Arg2.
+           display "Arg1=" Arg1 "_"
+           display "Arg2=" Arg2 "_"
+           goback
+           .
+       END PROGRAM Sub.
+       END PROGRAM DVZF0OSM.
+      
