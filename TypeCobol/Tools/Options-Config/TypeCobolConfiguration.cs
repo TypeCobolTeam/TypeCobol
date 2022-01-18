@@ -30,8 +30,9 @@ namespace TypeCobol.Tools.Options_Config
         public List<string> OutputFiles = new List<string>();
         public List<string> LineMapFiles = new List<string>();
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
-        public string ErrorFile = null;
-        public string LogFile = null;
+        public string ErrorFile;
+        public string LogFile;
+        public string UserAgent; //Stored but not used directly, will be logged as part of the commandl-line
 
         //Log file name
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
@@ -299,6 +300,7 @@ namespace TypeCobol.Tools.Options_Config
 #if EUROINFO_RULES
                 { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v },
 #endif
+                { "ua|useragent=", "Optional descriptive string to help identify the client of the parser", v => typeCobolConfig.UserAgent = v }
             };
             return commonOptions;
         }
