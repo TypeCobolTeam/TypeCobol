@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -334,7 +335,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.IsTableOccurence)
                     {
                         var subscriptedStorageArea = actual.StorageArea as DataOrConditionStorageArea;
-                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Count > 0)
+                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Length > 0)
                         {
                             //if there are subscripts
 
@@ -376,8 +377,8 @@ namespace TypeCobol.Compiler.Diagnostics
                             TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType != null && calleeType != null)
                             {
-                                //Compare references of TypeDefinition
-                                if (callerType != calleeType)
+                                //Compare TypeDefinitions
+                                if (!callerType.Equals(calleeType))
                                 {
                                     var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
@@ -628,7 +629,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             CheckNoGlobalOrExternal(functionDeclaration.Get<DataDivision>("data-division"));
             CheckNoLinkageItemIsAParameter(functionDeclaration.Get<LinkageSection>("linkage"), header.Profile);
-
+            CheckNoUsingProcedureDiv(functionDeclaration.Get<ProcedureDivision>("procedure-division"));
             CheckParameters(header.Profile, functionDeclaration);
 
             var headerNameURI = new URI(header.Name);
@@ -636,48 +637,9 @@ namespace TypeCobol.Compiler.Diagnostics
             if (functions.Count > 1)
             {
                 Token nameToken = header.FunctionName.NameLiteral.Token;
-                DiagnosticUtils.AddError(header,
+                DiagnosticUtils.AddError(functionDeclaration,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
                     headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
-            }
-
-
-            //// Set a Warning if the formalized comment parameter is unknown or if the function parameter have no description
-            if (header.FormalizedCommentDocumentation != null)
-            {
-                // Get the parameters inside the Formalized Comment that are not inside the function parameters
-                var formComParamOrphan = header.FormalizedCommentDocumentation.Parameters.Keys.Except(
-                    functionDeclaration.Profile.Parameters.Select(p => p.Name));
-
-                // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
-                foreach (var orphan in formComParamOrphan)
-                {
-                    var tokens = header.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
-                    foreach (var token in tokens)
-                    {
-                        DiagnosticUtils.AddError(header,
-                            "Parameter name does not match to any function parameter: " + orphan,
-                            token, code: MessageCode.Warning);
-                    }
-                }
-
-                // Get the parameters inside the function parameters that are not inside the Formalized Comment
-                var sameParameters = functionDeclaration.Profile.Parameters.Where(p =>
-                    header.FormalizedCommentDocumentation.Parameters.Keys.Contains(p.Name));
-
-                var functionParamWithoutDesc = functionDeclaration.Profile.Parameters.Except(sameParameters);
-
-                // For each of them, place a warning on the parameter definition
-                foreach (var param in functionParamWithoutDesc)
-                {
-                    var token = param.CodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.UserDefinedWord);
-                    if (token != null)
-                    {
-                        DiagnosticUtils.AddError(header,
-                            "Parameter does not have any description inside the formalized comments: " + param.Name,
-                            token, code: MessageCode.Warning);
-                    }
-                }
             }
         }
 
@@ -755,6 +717,17 @@ namespace TypeCobol.Compiler.Diagnostics
                     continue;
                 }
             }
+        }
+
+        /// <summary>
+        /// TCRFUN_DECLARATION_NO_USING
+        /// </summary>
+        private static void CheckNoUsingProcedureDiv(ProcedureDivision node)
+        {
+            if (node == null) return; //No procedure division
+
+            if (node.CodeElement.UsingParameters != null && node.CodeElement.UsingParameters.Count > 0)
+                DiagnosticUtils.AddError(node, "TypeCobol procedure cannot declare parameters on its procedure division.");
         }
 
         private static void AddEntries(List<DataDefinition> linkage, LinkageSection node)
@@ -871,7 +844,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (statement != null)
             {
                 // Check receivers (incremented) 
-                var receivers = node?.StorageAreaWritesDataDefinition?.Values;
+                var receivers = node.StorageAreaWritesDataDefinition?.Values;
                 if (receivers == null)
                     return;
                 bool containsPointers = false;
@@ -881,7 +854,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (receiver.Usage == DataUsage.Pointer)
                     {
                         containsPointers = true;
-                        var levelNumber = (receiver.CodeElement).LevelNumber;
+                        System.Diagnostics.Debug.Assert(receiver.CodeElement != null);
+                        var levelNumber = receiver.CodeElement.LevelNumber;
                         if (levelNumber != null && levelNumber.Value > 49)
                         {
                             DiagnosticUtils.AddError(node,
@@ -936,22 +910,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
     }
-
-    public class ProgramChecker
-    {
-        public static void OnNode(Program node)
-        {
-            node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
-
-            if (node.IsFlagSet(Node.Flag.MissingEndProgram))
-            {
-                DiagnosticUtils.AddError(node,
-                    "\"END PROGRAM\" is missing.", MessageCode.Warning);
-            }
-
-        }
-    }
-
 
     public class GlobalStorageSectionChecker
     {
@@ -1008,6 +966,120 @@ namespace TypeCobol.Compiler.Diagnostics
 
     }
 
-}
-        
+    /// <summary>
+    /// Contains methods to check syntax of formalized comments.
+    /// </summary>
+    internal static class FormalizedCommentsChecker
+    {
+        public static void CheckFunctionComments(FunctionDeclaration functionDeclaration)
+        {
+            //For TC procedures, comments are located directly above function declaration and forbidden on procedure division
+            var procedureDivision = GetProcedureDivision(functionDeclaration);
+            if (procedureDivision?.CodeElement.FormalizedCommentDocumentation != null)
+            {
+                DiagnosticUtils.AddError(procedureDivision,
+                    "Formalized Comments can be placed above Procedure Division only for Programs",
+                    procedureDivision.CodeElement,
+                    MessageCode.ErrorFormalizedCommentMissplaced);
+            }
 
+            var comments = functionDeclaration.CodeElement.FormalizedCommentDocumentation;
+            if (comments == null) return;
+
+            //Check for duplicate tags
+            CheckDuplicateFields(functionDeclaration);
+
+            //Check matching between declared params and documented params
+            var declaredParams = functionDeclaration.Profile.Parameters.Select(p => p.Name).ToArray();
+            var documentedParams = comments.Parameters.Keys;
+            CheckParameterMatching(functionDeclaration, declaredParams, documentedParams, "function");
+        }
+
+        public static void CheckProgramComments(Program program)
+        {
+            //For regular Cobol programs, comments are above the procedure division
+            var procedureDivision = GetProcedureDivision(program);
+            var comments = procedureDivision?.CodeElement.FormalizedCommentDocumentation;
+            if (comments == null) return;
+
+            //Check for duplicate tags
+            CheckDuplicateFields(procedureDivision);
+
+            //Check matching between declared params and documented params
+            var usingParameters = procedureDivision.CodeElement.UsingParameters;
+            var declaredParams = usingParameters != null
+                ? usingParameters.Select(p => p.StorageArea.SymbolReference?.Name).ToArray()
+                : Array.Empty<string>();
+            var documentedParams = comments.Parameters.Keys;
+            CheckParameterMatching(procedureDivision, declaredParams, documentedParams, "program");
+        }
+
+        public static void CheckTypeComments(TypeDefinition typeDefinition)
+        {
+            var comments = typeDefinition.CodeElement.FormalizedCommentDocumentation;
+            if (comments == null) return;
+
+            //Check for duplicate tags
+            CheckDuplicateFields(typeDefinition);
+
+            // Add a warning if a parameters field is set inside the formalized comment
+            if (comments.Parameters.Any())
+            {
+                var token = typeDefinition.CodeElement.ConsumedTokens.First(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_PARAMETERS);
+                DiagnosticUtils.AddError(typeDefinition, "Type Definition does not support Parameters field", token, code: MessageCode.Warning);
+            }
+        }
+
+        private static ProcedureDivision GetProcedureDivision(Node node) => node.Children.OfType<ProcedureDivision>().FirstOrDefault();
+
+        private static void CheckDuplicateFields(Node commentsOwner)
+        {
+            var tokenGroups = commentsOwner.CodeElement.ConsumedTokens.GroupBy(t => t.TokenType);
+            foreach (var tokenGroup in tokenGroups)
+            {
+                //Check all tags, so look for all formalized comments TokenTypes except START, STOP and VALUE.
+                if (tokenGroup.Key >= TokenType.FORMALIZED_COMMENTS_DESCRIPTION && tokenGroup.Key <= TokenType.FORMALIZED_COMMENTS_TODO && tokenGroup.Count() > 1)
+                {
+                    foreach (var token in tokenGroup)
+                    {
+                        DiagnosticUtils.AddError(commentsOwner,
+                            "Formalized comment field is declared more than once : " + token.Text, token,
+                            code: MessageCode.Warning);
+                    }
+                }
+            }
+        }
+
+        private static void CheckParameterMatching(Node commentsOwner, ICollection<string> declaredParams, ICollection<string> documentedParams, string context)
+        {
+            // User-defined words of the CE defining the comments, this will be used to position the diagnostics
+            var userDefinedWords = commentsOwner.CodeElement.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord).ToArray();
+
+            // Get the parameters inside the Formalized Comment that are not inside the program/function parameters
+            var formComParamOrphan = documentedParams.Except(declaredParams);
+
+            // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
+            AddDiagnostics(formComParamOrphan, "Parameter name does not match to any " + context + " parameter: ");
+
+            // Get the parameters inside the program/function parameters that are not inside the Formalized Comment
+            var programParamWithoutDesc = declaredParams.Except(documentedParams);
+
+            // For each of them, place a warning on the parameter definition
+            AddDiagnostics(programParamWithoutDesc, "Parameter does not have any description inside the formalized comments: ");
+
+            void AddDiagnostics(IEnumerable<string> orphans, string message)
+            {
+                foreach (var orphan in orphans)
+                {
+                    foreach (var token in userDefinedWords)
+                    {
+                        if (token.Text == orphan)
+                        {
+                            DiagnosticUtils.AddError(commentsOwner, message + orphan, token, code: MessageCode.Warning);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,9 +10,9 @@ using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.File;
 using System.Runtime.CompilerServices;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Directives;
 
 using static TypeCobol.Codegen.Generators.LinearNodeSourceCodeMapper;
 
@@ -864,6 +864,7 @@ namespace TypeCobol.Codegen.Generators
             //Take interessting scan state values from the original input
             TypeCobol.Compiler.Parser.CodeElementsLine cel = Input[FirstGSLine] as TypeCobol.Compiler.Parser.CodeElementsLine;
             //first true argument => we are in a DataDivision.
+            var scannerOptions = new TypeCobolOptions();
             System.Diagnostics.Debug.Assert(cel.ScanState.InsideDataDivision);
             string gsText = gsSrcText.GetTextAt(0, gsSrcText.Size);
             using (StringReader sr = new StringReader(gsText))
@@ -892,9 +893,8 @@ namespace TypeCobol.Codegen.Generators
                         }
                     }
 
-                    MultilineScanState scanState = new MultilineScanState(true, cel.ScanState.DecimalPointIsComma, cel.ScanState.WithDebuggingMode, cel.ScanState.EncodingForAlphanumericLiterals ?? IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
-                    tempTokensLine.InitializeScanState(scanState);
-                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, null, true);
+                    tempTokensLine.InitializeScanState(cel.ScanState);
+                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, scannerOptions, true);
                     Token t = null;
 
                     while ((t = scanner.GetNextToken()) != null)
@@ -1223,7 +1223,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 foreach (int lineNumber in ExceedLines.Keys)
                 {
-                    Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, 0, 0, lineNumber);
+                    Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, new Diagnostic.Position(lineNumber, 0, lineNumber, 0, null));
                     AddDiagnostic(diag);
                 }
             }

@@ -2,9 +2,9 @@
        PROGRAM-ID. MainProgram.
        data division.
        working-storage section.
-Line 5[27,33] <27, Error, Syntax> - Error in copy 'TypedefStrong' at line 1 : Syntax error : Custom EI rule : Type 'TypedefStrong1' must be marked as STRICT.
-Line 5[27,33] <27, Error, Syntax> - Error in copy 'TypedefStrong' at line 5 : Syntax error : Custom EI rule : Type 'TypedefStrong2' must be marked as STRICT.
-Line 5[8,48] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a copy. Please review the 'TypedefStrong' copy.
+Line 5[10,28] <27, Error, Syntax> - Error in copy 'TypedefStrong' at line 1 : Syntax error : Custom EI rule : Type 'TypedefStrong1' must be marked as STRICT.
+Line 5[10,28] <27, Error, Syntax> - Error in copy 'TypedefStrong' at line 5 : Syntax error : Custom EI rule : Type 'TypedefStrong2' must be marked as STRICT.
+Line 5[10,28] <30, Error, Semantics> - Error in copy 'TypedefStrong' at line 5 : Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a copy. Please review the 'TypedefStrong' copy.
          COPY TypedefStrong.
          01 var1 type TypedefStrong1.
          01 var2 type TypedefStrong2.

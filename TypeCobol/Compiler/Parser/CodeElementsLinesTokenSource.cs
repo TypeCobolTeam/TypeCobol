@@ -103,7 +103,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            return Token.END_OF_FILE;
+            return Token.EndOfFile();
         }
 
         public string SourceName

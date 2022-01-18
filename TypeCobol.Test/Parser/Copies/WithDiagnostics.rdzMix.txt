@@ -1,0 +1,13 @@
+       05 :tag:-var1.
+          10 :tag:-var1-item1 PIC X.
+Line 3[31,34] <27, Error, Syntax> - Syntax error : no viable alternative at input '10 ... PICT'
+Line 3[37,37] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+          10 :tag:-var1-item2 PICT X.
+       05 :tag:-var2.
+Line 5[31,36] <27, Error, Syntax> - Syntax error : no viable alternative at input '10 ... PICTUR'
+          10 :tag:-var2-item1 PICTUR X.
+          10 :tag:-var2-item3 PIC X.
+      *Checking DECIMAL-POINT IS COMMA
+Line 8[51,51] <12, Warning, Tokens> - A blank was missing before character "1" in column 52. A blank was assumed.
+       05 wrongInitialValueFormat PIC 9V99 VALUE 3.14.
+       05 var3                    PIC 9V99 VALUE 3,14.

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Antlr4.Runtime;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupPreprocessor
@@ -17,14 +14,14 @@ namespace TypeCobol.Compiler.CupPreprocessor
     /// </summary>
     public class CompilerDirectiveBuilder : ICompilerDirectiveBuilder
     {
-        public CompilerDirectiveBuilder(TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public CompilerDirectiveBuilder(CompilationDocument document)
         {
-            TypeCobolOptions = compilerOptions;
-            CopyTextNameVariations = copyTextNameVariations;
+            _document = document;
         }
 
-        public TypeCobolOptions TypeCobolOptions { get; set; }
-        public List<RemarksDirective.TextNameVariation> CopyTextNameVariations { get; set; }
+        private readonly CompilationDocument _document;
+        private TypeCobolOptions TypeCobolOptions => _document.CompilerOptions;
+        private List<RemarksDirective.TextNameVariation> CopyTextNameVariations => _document.CopyTextNamesVariations;
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
@@ -62,10 +59,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             else
             {
                 Token errorToken = optionToken;
-                Diagnostic diag = new Diagnostic(
-                    MessageCode.InvalidControlCblCompilerStatementOption,
-                    errorToken.Column, errorToken.EndColumn,
-                    errorToken.Line, option);
+                Diagnostic diag = new Diagnostic(MessageCode.InvalidControlCblCompilerStatementOption, errorToken.Position(), option);
                 CompilerDirective.AddDiagnostic(diag);
             }
         }
@@ -88,63 +82,58 @@ namespace TypeCobol.Compiler.CupPreprocessor
             TypeCobol.Compiler.Scanner.Token suppress, PairTokenListList replacingOperands)
         {
             var copy = (CopyDirective)CompilerDirective;
-            bool isCopy = copy.COPYToken.TokenType == TokenType.COPY;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-            {                
 #if EUROINFO_RULES
+            if (copy.TextName != null)
+            {
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
-                    if (copy.TextName != null)
+                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                    var variations = CopyTextNameVariations;
+                    if (TypeCobolOptions.AutoRemarksEnable &&
+                        (variations == null ||
+                            !variations.Any(
+                                v =>
+                                    string.Equals(v.TextNameWithSuffix, copy.TextName,
+                                        StringComparison.InvariantCultureIgnoreCase))))
+                    //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
                     {
-
-                        // Find the list of copy text names variations declared by previous REMARKS compiler directives
-                        var variations = CopyTextNameVariations;
-                        if (TypeCobolOptions.AutoRemarksEnable &&
-                            (variations == null ||
-                             !variations.Any(
-                                 v =>
-                                     string.Equals(v.TextNameWithSuffix, copy.TextName,
-                                         StringComparison.InvariantCultureIgnoreCase))))
-                        //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
-                        {
-                            variations = new List<RemarksDirective.TextNameVariation>
+                        variations = new List<RemarksDirective.TextNameVariation>
                         {
                             new RemarksDirective.TextNameVariation(copy.TextName)
                         };
+                        CopyTextNameVariations.AddRange(variations);
+                    }
 
-                            CopyTextNameVariations.AddRange(variations);
-                        }
-
-                        if (variations != null)
+                    if (variations != null)
+                    {
+                        var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
+                                        StringComparison.InvariantCultureIgnoreCase));
+                        if (declaration != null && this.TypeCobolOptions.HasCpyCopy(declaration.TextName))
                         {
-                            var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
-                                            StringComparison.InvariantCultureIgnoreCase));
-                            if (declaration != null && copy.TextName.StartsWith("Y", StringComparison.InvariantCultureIgnoreCase))
+                            // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
+                            copy.RemoveFirst01Level = true;
+                            if (declaration.HasSuffix)
                             {
-                                // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
-                                copy.RemoveFirst01Level = true;
-                                if (declaration.HasSuffix)
-                                {
-                                    copy.TextName = declaration.TextName;
-                                    copy.InsertSuffixChar = true;
-                                    copy.Suffix = declaration.Suffix;
-                                    copy.PreSuffix = declaration.PreSuffix;
-                                }
+                                copy.TextName = declaration.TextName;
+                                copy.InsertSuffixChar = true;
+                                copy.Suffix = declaration.Suffix;
+                                copy.PreSuffix = declaration.PreSuffix;
                             }
                         }
                     }
                 }
-#endif
+                _document.CollectUsedCopy(copy);
             }
+#endif
             copy.LibraryName = GetName(qualifiedTextName.LibraryName);
             copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
 
             copy.Suppress = suppress != null;
             if (suppress != null)
             {
-                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Column, suppress.EndColumn,
-                    suppress.Line, "\"COPY SUPPRESS\" should not be used");
+                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Position(), "\"COPY SUPPRESS\" should not be used");
                 CompilerDirective.AddDiagnostic(error);
             }
 
@@ -168,9 +157,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                     {
                         if (!bReported)
                         {
-                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Column,
-                                qualifiedTextName.TextName.EndColumn,
-                                  qualifiedTextName.TextName.Line, "\"REPLACE\" Empty Comparison Pseudo Text.");
+                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Position(), "\"REPLACE\" Empty Comparison Pseudo Text.");
                             CompilerDirective.AddDiagnostic(error);
                             bReported = true;
                         }
@@ -352,10 +339,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             if (insertDirective.SequenceNumber < 0)
             {
                 Token errorToken = sequenceNumber;
-                Diagnostic error = new Diagnostic(
-                    MessageCode.InvalidNumericLiteralFormat,
-                    errorToken.Column, errorToken.EndColumn,
-                    errorToken.Line, "TODO");
+                Diagnostic error = new Diagnostic(MessageCode.InvalidNumericLiteralFormat, errorToken.Position());
                 CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
             }
         }

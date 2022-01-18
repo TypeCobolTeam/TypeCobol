@@ -8,43 +8,41 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.CupParser.NodeBuilder;
+using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
-using String = System.String;
 
 namespace TypeCobol.Test.Utils
 {
     public static class ParserUtils
     {
-        public static CompilationDocument ScanCobolFile(string relativePath, string textName, DocumentFormat documentFormat)
+        public static CompilationDocument ScanCobolFile(string relativePath, string textName, bool isCopy, DocumentFormat documentFormat)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(relativePath));
             if (!localDirectory.Exists)
             {
-                throw new Exception(String.Format("Directory : {0} does not exist", relativePath));
+                throw new Exception(string.Format("Directory : {0} does not exist", relativePath));
             }
 
             CompilationProject project = new CompilationProject("test",
                 localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), null);
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true, project);
-            compiler.CompileOnce();
+            FileCompiler compiler = new FileCompiler(null, textName, documentFormat.ColumnsLayout, isCopy, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
+            compiler.CompileOnce(ExecutionStep.Preprocessor, false);
 
-            return compiler.CompilationResultsForCopy;
+            return compiler.CompilationResultsForProgram;
         }
 
-        public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null, ExecutionStep execToStep = ExecutionStep.SemanticCheck)
+        public static CompilationUnit ParseCobolFile(string textName, string folder, bool isCopy = false, DocumentFormat documentFormat = null, ExecutionStep execToStep = ExecutionStep.SemanticCheck)
         {
-            if (folder == null) folder = "Parser" + Path.DirectorySeparatorChar + "CodeElements";
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
             if (!localDirectory.Exists)
             {
-                throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
+                throw new Exception(string.Format("Directory : {0} does not exist", localDirectory.FullName));
             }
             if (documentFormat == null) documentFormat = DocumentFormat.RDZReferenceFormat;
 
@@ -53,23 +51,23 @@ namespace TypeCobol.Test.Utils
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] { ".cpy", ".cbl" },
                 documentFormat, options, null);
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, options, null, false, project);
+            FileCompiler compiler = new FileCompiler(null, textName, documentFormat.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, null, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
         }
 
-        public static CompilationUnit ParseCobolString(string cobolString)
+        public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy)
         {
             //Prepare
-            var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
+            var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
             var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
 
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false, project);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
@@ -93,7 +91,7 @@ namespace TypeCobol.Test.Utils
         {
             StringBuilder builder = new StringBuilder();
             //Sort diagnostics by line order
-            foreach (Diagnostic d in diagnostics.OrderBy(d => d.Line))
+            foreach (Diagnostic d in diagnostics.OrderBy(d => d.LineStart))
             {
                 string errmsg = null;
 
@@ -124,7 +122,7 @@ namespace TypeCobol.Test.Utils
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -145,7 +143,7 @@ namespace TypeCobol.Test.Utils
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -394,7 +392,7 @@ namespace TypeCobol.Test.Utils
         {
             ErrorCount++;
 
-            IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
+            IList<string> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
             foreach (string ruleInvocation in stack.Reverse())
             {
                 errorLog.AppendLine(ruleInvocation);

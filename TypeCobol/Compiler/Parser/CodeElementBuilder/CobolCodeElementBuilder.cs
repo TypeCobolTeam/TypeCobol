@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler.SqlCodeElements;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -24,16 +25,28 @@ namespace TypeCobol.Compiler.Parser
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
 		private CobolStatementsBuilder CobolStatementsBuilder { get; set; }
         private SqlCodeElementBuilder SqlCodeElementBuilder { get; set; }
+		private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+
+		public CodeElementBuilder(TypeCobolOptions compilerOptions)
+		{
+			var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
+			LanguageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
+            CobolWordsBuilder = new CobolWordsBuilder();
+            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, LanguageLevelChecker);
+			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
+		}
 
         /// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
         public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
 			CodeElement = null;
 			Context = null;
-			CobolWordsBuilder = new CobolWordsBuilder(new Dictionary<Token, SymbolInformation>());
-			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
-			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder);
+			CobolWordsBuilder = new CobolWordsBuilder();
+			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, LanguageLevelChecker);
+			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
             SqlCodeElementBuilder = new SqlCodeElementBuilder();
-        }
+			CobolWordsBuilder.Reset();
+			CobolExpressionsBuilder.Reset();
+		}
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
@@ -302,13 +315,17 @@ namespace TypeCobol.Compiler.Parser
 			var paragraph = new SourceComputerParagraph();
 			if (context.computerName != null)
 			{
-				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
+				System.Diagnostics.Debug.Assert(context.computerName is Token);
+				//TokenType is UserDefinedWord, so it's ok to create an AlphanumericValue
+				paragraph.ComputerName = new AlphanumericValue((Token) context.computerName);
 			}
 
 			if (context.DEBUGGING() != null)
 			{
-				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
+				var debuggingToken = ParseTreeUtils.GetFirstToken(context.DEBUGGING());
+				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, debuggingToken);
 				IsDebuggingModeEnabled = true;
+				DiagnosticUtils.AddError(paragraph, "Debugging mode is active", debuggingToken, null, MessageCode.Warning);
 			}
 
 			Context = context;
@@ -320,7 +337,9 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterObjectComputerParagraph(CodeElementsParser.ObjectComputerParagraphContext context) {
 			var paragraph = new ObjectComputerParagraph();
 			if(context.computerName != null) {
-				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
+				System.Diagnostics.Debug.Assert(context.computerName is Token);
+				//TokenType is UserDefinedWord, so it's ok to create an AlphanumericValue
+				paragraph.ComputerName = new AlphanumericValue((Token) context.computerName);
 			}
 			if(context.memorySizeClause() != null) {
 				var memorySizeClauseContext = context.memorySizeClause();
@@ -1147,7 +1166,12 @@ namespace TypeCobol.Compiler.Parser
             if (context.pictureClause() != null && context.pictureClause().Length > 0)
             {
                 var pictureClauseContext = context.pictureClause()[0];
-                entry.Picture = CobolWordsBuilder.CreateAlphanumericValue(pictureClauseContext.pictureCharacterString);
+                if (pictureClauseContext.pictureCharacterString != null)
+                {
+                    System.Diagnostics.Debug.Assert(pictureClauseContext.pictureCharacterString is Token);
+                    //TokenType is PictureCharacterString so it's ok to create an AlphanumericValue
+                    entry.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
+                }
             }
 
 // [COBOL 2002]
@@ -1404,9 +1428,12 @@ namespace TypeCobol.Compiler.Parser
 		    FormalizedCommentDocumentation formalizedCommentDocumentation = null;
 		    if (context.formalizedComment() != null)
 		        formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
-		    // [/TypeCobol]
-            Context = context;
-            CodeElement = new ProcedureDivisionHeader(formalizedCommentDocumentation);
+			// [/TypeCobol]
+			var procedureDivisionHeader = new ProcedureDivisionHeader(formalizedCommentDocumentation);
+			Context = context;
+			CodeElement = procedureDivisionHeader;
+
+			LanguageLevelChecker.Check(procedureDivisionHeader, context);
 		}
 		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
 			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());
@@ -1673,15 +1700,24 @@ namespace TypeCobol.Compiler.Parser
 
 		// --- ACCEPT ---
 
-		public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context) {
+		public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context)
+        {
 			Context = context;
-			if (context.acceptDataTransfer() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(context.acceptDataTransfer());
-			} else
-			if(context.acceptSystemDateTime() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAcceptSystemDateTime(context.acceptSystemDateTime());
-			}
-		}
+
+            AcceptStatement acceptStatement;
+            var receivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
+            if (context.fromSystemDateTime() != null)
+            {
+                acceptStatement = CobolStatementsBuilder.CreateAcceptSystemDateTime(receivingStorageArea, context.fromSystemDateTime());
+            }
+            else
+            {
+                acceptStatement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(receivingStorageArea, context.fromEnvironment());
+            }
+
+            AcceptStatementChecker.OnCodeElement(acceptStatement, context);
+            CodeElement = acceptStatement;
+        }
 
 
 	    // --- ALTER ---
@@ -1872,7 +1908,9 @@ namespace TypeCobol.Compiler.Parser
 				CodeElement = CobolStatementsBuilder.CreateGotoStatement(context.gotoSimple());
 			}
 			if (context.gotoConditional() != null) {
-				CodeElement = CobolStatementsBuilder.CreateGotoConditionalStatement(context.gotoConditional());
+				var statement = CobolStatementsBuilder.CreateGotoConditionalStatement(context.gotoConditional());
+				CodeElement = statement;
+				GotoConditionalStatementChecker.OnCodeElement(statement, context.gotoConditional());
 			}
 		}
 
@@ -2164,7 +2202,9 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateWhenCondition(context);
+			var whenCondition = CobolStatementsBuilder.CreateWhenCondition(context); ;
+			CodeElement = whenCondition;
+			WhenConditionStatementChecker.OnCodeElement(whenCondition, context);
 		}
 		public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context) {
 			Context = context;

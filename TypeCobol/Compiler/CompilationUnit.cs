@@ -19,25 +19,36 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class CompilationUnit : CompilationDocument
     {
-        private readonly IAnalyzerProvider _analyzerProvider;
-        private readonly Dictionary<string, object> _analyzerResults;
+        private readonly AnalyzerProviderWrapper _analyzerProvider;
 
         /// <summary>
         /// Initializes a new compilation document from a list of text lines.
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
-            base(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, copyTextNameVariations)
+        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
+            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations)
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
             PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
             PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
+            if (analyzerProvider is AnalyzerProviderWrapper analyzerProviderWrapper)
+            {
+                _analyzerProvider = analyzerProviderWrapper;
+            }
+            else if (analyzerProvider != null)
+            {
+                // Wrap the given provider to secure it
+                _analyzerProvider = new AnalyzerProviderWrapper();
+                _analyzerProvider.AddProvider(analyzerProvider);
+            }
+            else
+            {
+                _analyzerProvider = null;
+            }
 
-            _analyzerProvider = analyzerProvider;
-            _analyzerResults = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -84,7 +95,7 @@ namespace TypeCobol.Compiler
                     if (processedTokensDocument != null)
                     {
                         // Parse the whole document for the first time
-                        CodeElementsParserStep.ParseDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines), CompilerOptions, perfStatsForParserInvocation);
+                        CodeElementsParserStep.ParseDocument(processedTokensDocument, CompilerOptions, perfStatsForParserInvocation);
 
                         // Create the first code elements document snapshot
                         CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
@@ -92,8 +103,7 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(TextSourceInfo, codeElementsDocumentLines, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, perfStatsForParserInvocation);
+                    IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(processedTokensDocument, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, perfStatsForParserInvocation);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<ICodeElementsLine> currentCodeElementsLinesVersion = previousCodeElementsDocument.CurrentVersion;
@@ -103,8 +113,9 @@ namespace TypeCobol.Compiler
                     // Prepare an event to signal document change to all listeners
                     documentChangedEvent = new DocumentChangedEvent<ICodeElementsLine>(currentCodeElementsLinesVersion, currentCodeElementsLinesVersion.next);
                     currentCodeElementsLinesVersion = currentCodeElementsLinesVersion.next;
-                   
+
                     // Update the code elements document snapshot
+                    ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
                     CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, codeElementsDocumentLines.ToImmutable());
                 }
 
@@ -118,6 +129,11 @@ namespace TypeCobol.Compiler
                     codeElementsLinesChanged(this, documentChangedEvent);
                 }
             }
+
+#if DEBUG
+            //Update CE diag count for future checks
+            _codeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+#endif
         }
 
         /// <summary>
@@ -136,6 +152,23 @@ namespace TypeCobol.Compiler
         /// </summary>
         public PerfStatsForParsingStep PerfStatsForCodeElementsParser { get; private set; }
 
+#if DEBUG
+        private int _codeElementDiagnosticCount;
+
+        /// <summary>
+        /// Debug-only check to avoid creation of diagnostics on CodeElements after they have been created/refreshed.
+        /// Must be called at the end of each compilation step defined after <see cref="RefreshCodeElementsDocumentSnapshot"/>.
+        /// </summary>
+        private void CheckCodeElementDiagnostics()
+        {
+            var actualCodeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            if (actualCodeElementDiagnosticCount != _codeElementDiagnosticCount)
+            {
+                System.Diagnostics.Debug.Fail("CodeElement diagnostics should not be created after CE phase !");
+            }
+        }
+#endif
+
         public string AntlrResult {
             get
             {
@@ -147,35 +180,7 @@ namespace TypeCobol.Compiler
                     builder.Append(CodeElementsParserStep.AntlrPerformanceProfiler.WriteInfoToString());
                 }
 
-                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForTemporarySemantic.ActivateDetailedAntlrPofiling)
-                {
-                    builder.Append("\n\n---PROGRAM CLASS PARSER STEP---\n");
-                    builder.Append(ProgramClassParserStep.AntlrPerformanceProfiler.WriteInfoToString());
-                }
-
                 return builder.ToString();
-            }
-        }
-
-        /// <summary>
-        /// Attempt to retrieve the result for specific analyzer identified by its id.
-        /// </summary>
-        /// <typeparam name="TResult">Desired type of result.</typeparam>
-        /// <param name="analyzerIdentifier">Unique string identifier of the analyzer.</param>
-        /// <param name="result">The result of the analyzer if found, default(TResult) otherwise.</param>
-        /// <returns>True if the result has been found, False otherwise.</returns>
-        public bool TryGetAnalyzerResult<TResult>(string analyzerIdentifier, out TResult result)
-        {
-            lock (lockObjectForAnalyzerResults)
-            {
-                if (_analyzerResults.TryGetValue(analyzerIdentifier, out var untypedResult) && untypedResult is TResult typedResult)
-                {
-                    result = typedResult;
-                    return true;
-                }
-
-                result = default;
-                return false;
             }
         }
 
@@ -224,13 +229,16 @@ namespace TypeCobol.Compiler
             {
                 programClassNotChanged(this, new ProgramClassEvent() { Version = ProgramClassDocumentSnapshot.CurrentVersion });
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>
         /// Creates a temporary snapshot which contains element before the cross check phase
         /// Usefull to create a program symboltable without checking nodes.
         /// For instance : it's used to load all the symbols from every dependencies before running the cross check phase to resolve symbols.
-        /// <param name="useAntlrProgramParsing">Shall ANTLR be used to parse TypeCobol Program, otherwise it will be CUP</param>
         /// </summary>
         public void ProduceTemporarySemanticDocument()
         {
@@ -243,16 +251,9 @@ namespace TypeCobol.Compiler
                 {
                     // Start perf measurement
                     var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
+                    var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
-                    SourceFile root;
-                    List<Diagnostic> newDiagnostics;
-                    Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
-
-                    List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
-                    List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
-
-                    var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CupParseProgramOrClass(
                         TextSourceInfo,
@@ -261,25 +262,44 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
-                        out root,
-                        out newDiagnostics,
-                        out nodeCodeElementLinkers,
-                        out typedVariablesOutsideTypedef,
-                        out typeThatNeedTypeLinking);
+                        out var root,
+                        out var newDiagnostics,
+                        out var nodeCodeElementLinkers,
+                        out var typedVariablesOutsideTypedef,
+                        out var typeThatNeedTypeLinking);
+
+                    //Capture the syntax-driven analyzers results
+                    var results = new Dictionary<string, object>();
+                    if (customAnalyzers != null)
+                    {
+                        foreach (var analyzer in customAnalyzers)
+                        {
+                            try
+                            {
+                                results.Add(analyzer.Identifier, analyzer.GetResult());
+                            }
+                            catch (Exception exception)
+                            {
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer.Identifier, exception.Message, exception);
+                                newDiagnostics.Add(diagnostic);
+                            }
+                        }
+                    }
 
                     // Capture the produced results
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
-                        typedVariablesOutsideTypedef, typeThatNeedTypeLinking);
+                        typedVariablesOutsideTypedef, typeThatNeedTypeLinking, results);
 
-                    //Capture the syntax-driven analyzers results, the diagnostics are already collected
-                    if (customAnalyzers != null)
+                    //Direct copy parsing : remove redundant root 01 level if any.
+                    if (UseDirectCopyParsing)
                     {
-                        lock (lockObjectForAnalyzerResults)
+                        var firstDataDefinition = root.MainProgram
+                            .Children[0]  //Data Division
+                            .Children[0]  //Working-Storage Section
+                            .Children[0]; //First data def
+                        if (firstDataDefinition.ChildrenCount == 0)
                         {
-                            foreach (var customAnalyzer in customAnalyzers)
-                            {
-                                _analyzerResults[customAnalyzer.Identifier] = customAnalyzer.GetResult();
-                            }
+                            firstDataDefinition.Remove();
                         }
                     }
 
@@ -287,6 +307,10 @@ namespace TypeCobol.Compiler
                     PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
                 }
             }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>
@@ -295,14 +319,16 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void RefreshCodeAnalysisDocumentSnapshot()
         {
+            bool documentUpdated = false;
             lock (lockObjectForCodeAnalysisDocumentSnapshot)
             {
                 var programClassDocument = ProgramClassDocumentSnapshot;
-                if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate())
+                if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate(out int version))
                 {
                     PerfStatsForCodeQualityCheck.OnStartRefresh();
 
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
+                    Dictionary<string, object> results = new Dictionary<string, object>();
                     var analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
                     if (analyzers != null)
                     {
@@ -312,7 +338,7 @@ namespace TypeCobol.Compiler
                         var processedTokensDocument = (ProcessedTokensDocument) codeElementsDocument.PreviousStepSnapshot;
                         var tokensDocument = (TokensDocument) processedTokensDocument.PreviousStepSnapshot;
 
-                        //Launch code analysis and gather quality rules violations
+                        //Launch code analysis, gather quality rules violations and analyzer additional results
                         foreach (var analyzer in analyzers)
                         {
                             try
@@ -323,49 +349,54 @@ namespace TypeCobol.Compiler
                                 analyzer.Inspect(temporarySemanticDocument);
                                 analyzer.Inspect(programClassDocument);
                                 diagnostics.AddRange(analyzer.Diagnostics);
+                                results[analyzer.Identifier] = analyzer.GetResult();
                             }
                             catch (Exception exception)
                             {
-                                ReportAnalyzerException(analyzer.Identifier, exception);
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer.Identifier, exception.Message, exception);
+                                diagnostics.Add(diagnostic);
                             }
-                        }
-
-                        //Store analyzer results (if any)
-                        lock (lockObjectForAnalyzerResults)
-                        {
-                            foreach (var analyzer in analyzers)
-                            {
-                                try
-                                {
-                                    _analyzerResults[analyzer.Identifier] = analyzer.GetResult();
-                                }
-                                catch (Exception exception)
-                                {
-                                    ReportAnalyzerException(analyzer.Identifier, exception);
-                                }
-                            }
-                        }
-
-                        void ReportAnalyzerException(string analyzer, Exception exception)
-                        {
-                            var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, 0, 0, 0, analyzer, exception.Message, exception);
-                            diagnostics.Add(diagnostic);
                         }
                     }
 
                     //Create updated snapshot
-                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, diagnostics);
+                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, version, diagnostics, results);
+                    documentUpdated = true;
 
                     PerfStatsForCodeQualityCheck.OnStopRefresh();
                 }
 
-                bool CodeAnalysisDocumentNeedsUpdate()
+                bool CodeAnalysisDocumentNeedsUpdate(out int newVersion)
                 {
-                    return CodeAnalysisDocumentSnapshot == null //Not yet computed
-                           ||
-                           (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion); //Obsolete version
+                    if (CodeAnalysisDocumentSnapshot == null)
+                    {
+                        //Not yet computed
+                        newVersion = 0;
+                        return true;
+                    }
+
+                    if (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion)
+                    {
+                        //Obsolete version
+                        newVersion = CodeAnalysisDocumentSnapshot.CurrentVersion + 1;
+                        return true;
+                    }
+
+                    //No need for update
+                    newVersion = -1;
+                    return false;
                 }
             }
+
+            EventHandler<ProgramClassEvent> codeAnalysisCompleted = CodeAnalysisCompleted;
+            if (documentUpdated && codeAnalysisCompleted != null)
+            {
+                codeAnalysisCompleted(this, new ProgramClassEvent() { Version = CodeAnalysisDocumentSnapshot.CurrentVersion });
+            }
+
+#if DEBUG
+            CheckCodeElementDiagnostics();
+#endif
         }
 
         /// <summary>
@@ -488,6 +519,12 @@ namespace TypeCobol.Compiler
         public event EventHandler<ProgramClassEvent> ProgramClassNotChanged;
 
         /// <summary>
+        /// Subscribe to this event to get notified of new code analysis results.
+        /// Re-use of <code>ProgramClassEvent</code> class but the version number does correspond to the <code>CodeAnalysisDocumentSnapshot</code> version.
+        /// </summary>
+        public event EventHandler<ProgramClassEvent> CodeAnalysisCompleted;
+
+        /// <summary>
         /// Performance stats for the TemporaryProgramClassDocumentSnapshot method
         /// </summary>
         public PerfStatsForParsingStep PerfStatsForTemporarySemantic { get; }
@@ -502,7 +539,6 @@ namespace TypeCobol.Compiler
         protected readonly object lockObjectForCodeElementsDocumentSnapshot = new object();
         protected readonly object lockObjectForTemporarySemanticDocument = new object();
         protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
-        protected readonly object lockObjectForAnalyzerResults = new object();
         protected readonly object lockObjectForCodeAnalysisDocumentSnapshot = new object();
 
         #endregion

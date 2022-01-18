@@ -1,0 +1,23 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. tcDataDef.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+Line 5[7,10] <48, Error, Syntax> - TypeCobol-only feature: formalized comments are not supported.
+      %<<<
+       @TODO Check that we get the correct error messages !
+      %>>>
+Line 8[18,24] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... TYPEDEF'
+Line 8[32,32] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+       01 MyType TYPEDEF STRICT.
+          05 item PIC X.
+Line 10[28,32] <48, Error, Syntax> - TypeCobol-only feature: initial value for boolean data is not supported.
+Line 10[18,21] <48, Error, Syntax> - Cobol2002-only feature: TYPE clause is not supported.
+       01 MyBool TYPE BOOL VALUE TRUE.
+Line 11[7,10] <48, Error, Syntax> - TypeCobol-only feature: formalized comments are not supported.
+      %<<<
+       @TODO Not allowed !
+      %>>>
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM tcDataDef.

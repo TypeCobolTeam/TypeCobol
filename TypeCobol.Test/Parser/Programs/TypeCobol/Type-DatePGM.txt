@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,26] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 24[30,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable today:DATE. OffendingSymbol=[30,34:today]<UserDefinedWord>
 Line 30[3,42] <27, Error, Syntax> - Syntax error : DATE properties are read-only
 Line 31[3,42] <27, Error, Syntax> - Syntax error : DATE properties are read-only

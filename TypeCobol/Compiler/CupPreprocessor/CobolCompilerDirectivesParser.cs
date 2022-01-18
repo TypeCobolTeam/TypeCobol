@@ -745,6 +745,87 @@ new short[173][] {
 		ErrorReporter.SyntaxError(this, getParserStack(), ((CobolWordsTokenizer)getScanner()).LastStopSymbol);
 	}
 
+    /// <summary>
+    /// Here is the new Hack for issue #2062 until we can write a preprocessor that run before or
+    /// during the Lexical Analysis phase (Scanner).
+    /// Issue #2062 is also about Partial Cobol Words broken on several lines.
+    /// Here we want to recognize such Partial Cobol Words, that are comparison tokens of a
+	/// REPLACE directive.
+    /// </summary>
+    /// <param name="operandTokens">The list of tokens</param>
+	/// <return>true if it was a PartialCobolWord, false otherwise</return>
+    private bool HackMultiLinePartialCobolWord(TokenList operandTokens)
+    {
+        if (operandTokens.Count >= 3 && 
+            operandTokens[0].TokenType == TokenType.ColonSeparator &&
+            operandTokens[operandTokens.Count - 1].TokenType == TokenType.ColonSeparator &&
+            operandTokens[0].TokensLine != operandTokens[operandTokens.Count - 1].TokensLine)          
+        {
+			TokenList result = new TokenList();
+			result.Add(operandTokens[0]);
+			TokenList innerTokens = TrimLeftRightSpaceTokens(operandTokens, 1, operandTokens.Count - 2, result);
+			result.Add(operandTokens[operandTokens.Count - 1]);
+            Token t = new TokensGroup(TokenType.PartialCobolWord, new List<Token>(result));
+			string text = t.Text;
+			int endPosition;
+			if (ScannerUtils.CheckForPartialCobolWordPattern(text, 0, text.Length-1, false, out endPosition) && endPosition == text.Length-1)
+			{
+				operandTokens.Clear();
+				operandTokens.Add(t);
+				return true;
+			}
+        }
+		return false;
+    }
+    /// <summary>
+    /// Normalize REPLACE comparisons token, by first checking for PartialCobolWord Hack
+    /// and otherwise removing all space tokens.
+    /// </summary>
+    /// <param name="operandTokens">The list of tokens</param>
+	/// <return>The list of noramlized tokens</return>
+	internal TokenList NormalizeComparisonTokens(TokenList from)
+	{
+		return !HackMultiLinePartialCobolWord(from) ? RemoveSpaceTokens(from) : from;
+	}
+	internal TokenList RemoveSpaceTokens(TokenList from)
+	{
+		TokenList result = new TokenList();
+        foreach(var t in from)
+        {
+            if (t.TokenFamily != TokenFamily.Whitespace &&
+                t.TokenFamily != TokenFamily.Comments)
+				result.Add(t);
+        }
+		return result;
+	}
+
+	internal TokenList TrimLeftRightSpaceTokens(TokenList from)
+	{
+		return TrimLeftRightSpaceTokens(from, 0, from.Count - 1);
+	}
+	internal TokenList TrimLeftRightSpaceTokens(TokenList from, int i, int j, TokenList result = null)
+	{
+		result = result??new TokenList();
+        for(; i < from.Count; i++)
+        {
+            if (from[i].TokenFamily != TokenFamily.Whitespace &&
+                from[i].TokenFamily != TokenFamily.Comments)
+				break;
+        }
+		for(; j >= 0; j--)
+		{
+            if (from[j].TokenFamily != TokenFamily.Whitespace &&
+                from[j].TokenFamily != TokenFamily.Comments)
+				break;
+		}
+		for (; i <= j; i++)
+		{
+			result.Add(from[i]);
+		}
+		return result;
+	}
+
+
 }
 
 /** Cup generated class to encapsulate user supplied action code.*/
@@ -965,7 +1046,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
 		PairTokenListList replaces = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
-		 replaces.Add(new Tuple<List<Token>, List<Token>>(from,by)); RESULT = replaces; 
+		 replaces.Add(new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = replaces; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(166/*pseudoTextReplaces*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
@@ -976,7 +1057,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
               PairTokenListList RESULT = null;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
-		 RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(from,by)}; 
+		 RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(166/*pseudoTextReplaces*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
@@ -1472,7 +1553,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
 		PairTokenListList operands = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
-		 operands.Add(new Tuple<List<Token>, List<Token>>(from,by)); RESULT = operands; 
+		 operands.Add(new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = operands; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(148/*copyReplacingOperands*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
@@ -1483,7 +1564,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
               PairTokenListList RESULT = null;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
-		 RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(from,by)}; 
+		  RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(148/*copyReplacingOperands*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;

@@ -216,8 +216,9 @@ codeElement:
 //	[TYPECOBOL]
 	| tcCodeElement;
 
-// what is here is not important as long as it is not epsilon
-tcCodeElement: PUBLIC | PRIVATE | UNSAFE;
+// dummy definition of TypeCobol code elements, not used but required by Antlr.
+// see TypeCobolCodeElements.g4 for the proper definition.
+tcCodeElement: UNSAFE;
 //	[/TYPECOBOL]
 
 
@@ -325,7 +326,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-	END PROGRAM programNameReference2 PeriodSeparator;
+	END PROGRAM programNameReference2? PeriodSeparator;
 			  
 // p97 : Class IDENTIFICATION DIVISION
 // For a class, the first paragraph of the IDENTIFICATION DIVISION must
@@ -1967,7 +1968,7 @@ recordClause:
 // record description entry associated with the file.
 
 labelRecordsClause:
-    LABEL ((RECORD IS?) | (RECORDS ARE?)) ((STANDARD | OMITTED) | dataNameReference*);
+    LABEL (RECORD | RECORDS) (IS | ARE)? ((STANDARD | OMITTED) | dataNameReference*);
 
 // p180: The VALUE OF clause describes an item in the label records associated with the
 // file.
@@ -1992,7 +1993,7 @@ valueOfClause:
 // with the same name.
 
 dataRecordsClause:
-    DATA ((RECORD IS?) | (RECORDS ARE?)) dataNameReference+;
+    DATA (RECORD | RECORDS) (IS | ARE)? dataNameReference+;
 
 // p180: The LINAGE clause specifies the depth of a logical page in number of lines.
 // Optionally, it also specifies the line number at which the footing area begins and
@@ -3847,13 +3848,13 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement: 
-	acceptDataTransfer | acceptSystemDateTime;
+	ACCEPT alphanumericStorageArea? (fromEnvironment | fromSystemDateTime)?;
 
-acceptDataTransfer:
-	ACCEPT alphanumericStorageArea (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
+fromEnvironment:
+	FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName;
 
-acceptSystemDateTime:
-	ACCEPT alphanumericStorageArea FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
+fromSystemDateTime:
+	FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
 
 
 yyyyMmDd: (
@@ -4364,8 +4365,8 @@ comparisonLHSExpression:
 	variableOrExpression2 | booleanValueOrExpression;
 
 whenCondition:
-	WHEN LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*;
+	WHEN (LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
+  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*)?;
 
 comparisonRHSExpression: 
 	ANY | booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);

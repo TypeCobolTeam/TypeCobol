@@ -301,6 +301,17 @@ namespace TypeCobol.Compiler.Nodes {
 
     public class Sort: GenericNode<SortStatement>, Statement {
 	    public Sort(SortStatement statement): base(statement) { }
+
+        public ParagraphSymbol InputProcedureParagraphSymbol { get; internal set; }
+        public ParagraphSymbol InputThroughProcedureParagraphSymbol { get; internal set; }
+        public SectionSymbol InputProcedureSectionSymbol { get; internal set; }
+        public SectionSymbol InputThroughProcedureSectionSymbol { get; internal set; }
+
+        public ParagraphSymbol OutputProcedureParagraphSymbol { get; internal set; }
+        public ParagraphSymbol OutputThroughProcedureParagraphSymbol { get; internal set; }
+        public SectionSymbol OutputProcedureSectionSymbol { get; internal set; }
+        public SectionSymbol OutputThroughProcedureSectionSymbol { get; internal set; }
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);

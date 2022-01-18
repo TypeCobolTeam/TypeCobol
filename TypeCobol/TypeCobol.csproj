@@ -16,6 +16,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup>
+    <Antlr4UseCSharpGenerator>true</Antlr4UseCSharpGenerator>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
@@ -47,21 +50,6 @@
     <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs">
       <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesBaseListener.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesBaseVisitor.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseVisitor.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesListener.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesParser.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesParser.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesVisitor.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesVisitor.cs</Link>
-    </Compile>
     <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
@@ -87,10 +75,6 @@
     <Antlr4 Include="AntlrGrammar\CobolCodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="AntlrGrammar\CobolCompilerDirectives.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
     </Antlr4>
     <None Include="AntlrGrammar\CobolExpressions.g4" />
     <None Include="AntlrGrammar\CobolWords.g4" />
@@ -133,10 +117,7 @@
     <None Include="Documentation\Studies\Text editors functions study.xlsx" />
     <None Include="Documentation\Studies\Symbols and User defined words.xlsx" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Compiler\Parser\NodeBuilder\" />
-    <Folder Include="Documentation\Presentations\" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AntlrGrammar\How to configure antlr 4 in Visual Studio.txt" />
@@ -165,6 +146,7 @@
   <ItemGroup>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

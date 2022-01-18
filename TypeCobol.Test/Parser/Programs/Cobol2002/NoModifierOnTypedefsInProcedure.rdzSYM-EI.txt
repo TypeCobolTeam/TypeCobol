@@ -33,18 +33,15 @@ Functions:
     Owner: DVZFSCT0::Proc1
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: DVZFSCT0::Proc1::type1
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE, InsideTypedef]
           Owner: DVZFSCT0::Proc1::type1
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False
@@ -55,18 +52,15 @@ Functions:
     Owner: DVZFSCT0::Proc1
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: DVZFSCT0::Proc1::type2
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE, InsideTypedef]
           Owner: DVZFSCT0::Proc1::type2
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False
@@ -77,18 +71,15 @@ Functions:
     Owner: DVZFSCT0::Proc1
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: DVZFSCT0::Proc1::type3
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [Global, WORKING_STORAGE, InsideTypedef]
           Owner: DVZFSCT0::Proc1::type3
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False
@@ -110,18 +101,15 @@ Programs:
       Owner: DVZFSCT0::Nested::Proc2
       Type:
         (.NET Type=TypedefType, Tag=Typedef)
-        Flags: [InsideTypedef]
         Symbol: DVZFSCT0::Nested::Proc2::type4
         TargetType:
           (.NET Type=GroupType, Tag=Group)
-          Flags: [InsideTypedef]
           Fields:
             champ1 (.NET Type=VariableSymbol, Kind=Variable)
             Flags: [WORKING_STORAGE, InsideTypedef]
             Owner: DVZFSCT0::Nested::Proc2::type4
             Type:
               (.NET Type=PictureType, Tag=Picture)
-              Flags: [InsideTypedef]
               Picture: X(1)
             Level: 5
             IsFiller: False
@@ -132,18 +120,15 @@ Programs:
       Owner: DVZFSCT0::Nested::Proc2
       Type:
         (.NET Type=TypedefType, Tag=Typedef)
-        Flags: [InsideTypedef]
         Symbol: DVZFSCT0::Nested::Proc2::type5
         TargetType:
           (.NET Type=GroupType, Tag=Group)
-          Flags: [InsideTypedef]
           Fields:
             champ1 (.NET Type=VariableSymbol, Kind=Variable)
             Flags: [WORKING_STORAGE, InsideTypedef]
             Owner: DVZFSCT0::Nested::Proc2::type5
             Type:
               (.NET Type=PictureType, Tag=Picture)
-              Flags: [InsideTypedef]
               Picture: X(1)
             Level: 5
             IsFiller: False
@@ -154,18 +139,15 @@ Programs:
       Owner: DVZFSCT0::Nested::Proc2
       Type:
         (.NET Type=TypedefType, Tag=Typedef)
-        Flags: [InsideTypedef]
         Symbol: DVZFSCT0::Nested::Proc2::type6
         TargetType:
           (.NET Type=GroupType, Tag=Group)
-          Flags: [InsideTypedef]
           Fields:
             champ1 (.NET Type=VariableSymbol, Kind=Variable)
             Flags: [Global, WORKING_STORAGE, InsideTypedef]
             Owner: DVZFSCT0::Nested::Proc2::type6
             Type:
               (.NET Type=PictureType, Tag=Picture)
-              Flags: [InsideTypedef]
               Picture: X(1)
             Level: 5
             IsFiller: False
@@ -189,18 +171,15 @@ Functions:
     Owner: Stacked::Proc3
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: Stacked::Proc3::type7
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE, InsideTypedef]
           Owner: Stacked::Proc3::type7
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False
@@ -211,18 +190,15 @@ Functions:
     Owner: Stacked::Proc3
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: Stacked::Proc3::type8
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE, InsideTypedef]
           Owner: Stacked::Proc3::type8
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False
@@ -233,18 +209,15 @@ Functions:
     Owner: Stacked::Proc3
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
-      Flags: [InsideTypedef]
       Symbol: Stacked::Proc3::type9
       TargetType:
         (.NET Type=GroupType, Tag=Group)
-        Flags: [InsideTypedef]
         Fields:
           champ1 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [Global, WORKING_STORAGE, InsideTypedef]
           Owner: Stacked::Proc3::type9
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
           IsFiller: False

@@ -1,0 +1,10 @@
+Range (11, 8) -> (12, 28) <27, Error, Syntax> - Syntax error : "END PROGRAM" is missing.
+--- Nodes ---
+?
+  Main
+    Nested1
+      end
+    end
+  Stacked1
+    Nested1
+      end

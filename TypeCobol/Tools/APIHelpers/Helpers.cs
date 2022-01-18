@@ -34,7 +34,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, false, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     var diagnostics = parser.Results.AllDiagnostics();
@@ -57,7 +57,7 @@ namespace TypeCobol.Tools.APIHelpers
 
                         if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
                         {
-                            diagEvent?.Invoke(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic("No types and no procedures/functions found", 1, 1, 1, null, MessageCode.Warning) });
+                            diagEvent?.Invoke(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic("No types and no procedures/functions found", Diagnostic.Position.Default, null, MessageCode.Warning) });
                             continue;
                         }
 
@@ -89,7 +89,7 @@ namespace TypeCobol.Tools.APIHelpers
             var options = new TypeCobolOptions(config) { ExecToStep = ExecutionStep.SemanticCheck };
             var parser = new Parser(customSymbols);
 
-            parser.Init(path, options, config.Format, config.CopyFolders);
+            parser.Init(path, false, options, config.Format, config.CopyFolders);
             parser.Parse(path); //Parse the dependency file
 
             return parser.Results;
@@ -129,7 +129,7 @@ namespace TypeCobol.Tools.APIHelpers
                 //Issue #668, warn if dependencies path are invalid
                 if (diagEvent != null && dependenciesFound.Count == 0)
                 {
-                    diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(path + ", no dependencies found", 1, 1, 1, null, MessageCode.DependenciesLoading) });
+                    diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(path + ", no dependencies found", Diagnostic.Position.Default, null, MessageCode.DependenciesLoading) });
                 }
                 dependencies.AddRange(dependenciesFound); //Get File by name or search the directory for all files
             }
@@ -221,7 +221,7 @@ namespace TypeCobol.Tools.APIHelpers
                             && !programTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement.Visibility == AccessModifier.Public))       //No Public Types in Program table
                             && !programTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement.Visibility == AccessModifier.Public)))  //No Public Functions in Program table
                         {
-                            diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(string.Format("No public types or procedures/functions found in {0}", program.Name), 1, 1, 1, null, MessageCode.Warning) });
+                            diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(string.Format("No public types or procedures/functions found in {0}", program.Name), Diagnostic.Position.Default, null, MessageCode.Warning) });
                             continue;
                         }
                         table.AddProgram(program); //Add program to Namespace symbol table

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TypeCobol.Analysis;
@@ -31,14 +33,15 @@ namespace TypeCobol.Test.Report
         /// Parse a file using an INodeListener and IReport instance and compare the resulting report.
         /// </summary>
         /// <param name="fileName">The file name to parse</param>
+        /// <param name="isCopy">True to indicate the source file is a copy, False otherwise</param>
         /// <param name="reportFileName">The file that contains the expected report</param>
         /// <typeparam name="T">The Type of the IReport instance to be instantiated.</typeparam>
         /// <returns>Return true if the report has been generated and compared, false otherwise</returns>
-        public static ReturnCode ParseWithNodeListenerReportCompare<T>(string fileName, string reportFileName)
+        public static ReturnCode ParseWithNodeListenerReportCompare<T>(string fileName, bool isCopy, string reportFileName)
             where T : IReport, ISyntaxDrivenAnalyzer, new()
         {
             T report = default;
-            var analyzerProvider = new AnalyzerProvider();
+            var analyzerProvider = new AnalyzerProviderWrapper(str => Debug.Fail(str));
             analyzerProvider.AddActivator((o, t) => report = new T());
 
             string input = Path.Combine(ROOT_INPUT, fileName);
@@ -50,7 +53,7 @@ namespace TypeCobol.Test.Report
                 typeCobolOption.AutoRemarksEnable = false;
 #endif
             string copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
-            parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder }, analyzerProvider);
+            parser.Init(input, isCopy, typeCobolOption, format, new List<string>() { copyFolder }, analyzerProvider);
             parser.Parse(input);
 
             // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running

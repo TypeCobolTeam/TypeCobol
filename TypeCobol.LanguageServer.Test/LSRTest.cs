@@ -254,6 +254,7 @@ namespace TypeCobol.LanguageServer.Test
         public void SimpleMoveToCompletion()
         {
             LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("SimpleMoveToCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
         }
 
         [TestMethod]
@@ -282,6 +283,13 @@ namespace TypeCobol.LanguageServer.Test
         public void CompletionAfterDotFromTypedDataDef()
         {
             LSRTestHelper.Test("CompletionAfterDotFromTypedDataDef", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionAfterWhen()
+        {
+            LSRTestHelper.Test("CompletionAfterWhen", LsrTestingOptions.NoLsrTesting, true, false, true);
         }
 
         [TestMethod]
@@ -317,6 +325,7 @@ namespace TypeCobol.LanguageServer.Test
         public void DisplayCompletion()
         {
             LSRTestHelper.Test("DisplayCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("DisplayCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
         }
 
         [TestMethod]
@@ -447,6 +456,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionCallDuplicateProcedure", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void AmbiguousVariablesCompletion()
+        {
+            LSRTestHelper.Test("AmbiguousVariablesCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("AmbiguousVariablesCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
+        }
         #endregion
 
         [TestMethod]
@@ -501,6 +518,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             //Issue #1900, initially a NullReferenceException was thrown instead of a proper diagnostic
             LSRTestHelper.Test("EmptyExecStatement", LsrTestingOptions.NoLsrTesting);
+        }
+
+        [TestMethod]
+        [TestCategory("CopyEdit")]
+        public void CopyEditAddDataItem()
+        {
+            LSRTestHelper.Test("CopyEditAddDataItem", LsrTestingOptions.NoLsrTesting, true);
         }
     }
 }

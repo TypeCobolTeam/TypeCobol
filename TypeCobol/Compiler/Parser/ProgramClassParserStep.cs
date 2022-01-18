@@ -23,9 +23,6 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     static class ProgramClassParserStep
     {
-        // When not null, optionnaly used to gather Antlr performance profiling information
-        public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
-
         private static bool CupPrepared = false;
         /// <summary>
         /// This static prepare the parser generated method CUP_TypeCobolProgramParser_do_action.
@@ -60,7 +57,15 @@ namespace TypeCobol.Compiler.Parser
 #if DEBUG_ANTRL_CUP_TIME
             var t1 = DateTime.UtcNow;            
 #endif
-            CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines);
+            IEnumerable<CodeElement> before = null;
+            IEnumerable<CodeElement> after = null;
+            if (textSourceInfo.IsCopy)
+            {
+                var programSkeleton = new CopyParsing.ProgramSkeleton(textSourceInfo);
+                before = programSkeleton.Before();
+                after = programSkeleton.After();
+            }
+            CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines, before, after);
             CupParser.TypeCobolProgramParser parser = new CupParser.TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
             parser.ErrorReporter = diagReporter;
@@ -92,7 +97,7 @@ namespace TypeCobol.Compiler.Parser
             catch (Exception ex)
             {
                 var code = Diagnostics.MessageCode.ImplementationError;
-                programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
+                programClassBuilderError = new ParserDiagnostic(ex.ToString(), Diagnostic.Position.Default, null, code, ex);
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
 

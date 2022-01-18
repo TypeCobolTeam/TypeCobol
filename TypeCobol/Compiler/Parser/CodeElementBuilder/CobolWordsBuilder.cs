@@ -13,12 +13,11 @@ namespace TypeCobol.Compiler.Parser
 {
     internal class CobolWordsBuilder
     {
-
         internal IDictionary<Token, SymbolInformation> symbolInformationForTokens { get; private set; }
 
-        public CobolWordsBuilder(IDictionary<Token, SymbolInformation> symbolInformationForTokens)
+        public void Reset()
         {
-            this.symbolInformationForTokens = symbolInformationForTokens;
+            this.symbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
         }
 
         private void AddToSymbolInformations(AlphanumericValue nameLiteral, SymbolInformation symbolInfo)
@@ -104,31 +103,48 @@ namespace TypeCobol.Compiler.Parser
                 return CreateFigurativeConstant(context.figurativeConstant());
             }
 
-            //alphanumericOrNationalLiteralToken()
-            Token token = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(token);
-        }
-        internal AlphanumericValue CreateAlphanumericValue(ParserRuleContext context)
-        {
-            Token token = ParseTreeUtils.GetFirstToken(context);
-            if (token == null) return null;
-            return new AlphanumericValue(token);
+            return CreateAlphanumericValue(context.alphanumericOrNationalLiteralToken());
         }
 
-        internal AlphanumericValue CreateAlphanumericValue(ITerminalNode node)
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.AlphanumericLiteralTokenContext context) => CreateAlphanumericValueUsingFirstToken(context);
+
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.AlphanumericOrNationalLiteralTokenContext context) => CreateAlphanumericValueUsingFirstToken(context);
+
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.AlphanumericValue2Context context)
         {
-            return CreateAlphanumericValue(ParseTreeUtils.GetFirstToken(node));
+            if (context == null) return null;
+            return CreateAlphanumericValue(context.alphanumericOrNationalLiteralToken());
         }
 
-        internal AlphanumericValue CreateAlphanumericValue(IToken node) {
-            return CreateAlphanumericValue((Token)node);
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.AlphanumericValue5Context context)
+        {
+            if (context == null) return null;
+
+            if (context.UserDefinedWord() != null)
+            {
+                return CreateAlphanumericValue(context.UserDefinedWord());
+            }
+
+            return CreateAlphanumericValue(context.alphanumericLiteralToken());
         }
-        internal AlphanumericValue CreateAlphanumericValue(Token token) {
-            if (token == null) return null;
-            // [COBOL 2002]
-            if (token.TokenType == TokenType.DATE) token.TokenType = TokenType.UserDefinedWord;
-            // [/COBOL 2002]
-            return new AlphanumericValue(token);
+
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.StandardCollatingSequenceReferenceContext context) => CreateAlphanumericValueUsingFirstToken(context);
+
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.SpecialRegisterReferenceContext context) => CreateAlphanumericValueUsingFirstToken(context);
+
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] ITerminalNode node) => CreateAlphanumericValueUsingFirstToken(node);
+
+        private AlphanumericValue CreateAlphanumericValueUsingFirstToken(IParseTree parseTree)
+        {
+            Token token = ParseTreeUtils.GetFirstToken(parseTree);
+            return token != null ? new AlphanumericValue(token) : null;
         }
 
         [CanBeNull]
@@ -762,30 +778,31 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolReference CreateIndexNameReference(CodeElementsParser.QualifiedIndexNameContext context)
         {
-            IToken head = null;
-
             //Detect if it's Cobol Qualified (IN|OF)
             if (context.indexName != null)
-                return new SymbolReference(CreateAlphanumericValue(context.indexName), SymbolType.IndexName);
-            else //Else it typecobol qualified
             {
-                head = context.TcHeadDefiniiton;
-                if (context.children.Any(x => (x.Payload as Token)?.TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
-                    return null; //If not UserDefiedWord or QualifiedSeparator it's a mistake. 
+                System.Diagnostics.Debug.Assert(context.indexName is Token);
+                //TokenType is UserDefinedWord, so it's ok to create an AlphanumericValue
+                return new SymbolReference(new AlphanumericValue((Token) context.indexName), SymbolType.IndexName);
             }
+
+            //Else it typecobol qualified
+            if (context.children.Any(x => (x.Payload as Token)?.TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
+                return null; //If not UserDefinedWord or QualifiedSeparator it's a mistake.
+
+            IToken head = context.TcHeadDefiniiton;
+            if (head == null) return null; //If head is null -> return null, we can't create the QualifiedReference properly.
+
             var tail = context.UserDefinedWord();
             tail = tail.Where(t => t.Symbol != head).ToArray();
-                Array.Reverse(tail);
+            Array.Reverse(tail);
 
-            return CreateQualifiedIndexName(head, tail, false);
-        }
-
-        private SymbolReference CreateQualifiedIndexName(IToken head, ITerminalNode[] tail, bool isCOBOL = true)
-        {
-            if (head == null)
-                return null; //If head is null -> retrun null, we can't create the QualifiedReference properly.
-            var reference = CreateQualifiedSymbolReference(new SymbolReference(CreateAlphanumericValue(head), SymbolType.IndexName), new SymbolReference(CreateAlphanumericValue(tail[0]), SymbolType.IndexName), isCOBOL);
-            for (int c = 1; c < tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, new SymbolReference(CreateAlphanumericValue(tail[c]), SymbolType.IndexName), isCOBOL);
+            System.Diagnostics.Debug.Assert(head is Token);
+            //head.TokenType is UserDefinedWord so it's ok to create an AlphanumericValue
+            var headLiteral = new AlphanumericValue((Token) head);
+            
+            var reference = CreateQualifiedSymbolReference(new SymbolReference(headLiteral, SymbolType.IndexName), new SymbolReference(CreateAlphanumericValue(tail[0]), SymbolType.IndexName), false);
+            for (int c = 1; c < tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, new SymbolReference(CreateAlphanumericValue(tail[c]), SymbolType.IndexName), false);
             symbolInformationForTokens[reference.NameLiteral.Token] = reference;
             return reference;
         }
@@ -1104,8 +1121,10 @@ namespace TypeCobol.Compiler.Parser
             return CreateExternalName(context.externalName5(), SymbolType.AssignmentName);
         }
 
+        [CanBeNull]
         internal ExternalNameOrSymbolReference CreateAssignmentNameOrFileNameReference(CodeElementsParser.AssignmentNameOrFileNameReferenceContext context)
         {
+            if (context == null) return null;
             return CreateExternalNameOrSymbolReference(context.externalNameOrSymbolReference5(), new SymbolType[] { SymbolType.AssignmentName, SymbolType.FileName });
         }
 
@@ -1202,7 +1221,7 @@ namespace TypeCobol.Compiler.Parser
         [CanBeNull]
         internal EnumeratedValue CreateRecordingMode(CodeElementsParser.RecordingModeContext context)
         {
-            return CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum));
+            return context != null ? CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum)) : null;
         }
 
         #endregion

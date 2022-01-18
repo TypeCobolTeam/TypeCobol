@@ -116,6 +116,7 @@ namespace TypeCobol.Compiler.Text
         public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text, int pmax, int pmin, bool bConvertFirstLine)
         {
             var result = new List<ITextLine>();
+            var scannerOptions = new TypeCobolOptions();
             foreach (var part in text.Split(new[] { Environment.NewLine, "\n", "\r" }, StringSplitOptions.None))
             {
                 int max = pmax;
@@ -134,7 +135,7 @@ namespace TypeCobol.Compiler.Text
                         indicator = '-';
                     }
 
-                    IList<Tuple<string, bool>> lines = Split(part, max, min);
+                    IList<Tuple<string, bool>> lines = Split(part, max, min, scannerOptions);
 
                     for (int i = 0; i < lines.Count; i++)
                     {
@@ -177,7 +178,7 @@ namespace TypeCobol.Compiler.Text
             return result;
         }
 
-        private static IList<Tuple<string, bool> > Split(string line, int max, int min)
+        private static IList<Tuple<string, bool> > Split(string line, int max, int min, TypeCobolOptions scannerOptions)
         {
             var lines = new List<Tuple<string, bool>>();
             int nLine = (line.Length / max) + ((line.Length % max) != 0 ? 1 : 0);
@@ -194,9 +195,9 @@ namespace TypeCobol.Compiler.Text
                 }
             }
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line);
-            tempTokensLine.InitializeScanState(new MultilineScanState(false, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
-            Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, null, false);
+            Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, scannerOptions, false);
             Token t = null;
             int nCurLength = 0;
             int nSpan = max;
@@ -328,7 +329,7 @@ namespace TypeCobol.Compiler.Text
         // List of compiler directives keywords which can be encountered before column 8
         // even in Cobol reference format, and which force a certain form a free format
         // text lines in otherwise reference format files
-        private static readonly string[] COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8 = new string[] {
+        private static readonly string[] COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_COLUMN_8 = new string[] {
             "CBL",
             "PROCESS",
             "*CBL",
@@ -355,9 +356,9 @@ namespace TypeCobol.Compiler.Text
                 if (Char.IsDigit(firstChar) || firstChar == ' ') continue;
 
                 // Try to match each one of the potential compiler directives in turn
-                for (int compilerDirectiveIndex = 0; (compilerDirectiveIndex < COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8.Length && !compilerDirectiveFound); compilerDirectiveIndex++)
+                for (int compilerDirectiveIndex = 0; (compilerDirectiveIndex < COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_COLUMN_8.Length && !compilerDirectiveFound); compilerDirectiveIndex++)
                 {
-                    string compilerDirectiveKeyword = COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8[compilerDirectiveIndex];
+                    string compilerDirectiveKeyword = COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_COLUMN_8[compilerDirectiveIndex];
 
                     // Try to match the first character of a compiler directive
                     if (Char.ToUpper(firstChar) == compilerDirectiveKeyword[0])
@@ -428,11 +429,13 @@ namespace TypeCobol.Compiler.Text
                     break;
             }
 
-            // Detect blank lines
-            if ((Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation) &&
-               (Source.IsEmpty || String.IsNullOrWhiteSpace(SourceText)))
+            if (Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation)
             {
-                Type = CobolTextLineType.Blank;
+                // Detect blank lines
+                if (Source.IsEmpty || string.IsNullOrWhiteSpace(SourceText))
+                {
+                    Type = CobolTextLineType.Blank;
+                }
             }
         }
 
@@ -548,7 +551,7 @@ namespace TypeCobol.Compiler.Text
         /// in a snapshot of the document at a given point in time.
         /// When a line is created outside of a document, LineIndex = -1.
         /// </summary>
-        public int LineIndex { get; set; }
+        public int LineIndex { get; protected set; }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Scanner
 {
     /// <summary>
     /// Internal Scanner state propagated from one line to the other when compiling a complete source file
     /// </summary>
-    public class MultilineScanState : IEquatable<MultilineScanState>
+    public partial class MultilineScanState : IEquatable<MultilineScanState>
     {
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
@@ -40,9 +36,9 @@ namespace TypeCobol.Compiler.Scanner
         public bool InsidePseudoText { get; private set; }
 
         /// <summary>
-        /// True if we are inside the symbolicCharactersClause > symbolicCharacterDefinition+
+        /// Special names defined for this scan state
         /// </summary>
-        public bool InsideSymbolicCharacterDefinitions { get; private set; }
+        public SpecialNamesContext SpecialNames { get; }
 
         /// <summary>
         /// True if we are between two formalizedComments markups
@@ -60,11 +56,6 @@ namespace TypeCobol.Compiler.Scanner
         public bool InsideMultilineComments { get; private set; }
 
         /// <summary>
-        /// True as soon as the keyword DECIMAL-POINT has been encountered
-        /// </summary>
-        public bool DecimalPointIsComma { get; private set; }
-
-        /// <summary>
         /// True as soon as the keywords DEBUGGING MODE have been encountered
         /// </summary>
         public bool WithDebuggingMode { get; private set; }
@@ -72,32 +63,26 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True if we are scanning inside a Copy.
         /// </summary>
-        public bool InsideCopy { get; set; }
+        public bool InsideCopy
+        {
+            get;
+            internal set; //Setter is used only at import time when we jump from including document to included copy.
+        }
 
         /// <summary>
         /// Encoding of the text file : used to decode the value of an hexadecimal alphanumeric literal
         /// </summary>
-        public Encoding EncodingForAlphanumericLiterals { get; private set; }
+        public Encoding EncodingForAlphanumericLiterals { get; }
+
+        // Used to track the end of a REPLACE directive.
+        private bool _afterReplacementPseudoText;
 
         /// <summary>
-        /// Symbolic character names previously defined in the source file
-        /// NB : value will be null until at least one symbolic character is defined
-        /// => only use method AddSymbolicCharacter to safely add an element to this list
+        /// True if we are scanning inside a REPLACE directive.
         /// </summary>
-        public IList<string> SymbolicCharacters { get; private set; }
+        public bool InsideReplaceDirective { get; private set; }
 
-        /// <summary>
-        /// Register a new symbolic character name found in the source file
-        /// </summary>
-        public void AddSymbolicCharacter(string tokenText)
-        {
-            if (SymbolicCharacters == null)
-            {
-                SymbolicCharacters = new List<string>();
-            }
-            SymbolicCharacters.Add(tokenText);
-        }
-
+#if EUROINFO_RULES
         /// <summary>
         /// True when we are existing a remarks directive. 
         /// </summary>
@@ -111,20 +96,22 @@ namespace TypeCobol.Compiler.Scanner
         /// True if we are inside a COPY=(..) of a REMARKS compiler directive.
         /// </summary>
         public bool InsideRemarksParentheses { get; set; }
+#endif
 
         /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, false, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+        public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false, bool insideCopy = false) :
+            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, 
-                bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField,
-                bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+        private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText,
+            SpecialNamesContext specialNamesContext, bool insideFormalizedComment, bool insideMultilineComments,
+            bool insideParamsField, bool withDebuggingMode, bool insideCopy,
+            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -132,10 +119,12 @@ namespace TypeCobol.Compiler.Scanner
             InsideFormalizedComment = insideFormalizedComment;
             InsideMultilineComments = insideMultilineComments;
             InsideParamsField = insideParamsField;
-            InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
-            DecimalPointIsComma = decimalPointIsComma;
+            SpecialNames = specialNamesContext;
             WithDebuggingMode = withDebuggingMode;
+            InsideCopy = insideCopy;
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
+            _afterReplacementPseudoText = afterReplacementPseudoText;
+            InsideReplaceDirective = insideReplaceDirective;
         }
 
         /// <summary>
@@ -143,16 +132,12 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions,
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, SpecialNames.Clone(),
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
-            clone.InsideCopy = this.InsideCopy;
+                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
-            if (SymbolicCharacters != null)
-            {
-                clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
-            }
+
 #if EUROINFO_RULES
             clone.InsideRemarksDirective = InsideRemarksDirective;
             clone.InsideRemarksParentheses = InsideRemarksParentheses;
@@ -166,7 +151,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public void AdvanceToNextStateAndAdjustTokenProperties(Token newToken)
         {
-
             // Ignore whitespace separators
             if (newToken.TokenFamily == TokenFamily.Whitespace ||
                 newToken.TokenFamily == TokenFamily.Comments)
@@ -213,6 +197,11 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.PseudoTextDelimiter:
                     // Register the start or the end of a pseudo text section
                     InsidePseudoText = !InsidePseudoText;
+                    if (!InsidePseudoText && BeforeLastSignificantToken?.TokenType == TokenType.BY)
+                    {
+                        // Leaving a PseudoText located after the 'BY' keyword -> we are after a replacement pseudo text
+                        _afterReplacementPseudoText = true;
+                    }
                     break;
                 case TokenType.COPY:
                     // Register the end of a pseudo text section (COPY not allowed in pseudo text)
@@ -223,7 +212,7 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 case TokenType.DECIMAL_POINT:
                     // Register the occurence of a DECIMAL-POINT IS COMMA clause      
-                    DecimalPointIsComma = true;
+                    SpecialNames.DecimalPointIsComma = true;
                     break;
                 case TokenType.MODE:
                     // Register the occurence of a WITH? DEBUGGING MODE clause    
@@ -235,7 +224,7 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 case TokenType.SYMBOLIC:
                     // Register the start of a SYMBOLIC CHARACTERS? clause
-                    InsideSymbolicCharacterDefinitions = true;
+                    SpecialNames.InsideSymbolicCharacterDefinitions = true;
                     break;
                 case TokenType.FORMALIZED_COMMENTS_START:
                     // Register the begin of the formalized Comments
@@ -268,19 +257,69 @@ namespace TypeCobol.Compiler.Scanner
                     // Register the end of the formalized Comments
                     InsideMultilineComments = false;
                     return;
+                case TokenType.CURRENCY:
+                    // CURRENCY token is used either to satrt a CURRENCY SIGN clause or as an intrinsic type name in tC
+                    if (LastSignificantToken?.TokenType != TokenType.TYPE)
+                    {
+                        SpecialNames.BeginCurrencySignClause();
+                    }
+                    break;
+                case TokenType.SYMBOL:
+                    // SYMBOL keyword is used only in CURRENCY SIGN clause
+                    SpecialNames.WithPictureSymbol();
+                    break;
+                case TokenType.AlphanumericLiteral:
+                case TokenType.HexadecimalAlphanumericLiteral:
+                case TokenType.NullTerminatedAlphanumericLiteral:
+                    if (SpecialNames.InsideCurrencySignDefinitions)
+                    {
+                        SpecialNames.OnAlphanumericLiteralToken(newToken);
+                    }
+                    break;
+                case TokenType.REPLACE:
+                    InsideReplaceDirective = true;
+                    break;
+                case TokenType.PeriodSeparator:
+                    if (_afterReplacementPseudoText)
+                    {
+                        _afterReplacementPseudoText = false;
+                        InsideReplaceDirective = false;
+                    }
+                    break;
             }
 
             // Avoid setting last significative token for multiline Comments
             if (InsideMultilineComments) { return; }
 
             // Register the end of a SYMBOLIC CHARACTERS? clause
-            if (InsideSymbolicCharacterDefinitions &&
+            if (SpecialNames.InsideSymbolicCharacterDefinitions &&
                 newToken.TokenType != TokenType.SYMBOLIC && newToken.TokenType != TokenType.CHARACTERS &&
                 newToken.TokenType != TokenType.SymbolicCharacter &&
                 newToken.TokenType != TokenType.IS && newToken.TokenType != TokenType.ARE &&
                 newToken.TokenType != TokenType.IntegerLiteral)
             {
-                InsideSymbolicCharacterDefinitions = false;
+                SpecialNames.InsideSymbolicCharacterDefinitions = false;
+            }
+
+            // Register the end of all CURRENCY SIGN clauses
+            if (SpecialNames.InsideCurrencySignDefinitions)
+            {
+                switch (newToken.TokenType)
+                {
+                    case TokenType.CURRENCY:
+                    case TokenType.SIGN:
+                    case TokenType.IS:
+                    case TokenType.AlphanumericLiteral:
+                    case TokenType.HexadecimalAlphanumericLiteral:
+                    case TokenType.NullTerminatedAlphanumericLiteral:
+                    case TokenType.WITH:
+                    case TokenType.PICTURE:
+                    case TokenType.SYMBOL:
+                        break;
+                    default:
+                        SpecialNames.EndAllCurrencySignClauses();
+                        break;
+                }
             }
 
             // Register the last significant token 
@@ -525,7 +564,7 @@ namespace TypeCobol.Compiler.Scanner
             return InsideDataDivision == otherScanState.InsideDataDivision &&
                    InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
                    InsidePseudoText == otherScanState.InsidePseudoText &&
-                   InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
+                   SpecialNames.Equals(otherScanState.SpecialNames) &&
                    InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
                    InsideParamsField == otherScanState.InsideParamsField &&
                    InsideMultilineComments == otherScanState.InsideMultilineComments &&
@@ -536,11 +575,10 @@ namespace TypeCobol.Compiler.Scanner
                    //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
                    // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
 #endif
-                   DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                    WithDebuggingMode == otherScanState.WithDebuggingMode &&
                    EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
-                   ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) ||
-                    (SymbolicCharacters != null && otherScanState.SymbolicCharacters != null && SymbolicCharacters.Count == otherScanState.SymbolicCharacters.Count));
+                   _afterReplacementPseudoText == otherScanState._afterReplacementPseudoText &&
+                   InsideReplaceDirective == otherScanState.InsideReplaceDirective;
         }
 
         /// <summary>
@@ -555,7 +593,7 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideDataDivision.GetHashCode();
                 hash = hash * 23 + InsideProcedureDivision.GetHashCode();
                 hash = hash * 23 + InsidePseudoText.GetHashCode();
-                hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
+                hash = hash * 23 + SpecialNames.GetHashCode();
                 hash = hash * 23 + InsideFormalizedComment.GetHashCode();
                 hash = hash * 23 + InsideParamsField.GetHashCode();
                 hash = hash * 23 + InsideMultilineComments.GetHashCode();
@@ -564,13 +602,10 @@ namespace TypeCobol.Compiler.Scanner
 #if EUROINFO_RULES
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
 #endif
-                hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                 hash = hash * 23 + WithDebuggingMode.GetHashCode();
                 hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();
-                if (SymbolicCharacters != null)
-                {
-                    hash = hash * 23 + SymbolicCharacters.Count;
-                }
+                hash = hash * 23 + _afterReplacementPseudoText.GetHashCode();
+                hash = hash * 23 + InsideReplaceDirective.GetHashCode();
                 return hash;
             }
         }

@@ -10,6 +10,8 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Logging;
+using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
 {
@@ -122,11 +124,28 @@ namespace TypeCobol.LanguageServer
         public static bool UseOutlineRefresh { get; set; }
 
         /// <summary>
+        /// No Copy and Dependency files watchers.
+        /// </summary>
+        public static bool NoCopyDependencyWatchers { get; set; }
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// A Path to a file of CPY Copy names
+        /// </summary>
+        private static string CpyCopyNamesMapFilePath { get; set; }
+#endif
+
+        /// <summary>
         /// Are we supporting CFG/DFA Refresh Notifications.
         /// </summary>
         public static TypeCobolCustomLanguageServer.UseCfgMode UseCfg { get; set; }
 
         public static System.Diagnostics.Process Process;
+
+        /// <summary>
+        /// Custom extensions Dll Paths
+        /// </summary>
+        public static List<string> Extensions = new List<string>();
 
         /// <summary>
         /// Run the Lsr Process
@@ -215,9 +234,15 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
+#if EUROINFO_RULES
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => CpyCopyNamesMapFilePath = v },
+#endif
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
+                { "ca|customanalyzer=", "OBSOLETE - Use 'ext' option instead.", v => Extensions.Add(v) },
+                { "ext|extension=", "{PATH} to a custom DLL file containing parser extension(s). This option can be specified more than once.", v => Extensions.Add(v) },
+                { "now|nowatchers",  "No Copy and Dependency files watchers.", _ => NoCopyDependencyWatchers = true}
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -233,6 +258,15 @@ namespace TypeCobol.LanguageServer
             {
                 System.Console.WriteLine(Version);
                 return 0;
+            }
+
+            //TODO #2091 Add DebugLogger and FileLogger
+
+            //External loggers if extensions have been provided
+            var extensionManager = new ExtensionManager(Extensions);
+            foreach (var externalLogger in extensionManager.Activate<ILogger>())
+            {
+                LoggingSystem.RegisterLogger(externalLogger);
             }
 
             TextWriter logWriter = null;
@@ -295,7 +329,11 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
-
+                typeCobolServer.ExtensionManager = extensionManager;
+                typeCobolServer.NoCopyDependencyWatchers = NoCopyDependencyWatchers;
+#if EUROINFO_RULES
+                typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+#endif
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };
                 backgroundExecutionThread.Start();

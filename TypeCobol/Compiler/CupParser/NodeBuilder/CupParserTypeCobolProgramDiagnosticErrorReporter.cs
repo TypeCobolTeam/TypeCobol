@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using CSCupRuntime;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -59,7 +55,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             TypeCobolProgramParser tcpParser = parser as TypeCobolProgramParser;
             ProgramClassBuilder builder = tcpParser.Builder as ProgramClassBuilder;
             var errorReporter = tcpParser.ErrorReporter;
-            var tokenizer = parser.getScanner() as CodeElementTokenizer;
             CodeElementTokenizer newTokenizer = new CodeElementTokenizer(start, firstSymbol);
             TypeCobolProgramParser newParser = new TypeCobolProgramParser(newTokenizer);
             newParser.Builder = builder;
@@ -97,21 +92,20 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (tcpParser.IsTrial)
                 return true;
             List<string> expected = ExpectedSymbols(parser, curToken);
-            string symName = CodeElementTokenizer.CupTokenToString(curToken.sym);
             Symbol validSymbol = GetParserValidStackSymbol(parser, curToken);
-            string text = validSymbol != null ? (validSymbol.value as CodeElement).Text : "";
+            var ce = validSymbol?.value as CodeElement;
+            string text = ce?.Text ?? string.Empty;
             string msg = string.Format("extraneous input '{0}' expecting {{{1}}}", text, string.Join(", ", expected));
             System.Diagnostics.Debug.WriteLine(msg);
-            CupParserDiagnostic diagnostic = new CupParserDiagnostic(msg, validSymbol, null);
+            CupParserDiagnostic diagnostic = new CupParserDiagnostic(msg, ce, null);
             AddDiagnostic(diagnostic);
             //Try to add the last encountered statement in the stack if it is not already entered. 
             StackList<Symbol> stack = tcpParser.getParserStack();
             foreach (var symbol in stack)
             {
-                if (symbol.value is StatementElement)
+                if (symbol.value is StatementElement statementElement)
                 {
-                    lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementEntryPoint,
-                        symbol.value as CodeElement, true);
+                    lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementEntryPoint, statementElement, true);
                     stmtParser.parse();
                     break;
                 }
@@ -151,59 +145,4 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             return expected;
         }
     }
-
-    /// <summary>
-    /// Enhanced error message containing additional information about 
-    /// the origin of the syntax error in the grammar : offending symbol, rule stack
-    /// </summary>
-    public class CupParserDiagnostic : Diagnostic
-    {
-        public CupParserDiagnostic(string message, Symbol offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null) :
-            base(code, (offendingSymbol == null || offendingSymbol.value == null) ? -1 : (offendingSymbol.value as CodeElement).Column,
-                offendingSymbol == null ? -1 : ((offendingSymbol.value as CodeElement).StopIndex < 0 ? -1 : ((offendingSymbol.value as CodeElement).StopIndex + 1)),
-                offendingSymbol == null ? -1 : (offendingSymbol.value as CodeElement).Line, message, exception)
-        {
-            OffendingSymbol = offendingSymbol;
-            this.ruleStack = ruleStack;
-
-            CodeElement e = offendingSymbol?.value as CodeElement;
-            if (e != null && e.IsInsideCopy())
-            {
-                var copyToken = e.FirstCopyDirective?.COPYToken;
-                if (copyToken != null) Line = copyToken.Line;
-            }
-        }
-
-        public CupParserDiagnostic(string message, int start, int stop, int line, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null)
-            : base(code, start, stop, line, message, exception)
-        {
-            this.ruleStack = ruleStack;
-        }
-
-        /// <summary>
-        /// First token which did not match the current rule in the grammar
-        /// </summary>
-        public Symbol OffendingSymbol { get; private set; }
-
-        /// <summary>Grammar rules which were being recognized when an incorrect token occured.</summary>
-        private readonly string ruleStack;
-
-        public string ToStringWithRuleStack()
-        {
-            var str = new StringBuilder();
-            str.Append(base.ToString());
-            if (ruleStack != null) str.Append(" RuleStack=" + ruleStack + ", ");
-            if (OffendingSymbol != null)
-            {
-                str.Append(" OffendingSymbol=").Append(OffendingSymbol.value);
-                var importedToken = OffendingSymbol.value as ImportedToken;
-                if (importedToken != null)
-                {
-                    str.Append(" in ").Append(importedToken.CopyDirective);
-                }
-            }
-            return str.ToString();
-        }
-    }
-
 }

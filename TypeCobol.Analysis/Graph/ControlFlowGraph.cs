@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Analysis.Graph
 {
@@ -9,7 +10,7 @@ namespace TypeCobol.Analysis.Graph
     /// </summary>
     /// <typeparam name="N"></typeparam>
     /// <typeparam name="D"></typeparam>
-    public class ControlFlowGraph<N, D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// BasicBlock callback type.
@@ -121,6 +122,30 @@ namespace TypeCobol.Analysis.Graph
         public N ProcedureDivisionNode { get; private set; }
 
         /// <summary>
+        /// All PERFORMs found in the program which may be prematurely exited. Null if no such perform found.
+        /// Key is the PERFORM statement which is prematurely ended, value is the list of all the instructions that break the flow of this PERFORM.
+        /// </summary>
+        public Dictionary<PerformProcedure, List<N>> PrematurePerformExits { get; private set; }
+
+        /// <summary>
+        /// All PERFORM THRUs found in the program which are using incorrect order for their starting and ending procedures. Null if no such perform found.
+        /// Key is the PERFORM THRU statement which has wrong procedure order, the tuple contains the resolved paragraph or section nodes.
+        /// First item is the start of range (before THRU), second item is the end of range (after THRU). So Item1 is declared after Item2 in program.
+        /// </summary>
+        public Dictionary<PerformProcedure, Tuple<N, N>> WrongOrderPerformThrus { get; private set; }
+
+        /// <summary>
+        /// All recursive PERFORMs found in the program. Null if no such perform found.
+        /// Key is the recursive PERFORM statement, value is the list of all detected instructions that lead to recursion.
+        /// </summary>
+        public Dictionary<PerformProcedure, List<N>> RecursivePerforms { get; private set; }
+
+        /// <summary>
+        /// All unreachable blocks of this graph. The property may be null but not empty.
+        /// </summary>
+        public List<BasicBlock<N, D>> UnreachableBlocks { get; private set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="programOrFunctionNode">The program of function node of the graph.</param>
@@ -156,6 +181,81 @@ namespace TypeCobol.Analysis.Graph
         /// (i.e. encountered a PROCEDURE DIVISION node while building).
         /// </summary>
         public bool IsInitialized => ProcedureDivisionNode != null;
+
+        /// <summary>
+        /// Register an instruction that make a perform statement go out of its boundaries.
+        /// </summary>
+        /// <param name="perform">Perform node</param>
+        /// <param name="exitingInstruction">Exiting instruction</param>
+        internal void AddPrematureExitForPerformStatement(PerformProcedure perform, N exitingInstruction)
+        {
+            if (PrematurePerformExits == null)
+            {
+                PrematurePerformExits = new Dictionary<PerformProcedure, List<N>>();
+            }
+
+            if (PrematurePerformExits.TryGetValue(perform, out var nodes))
+            {
+                nodes.Add(exitingInstruction);
+            }
+            else
+            {
+                PrematurePerformExits.Add(perform, new List<N>(){ exitingInstruction });
+            }
+        }
+
+        /// <summary>
+        /// Register a Perform Thru with incorrect order of its target procedures.
+        /// </summary>
+        /// <param name="performThru">Perform node</param>
+        /// <param name="procedure">Target procedure node</param>
+        /// <param name="throughProcedure">Target THRU procedure node</param>
+        internal void AddWrongOrderPerformThru(PerformProcedure performThru, N procedure, N throughProcedure)
+        {
+            if (WrongOrderPerformThrus == null)
+            {
+                WrongOrderPerformThrus = new Dictionary<PerformProcedure, Tuple<N, N>>();
+            }
+
+            System.Diagnostics.Debug.Assert(!WrongOrderPerformThrus.ContainsKey(performThru));
+            WrongOrderPerformThrus.Add(performThru, new Tuple<N, N>(procedure, throughProcedure));
+        }
+
+        /// <summary>
+        /// Register a recursive jump for a perform statement.
+        /// </summary>
+        /// <param name="perform">Perform node</param>
+        /// <param name="recursiveJump">Recursive jump node</param>
+        internal void AddRecursivePerform(PerformProcedure perform, N recursiveJump)
+        {
+            if (RecursivePerforms == null)
+            {
+                RecursivePerforms = new Dictionary<PerformProcedure, List<N>>();
+            }
+
+            if (RecursivePerforms.TryGetValue(perform, out var nodes))
+            {
+                nodes.Add(recursiveJump);
+            }
+            else
+            {
+                RecursivePerforms.Add(perform, new List<N>() { recursiveJump });
+            }
+        }
+
+        /// <summary>
+        /// Register one unreachable block of this graph
+        /// </summary>
+        /// <param name="block">The unreachable block to add</param>
+        internal void AddUnreachableBlock(BasicBlock<N, D> block)
+        {
+            if (UnreachableBlocks == null)
+            {
+                UnreachableBlocks = new List<BasicBlock<N, D>>();
+            }
+
+            UnreachableBlocks.Add(block);
+        }
 
         /// <summary>
         /// Set up the Predecessor Edges list starting from the root block.	
@@ -226,7 +326,7 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// Clear previous analysis data for all blocks.
         /// </summary>
-        public void ResetAllBlockData()
+        internal void ResetAllBlockData()
         {
             foreach (var block in AllBlocks)
             {
@@ -279,6 +379,35 @@ namespace TypeCobol.Analysis.Graph
         {
             if (RootBlock != null)
                 DFS(RootBlock, callback);
+        }
+
+        /// <summary>
+        /// Get all terminal blocks from the given block.
+        /// </summary>
+        /// <param name="block">The starting block</param>
+        /// <param name="accumulator">Target list to accumulate terminal blocks</param>
+        internal void GetTerminalSuccessorEdges(BasicBlock<N, D> block, List<BasicBlock<N, D>> accumulator)
+        {
+            var visitedBlocks = new HashSet<int>();
+            Accumulate(block);
+
+            void Accumulate(BasicBlock<N, D> currentBlock)
+            {
+                if (visitedBlocks.Contains(currentBlock.Index))
+                    return;
+
+                visitedBlocks.Add(currentBlock.Index);
+
+                if (currentBlock.SuccessorEdges.Count == 0)
+                {
+                    accumulator.Add(currentBlock);
+                }
+                else foreach (var successorIndex in currentBlock.SuccessorEdges)
+                {
+                    var successor = SuccessorEdges[successorIndex];
+                    Accumulate(successor);
+                }
+            }
         }
     }
 }

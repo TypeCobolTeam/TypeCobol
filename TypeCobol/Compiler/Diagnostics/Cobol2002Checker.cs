@@ -119,19 +119,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            // Add a warning if a parameters field is set inside the formalized comment
-            if (typeDefinition.CodeElement.FormalizedCommentDocumentation != null && typeDefinition.CodeElement.FormalizedCommentDocumentation.Parameters.Any())
-            {
-                var token = typeDefinition.CodeElement.ConsumedTokens
-                    .FirstOrDefault(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_PARAMETERS);
-                if (token != null)
-                {
-                    DiagnosticUtils.AddError(typeDefinition.CodeElement,
-                        "Type Definition does not support Parameters field",
-                        token, code: MessageCode.Warning);
-                }
-            }
-
             //Check circular reference if not already done by TypeCobolLinker
             TypeCobolLinker.CheckCircularReferences(typeDefinition);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,7 @@ namespace TypeCobol.Analysis.Test
 {
     internal static class CfgTestUtils
     {
-        private const string CFG_ANALYZER_IDENTIFIER = "cfg-test-utils";
-
-        private static readonly Dictionary<CfgBuildingMode, AnalyzerProvider> _AnalyzerProviders;
+        private static readonly Dictionary<CfgBuildingMode, AnalyzerProviderWrapper> _AnalyzerProviders;
 
         //From TypeCobol.Test
         public static readonly string ThirdPartyDir;
@@ -34,7 +33,7 @@ namespace TypeCobol.Analysis.Test
 
         static CfgTestUtils()
         {
-            _AnalyzerProviders = new Dictionary<CfgBuildingMode, AnalyzerProvider>();
+            _AnalyzerProviders = new Dictionary<CfgBuildingMode, AnalyzerProviderWrapper>();
             AddAnalyzerProvider(CfgBuildingMode.Standard);
             AddAnalyzerProvider(CfgBuildingMode.Extended);
             AddAnalyzerProvider(CfgBuildingMode.WithDfa);
@@ -51,8 +50,8 @@ namespace TypeCobol.Analysis.Test
 
             void AddAnalyzerProvider(CfgBuildingMode mode)
             {
-                var analyzerProvider = new AnalyzerProvider();
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_ANALYZER_IDENTIFIER, mode));
+                var analyzerProvider = new AnalyzerProviderWrapper(str => Debug.Fail(str));
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(mode, o));
                 _AnalyzerProviders.Add(mode, analyzerProvider);
             }
         }
@@ -132,8 +131,8 @@ namespace TypeCobol.Analysis.Test
                     analyzerProvider.AddActivator(activator);
                 }
             }
-
-            var parser = Parser.Parse(sourceFilePath, DocumentFormat.RDZReferenceFormat, analyzerProvider: analyzerProvider);
+            
+            var parser = Parser.Parse(sourceFilePath, false, new TypeCobolOptions(), DocumentFormat.RDZReferenceFormat, analyzerProvider: analyzerProvider);
             var results = parser.Results;
 
             if (expectedDiagnosticsFilePath != null)
@@ -172,7 +171,8 @@ namespace TypeCobol.Analysis.Test
                 }
             }
 
-            if (results.TryGetAnalyzerResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, D>> graphs))
+            string analyzerIdentifier = CfgDfaAnalyzerFactory.GetIdForMode(mode);
+            if (results.TemporaryProgramClassDocumentSnapshot.AnalyzerResults.TryGetResult(analyzerIdentifier, out IList<ControlFlowGraph<Node, D>> graphs))
             {
                 return graphs;
             }

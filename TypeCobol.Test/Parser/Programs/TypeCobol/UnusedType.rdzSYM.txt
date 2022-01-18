@@ -18,18 +18,15 @@ Types:
   Owner: MyPGM
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
-    Flags: [InsideTypedef]
     Symbol: MyPGM::Type3
     TargetType:
       (.NET Type=GroupType, Tag=Group)
-      Flags: [InsideTypedef]
       Fields:
         var3 (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [WORKING_STORAGE, InsideTypedef]
         Owner: MyPGM::Type3
         Type:
           (.NET Type=PictureType, Tag=Picture)
-          Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
         IsFiller: False
@@ -40,18 +37,15 @@ Types:
   Owner: MyPGM
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
-    Flags: [InsideTypedef]
     Symbol: MyPGM::Type2
     TargetType:
       (.NET Type=GroupType, Tag=Group)
-      Flags: [InsideTypedef]
       Fields:
         var2 (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [WORKING_STORAGE, InsideTypedef]
         Owner: MyPGM::Type2
         Type:
           (.NET Type=GroupType, Tag=Group)
-          Flags: [InsideTypedef]
           Fields:
             type3 (.NET Type=TypedVariableSymbol, Kind=Variable)
             Flags: [WORKING_STORAGE, HasATypedefType, InsideTypedef]
@@ -67,18 +61,15 @@ Types:
   Owner: MyPGM
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
-    Flags: [InsideTypedef]
     Symbol: MyPGM::Type1
     TargetType:
       (.NET Type=GroupType, Tag=Group)
-      Flags: [InsideTypedef]
       Fields:
         var1 (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [WORKING_STORAGE, InsideTypedef]
         Owner: MyPGM::Type1
         Type:
           (.NET Type=GroupType, Tag=Group)
-          Flags: [InsideTypedef]
           Fields:
             type2 (.NET Type=TypedVariableSymbol, Kind=Variable)
             Flags: [WORKING_STORAGE, HasATypedefType, InsideTypedef]

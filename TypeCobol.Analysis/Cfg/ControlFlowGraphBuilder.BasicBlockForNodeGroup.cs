@@ -29,10 +29,10 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Terminal blocks within this Group.
             /// </summary>
-            internal List<BasicBlockForNode> TerminalBlocks
+            public IList<BasicBlock<Node, D>> TerminalBlocks
             {
                 get;
-                set;
+                internal set;
             }
 
             /// <summary>

@@ -29,7 +29,7 @@ namespace TypeCobol.LanguageServer.Test
         /// </summary>
         public const int LSR_TEST_TIMEOUT = 1000 * 30;
 
-        public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, bool useSyntaxColoring = false, bool useOutline = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null, bool useCfg = false)
+        public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, bool useSyntaxColoring = false, bool useOutline = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null, bool useCfg = false, bool pureCobol = false)
         {
             var workingDirectory = "LSRTests";
             var testWorkingDirectory = workingDirectory + Path.DirectorySeparatorChar + testFolderName;
@@ -56,8 +56,8 @@ namespace TypeCobol.LanguageServer.Test
                 new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" +
                                   Path.DirectorySeparatorChar + copyFolder).FullName.Replace(@"\", @"\\"));
             String testOptions = "";
-            testOptions += useOutline ? ",\"-ol\"" : "";
-            testOptions += useCfg ? ",\"-cfg=AsContent\"" : "";
+            testOptions += useOutline ? "" : ",\"-dol\"";
+            testOptions += pureCobol ? ",\"-cob\"" : "";
             configFileContent = configFileContent.Replace("{TestOptions}", testOptions);
 
             configFileContent = configFileContent.Replace("{IntrinsicFile}",
@@ -101,6 +101,10 @@ namespace TypeCobol.LanguageServer.Test
                 useSyntaxColoring ? "-sc" : "",
                 useOutline ? "-ol" : "",
                 useCfg ? "-cfg=AsContent" : "");
+
+            //Build full path to default Cpy Copy names file for LSR tests
+            string cpyCopiesFile = Path.GetFullPath(Path.Combine(testWorkingDirectory, "input", "CpyCopies.lst"));
+            arguments += " -ycpl=\"" + cpyCopiesFile + "\"";
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();

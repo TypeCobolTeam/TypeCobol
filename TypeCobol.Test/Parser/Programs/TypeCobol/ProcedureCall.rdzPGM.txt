@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 15[29,39] <27, Error, Syntax> - Syntax error : Given value is not correct : (00ABC100) expected numerical value only OffendingSymbol=[29,39:X(00ABC100)]<PictureCharacterString>
+Line 15[29,39] <27, Error, Syntax> - Syntax error : Missing '(' or ')' in PICTURE string OffendingSymbol=[29,39:X(00ABC100)]<PictureCharacterString>
 Line 27[37,39] <27, Error, Syntax> - Syntax error : mismatched input 'PIC' expecting {user defined word, CURRENCY, DATE} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause,  OffendingSymbol=[37,39:PIC]<PIC>
 Line 27[21,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[21,26:myDate]<UserDefinedWord>
 Line 36[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
@@ -10,29 +10,29 @@ Line 41[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format'
 Line 111[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
 Line 115[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
 Line 119[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
-Line 127[8,8] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
-Line 137[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  output(Alphanumeric, Alphanumeric)
-Line 142[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  in-out(Alphanumeric, Alphanumeric)
-Line 147[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 
-Line 147[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrPr' of usage ProcedurePointer and received 'someformat' of usage 
-Line 162[12,50] <30, Error, Semantics> - Semantic error: Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Numeric)
+Line 127[8,11] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized OffendingSymbol=[8,11:CALL]<CALL>
+Range (137, 8) -> (138, 43) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  output(Alphanumeric, Alphanumeric)
+Range (142, 8) -> (143, 43) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  in-out(Alphanumeric, Alphanumeric)
+Range (147, 8) -> (148, 40) <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 
+Range (147, 8) -> (148, 40) <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrPr' of usage ProcedurePointer and received 'someformat' of usage 
+Range (162, 12) -> (164, 50) <30, Error, Semantics> - Semantic error: Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Numeric)
 Line 170[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
 Line 170[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 8
 Line 170[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
 Line 170[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
 Line 170[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 102
-Line 173[12,50] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' input(DATE, Alphanumeric) output(Numeric)
-Line 173[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Numeric 
-Line 173[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 102
-Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'mydate' of type DATE and received 'someformat' of type Alphanumeric 
-Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'format' of type Alphanumeric and received 'somedate' of type DATE 
-Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Numeric 
-Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'actual-format' of type Numeric and received 'flag' of type BOOL 
+Range (173, 12) -> (175, 50) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' input(DATE, Alphanumeric) output(Numeric)
+Range (173, 12) -> (175, 50) <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Numeric 
+Range (173, 12) -> (175, 50) <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 102
+Range (179, 12) -> (181, 46) <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'mydate' of type DATE and received 'someformat' of type Alphanumeric 
+Range (179, 12) -> (181, 46) <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'format' of type Alphanumeric and received 'somedate' of type DATE 
+Range (179, 12) -> (181, 46) <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Numeric 
+Range (179, 12) -> (181, 46) <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'actual-format' of type Numeric and received 'flag' of type BOOL 
 Line 194[18,21] <27, Error, Syntax> - Syntax error : extraneous input 'var1' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[18,21:var1]<UserDefinedWord>
-Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' only takes 5 parameter(s)
-Line 201[12,46] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'MyProc1' input(DATE, Alphanumeric, ?, DATE) output(BOOL, Alphanumeric)
-Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'okay' of type BOOL and received 'somedate' of type DATE 
-Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'actual-format' of type Alphanumeric and received 'flag' of type BOOL 
+Range (201, 12) -> (204, 46) <27, Error, Syntax> - Syntax error : Function 'MyProc1' only takes 5 parameter(s)
+Range (201, 12) -> (204, 46) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'MyProc1' input(DATE, Alphanumeric, ?, DATE) output(BOOL, Alphanumeric)
+Range (201, 12) -> (204, 46) <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'okay' of type BOOL and received 'somedate' of type DATE 
+Range (201, 12) -> (204, 46) <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'actual-format' of type Alphanumeric and received 'flag' of type BOOL 
 Line 203[21,25] <30, Error, Semantics> - Semantic error: Symbol INOUT is not referenced OffendingSymbol=[21,25:INOUT]<UserDefinedWord>
 Line 233[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
 Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 8
@@ -42,7 +42,7 @@ Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateForma
 Line 243[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'StrangelyReturnsItsInput' 
 Line 243[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
 Line 252[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
-Line 256[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)
+Range (256, 12) -> (257, 39) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)
 Line 266[18,41] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not referenced
 
 --- Program ---

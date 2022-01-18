@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TypeCobol.Analysis;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -35,30 +34,24 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         };
 
         /// <summary>
-        /// Are we using the CFG view in the client.    
+        /// Are we using the CFG view in the client.
         /// </summary>
         public UseCfgMode UseCfgDfaDataRefresh { get; set; }
         protected override InitializeResult OnInitialize(InitializeParams parameters)
         {
             var result = base.OnInitialize(parameters);
             this.Workspace.DocumentModifiedEvent += DocumentModified;
+            this.Workspace.UseCfgDfaDataRefresh = UseCfgDfaDataRefresh != UseCfgMode.No;
             return result;
         }
 
         /// <summary>
-        /// Handle -ol and -cfg options from the client configuration change notification.
+        /// Handle -ol option from the client configuration change notification.
         /// </summary>
-        /// <param name="sender">Should be the Workspace instance</param>
         /// <param name="options">Client's Options</param>
         protected override void OnDidChangeConfiguration(string[] options)
         {
-            this.UseOutlineRefresh = options.Contains("-ol");
-            if(options.Contains("-cfg=AsFile"))
-                this.UseCfgDfaDataRefresh = UseCfgMode.AsFile;
-            else if(options.Contains("-cfg=AsContent"))
-                this.UseCfgDfaDataRefresh = UseCfgMode.AsContent;
-            else
-                this.UseCfgDfaDataRefresh = UseCfgMode.No;
+            this.UseOutlineRefresh = !options.Contains("-dol");
             base.OnDidChangeConfiguration(options);
         }
 
@@ -131,7 +124,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         /// <summary>
         /// The Missing copies notification is sent from the client to the server
-        /// when the client failed to load copies, it send back a list of missing copies to the server.
+        /// when the client has finished to load copies, it send back a list of missing copies that it fails to load to the server.
+        /// The list can be empty if all copies has been loaded.
         /// </summary>
         protected virtual void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
         {
@@ -174,13 +168,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
                 List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
                 copiesName.AddRange(dependenciesMissingCopies);
-                if (copiesName.Count > 0)
-                {
-                    var missingCopiesParam = new MissingCopiesParams();
-                    missingCopiesParam.textDocument = parameter.textDocument;
-                    missingCopiesParam.Copies = copiesName;
-                    this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
-                }
+                MissingCopiesDetected(parameter.textDocument, copiesName);
             }
         }
 

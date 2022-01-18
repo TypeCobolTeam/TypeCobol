@@ -15,7 +15,7 @@
            SET IDX to 1.
            SEARCH ELEM
                 AT END
-                   MOVE 0 TO NUM
+                   MOVE 0 TO NUM(IDX)
                   when NBJ(IDX) = 28
                   display NUM(IDX) "/" LIB(IDX)
                   when IDX > IDX-END next sentence.

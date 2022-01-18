@@ -222,11 +222,34 @@ namespace TypeCobol.Test.Parser.Scanner
             };
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
+
+            testName = "TCKeywords";
+            testLines = new string[]
+                        {
+                            "TYPEDEF STRONG UNSAFE PUBLIC PRIVATE IN-OUT STRICT",
+                            "TyPeDeF StRoNg UnSaFe PuBlIc PrIvAtE In-oUt StRiCt",
+                            "MOVE public TO private",
+                            "MOVE UNSAFE strong TO strict"
+                        };
+
+            //Scan as pure cobol
+            ScannerUtils.CompilerOptions.IsCobolLanguage = true;
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName + "-AsCobol85");
+
+            //Scan as TypeCobol
+            ScannerUtils.CompilerOptions.IsCobolLanguage = false;
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName + "-AsTypeCobol");
         }
 
-        public static void CheckPartialCobolWords()
+        /// <summary>
+        /// CheckPartialCobolWords
+        /// </summary>
+        /// <param name="cobol">true for Pure Cobol Language, false otherwise</param>
+        public static void CheckPartialCobolWords(bool cobol)
         {
-            string testName = "PartialCobolWords";
+            string testName = cobol ? "PartialCobolWords" : "PartialCobolWordsTC";
             string[] testLines = new string[] {
                 "88  :MSVCOUT:-RtnCod-OK",
                 "01  TOTO-:MSVCOUT:",
@@ -246,7 +269,9 @@ namespace TypeCobol.Test.Parser.Scanner
                 "if (W-CCOMDE-UN-CHOIX(CCOMDI-:ZONE:) = 'D' or   ",
                 "replace ==:ZONE:== by ==SUPX== ==:SSPRO:== by ==CCTZ023B==."
             };
+            ScannerUtils.CompilerOptions.IsCobolLanguage = cobol;
             string result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CompilerOptions.IsCobolLanguage = false;
             ScannerUtils.CheckWithResultFile(result, testName);
         }
 

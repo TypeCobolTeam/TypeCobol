@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -10,13 +9,27 @@ namespace TypeCobol.Compiler.Types
     /// The goal of this class is to implement a PICTURE string format validator.
     /// Using precedence rules as described in the IBM Cobol Reference.
     /// 
-    /// My strategy is to implement a NFA (A non-deterministic Finite Automata) over predecence
-    /// character rules. Deterministic is obtained, by taking in acount insertion floating position and whether or nor
-    /// the position is before or after a decimal floating point, cause for these situations specific states handle
+    /// My strategy is to implement a NFA (A non-deterministic Finite Automata) over precedence
+    /// character rules. Determinism is obtained, by taking in account insertion floating position and whether or not
+    /// the position is before or after a decimal floating point, cause for these cases specific states handle
     /// these situations.
     /// </summary>
-    public class PictureValidator
+    public partial class PictureValidator
     {
+        private const string EMPTY = "Empty PICTURE string";
+        private const string UNKNOWN_SYMBOL = "Invalid PICTURE string '{0}': character '{1}' at position '{2}' was not expected";
+        private const string PARENTHESES_DO_NOT_MATCH = "Missing '(' or ')' in PICTURE string";
+        private const string SYMBOL_COUNT_CANNOT_BE_ZERO = "Symbol count cannot be zero";
+        private const string MULTIPLE_CURRENCIES_IN_SAME_PICTURE = "Cannot mix currency symbols in a PICTURE string: '{0}' symbol was not expected";
+        private const string INVALID_PICTURE_STRING = "Combination of symbols '{0}' was not recognized as a valid PICTURE string";
+        private const string INVALID_SYMBOL_POSITION = "Invalid position in PICTURE string of the symbol: {0}";
+        private const string SYMBOL_S_MUST_BE_THE_FIRST = "S must be at the beginning of a PICTURE string";
+        private const string MULTIPLE_V = "V must appears only once in a PICTURE string";
+        private const string WRONG_P_POSITION = "P must appears at the head or tail position of a PICTURE string";
+        private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string";
+        private const string SYMBOL_CAN_APPEAR_ONLY_ONCE = "Only one occurrence of '{0}' symbol can appear in a PICTURE string";
+        private const string AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT = "At least one of symbols A, G, N, X, Z, 9, or *, or at least two of symbols +, -, or CS must be present";
+
         /// <summary>
         /// Picture string constructor.
         /// </summary>
@@ -24,90 +37,139 @@ namespace TypeCobol.Compiler.Types
         /// And it does not contains any spaces
         /// </param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
-        public PictureValidator(string picture, bool separateSign = false)
+        /// <param name="decimalPointIsComma">a boolean to swap NumericSeparator and DecimalPoint characters, default is false</param>
+        /// <param name="currencyDescriptors">All custom currency descriptors indexed by their symbol. If null, the default currency descriptor is used.</param>
+        public PictureValidator(string picture, bool separateSign = false, bool decimalPointIsComma = false, IDictionary<char, CurrencyDescriptor> currencyDescriptors = null)
         {
-            System.Diagnostics.Contracts.Contract.Requires(picture != null);
-            System.Diagnostics.Contracts.Contract.Requires(picture.ToUpper().IndexOf("PIC") == -1);
-            System.Diagnostics.Contracts.Contract.Requires(picture.ToUpper().IndexOf(' ') == -1);
+            System.Diagnostics.Debug.Assert(picture != null);
+            System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
+            System.Diagnostics.Debug.Assert(!picture.Contains(" "));
 
-            Picture = picture.ToUpper();
+            if (currencyDescriptors == null || currencyDescriptors.Count == 0)
+            {
+                //Use default currency descriptor ($)
+                var defaultCurrencyDescriptor = CurrencyDescriptor.Default;
+                _potentialCurrencyDescriptors = new Dictionary<char, CurrencyDescriptor>()
+                                                {
+                                                    { defaultCurrencyDescriptor.Symbol, defaultCurrencyDescriptor }
+                                                };
+            }
+            else
+            {
+                _potentialCurrencyDescriptors = currencyDescriptors;
+            }
+            _currencyDescriptor = null;
+
+            OriginalPicture = picture;
+            _decimalPointIsComma = decimalPointIsComma;
+            if (_decimalPointIsComma)
+            {
+                //Swap '.' and ',' in original picture
+                var pictureBuilder = new StringBuilder();
+                foreach (char c in picture)
+                {
+                    switch (c)
+                    {
+                        case '.':
+                            pictureBuilder.Append(',');
+                            break;
+                        case ',':
+                            pictureBuilder.Append('.');
+                            break;
+                        default:
+                            pictureBuilder.Append(c);
+                            break;
+                    }
+                }
+
+                Picture = pictureBuilder.ToString();
+            }
+            else
+            {
+                Picture = picture;
+            }
+
             IsSeparateSign = separateSign;
-            CurrencySymbol = "$";
-            DecimalPoint = '.';
-            NumericSeparator = ',';
-            ValidationMesssage = new List<string>();
         }
 
         /// <summary>
-        /// The Picture string.
+        /// The unaltered Picture string
         /// </summary>
-        public string Picture
-        {
-            get;
-            private set;
-        }
+        public string OriginalPicture { get; }
+
+        /// <summary>
+        /// The Picture string to validate, with comma and dot swapped if DECIMAL POINT IS COMMA is active.
+        /// </summary>
+        public string Picture { get; }
 
         /// <summary>
         /// Indicating whether the sign is separate character
         /// </summary>
-        public bool IsSeparateSign
-        {
-            get;
-            private set;
-        }
+        public bool IsSeparateSign { get; }
+
+        private readonly IDictionary<char, CurrencyDescriptor> _potentialCurrencyDescriptors;
+        /// <summary>
+        /// The Currency Symbol found in the picture.
+        /// </summary>
+        private CurrencyDescriptor _currencyDescriptor;
 
         /// <summary>
-        /// The Currency Symbol to be used.
+        /// Comma and Dot swapped ?
         /// </summary>
-        public String CurrencySymbol
-        {
-            get;
-            set;
-        }
+        private readonly bool _decimalPointIsComma;
 
         /// <summary>
-        /// The decimal point character
+        /// Determines whether the picture string of this instance is valid or not.
         /// </summary>
-        public char DecimalPoint
+        /// <param name="validationMessages">List of encountered validation errors.</param>
+        /// <returns>A validation result instance.</returns>
+        public Result Validate(out List<string> validationMessages)
         {
-            get;
-            set;
-        }
+            //Accumulate validation error messages
+            validationMessages = new List<string>();
 
-        /// <summary>
-        /// The Numeric Separator
-        /// </summary>
-        public char NumericSeparator
-        {
-            get;
-            set;
-        }
+            //1. First Validate against the PICTURE string regular expression.
+            List<Tuple<string, int>> matches = PictureStringSplitter(validationMessages);
+            if (matches == null || matches.Count == 0) return new Result();
 
-        /// <summary>
-        /// All validation messages if any.
-        /// </summary>
-        public List<String> ValidationMesssage
-        {
-            get;
-            internal set;
+            //Build Character sequence
+            Character[] sequence = CollectPictureSequence(matches, validationMessages, out var symbolCounts);
+            if (validationMessages.Count > 0) return new Result(sequence, _currencyDescriptor);
+
+            //Determine data category
+            var category = DeterminePictureCategory(sequence, symbolCounts);
+            if (category == PictureCategory.Invalid)
+            {
+                validationMessages.Add(string.Format(INVALID_PICTURE_STRING, OriginalPicture));
+            }
+            else
+            {
+                //Validate the sequence using automata
+                Automata automata = new Automata(this);
+                if (automata.Run(sequence, category, validationMessages))
+                {
+                    //OK
+                    return new Result(sequence, _currencyDescriptor, category, automata.Digits, automata.RealDigits, automata.IsSigned, automata.Scale, automata.Size);
+                }
+            }
+
+            //KO
+            return new Result(sequence, _currencyDescriptor);
         }
 
         /// <summary>
         /// Check the count in a picture string part ([0-9]+)
         /// </summary>
         /// <param name="pic">The picture string</param>
-        /// <param name="startOffset">start offset inside the picture string where should beging the count</param>
+        /// <param name="startOffset">start offset inside the picture string where should begin the count</param>
+        /// <param name="validationMessages">List of error messages</param>
         /// <param name="count">[out] the count calculated if no error, -1 otherwise.</param>
         /// <returns>The new starting offset after the count part.</returns>
-        private static int CheckItemCount(string pic, int startOffset, out int count)
+        private static int CheckItemCount(string pic, int startOffset, List<string> validationMessages, out int count)
         {
-            count = -1;
-            if (startOffset >= pic.Length)
+            if (startOffset < pic.Length && pic[startOffset] == '(')
             {
-                count = 1;
-            }
-            else if (pic[startOffset] == '(')
-            {
+                count = 0;
                 bool bGood = false;
                 startOffset++;
                 while (startOffset < pic.Length)
@@ -119,16 +181,17 @@ namespace TypeCobol.Compiler.Types
                         break;
                     }
                     if (pic[startOffset] < '0' || pic[startOffset] > '9')
-                    {//Error
-                        count = -1;
+                    {
                         break;
                     }
                     int n = pic[startOffset] - '0';
-                    count = count == -1 ? n : count * 10 + n;
+                    count = count * 10 + n;
                     startOffset++;
                 }
                 if (!bGood)
                 {
+                    //Error on parenthesis
+                    validationMessages.Add(PARENTHESES_DO_NOT_MATCH);
                     count = -1;
                 }
             }
@@ -139,17 +202,34 @@ namespace TypeCobol.Compiler.Types
             return startOffset;
         }
 
+        //static part of the splitter alphabet
+        private static readonly string[] _Alphabet =
+        {
+            "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z",
+            "9", "0", "/", ",", ".", "+", "-", "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*"
+        };
+
         /// <summary>
         /// Split the Picture String into its parts. A List of tuple(Symbol, count)
         /// Example: 9(2)X(4)9
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        public static List<Tuple<string, int>> PictureStringSplitter(String picture, string currencySymbol)
+        private List<Tuple<string, int>> PictureStringSplitter(List<string> validationMessages)
         {
+            if (string.IsNullOrWhiteSpace(Picture))
+            {
+                validationMessages.Add(EMPTY);
+                return null;
+            }
+
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
-            String[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
-            for (int l = 0; l < picture.Length;)
+            //The whole alphabet is made of static picture string symbols and custom (or only default) currency symbol(s).
+            string[] alphabet = _Alphabet
+                .Concat(_potentialCurrencyDescriptors.Keys.Select(currencySymbol => currencySymbol.ToString()))
+                .ToArray();
+
+            for (int l = 0; l < Picture.Length;)
             {
                 bool match = false;
                 for (int i = 0; i < alphabet.Length && !match; i++)
@@ -157,21 +237,21 @@ namespace TypeCobol.Compiler.Types
                     switch (alphabet[i].Length)
                     {
                         case 1:
-                            match = picture[l] == alphabet[i][0];
+                            match = Picture[l] == alphabet[i][0];
                             break;
                         case 2:
-                            if ((l + 1) < picture.Length)
+                            if ((l + 1) < Picture.Length)
                             {
-                                match = picture[l] == alphabet[i][0] && picture[l + 1] == alphabet[i][1];
+                                match = Picture[l] == alphabet[i][0] && Picture[l + 1] == alphabet[i][1];
                             }
                             break;
                         default:
-                            if ((l + alphabet[i].Length - 1) < picture.Length)
+                            if ((l + alphabet[i].Length - 1) < Picture.Length)
                             {
                                 match = true;
-                                for (int j = 0, n = l; j < alphabet[i].Length && n < picture.Length; j++, n++)
+                                for (int j = 0, n = l; j < alphabet[i].Length && n < Picture.Length; j++, n++)
                                 {
-                                    if (picture[n] != alphabet[i][j])
+                                    if (Picture[n] != alphabet[i][j])
                                     {
                                         match = false;
                                         break;
@@ -180,1351 +260,281 @@ namespace TypeCobol.Compiler.Types
                             }
                             break;
                     }
+
                     if (match)
                     {
-                        int count = -1;
-                        l = CheckItemCount(picture, l + alphabet[i].Length, out count);
+                        l = CheckItemCount(Picture, l + alphabet[i].Length, validationMessages, out int count);
                         if (count == -1)
                             return null;
                         items.Add(new Tuple<string, int>(alphabet[i], count));
                     }
                 }
+
                 if (!match)
+                {
+                    validationMessages.Add(string.Format(UNKNOWN_SYMBOL, OriginalPicture, Picture[l], l + 1));
                     return null;
+                }
             }
             return items;
         }
 
         /// <summary>
-        /// Special chracters.
-        /// </summary>
-        internal enum SC
-        {
-            B,
-            ZERO, // 0
-            SLASH, // /
-            COMMA, // ,
-            DOT, // .
-            PLUS, // +
-            MINUS, // -
-            CR,
-            DB,
-            CS,
-            E,
-            Z,
-            STAR, // *
-            NINE, // 9                        
-            A,
-            X,
-            S,
-            V,
-            P,
-            G,
-            N,
-
-            //.. The count of special char
-            SpecialCharCount
-        }
-
-        private static SC Char2SC(char c)
-        {
-            switch (c)
-            {
-                case 'A':
-                    return SC.A;
-                case 'B':
-                    return SC.B;
-                case 'E':
-                    return SC.E;
-                case 'G':
-                    return SC.G;
-                case 'N':
-                    return SC.N;
-                case 'P':
-                    return SC.P;
-                case 'S':
-                    return SC.S;
-                case 'V':
-                    return SC.V;
-                case 'X':
-                    return SC.X;
-                case 'Z':
-                    return SC.Z;
-                case '9':
-                    return SC.NINE;
-                case '0':
-                    return SC.ZERO;
-                case '/':
-                    return SC.SLASH;
-                case ',':
-                    return SC.COMMA;
-                case '.':
-                    return SC.DOT;
-                case '+':
-                    return SC.PLUS;
-                case '-':
-                    return SC.MINUS;
-                case '*':
-                    return SC.STAR;
-                case '$':
-                    return SC.CS;
-                default:
-                    throw new ArgumentException();
-            }
-        }
-
-        private String SC2String(SC c)
-        {
-            switch (c)
-            {
-                case SC.A:
-                    return "A";
-                case SC.B:
-                    return "B";
-                case SC.E:
-                    return "E";
-                case SC.G:
-                    return "G";
-                case SC.N:
-                    return "N";
-                case SC.P:
-                    return "P";
-                case SC.S:
-                    return "S";
-                case SC.V:
-                    return "V";
-                case SC.X:
-                    return "X";
-                case SC.Z:
-                    return "Z";
-                case SC.NINE:
-                    return "9";
-                case SC.ZERO:
-                    return "0";
-                case SC.SLASH:
-                    return "/";
-                case SC.COMMA:
-                    return ",";
-                case SC.DOT:
-                    return ".";
-                case SC.PLUS:
-                    return "+";
-                case SC.MINUS:
-                    return "-";
-                case SC.STAR:
-                    return "*";
-                case SC.CS:
-                    return CurrencySymbol;
-                case SC.CR:
-                    return "CR";
-                case SC.DB:
-                    return "DB";
-                default:
-                    throw new ArgumentException();
-            }
-        }
-
-        /// <summary>
-        /// Dertermine if the given character is a simple insertion character.
-        /// </summary>
-        /// <param name="c">Return true if yes, false otherwise</param>
-        /// <returns>true if yes, false otherwise</returns>
-        public bool IsSimpleInsertionCharacter(char c)
-        {
-            return c == 'B' || c == '0' || c == '/' || c == NumericSeparator;
-        }
-
-        /// <summary>
-        /// Dertermine if the given character is a simple insertion character.
-        /// </summary>
-        /// <param name="c">Return true if yes, false otherwise</param>
-        /// <returns>true if yes, false otherwise</returns>
-        internal bool IsSimpleInsertionCharacter(SC c)
-        {
-            return c == SC.B || c == SC.ZERO || c == SC.SLASH || c == Char2SC(NumericSeparator);
-        }
-
-        /// <summary>
-        /// Collect the Picture sequence of characters from the list of parts. And perform some prevalidation
+        /// Collect the Picture sequence of characters from the list of parts. And perform some pre-validation
         /// checks.
         /// </summary>
         /// <param name="matches">All Picture items matched</param>
+        /// <param name="validationMessages">List of error messages</param>
+        /// <param name="symbolCounts">[out] Symbol count dictionary</param>
         /// <returns>The list of picture item sequence</returns>
-        private List<Character> CollectPictureSequence(List<Tuple<string, int>> matches)
+        private Character[] CollectPictureSequence(List<Tuple<string, int>> matches, List<string> validationMessages, out IDictionary<SC, int> symbolCounts)
         {
+            symbolCounts = Enum.GetValues(typeof(SC)).Cast<SC>().ToDictionary(sc => sc, sc => 0);
             List<Character> sequence = new List<Character>();
-            Character prevChar = null;//Previous char so that we can accumulate consecutive same characters.
-            int cr_count = 0;
-            int db_count = 0;
-            int e_count = 0;
-            int s_count = 0;
-            int v_count = 0;
-            int dot_count = 0;
-
-            bool foundCR = false;
-            bool foundDB = false;
-            bool foundPlus = false;
-            bool foundMinus = false;
-
+            Character prevChar = null; //Previous char so that we can accumulate consecutive same characters.
             foreach (var m in matches)
             {
                 string ch = m.Item1;
                 int count = m.Item2;
                 if (count == 0)
-                {//Count cannot be 0.
-                    ValidationMesssage.Add(Context.SymbolCountCannotBeZeroMsg);
+                {
+                    //Count cannot be 0.
+                    validationMessages.Add(SYMBOL_COUNT_CANNOT_BE_ZERO);
                 }
 
                 SC sc;
                 if (ch.Length == 1)
                 {
-                    try
+                    char c = ch[0];
+                    if (_potentialCurrencyDescriptors.TryGetValue(c, out var currencyDescriptor))
                     {
-                        sc = Char2SC(ch[0]);
-                    }
-                    catch (ArgumentException ae)
-                    {
-                        if (ch.Equals(CurrencySymbol))
+                        if (_currencyDescriptor == null)
                         {
+                            //This is the first currency symbol encountered
+                            _currencyDescriptor = currencyDescriptor;
+                            sc = SC.CS;
+                        }
+                        else if (_currencyDescriptor == currencyDescriptor)
+                        {
+                            //New occurrence of the previously found currency symbol
                             sc = SC.CS;
                         }
                         else
                         {
-                            throw ae;
+                            //Error, cannot mix different currency symbols
+                            validationMessages.Add(string.Format(MULTIPLE_CURRENCIES_IN_SAME_PICTURE, c));
+                            continue;
                         }
                     }
+                    else
+                    {
+                        sc = Char2SC(c);
+                    }
                 }
-                else if (ch == CurrencySymbol)
-                    sc = SC.CS;
-                else if (ch == "CR")
+                else if (ch.Equals("CR", StringComparison.OrdinalIgnoreCase))
                     sc = SC.CR;
-                else if (ch == "DB")
+                else if (ch.Equals("DB", StringComparison.OrdinalIgnoreCase))
                     sc = SC.DB;
                 else
                     throw new InvalidOperationException();//Should never arrive
-                if (prevChar != null && prevChar.ch == sc)
+
+                //Accumulate symbol with previous or create new Character
+                symbolCounts[sc] += count;
+                if (prevChar != null && prevChar.SpecialChar == sc)
                 {
-                    prevChar.count += count;
+                    prevChar.Count += count;
                 }
                 else
                 {
                     prevChar = new Character(sc, count);
                     sequence.Add(prevChar);
                 }
-                //Validate those symbols that can appear only once in a PICTURE string.
-                switch (sc)
+            }
+
+            //Validate symbol counts
+            SC[] onlyOnce = { SC.E, SC.S, SC.DOT, SC.CR, SC.DB};
+            foreach (var sc in onlyOnce)
+            {
+                if (symbolCounts[sc] > 1)
                 {
-                    case SC.PLUS:
-                        foundPlus = true;
-                        break;
-                    case SC.MINUS:
-                        foundMinus = true;
-                        break;
-                    case SC.CR:
-                        foundCR = true;
-                        cr_count += count;
-                        if (cr_count > 1)
-                        {
-                            ValidationMesssage.Add(Context.MoreThanOne_CR_CharacterMsg);
-                        }
-                        break;
-                    case SC.DB:
-                        foundDB = true;
-                        db_count += count;
-                        if (db_count > 1)
-                        {
-                            ValidationMesssage.Add(Context.MoreThanOne_DB_CharacterMsg);
-                        }
-                        break;
-                    case SC.S:
-                        s_count += count;
-                        if (s_count > 1)
-                        {
-                            ValidationMesssage.Add(Context.MoreThanOne_S_CharacterMsg);
-                        }
-                        break;
-                    case SC.V:
-                        v_count += count;
-                        if (v_count > 1)
-                        {
-                            ValidationMesssage.Add(Context.MoreThanOne_V_CharacterMsg);
-                        }
-                        break;
-                    case SC.E:
-                        e_count += count;
-                        if (e_count > 1)
-                        {
-                            ValidationMesssage.Add(Context.MoreThanOne_E_CharacterMsg);
-                        }
-                        break;
-                    case SC.DOT:
-                        dot_count += count;
-                        if (dot_count > 1)
-                        {
-                            ValidationMesssage.Add(Context.MoreThanOne_Dot_CharacterMsg);
-                        }
-                        break;
+                    validationMessages.Add(string.Format(SYMBOL_CAN_APPEAR_ONLY_ONCE, SC2String(sc)));
                 }
             }
-            int cntFound = (foundCR || foundDB ? 1 : 0);
-            cntFound += (foundPlus || foundMinus ? 1 : 0);
-            if (cntFound > 1)
-            { // 0 is valid
-                ValidationMesssage.Add(Context.MultuallyExclusiveSymbolMsg);
+            bool atLeastOneAGNXZNineStar = symbolCounts[SC.A] + symbolCounts[SC.G] + symbolCounts[SC.N] +
+                                           symbolCounts[SC.X] + symbolCounts[SC.Z] + symbolCounts[SC.NINE] +
+                                           symbolCounts[SC.STAR] >= 1;
+            bool atLeastTwoPlusMinusCs = symbolCounts[SC.PLUS] >= 2 || symbolCounts[SC.MINUS] >= 2 || symbolCounts[SC.CS] >= 2;
+            if (!(atLeastOneAGNXZNineStar || atLeastTwoPlusMinusCs))
+            {
+                validationMessages.Add(AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT);
             }
-            return sequence;
+
+            return sequence.ToArray();
         }
 
         /// <summary>
-        /// The validation context that has been used.
+        /// Check symbol counts to determine the data category of the picture.
         /// </summary>
-        public Context ValidationContext
+        /// <param name="sequence">Sequence of symbols</param>
+        /// <param name="symbolCounts">Dictionary of all symbol counts</param>
+        /// <returns>PictureCategory of the sequence, maybe Invalid</returns>
+        private PictureCategory DeterminePictureCategory(Character[] sequence, IDictionary<SC, int> symbolCounts)
         {
-            get;
-            private set;
-        }
+            int totalCount = symbolCounts.Values.Sum();
+            if (IsNumericEdited())         return PictureCategory.NumericEdited;
+            if (IsNumeric())               return PictureCategory.Numeric;
+            if (IsAlphanumericEdited())    return PictureCategory.AlphanumericEdited;
+            if (IsAlphanumeric())          return PictureCategory.Alphanumeric;
+            if (IsExternalFloatingPoint()) return PictureCategory.ExternalFloatingPoint;
+            if (IsDBCS())                  return PictureCategory.DBCS;
+            if (IsNationalEdited())        return PictureCategory.NationalEdited;
+            if (IsNational())              return PictureCategory.National;
+            if (IsAlphabetic())            return PictureCategory.Alphabetic;
+            return PictureCategory.Invalid;
 
-        /// <summary>
-        /// Determines whether the picture string of this instance is valid or not.
-        /// </summary>
-        /// <returns>true if the pic is valid, false otherwise</returns>
-        public bool IsValid()
-        {
-            //0. Picure String must contains at least
-            //1. First Validate against the PICTURE string regular expression.
-            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol);
-            if (matches == null)
-                return false;
-            if (matches.Count <= 0)
-                return false;
-            //Construct Charcater sequence
-            ValidationMesssage.Clear();
-            List<Character> sequence = CollectPictureSequence(matches);
-            if (ValidationMesssage.Count > 0)
-                return false;
-            //No Validate the sequence
-            return ValidatePictureSequence(sequence);
-        }
-
-        /// <summary>
-        /// Validate a picture sequence
-        /// </summary>
-        /// <param name="sequence">The sequence to validate</param>
-        /// <returns>true if the sequence represents a valid Picture, false otherwise.</returns>
-        private bool ValidatePictureSequence(List<Character> sequence)
-        {
-            Context ctx = ComputeInitialContext(sequence);
-            ValidationContext = ctx;
-            return this.RunAutomata(ctx);
-        }
-
-        /// <summary>
-        /// Compute indexes of the Floating Insertion String. That is to the left most and the right most of the characters
-        /// CS, + or -.
-        /// </summary>
-        /// <param name="sequence">The on which to perform the computation</param>
-        /// <param name="firstIndex">[out] First Floating Index</param>
-        /// <param name="lastIndex">[out] Last Floating Index</param>
-        private void ComputeFloatingStringIndexes(List<Character> sequence, out int firstIndex, out int lastIndex)
-        {
-            firstIndex = lastIndex = -1;
-            int lastNonSimpleIndex = -1;
-            SC floatChar = (SC)(-1); ; //The float character that corresponds to the first index either CS, + or -.
-            int i = 0;
-            for (i = 0; i < sequence.Count; i++)
+            bool IsAlphabetic()
             {
-                Character c = sequence[i];
-                if (firstIndex == -1 && (c.ch == SC.PLUS || c.ch == SC.MINUS || c.ch == SC.CS))
-                {
-                    if (lastNonSimpleIndex >= 0 && sequence[lastNonSimpleIndex].ch == c.ch)
-                    {
-                        firstIndex = lastNonSimpleIndex;
-                        floatChar = c.ch;
-                        continue;
-                    }
-                    else if (c.count > 1)
-                    {
-                        firstIndex = i;
-                        floatChar = c.ch;
-                        continue;
-                    }
-                }
-                if (firstIndex == -1 && !IsSimpleInsertionCharacter(c.ch))
-                {
-                    lastNonSimpleIndex = i;
-                }
-                else if (firstIndex >= 0 && !(IsSimpleInsertionCharacter(c.ch) || c.ch == floatChar))
-                {
-                    lastIndex = i - 1;
-                    break;
-                }
+                //Only A
+                return Count(SC.A) == totalCount;
             }
 
-            if (i >= sequence.Count && firstIndex >= 0)
-            { //We have reach the end of the sequence with a first index and no lastIndex ==>
-              //Set the last index to the last character of the sequence
-                lastIndex = sequence.Count - 1;
-                return;
-            }
-            else if (!(i < sequence.Count && (SC2String(sequence[i].ch)[0] == DecimalPoint || sequence[i].ch == SC.V)))
-            {//The last index does not precede the DecimalPoint separator position
-                return;
-            }
-            //If the last index precede the DecimalPoint position so all characters including the decimal point
-            //that are not simple characters or the floating character must be part o the right most index
-
-            for (++i; i < sequence.Count; i++)
+            bool IsAlphanumeric()
             {
-                Character c = sequence[i]; ;
-                if (!(IsSimpleInsertionCharacter(c.ch) || c.ch == floatChar))
-                    return;
-            }
-            lastIndex = i - 1;
-        }
-
-        /// <summary>
-        /// Compute the initial validation context.
-        /// </summary>
-        /// <param name="sequence">The sequenc of characters.</param>
-        /// <returns></returns>
-        private Context ComputeInitialContext(List<Character> sequence)
-        {
-            int firstIndex;
-            int lastIndex;
-            ComputeFloatingStringIndexes(sequence, out firstIndex, out lastIndex);
-            Context ctx = new Context(sequence);
-            ctx.FirstFloatingIndex = firstIndex;
-            ctx.LastFloatingIndex = lastIndex;
-            ctx.CurrencySymbol = this.CurrencySymbol;
-            ctx.DecimalPoint = this.DecimalPoint;
-            ctx.NumericSeparator = this.NumericSeparator;
-            ctx.IsSeparateSign = IsSeparateSign;
-            ctx.ValidationMesssage = ValidationMesssage;
-
-            return ctx;
-        }
-
-        /// <summary>
-        /// The representation of a character of the DFA alphabet.
-        /// </summary>
-        internal class Character
-        {
-            /// <summary>
-            /// The character
-            /// </summary>
-            public SC ch;
-            /// <summary>
-            /// The repetion count of the character.
-            /// </summary>
-            public int count;
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="c">The character</param>
-            /// <param name="n">The repetion count</param>
-            public Character(SC c, int n)
-            {
-                ch = c;
-                count = n;
+                //Only A X 9 but not allowed to be made only of A or 9
+                int x = Count(SC.X);
+                if (x == totalCount) return true;
+                int a = Count(SC.A);
+                int nine = Count(SC.NINE);
+                return a + x + nine == totalCount && a != totalCount && nine != totalCount;
             }
 
-            public override string ToString()
+            bool IsAlphanumericEdited()
             {
-                string s = null;
-                switch (ch)
-                {
-                    case SC.A:
-                        s = "A";
-                        break;
-                    case SC.B:
-                        s = "B"; break;
-                    case SC.E:
-                        s = "E"; break;
-                    case SC.G:
-                        s = "G"; break;
-                    case SC.N:
-                        s = "N"; break;
-                    case SC.P:
-                        s = "P"; break;
-                    case SC.S:
-                        s = "S"; break;
-                    case SC.V:
-                        s = "V"; break;
-                    case SC.X:
-                        s = "X"; break;
-                    case SC.Z:
-                        s = "Z"; break;
-                    case SC.NINE:
-                        s = "9"; break;
-                    case SC.ZERO:
-                        s = "0"; break;
-                    case SC.SLASH:
-                        s = "/"; break;
-                    case SC.COMMA:
-                        s = ","; break;
-                    case SC.DOT:
-                        s = "."; break;
-                    case SC.PLUS:
-                        s = "+"; break;
-                    case SC.MINUS:
-                        s = "-"; break;
-                    case SC.STAR:
-                        s = "*"; break;
-                    case SC.CS:
-                        s = "."; break;
-                    case SC.CR:
-                        s = "CR"; break;
-                    case SC.DB:
-                        s = "DB"; break;
-                    default:
-                        throw new ArgumentException();
-                }
-                return count > 0 ? (s + '(' + count + ')') : s;
-            }
-        }
+                //Only A X 9 B 0 /
+                bool onlyAXNineBZeroSlash = Count(SC.A, SC.X, SC.NINE, SC.B, SC.ZERO, SC.SLASH) == totalCount;
+                if (!onlyAXNineBZeroSlash) return false;
 
-        /// <summary>
-        /// A validation context.
-        /// </summary>
-        public class Context
-        {
-            internal static readonly string SymbolCountCannotBeZeroMsg = "Symbol count cannot be zero";
-            internal static readonly string InvalidSymbolPosMsg = "Invalid position in PICTURE string of the symbol : {0}";
-            internal static readonly string SymbolSMustOccurOnlyOnceMsg = "Character S must be repeated only once in PICTURE string";
-            internal static readonly string SymbolSMustBeTheFirstMsg = "S must be at the beginning of a PICTURE string";
-            internal static readonly string MultipleVMsg = "V must appears only once in a PICTURE string";
-            internal static readonly string WrongPPoitionMsg = "P must appears at the head or tail position of a PICTURE string";
-            internal static readonly string ZStarMutuallyExclusiveMsg = "Z and * symbols are mutually exclusise in a PICTURE string.";
-            internal static readonly string MoreThanOne_E_CharacterMsg = "Only one occurence of E symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_CR_CharacterMsg = "Only one occurence of CR symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_DB_CharacterMsg = "Only one occurence of DB symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_S_CharacterMsg = "Only one occurence of S symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_V_CharacterMsg = "Only one occurence of V symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_Dot_CharacterMsg = "Only one occurence of '.' symbol can appers in a PICTURE string";
-            internal static readonly string MultuallyExclusiveSymbolMsg = "+/-/CR/DB are mutually exclusive";
+                //At least one A or one X
+                bool atLeastOneAX = Count(SC.A, SC.X) >= 1;
+                if (!atLeastOneAX) return false;
 
-            /// <summary>
-            /// Empty constructor.
-            /// </summary>
-            internal Context(List<Character> sequence)
-            {
-                ValidationMesssage = new List<String>();
-                Sequence = sequence;
-                IsBeforeDecimalPoint = true;
-            }
-            /// <summary>
-            /// Indicating whether the sign is separate character
-            /// </summary>
-            internal bool IsSeparateSign
-            {
-                get;
-                set;
+                //At least one B or 0 or /
+                bool atLeastOneBZeroSlash = Count(SC.B, SC.ZERO, SC.SLASH) >= 1;
+                return atLeastOneBZeroSlash;
             }
 
-
-            /// <summary>
-            /// The Currency Symbol to be used.
-            /// </summary>
-            internal String CurrencySymbol
+            bool IsDBCS()
             {
-                get;
-                set;
-            }
+                //Only G B
+                bool onlyGB = Count(SC.G, SC.B) == totalCount;
+                if (!onlyGB) return false;
 
-            /// <summary>
-            /// The decimal point character
-            /// </summary>
-            internal char DecimalPoint
-            {
-                get;
-                set;
+                //At least one G
+                bool atLeastOneG = Count(SC.G) >= 1;
+                return atLeastOneG;
             }
 
-            /// <summary>
-            /// The Numeric Separator
-            /// </summary>
-            internal char NumericSeparator
+            bool IsNational()
             {
-                get;
-                set;
+                //Only N
+                return Count(SC.N) == totalCount;
             }
 
-            /// <summary>
-            /// Are we in Floating Insertion Symboils Mode ?
-            /// </summary>
-            internal bool IsFloatingInsertionMode
+            bool IsNationalEdited()
             {
-                get;
-                set;
-            }
-            /// <summary>
-            /// Current Index in the sequence
-            /// </summary>
-            internal int SequenceIndex
-            {
-                get;
-                set;
-            }
-            /// <summary>
-            /// The sequence
-            /// </summary>
-            internal List<Character> Sequence
-            {
-                get;
-                set;
-            }
-            /// <summary>
-            /// Current State
-            /// </summary>
-            internal int State
-            {
-                get;
-                set;
+                //Only N B 0 /
+                bool onlyNBZeroSlash = Count(SC.N, SC.B, SC.ZERO, SC.SLASH) == totalCount;
+                if (!onlyNBZeroSlash) return false;
+
+                //At least one N
+                bool atLeastOneN = Count(SC.N) >= 1;
+                if (!atLeastOneN) return false;
+
+                //At least one B or 0 or /
+                bool atLeastOneBZeroSlash = Count(SC.B, SC.ZERO, SC.SLASH) >= 1;
+                return atLeastOneBZeroSlash;
             }
 
-            /// <summary>
-            /// The Current Picture category during validation.
-            /// </summary>
-            public PictureCategory Category
+            bool IsExternalFloatingPoint()
             {
-                get;
-                private set;
-            }
-
-            /// <summary>
-            /// Size in byte
-            /// </summary>
-            public int Size
-            {
-                get;
-                private set;
-            }
-
-            /// <summary>
-            /// Number of digit places
-            /// </summary>
-            public int Digits
-            {
-                get;
-                private set;
-            }
-            /// <summary>
-            /// 1/10^Scale
-            /// </summary>
-            public int Scale
-            {
-                get;
-                private set;
-            }
-
-            /// <summary>
-            /// Have 'S'
-            /// </summary>
-            public bool HaveSign
-            {
-                get;
-                private set;
-            }
-            /// <summary>
-            /// Real number of digite
-            /// </summary>
-            public int RealDigits
-            {
-                get;
-                private set;
-            }
-
-            /// <summary>
-            /// The Index of the first character of a floating inssertion string in the sequence.
-            /// </summary>
-            internal int FirstFloatingIndex
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// The Index of the last character of a floating inssertion string in the sequence.
-            /// </summary>
-            internal int LastFloatingIndex
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// True if we are before a decimal point character, false otherwise.
-            /// </summary>
-            internal bool IsBeforeDecimalPoint
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// true if we have encountered Z,*,+,-, CS or 9 before P
-            /// </summary>
-            internal bool DigitsSeenBeforeP
-            {
-                get;
-                set;
-            }
-            /// <summary>
-            /// Current count of alphanumeric characters.
-            /// </summary>
-            private int AX_digits = 0;
-            /// <summary>
-            /// The count of V symbol
-            /// </summary>
-            private int V_count = 0;
-            /// <summary>
-            /// The count of either CR, DB, + or - symbols
-            /// </summary>
-            private int S_count = 0;
-            /// <summary>
-            /// Have we seen Z ?
-            /// </summary>
-            private bool Z_seen = false;
-            /// <summary>
-            /// Have we seen '*' ?
-            /// </summary>
-            private bool Star_seen = false;
-            /// <summary>
-            /// Called when changing transition on the given character, so specific validaton actions can be performed here.
-            /// </summary>
-            /// <param name="c">Character on the transition</param>
-            /// <param name="t">Transition representing the next state</param>
-            /// <param name="state">The current state of the character</param>
-            /// <param name="gotoState">The state to goto, the method cans decide go to to another state that's why thie value is passed by reference.</param>
-            /// <returns>return true to continue validation, false otherwise.</returns>
-            internal bool OnGoto(Character c, int state, ref int gotoState)
-            {
-                switch (c.ch)
-                {
-                    case SC.B:      //'B'
-                    case SC.ZERO:   //'0'
-                    case SC.SLASH:  //'/'
-                        this.Category |= PictureCategory.Edited;
-                        break;
-                    case SC.PLUS:   //'+'
-                    case SC.MINUS:  //'-'
-                        this.Category |= PictureCategory.NumericEdited;
-                        Digits += c.count - 1;
-                        S_count++;
-                        break;
-                    case SC.Z:
-                    case SC.STAR:
-                        if (c.ch == SC.Z)
-                            Z_seen = true;
-                        else
-                            Star_seen = true;
-                        if (Z_seen && Star_seen)
-                        {
-                            ValidationMesssage.Add(ZStarMutuallyExclusiveMsg);
-                            return false;
-                        }
-                        this.Category |= PictureCategory.NumericEdited;
-                        Digits += c.count;
-                        if (V_count > 0)
-                        {
-                            Scale += c.count;
-                        }
-                        break;
-                    case SC.CR:
-                    case SC.DB:
-                        this.Category |= PictureCategory.NumericEdited;
-                        S_count++;
-                        break;
-                    case SC.CS:
-                        this.Category |= PictureCategory.NumericEdited;
-                        Digits += c.count - 1;
-                        break;
-                    case SC.E:
-                        break;
-                    case SC.A:
-                        this.Category |= PictureCategory.Alphabetic;
-                        AX_digits += c.count;
-                        break;
-                    case SC.X:
-                        this.Category |= PictureCategory.AlphaNumeric;
-                        AX_digits += c.count;
-                        break;
-                    case SC.NINE://9
-                        this.Category |= PictureCategory.Numeric;
-                        Digits += c.count;
-                        RealDigits += c.count;
-                        if (V_count > 0)
-                        {//We have seen the decimal point --> digitq are un the decimal part
-                            Scale += c.count;
-                        }
-                        break;
-                    case SC.G:
-                        this.Category |= PictureCategory.Dbcs;
-                        AX_digits += c.count;
-                        break;
-                    case SC.N:
-                        this.Category |= PictureCategory.National;
-                        AX_digits += c.count;
-                        break;
-                    case SC.S:
-                        this.Category |= PictureCategory.Numeric;
-                        if (c.count > 1)
-                        {
-                            ValidationMesssage.Add(SymbolSMustOccurOnlyOnceMsg);
-                            return false;
-                        }
-                        if (state != 0 || this.SequenceIndex != 0)
-                        {
-                            ValidationMesssage.Add(SymbolSMustBeTheFirstMsg);
-                            return false;
-                        }
-                        S_count += c.count;
-                        break;
-                    case SC.DOT:
-                    case SC.COMMA:
-                        this.Category |= PictureCategory.NumericEdited;
-                        if (c.ch != Char2SC(this.DecimalPoint))
-                            break;
-                        goto case SC.V;
-                    case SC.V:
-                        this.Category |= PictureCategory.Numeric;
-                        V_count += c.count;
-                        if (V_count > 1)
-                        {
-                            ValidationMesssage.Add(MultipleVMsg);
-                            return false;
-                        }
-                        this.IsBeforeDecimalPoint = false;
-                        break;
-                    case SC.P:
-                        this.Category |= PictureCategory.Numeric;
-                        if (!ValidateP())
-                            return false;
-                        Digits += c.count;
-                        Scale += (V_count > 0 ? c.count : (-c.count));
-                        break;
-                    default:
-                        break;
-                }
-                if (S_count > 0)
-                    HaveSign = true;
-                //Update total sise
-                switch (c.ch)
-                {
-                    case SC.S:
-                        Size += this.IsSeparateSign ? 1 : 0;
-                        break;
-                    case SC.V:
-                    case SC.P:
-                        break;
-                    case SC.CR:
-                    case SC.CS:
-                        Size += c.count * 2;
-                        break;
-                    case SC.N:
-                    case SC.G:
-                        Size += c.count * 2;
-                        break;
-                    default:
-                        Size += c.count;
-                        break;
-                }
-                return true;
-            }
-
-            /// <summary>
-            /// Validate the presence of the P character. 
-            /// The Symbol P specified a scaling position and implies an assumed decimal point (to the left of the Ps if the Ps are leftmost PICTURE characters;
-            /// to right of the Ps if the Ps are rightmost PICTURE charcaters).
-            /// If we say that the charcater ^ means the beginning of the PICTURE sequence
-            /// and $ means the end of the PICTURE sequence sequence, only the following situations are valid for P.
-            /// ^P | ^VP | ^SP | ^SVP | P$ | PV$
-            /// </summary>
-            /// <returns>true if OK, false otherwise.</returns>
-            private bool ValidateP()
-            {
-                if (this.SequenceIndex == 0 || this.SequenceIndex == (this.Sequence.Count - 1))
-                {
-                    V_count += (this.SequenceIndex == 0) ? 1 : 0; //Assume decimal point symbol V at the beginning
-                    return true;//^P | P$;
-                }
-                if (this.SequenceIndex == 1 && (this.Sequence[0].ch == SC.S || this.Sequence[0].ch == SC.V))
-                {
-                    V_count += 1;//Assume decimal point symbol V at the beginning
-                    return true;//^SP | ^VP
-                }
-                if (this.SequenceIndex == 2 && (this.Sequence[0].ch == SC.S && this.Sequence[1].ch == SC.V))
-                {
-                    V_count += 1;//Assume decimal point symbol V at the beginning
-                    return true;//^SVP
-                }
-                if (this.SequenceIndex == (this.Sequence.Count - 2) && this.Sequence[this.Sequence.Count - 1].ch == SC.V)
-                    return true;//$PV
-                this.ValidationMesssage.Add(WrongPPoitionMsg);
-                return false;
-            }
-
-            /// <summary>
-            /// Determines if the current Sequence Index is inside the Floating Insertion Symbols range.
-            /// </summary>
-            private bool IsCurrentIndexInsidefloatingInsertion
-            {
-                get
-                {
-                    return this.FirstFloatingIndex >= 0 && this.LastFloatingIndex >= 0 &&
-                        this.FirstFloatingIndex <= this.SequenceIndex && this.SequenceIndex <= this.LastFloatingIndex;
-                }
-            }
-
-            /// <summary>
-            /// Return true if the current sequence index is the first symbol of the sequence.
-            /// </summary>
-            private bool IsFirstSymbol
-            {
-                get
-                {
-                    return SequenceIndex == 0;
-                }
-            }
-
-            /// <summary>
-            /// Return true if the current sequence index is the last symbol of the sequence.
-            /// </summary>
-            private bool IsLastymbol
-            {
-                get
-                {
-                    return SequenceIndex == Sequence.Count - 1;
-                }
-
-            }
-
-            /// <summary>
-            /// Get the state that is used to handle the given charcater in the Automata
-            /// </summary>
-            /// <param name="c">The character to get the handling state</param>
-            /// <returns>The state number if one exist, -1 otherwise</returns>
-            internal int GetState(Character c)
-            {
-                switch (c.ch)
-                {
-                    case SC.B:
-                        return 1;
-                    case SC.ZERO:
-                    case SC.SLASH:
-                        return 2;
-                    case SC.COMMA:
-                        return 3;
-                    case SC.DOT:
-                        return 4;
-                    case SC.PLUS:
-                    case SC.MINUS:
-                        {
-                            if (!IsCurrentIndexInsidefloatingInsertion)
-                            {
-                                if (IsFirstSymbol)
-                                    return 5;
-                                else if (IsLastymbol)
-                                    return 6;
-                                else
-                                    return 5;
-                            }
-                            else
-                            {
-                                DigitsSeenBeforeP = true;
-                                return IsBeforeDecimalPoint ? 12 : 13;
-                            }
-                        }
-                    case SC.CR:
-                    case SC.DB:
-                        return 7;
-                    case SC.CS:
-                        {
-                            if (!IsCurrentIndexInsidefloatingInsertion)
-                            {
-                                return 8;
-                            }
-                            else
-                            {
-                                DigitsSeenBeforeP = true;
-                                return IsBeforeDecimalPoint ? 14 : 15;
-                            }
-                        }
-                    case SC.E:
-                        return 9;
-                    case SC.Z:
-                    case SC.STAR:
-                        DigitsSeenBeforeP = true;
-                        return IsBeforeDecimalPoint ? 10 : 11;
-                    case SC.NINE:
-                        DigitsSeenBeforeP = true;
-                        return 16;
-                    case SC.A:
-                    case SC.X:
-                        return 17;
-                    case SC.S:
-                        return 18;
-                    case SC.V:
-                        return 19;
-                    case SC.P:
-                        return DigitsSeenBeforeP && IsBeforeDecimalPoint ? 20 : 21;
-                    case SC.G:
-                        return 22;
-                    case SC.N:
-                        return 23;
-                    default:
-                        return -1;//Should never arrive.
-                }
-            }
-
-            /// <summary>
-            /// Determines if the current sequence after a call to Isvalid method, is in fact an ExternalFloat picture string
-            /// category.
-            /// </summary>
-            /// <returns></returns>
-            public bool IsExternalFloatSequence()
-            {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count <= 4)
-                    return false;// should contained with at leas (+|-)*2,(.|V),E
-                if (this.Category != PictureCategory.NumericEdited)
-                    return false;//By Defualt is a NumericEdited category.
+                //Format is: (+|-) (9|.|V) E (+|-) 99
                 int i = 0;
-                if (Sequence[i].ch != SC.PLUS && Sequence[i].ch != SC.MINUS)
-                    return false;
-                int len = Sequence.Count;
+                int length = sequence.Length;
+
+                //First symbol is + or -
+                if (!OnePlusOrMinus()) return false;
                 i++;
-                if (Sequence[i].ch == SC.DOT || Sequence[i].ch == SC.V)
+
+                //Consume mantissa
+                bool seenDecimalPoint = false;
+                while (i < length && sequence[i].SpecialChar != SC.E)
                 {
-                    if (Sequence[i + 1].ch != SC.NINE)
-                        return false;
+                    switch (sequence[i].SpecialChar)
+                    {
+                        case SC.DOT:
+                        case SC.V:
+                            if (seenDecimalPoint) return false;
+                            seenDecimalPoint = true;
+                            goto case SC.NINE;
+                        case SC.NINE:
+                            i++;
+                            break;
+                        default:
+                            return false;
+                    }
                 }
-                else if (Sequence[i].ch == SC.NINE)
-                {
-                    i++;
-                    if (Sequence[i].ch != SC.DOT & Sequence[i].ch != SC.V)
-                        return false;
-                    i++;
-                }
-                else
-                    return false;
-                if (i >= len || Sequence[i].ch == SC.NINE)
-                    i++;
-                if (i >= len || Sequence[i].ch != SC.E)
-                    return false;
-                if (++i >= len || (Sequence[i].ch != SC.PLUS && Sequence[i].ch != SC.MINUS))
-                    return false;
-                if (++i >= len || !(Sequence[i].ch == SC.NINE && Sequence[i].count == 2))
-                    return false;
-                return i == (len - 1);
+
+                //Found a decimal point ?
+                if (!seenDecimalPoint) return false;
+
+                //Reached the E ?
+                if (i == length) return false;
+                i++;
+
+                //Next is + or -
+                if (!OnePlusOrMinus()) return false;
+                i++;
+
+                //Last symbol is exponent, always represented as two 9
+                return i == length - 1 && sequence[i].SpecialChar == SC.NINE && sequence[i].Count == 2;
+
+                bool OnePlusOrMinus() => sequence[i].Count == 1 && (sequence[i].SpecialChar == SC.PLUS || sequence[i].SpecialChar == SC.MINUS);
             }
 
-            /// <summary>
-            /// Determine whether or not the sequence is alphabetic.
-            /// </summary>
-            /// <returns>true if the sequence is alphabetic, false otherwise</returns>
-            public bool IsAplphabeticSequence()
+            bool IsNumeric()
             {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                return this.Sequence.TrueForAll(c => c.ch == SC.A);
+                //Only 9 P S V
+                bool onlyNinePSV = Count(SC.NINE, SC.P, SC.S, SC.V) == totalCount;
+                if (!onlyNinePSV) return false;
+
+                //S must be first -> validated by automata
+
+                //Only one V
+                bool onlyOneV = Count(SC.V) <= 1;
+                return onlyOneV;
             }
 
-            /// <summary>
-            /// Determines if the current sequence is a Dbcs seqeunce
-            /// </summary>
-            /// <returns>true if yes, false otherwise</returns>
-            public bool IsDbcsSequence()
+            bool IsNumericEdited()
             {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                return this.Sequence.TrueForAll(c => c.ch == SC.G || c.ch == SC.B);
+                //Only B P V Z 9 0 / , . + - CR DB * cs
+                bool onlyBPVZNineZeroSlashCommaDotPlusMinusCRDBStarCS = Count(SC.E, SC.A, SC.X, SC.S, SC.G, SC.N) == 0;
+                if (!onlyBPVZNineZeroSlashCommaDotPlusMinusCRDBStarCS) return false;
+
+                //Truly edited otherwise it is Numeric
+                bool edited = Count(SC.NINE, SC.P, SC.V) != totalCount;
+                if (!edited) return false;
+
+                //+ - CR DB mutually exclusive
+                int plus = Count(SC.PLUS);
+                int minus = Count(SC.MINUS);
+                int cr = Count(SC.CR);
+                int db = Count(SC.DB);
+                int plusMinusCrDb = plus + minus + cr + db;
+                bool plusMinusCrDbExclusive = plus == plusMinusCrDb || minus == plusMinusCrDb || cr == plusMinusCrDb || db == plusMinusCrDb;
+                return plusMinusCrDbExclusive;
             }
 
-            /// <summary>
-            /// Determines if the current sequence is a numeric sequence
-            /// </summary>
-            /// <returns>true if yes, false otherwise</returns>
-            public bool IsNumericSequence()
-            {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                return this.Sequence.TrueForAll(c => c.ch == SC.NINE || c.ch == SC.S || c.ch == SC.V || c.ch == SC.P);
-            }
-
-            /// <summary>
-            /// Determine whether or not the sequence is alphanumeric.
-            /// </summary>
-            /// <returns>true if the sequence is alphanumeric, false otherwise</returns>
-            public bool IsAlphanumericSequence()
-            {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                return this.Sequence.TrueForAll(c => c.ch == SC.NINE || c.ch == SC.X || c.ch == SC.A);
-            }
-
-            /// <summary>
-            /// Determine whether or not the sequence is a numeric-edited item
-            /// </summary>
-            /// <returns>true if the sequence is numeric-edited, false otherwise</returns>
-            public bool IsNumericEditedSequence()
-            {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                return this.Sequence.TrueForAll(c =>
-                    c.ch == SC.B ||
-                    c.ch == SC.P ||
-                    c.ch == SC.V ||
-                    c.ch == SC.Z ||
-                    c.ch == SC.NINE ||
-                    c.ch == SC.ZERO ||
-                    c.ch == SC.SLASH ||
-                    c.ch == SC.COMMA ||
-                    c.ch == SC.DOT ||
-                    c.ch == SC.PLUS ||
-                    c.ch == SC.MINUS ||
-                    c.ch == SC.STAR ||
-                    c.ch == SC.CS
-                );
-            }
-
-            /// <summary>
-            /// Determine whether or not the sequence is a alphanumeric-edited item
-            /// </summary>
-            /// <returns>true if the sequence is alphanumeric-edited, false otherwise</returns>
-            public bool IsAlphaNumericEditedSequence()
-            {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                return this.Sequence.TrueForAll(c =>
-                    c.ch == SC.A ||
-                    c.ch == SC.X ||
-                    c.ch == SC.NINE ||
-                    c.ch == SC.B ||
-                    c.ch == SC.ZERO ||
-                    c.ch == SC.SLASH
-                );
-            }
-
-            /// <summary>
-            /// Is a sequence only formed with national characters that is to say only N.
-            /// </summary>
-            /// <returns>true if yes, false otherwise</returns>
-            public bool IsNationalSequence()
-            {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                return this.Sequence.TrueForAll(c => c.ch == SC.N);
-            }
-
-            /// <summary>
-            /// Is a sequence only formed with national edited characters, that is to say with
-            /// symbols N, B, 0 or /, with at least one N and one other symbol in the picture chracter_string.
-            /// </summary>
-            /// <returns>true if yes, false otherwise</returns>
-            public bool IsNationalEditedSequence()
-            {
-                if (this.Sequence == null)
-                    return false;
-                if (this.Sequence.Count == 0)
-                    return false;
-                bool hasN = false;
-                bool bAll = this.Sequence.TrueForAll(c => (hasN |= c.ch == SC.N) ||
-                                c.ch == SC.B ||
-                                c.ch == SC.ZERO ||
-                                c.ch == SC.SLASH);
-                return hasN && bAll;
-            }
-
-            /// <summary>
-            /// All validation messages if any.
-            /// </summary>
-            public List<String> ValidationMesssage
-            {
-                get;
-                internal set;
-            }
-
-        }
-
-        /// <summary>
-        /// An Automate State a state is a list of Transition.
-        /// </summary>
-        private class State
-        {
-            /// <summary>
-            /// The State Number
-            /// </summary>
-            public int Number
-            {
-                get;
-                private set;
-            }
-            /// <summary>
-            /// Transitions on characters boolean vector.
-            /// </summary>
-            public bool[] Trans
-            {
-                get;
-                private set;
-            }
-
-            /// <summary>
-            /// Transition table constructor
-            /// </summary>
-            /// <param name="number">The state number</param>
-            /// <param name="gotos"></param>
-            public State(int number, params SC[] vtrans)
-            {
-                System.Diagnostics.Contracts.Contract.Requires(vtrans != null);
-                bool[] atrans = new bool[(int)SC.SpecialCharCount];
-                for (int i = 0; i < vtrans.Length; i++)
-                {
-                    System.Diagnostics.Contracts.Contract.Assume(atrans[(int)vtrans[i]] == false);
-                    atrans[(int)vtrans[i]] = true;
-                }
-                Number = number;
-                Trans = atrans;
-            }
-
-            /// <summary>
-            /// Determines if this state has a transition on the given character.
-            /// </summary>
-            /// <param name="c">The character to determine if it is a character of transition</param>
-            /// <returns>true if a transition is possible, false otherwise</returns>
-            public bool this[Character c]
-            {
-                get
-                {
-                    return this[c.ch];
-                }
-            }
-
-            /// <summary>
-            /// Determines if this state has a transition on the given character.
-            /// </summary>
-            /// <param name="c">The character to determine if it is a character of transition</param>
-            /// <returns>true if a transition is possible, false otherwise</returns>
-            public bool this[SC c]
-            {
-                get
-                {
-                    return Trans[(int)c];
-                }
-            }
-        }
-
-        private static SC T(char c)
-        {
-            return Char2SC(c);
-        }
-        /// <summary>
-        /// Static representation of a (NFA) Non Deterministic Finite Automata over PICTURE symbols precedence rules.
-        /// </summary>
-        private static State[] Automata =
-        {
-            //State 0: Start Symbols
-            new State(0,T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('S'),T('V'),T('P'),T('G'),T('N') ),
-
-            //------------------------------------------------------
-            // NON FLOATING INSERTION SYMBOLS
-            //------------------------------------------------------
-            //State 1: --B-->(1)
-            new State(1, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('G'),T('N') ),
-            //State 2: --[0|/]-->(2)
-            new State(2, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('N') ),
-            //State 3: --,-->(3)
-            new State(3,  T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9'),T('V'),T('P') ),
-            //State 4: --.-->(4)
-            new State(4, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9') ),
-            //State 5: --[+|-]-->(5)
-            new State(5, T('B'),T('0'),T('/'),T(','),T('.'),T('Z'),T('*'),SC.CS,T('9'),T('V'),T('P') ),
-            //State 6: --[+|-]-->(6)
-            new State(6, new SC[0]),
-            //State : --[CR|DB]-->()
-            new State(7, new SC[0]),
-            //State : --CS-->(8)
-            new State(8, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
-            //State : --E-->(9)
-            new State(9, T('+'),T('-') ),
-
-            //------------------------------------------------------
-            //FLOATING INSERTION SYMBOLS
-            //------------------------------------------------------
-            //State 10: --[Z|*]-->(10)
-            new State(10, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
-            //State 11: --[Z|*]-->(11)
-            new State(11, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*') ),
-            //State 12: --[+|-]-->(12)
-            new State(12, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('9'),T('V'),T('P') ),
-            //State 13: --[+|-]-->(13)
-            new State(13, T('B'),T('0'),T('/'),T(','),T('+'),T('-') ),
-            //State 14: --CS-->(14)
-            new State(14, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,SC.CS,T('9'),T('V'),T('P') ),
-            //State 15: --CS-->(15)
-            new State(15, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,SC.CS ),
-
-            //------------------------------------------------------
-            //OTHER SYMBOLS
-            //------------------------------------------------------
-            //State 16: --9-->(16)
-            new State(16, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('9'),T('A'),T('X'),T('V'),T('P')),
-            //State 17: --[A|X]-->(17)
-            new State(17, T('B'),T('0'),T('/'),T('9'),T('A'),T('X')),
-            //State 18: --S-->(18)
-            new State(18, T('9'),T('V'),T('P')),
-            //State 19: --V-->(19)
-            new State(19, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('Z'),T('*'),SC.CS,T('9'),T('P') ),
-            //State 20: --P-->(20)
-            new State(20, T('+'),T('-'),SC.CR,SC.DB,T('V'),T('P')),
-            //State 21: --P-->(21)
-            new State(21, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('P')),
-            //State 22: --G-->(22)
-            new State(22, T('B'),T('G') ),
-            //State 23: --N-->(23)
-            new State(23, T('B'),T('0'),T('/'),T('N') ),
-        };
-
-        /// <summary>
-        /// Run the automata on the given context along with its PICTURE sequence.
-        /// </summary>
-        /// <param name="ctx">The context</param>
-        /// <returns>true if we reach the final character in a valid state, false otherwise.</returns>
-        private bool RunAutomata(Context ctx)
-        {
-            int state = 0;
-            for (int i = 0; i < ctx.Sequence.Count; i++)
-            {
-                Character c = ctx.Sequence[i];
-                if (!Automata[state][c])
-                {//No transition
-                    ctx.ValidationMesssage.Add(string.Format(Context.InvalidSymbolPosMsg, SC2String(c.ch)));
-                    return false;
-                }
-                ctx.State = state;
-                ctx.SequenceIndex = i;
-                int gotoState = ctx.GetState(c); ;
-                if (!ctx.OnGoto(c, state, ref gotoState))
-                    return false;
-                state = gotoState;
-            }
-            return true;
+            int Count(params SC[] symbols) => symbols.Sum(symbol => symbolCounts[symbol]);
         }
     }
 }

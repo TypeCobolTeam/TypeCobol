@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Analysis;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.SqlNodes;
 
@@ -20,8 +21,8 @@ namespace TypeCobol.Compiler.SqlAnalysis.ASTRules
 
         public override void Check(Commit item)
         {
-            var token = item.CodeElement.ConsumedTokens[0]; 
-            Violation v = new Violation(_ruleId, Severity.Error, token.Line, token.StartIndex, token.StopIndex, "SQL Commit statement is not allowed in EXEC SQL statement");
+            Scanner.Token token = item.CodeElement.ConsumedTokens[0]; 
+            Violation v = new Violation(_ruleId, Severity.Error, token.Position(), "SQL Commit statement is not allowed in EXEC SQL statement");
             _addViolationAction(v);
         }
     }

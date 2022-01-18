@@ -78,12 +78,12 @@ Line 52[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is mod
                - var1 pic X
       %>>>
        declare InvalidParamProc private
-Line 75[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+Line 75[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported
               input var1 pic X occurs 5.
        end-declare.
       
        declare InvalidParamProc2 private
-Line 79[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+Line 79[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported
                input var1 pic X occurs 5.
        end-declare.
       

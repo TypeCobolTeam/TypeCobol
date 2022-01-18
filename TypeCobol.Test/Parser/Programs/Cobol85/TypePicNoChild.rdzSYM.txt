@@ -68,7 +68,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Comp
     Fields:
       var2 (.NET Type=VariableSymbol, Kind=Variable)
@@ -107,7 +106,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Comp2
     Fields:
       titi (.NET Type=VariableSymbol, Kind=Variable)
@@ -115,7 +113,6 @@ WorkingStorageData:
       Owner: DVZF0OSM::toto
       Type:
         (.NET Type=Type, Tag=Usage)
-        Flags: [BuiltinType]
         Usage: Comp2
       Level: 5
       IsFiller: False
@@ -128,7 +125,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Comp2
     Fields:
       titi (.NET Type=VariableSymbol, Kind=Variable)
@@ -136,7 +132,6 @@ WorkingStorageData:
       Owner: DVZF0OSM::toto
       Type:
         (.NET Type=Type, Tag=Usage)
-        Flags: [BuiltinType]
         Usage: Comp2
       Level: 5
       IsFiller: False
@@ -149,7 +144,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Comp2
     Fields:
       titi (.NET Type=VariableSymbol, Kind=Variable)
@@ -170,7 +164,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Comp
     Fields:
       var3 (.NET Type=VariableSymbol, Kind=Variable)
@@ -191,7 +184,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Pointer
     Fields:
       var2 (.NET Type=VariableSymbol, Kind=Variable)
@@ -212,7 +204,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Pointer
     Fields:
       var2 (.NET Type=VariableSymbol, Kind=Variable)
@@ -266,7 +257,6 @@ WorkingStorageData:
         (.NET Type=GroupType, Tag=Group)
         LeadingType:
           (.NET Type=Type, Tag=Usage)
-          Flags: [BuiltinType]
           Usage: Comp
         Fields:
           var3 (.NET Type=VariableSymbol, Kind=Variable)
@@ -295,7 +285,6 @@ WorkingStorageData:
         (.NET Type=GroupType, Tag=Group)
         LeadingType:
           (.NET Type=Type, Tag=Usage)
-          Flags: [BuiltinType]
           Usage: Pointer
         Fields:
           var3 (.NET Type=VariableSymbol, Kind=Variable)
@@ -363,7 +352,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Comp
     Fields:
       var2 (.NET Type=VariableSymbol, Kind=Variable)
@@ -373,7 +361,6 @@ WorkingStorageData:
         (.NET Type=GroupType, Tag=Group)
         LeadingType:
           (.NET Type=Type, Tag=Usage)
-          Flags: [BuiltinType]
           Usage: Comp
         Fields:
           var3 (.NET Type=VariableSymbol, Kind=Variable)
@@ -396,7 +383,6 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Flags: [BuiltinType]
       Usage: Pointer
     Fields:
       var2 (.NET Type=VariableSymbol, Kind=Variable)
@@ -406,7 +392,6 @@ WorkingStorageData:
         (.NET Type=GroupType, Tag=Group)
         LeadingType:
           (.NET Type=Type, Tag=Usage)
-          Flags: [BuiltinType]
           Usage: Pointer
         Fields:
           var3 (.NET Type=VariableSymbol, Kind=Variable)

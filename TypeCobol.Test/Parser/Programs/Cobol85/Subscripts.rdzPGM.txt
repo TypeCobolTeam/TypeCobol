@@ -1,0 +1,44 @@
+﻿--- Diagnostics ---
+Line 35[31,31] <27, Error, Syntax> - Syntax error : Subscript value '0' is invalid. Subscript must be a strictly positive integer. OffendingSymbol=[31,31:0]<IntegerLiteral>{0}
+Line 36[31,33] <27, Error, Syntax> - Syntax error : Subscript value '-20' is invalid. Subscript must be a strictly positive integer. OffendingSymbol=[31,33:-20]<IntegerLiteral>{-20}
+Line 37[31,32] <27, Error, Syntax> - Syntax error : Subscript value '20' exceeds the maximum occurrence count '10' of the table. OffendingSymbol=[31,32:20]<IntegerLiteral>{20}
+Line 38[31,32] <27, Error, Syntax> - Syntax error : Subscript value '20' exceeds the maximum occurrence count '10' of the table. OffendingSymbol=[31,32:20]<IntegerLiteral>{20}
+Line 38[35,36] <27, Error, Syntax> - Syntax error : Subscript value '30' exceeds the maximum occurrence count '20' of the table. OffendingSymbol=[35,36:30]<IntegerLiteral>{30}
+Line 38[39,40] <27, Error, Syntax> - Syntax error : Subscript value '40' exceeds the maximum occurrence count '30' of the table. OffendingSymbol=[39,40:40]<IntegerLiteral>{40}
+Line 39[17,20] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 40[17,20] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 41[17,20] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 42[17,20] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 43[17,20] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'item', check number of OCCURS clauses. OffendingSymbol=[17,20:item]<UserDefinedWord>
+Line 44[31,32] <27, Error, Syntax> - Syntax error : Subscript value '20' exceeds the maximum occurrence count '10' of the table. OffendingSymbol=[31,32:20]<IntegerLiteral>{20}
+
+--- Program ---
+PROGRAM: Subscripts common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  tab1:Alphanumeric
+  oc1:Array
+  oc1:Array
+  oc1:Array
+  oc1:Array
+  item:Alphanumeric
+  item:Alphanumeric
+  item:Alphanumeric
+  item:Alphanumeric
+  item:Alphanumeric
+  tab2:Alphanumeric
+  oc2:Array
+  oc3:Array
+  tab3:Alphanumeric
+  tab4:Alphanumeric
+  max-val:Numeric
+  notATable:Alphanumeric
+  group1:Alphanumeric
+  elt:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

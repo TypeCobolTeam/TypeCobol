@@ -1,8 +1,8 @@
 ﻿ReturnCode=Warning_
 6 errors in "input\DocGen.tcbl":
-Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 Line 9[13,18] <37, Warning, General> - Warning: Formalized comment field is declared more than once : params
 Line 13[12,17] <37, Warning, General> - Warning: Formalized comment field is declared more than once : Params
+Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 Line 60[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
 Line 65[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
 Line 67[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli

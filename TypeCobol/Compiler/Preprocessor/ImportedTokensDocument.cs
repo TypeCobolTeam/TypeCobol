@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         public ITokensLinesIterator GetProcessedTokensIterator()
         {
-            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines, this.CompilerOptions);
+            ITokensLinesIterator sourceIterator = SourceDocument.GetProcessedTokensIterator();
             if (HasReplacingDirective
 #if EUROINFO_RULES
                 || (this.CompilerOptions.UseEuroInformationLegacyReplacingSyntax && (this. CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar))

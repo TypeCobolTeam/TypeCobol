@@ -72,17 +72,24 @@ namespace TypeCobol.Compiler.Scanner
 
         private static IDictionary<string, TokenType> tokenTypeFromTokenString;
 
-        internal static TokenType GetTokenTypeFromTokenString(string tokenString)
+        internal static TokenType GetTokenTypeFromTokenString(string tokenString, CobolLanguageLevel targetLanguageLevel)
         {
-            TokenType tokenType;
-            if (tokenTypeFromTokenString.TryGetValue(tokenString, out tokenType))
+            if (tokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
             {
-                return tokenType;
+                if (targetLanguageLevel == CobolLanguageLevel.TypeCobol) return tokenType;
+
+                var family = GetTokenFamilyFromTokenType(tokenType);
+                if (targetLanguageLevel > CobolLanguageLevel.Cobol85)
+                {
+                    //Cobol2002 or Cobol2014 -> exclude TC keywords
+                    return family == TokenFamily.TypeCobolKeyword ? TokenType.UserDefinedWord : tokenType;
+                }
+
+                //Cobol85 -> exclude TC and 2002 keywords
+                return family == TokenFamily.TypeCobolKeyword || family == TokenFamily.Cobol2002Keyword ? TokenType.UserDefinedWord : tokenType;
             }
-            else
-            {
-                return TokenType.UserDefinedWord;
-            }
+
+            return TokenType.UserDefinedWord;
         }
         
         // Formalized Comments only to avoid Formalized Comments tokens detection in Cobol and Cobol tokens in Formalized Comments

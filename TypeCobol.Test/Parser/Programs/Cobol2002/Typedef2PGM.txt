@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 17[1,2] <27, Error, Syntax> - Syntax error : extraneous input '01' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[1,2:01]<IntegerLiteral>{1}
 Line 18[3,4] <27, Error, Syntax> - Syntax error : extraneous input '02' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[3,4:02]<IntegerLiteral>{2}
 

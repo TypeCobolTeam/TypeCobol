@@ -1249,7 +1249,9 @@ whenConditionClauses ::=
 	|	whenConditionClauses error whenConditionClause
 	;
 
-whenConditionClause ::= whenEvaluateConditionsStart  statements
+whenConditionClause ::=  whenEvaluateConditionsStart
+    {: my_parser.Builder.EndWhenConditionClause(); :}
+	| whenEvaluateConditionsStart  statements
 	{: my_parser.Builder.EndWhenConditionClause(); :}
 	;
 

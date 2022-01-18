@@ -40,15 +40,12 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public bool IsElementary => Fields.All(f => f.IsCondition);
 
-        internal override void SetFlag(Flags flag, bool value, bool propagate = false)
+        internal override void PropagateSymbolFlag(Flags flag, bool value)
         {
-            base.SetFlag(flag, value, propagate);
-            if (propagate)
+            //Propagate flag to symbols defined in this GroupType
+            foreach (var variableSymbol in Fields)
             {
-                foreach (var varSym in Fields)
-                {
-                    varSym.SetFlag(flag, value, true);
-                }
+                variableSymbol.SetFlag(flag, value, true);
             }
         }
 

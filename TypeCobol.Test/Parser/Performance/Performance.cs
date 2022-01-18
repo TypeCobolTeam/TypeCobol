@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,7 +7,6 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser.Performance
@@ -129,8 +127,7 @@ namespace TypeCobol.Test.Parser.Performance
         public void AntlrPerformanceProfiler()
         {
             Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.rdz.pgm", new AntlrName());
-            TestUnit unit = new TestUnit(new Multipass(paths));
-            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            TestUnit unit = new TestUnit(new Multipass(paths), antlrProfiler: true);
             unit.Parse();
 
             unit.Compare(unit.Compiler.CompilationResultsForProgram.AntlrResult);
@@ -168,7 +165,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
         //[Ignore]
-        public void Part1_Incremental_TC_GlobaStorage()
+        public void Part1_Incremental_TC_GlobalStorage()
         {
             IncrementalPerformance2(BigTypes_1Procedure, 65807, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
         }
@@ -221,7 +218,7 @@ namespace TypeCobol.Test.Parser.Performance
         /// Creates the AnalyzerProvider to be used.
         /// </summary>
         /// <returns></returns>
-        protected virtual CompositeAnalyzerProvider CreateAnalyzerProvider()
+        protected virtual IAnalyzerProvider CreateAnalyzerProvider()
         {
             return null;
         }
@@ -238,13 +235,13 @@ namespace TypeCobol.Test.Parser.Performance
             CompilationProject project = new CompilationProject("test",
                 root.FullName, new[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), CreateAnalyzerProvider());
-            FileCompiler compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
+            FileCompiler compiler = new FileCompiler(null, filename, documentFormat.ColumnsLayout, false, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
             //Make an incremental change to the source code
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
             ExecuteIncremental(compiler, stats, newLineIndex, newLineText);
 
             // Display a performance report
-            TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name, stats, compiler.CompilationResultsForProgram);
+            TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), filename, stats, compiler.CompilationResultsForProgram);
         }
 
         private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText)
@@ -389,7 +386,7 @@ namespace TypeCobol.Test.Parser.Performance
         protected virtual TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
         {
             var document = new TypeCobol.Parser();
-            document.Init(fullPath, options, format, copiesFolder, CreateAnalyzerProvider());
+            document.Init(fullPath, false, options, format, copiesFolder, CreateAnalyzerProvider());
             document.Parse(fullPath);
             return document;
         }

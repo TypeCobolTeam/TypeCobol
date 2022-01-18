@@ -1,0 +1,20 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. tcCall.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var-program-name PIC X(8) VALUE 'somepgm'.
+       01 var-input PIC X.
+       01 var-inout PIC X.
+       01 var-output PIC X.
+       PROCEDURE DIVISION.
+      *OK
+           CALL var-program-name USING var-input var-inout var-output.
+      *KO procedure-style CALL
+Line 13[34,38] <48, Error, Syntax> - TypeCobol-only feature: 'INPUT' keyword is not supported in a Cobol CALL.
+Range (13, 12) -> (15, 50) <30, Error, Semantics> - Semantic error: Function not found 'var-program-name' input(Alphanumeric, ?, Alphanumeric) output(Alphanumeric)
+           CALL var-program-name INPUT var-input 
+Line 14[34,39] <30, Error, Semantics> - Semantic error: Symbol IN-OUT is not referenced
+                                 IN-OUT var-inout
+Line 15[34,39] <48, Error, Syntax> - TypeCobol-only feature: 'OUTPUT' keyword is not supported in a Cobol CALL.
+                                 OUTPUT var-output.
+       END PROGRAM tcCall.

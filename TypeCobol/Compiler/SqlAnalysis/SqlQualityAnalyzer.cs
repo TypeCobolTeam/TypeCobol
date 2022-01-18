@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.SqlAnalysis
         private readonly SqlASTChecker _sqlAstChecker;
         public SqlQualityAnalyzer() : base(typeof(SqlQualityAnalyzer).FullName)
         {
-            _sqlAstChecker = new SqlASTChecker(AddDiagnostic);
+            _sqlAstChecker = new SqlASTChecker(DiagnosticList.Add);
         }
 
         public override object GetResult()

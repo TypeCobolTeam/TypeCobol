@@ -221,7 +221,7 @@ namespace TypeCobol.Compiler.Nodes {
             this.CodeElement = dataDefinitionEntry;
         }
 
-        private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
+        private CommonDataDescriptionAndDataRedefines _CommonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
 
 
         protected override CodeElement InternalCodeElement => CodeElement;
@@ -325,19 +325,6 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        private PictureValidator _pictureValidator;
-        public PictureValidator PictureValidator
-        {
-            get
-            {
-                if (_pictureValidator != null) return _pictureValidator;
-
-                _pictureValidator = new PictureValidator(Picture.Value, SignIsSeparate);
-
-                return _pictureValidator;
-            }
-        }
-
         /// <summary>
         /// PhysicalLength is the size taken by a DataDefinition and its children in memory
         /// </summary>
@@ -417,14 +404,16 @@ namespace TypeCobol.Compiler.Nodes {
                 }
                 return 1;
             }
-            if (PictureValidator.IsValid())
+
+            System.Diagnostics.Debug.Assert(PictureValidationResult != null);
+            if (PictureValidationResult.IsValid)
             {
-                PictureType type = new PictureType(PictureValidator);
+                PictureType type = new PictureType(PictureValidationResult, SignIsSeparate);
                 type.Usage = usage;
                 return type.Length;
             }
-            else
-                return 1;
+            
+            return 1;
         }
 
         /// <summary>
@@ -486,7 +475,7 @@ namespace TypeCobol.Compiler.Nodes {
                     switch (Usage.Value)
                     {
                         case DataUsage.Binary:
-                            if (PictureValidator.ValidationContext.Digits <= 4)
+                            if (PictureValidationResult?.Digits <= 4)
                             {
                                 m = 2;
                             }
@@ -643,7 +632,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public bool IsIndex { get; internal set; }
+        public bool IsTableIndex { get; internal set; }
         public string Hash
         {
             get
@@ -655,14 +644,15 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         #region TypeProperties
-        public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
-        public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
-        public DataUsage? Usage
+        public AlphanumericValue Picture => _CommonDataDesc?.Picture;
+        internal PictureValidator.Result PictureValidationResult => _CommonDataDesc?.PictureValidationResult;
+        public bool IsJustified { get {  if(_CommonDataDesc != null && _CommonDataDesc.IsJustified != null) return _CommonDataDesc.IsJustified.Value; else return false; } }
+        public virtual DataUsage? Usage
         {
             get
             {
-                if (_ComonDataDesc != null && _ComonDataDesc.Usage != null)
-                    return _ComonDataDesc.Usage.Value;
+                if (_CommonDataDesc != null && _CommonDataDesc.Usage != null)
+                    return _CommonDataDesc.Usage.Value;
 
                 if (CodeElement?.LevelNumber?.Value > 50)
                 {
@@ -681,8 +671,8 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                if (_ComonDataDesc?.IsGroupUsageNational != null)
-                    return _ComonDataDesc.IsGroupUsageNational.Value;
+                if (_CommonDataDesc?.IsGroupUsageNational != null)
+                    return _CommonDataDesc.IsGroupUsageNational.Value;
 
                 else if (Parent is DataDefinition parent)
                     return parent.IsGroupUsageNational;
@@ -690,23 +680,23 @@ namespace TypeCobol.Compiler.Nodes {
                 else return false;
             }
         }
-        public long MinOccurencesCount { get { if (_ComonDataDesc != null && _ComonDataDesc.MinOccurencesCount != null) return _ComonDataDesc.MinOccurencesCount.Value; else return 1; } }
-        public long MaxOccurencesCount { get { return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1; } }
+        public long MinOccurencesCount { get { if (_CommonDataDesc != null && _CommonDataDesc.MinOccurencesCount != null) return _CommonDataDesc.MinOccurencesCount.Value; else return 1; } }
+        public long MaxOccurencesCount { get { return _CommonDataDesc != null && _CommonDataDesc.MaxOccurencesCount != null ? _CommonDataDesc.MaxOccurencesCount.Value : 1; } }
 
 
-        public NumericVariable OccursDependingOn { get { return _ComonDataDesc != null ? _ComonDataDesc.OccursDependingOn : null; } }
-        public bool HasUnboundedNumberOfOccurences { get { if (_ComonDataDesc != null && _ComonDataDesc.HasUnboundedNumberOfOccurences != null) return _ComonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
-        public bool IsTableOccurence { get { if (_ComonDataDesc != null) return _ComonDataDesc.IsTableOccurence; else return false; } }
-        public CodeElementType? Type { get { if (_ComonDataDesc != null) return _ComonDataDesc.Type; else return null; } }
-        public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false; } }
-        public SignPosition? SignPosition { get { if (_ComonDataDesc != null && _ComonDataDesc.SignPosition != null) return _ComonDataDesc.SignPosition.Value; else return null; } }
+        public NumericVariable OccursDependingOn { get { return _CommonDataDesc != null ? _CommonDataDesc.OccursDependingOn : null; } }
+        public bool HasUnboundedNumberOfOccurences { get { if (_CommonDataDesc != null && _CommonDataDesc.HasUnboundedNumberOfOccurences != null) return _CommonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
+        public bool IsTableOccurence { get { if (_CommonDataDesc != null) return _CommonDataDesc.IsTableOccurence; else return false; } }
+        public CodeElementType? Type { get { if (_CommonDataDesc != null) return _CommonDataDesc.Type; else return null; } }
+        public bool SignIsSeparate { get { if (_CommonDataDesc != null && _CommonDataDesc.SignIsSeparate != null) return _CommonDataDesc.SignIsSeparate.Value; else return false; } }
+        public SignPosition? SignPosition { get { if (_CommonDataDesc != null && _CommonDataDesc.SignPosition != null) return _CommonDataDesc.SignPosition.Value; else return null; } }
 
         public SyncAlignment? Synchronized
         {
             get
             {
-                if (_ComonDataDesc?.Synchronized != null)
-                    return _ComonDataDesc.Synchronized.Value;
+                if (_CommonDataDesc?.Synchronized != null)
+                    return _CommonDataDesc.Synchronized.Value;
 
                 else if (Parent is DataDefinition parent)
                     return parent.Synchronized;
@@ -714,7 +704,7 @@ namespace TypeCobol.Compiler.Nodes {
                 else return null;
             }
         }
-        public SymbolReference ObjectReferenceClass { get { if (_ComonDataDesc != null) return _ComonDataDesc.ObjectReferenceClass; else return null; } }
+        public SymbolReference ObjectReferenceClass { get { if (_CommonDataDesc != null) return _CommonDataDesc.ObjectReferenceClass; else return null; } }
         #endregion
     }
 
@@ -942,7 +932,7 @@ namespace TypeCobol.Compiler.Nodes {
         public IndexDefinition(SymbolDefinition symbolDefinition) : base(null)
         {
             _SymbolDefinition = symbolDefinition;
-            IsIndex = true;
+            IsTableIndex = true;
         }
 
         private SymbolDefinition _SymbolDefinition;
@@ -955,6 +945,18 @@ namespace TypeCobol.Compiler.Nodes {
         public override DataType DataType
         {
             get { return DataType.Numeric; }
+        }
+
+        public override DataUsage? Usage
+        {
+	        get { return DataUsage.Index; }
+        }
+
+        public override long PhysicalLength
+        {
+            //Table indexes are not physically stored into their parent DATA section.
+            //Their size and actual location in memory depends on the compiler implementation.
+            get { return 0; }
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -1019,6 +1021,64 @@ namespace TypeCobol.Compiler.Nodes {
 
                 return hashCode;
             }
+        }
+    }
+
+    /// <summary>
+    /// Helper class for manipulating table definitions (DataDescription or DataRedefines having an OCCURS clause).
+    /// </summary>
+    public static class TableDefinitionExtensions
+    {
+        /// <summary>
+        /// Collect all parent table definitions of the given data-item.
+        /// If the given DataDefinition is a table itself, it is included in the result.
+        /// Results are ordered from the given data item to its highest parent table.
+        /// </summary>
+        /// <param name="dataDefinition">Data definition to start from.</param>
+        /// <returns>List of parent tables. Maybe null if the data-item is part of a TC typedef,
+        /// empty if the data-item does not belong to any table.</returns>
+        /// <remarks>Returns empty list for a null starting DataDefinition.</remarks>
+        [CanBeNull]
+        public static List<DataDefinition> GetParentTableDefinitions([CanBeNull] this DataDefinition dataDefinition)
+        {
+            var result = new List<DataDefinition>();
+            var tableDefinition = dataDefinition;
+            while (tableDefinition != null)
+            {
+                //TODO SemanticDomain: use symbols and type expansion to get all the OCCURS including those coming from a typedef
+                if (tableDefinition.IsPartOfATypeDef) return null;
+
+                if (tableDefinition.IsTableOccurence) result.Add(tableDefinition);
+                tableDefinition = tableDefinition.Parent as DataDefinition;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get the sorting keys of the given table.
+        /// </summary>
+        /// <param name="tableDefinition">Non-null DataDefinition instance, property IsTableOccurence must be true.</param>
+        /// <returns>Array of TableSortingKey, maybe null.</returns>
+        [CanBeNull]
+        public static TableSortingKey[] GetTableSortingKeys([NotNull] this DataDefinition tableDefinition)
+        {
+            System.Diagnostics.Debug.Assert(tableDefinition.CodeElement != null);
+            System.Diagnostics.Debug.Assert(tableDefinition.IsTableOccurence);
+            return ((CommonDataDescriptionAndDataRedefines) tableDefinition.CodeElement).TableSortingKeys;
+        }
+
+        /// <summary>
+        /// Get the indexes of the given table.
+        /// </summary>
+        /// <param name="tableDefinition">Non-null DataDefinition instance, property IsTableOccurence must be true.</param>
+        /// <returns>Array of SymbolDefinition, maybe null.</returns>
+        [CanBeNull]
+        public static SymbolDefinition[] GetIndexes([NotNull] this DataDefinition tableDefinition)
+        {
+            System.Diagnostics.Debug.Assert(tableDefinition.CodeElement != null);
+            System.Diagnostics.Debug.Assert(tableDefinition.IsTableOccurence);
+            return ((CommonDataDescriptionAndDataRedefines) tableDefinition.CodeElement).Indexes;
         }
     }
 

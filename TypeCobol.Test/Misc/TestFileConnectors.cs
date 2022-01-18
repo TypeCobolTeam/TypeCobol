@@ -26,7 +26,7 @@ namespace TypeCobol.Test.Misc
             };
 
             var folder = Path.Combine("Parser", "Programs", "Cobol85");
-            var compilationUnit = ParserUtils.ParseCobolFile("FileControl2", DocumentFormat.RDZReferenceFormat, folder);
+            var compilationUnit = ParserUtils.ParseCobolFile("FileControl2", folder);
             var fileConnectors = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.FileConnectors;
 
             Assert.IsNotNull(fileConnectors);

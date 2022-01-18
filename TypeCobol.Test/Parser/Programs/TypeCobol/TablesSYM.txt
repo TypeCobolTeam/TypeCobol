@@ -1,5 +1,12 @@
 --- Diagnostics ---
-Line 1[1,21] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 23[15,15] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[15,15:E]<UserDefinedWord>
+Line 24[41,41] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[41,41:E]<UserDefinedWord>
+Line 26[15,15] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[15,15:E]<UserDefinedWord>
+Line 30[15,15] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[15,15:E]<UserDefinedWord>
+Line 33[6,6] <27, Error, Syntax> - Syntax error : Too many subscripts for data item 'X', check number of OCCURS clauses. OffendingSymbol=[6,6:X]<UserDefinedWord>
+Line 38[13,13] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[13,13:E]<UserDefinedWord>
+Line 39[27,27] <27, Error, Syntax> - Syntax error : Not enough subscripts for data item 'E', check number of OCCURS clauses. OffendingSymbol=[27,27:E]<UserDefinedWord>
+Line 49[30,32] <27, Error, Syntax> - Syntax error : Subscript value '101' exceeds the maximum occurrence count '100' of the table. OffendingSymbol=[30,32:101]<IntegerLiteral>{101}
 
 --- Program ---
 Tables (.NET Type=ProgramSymbol, Kind=Program)

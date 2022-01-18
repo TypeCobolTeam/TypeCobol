@@ -10,7 +10,7 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 2;9;1;Greater than or equal operator >= should be followed by a space;1;260;Each relational operator must be preceded and followed by a space. 
 2;10;1;Invalid character found after > : expecting space or =;1;260;Each relational operator must be preceded and followed by a space. 
 2;11;1;Invalid character found after = : expecting space or =;1;0;Syntax described pages : 47, 260
-2;12;1;Invalid character found after . : expecting space or digit;1;0;Syntax described pages : 37, 38, 46
+2;12;2;A blank was missing before character "{0}" in column {1}. A blank was assumed.;0;0;
 2;13;1;Invalid character found after + : expecting space, digit or .;1;0;Syntax described pages : 37, 38, 254
 2;14;1;Invalid character found after - : expecting space, digit or .;1;0;Syntax described pages : 37, 38, 254
 2;15;1;Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period;1;47;A closing pseudo-text delimiter must be immediately followed by a separator space, comma, semicolon, or period
@@ -20,7 +20,7 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 2;19;2;The number of characters in an hexadecimal alphanumeric literal should be a multiple of 2;1;36;An even number of hexadecimal digits must be specified. Two hexadecimal digits represent one character in a single-byte character set (EBCDIC or ASCII). 
 2;20;2;The number of characters in an hexadecimal national literal should be a multiple of 4;1;41;The number of hexadecimal digits must be a multiple of four. Each group of four hexadecimal digits represents a single national character and must represent a valid code point in UTF-16. 
 2;21;1;The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal;1;55;If the continued line contains an alphanumeric or national literal, the continuation line must contain the same quotation marks
-2;22;1;Because the alphanumeric literal on the previous line ended with a delimiter {0} in the last column,  this continuation line must start with two delimiters {0}{0};1;55;If an alphanumeric literal that is to be continued on the next line has as its last character a quotation mark in column 72, the continuation line must start with two consecutive quotation marks
+2;22;1;The alphanumeric literal was not properly continued. This continuation line can start with two delimiters {0}{0} only if the alphanumeric literal on the previous line ended with a delimiter {0} {1};1;55;If an alphanumeric literal that is to be continued on the next line has as its last character a quotation mark in column 72, the continuation line must start with two consecutive quotation marks
 1;23;2;Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line;1;54;Area A of a continuation line must be blank
 1;24;1;A hyphen indicator (continuation line) is not permitted in comment entries;1;105;A hyphen in the indicator area (column 7) is not permitted in comment - entries
 3;25;1;Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses;1;528;options-list : a series of one or more compiler options, each one separated by a comma or a space. 
@@ -45,4 +45,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 5;44;1;Invalid use of '%'. Should be used with "%<< ... (linebreak) %>>" for MultiLine Comment or "%<<< ... (linebreak) %>>>" for Formalized Comment;0;0;Page
 7;45;2;Info: {0};0;0;
 8;46;1;CodeAnalysis: analyzer '{0}' failed. Exception message is '{1}';0;0;
-3;48;1;Missing copy '{0}' included by copy '{1}';1;531;text-name identifies the copy text. library-name identifies where the copy text exists
+4;48;1;{0}-only feature: {1};0;0;

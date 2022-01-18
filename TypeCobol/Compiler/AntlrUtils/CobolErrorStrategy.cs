@@ -1,4 +1,5 @@
-﻿using Antlr4.Runtime;
+﻿using System;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using System.Collections.Generic;
 using System.Text;
@@ -18,6 +19,12 @@ namespace TypeCobol.Compiler.AntlrUtils
     /// </summary>
     public class CobolErrorStrategy : DefaultErrorStrategy
     {
+        private static readonly HashSet<string> _UnsupportedKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                                                                       {
+                                                                           "occurs",//for arrays in procedure param declaration see #554
+                                                                           "exhibit"
+                                                                       };
+
         // --- Override the method below to customize Antlr Token deleting strategy ---
 
         /// <summary>
@@ -48,24 +55,25 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         protected virtual string ErrorMessageForNoViableAlternative(NoViableAltException e, Antlr4.Runtime.Parser recognizer)
         {
-            ITokenStream tokens = ((ITokenStream)recognizer.InputStream);
-            string input;
-            if (tokens != null) {
-                if (e.StartToken.Type == TokenConstants.Eof) {
+            string msg;
+            if (_UnsupportedKeywords.Contains(e.StartToken.Text))
+            {
+                msg = EscapeWSAndQuote(e.StartToken.Text) + " is not supported";
+            }
+            else
+            {
+                string input;
+                if (e.StartToken.Type == TokenConstants.Eof)
+                {
                     input = "<end of file>";
                 }
-                else {
-                    input = tokens.GetText(e.StartToken, e.OffendingToken);
+                else
+                {
+                    ITokenStream tokens = (ITokenStream) recognizer.InputStream;
+                    input = tokens?.GetText(e.StartToken, e.OffendingToken) ?? "<unknown input>";
                 }
+                msg = "no viable alternative at input " + EscapeWSAndQuote(input);
             }
-            else {
-                input = "<unknown input>";
-            }
-            string msg = "no viable alternative at input " + EscapeWSAndQuote(input);
-
-            //TEMPORARY FIX until #554 is done 
-            if (input == "occurs")
-                msg = EscapeWSAndQuote(input) + " is not supported yet";
 
             return msg;
         }

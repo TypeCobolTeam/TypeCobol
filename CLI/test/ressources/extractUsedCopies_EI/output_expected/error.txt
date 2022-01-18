@@ -1,5 +1,7 @@
-﻿ReturnCode=MissingCopy_
-3 errors in "input\Copies.rdz.tcbl":
-Line 13[18,31] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTRDF1L
-Line 16[14,61] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTRDF3L
-Line 19[8,42] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTTMCOI
+ReturnCode=MissingCopy_
+5 errors in "input\Copies.rdz.tcbl":
+Line 22[12,25] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: XCONVEAL
+Line 24[12,62] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: XPRTD20L
+Line 30[30,43] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTRDF1L
+Line 33[14,61] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTRDF3L
+Line 44[8,42] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: CPXMCOIS

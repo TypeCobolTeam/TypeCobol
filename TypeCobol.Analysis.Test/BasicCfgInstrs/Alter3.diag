@@ -1,11 +1,15 @@
 --- Diagnostics ---
 Line 9[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 11[12,16] <37, Warning, General> - Warning: ALTER should not be used
-Line 11[12,12] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
+Line 11[12,46] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
 Line 13[12,16] <37, Warning, General> - Warning: ALTER should not be used
-Line 13[12,12] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
+Line 13[12,46] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
 Line 15[12,16] <37, Warning, General> - Warning: ALTER should not be used
-Line 15[12,12] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
+Line 15[12,46] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
 Line 17[12,16] <37, Warning, General> - Warning: ALTER should not be used
-Line 17[12,12] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
+Line 17[12,46] <30, Error, Semantics> - Semantic error: Bad ALTER instruction: could not locate corresponding altered GO TO.
 Line 22[8,10] <37, Warning, General> - Warning: Paragraph 'p2' is empty
+Line 24[12,23] <37, Warning, General> - Warning: Unreachable code detected
+Line 27[12,23] <37, Warning, General> - Warning: Unreachable code detected
+Line 31[12,41] <37, Warning, General> - Warning: Unreachable code detected
+Line 34[12,27] <37, Warning, General> - Warning: Unreachable code detected

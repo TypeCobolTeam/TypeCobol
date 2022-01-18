@@ -105,6 +105,7 @@ namespace CLI.Test
             CLITestHelper.Test("dependenciesSignatureOverload", ReturnCode.Success);
             CLITestHelper.Test("dependenciesSignatureOverload_2", ReturnCode.Success);
             CLITestHelper.Test("dependenciesSignatureOverload_3", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("dependenciesSignatureOverload_4", ReturnCode.Success);
         }
 
         [TestMethod]
@@ -250,6 +251,16 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Try parsing to parse a Pure Cobol Which maybe unparsed because of the presence of
+        /// specific TypeCobol Language feature..
+        /// </summary>
+        [TestMethod]
+        public void TestFailParseNonPureCobol()
+        {
+            CLITestHelper.Test("failcoboloptionparse", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test all CLI arguments errors as follow:
         /// 
         /// arguments_errors_1:
@@ -376,8 +387,20 @@ namespace CLI.Test
         [TestMethod]
         public void TestCustomAnalyzers()
         {
-            CLITestHelper.Test("custom_analyzers", ReturnCode.Warning);
+            CLITestHelper.Test("custom_analyzers", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("custom_analyzers_withcfg", ReturnCode.ParsingDiagnostics);
         }
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// Test the usage of option -ycpl
+        /// </summary>
+        [TestMethod]
+        public void TestCpyList()
+        {
+            CLITestHelper.Test("ycopylist", ReturnCode.Success);
+        }
+#endif
     }
 
     public class CLITestHelper {

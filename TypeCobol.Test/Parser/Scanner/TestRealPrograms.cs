@@ -28,7 +28,7 @@ namespace TypeCobol.Test.Parser.Scanner
                 string textName = Path.GetFileNameWithoutExtension(fileName);
 
                 // Initialize a CompilationDocument
-                FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, ColumnsLayout.CobolReferenceFormat, new TypeCobolOptions(), null, true, project);
+                FileCompiler compiler = new FileCompiler(null, textName, ColumnsLayout.CobolReferenceFormat, false, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
 
                 // Start compilation
                 try
