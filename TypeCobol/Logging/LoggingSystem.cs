@@ -122,6 +122,13 @@ namespace TypeCobol.Logging
             _Loggers.Add(logger);
         }
 
+        private static IDictionary<string, object> AddMinimalContext(IDictionary<string, object> contextData)
+        {
+            var result = contextData ?? new Dictionary<string, object>(1);
+            result[ContextKeys.ParserVersion] = Parser.Version;
+            return result;
+        }
+
         /// <summary>
         /// Log a custom string.
         /// </summary>
@@ -130,7 +137,7 @@ namespace TypeCobol.Logging
         /// <param name="contextData">Optional context data.</param>
         public static void LogMessage(LogLevel level, string message, IDictionary<string, object> contextData = null)
         {
-            _LoggerThread.AddWork(logger => logger.LogMessage(level, message, contextData));
+            _LoggerThread.AddWork(logger => logger.LogMessage(level, message, AddMinimalContext(contextData)));
         }
 
         /// <summary>
@@ -140,7 +147,7 @@ namespace TypeCobol.Logging
         /// <param name="contextData">Optional context data.</param>
         public static void LogException(Exception exception, IDictionary<string, object> contextData = null)
         {
-            _LoggerThread.AddWork(logger => logger.LogException(exception, contextData));
+            _LoggerThread.AddWork(logger => logger.LogException(exception, AddMinimalContext(contextData)));
         }
 
         /// <summary>
@@ -152,7 +159,7 @@ namespace TypeCobol.Logging
         /// <param name="contextData">Optional context data.</param>
         public static void LogMetric(string name, double value, string unit = null, IDictionary<string, object> contextData = null)
         {
-            _LoggerThread.AddWork(logger => logger.LogMetric(name, value, unit, contextData));
+            _LoggerThread.AddWork(logger => logger.LogMetric(name, value, unit, AddMinimalContext(contextData)));
         }
     }
 }
