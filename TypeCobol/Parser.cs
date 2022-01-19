@@ -23,7 +23,7 @@ namespace TypeCobol
 
         static Parser()
         {
-			//Read current version from assembly attribute
+            //Read current version from assembly attribute
             Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         }
 
