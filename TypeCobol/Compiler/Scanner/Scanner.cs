@@ -196,16 +196,16 @@ namespace TypeCobol.Compiler.Scanner
                     previousAlphaNumLitNeedsSeparator = !nextTokenInContinuationLine;
                 }
 
-                // Check if the next AlphaNumericLiteral should be preceed by a blank
-                bool nextAphaNumLitNeedSeparator = lastToken != null && lastToken.TokenType != TokenType.SpaceSeparator && lastToken.TokenType != TokenType.PeriodSeparator &&
+                // Check if the next AlphaNumericLiteral should be preceded by a blank
+                bool nextAlphaNumLitNeedSeparator = lastToken != null && lastToken.TokenType != TokenType.SpaceSeparator && lastToken.TokenType != TokenType.PeriodSeparator &&
                     nextToken.TokenType == TokenType.AlphanumericLiteral &&
                     ScannerUtils.IsIdentifierOrLiteral1(lastToken);
                 // Special check : not for a next token in a continuation line if the previous token was a literal string
-                if (nextAphaNumLitNeedSeparator && lastToken.TokenType == TokenType.AlphanumericLiteral)
+                if (nextAlphaNumLitNeedSeparator && lastToken.TokenType == TokenType.AlphanumericLiteral)
                 {
-                    nextAphaNumLitNeedSeparator = !nextTokenInContinuationLine;
+                    nextAlphaNumLitNeedSeparator = !nextTokenInContinuationLine;
                 }
-                if (previousAlphaNumLitNeedsSeparator || nextAphaNumLitNeedSeparator)
+                if (previousAlphaNumLitNeedsSeparator || nextAlphaNumLitNeedSeparator)
                 {
                     bool isOneQuoteFusion = lastToken.TokenType == TokenType.AlphanumericLiteral &&
                         nextToken.TokenType == TokenType.AlphanumericLiteral &&
