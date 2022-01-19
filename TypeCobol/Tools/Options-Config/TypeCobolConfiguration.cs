@@ -32,7 +32,7 @@ namespace TypeCobol.Tools.Options_Config
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile;
         public string LogFile;
-        public string UserAgent; //Stored but not used directly, will be logged as part of the commandl-line
+        public string UserAgent; //Stored but not used directly, will be logged as part of the command-line
 
         //Log file name
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
