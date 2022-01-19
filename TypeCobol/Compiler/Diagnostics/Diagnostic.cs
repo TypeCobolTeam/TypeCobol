@@ -15,14 +15,14 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             public static readonly Position Default = new Position(0, 0, 0, 0, null);
 
-            internal readonly string _messageAdapter;
-            internal readonly bool _fromIcludingDirective;
+            private readonly string _messageAdapter;
+            internal bool FromIncludingDirective { get; }
 
             public Position(int lineStart, int columnStart, int lineEnd, int columnEnd, CopyDirective includingDirective)
             {
                 if (includingDirective != null)
                 {
-                    _fromIcludingDirective = true;
+                    FromIncludingDirective = true;
                     //Position diagnostic on including copy directive and adapt message
                     var startToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.FirstOrDefault()?.FirstOrDefault();
                     var endToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.LastOrDefault()?.LastOrDefault();
@@ -127,8 +127,10 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             Info = info;
             _UsePredefinedArguments = usePredefinedArguments;
-            _MessageArgs = messageArgs ?? Array.Empty<object>();
-            ApplyMessageAndPosition(position);
+            messageArgs = messageArgs ?? Array.Empty<object>();
+            _MessageArgs = usePredefinedArguments ? messageArgs : null;
+            Message = !usePredefinedArguments ? string.Format(Info.MessageTemplate, messageArgs) : null;
+            ApplyPosition(position);
             CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();
         }
 
@@ -208,15 +210,19 @@ namespace TypeCobol.Compiler.Diagnostics
             return $"{location} <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
         }
 
-        private void ApplyMessageAndPosition([NotNull] Position position)
+        private void ApplyPosition([NotNull] Position position)
         {
             System.Diagnostics.Debug.Assert(position != null);
             LineStart = position.LineStart;
             LineEnd = position.LineEnd;
             ColumnStart = position.ColumnStart;
             ColumnEnd = position.ColumnEnd;
-            Message = position._fromIcludingDirective && Message != null ? Message : string.Format(Info.MessageTemplate,
-                _UsePredefinedArguments ? TranslateArguments(_MessageArgs) : _MessageArgs);
+            if (_UsePredefinedArguments)
+            {
+                Message = position.FromIncludingDirective && Message != null 
+                    ? Message 
+                    : string.Format(Info.MessageTemplate,TranslateArguments(_MessageArgs));                
+            }
             Message = position.AdaptMessage(Message);
         }
 
@@ -245,7 +251,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public Diagnostic CopyAt([NotNull] Position newPosition)
         {
             var copy = Duplicate();
-            copy.ApplyMessageAndPosition(newPosition);
+            copy.ApplyPosition(newPosition);
             return copy;
         }
     }

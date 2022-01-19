@@ -17,19 +17,19 @@ namespace TypeCobol.Compiler.Scanner
     /// Structure that represents continuation positions in a string resulting of multi line continuation
     /// concatenation.
     /// </summary>
-    public struct ContinuationPositions
+    public class ContinuationPositions
     {
         /// <summary>
         /// All continuation position in a concatenate string
         /// </summary>
-        public BitArray ContinuteBitPositions;
+        public BitArray ContinuationBitPositions { get; }
         /// <summary>
         /// Bit array of Multi String concatenation positions. Can be null
         /// </summary>
-        public BitArray MultiStringConcatBitPositions;
-        public ContinuationPositions(BitArray continuteBitPositions, BitArray multiStringConcatBitPositions)
+        public BitArray MultiStringConcatBitPositions { get; }
+        public ContinuationPositions(BitArray continuationBitPositions, BitArray multiStringConcatBitPositions)
         {
-            this.ContinuteBitPositions = continuteBitPositions;
+            this.ContinuationBitPositions = continuationBitPositions;
             this.MultiStringConcatBitPositions = multiStringConcatBitPositions;
         }
     }
@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="copyTextNameVariations"></param>
         /// <param name="continuationPositions">Continuation positions if scanning a concatenated line of multi line continuations</param>
         public static void ScanTokensLine(TokensLine tokensLine, MultilineScanState initialScanState, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations,
-            ContinuationPositions? continuationPositions = null)
+            ContinuationPositions continuationPositions = null)
         {
             // Updates are forbidden after a snapshot of a specific version of a line
             if (!tokensLine.CanStillBeUpdatedBy(CompilationStep.Scanner))
@@ -185,15 +185,15 @@ namespace TypeCobol.Compiler.Scanner
                     tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
                         tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Literal is not correctly delimited.");
                 }
-                bool nextTokenIncontinutaionLine = continuationPositions?.ContinuteBitPositions?.Get(nextToken.StartIndex) ?? false;
+                bool nextTokenInContinuationLine = continuationPositions?.ContinuationBitPositions?.Get(nextToken.StartIndex) ?? false;
                 // Check if the previous AlphaNumericLiteral should be followed by a blank
-                bool previousAphaNumLitNeedSeparator = lastToken != null && lastToken.TokenType == TokenType.AlphanumericLiteral &&
+                bool previousAlphaNumLitNeedsSeparator = lastToken != null && lastToken.TokenType == TokenType.AlphanumericLiteral &&
                     nextToken.TokenType != TokenType.SpaceSeparator && nextToken.TokenType != TokenType.PeriodSeparator &&
                     ScannerUtils.IsIdentifierOrLiteral1(nextToken);
                 // Special check: not for a next token in a continuation line if the previous token was a literal string
-                if (previousAphaNumLitNeedSeparator)
+                if (previousAlphaNumLitNeedsSeparator)
                 {
-                    previousAphaNumLitNeedSeparator = !nextTokenIncontinutaionLine;
+                    previousAlphaNumLitNeedsSeparator = !nextTokenInContinuationLine;
                 }
 
                 // Check if the next AlphaNumericLiteral should be preceed by a blank
@@ -203,9 +203,9 @@ namespace TypeCobol.Compiler.Scanner
                 // Special check : not for a next token in a continuation line if the previous token was a literal string
                 if (nextAphaNumLitNeedSeparator && lastToken.TokenType == TokenType.AlphanumericLiteral)
                 {
-                    nextAphaNumLitNeedSeparator = !nextTokenIncontinutaionLine;
+                    nextAphaNumLitNeedSeparator = !nextTokenInContinuationLine;
                 }
-                if (previousAphaNumLitNeedSeparator || nextAphaNumLitNeedSeparator)
+                if (previousAlphaNumLitNeedsSeparator || nextAphaNumLitNeedSeparator)
                 {
                     bool isOneQuoteFusion = lastToken.TokenType == TokenType.AlphanumericLiteral &&
                         nextToken.TokenType == TokenType.AlphanumericLiteral &&
@@ -780,7 +780,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Continuation positions if scanning a concatenated line of multi line continuations
         /// </summary>
-        private readonly ContinuationPositions? continuationPositions;
+        private readonly ContinuationPositions continuationPositions;
 
         private bool InterpretDoubleColonAsQualifiedNameSeparator
         {
@@ -803,7 +803,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="compilerOptions"></param>
         /// <param name="beSmartWithLevelNumber"></param>
         /// <param name="continuationPositions">Continuation positions if scanning a concatenated line of multi line continuations</param>
-        public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true, ContinuationPositions? continuationPositions = null)
+        public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true, ContinuationPositions continuationPositions = null)
         {
             this.tokensLine = tokensLine;
             this.line = line;
