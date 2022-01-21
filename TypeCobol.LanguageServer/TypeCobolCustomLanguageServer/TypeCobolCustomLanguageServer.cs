@@ -16,6 +16,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             rpcServer.RegisterRequestMethod(NodeRefreshRequest.Type, ReceivedRefreshNodeRequest);
             rpcServer.RegisterNotificationMethod(SignatureHelpContextNotification.Type, ReceivedSignatureHelpContext);
             rpcServer.RegisterNotificationMethod(ExtractUseCopiesNotification.Type, ReceivedExtractUseCopiesNotification);
+            rpcServer.RegisterNotificationMethod(DocumentConfigurationChangedNotification.Type, ReceivedDocumentConfigurationChanged);
         }
 
         /// <summary>
@@ -86,7 +87,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             try
             {
-                OnDidReceiveNodeRefresh((NodeRefreshParams) parameters);
+                OnDidReceiveNodeRefresh((NodeRefreshParams)parameters);
             }
             catch (Exception e)
             {
@@ -105,7 +106,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             catch (Exception e)
             {
                 NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message};
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
         }
@@ -151,6 +152,24 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             try
             {
                 OnDidReceiveExtractUseCopies((ExtractUseCopiesParams)parameters);
+            }
+            catch (Exception e)
+            {
+                RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+            }
+        }
+
+        /// <summary>
+        /// Document Configuration Changed notification from the client
+        /// </summary>
+        /// <param name="notificationType"></param>
+        /// <param name="parameters"></param>
+        private void ReceivedDocumentConfigurationChanged(NotificationType notificationType, object parameters)
+        {
+            DocumentConfigurationChangedParams docChangeConfParams = (DocumentConfigurationChangedParams)parameters;
+            try
+            {
+                this.Workspace.UpdateDocumentConfiguration(docChangeConfParams);
             }
             catch (Exception e)
             {

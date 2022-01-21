@@ -20,6 +20,7 @@ using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
+using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 
 namespace TypeCobol.LanguageServer
 {
@@ -197,8 +198,17 @@ namespace TypeCobol.LanguageServer
         /// <returns>The corresponding FileCompiler instance.</returns>
         public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText) => OpenTextDocument(docContext, sourceText, LsrTestOptions);
 
-        private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
+        /// <summary>
+        /// Open a Text Document
+        /// </summary>
+        /// <param name="docContext">The Document Context</param>
+        /// <param name="sourceText">The source text</param>
+        /// <param name="lsrOptions">LST testing options</param>
+        /// <param name="compilationProjet">The Compilation project to be used.</param>
+        /// <returns></returns>
+        private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions, CompilationProject compilationProjet = null)
         {
+            compilationProjet = compilationProjet ?? CompilationProject;
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
             FileCompiler fileCompiler = null;
@@ -229,11 +239,11 @@ namespace TypeCobol.LanguageServer
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
 
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
-                CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
-                CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProjet.SourceFileProvider,
+                compilationProjet, compilationProjet.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
+                compilationProjet);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProjet.SourceFileProvider, compilationProjet, compilationProjet.CompilationOptions, _customSymbols, compilationProjet);
 #endif
 
             lock (_lockForOpenedDocuments)
@@ -586,7 +596,7 @@ namespace TypeCobol.LanguageServer
             }
 
             if (!IsEmpty)
-                RefreshOpenedFiles();
+                DoRefreshOpenedFiles(true);
             else
                 RefreshCustomSymbols();
 
@@ -614,6 +624,50 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
+        /// Handle a Document Configuration Change notification from the client
+        /// </summary>
+        /// <param name="docChangeConfParams"></param>
+        internal void UpdateDocumentConfiguration(DocumentConfigurationChangedParams docChangeConfParams)
+        {
+            Uri docUri = new Uri(docChangeConfParams.textDocument.uri);
+            if (docUri.IsFile)
+            {
+                FileCompiler fileCompilerToUpdade = null;
+                DocumentContext contextToUpdate;
+                lock (_lockForOpenedDocuments)
+                {
+                    if (_openedDocuments.TryGetValue(docUri, out contextToUpdate))
+                    {
+                        fileCompilerToUpdade = contextToUpdate.FileCompiler;
+                    }
+                }
+                if(fileCompilerToUpdade != null)
+                {
+                    // If the FileCompiler uses the Worspace's Global CompilationProject instance
+                    // We must create a specific one.
+                    if (fileCompilerToUpdade.CompilationProject == this.CompilationProject)
+                    {
+                        fileCompilerToUpdade.CompilationProject = 
+                            new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format,
+                            this.CompilationProject.CompilationOptions, this.CompilationProject.AnalyzerProvider);
+                    }
+                    else
+                    {
+                        fileCompilerToUpdade.CompilationProject.SourceFileProvider.Clear();
+                    }
+                    // Now set new copy Directories
+                    foreach (var copyFolder in docChangeConfParams.CopyFolders)
+                    {
+                        fileCompilerToUpdade.CompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
+                            new[] { ".cpy" }, Configuration.Format.Encoding,
+                            Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength);
+                    }
+                    RefreshOpenedDocument(contextToUpdate);
+                }
+            }
+        }
+
+        /// <summary>
         /// The method is called in response to a MissingCopyNotification from the client.
         /// The RemainingMissingCopies list can contain a list of COPY that the client fails to load,
         /// or an empty list if all COPY have been loaded.
@@ -631,7 +685,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all opened files' parser.
         /// </summary>
-        public void RefreshOpenedFiles()
+        private void DoRefreshOpenedFiles(bool fromConfiguationChanged)
         {
             RefreshCustomSymbols();
             this.CompilationProject.ClearImportedCompilationDocumentsCache();
@@ -641,18 +695,40 @@ namespace TypeCobol.LanguageServer
                 var tempOpeneContexts = new Dictionary<Uri, DocumentContext >(_openedDocuments);
                 foreach (var contextEntry in tempOpeneContexts)
                 {
-                    Uri uri = contextEntry.Key;
                     DocumentContext docContext = contextEntry.Value;
-                    var sourceText = new StringBuilder();
-                    foreach (var line in docContext.FileCompiler.TextDocument.Lines)
-                        sourceText.AppendLine(line.Text);
-
-                    //Disconnect previous LanguageServer connection
-                    docContext.LanguageServerConnection(false);                    
-
-                    OpenTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
+                    if (fromConfiguationChanged)
+                        docContext.FileCompiler.CompilationProject = CompilationProject;
+                    else
+                        docContext.FileCompiler.CompilationProject.CompilationOptions = CompilationProject.CompilationOptions;
+                    RefreshOpenedDocument(docContext);
                 }
             }
+        }
+
+        /// <summary>
+        /// Refresh all opened files' parser.
+        /// </summary>
+        private void RefreshOpenedFiles()
+        {
+            DoRefreshOpenedFiles(false);
+        }
+
+        /// <summary>
+        /// Refresh One opened document
+        /// </summary>
+        /// <param name="docContext">The Document context to b refreshed</param>
+        public void RefreshOpenedDocument(DocumentContext docContext)
+        {
+            docContext.FileCompiler.CompilationProject.ClearImportedCompilationDocumentsCache();
+
+            var sourceText = new StringBuilder();
+            foreach (var line in docContext.FileCompiler.TextDocument.Lines)
+                sourceText.AppendLine(line.Text);
+
+            //Disconnect previous LanguageServer connection
+            docContext.LanguageServerConnection(false);
+
+            OpenTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting, docContext.FileCompiler.CompilationProject);
         }
 
         private void RefreshCustomSymbols()

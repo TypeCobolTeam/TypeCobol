@@ -83,7 +83,7 @@ namespace TypeCobol.Compiler
         public EndOfLineDelimiter EndOfLineDelimiter { get; private set; }
         public int FixedLineLength { get; private set; }
         public ColumnsLayout ColumnsLayout { get; private set; }
-        public TypeCobolOptions CompilationOptions { get; private set; }
+        public TypeCobolOptions CompilationOptions { get; set; }
         public IAnalyzerProvider AnalyzerProvider { get; private set; }
 
         // -- Files manipulation --
