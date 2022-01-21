@@ -373,7 +373,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             DataOrConditionStorageArea dataOrConditionStorageArea = conditionInstance.ConditionReference;
                             if (dataOrConditionStorageArea.Subscripts.Length > 0)
                             {
-                                return checkDataOrConditionStorageArea(dataOrConditionStorageArea);
+                                return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
                             }
                             return true;
 
@@ -404,14 +404,14 @@ namespace TypeCobol.Compiler.Diagnostics
                         && numericVariableOperand.NumericVariable?.StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea
                         && dataOrConditionStorageArea.Subscripts.Length > 0)
                     {
-                        return checkDataOrConditionStorageArea(dataOrConditionStorageArea);
+                        return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
                     }
 
                     DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
                     return false;
                 }
 
-                bool checkDataOrConditionStorageArea(DataOrConditionStorageArea dataOrConditionStorageArea)
+                bool CheckDataOrConditionStorageArea(DataOrConditionStorageArea dataOrConditionStorageArea)
                 {
                     //Check indexes for every dimension
                     if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
@@ -446,7 +446,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         else 
                         {
                             //Special check for 88 level definitions that are children of a selected used key.
-                            if (usedKey.CodeElement?.LevelNumber.Value == 88 &&
+                            if (usedKey.CodeElement?.LevelNumber?.Value == 88 &&
                                 usedKey.Parent is DataDefinition parentUsedKey &&
                                 usedKeys.ContainsKey(parentUsedKey.Name))
                             {
