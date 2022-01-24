@@ -32,7 +32,6 @@ namespace TypeCobol.Tools.Options_Config
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile;
         public string LogFile;
-        public string UserAgent; //Stored but not used directly, will be logged as part of the command-line
 
         //Log file name
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
@@ -298,9 +297,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
 #if EUROINFO_RULES
-                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v },
+                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
 #endif
-                { "ua|useragent=", "Optional descriptive string to help identify the client of the parser", v => typeCobolConfig.UserAgent = v }
             };
             return commonOptions;
         }
