@@ -1,6 +1,5 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,6:AUTHOR]<AUTHOR>
-[7,7: ]<SpaceSeparator>
 =>continued:[8,25:comment on severallines without delimiter]<CommentEntry>
 
 -- Line 2 --
@@ -12,7 +11,6 @@ Line 0[1,1] <24, Error, TextFormat> - A hyphen indicator (continuation line) is 
 [1,12:INSTALLATION]<INSTALLATION>
 
 -- Line 4 --
-[1,5:     ]<SpaceSeparator>
 =>continued:[6,13:comment1comment2]<CommentEntry>
 
 -- Line 5 --

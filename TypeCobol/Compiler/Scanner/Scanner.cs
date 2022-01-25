@@ -1523,7 +1523,15 @@ namespace TypeCobol.Compiler.Scanner
             // consume all whitespace chars available
             for (; currentIndex <= lastIndex && line[currentIndex] == ' '; currentIndex++) { }
             int endIndex = currentIndex - 1;
-            return new Token(TokenType.SpaceSeparator, startIndex, endIndex, tokensLine);
+
+            if (tokensLine.ScanState.InsidePseudoText || !compilerOptions.OptimizeWhitespaceScanning)
+            {
+                // SpaceSeparator has to be created
+                return new Token(TokenType.SpaceSeparator, startIndex, endIndex, tokensLine);
+            }
+
+            // jump to next token
+            return GetNextToken();
         }
 
         private Token ScanOneChar(int startIndex, TokenType tokenType)

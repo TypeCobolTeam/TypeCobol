@@ -1,8 +1,6 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,7:PICTURE]<PICTURE>
-[8,8: ]<SpaceSeparator>
 [9,10:IS]<IS>
-[11,11: ]<SpaceSeparator>
 =>continued:[12,12:X.4]<PictureCharacterString>
 
 -- Line 2 --
@@ -10,9 +8,7 @@
 =>continuation:[6,7:X.4]<PictureCharacterString>
 [8,9:. ]<PeriodSeparator>
 [10,12:PIC]<PIC>
-[13,13: ]<SpaceSeparator>
 [14,15:IS]<IS>
-[16,16: ]<SpaceSeparator>
 =>continued:[17,18:Y.3]<PictureCharacterString>
 
 -- Line 3 --
@@ -30,7 +26,6 @@
 
 -- Line 6 --
 [1,7:PICTURE]<PICTURE>
-[8,8: ]<SpaceSeparator>
 =>continued:[9,13:abcd,YKF3]<PictureCharacterString>
 
 -- Line 7 --
