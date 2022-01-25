@@ -27,7 +27,7 @@
 [27,30:prud]<UserDefinedWord>
 [31,35:'hon']<AlphanumericLiteral>(',Y,Y){hon}
 =>continued:[36,36:==]<PseudoTextDelimiter>
-Line 0[31,35] <12, Warning, Tokens> - A blank was missing before character "'" in column 31. A blank was assumed.
+Line 0[31,35] <12, Warning, Tokens> - A blank was missing before character "'" in column 'hon'. A blank was assumed.
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>

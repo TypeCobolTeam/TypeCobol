@@ -60,34 +60,34 @@ Line 39[12,13] <12, Warning, Tokens> - A blank was missing before character """ 
       
       *Warning a blank was missing before character '"' in column 26.
       *A blank was assumed
-Line 61[26,28] <12, Warning, Tokens> - A blank was missing before character "s" in column 26. A blank was assumed.
+Line 61[26,28] <12, Warning, Tokens> - A blank was missing before character "s" in column str. A blank was assumed.
            display "str="str
            display "str="
       -       str
       
       *Warning a blank was missing before character "'" in column 23.
       *A blank was assumed
-Line 67[23,28] <12, Warning, Tokens> - A blank was missing before character "'" in column 23. A blank was assumed.
+Line 67[23,28] <12, Warning, Tokens> - A blank was missing before character "'" in column 'str='. A blank was assumed.
            display str'str='
            display str
       *Warning a blank was missing before character '"' in column 15.
       *A blank was assumed
-Line 71[15,20] <12, Warning, Tokens> - A blank was missing before character "'" in column 15. A blank was assumed.
+Line 71[15,20] <12, Warning, Tokens> - A blank was missing before character "'" in column 'str='. A blank was assumed.
       -       'str='
       
       *Warning a blank was missing before character '"' in column 23.
       *A blank was assumed
-Line 75[23,28] <12, Warning, Tokens> - A blank was missing before character """ in column 23. A blank was assumed.
+Line 75[23,28] <12, Warning, Tokens> - A blank was missing before character """ in column "str=". A blank was assumed.
            display str"str="
            display str
       *Warning a blank was missing before character '"' in column 15.
       *A blank was assumed
-Line 79[15,20] <12, Warning, Tokens> - A blank was missing before character """ in column 15. A blank was assumed.
+Line 79[15,20] <12, Warning, Tokens> - A blank was missing before character """ in column "str=". A blank was assumed.
       -       "str="
       
       *Warning a blank was missing before character '"' in column 26.
       *A blank was assumed
-Line 83[26,28] <12, Warning, Tokens> - A blank was missing before character "s" in column 26. A blank was assumed.
+Line 83[26,28] <12, Warning, Tokens> - A blank was missing before character "s" in column str. A blank was assumed.
            display 'str='str
            display 'str='
       -       str
@@ -97,14 +97,14 @@ Line 83[26,28] <12, Warning, Tokens> - A blank was missing before character "s" 
       -       str
       *Warning a blank was missing before character '"' in column 16.
       *A blank was assumed
-Line 92[16,18] <12, Warning, Tokens> - A blank was missing before character """ in column 16. A blank was assumed.
+Line 92[16,18] <12, Warning, Tokens> - A blank was missing before character """ in column "_". A blank was assumed.
       -        "_"
       
            display 'str='
       -       str
       *Warning a blank was missing before character '"' in column 16.
       *A blank was assumed
-Line 98[16,18] <12, Warning, Tokens> - A blank was missing before character "'" in column 16. A blank was assumed.
+Line 98[16,18] <12, Warning, Tokens> - A blank was missing before character "'" in column '_'. A blank was assumed.
       -        '_'
       
       
@@ -130,7 +130,7 @@ Line 116[19,20] <12, Warning, Tokens> - A blank was missing before character "'"
       *    OK and no warning
       *Warning a blank was missing before character '"' in column 36.
       *A blank was assumed
-Line 120[36,45] <12, Warning, Tokens> - A blank was missing before character """ in column 36. A blank was assumed.
+Line 120[36,45] <12, Warning, Tokens> - A blank was missing before character """ in column "(foo) : ". A blank was assumed.
            DISPLAY 'A sample text '"(foo) : " W-Var1
            DISPLAY 'A sample text '
       -            "(foo) : " W-Var1
@@ -143,7 +143,7 @@ Line 127[19,20] <12, Warning, Tokens> - A blank was missing before character """
       *    OK and no warning
       *Warning a blank was missing before character '"' in column 36.
       *A blank was assumed
-Line 131[36,45] <12, Warning, Tokens> - A blank was missing before character "'" in column 36. A blank was assumed.
+Line 131[36,45] <12, Warning, Tokens> - A blank was missing before character "'" in column '(foo) : '. A blank was assumed.
            DISPLAY "A sample text "'(foo) : ' W-Var1
            DISPLAY "A sample text "
       -            '(foo) : ' W-Var1

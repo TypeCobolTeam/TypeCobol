@@ -212,9 +212,9 @@ namespace TypeCobol.Compiler.Scanner
                         lastToken.Text[lastToken.Text.Length - 1] == nextToken.Text[0];
                     if (!isOneQuoteFusion)
                     {   // Report only if the concatenation is not "" or ''
-                        tokensLine.AddDiagnostic(true, MessageCode.DotShouldBeFollowedBySpace,
+                        tokensLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace,
                             nextToken,
-                            nextToken.Text[0], Diagnostic.PredefArgColumnStart);
+                            nextToken.Text[0], nextToken.Text);
                     }
                 }
 

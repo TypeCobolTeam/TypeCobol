@@ -16,13 +16,11 @@ namespace TypeCobol.Compiler.Diagnostics
             public static readonly Position Default = new Position(0, 0, 0, 0, null);
 
             private readonly string _messageAdapter;
-            internal bool FromIncludingDirective { get; }
 
             public Position(int lineStart, int columnStart, int lineEnd, int columnEnd, CopyDirective includingDirective)
             {
                 if (includingDirective != null)
                 {
-                    FromIncludingDirective = true;
                     //Position diagnostic on including copy directive and adapt message
                     var startToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.FirstOrDefault()?.FirstOrDefault();
                     var endToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.LastOrDefault()?.LastOrDefault();
@@ -80,86 +78,19 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="messageCode">Diagnostic's message code</param>
-        /// <param name="position">Position in the source code</param>        
-        /// <param name="messageArgs">The message arguments</param>
         public Diagnostic(MessageCode messageCode, [NotNull] Position position, params object[] messageArgs)
             : this(DiagnosticMessage.GetFromCode(messageCode), position, messageArgs)
         {
 
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="usePredefinedArguments">True if predefined arguments are used, false otherwise</param>
-        /// <param name="messageCode">Diagnostic's message code</param>
-        /// <param name="position">Position in the source code</param>        
-        /// <param name="messageArgs">The message arguments</param>
-        public Diagnostic(bool usePredefinedArguments, MessageCode messageCode, [NotNull] Position position, params object[] messageArgs)
-            : this(usePredefinedArguments, DiagnosticMessage.GetFromCode(messageCode), position, messageArgs)
-        {
-
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="info">Diagnostics info</param>
-        /// <param name="position">Position in the source code</param>
-        /// <param name="messageArgs">The message arguments</param>
         protected Diagnostic(DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
-           : this(false, info, position, messageArgs)
-        {
-
-        }
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="usePredefinedArguments">True if predefined arguments are used, false otherwise</param>
-        /// <param name="info">Diagnostics info</param>
-        /// <param name="position">Position in the source code</param>        
-        /// <param name="messageArgs">The message arguments</param>
-        protected Diagnostic(bool usePredefinedArguments, DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
         {
             Info = info;
-            _UsePredefinedArguments = usePredefinedArguments;
             messageArgs = messageArgs ?? Array.Empty<object>();
-            _MessageArgs = usePredefinedArguments ? messageArgs : null;
-            Message = !usePredefinedArguments ? string.Format(Info.MessageTemplate, messageArgs) : null;
+            Message = string.Format(Info.MessageTemplate, messageArgs);
             ApplyPosition(position);
             CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Predefined value for Dynamic Column Position
-        /// </summary>
-        public static object PredefArgColumnStart = new object();
-        /// <summary>
-        /// Translate message arguments to predefined dynamic values.
-        /// </summary>
-        /// <param name="messageArgs">The arguments to be translated</param>
-        /// <returns>The resulting arguments</returns>
-        private object[] TranslateArguments(object[] messageArgs)
-        {
-            if (messageArgs.Length == 0)
-                return messageArgs;
-            object[] newMessageArgs = new object[messageArgs.Length];
-            for (int i = 0; i < messageArgs.Length; i++)
-            {
-                if (messageArgs[i] == PredefArgColumnStart)
-                {
-                    newMessageArgs[i] = this.ColumnStart;
-                }
-                else
-                {
-                    newMessageArgs[i] = messageArgs[i];
-                }
-            }
-            return newMessageArgs;
         }
 
         protected Diagnostic([NotNull] Diagnostic other)
@@ -172,8 +103,6 @@ namespace TypeCobol.Compiler.Diagnostics
             ColumnStart = other.ColumnStart;
             ColumnEnd = other.ColumnEnd;
             Message = other.Message;
-            _UsePredefinedArguments = other._UsePredefinedArguments;
-            _MessageArgs = other._MessageArgs;
             CaughtException = other.CaughtException;
         }
 
@@ -184,11 +113,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public int ColumnEnd { get; private set; }
         public string Message { get; private set; }
         public Exception CaughtException { get; }
-        private object[] _MessageArgs;
-        /// <summary>
-        /// Does this diagnostic use predefined arguments.
-        /// </summary>
-        private bool _UsePredefinedArguments;
 
         /// <summary>
         /// Text representation of a diagnostic for debugging or test purposes
@@ -217,12 +141,6 @@ namespace TypeCobol.Compiler.Diagnostics
             LineEnd = position.LineEnd;
             ColumnStart = position.ColumnStart;
             ColumnEnd = position.ColumnEnd;
-            if (_UsePredefinedArguments)
-            {
-                Message = position.FromIncludingDirective && Message != null 
-                    ? Message 
-                    : string.Format(Info.MessageTemplate,TranslateArguments(_MessageArgs));                
-            }
             Message = position.AdaptMessage(Message);
         }
 

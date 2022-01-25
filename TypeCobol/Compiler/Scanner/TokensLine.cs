@@ -121,21 +121,8 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, Token token, params object[] messageArgs)
         {
-            AddDiagnostic(false, messageCode, token, messageArgs);
-        }
-
-        /// <summary>
-        /// Use this method to attach a diagnostic for a specific token to this line 
-        /// (never call directly Diagnostics.Add)
-        /// </summary>
-        /// <param name="usePredefinedArguments">True if predefined arguments are used, false otherwise</param>
-        /// <param name="messageCode">The Diagnostic's message code</param>
-        /// <param name="token">The associated token</param>
-        /// <param name="messageArgs">The message arguments</param>
-        internal void AddDiagnostic(bool usePredefinedArguments, MessageCode messageCode, Token token, params object[] messageArgs)
-        {
-            Diagnostic diag = new TokenDiagnostic(usePredefinedArguments, messageCode, token, messageArgs);
-            if (diag.Info.Severity == Severity.Error)
+            Diagnostic diag = new TokenDiagnostic(messageCode, token, messageArgs);
+            if(diag.Info.Severity == Severity.Error)
             {
                 token.HasError = true;
             }
