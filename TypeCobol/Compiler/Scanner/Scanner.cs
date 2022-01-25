@@ -672,7 +672,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan an isolated token in the given context.
         /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, out Diagnostic error)
+        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, TypeCobolOptions scanOptions, out Diagnostic error)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext);
@@ -680,7 +680,7 @@ namespace TypeCobol.Compiler.Scanner
             Token candidateToken;
             if (tokenText.Length > 0)
             {
-                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
+                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, scanOptions, false);
                 candidateToken = tempScanner.GetNextToken();
             }
             else
