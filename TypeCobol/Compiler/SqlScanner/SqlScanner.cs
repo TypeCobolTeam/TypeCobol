@@ -12,12 +12,22 @@ namespace TypeCobol.Compiler.SqlScanner
     /// </summary>
     public static class SqlScanner
     {
+        /// <summary>
+        /// True if the given char can bepart of an SQL keyword.
+        /// </summary>
+        /// <param name="c">The character to test</param>
+        /// <returns>True if yes, no otherwise</returns>
+        public static bool IsSqlKeywordPart(char c)
+        {
+            return c == '-' || Char.IsLetter(c);
+        }
+
         public static Token ScanSqlKeywordOrExecStatementText(ref int currentIndex, int startIndex, int endIndex, int lastIndex, string line, TokensLine tokensLine)
         {
             int curIndex = currentIndex;
-            if (SqlChar.IsSqlKeywordPart(line[startIndex]))
+            if (IsSqlKeywordPart(line[startIndex]))
             {
-                for (; curIndex <= lastIndex && SqlChar.IsSqlKeywordPart(line[curIndex]); curIndex++) { }
+                for (; curIndex <= lastIndex && IsSqlKeywordPart(line[curIndex]); curIndex++) { }
                 int curEndIndex = curIndex - 1;
                 string text = line.Substring(startIndex, curEndIndex - startIndex + 1);
                 if (text.Equals("COMMIT", StringComparison.OrdinalIgnoreCase)) {
