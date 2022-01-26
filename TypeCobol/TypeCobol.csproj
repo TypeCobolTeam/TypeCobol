@@ -50,7 +50,6 @@
     <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs">
       <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
     </Compile>
-
     <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
@@ -118,6 +117,7 @@
     <None Include="Documentation\Studies\Text editors functions study.xlsx" />
     <None Include="Documentation\Studies\Symbols and User defined words.xlsx" />
     <None Include="packages.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AntlrGrammar\How to configure antlr 4 in Visual Studio.txt" />
@@ -146,6 +146,7 @@
   <ItemGroup>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

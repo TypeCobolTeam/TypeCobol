@@ -4,7 +4,7 @@ using System.Text;
 namespace TypeCobol.Compiler.Scanner
 {
     /// <summary>
-    /// Class used for tokens which particpate in a multiline continuation with other tokens on previous or next lines
+    /// Class used for tokens which participate in a multiline continuation with other tokens on previous or next lines
     /// </summary>
     public class ContinuationToken : Token
     {

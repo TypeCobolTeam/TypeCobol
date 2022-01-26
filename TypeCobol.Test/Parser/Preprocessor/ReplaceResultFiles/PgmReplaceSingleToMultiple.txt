@@ -21,5 +21,6 @@
 [11,15:TOTO2]<UserDefinedWord>
 [17,21:VALUE]<VALUE>
 [23,28:"TITI"]<AlphanumericLiteral>(",Y,Y){TITI}
+[23,28: ]<SpaceSeparator>
 [23,28:SUPPRESS]<SUPPRESS>
 [29,29+:.]<PeriodSeparator>
