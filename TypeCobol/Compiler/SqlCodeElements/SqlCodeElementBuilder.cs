@@ -9,7 +9,7 @@ using TypeCobol.Compiler.SqlCodeElements.Statement;
 
 namespace TypeCobol.Compiler.SqlCodeElements
 {
-    public class SqlCodeElementBuilder : ISqlCodeElementBuilder
+    public class SqlCodeElementBuilder
     {
         public CodeElement CreateCommitStatement(CodeElementsParser.CommitStatementContext context)
         {
