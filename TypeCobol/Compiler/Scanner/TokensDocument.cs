@@ -80,25 +80,5 @@ namespace TypeCobol.Compiler.Scanner
 
             return sbResult.ToString();
         }
-
-        /// <summary>
-        /// Iterator over all the diagnostics registered in Lines after parsing code elements
-        /// </summary>
-        public IEnumerable<Diagnostic> AllDiagnostics
-        {
-            get
-            {
-                foreach (var line in Lines)
-                {
-                    if (line.ScannerDiagnostics != null)
-                    {
-                        foreach (Diagnostic diagnostic in line.ScannerDiagnostics)
-                        {
-                            yield return diagnostic;
-                        }
-                    }
-                }
-            }
-        }
     }
 }

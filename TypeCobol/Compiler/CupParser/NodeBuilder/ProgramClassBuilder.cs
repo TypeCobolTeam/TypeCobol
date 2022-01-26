@@ -747,55 +747,38 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             foreach (var parameter in declaration.Profile.InputParameters) //Set Input Parameters
             {
-                var paramNode = new ParameterDescription(parameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
-                paramNode.PassingType = ParameterDescription.PassingTypes.Input;
-                funcProfile.InputParameters.Add(paramNode);
-
-                paramNode.SetParent(CurrentNode);
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-                CheckIfItsTyped(paramNode, paramNode.CodeElement);
-            }
-            foreach (var parameter in declaration.Profile.OutputParameters) //Set Output Parameters
-            {
-                var paramNode = new ParameterDescription(parameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
-                paramNode.PassingType = ParameterDescription.PassingTypes.Output;
-                funcProfile.OutputParameters.Add(paramNode);
-
-                paramNode.SetParent(CurrentNode);
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-                CheckIfItsTyped(paramNode, paramNode.CodeElement);
+                funcProfile.InputParameters.Add(CreateParamNode(parameter, ParameterDescription.PassingTypes.Input));
             }
             foreach (var parameter in declaration.Profile.InoutParameters) //Set Inout Parameters
             {
-                var paramNode = new ParameterDescription(parameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
-                paramNode.PassingType = ParameterDescription.PassingTypes.InOut;
-                funcProfile.InoutParameters.Add(paramNode);
-
-                paramNode.SetParent(CurrentNode);
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-                CheckIfItsTyped(paramNode, paramNode.CodeElement);
+                funcProfile.InoutParameters.Add(CreateParamNode(parameter, ParameterDescription.PassingTypes.InOut));
+            }
+            foreach (var parameter in declaration.Profile.OutputParameters) //Set Output Parameters
+            {
+                funcProfile.OutputParameters.Add(CreateParamNode(parameter, ParameterDescription.PassingTypes.Output));
             }
 
             if (declaration.Profile.ReturningParameter != null) //Set Returning Parameters
             {
-                var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
-                paramNode.PassingType = ParameterDescription.PassingTypes.Returning;
-                node.Profile.ReturningParameter = paramNode;
-
-                paramNode.SetParent(CurrentNode);
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-                CheckIfItsTyped(paramNode, paramNode.CodeElement);
+                funcProfile.ReturningParameter = CreateParamNode(declaration.Profile.ReturningParameter, ParameterDescription.PassingTypes.Returning);
             }
 
             Dispatcher.StartFunctionDeclaration(header);
+
+            ParameterDescription CreateParamNode(ParameterDescriptionEntry parameter, ParameterDescription.PassingTypes passingType)
+            {
+                var paramNode = new ParameterDescription(parameter)
+                                {
+                                    PassingType = passingType,
+                                    SymbolTable = CurrentNode.SymbolTable,
+                                };
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
+                paramNode.SetParent(CurrentNode);
+                SyntaxTree.Nodes.Add(paramNode);
+                CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
+                return paramNode;
+            }
         }
 
         public virtual void EndFunctionDeclaration(FunctionDeclarationEnd end)
