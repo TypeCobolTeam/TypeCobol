@@ -129,8 +129,8 @@ namespace TypeCobol.Compiler.CodeElements
         XmlGenerateStatement,
         XmlParseStatement,
 
-        //...
-        LastStatementType
+        //Sql
+        CommitStatement
 
     }
 }

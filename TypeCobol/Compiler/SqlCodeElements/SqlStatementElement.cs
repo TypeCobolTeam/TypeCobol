@@ -9,14 +9,14 @@ namespace TypeCobol.Compiler.SqlCodeElements
     /// </summary>
     public abstract class SqlStatementElement : StatementElement
     {
-        protected SqlStatementElement(SqlCodeElementType codeElementType, SqlStatementType statementType) 
-            : base((CodeElementType)codeElementType, (StatementType)statementType)
+        protected SqlStatementElement(CodeElementType codeElementType, StatementType statementType) 
+            : base(codeElementType, statementType)
         {
         }
 
         /// <summary>
         /// Type of executable Sql statement
         /// </summary>
-        public SqlStatementType SqlStatementType => (SqlStatementType)base.StatementType;
+        public StatementType SqlStatementType => base.StatementType;
     }
 };

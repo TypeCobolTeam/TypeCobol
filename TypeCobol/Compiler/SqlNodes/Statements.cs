@@ -10,12 +10,10 @@ using TypeCobol.Compiler.SqlCodeElements.Statement;
 
 namespace TypeCobol.Compiler.SqlNodes
 {
-    public interface Statement { }
-
     /// <summary>
     /// Sql COMMIT Node
     /// </summary>
-    public class Commit : GenericNode<CommitStatement>, Statement
+    public class Commit : GenericNode<CommitStatement>, TypeCobol.Compiler.Nodes.Statement
     {
         public Commit(CommitStatement statement) : base(statement) { }
 

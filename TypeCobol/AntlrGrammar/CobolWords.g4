@@ -2114,7 +2114,10 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     PRIVATE |
     IN_OUT | 
 	STRICT  |
-	QUESTION_MARK
+	QUESTION_MARK 
+
+    //Sql
+    | COMMIT
 );
 
 

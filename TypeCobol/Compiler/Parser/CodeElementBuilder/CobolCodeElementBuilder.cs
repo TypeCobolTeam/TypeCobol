@@ -34,16 +34,13 @@ namespace TypeCobol.Compiler.Parser
             CobolWordsBuilder = new CobolWordsBuilder();
             CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, LanguageLevelChecker);
 			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
+			SqlCodeElementBuilder = new SqlCodeElementBuilder();
 		}
 
         /// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
         public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
 			CodeElement = null;
 			Context = null;
-			CobolWordsBuilder = new CobolWordsBuilder();
-			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, LanguageLevelChecker);
-			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
-            SqlCodeElementBuilder = new SqlCodeElementBuilder();
 			CobolWordsBuilder.Reset();
 			CobolExpressionsBuilder.Reset();
 		}

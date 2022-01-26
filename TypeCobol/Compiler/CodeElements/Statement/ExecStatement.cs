@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
-//statement.CodeLines = BuildObjectArrayFromParserRules(context.ExecStatementText(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
@@ -37,7 +36,7 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    public class ExecStatementText : CodeElementEnd
+    public class ExecStatementText : CodeElement
     {
         public ExecStatementText() : base(CodeElementType.ExecStatementText) { }
 

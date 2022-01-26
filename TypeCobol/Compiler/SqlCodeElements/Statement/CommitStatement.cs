@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.SqlCodeElements.Statement
     /// </summary>
     public class CommitStatement : SqlStatementElement
     {
-        public CommitStatement() : base(SqlCodeElementType.CommitStatement, SqlStatementType.CommitStatement)
+        public CommitStatement() : base(CodeElementType.CommitStatement, StatementType.CommitStatement)
         {
         }
 
