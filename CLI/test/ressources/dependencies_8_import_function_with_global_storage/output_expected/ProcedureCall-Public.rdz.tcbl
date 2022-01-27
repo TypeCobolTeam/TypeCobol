@@ -1,4 +1,4 @@
-      *TypeCobol_Version:0.1(alpha)
+      *TypeCobol_Version:v0.0.0-local
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
        DATA DIVISION.
