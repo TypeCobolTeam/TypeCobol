@@ -16,11 +16,9 @@ namespace TypeCobol.Logging
         /// </summary>
         private class LoggerThread
         {
-            //Check queue every...
+            //Check action queue every 1.5s, this is also the maximum allotted
+            //time to flush remaining logging actions before ending the process.
             private static readonly TimeSpan _Period = TimeSpan.FromMilliseconds(1500);
-
-            //Allotted time to flush remaining actions before ending the process.
-            private static readonly TimeSpan _StopTimeout = TimeSpan.FromMilliseconds(500);
 
             private readonly ConcurrentQueue<Action<ILogger>> _work;
             private readonly Thread _thread;
@@ -75,7 +73,7 @@ namespace TypeCobol.Logging
                 }
 
                 //Wait for last actions to be processed
-                _thread.Join(_StopTimeout);
+                _thread.Join(_Period);
 
                 System.Diagnostics.Debug.Assert(_work.Count == 0);
             }
