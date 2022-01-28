@@ -19,7 +19,6 @@ namespace TypeCobol.Server {
             bool version = false;
 
             var config = new TypeCobolConfiguration();
-            config.CommandLine = string.Join(" ", argv);
 
             var p = new OptionSet();
 

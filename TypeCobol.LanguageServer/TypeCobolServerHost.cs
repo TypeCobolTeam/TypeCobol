@@ -140,6 +140,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static TypeCobolCustomLanguageServer.UseCfgMode UseCfg { get; set; }
 
+        /// <summary>
+        /// Client identifier. Stored but not used directly, will be logged as part of the command-line.
+        /// </summary>
+        public static string UserAgent { get; set; }
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -242,7 +247,8 @@ namespace TypeCobol.LanguageServer
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
                 { "ca|customanalyzer=", "OBSOLETE - Use 'ext' option instead.", v => Extensions.Add(v) },
                 { "ext|extension=", "{PATH} to a custom DLL file containing parser extension(s). This option can be specified more than once.", v => Extensions.Add(v) },
-                { "now|nowatchers",  "No Copy and Dependency files watchers.", _ => NoCopyDependencyWatchers = true}
+                { "now|nowatchers",  "No Copy and Dependency files watchers.", _ => NoCopyDependencyWatchers = true},
+                { "ua|useragent=", "Optional descriptive string to help identify the client of the parser", v => UserAgent = v }
             };
 
             System.Collections.Generic.List<string> arguments;
