@@ -19,10 +19,7 @@ namespace TypeCobol.Compiler.SqlNodes
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            if (astVisitor is IASTWithSqlVisitor astSqlVisitor) { 
-                return astSqlVisitor.Visit(this);
-            }
-            return true;
+            return astVisitor.Visit(this);
         }
     }
 }

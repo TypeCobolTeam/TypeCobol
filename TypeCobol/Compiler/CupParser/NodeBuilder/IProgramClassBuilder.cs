@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.SqlNodes;
+using TypeCobol.Compiler.SqlCodeElements.Statement;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -27,7 +28,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// <summary>
     /// Interface of a Program class builder based
     /// </summary>
-    public interface IProgramClassBuilder: ISqlNodeBuilder
+    public interface IProgramClassBuilder
     {
         /// <summary>
         /// Starts a compilation unit.
@@ -813,6 +814,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void EndOnAtEnd();
         void StartNoAtEnd([NotNull] TypeCobol.Compiler.CodeElements.NotAtEndCondition cond);
         void EndNoAtEnd();
+        #endregion
+
+        #region Sql
+        /// <summary>
+        /// Enter a Commit Statement Node
+        /// </summary>
+        /// <param name="commit">The correponding Commit Statement Code Element</param>
+        void OnCommitStatement([NotNull] CommitStatement commit);
         #endregion
     }
 }

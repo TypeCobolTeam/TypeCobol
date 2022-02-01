@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.SqlCodeElements.Statement;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.SqlNodes;
 using TypeCobol.Compiler.Scanner;
 using Object = TypeCobol.Compiler.Nodes.Object;
 using String = TypeCobol.Compiler.Nodes.String;
@@ -372,6 +374,11 @@ namespace TypeCobol.Compiler.CodeElements
 
         bool Visit([NotNull] ParametersProfileNode profile);
         bool Visit ([NotNull] IndexDefinition indexDefinition);
+
+        //Sql
+        bool Visit([NotNull] CommitStatement acceptStatement);
+
+        bool Visit([NotNull] Commit commit);
     }
 
 
@@ -1466,6 +1473,18 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public bool Visit([NotNull] Use useStatement)
+        {
+            return true;
+        }
+
+
+        //Sql
+        public virtual bool Visit([NotNull] CommitStatement acceptStatement)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] Commit commit)
         {
             return true;
         }
