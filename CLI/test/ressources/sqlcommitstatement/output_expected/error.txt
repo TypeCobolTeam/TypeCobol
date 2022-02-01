@@ -1,4 +1,0 @@
-ReturnCode=ParsingDiagnostics_
-2 errors in "input\ExecSqlWithCommit.rdz.cbl":
-Line 7[10,17] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
-Line 6[8,13] <47, Error, CodeAnalysis> - SQL Commit statement is not allowed in EXEC SQL statement

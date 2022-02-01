@@ -2115,9 +2115,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     IN_OUT | 
 	STRICT  |
 	QUESTION_MARK 
-
-    //Sql
-    | COMMIT
 );
 
 

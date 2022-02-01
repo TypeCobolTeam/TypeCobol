@@ -96,12 +96,6 @@ namespace TypeCobol.Tools.Options_Config
             }
         }
 #endif
-
-        /// <summary>
-        /// Is Sql Code Analysis allowed.
-        /// </summary>
-        public bool UseSqlCodeAnalysis = false;
-
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
             // Warnings
@@ -300,7 +294,6 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cpto|diagnostic.checkPerformThruOrder=", "Indicate level of check perform thru procedure order: warning, error, info, ignore.", v => typeCobolConfig.CheckPerformThruOrder = TypeCobolCheckOption.Parse(v) },
                 { "diag.crp|diagnostic.checkRecursivePerforms=", "Indicate level of check recursive performs: warning, error, info, ignore.", v => typeCobolConfig.CheckRecursivePerforms = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
-                { "sqla|sqlanalysis", "Use Sql Code Analysis.", v => typeCobolConfig.UseSqlCodeAnalysis = true},
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
 #if EUROINFO_RULES

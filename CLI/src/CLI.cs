@@ -13,7 +13,6 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Report;
-using TypeCobol.Compiler.SqlAnalysis;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Logging;
@@ -304,10 +303,6 @@ namespace TypeCobol.Server
                         });
 
                 }
-
-                //Register SQL Analyzer
-                if (_configuration.UseSqlCodeAnalysis)
-                    analyzerProviderWrapper.AddActivator(options => new SqlQualityAnalyzer());
             }
 
             return reports;
