@@ -84,10 +84,6 @@
 
        ID DIVISION.
        PROGRAM-ID. DVZF0OS2.
-      *REMARKS. COPY=(
-      *        Codegen-SecondCopy
-      *        ).
-                                                 
        data division.
        working-storage section.
        01 var1 .

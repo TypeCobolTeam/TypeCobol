@@ -43,8 +43,8 @@ namespace TypeCobol.Codegen.Actions
         public IList<Action> Execute()
         {
 #if EUROINFO_RULES
-            if (((Program) Source).IsNested)
-                return null; //We dont have to care about nested program. It prevents from generating REMARKS directive multiple times
+            if (!((Program) Source).IsMainProgram)
+                return null; //We don't have to care about nested/stacked programs. It prevents from generating REMARKS directive multiple times
 
             //Get tokensLine
             var tokensLines = (CompilationDocument.CobolTextLines as IReadOnlyList<Compiler.Scanner.TokensLine>);
