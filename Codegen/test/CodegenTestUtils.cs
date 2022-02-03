@@ -22,10 +22,9 @@ namespace TypeCobol.Codegen {
         /// for now and we don't have specifications for FreeFormat.
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="autoRemarks"></param>
         /// <param name="typeCobolVersion"></param>
         /// <param name="copies"></param>
-        public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null
+        public static void ParseGenerateCompare(string path, string typeCobolVersion = null, IList<string> copies = null
 #if EUROINFO_RULES
             , string cpyCopyNamesMapFilePath = null
 #endif
@@ -33,7 +32,6 @@ namespace TypeCobol.Codegen {
         {
             var options = new TypeCobolOptions();
 #if EUROINFO_RULES
-            options.AutoRemarksEnable = autoRemarks;
             if (cpyCopyNamesMapFilePath != null) options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesMapFilePath);
 #endif
             ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, null);
@@ -87,16 +85,12 @@ namespace TypeCobol.Codegen {
         /// for now and we don't have specifications for FreeFormat.
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="autoRemarks"></param>
         /// <param name="typeCobolVersion"></param>
-        /// <param name="copies"></param>        
-        public static void ParseGenerateCompareWithLineMapping(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null)
+        /// <param name="copies"></param>
+        /// <remarks>CpyCopyNameMap option is not supported yet in this method</remarks>
+        public static void ParseGenerateCompareWithLineMapping(string path, string typeCobolVersion = null, IList<string> copies = null)
         {
             var options = new TypeCobolOptions();
-#if EUROINFO_RULES
-            options.AutoRemarksEnable = autoRemarks;
-            //No CPY copy list support yet
-#endif
             ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, new MemoryStream());
         }
 

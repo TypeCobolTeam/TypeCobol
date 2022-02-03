@@ -49,9 +49,7 @@ namespace TypeCobol.Test.Report
             DocumentFormat format = DocumentFormat.RDZReferenceFormat;
             var parser = new TypeCobol.Parser();
             var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
-#if EUROINFO_RULES
-                typeCobolOption.AutoRemarksEnable = false;
-#endif
+            
             string copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
             parser.Init(input, isCopy, typeCobolOption, format, new List<string>() { copyFolder }, analyzerProvider);
             parser.Parse(input);

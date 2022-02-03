@@ -12,7 +12,6 @@ namespace TypeCobol.Compiler.Directives
     {
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
-        public bool AutoRemarksEnable { get; set; }
         /// <summary>
         /// Path to generate collected used copy names
         /// </summary>
@@ -94,7 +93,6 @@ namespace TypeCobol.Compiler.Directives
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
 
 #if EUROINFO_RULES
-            AutoRemarksEnable = config.AutoRemarks;
             CpyCopyNameMap = config.CpyCopyNameMap;
             ReportUsedCopyNamesPath = config.ReportUsedCopyNamesPath;
 #endif
