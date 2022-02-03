@@ -1,5 +1,10 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
+      *REMARKS. COPY=(
+      *        MyDataCopy
+      *        MyProcedureCopy
+      *        ).
+                                                               
        PROCEDURE DIVISION.
 
       *DECLARE FUNCTION DoesNothing PRIVATE.

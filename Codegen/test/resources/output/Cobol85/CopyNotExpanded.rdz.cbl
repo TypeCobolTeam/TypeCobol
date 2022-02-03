@@ -1,6 +1,11 @@
 ﻿000000 IDENTIFICATION DIVISION.
 000000* Test to check if COPY are not expanded when code is generated
 000000 PROGRAM-ID.   CopyNotExpanded.
+      *REMARKS. COPY=(
+      *        CopyData
+      *        CopyProcedure
+      *        ).
+                                                                                                                                             
 000000
 000000 DATA DIVISION.
 000000 WORKING-STORAGE SECTION.

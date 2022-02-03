@@ -1,5 +1,9 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. CPYRPL4C.
+      *REMARKS. COPY=(
+      *        YxxxENT
+      *        ).
+                                                             
       
        ENVIRONMENT DIVISION.
        DATA DIVISION.

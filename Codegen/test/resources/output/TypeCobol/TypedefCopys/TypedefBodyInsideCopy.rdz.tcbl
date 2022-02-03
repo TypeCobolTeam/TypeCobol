@@ -1,5 +1,10 @@
 ﻿       identification division.
        program-id. MyPGM.
+      *REMARKS. COPY=(
+      *        MyCopyA
+      *        MyCopyB
+      *        ).
+                                                          
        environment division.
        configuration section.
        source-computer. ibm-370

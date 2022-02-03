@@ -1,6 +1,10 @@
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
+      *REMARKS. COPY=(
+      *        Codegen-SecondCopy
+      *        ).
+                                                             
        data division.
        WORKING-STORAGE SECTION.
        01 TC-DVZF0OS2 pic X(08) value 'DVZF0OS2'.
@@ -80,8 +84,11 @@
 
        ID DIVISION.
        PROGRAM-ID. DVZF0OS2.
-       DATA DIVISION.
+      *REMARKS. COPY=(
+      *        Codegen-SecondCopy
+      *        ).
                                                  
+       DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  TC-DVZF0OS2-FctList-Loaded PIC X(02).
            88 TC-DVZF0OS2-FctList-IsLoaded      VALUE 'OK'.
@@ -94,7 +101,6 @@
            05 TC-DVZF0OS2-bdb3e928-Idt   PIC X(08) VALUE 'bdb3e928'.
            05 TC-DVZF0OS2-bdb3e928 PROCEDURE-POINTER.
 
-       
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 

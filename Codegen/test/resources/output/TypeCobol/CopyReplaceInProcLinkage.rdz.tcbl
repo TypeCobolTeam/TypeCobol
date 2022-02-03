@@ -1,6 +1,10 @@
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
+      *REMARKS. COPY=(
+      *        MSVCOUT
+      *        ).
+                                                             
        PROCEDURE DIVISION.
            .
 
