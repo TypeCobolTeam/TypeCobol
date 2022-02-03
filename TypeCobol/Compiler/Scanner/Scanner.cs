@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -55,7 +54,7 @@ namespace TypeCobol.Compiler.Scanner
             int lastIndex = textLine.Source.EndIndex;
 
 #if EUROINFO_RULES
-            if (compilerOptions.UseEuroInformationLegacyReplacingSyntax)
+            if (compilerOptions.UseEuroInformationLegacyReplacingSyntax && !compilerOptions.IsCobolLanguage)
             {
                 if (tokensLine.ScanState.LeavingRemarksDirective) //If last scanned line was the end of a remarksDirective then mark scanstate as outside of remarksDirective for this new line
                     tokensLine.ScanState.InsideRemarksDirective = tokensLine.ScanState.LeavingRemarksDirective = false;
