@@ -2176,9 +2176,9 @@ namespace TypeCobol.Compiler.Scanner
                 for (; endIndex > startIndex && line[endIndex] == ' '; endIndex--) { }
 
                 // If only whitespace just before END-EXEC, return a whitespace token
-                if(endIndex == startIndex && line[endIndex] == ' ')
+                if (endIndex == startIndex && line[endIndex] == ' ')
                 {
-                    return ScanWhitespace(startIndex);  
+                    return ScanWhitespace(startIndex);
                 }
             }
             // ExecStatementText is empty
@@ -2187,7 +2187,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Directly scan END-EXEC keyword
                 return ScanKeywordOrUserDefinedWord(startIndex);
             }
-
+            // Fall into SQL mode: either a SQL Token or an ExecStatementText token.
             return TypeCobol.Compiler.SqlScanner.SqlScanner.ScanSqlKeywordOrExecStatementText(startIndex, endIndex, line, tokensLine, out currentIndex);
         }
 
