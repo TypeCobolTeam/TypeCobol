@@ -5,6 +5,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.SqlCodeElements.Statement;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -542,6 +543,9 @@ namespace TypeCobol.Compiler.Parser
                         break;
                     case CodeElementType.FunctionDeclarationEnd:
                         codeElement = new FunctionDeclarationEnd();
+                        break;
+                    case CodeElementType.CommitStatement:
+                        codeElement = new CommitStatement();
                         break;
                     default:
                         throw new NotImplementedException();

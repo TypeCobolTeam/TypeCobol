@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.qualifiedTextName() != null)
             {
                 // TCRFUN_LIBRARY_COPY
-                copy.Name = CobolWordsBuilder.CreateQualifiedTextName(context.qualifiedTextName()); //TODO#278 eww!
+                copy.Name = _CobolWordsBuilder.CreateQualifiedTextName(context.qualifiedTextName()); //TODO#278 eww!
             }
             Context = context;
             CodeElement = copy;
@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Parser
             SymbolDefinition name = null;
             if (context.functionNameDefinition() != null)
             {
-                name = CobolWordsBuilder.CreateFunctionNameDefinition(context.functionNameDefinition());
+                name = _CobolWordsBuilder.CreateFunctionNameDefinition(context.functionNameDefinition());
             }
 
             FormalizedCommentDocumentation formalizedCommentDocumentation = null;
@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var parameter = new ParameterDescriptionEntry();
             parameter.LevelNumber = new GeneratedIntegerValue(1);
-            parameter.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+            parameter.DataName = _CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
             if (context.pictureClause() != null)
             {
                 var pictureClauseContext = context.pictureClause();
@@ -135,7 +135,7 @@ namespace TypeCobol.Compiler.Parser
             else if (context.cobol2002TypeClause() != null)
             {
                 parameter.UserDefinedDataType =
-                    CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause());
+                    _CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause());
                 if (parameter.UserDefinedDataType != null)
                     parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
             } else if (context.POINTER() != null) {
@@ -310,7 +310,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.valueClause() != null)
             {
                 var valueClauseContext = context.valueClause();
-                parameter.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
+                parameter.InitialValue = _CobolWordsBuilder.CreateValue(valueClauseContext.value2());
             }
 
             if (context.QUESTION_MARK() != null)
@@ -407,7 +407,7 @@ namespace TypeCobol.Compiler.Parser
             // - ProgramNameOrProgramEntry
             // - data, condition, UPSISwitch, TCFunctionName
             var cbCallProc = context.procedurePointerOrFunctionPointerVariableOrfunctionNameReference;
-            var ambiguousSymbolReference = CobolExpressionsBuilder.CreateProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(cbCallProc);
+            var ambiguousSymbolReference = _CobolExpressionsBuilder.CreateProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(cbCallProc);
           
 
             //If (inputs, inouts ou outputs).Count > 0, then it's a procedure call
@@ -431,7 +431,7 @@ namespace TypeCobol.Compiler.Parser
                     
                     
                     if (p.sharedVariableOrFileName() != null) {
-                        callSiteParameter.StorageAreaOrValue = CobolExpressionsBuilder.CreateSharedVariableOrFileName(p.sharedVariableOrFileName());
+                        callSiteParameter.StorageAreaOrValue = _CobolExpressionsBuilder.CreateSharedVariableOrFileName(p.sharedVariableOrFileName());
                     } else if (p.OMITTED() != null) {
                         callSiteParameter.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(p.OMITTED()));
                     }
@@ -450,7 +450,7 @@ namespace TypeCobol.Compiler.Parser
 
                     if (p.sharedStorageArea1() != null)
                     {
-                        callSiteParameter.StorageAreaOrValue = new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1()));
+                        callSiteParameter.StorageAreaOrValue = new Variable(_CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1()));
                     }
                     else if (p.OMITTED() != null)
                     {
@@ -472,7 +472,7 @@ namespace TypeCobol.Compiler.Parser
 
                     if (p.sharedStorageArea1() != null)
                     {
-                        callSiteParameter.StorageAreaOrValue = new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1()));
+                        callSiteParameter.StorageAreaOrValue = new Variable(_CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1()));
                     }
                     else if (p.OMITTED() != null)
                     {
@@ -556,7 +556,7 @@ namespace TypeCobol.Compiler.Parser
                     //We must remove it as TCFunctionNameRefVariable doesn't contains a StorageArea
                     if (ambiguousSymbolReference.StorageArea != null)
                     {
-                        CobolExpressionsBuilder.storageAreaReads.Remove(ambiguousSymbolReference.StorageArea);
+                        _CobolExpressionsBuilder.storageAreaReads.Remove(ambiguousSymbolReference.StorageArea);
                     }
 
                     statement =
@@ -636,7 +636,7 @@ namespace TypeCobol.Compiler.Parser
                 statement.CallSites.Add(callSite);
             }
 
-            LanguageLevelChecker.Check(statement, context);
+            _LanguageLevelChecker.Check(statement, context);
 
             CodeElement = statement;
         }
@@ -668,13 +668,13 @@ namespace TypeCobol.Compiler.Parser
         public override void ExitDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
         {
             System.Diagnostics.Debug.Assert(CodeElement is DataDefinitionEntry);
-            LanguageLevelChecker.Check((DataDefinitionEntry) CodeElement, context);
+            _LanguageLevelChecker.Check((DataDefinitionEntry) CodeElement, context);
         }
 
         public override void ExitTcCodeElement(CodeElementsParser.TcCodeElementContext context)
         {
             System.Diagnostics.Debug.Assert(CodeElement != null);
-            LanguageLevelChecker.Check(CodeElement, context);
+            _LanguageLevelChecker.Check(CodeElement, context);
         }
     }
 }

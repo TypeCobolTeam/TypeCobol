@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
+﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.SqlCodeElements;
 using TypeCobol.Compiler.SqlCodeElements.Statement;
 
 namespace TypeCobol.Compiler.SqlNodes
@@ -13,7 +7,7 @@ namespace TypeCobol.Compiler.SqlNodes
     /// <summary>
     /// Sql COMMIT Node
     /// </summary>
-    public class Commit : GenericNode<CommitStatement>, TypeCobol.Compiler.Nodes.Statement
+    public class Commit : GenericNode<CommitStatement>, Statement
     {
         public Commit(CommitStatement statement) : base(statement) { }
 

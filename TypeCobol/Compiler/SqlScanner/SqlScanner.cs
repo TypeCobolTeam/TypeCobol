@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.SqlScanner
     public static class SqlScanner
     {
         /// <summary>
-        /// True if the given char can bepart of an SQL keyword.
+        /// True if the given char can be part of an SQL keyword.
         /// </summary>
         /// <param name="c">The character to test</param>
         /// <returns>True if yes, no otherwise</returns>

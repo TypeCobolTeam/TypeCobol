@@ -375,9 +375,18 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ParametersProfileNode profile);
         bool Visit ([NotNull] IndexDefinition indexDefinition);
 
-        //Sql
+        /// <summary>
+        /// COMMIT Statement Code Element visitor method
+        /// </summary>
+        /// <param name="acceptStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
         bool Visit([NotNull] CommitStatement acceptStatement);
 
+        /// <summary>
+        /// COMMIT Statement Node visitor method
+        /// </summary>
+        /// <param name="commit">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         bool Visit([NotNull] Commit commit);
     }
 
@@ -1478,12 +1487,21 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 
-        //Sql
+        /// <summary>
+        /// COMMIT Statement Code Element visitor method
+        /// </summary>
+        /// <param name="acceptStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
         public virtual bool Visit([NotNull] CommitStatement acceptStatement)
         {
             return true;
         }
 
+        /// <summary>
+        /// COMMIT Statement Node visitor method
+        /// </summary>
+        /// <param name="commit">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         public virtual bool Visit([NotNull] Commit commit)
         {
             return true;
