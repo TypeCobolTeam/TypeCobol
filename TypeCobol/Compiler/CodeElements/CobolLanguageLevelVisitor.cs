@@ -378,9 +378,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// COMMIT Statement Code Element visitor method
         /// </summary>
-        /// <param name="acceptStatement">The Code Element to be visited</param>
+        /// <param name="commitStatement">The Code Element to be visited</param>
         /// <returns>true to continue visiting Code elements, false otherwise </returns>
-        bool Visit([NotNull] CommitStatement acceptStatement);
+        bool Visit([NotNull] CommitStatement commitStatement);
 
         /// <summary>
         /// COMMIT Statement Node visitor method
@@ -1490,9 +1490,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// COMMIT Statement Code Element visitor method
         /// </summary>
-        /// <param name="acceptStatement">The Code Element to be visited</param>
+        /// <param name="commitStatement">The Code Element to be visited</param>
         /// <returns>true to continue visiting Code elements, false otherwise </returns>
-        public virtual bool Visit([NotNull] CommitStatement acceptStatement)
+        public virtual bool Visit([NotNull] CommitStatement commitStatement)
         {
             return true;
         }

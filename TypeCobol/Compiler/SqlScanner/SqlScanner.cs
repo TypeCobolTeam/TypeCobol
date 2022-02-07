@@ -32,7 +32,7 @@ namespace TypeCobol.Compiler.SqlScanner
             int curIndex = startIndex;
             if (IsSqlKeywordPart(line[curIndex]))
             {
-                for (; curIndex <= endIndex && IsSqlKeywordPart(line[curIndex]); curIndex++) { }
+                for (++curIndex; curIndex <= endIndex && IsSqlKeywordPart(line[curIndex]); curIndex++) { }
                 int curEndIndex = curIndex - 1;
                 string text = line.Substring(startIndex, curEndIndex - startIndex + 1);
                 if (text.Equals("COMMIT", StringComparison.OrdinalIgnoreCase))
