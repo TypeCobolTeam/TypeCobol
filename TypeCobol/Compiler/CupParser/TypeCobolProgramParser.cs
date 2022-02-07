@@ -3734,7 +3734,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
 		object stmt = (object)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 /*my_parser.Builder.OnExecStatement(stmt);*/ 
+		 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;

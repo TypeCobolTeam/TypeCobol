@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -2189,7 +2188,7 @@ namespace TypeCobol.Compiler.Scanner
                 return ScanKeywordOrUserDefinedWord(startIndex);
             }
 
-            return TypeCobol.Compiler.SqlScanner.SqlScanner.ScanSqlKeywordOrExecStatementText(ref currentIndex, startIndex, endIndex, lastIndex, line, tokensLine);
+            return TypeCobol.Compiler.SqlScanner.SqlScanner.ScanSqlKeywordOrExecStatementText(startIndex, endIndex, line, tokensLine, out currentIndex);
         }
 
         private Token ScanKeywordOrUserDefinedWord(int startIndex)

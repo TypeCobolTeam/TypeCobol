@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.SqlCodeElements
@@ -13,10 +11,5 @@ namespace TypeCobol.Compiler.SqlCodeElements
             : base(codeElementType, statementType)
         {
         }
-
-        /// <summary>
-        /// Type of executable Sql statement
-        /// </summary>
-        public StatementType SqlStatementType => base.StatementType;
     }
 };

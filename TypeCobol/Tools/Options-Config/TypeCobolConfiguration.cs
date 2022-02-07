@@ -96,6 +96,7 @@ namespace TypeCobol.Tools.Options_Config
             }
         }
 #endif
+
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
             // Warnings

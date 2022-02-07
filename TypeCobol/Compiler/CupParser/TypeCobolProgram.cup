@@ -1068,7 +1068,7 @@ singleStatement ::=
 	{: my_parser.Builder.OnCancelStatement(stmt); :}
 // -- DB2 & CICS integration --
 	| execStatement:stmt
-	{: /*my_parser.Builder.OnExecStatement(stmt);*/ :}
+	{: :}
 // -- dynamic allocation --
 	| AllocateStatement:stmt
 	{: my_parser.Builder.OnAllocateStatement(stmt); :}

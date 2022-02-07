@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.SqlScanner;
+﻿using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.SqlCodeElements.Statement
 {
@@ -16,11 +9,6 @@ namespace TypeCobol.Compiler.SqlCodeElements.Statement
     {
         public CommitStatement() : base(CodeElementType.CommitStatement, StatementType.CommitStatement)
         {
-        }
-
-        public override bool VisitCodeElement(IASTVisitor astVisitor)
-        {
-            return base.VisitCodeElement(astVisitor);
         }
     }
 }

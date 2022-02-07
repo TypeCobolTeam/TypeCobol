@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.SqlScanner
@@ -22,20 +18,30 @@ namespace TypeCobol.Compiler.SqlScanner
             return c == '-' || Char.IsLetter(c);
         }
 
-        public static Token ScanSqlKeywordOrExecStatementText(ref int currentIndex, int startIndex, int endIndex, int lastIndex, string line, TokensLine tokensLine)
+        /// <summary>
+        /// Scan a SQL keyword if one is recognized or a ExecStatementText token otherwise.
+        /// </summary>
+        /// <param name="startIndex">Start scanning index in the line</param>
+        /// <param name="endIndex">End scanning index in the line</param>
+        /// <param name="line">The line to be scanned</param>
+        /// <param name="tokensLine">The associed TokensLine instance to be asociated with the token to create.</param>
+        /// <param name="currentIndex">[out] the new end index</param>
+        /// <returns>Either a SQL keyword token or a ExecStatementText token otherwise</returns>
+        public static Token ScanSqlKeywordOrExecStatementText(int startIndex, int endIndex, string line, TokensLine tokensLine, out int currentIndex)
         {
-            int curIndex = currentIndex;
-            if (IsSqlKeywordPart(line[startIndex]))
+            int curIndex = startIndex;
+            if (IsSqlKeywordPart(line[curIndex]))
             {
-                for (; curIndex <= lastIndex && IsSqlKeywordPart(line[curIndex]); curIndex++) { }
+                for (; curIndex <= endIndex && IsSqlKeywordPart(line[curIndex]); curIndex++) { }
                 int curEndIndex = curIndex - 1;
                 string text = line.Substring(startIndex, curEndIndex - startIndex + 1);
-                if (text.Equals("COMMIT", StringComparison.OrdinalIgnoreCase)) {
+                if (text.Equals("COMMIT", StringComparison.OrdinalIgnoreCase))
+                {
                     currentIndex = curIndex;
                     return new Token(TokenType.COMMIT, startIndex, curEndIndex, tokensLine);
-                }                    
+                }
             }
-            // Consume all chars
+            // Consume all chars as ExecStatementText
             currentIndex = endIndex + 1;
             return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
         }
