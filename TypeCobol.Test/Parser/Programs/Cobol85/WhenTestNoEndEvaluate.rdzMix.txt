@@ -23,6 +23,7 @@ Line 16[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" 
 Line 20[17,26] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when bool1
                 when other continue
+Line 22[12,22] <27, Error, Syntax> - Syntax error : Search statement must have at least one when element.
 Line 22[12,22] <27, Error, Syntax> - Syntax error : Cannot SEARCH in 'var1', data item is not a table.
            search var1
 Line 23[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause

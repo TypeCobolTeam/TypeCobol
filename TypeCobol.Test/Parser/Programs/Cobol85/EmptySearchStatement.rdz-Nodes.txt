@@ -1,5 +1,6 @@
 Line 6[16,17] <30, Error, Semantics> - Semantic error: Symbol OK is not referenced
 Line 7[26,32] <30, Error, Semantics> - Semantic error: Symbol MyArray is not referenced
+Line 7[15,32] <27, Error, Syntax> - Syntax error : Search statement must have at least one when element.
 Line 15[8,13] <37, Warning, General> - Warning: Paragraph 'PARA1' is empty
 --- Nodes ---
 ?
