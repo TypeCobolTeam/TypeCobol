@@ -1,0 +1,23 @@
+Line 6[16,17] <30, Error, Semantics> - Semantic error: Symbol OK is not referenced
+Line 7[26,32] <30, Error, Semantics> - Semantic error: Symbol MyArray is not referenced
+Line 15[8,13] <37, Warning, General> - Warning: Paragraph 'PARA1' is empty
+--- Nodes ---
+?
+  MyPGM
+    procedure-division
+      PARA0
+        sentence-0
+          [[IfStatement]] [12,13:IF]<IF> --> [16,17:OK]<UserDefinedWord>
+
+            ?
+              [[SearchStatement]] [15,20:SEARCH]<SEARCH> --> [26,32:MyArray]<UserDefinedWord>
+
+                end
+            end
+          [[PerformProcedureStatement]] [12,18:PERFORM]<PERFORM> --> [20,24:PARA1]<UserDefinedWord>
+
+          end
+      PARA1
+        sentence-0
+          end
+    end

@@ -28,7 +28,7 @@ Line 21[17,26] <27, Error, Syntax> - Syntax error : Missing statement in "when" 
 Line 24[12,22] <27, Error, Syntax> - Syntax error : Cannot SEARCH in 'var1', data item is not a table.
            search var1
 Line 25[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
-Line 25[17,20] <27, Error, Syntax> - Syntax error : extraneous input 'when' expecting {AtEndCondition, WhenSearchCondition}
+Line 25[17,20] <27, Error, Syntax> - Syntax error : extraneous input 'when' expecting {AtEndCondition, WhenSearchCondition, SearchStatementEnd}
                 when
                 when var2
                     when var3 display "search"
