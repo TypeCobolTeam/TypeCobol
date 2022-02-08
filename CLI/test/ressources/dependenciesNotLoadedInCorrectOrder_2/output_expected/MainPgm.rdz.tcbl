@@ -1,4 +1,4 @@
-      *TypeCobol_Version:0.1(alpha)
+      *TypeCobol_Version:[[ParserVersion]]
        identification division.
        program-id. TCOSMPL2.
        data division.
