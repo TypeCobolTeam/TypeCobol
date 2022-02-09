@@ -70,7 +70,7 @@ namespace TypeCobol.Server
             catch (Exception unexpected)
             {
                 LoggingSystem.LogException(unexpected); //TODO add more context data ?
-                AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, config.CommandLine);
+                AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, Environment.CommandLine);
 
                 string message = unexpected.Message + Environment.NewLine + unexpected.StackTrace;
                 Server.AddError(errorWriter, string.Empty, new Diagnostic(MessageCode.SyntaxErrorInParser, Diagnostic.Position.Default, message));
@@ -551,7 +551,7 @@ namespace TypeCobol.Server
                     if (diagnostic.CaughtException != null)
                     {
                         LoggingSystem.LogException(diagnostic.CaughtException, context);
-                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles, _configuration.CopyFolders, _configuration.CommandLine);
+                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
                     }
                 }
 
@@ -567,7 +567,7 @@ namespace TypeCobol.Server
 
                         if (generationException.NeedMail)
                         {
-                            AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, _configuration.CommandLine);
+                            AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
                         }
 
                         if (generationException.Logged)
