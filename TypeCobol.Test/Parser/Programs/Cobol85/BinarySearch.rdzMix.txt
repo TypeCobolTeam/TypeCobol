@@ -1,0 +1,89 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. SearchAll.
+       data division.
+       working-storage section.
+       01 tab.
+          05 var1 occurs 10 ascending key is Var2 indexed by idx .
+            10 var2 pic X(1) .
+      
+       PROCEDURE DIVISION.    
+      
+      *-------- ONLY WHEN
+      *OK, when with instruction
+           search all var1
+              when var2(idx) = 'b'
+                display "test"
+           end-search
+      
+      *OK, when without instruction
+           search all var1
+Line 20[15,34] <37, Warning, General> - Warning: Missing statement in when clause
+              when var2(idx) = 'b'
+      
+           end-search
+      
+      *-------- AT END and WHEN
+      *OK
+           search all var1
+              at end
+                display "end"
+              when var2(idx) = 'b'
+                display "when"
+           end-search
+      
+      *OK
+           search all var1
+              at end
+                display "end"
+Line 37[15,34] <37, Warning, General> - Warning: Missing statement in when clause
+              when var2(idx) = 'b'
+           end-search
+      
+      
+      *-------- AT END at wrong position
+           search all var1
+              when var2(idx) = 'b'
+                display "when"
+      *KO at end must be before when statement
+Line 46[15,20] <27, Error, Syntax> - Syntax error : extraneous input 'atend' expecting {SentenceEnd, AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}
+              at end
+                display "end"
+           end-search
+      
+           search all var1
+              when var2(idx) = 'b'
+      *KO at end must be before when statement
+              at end
+                display "end"
+           end-search
+
+      *-------- 2 WHEN always KO
+           search all var1
+              when var2(idx) = 'a'
+                display "when a"
+Line 61[15,34] <27, Error, Syntax> - Syntax error : Invalid WHEN clause, binary SEARCH only allows a single WHEN clause
+              when var2(idx) = 'b'
+                display "when b"
+           end-search
+      
+           search all var1
+              at end
+                display "end"
+              when var2(idx) = 'a'
+                display "when a"
+Line 70[15,34] <27, Error, Syntax> - Syntax error : Invalid WHEN clause, binary SEARCH only allows a single WHEN clause
+              when var2(idx) = 'b'
+                display "when b"
+           end-search
+      
+           search all var1
+              at end
+                display "end"
+Line 77[15,34] <37, Warning, General> - Warning: Missing statement in when clause
+              when var2(idx) = 'a'
+Line 78[15,34] <27, Error, Syntax> - Syntax error : Invalid WHEN clause, binary SEARCH only allows a single WHEN clause
+              when var2(idx) = 'b'
+                display "when a and b"
+           end-search
+           goback.
+       END PROGRAM SearchAll.

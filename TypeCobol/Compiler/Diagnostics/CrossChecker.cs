@@ -254,6 +254,21 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
+            
+            if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
+            {
+                int i=0;
+                var list = search.GetChildren<WhenSearch>();
+                foreach (var whenSearch in list)
+                {
+                    if (i > 0) 
+                    {
+                        DiagnosticUtils.AddError(whenSearch, "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
+                    }
+                    i++;
+                }
+      
+            }
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
             if (tableToSearch != null)
             {
@@ -310,6 +325,12 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
             var search = (Search) whenSearch.Parent;
+
+            if (whenSearch.ChildrenCount == 0)
+            {
+                var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
+                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause",messageCode);
+            }
 
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
             {
