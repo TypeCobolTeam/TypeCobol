@@ -14,23 +14,15 @@ namespace TypeCobol.Compiler.Preprocessor
     {
         private class TokensLinesIterator : ITokensLinesIterator
         {
-            private static Token GenerateReplacement(Token partialCobolWordToken)
-            {
-                System.Diagnostics.Debug.Assert(partialCobolWordToken.TokenType == TokenType.PartialCobolWord);
-
-                //basic replacement mechanic, remove the ':' from the tag.
-                //NOTE: PartialCobolWord have their ScanStateSnapshot embedded so we can use it to replace with number literal after OCCURS if need be...
-                //NOTE: Does not handle '::-item' or 'item-::' partial names as '::' will turn into empty string and will produce invalid data names.
-                string replacedTokenText = partialCobolWordToken.NormalizedText.Replace(":", string.Empty);
-                return ReplaceTokensLinesIterator.GenerateReplacementToken(partialCobolWordToken, replacedTokenText);
-            }
-
             private readonly ITokensLinesIterator _sourceIterator;
+            private readonly TypeCobolOptions _compilerOptions;
 
-            public TokensLinesIterator([NotNull] ITokensLinesIterator sourceIterator)
+            public TokensLinesIterator([NotNull] ITokensLinesIterator sourceIterator, [NotNull] TypeCobolOptions compilerOptions)
             {
                 System.Diagnostics.Debug.Assert(sourceIterator != null);
+                System.Diagnostics.Debug.Assert(compilerOptions != null);
                 _sourceIterator = sourceIterator;
+                _compilerOptions = compilerOptions;
             }
 
             public Token NextToken()
@@ -38,9 +30,13 @@ namespace TypeCobol.Compiler.Preprocessor
                 var nextToken = _sourceIterator.NextToken();
                 if (nextToken.TokenType == TokenType.PartialCobolWord)
                 {
-                    //Perform automatic token replacement
+                    //basic replacement mechanic, remove the ':' from the tag.
+                    //NOTE: PartialCobolWord have their ScanStateSnapshot embedded so we can use it to replace with number literal after OCCURS if need be...
+                    //NOTE: Does not handle '::-item' or 'item-::' partial names as '::' will turn into empty string and will produce invalid data names.
                     var originalToken = nextToken;
-                    var generatedReplacementToken = GenerateReplacement(originalToken);
+                    string replacedTokenText = originalToken.NormalizedText.Replace(":", string.Empty);
+                    var generatedReplacementToken = ReplaceTokensLinesIterator.GenerateReplacementToken(originalToken, replacedTokenText, _compilerOptions);
+
                     nextToken = new ReplacedPartialCobolWord(generatedReplacementToken, null, originalToken);
                 }
 
@@ -84,12 +80,14 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
+        private readonly TypeCobolOptions _compilerOptions;
+
         public AutoReplacePartialWordsTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<CodeElementsLine> processedTokensLines, TypeCobolOptions compilerOptions)
             : base(previousStepSnapshot, processedTokensLinesVersion, processedTokensLines, compilerOptions)
         {
-            
+            _compilerOptions = compilerOptions;
         }
 
-        public override ITokensLinesIterator GetProcessedTokensIterator() => new TokensLinesIterator(base.GetProcessedTokensIterator());
+        public override ITokensLinesIterator GetProcessedTokensIterator() => new TokensLinesIterator(base.GetProcessedTokensIterator(), _compilerOptions);
     }
 }

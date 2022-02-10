@@ -1,6 +1,5 @@
-﻿-- Line 1 --
+-- Line 1 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22+:"DISP1"]<AlphanumericLiteral>(",Y,Y){DISP1}
 
 -- Line 2 --
@@ -8,7 +7,6 @@
 
 -- Line 3 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22+:"DISP2"]<AlphanumericLiteral>(",Y,Y){DISP2}
 
 -- Line 4 --
@@ -16,25 +14,20 @@
 
 -- Line 5 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22+:"DISP3"]<AlphanumericLiteral>(",Y,Y){DISP3}
 
 -- Line 6 --
-[8,15:        ]<SpaceSeparator>
 *** DIRECTIVE EJECT ([16,20:EJECT]<EJECT>) ***
 
 -- Line 7 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22+:"DISP4"]<AlphanumericLiteral>(",Y,Y){DISP4}
 
 -- Line 8 --
-[8,15:        ]<SpaceSeparator>
 *** DIRECTIVE EJECT ([16,20:EJECT]<EJECT>[21,21+:.]<PeriodSeparator>) ***
 
 -- Line 9 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22+:"DISP5"]<AlphanumericLiteral>(",Y,Y){DISP5}
 
 -- Line 10 --
@@ -42,7 +35,6 @@
 
 -- Line 11 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22+:"DISP6"]<AlphanumericLiteral>(",Y,Y){DISP6}
 
 -- Line 12 --
@@ -50,12 +42,10 @@
 
 -- Line 13 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22+:"DISP7"]<AlphanumericLiteral>(",Y,Y){DISP7}
 
 -- Line 14 --
 *** DIRECTIVE EJECT ([8,12:EJECT]<EJECT>) ***
-[13,13: ]<SpaceSeparator>
 *** DIRECTIVE EJECT ([14,18:EJECT]<EJECT>[19,20:. ]<PeriodSeparator>) ***
 *** DIRECTIVE EJECT ([21,25:EJECT]<EJECT>) ***
 

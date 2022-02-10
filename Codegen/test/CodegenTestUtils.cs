@@ -31,7 +31,7 @@ namespace TypeCobol.Codegen {
 #endif
         )
         {
-            var options = new TypeCobolOptions();
+            var options = new TypeCobolOptions() { OptimizeWhitespaceScanning = false };
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
             if (cpyCopyNamesMapFilePath != null) options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesMapFilePath);
@@ -92,7 +92,7 @@ namespace TypeCobol.Codegen {
         /// <param name="copies"></param>        
         public static void ParseGenerateCompareWithLineMapping(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null)
         {
-            var options = new TypeCobolOptions();
+            var options = new TypeCobolOptions() { OptimizeWhitespaceScanning = false };
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
             //No CPY copy list support yet

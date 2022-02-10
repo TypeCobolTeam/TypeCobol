@@ -1,6 +1,4 @@
-﻿[1,1: ]<SpaceSeparator>
 [2,3:. ]<PeriodSeparator>
-[4,7:    ]<SpaceSeparator>
 [8,9:, ]<CommaSeparator>
 [10,11:; ]<SemicolonSeparator>
 [12,12:(]<LeftParenthesisSeparator>

@@ -864,7 +864,6 @@ namespace TypeCobol.Codegen.Generators
             //Take interessting scan state values from the original input
             TypeCobol.Compiler.Parser.CodeElementsLine cel = Input[FirstGSLine] as TypeCobol.Compiler.Parser.CodeElementsLine;
             //first true argument => we are in a DataDivision.
-            var scannerOptions = new TypeCobolOptions();
             System.Diagnostics.Debug.Assert(cel.ScanState.InsideDataDivision);
             string gsText = gsSrcText.GetTextAt(0, gsSrcText.Size);
             using (StringReader sr = new StringReader(gsText))
@@ -894,7 +893,7 @@ namespace TypeCobol.Codegen.Generators
                     }
 
                     tempTokensLine.InitializeScanState(cel.ScanState);
-                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, scannerOptions, true);
+                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, CompilationResults.CompilerOptions, true);
                     Token t = null;
 
                     while ((t = scanner.GetNextToken()) != null)
@@ -962,7 +961,7 @@ namespace TypeCobol.Codegen.Generators
                 if (((from - lineStartOffset) + (text.Length - crlf)) >= LEGAL_COBOL_LINE_LENGTH)
                 {
                     string lefttext = buffer.GetTextAt(lineStartOffset, from);
-                    ICollection<ITextLine> lines = CobolTextLine.CreateCobolLines(this.Layout, -1, ' ', "",
+                    ICollection<ITextLine> lines = CobolTextLine.CreateCobolLines(this.Layout, CompilationResults.CompilerOptions, -1, ' ', "",
                         lefttext + (crlf > 0 ? text.Substring(0, text.Length - crlf) : text), LEGAL_COBOL_LINE_LENGTH, 65, false);
                     StringWriter sw = new StringWriter();
                     foreach (var line in lines)
@@ -1421,7 +1420,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 if (Layout == ColumnsLayout.CobolReferenceFormat)
                 {
-                    var lines = CobolTextLine.Create(line.Text, Layout, line.LineIndex);
+                    var lines = CobolTextLine.Create(line.Text, Layout, CompilationResults.CompilerOptions, line.LineIndex);
                     foreach (var l in lines) results.Add(SetComment(l, isComment));
                 }
                 else if (Layout == ColumnsLayout.FreeTextFormat)
@@ -1437,12 +1436,12 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
-        /// Produces a commented or an uncommeneted text line from a text line
+        /// Produces a commented or an uncommented text line from a text line
         /// </summary>
         /// <param name="line">the line</param>
         /// <param name="isComment">if null then this is the identity function, if true a commented line is produced, otherwise an uncommented line is produced.</param>
-        /// <returns>if isComment is null the same line is return, if true a commneted line is returned otherwise an uncommented line</returns>
-        private static ITextLine SetComment(ITextLine line, bool? isComment)
+        /// <returns>if isComment is null the same line is return, if true a commented line is returned otherwise an uncommented line</returns>
+        private ITextLine SetComment(ITextLine line, bool? isComment)
         {
             if (isComment == true)
                 return Comment(line);
@@ -1456,9 +1455,9 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Produces a commented text line of a text line
         /// </summary>
-        /// <param name="line">The text line to be procuded a commented text line </param>
-        /// <returns>The commente dtext line</returns>
-        private static ITextLine Comment(ITextLine line)
+        /// <param name="line">The text line to be produced a commented text line</param>
+        /// <returns>The commented text line</returns>
+        private ITextLine Comment(ITextLine line)
         {
             var cobol = line as CobolTextLine;
             if (cobol != null)
@@ -1466,7 +1465,7 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder text = new StringBuilder(cobol.Text);
                 if (text.Length > 6)
                     text[6] = '*';
-                var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.LineIndex);
+                var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, CompilationResults.CompilerOptions, cobol.LineIndex);
                 foreach (var l in lines) return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
             }
@@ -1481,14 +1480,14 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="line">The text line to produce the uncommented text line.</param>
         /// <returns>The uncommented text line</returns>
-        private static ITextLine Uncomment(ITextLine line)
+        private ITextLine Uncomment(ITextLine line)
         {
             var cobol = line as CobolTextLine;
             if (cobol != null)
             {
                 StringBuilder text = new StringBuilder(cobol.Text);
                 text[6] = ' ';
-                var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.LineIndex);
+                var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, CompilationResults.CompilerOptions, cobol.LineIndex);
                 foreach (var l in lines)
                     return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
