@@ -254,21 +254,19 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
-            
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
             {
-                int i=0;
-                var list = search.GetChildren<WhenSearch>();
-                foreach (var whenSearch in list)
+                //Check for multiple WHENs, binary search only allows a single WHEN
+                int i = 1;
+                var whens = search.GetChildren<WhenSearch>();
+                while (i < whens.Count)
                 {
-                    if (i > 0) 
-                    {
-                        DiagnosticUtils.AddError(whenSearch, "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
-                    }
+                    var whenSearch = whens[i];
+                    DiagnosticUtils.AddError(whenSearch, "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
                     i++;
                 }
-      
             }
+
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
             if (tableToSearch != null)
             {
