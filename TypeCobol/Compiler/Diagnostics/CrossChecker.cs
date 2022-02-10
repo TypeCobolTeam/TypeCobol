@@ -532,8 +532,20 @@ namespace TypeCobol.Compiler.Diagnostics
             CheckEndProgram(program);
             
             FormalizedCommentsChecker.CheckProgramComments(program);
+          
             return true;
         }
+
+        public override bool Visit(ConfigurationSection configurationSection)
+        {
+            Program program = configurationSection.GetProgramNode();
+            if (program != null && program.IsNested)
+            {
+                DiagnosticUtils.AddError(configurationSection, "A Nested Program cannot have a CONFIGURATION SECTION.");
+            }
+            return true;
+        }
+
 
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {
