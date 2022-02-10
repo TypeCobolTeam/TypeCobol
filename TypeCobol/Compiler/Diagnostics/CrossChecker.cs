@@ -547,8 +547,20 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(program, "A Root Program cannot have a COMMON attribute.");
             }
             FormalizedCommentsChecker.CheckProgramComments(program);
+          
             return true;
         }
+
+        public override bool Visit(ConfigurationSection configurationSection)
+        {
+            Program program = configurationSection.GetProgramNode();
+            if (program != null && program.IsNested)
+            {
+                DiagnosticUtils.AddError(configurationSection, "A Nested Program cannot have a CONFIGURATION SECTION.");
+            }
+            return true;
+        }
+
 
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {
