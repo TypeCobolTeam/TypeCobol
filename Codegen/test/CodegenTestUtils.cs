@@ -30,7 +30,7 @@ namespace TypeCobol.Codegen {
 #endif
         )
         {
-            var options = new TypeCobolOptions();
+            var options = new TypeCobolOptions() { OptimizeWhitespaceScanning = false };
 #if EUROINFO_RULES
             if (cpyCopyNamesMapFilePath != null) options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesMapFilePath);
 #endif
@@ -90,7 +90,7 @@ namespace TypeCobol.Codegen {
         /// <remarks>CpyCopyNameMap option is not supported yet in this method</remarks>
         public static void ParseGenerateCompareWithLineMapping(string path, string typeCobolVersion = null, IList<string> copies = null)
         {
-            var options = new TypeCobolOptions();
+            var options = new TypeCobolOptions() { OptimizeWhitespaceScanning = false };
             ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, new MemoryStream());
         }
 

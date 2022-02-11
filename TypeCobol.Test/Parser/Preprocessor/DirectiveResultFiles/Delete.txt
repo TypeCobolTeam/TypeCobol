@@ -1,23 +1,22 @@
-﻿-- Line 1 --
-*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}) ***
+-- Line 1 --
+*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}) ***
 
 -- Line 2 --
-*** DIRECTIVE DELETE 2->2 ([4,9:DELETE]<DELETE_CD>[10,10: ]<SpaceSeparator>[11,17:0000002]<IntegerLiteral>{2}) ***
+*** DIRECTIVE DELETE 2->2 ([4,9:DELETE]<DELETE_CD>[11,17:0000002]<IntegerLiteral>{2}) ***
 
 -- Line 3 --
-*** DIRECTIVE DELETE 3->3 ([8,13:DELETE]<DELETE_CD>[14,14: ]<SpaceSeparator>[15,21:0000003]<IntegerLiteral>{3}) ***
+*** DIRECTIVE DELETE 3->3 ([8,13:DELETE]<DELETE_CD>[15,21:0000003]<IntegerLiteral>{3}) ***
 
 -- Line 4 --
-*** DIRECTIVE DELETE 1->1 2->2 3->3 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}[14,15:, ]<CommaSeparator>[16,21:000002]<IntegerLiteral>{2}[22,23:, ]<CommaSeparator>[24,29:000003]<IntegerLiteral>{3}) ***
+*** DIRECTIVE DELETE 1->1 2->2 3->3 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}[14,15:, ]<CommaSeparator>[16,21:000002]<IntegerLiteral>{2}[22,23:, ]<CommaSeparator>[24,29:000003]<IntegerLiteral>{3}) ***
 
 -- Line 5 --
-*** DIRECTIVE DELETE 1->10 100->200 1000->1000 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}[14,20:-000010]<IntegerLiteral>{-10}[21,22:, ]<CommaSeparator>[23,28:000100]<IntegerLiteral>{100}[29,35:-000200]<IntegerLiteral>{-200}[36,37:, ]<CommaSeparator>[38,43:001000]<IntegerLiteral>{1000}) ***
+*** DIRECTIVE DELETE 1->10 100->200 1000->1000 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}[14,20:-000010]<IntegerLiteral>{-10}[21,22:, ]<CommaSeparator>[23,28:000100]<IntegerLiteral>{100}[29,35:-000200]<IntegerLiteral>{-200}[36,37:, ]<CommaSeparator>[38,43:001000]<IntegerLiteral>{1000}) ***
 
 -- Line 6 --
 
 -- Line 7 --
 [8,13:DELETE]<DELETE>
-[14,14: ]<SpaceSeparator>
 [15,18:FILE]<FILE>
 
 -- Line 8 --
@@ -26,27 +25,27 @@
 [1,6:DELETE]<DELETE>
 
 -- Line 10 --
-*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}) ***
+*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}) ***
 [14,14+:,]<CommaSeparator>
 
 -- Line 11 --
-*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}) ***
+*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}) ***
 [14,14+:-]<MinusOperator>
 
 -- Line 12 --
-*** DIRECTIVE DELETE 1->1 2->2 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}[14,14: ]<SpaceSeparator>[15,20:000002]<IntegerLiteral>{2}) ***
+*** DIRECTIVE DELETE 1->1 2->2 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}[15,20:000002]<IntegerLiteral>{2}) ***
 
 -- Line 13 --
-*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}) ***
+*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}) ***
 [14,14:-]<MinusOperator>
 [15,15:,]<CommaSeparator>
 [16,21:000002]<IntegerLiteral>{2}
 
 -- Line 14 --
-*** DIRECTIVE DELETE ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,14:-000002]<IntegerLiteral>{-2}) ***
+*** DIRECTIVE DELETE ([1,6:DELETE]<DELETE_CD>[8,14:-000002]<IntegerLiteral>{-2}) ***
 
 -- Line 15 --
 
 -- Line 16 --
-*** DIRECTIVE DELETE 1->1 2->2 3->3 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}[14,14:,]<CommaSeparator>[15,20:000002]<IntegerLiteral>{2}[21,21:,]<CommaSeparator>[22,27:000003]<IntegerLiteral>{3}) ***
+*** DIRECTIVE DELETE 1->1 2->2 3->3 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}[14,14:,]<CommaSeparator>[15,20:000002]<IntegerLiteral>{2}[21,21:,]<CommaSeparator>[22,27:000003]<IntegerLiteral>{3}) ***
 

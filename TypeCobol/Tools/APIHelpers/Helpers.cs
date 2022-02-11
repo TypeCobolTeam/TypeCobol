@@ -22,9 +22,14 @@ namespace TypeCobol.Tools.APIHelpers
         public static string[] DEFAULT_EXTENSIONS = { ".cbl", ".cpy", ".copy"};
         public static string[] DEFAULT_COPY_EXTENSIONS = {".cpy", ".copy"};
 
-        public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent, bool optimizeWhitespaceScanning = true)
         {
             var parser = new Parser();
+            var options = new TypeCobolOptions()
+                          {
+                              ExecToStep = ExecutionStep.CrossCheck,
+                              OptimizeWhitespaceScanning = optimizeWhitespaceScanning
+                          };
             var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             var instrincicFiles = new List<string>();
 
@@ -34,7 +39,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, false, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, false, options, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     var diagnostics = parser.Results.AllDiagnostics();
@@ -82,11 +87,17 @@ namespace TypeCobol.Tools.APIHelpers
         /// </summary>
         /// <param name="path">Path of the dependency to parse</param>
         /// <param name="config">Current configuration</param>
+        /// <param name="optimizeWhitespaceScanning">Controls the SpaceSeparator token creation during scanning.
+        /// Must be set to False when this method is used with Codegen.</param>
         /// <param name="customSymbols">Intrinsic or Namespace SymbolTable</param>
-        /// <returns></returns>
-        private static CompilationUnit ParseDependency(string path, [NotNull] TypeCobolConfiguration config, SymbolTable customSymbols)
+        /// <returns>CompilationUnit instance</returns>
+        private static CompilationUnit ParseDependency(string path, [NotNull] TypeCobolConfiguration config, bool optimizeWhitespaceScanning, SymbolTable customSymbols)
         {
-            var options = new TypeCobolOptions(config) { ExecToStep = ExecutionStep.SemanticCheck };
+            var options = new TypeCobolOptions(config)
+                          {
+                              ExecToStep = ExecutionStep.SemanticCheck,
+                              OptimizeWhitespaceScanning = optimizeWhitespaceScanning
+                          };
             var parser = new Parser(customSymbols);
 
             parser.Init(path, false, options, config.Format, config.CopyFolders);
@@ -95,7 +106,7 @@ namespace TypeCobol.Tools.APIHelpers
             return parser.Results;
         }
 
-        public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable)
         {
             // For all paths given in preferences
             foreach (var path in config.Dependencies)
@@ -104,7 +115,7 @@ namespace TypeCobol.Tools.APIHelpers
                 foreach (string dependency in Tools.FileSystem.GetFiles(path, _DependenciesExtensions, true))
                 {
                     // For each missing copy found in dependency file
-                    foreach (var missingCopy in ParseDependency(dependency, config, intrinsicTable).MissingCopies)
+                    foreach (var missingCopy in ParseDependency(dependency, config, true, intrinsicTable).MissingCopies)
                     {
                         yield return missingCopy;
                     }
@@ -116,7 +127,8 @@ namespace TypeCobol.Tools.APIHelpers
             out List<RemarksDirective.TextNameVariation> usedCopies,
             //Key : path of the dependency
             //Copy name not found
-            out IDictionary<string, IEnumerable<string>> missingCopies)
+            out IDictionary<string, IEnumerable<string>> missingCopies,
+            bool optimizeWhitespaceScanning = true)
         {
             usedCopies = new List<RemarksDirective.TextNameVariation>();
             missingCopies = new Dictionary<string, IEnumerable<string>>();
@@ -180,7 +192,7 @@ namespace TypeCobol.Tools.APIHelpers
 #endif
                 try
                 {
-                    CompilationUnit parsingResult = ParseDependency(path, config, table);
+                    CompilationUnit parsingResult = ParseDependency(path, config, optimizeWhitespaceScanning, table);
 
                     //Report diagnostics
                     var diagnostics = parsingResult.AllDiagnostics();

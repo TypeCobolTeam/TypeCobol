@@ -25,14 +25,12 @@
 -- Line 8 --
 
 -- Line 9 --
-[8,10:   ]<SpaceSeparator>
 *** DIRECTIVE CBL|DATA=31 ([11,72:CBL DATA(31)                                                  ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 10 --
 [8,72:-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  ]<CommentLine>
 
 -- Line 11 --
-[8,9:  ]<SpaceSeparator>
 *** DIRECTIVE CBL|OFFSET ([10,72:CBL OFFSET                                                     ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 12 --
@@ -60,7 +58,6 @@
 [8,72:-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  ]<CommentLine>
 
 -- Line 20 --
-[8,8: ]<SpaceSeparator>
 *** DIRECTIVE CBL|OPT=FULL ([9,72:CBL OPT(FULL)                                                   ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 21 --
@@ -77,7 +74,6 @@
 
 -- Line 25 --
 [8,21:IDENTIFICATION]<IDENTIFICATION>
-[22,22: ]<SpaceSeparator>
 [23,30:DIVISION]<DIVISION>
 [31,32:. ]<PeriodSeparator>
 
@@ -85,12 +81,9 @@
 [8,72:-Reason  : AMEELIORATION PROCESS ACTIMAT                         ]<CommentLine>
 
 -- Line 27 --
-[8,16:         ]<SpaceSeparator>
 [17,23:PERFORM]<PERFORM>
-[24,24: ]<SpaceSeparator>
 [25,49:PROCESSUS-INDEXATION-IMMO]<UserDefinedWord>
 [50,51:. ]<PeriodSeparator>
-[52,72:                     ]<SpaceSeparator>
 
 -- Line 28 --
 [8,72:*** PROCESSUS DE MENAGE                                          ]<CommentLine>

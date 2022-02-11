@@ -671,7 +671,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan an isolated token in the given context.
         /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, out Diagnostic error)
+        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, TypeCobolOptions scanOptions, out Diagnostic error)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext);
@@ -679,7 +679,7 @@ namespace TypeCobol.Compiler.Scanner
             Token candidateToken;
             if (tokenText.Length > 0)
             {
-                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
+                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, scanOptions, false);
                 candidateToken = tempScanner.GetNextToken();
             }
             else
@@ -1522,7 +1522,15 @@ namespace TypeCobol.Compiler.Scanner
             // consume all whitespace chars available
             for (; currentIndex <= lastIndex && line[currentIndex] == ' '; currentIndex++) { }
             int endIndex = currentIndex - 1;
-            return new Token(TokenType.SpaceSeparator, startIndex, endIndex, tokensLine);
+
+            if (tokensLine.ScanState.InsidePseudoText || !compilerOptions.OptimizeWhitespaceScanning)
+            {
+                // SpaceSeparator has to be created
+                return new Token(TokenType.SpaceSeparator, startIndex, endIndex, tokensLine);
+            }
+
+            // jump to next token
+            return GetNextToken();
         }
 
         private Token ScanOneChar(int startIndex, TokenType tokenType)
