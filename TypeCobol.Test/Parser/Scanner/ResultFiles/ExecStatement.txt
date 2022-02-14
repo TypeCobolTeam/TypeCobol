@@ -1,46 +1,32 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,4:EXEC]<EXEC>
-[5,5: ]<SpaceSeparator>
 [6,8:SQL]<ExecTranslatorName>
-[9,9: ]<SpaceSeparator>
 [10,21:DELETE Table]<ExecStatementText>
-[22,22: ]<SpaceSeparator>
 [23,30:END-EXEC]<END_EXEC>
 [31,31+:.]<PeriodSeparator>
 
 -- Line 2 --
 [1,4:EXEC]<EXEC>
-[5,5: ]<SpaceSeparator>
 [6,8:SQL]<ExecTranslatorName>
-[9,9: ]<SpaceSeparator>
 [10,16:INCLUDE]<EXEC_SQL>
-[17,17: ]<SpaceSeparator>
 [18,24:YCPP324]<UserDefinedWord>
-[25,25: ]<SpaceSeparator>
 [26,34:REPLACING]<REPLACING>
 
 -- Line 3 --
 [1,4:EXEC]<EXEC>
-[5,5: ]<SpaceSeparator>
 [6,9:EXEC]<ExecTranslatorName>
-[10,10: ]<SpaceSeparator>
 [11,26:EXEC SQL SQL SQL]<ExecStatementText>
-[27,27: ]<SpaceSeparator>
 [28,35:END-EXEC]<END_EXEC>
-[36,36: ]<SpaceSeparator>
 [37,44:END-EXEC]<END_EXEC>
-[45,45: ]<SpaceSeparator>
 [46,53:END-EXEC]<END_EXEC>
 
 -- Line 4 --
 [1,4:EXEC]<EXEC>
 
 -- Line 5 --
-[1,3:   ]<SpaceSeparator>
 [4,6:SQL]<ExecTranslatorName>
 
 -- Line 6 --
-[1,2:  ]<SpaceSeparator>
 [3,23:tout un tas de blabla]<ExecStatementText>
 
 -- Line 7 --
@@ -49,23 +35,18 @@
 -- Line 8 --
 [1,16:   c'est la fin.]<ExecStatementText>
 [17,24:END-EXEC]<END_EXEC>
-[25,25: ]<SpaceSeparator>
 [26,28:ici]<UserDefinedWord>
 [29,29+:.]<PeriodSeparator>
 
 -- Line 9 --
-[1,1: ]<SpaceSeparator>
 [2,5:EXEC]<EXEC>
 
 -- Line 10 --
-[1,1: ]<SpaceSeparator>
 [2,4:SQL]<ExecTranslatorName>
 
 -- Line 11 --
 [1,7:INCLUDE]<EXEC_SQL>
-[8,8: ]<SpaceSeparator>
 [9,15:YPPRCGF]<UserDefinedWord>
-[16,16: ]<SpaceSeparator>
 
 -- Line 12 --
 [1,8:END-EXEC]<END_EXEC>
@@ -73,26 +54,19 @@
 
 -- Line 13 --
 [1,4:EXEC]<EXEC>
-[5,5: ]<SpaceSeparator>
 [6,11:SQLIMS]<ExecTranslatorName>
-[12,12: ]<SpaceSeparator>
 [13,19:INCLUDE]<EXEC_SQL>
-[20,20: ]<SpaceSeparator>
 [21,25:TOTO2]<UserDefinedWord>
-[26,26: ]<SpaceSeparator>
 [27,34:END-EXEC]<END_EXEC>
 
 -- Line 14 --
 [1,4:ExeC]<EXEC>
-[5,5: ]<SpaceSeparator>
 [6,8:Sql]<ExecTranslatorName>
 
 -- Line 15 --
 [1,7:include]<EXEC_SQL>
-[8,8: ]<SpaceSeparator>
 [9,21:copytoinclude]<UserDefinedWord>
 
 -- Line 16 --
 [1,8:eND-Exec]<END_EXEC>
-[9,9: ]<SpaceSeparator>
 

@@ -1,70 +1,44 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,4:MOVE]<MOVE>
-[5,5: ]<SpaceSeparator>
 [6,9:toto]<UserDefinedWord>
-[10,10: ]<SpaceSeparator>
 [11,12:TO]<TO>
-[13,13: ]<SpaceSeparator>
 [14,17:titi]<UserDefinedWord>
-[18,18: ]<SpaceSeparator>
 [19,25:DISPLAY]<DISPLAY>
-[26,26: ]<SpaceSeparator>
 [27,30:tata]<UserDefinedWord>
-[31,31: ]<SpaceSeparator>
 [32,34:ADD]<ADD>
-[35,35: ]<SpaceSeparator>
 [36,39:tete]<UserDefinedWord>
-[40,40: ]<SpaceSeparator>
 [41,42:TO]<TO>
-[43,43: ]<SpaceSeparator>
 [44,47:tutu]<UserDefinedWord>
 
 -- Line 2 --
 [1,8:SYMBOLIC]<SYMBOLIC>
-[9,9: ]<SpaceSeparator>
 [10,13:toto]<SymbolicCharacter>
-[14,14: ]<SpaceSeparator>
 [15,18:titi]<SymbolicCharacter>
-[19,19: ]<SpaceSeparator>
 [20,21:10]<IntegerLiteral>{10}
-[22,22: ]<SpaceSeparator>
 [23,24:20]<IntegerLiteral>{20}
 
 -- Line 3 --
 [1,8:SYMBOLIC]<SYMBOLIC>
-[9,9: ]<SpaceSeparator>
 [10,19:CHARACTERS]<CHARACTERS>
-[20,20: ]<SpaceSeparator>
 [21,24:tete]<SymbolicCharacter>
-[25,25: ]<SpaceSeparator>
 [26,27:IS]<IS>
-[28,28: ]<SpaceSeparator>
 [29,30:30]<IntegerLiteral>{30}
 
 -- Line 4 --
 [1,4:tutu]<SymbolicCharacter>
-[5,5: ]<SpaceSeparator>
 [6,8:ARE]<ARE>
-[9,9: ]<SpaceSeparator>
 [10,11:40]<IntegerLiteral>{40}
-[12,12: ]<SpaceSeparator>
 [13,14:IN]<IN>
-[15,15: ]<SpaceSeparator>
 [16,27:alphabetName]<UserDefinedWord>
 
 -- Line 5 --
 [1,7:DISPLAY]<DISPLAY>
-[8,8: ]<SpaceSeparator>
 [9,12:toto]<SymbolicCharacter>
-[13,13: ]<SpaceSeparator>
 [14,17:titi]<SymbolicCharacter>
 
 -- Line 6 --
 [1,4:tata]<UserDefinedWord>
-[5,5: ]<SpaceSeparator>
 [6,9:tutu]<SymbolicCharacter>
-[10,10: ]<SpaceSeparator>
 [11,14:tyty]<UserDefinedWord>
-[15,15: ]<SpaceSeparator>
 [16,19:tete]<SymbolicCharacter>
 

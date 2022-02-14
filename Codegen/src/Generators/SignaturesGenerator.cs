@@ -85,7 +85,7 @@ namespace TypeCobol.Codegen.Generators
                 {
                     if (textLine is TextLineSnapshot)
                     {
-                        var test = CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat);
+                        var test = CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat, CompilationUnit.CompilerOptions);
                         Destination.AppendLine(test.First().Text);
                     }
                     else
