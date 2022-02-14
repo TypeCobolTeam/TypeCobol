@@ -1121,7 +1121,9 @@ rewriteStatementConditional ::=
 	;
 
 searchStatementWithBody ::=
-		SearchStatement:stmt whenSearchConditionClauses:wsccs
+		searchStatement:stmt SearchStatementEnd:end
+		{:  :}
+	|	SearchStatement:stmt whenSearchConditionClauses:wsccs
 		{:  :}
 	|	SearchStatement:stmt whenSearchConditionClauses:wsccs SearchStatementEnd:send
 		{:  :}

@@ -254,6 +254,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
+            if (search.GetChildren<WhenSearch>().Count == 0)
+            {
+                DiagnosticUtils.AddError(search, "Search statement must have at least one when element.");
+            }
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
             if (tableToSearch != null)
             {
