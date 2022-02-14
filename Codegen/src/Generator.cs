@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Analytics;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
@@ -122,10 +120,10 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Document"> The compilation document </param>
+        /// <param name="document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
-        /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public Generator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
+        /// <param name="typeCobolVersion">Current version of TypeCobol parser/codegen</param>
+        public Generator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, string typeCobolVersion)
         {
             this.CompilationResults = document;
             this.TypeCobolVersion = typeCobolVersion;
@@ -135,7 +133,9 @@ namespace TypeCobol.Codegen
             if (!string.IsNullOrEmpty(TypeCobolVersion))
                 Destination.AppendLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
-            Actions = new GeneratorActions(this, skeletons, document, skeletons != null ? null : new TypeCobol.Codegen.Actions.Skeletons());
+            //Use pre-generated skeletons as the ActionsProvider.
+            IActionsProvider actionsProvider = new Actions.Skeletons();
+            Actions = new GeneratorActions(this, document, actionsProvider);
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
             //To Store Cloned Nodes by the Clone Action.
@@ -269,7 +269,6 @@ namespace TypeCobol.Codegen
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                AnalyticsWrapper.Telemetry.TrackEvent(EventType.Generation, "Diagnostics Detected", LogType.Genration);
                 throw new GenerationException("Unable to generate because of error diagnostics", compilationUnit.TextSourceInfo.Name, null, false, false);
             }
 

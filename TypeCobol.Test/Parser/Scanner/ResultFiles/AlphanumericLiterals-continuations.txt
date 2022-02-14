@@ -21,16 +21,16 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,16:"toto  ""and titi3"]<AlphanumericLiteral>(",Y,Y){toto  "and titi3}
 [17,17+:.]<PeriodSeparator>
-Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previous line ended with a delimiter " in the last column,  this continuation line must start with two delimiters ""
+Line 0[5,6] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters "" only if the alphanumeric literal on the previous line ended with a delimiter " at the last column
 
 -- Line 7 --
 [1,8:"toto  "]<AlphanumericLiteral>(",Y,Y){toto  }
-[9,9: ]<SpaceSeparator>
 
 -- Line 8 --
 [2,5:    ]<SpaceSeparator>
 [6,17:"and titi3b"]<AlphanumericLiteral>(",Y,Y){and titi3b}
 [18,18+:.]<PeriodSeparator>
+Line 0[5,6] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters "" only if the alphanumeric literal on the previous line ended with a delimiter " at the last column
 
 -- Line 9 --
 =>continued:[1,7:"toto  and titi4"]<AlphanumericLiteral>(",Y,Y){toto  and titi4}
@@ -79,11 +79,11 @@ Line 0[5,6] <21, Error, Tokens> - The delimiter character of this continuation l
 
 -- Line 20 --
 [1,6:'toto']<AlphanumericLiteral>(',Y,Y){toto}
-[7,8:  ]<SpaceSeparator>
 
 -- Line 21 --
 [2,5:    ]<SpaceSeparator>
 [6,17+:'and titi10']<AlphanumericLiteral>(',Y,Y){and titi10}
+Line 0[5,6] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters '' only if the alphanumeric literal on the previous line ended with a delimiter ' at the last column
 
 -- Line 22 --
 =>continued:[1,6:'toto''and titi11']<AlphanumericLiteral>(',Y,Y){toto'and titi11}
@@ -91,8 +91,7 @@ Line 0[5,6] <21, Error, Tokens> - The delimiter character of this continuation l
 -- Line 23 --
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,17:'toto''and titi11']<AlphanumericLiteral>(',Y,Y){toto'and titi11}
-[18,18: ]<SpaceSeparator>
-Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previous line ended with a delimiter ' in the last column,  this continuation line must start with two delimiters ''
+Line 0[5,6] <22, Error, Tokens> - The alphanumeric literal was not properly continued. This continuation line can start with two delimiters '' only if the alphanumeric literal on the previous line ended with a delimiter ' at the last column
 
 -- Line 24 --
 =>continued:[1,6:'toto''and titi11b']<AlphanumericLiteral>(',Y,Y){toto'and titi11b}
@@ -100,7 +99,6 @@ Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previo
 -- Line 25 --
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,19:'toto''and titi11b']<AlphanumericLiteral>(',Y,Y){toto'and titi11b}
-[20,20: ]<SpaceSeparator>
 
 -- Line 26 --
 [1,6:'toto']<AlphanumericLiteral>(',Y,Y){toto}
@@ -115,11 +113,9 @@ Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previo
 -- Line 29 --
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,18:'toto  "and titi11d']<AlphanumericLiteral>(',Y,Y){toto  "and titi11d}
-[19,19: ]<SpaceSeparator>
 Line 0[5,6] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
 
 -- Line 30 --
-[1,1: ]<SpaceSeparator>
 =>continued:[2,9+:N"toto  and titi12"]<NationalLiteral>(",Y,Y){toto  and titi12}
 
 -- Line 31 --
@@ -184,7 +180,6 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 
 -- Line 44 --
 =>continuation:[2,2:==]<PseudoTextDelimiter>
-[3,3: ]<SpaceSeparator>
 =>continued:[4,4:==]<PseudoTextDelimiter>
 Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
@@ -206,9 +201,7 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 [2,9:Issue 60]<CommentLine>
 
 -- Line 49 --
-[1,17:                 ]<SpaceSeparator>
 [18,21:MOVE]<MOVE>
-[22,22: ]<SpaceSeparator>
 =>continued:[23,66:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 ']<AlphanumericLiteral>(',Y,Y){Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 }
 
 -- Line 50 --
@@ -218,12 +211,8 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 -- Line 51 --
 [2,16:               ]<SpaceSeparator>
 =>continuation:[17,64:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 ']<AlphanumericLiteral>(',Y,Y){Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 }
-[65,66:  ]<SpaceSeparator>
 
 -- Line 52 --
-[1,42:                                          ]<SpaceSeparator>
 [43,44:TO]<TO>
-[45,46:  ]<SpaceSeparator>
 [47,55:SOMEWHERE]<UserDefinedWord>
-[56,66:           ]<SpaceSeparator>
 

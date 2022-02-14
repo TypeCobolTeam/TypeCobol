@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using JetBrains.Annotations;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
@@ -13,33 +13,27 @@ namespace TypeCobol.Compiler
     /// <summary>
     /// Collection of linked Cobol files grouped to be compiled together
     /// </summary>
-    public class CompilationProject : IProcessedTokensDocumentProvider
+    public class CompilationProject : IDocumentImporter
     {
         // -- Project creation and persistence --
 
         /// <summary>
         /// Create a new Cobol compilation project in a local directory
         /// </summary>
-        public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions) : this(projectName, rootDirectory, fileExtensions, documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, compilationOptions)
-        {
-            
-        }
-        /// <summary>
-        /// Create a new Cobol compilation project in a local directory
-        /// </summary>
-        public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength, ColumnsLayout columnsLayout, TypeCobolOptions compilationOptions)
+        public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
         {
             Name = projectName;
             RootDirectory = rootDirectory;
             SourceFileProvider = new SourceFileProvider();
-            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength);
 
-            Encoding = encoding;
-            EndOfLineDelimiter = endOfLineDelimiter;
-            FixedLineLength = fixedLineLength;
-            ColumnsLayout = columnsLayout;
+            Encoding = documentFormat.Encoding;
+            EndOfLineDelimiter = documentFormat.EndOfLineDelimiter;
+            FixedLineLength = documentFormat.FixedLineLength;
+            ColumnsLayout = documentFormat.ColumnsLayout;
             CompilationOptions = compilationOptions;
+            AnalyzerProvider = analyzerProvider;
 
+            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, Encoding, EndOfLineDelimiter, FixedLineLength);
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
@@ -90,6 +84,7 @@ namespace TypeCobol.Compiler
         public int FixedLineLength { get; private set; }
         public ColumnsLayout ColumnsLayout { get; private set; }
         public TypeCobolOptions CompilationOptions { get; private set; }
+        public IAnalyzerProvider AnalyzerProvider { get; private set; }
 
         // -- Files manipulation --
 
@@ -182,26 +177,17 @@ namespace TypeCobol.Compiler
             importedCompilationDocumentsCache.Clear();
         }
 
-
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, out PerfStatsForImportedDocument perfStats)
-        {
-            return GetProcessedTokensDocument(libraryName, textName, null, null, out perfStats);
-        }
-
         /// <summary>
-        /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
+        /// Returns a CompilationDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, [NotNull] string textName,
-            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
+        public virtual CompilationDocument Import(string libraryName, string textName,
+            MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
-            if (scanState != null)
-            {
-                cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
-                            (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
-                // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
-                // because a COPY is always cleanly delimited at CodeElement boundaries.
-            }
+            cacheKey += (scanState.SpecialNames.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
+                        (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
+            // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
+            // because a COPY is always cleanly delimited at CodeElement boundaries.
 
             perfStats = new PerfStatsForImportedDocument();
             CompilationDocument resultDocument;
@@ -216,8 +202,12 @@ namespace TypeCobol.Compiler
                 if (copyTextNameVariations != null)
                     copyTextNameVariations.Add(new RemarksDirective.TextNameVariation(textName));
 #endif
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true, scanState, this, copyTextNameVariations);
+                bool wasAlreadyInsideCopy = scanState.InsideCopy;
+                scanState.InsideCopy = true;
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this, copyTextNameVariations);
                 fileCompiler.CompileOnce();
+                scanState.InsideCopy = wasAlreadyInsideCopy;
+
                 resultDocument = fileCompiler.CompilationResultsForCopy;
                 perfStats.WasRetrievedFromCache = false;
                 perfStats.SourceFileSearchTime = fileCompiler.SourceFileSearchTime;
@@ -225,7 +215,8 @@ namespace TypeCobol.Compiler
 
                 importedCompilationDocumentsCache[cacheKey] = resultDocument;
             }
-            return resultDocument.ProcessedTokensDocumentSnapshot;
+
+            return resultDocument;
         }
     }
 }

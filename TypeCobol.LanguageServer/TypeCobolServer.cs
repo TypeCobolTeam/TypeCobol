@@ -16,6 +16,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
+using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
 {
@@ -44,7 +45,7 @@ namespace TypeCobol.LanguageServer
         public bool NoLogsMessageNotification { get; set; }
 
         /// <summary>
-        /// Lsr testing level (Source, Scan, Preprocess, Parse, Check)
+        /// Lsr testing level (Source, Scan, Preprocess, Parse, Check, CodeAnalysis)
         /// </summary>
         public LsrTestingOptions LsrTestingLevel { get; set; }
 
@@ -63,20 +64,43 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Cpy Copy names file
+        /// </summary>
+        public string CpyCopyNamesMapFilePath { get; set; }
+#endif
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
         /// </summary>
         public bool TimerDisabledOption { get; set; }
 
+        /// <summary>
+        /// Extension manager
+        /// </summary>
+        internal ExtensionManager ExtensionManager { get; set; }
+
+        /// <summary>
+        /// No Copy and Dependency files watchers.
+        /// </summary>
+        public bool NoCopyDependencyWatchers { get; set; }
+
         private bool Logger(string message, Uri uri)
         {
-            var uriLogMessageParams = new UriLogMessageParams()
+            if (uri == null)
             {
-                type = MessageType.Log,
-                message = message,
-                textDocument = new TextDocumentIdentifier(uri.ToString())
-            };
-            this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
+                RemoteConsole.Log(message);
+            }
+            else
+            {
+                var uriLogMessageParams = new UriLogMessageParams()
+                {
+                    type = MessageType.Log,
+                    message = message,
+                    textDocument = new TextDocumentIdentifier(uri.ToString())
+                };
+                this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
+            }
             return true;
         }
 
@@ -141,6 +165,33 @@ namespace TypeCobol.LanguageServer
             this.NotifyWarning(message);
         }
 
+        protected void MissingCopiesDetected(TextDocumentIdentifier textDocument, List<string> copiesName)
+        {
+            if (copiesName.Count > 0)
+            {
+                var missingCopiesParam = new MissingCopiesParams();
+                missingCopiesParam.textDocument = textDocument;
+
+#if EUROINFO_RULES
+                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
+                //----------------------------------------------------------
+                // We need to review this mechanism with RTC.
+                // Because actually it produces bad results and it will
+                // be clarified with RTC specifications. (see TFS 117645)
+                //----------------------------------------------------------
+                //missingCopiesParam.Copies = lookup[false].ToList();
+                //missingCopiesParam.CpyCopies = lookup[true].ToList();
+                //----------------------------------------------------------
+                missingCopiesParam.Copies = copiesName;
+                missingCopiesParam.CpyCopies = new List<string>();
+#else
+                missingCopiesParam.Copies = copiesName;
+                missingCopiesParam.CpyCopies = new List<string>();
+#endif
+                this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            }
+        }
+
         /// <summary>
         /// Event Method triggered when missing copies are detected.
         /// </summary>
@@ -152,10 +203,7 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            var missingCopiesParam = new MissingCopiesParams();
-            missingCopiesParam.Copies = missingCopiesEvent.Copies;
-            missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
-            this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            MissingCopiesDetected(new TextDocumentIdentifier(fileUri.ToString()), missingCopiesEvent.Copies);
         }
 
         /// <summary>
@@ -170,7 +218,7 @@ namespace TypeCobol.LanguageServer
 
             foreach (var diag in diagnosticEvent.Diagnostics)
             {
-                diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd),
+                diagList.Add(new Diagnostic(new Range(diag.LineStart, diag.ColumnStart, diag.LineEnd, diag.ColumnEnd),
                     diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(),
                     diag.Info.ReferenceText));
             }
@@ -189,18 +237,18 @@ namespace TypeCobol.LanguageServer
             get
             {
                 //TypeCobol version
-                return new Tuple<string, object>[] { new Tuple<string, object>("version", AnalyticsWrapper.Telemetry.TypeCobolVersion) };
+                return new Tuple<string, object>[] { new Tuple<string, object>("version", Parser.Version) };
             }
         }
 
-        protected DocumentContext GetDocumentContextFromStringUri(string uri, bool acceptNodeRefresh = true)
+        protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var context))
             {
-                // Get compilation info for the current file
-                if (acceptNodeRefresh)
-                    this.Workspace.RefreshSyntaxTree(context.FileCompiler); //Do a Node Refresh
+                System.Diagnostics.Debug.Assert(context.FileCompiler != null);
+                //Refresh context
+                this.Workspace.RefreshSyntaxTree(context.FileCompiler, refreshLevel);
                 return context;
             }
 
@@ -220,7 +268,11 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace.
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
-
+            if (!NoCopyDependencyWatchers)
+                this.Workspace.InitCopyDependencyWatchers();
+#if EUROINFO_RULES
+            this.Workspace.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+#endif
             // Propagate LSR testing options.
             this.Workspace.LsrTestOptions = LsrTestingLevel;
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
@@ -233,6 +285,8 @@ namespace TypeCobol.LanguageServer
             this.Workspace.ExceptionTriggered += ExceptionTriggered;
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
+            this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
+            this.Workspace.LoadCustomAnalyzers(ExtensionManager);
 
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
@@ -250,23 +304,30 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnShutdown()
         {
+            this.Workspace.LoadingIssueEvent -= LoadingIssueDetected;
+            this.Workspace.ExceptionTriggered -= ExceptionTriggered;
+            this.Workspace.WarningTrigger -= WarningTrigger;
             this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
             this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
             base.OnShutdown();
         }
 
+        protected virtual void OnDidChangeConfiguration(string[] arguments)
+        {
+            this.Workspace.DidChangeConfigurationParams(arguments);
+        }
         protected override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
         {
-            if (parameters.settings is Newtonsoft.Json.Linq.JArray)
+            if (parameters.settings is Newtonsoft.Json.Linq.JArray array)
             {
-                Newtonsoft.Json.Linq.JArray array = parameters.settings as Newtonsoft.Json.Linq.JArray;
-                IEnumerable<string> arguments = array.Select(t => t.ToString());
-                this.Workspace.DidChangeConfigurationParams(arguments);
+                IEnumerable<string> argsEnum = array.Select(t => t.ToString());
+                string[] arguments = argsEnum.ToArray<string>();
+                OnDidChangeConfiguration(arguments);
             }
             else
             {
-                this.Workspace.DidChangeConfigurationParams(parameters.settings.ToString());
+                OnDidChangeConfiguration(parameters.settings.ToString().Split(' '));
             }
         }
 
@@ -275,9 +336,6 @@ namespace TypeCobol.LanguageServer
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
             if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocumentContext(docContext.Uri, out _))
             {
-                //Subscribe to diagnostics event
-                this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
-
                 //Create a ILanguageServer instance for the document.
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, parameters.textDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
@@ -286,7 +344,7 @@ namespace TypeCobol.LanguageServer
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, text, this.Workspace.LsrTestOptions);
+                this.Workspace.OpenTextDocument(docContext, text);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
@@ -296,13 +354,13 @@ namespace TypeCobol.LanguageServer
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
 
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, false); //Text Change do not have to trigger node phase, it's only a another event that will do it
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only a another event that will do it
             if (docContext == null)
                 return;
 
             Uri objUri = new Uri(parameters.uri);
 
-            #region Convert text changes format from multiline range replacement to single line updates
+#region Convert text changes format from multiline range replacement to single line updates
 
             TextChangedEvent textChangedEvent = new TextChangedEvent();
             foreach (var contentChange in parameters.contentChanges)
@@ -330,7 +388,7 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        this.Workspace.OpenTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
+                        this.Workspace.OpenTextDocument(docContext, contentChange.text);
                         return;
                     }
                     catch (Exception e)
@@ -444,7 +502,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            #endregion
+#endregion
 
             // Update the source file with the computed text changes
             this.Workspace.UpdateSourceFile(objUri, textChangedEvent);
@@ -463,7 +521,6 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 this.Workspace.CloseSourceFile(objUri);
-                this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
@@ -488,7 +545,7 @@ namespace TypeCobol.LanguageServer
 
             //Commented because it's too slow
             //AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
-            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return resultHover;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -573,7 +630,7 @@ namespace TypeCobol.LanguageServer
             if (message != string.Empty)
             {
                 resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
-                    matchingCodeElement.Line,
+                    matchingCodeElement.LineEnd,
                     matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
                     new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
@@ -592,7 +649,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         protected override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -616,7 +673,6 @@ namespace TypeCobol.LanguageServer
 
                 if (lastSignificantToken != null)
                 {
-                    AnalyticsWrapper.Telemetry.TrackEvent(EventType.Completion, lastSignificantToken.TokenType.ToString(), LogType.Completion);
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
@@ -770,8 +826,7 @@ namespace TypeCobol.LanguageServer
 
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
-            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -779,11 +834,11 @@ namespace TypeCobol.LanguageServer
             if (docContext.FileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
-            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position).FirstOrDefault();
+            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position)?.FirstOrDefault();
             if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
-            var node = CompletionFactory.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
 
             //Get procedure name or qualified name
             string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);
@@ -895,8 +950,6 @@ namespace TypeCobol.LanguageServer
 
         protected override Definition OnDefinition(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Definition, "Definition event",
-                LogType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var docContext))

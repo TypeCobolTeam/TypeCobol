@@ -1,15 +1,11 @@
 ﻿using System.Linq;
-using System;
 using System.Collections.Generic;
-using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
-using Analytics;
-using Castle.Core.Internal;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -54,14 +50,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 return;
             }
 #endif
-
-            if (typedef.RestrictionLevel == RestrictionLevel.STRICT) //Manage as a STRICT TYPEDEF
-            {
-                if (typedef.IsSynchronized != null && typedef.IsSynchronized.Value == true)
-                {
-                    DiagnosticUtils.AddError(typedef, "SYNC clause cannot be used with a STRICT type definition", context.cobol2002TypedefClause());
-                }
-            }
 
             if (typedef.RestrictionLevel == RestrictionLevel.STRONG) //Manage as a STRONG TYPEDEF
             {
@@ -128,20 +116,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 foreach (var sub in typeDefinition.Children)
                 {
                     CheckForValueClause(sub, typeDefinition.Name);
-                }
-            }
-
-            // Add a warning if a parameters field is set inside the formalized comment
-            if (typeDefinition.CodeElement.FormalizedCommentDocumentation != null &&
-                !typeDefinition.CodeElement.FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
-            {
-                var token = typeDefinition.CodeElement.ConsumedTokens
-                    .FirstOrDefault(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_PARAMETERS);
-                if (token != null)
-                {
-                    DiagnosticUtils.AddError(typeDefinition.CodeElement,
-                        "Type Definition does not support Parameters field",
-                        token, code: MessageCode.Warning);
                 }
             }
 

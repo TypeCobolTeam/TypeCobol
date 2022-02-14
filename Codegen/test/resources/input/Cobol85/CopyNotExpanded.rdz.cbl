@@ -14,4 +14,4 @@
 000000     display "after copy"
 000000     .
 000000
-000000 END PROGRAM Test-UNSAFE.
+000000 END PROGRAM CopyNotExpanded.

@@ -1,0 +1,40 @@
+--- Diagnostics ---
+Line 25[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 32[17,22] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 40[16,27] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 45[14,24] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 51[14,23] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 96[10,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 107[14,23] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+Line 109[14,17] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
+
+--- Program ---
+PROGRAM: PgmTest common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MyCondition:BOOL
+  chaine:Alphanumeric
+  chaine-c:Alphanumeric
+-- FUNCTIONS ---
+  MyProc
+        in: myDate:DATE
+        in: bla:Numeric
+       out: toto:BOOL
+       out: bli:Numeric
+     inout: myBool:BOOL
+  MyProc2
+        in: myDate:DATE
+        in: bla:Numeric
+       out: toto:BOOL
+       out: bli:Numeric
+     inout: myBool:BOOL
+  procCopy
+        in: myname:Alphanumeric
+  MyProc3
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

@@ -31,7 +31,7 @@ namespace TypeCobol.Test
         {
             StringBuilder errors = new StringBuilder();
 
-            //Set to true to automaticaly replace content in ExpectedResult File
+            //Set to true to automatically replace content in ExpectedResult File
             bool autoReplace = false;
 
             if (testName == string.Empty && result == string.Empty && expectedResult == string.Empty &&
@@ -109,7 +109,8 @@ namespace TypeCobol.Test
                                 compiler.PerfStatsForPreprocessor.FirstCompilationTime +
                                 compiler.PerfStatsForCodeElementsParser.FirstCompilationTime +
                                 compiler.PerfStatsForTemporarySemantic.FirstCompilationTime +
-                                compiler.PerfStatsForProgramCrossCheck.FirstCompilationTime;
+                                compiler.PerfStatsForProgramCrossCheck.FirstCompilationTime +
+                                compiler.PerfStatsForCodeQualityCheck.FirstCompilationTime;
 
                 report.AppendLine("");
                 report.AppendLine("First compilation performance");
@@ -119,6 +120,7 @@ namespace TypeCobol.Test
                 FormatLine(compiler.PerfStatsForCodeElementsParser.FirstCompilationTime, totalTime, "code elements parser");
                 FormatLine(compiler.PerfStatsForTemporarySemantic.FirstCompilationTime, totalTime, "temporary semantic class parser");
                 FormatLine(compiler.PerfStatsForProgramCrossCheck.FirstCompilationTime, totalTime, "cross check class parser");
+                FormatLine(compiler.PerfStatsForCodeQualityCheck.FirstCompilationTime, totalTime, "quality check class parser");
 
                 report.AppendLine("Total: " + totalTime.ToString("##0.00") + " ms");
             }
@@ -134,6 +136,7 @@ namespace TypeCobol.Test
             FormatLine(stats.AverageCodeElementParserTime, stats.AverageTotalProcessingTime, "code elements parser");
             FormatLine(stats.AverateTemporarySemanticsParserTime, stats.AverageTotalProcessingTime, "temporary semantic class parser");
             FormatLine(stats.AverageCrossCheckerParserTime, stats.AverageTotalProcessingTime, "cross check class parser");
+            FormatLine(stats.AverageQualityCheckerParserTime, stats.AverageTotalProcessingTime, "quality check class parser");
 
             report.AppendLine("Total average time: " + stats.AverageTotalProcessingTime.ToString("##0.00") + " ms");
 
@@ -163,12 +166,13 @@ namespace TypeCobol.Test
             public CompilationStats()
             {
                 IterationNumber = 0;
-                AverageCodeElementParserTime = 0;
-                AverageCrossCheckerParserTime = 0;
-                AveragePreprocessorTime = 0;
-                AverageScannerTime = 0;
                 AverageTextUpdateTime = 0;
+                AverageScannerTime = 0;
+                AveragePreprocessorTime = 0;
+                AverageCodeElementParserTime = 0;
                 AverateTemporarySemanticsParserTime = 0;
+                AverageCrossCheckerParserTime = 0;
+                AverageQualityCheckerParserTime = 0;
                 AverageTotalProcessingTime = 0;
                 Line = 0;
                 TotalCodeElements = 0;
@@ -180,6 +184,7 @@ namespace TypeCobol.Test
             public float AverageCodeElementParserTime { get; set; }
             public float AverateTemporarySemanticsParserTime { get; set; }
             public float AverageCrossCheckerParserTime { get; set; }
+            public float AverageQualityCheckerParserTime { get; set; }
             public float AverageTotalProcessingTime { get; set; }
             //Number of lines in Cobol file
             public int Line { get; set; }

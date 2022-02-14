@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -19,71 +18,55 @@ namespace TypeCobol.Compiler.Preprocessor
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = processedTokensLinesVersion;
             Lines = processedTokensLines;
-            CompilerOptions = compilerOptions;
+            _compilerOptions = compilerOptions;
         }
 
-        private TypeCobolOptions CompilerOptions;
+        private readonly TypeCobolOptions _compilerOptions;
 
         /// <summary>
-        /// Informations on the source file on disk, or the buffer in memory
+        /// Information on the source file on disk, or the buffer in memory
         /// </summary>
-        public TextSourceInfo TextSourceInfo { get; private set; }
+        public TextSourceInfo TextSourceInfo { get; }
 
         /// <summary>
         /// Snapshot of the tokens document which was used to compute the current step
         /// </summary>
-        public IDocumentSnapshot<ITokensLine> PreviousStepSnapshot { get; private set; }
+        public IDocumentSnapshot<ITokensLine> PreviousStepSnapshot { get; }
 
         /// <summary>
         /// Document version identifier for the current document
         /// </summary>
-        public DocumentVersion<IProcessedTokensLine> CurrentVersion { get; private set; }
+        public DocumentVersion<IProcessedTokensLine> CurrentVersion { get; }
 
         /// <summary>
         /// Lines of the source text file viewed as lists of tokens and error messages
         /// </summary>
-        public ISearchableReadOnlyList<IProcessedTokensLine> Lines { get; private set; }
+        public ISearchableReadOnlyList<IProcessedTokensLine> Lines { get; }
 
         /// <summary>
         /// Iterator over the tokens contained in this document after
         /// - compiler directives processing
         /// - COPY directives text imports
-        /// - REPLACE directive token remplacements
+        /// - REPLACE directive token replacements
         /// </summary>
-        public ITokensLinesIterator ProcessedTokens
+        public virtual ITokensLinesIterator GetProcessedTokensIterator()
         {
-            get
-            {
-                return GetProcessedTokensIterator(TextSourceInfo, Lines,  CompilerOptions);
-            }
-        }
-
-        public IEnumerable<Token> ProcessedTokensSource
-        {
-            get
-            {
-                var tokenSource = ProcessedTokens;
-                Token token = null;
-                do
-                {
-                    token = (Token)tokenSource.NextToken();
-                    yield return token;
-                } while (token.Type != (int)TokenType.EndOfFile);
-            }
-        }
-
-        /// <summary>
-        /// Iterator over the tokens contained in the parameter "lines" after
-        /// - COPY directives text imports
-        /// - REPLACE directive token remplacements
-        /// </summary>
-        public static ITokensLinesIterator GetProcessedTokensIterator(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<IProcessedTokensLine> lines, TypeCobolOptions compilerOptions)
-        {
-            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(textSourceInfo.Name, lines, Token.CHANNEL_SourceTokens);
-            ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator, compilerOptions);
+            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(TextSourceInfo.Name, Lines, Token.CHANNEL_SourceTokens);
+            ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator, _compilerOptions);
             return replaceIterator;
         }
 
+        public IEnumerable<Token> GetProcessedTokens()
+        {
+            var tokenSource = GetProcessedTokensIterator();
+            Token token;
+            do
+            {
+                token = tokenSource.NextToken();
+                yield return token;
+            }
+            while (token.Type != (int) TokenType.EndOfFile);
+        }
 
         /// <summary>
         /// Iterator over all the diagnostics registered in Lines after parsing code elements
@@ -94,7 +77,7 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 foreach (var line in Lines)
                 {
-                    if (line.CompilerListingControlDirective != null && line.CompilerListingControlDirective.Diagnostics != null)
+                    if (line.CompilerListingControlDirective?.Diagnostics != null)
                     {
                         foreach (Diagnostic diagnostic in line.CompilerListingControlDirective.Diagnostics)
                         {

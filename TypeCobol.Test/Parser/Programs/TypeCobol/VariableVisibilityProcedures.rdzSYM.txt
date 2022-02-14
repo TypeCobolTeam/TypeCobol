@@ -1,0 +1,197 @@
+--- Diagnostics ---
+Line 17[17,28] <30, Error, Semantics> - Semantic error: Symbol dataProcMain is not referenced OffendingSymbol=[17,28:dataProcMain]<UserDefinedWord>
+Line 17[33,47] <30, Error, Semantics> - Semantic error: Symbol dataNestedLocal is not referenced OffendingSymbol=[33,47:dataNestedLocal]<UserDefinedWord>
+Line 18[17,32] <30, Error, Semantics> - Semantic error: Symbol dataNestedGlobal is not referenced OffendingSymbol=[17,32:dataNestedGlobal]<UserDefinedWord>
+Line 18[37,50] <30, Error, Semantics> - Semantic error: Symbol dataProcNested is not referenced OffendingSymbol=[37,50:dataProcNested]<UserDefinedWord>
+Line 19[17,34] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedLocal is not referenced OffendingSymbol=[17,34:dataSubNestedLocal]<UserDefinedWord>
+Line 19[39,57] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[39,57:dataSubNestedGlobal]<UserDefinedWord>
+Line 20[20,36] <30, Error, Semantics> - Semantic error: Symbol dataProcSubNested is not referenced OffendingSymbol=[20,36:dataProcSubNested]<UserDefinedWord>
+Line 34[17,29] <30, Error, Semantics> - Semantic error: Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 34[34,47] <30, Error, Semantics> - Semantic error: Symbol dataMainGlobal is not referenced OffendingSymbol=[34,47:dataMainGlobal]<UserDefinedWord>
+Line 35[17,31] <30, Error, Semantics> - Semantic error: Symbol dataNestedLocal is not referenced OffendingSymbol=[17,31:dataNestedLocal]<UserDefinedWord>
+Line 35[36,51] <30, Error, Semantics> - Semantic error: Symbol dataNestedGlobal is not referenced OffendingSymbol=[36,51:dataNestedGlobal]<UserDefinedWord>
+Line 36[17,30] <30, Error, Semantics> - Semantic error: Symbol dataProcNested is not referenced OffendingSymbol=[17,30:dataProcNested]<UserDefinedWord>
+Line 36[35,52] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedLocal is not referenced OffendingSymbol=[35,52:dataSubNestedLocal]<UserDefinedWord>
+Line 37[17,35] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[17,35:dataSubNestedGlobal]<UserDefinedWord>
+Line 37[40,56] <30, Error, Semantics> - Semantic error: Symbol dataProcSubNested is not referenced OffendingSymbol=[40,56:dataProcSubNested]<UserDefinedWord>
+Line 57[17,29] <30, Error, Semantics> - Semantic error: Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 57[34,45] <30, Error, Semantics> - Semantic error: Symbol dataProcMain is not referenced OffendingSymbol=[34,45:dataProcMain]<UserDefinedWord>
+Line 58[17,30] <30, Error, Semantics> - Semantic error: Symbol dataProcNested is not referenced OffendingSymbol=[17,30:dataProcNested]<UserDefinedWord>
+Line 58[35,52] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedLocal is not referenced OffendingSymbol=[35,52:dataSubNestedLocal]<UserDefinedWord>
+Line 59[17,35] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[17,35:dataSubNestedGlobal]<UserDefinedWord>
+Line 59[40,56] <30, Error, Semantics> - Semantic error: Symbol dataProcSubNested is not referenced OffendingSymbol=[40,56:dataProcSubNested]<UserDefinedWord>
+Line 73[17,29] <30, Error, Semantics> - Semantic error: Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 73[34,47] <30, Error, Semantics> - Semantic error: Symbol dataMainGlobal is not referenced OffendingSymbol=[34,47:dataMainGlobal]<UserDefinedWord>
+Line 74[17,28] <30, Error, Semantics> - Semantic error: Symbol dataProcMain is not referenced OffendingSymbol=[17,28:dataProcMain]<UserDefinedWord>
+Line 74[33,47] <30, Error, Semantics> - Semantic error: Symbol dataNestedLocal is not referenced OffendingSymbol=[33,47:dataNestedLocal]<UserDefinedWord>
+Line 75[17,32] <30, Error, Semantics> - Semantic error: Symbol dataNestedGlobal is not referenced OffendingSymbol=[17,32:dataNestedGlobal]<UserDefinedWord>
+Line 75[37,54] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedLocal is not referenced OffendingSymbol=[37,54:dataSubNestedLocal]<UserDefinedWord>
+Line 76[17,35] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[17,35:dataSubNestedGlobal]<UserDefinedWord>
+Line 76[40,56] <30, Error, Semantics> - Semantic error: Symbol dataProcSubNested is not referenced OffendingSymbol=[40,56:dataProcSubNested]<UserDefinedWord>
+Line 97[17,29] <30, Error, Semantics> - Semantic error: Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 97[34,45] <30, Error, Semantics> - Semantic error: Symbol dataProcMain is not referenced OffendingSymbol=[34,45:dataProcMain]<UserDefinedWord>
+Line 98[17,31] <30, Error, Semantics> - Semantic error: Symbol dataNestedLocal is not referenced OffendingSymbol=[17,31:dataNestedLocal]<UserDefinedWord>
+Line 98[36,49] <30, Error, Semantics> - Semantic error: Symbol dataProcNested is not referenced OffendingSymbol=[36,49:dataProcNested]<UserDefinedWord>
+Line 99[20,36] <30, Error, Semantics> - Semantic error: Symbol dataProcSubNested is not referenced OffendingSymbol=[20,36:dataProcSubNested]<UserDefinedWord>
+Line 113[17,29] <30, Error, Semantics> - Semantic error: Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 113[34,47] <30, Error, Semantics> - Semantic error: Symbol dataMainGlobal is not referenced OffendingSymbol=[34,47:dataMainGlobal]<UserDefinedWord>
+Line 114[17,28] <30, Error, Semantics> - Semantic error: Symbol dataProcMain is not referenced OffendingSymbol=[17,28:dataProcMain]<UserDefinedWord>
+Line 114[33,47] <30, Error, Semantics> - Semantic error: Symbol dataNestedLocal is not referenced OffendingSymbol=[33,47:dataNestedLocal]<UserDefinedWord>
+Line 115[17,32] <30, Error, Semantics> - Semantic error: Symbol dataNestedGlobal is not referenced OffendingSymbol=[17,32:dataNestedGlobal]<UserDefinedWord>
+Line 115[37,50] <30, Error, Semantics> - Semantic error: Symbol dataProcNested is not referenced OffendingSymbol=[37,50:dataProcNested]<UserDefinedWord>
+Line 116[17,34] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedLocal is not referenced OffendingSymbol=[17,34:dataSubNestedLocal]<UserDefinedWord>
+Line 116[39,57] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[39,57:dataSubNestedGlobal]<UserDefinedWord>
+
+--- Program ---
+MainProgram (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  dataMainLocal (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: MainProgram
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+  dataMainGlobal (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [Global, WORKING_STORAGE]
+  Owner: MainProgram
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+GlobalStorageData:
+  dataMainGlobalStorage (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [GLOBAL_STORAGE]
+  Owner: MainProgram
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+Functions:
+  procInMain (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: MainProgram
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [MainProgram::procInMain::paramMain]
+  WorkingStorageData:
+    dataProcMain (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [WORKING_STORAGE]
+    Owner: MainProgram::procInMain
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Level: 1
+    IsFiller: False
+  LinkageData:
+    paramMain (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: MainProgram::procInMain
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Level: 1
+    IsFiller: False
+Programs:
+  Nested (.NET Type=ProgramSymbol, Kind=Program)
+  Owner: MainProgram
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+  WorkingStorageData:
+    dataNestedLocal (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [WORKING_STORAGE]
+    Owner: MainProgram::Nested
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Level: 1
+    IsFiller: False
+    dataNestedGlobal (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [Global, WORKING_STORAGE]
+    Owner: MainProgram::Nested
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Level: 1
+    IsFiller: False
+  Functions:
+    procInNested (.NET Type=FunctionSymbol, Kind=Function)
+    Flags: [Private]
+    Owner: MainProgram::Nested
+    Type:
+      (.NET Type=ScopeType, Tag=Scope)
+      Parameters: [MainProgram::Nested::procInNested::paramNested]
+    WorkingStorageData:
+      dataProcNested (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: MainProgram::Nested::procInNested
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 1
+      IsFiller: False
+    LinkageData:
+      paramNested (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [LINKAGE, Input, Parameter]
+      Owner: MainProgram::Nested::procInNested
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 1
+      IsFiller: False
+  Programs:
+    SubNested (.NET Type=ProgramSymbol, Kind=Program)
+    Owner: MainProgram::Nested
+    Type:
+      (.NET Type=ScopeType, Tag=Scope)
+    WorkingStorageData:
+      dataSubNestedLocal (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: MainProgram::Nested::SubNested
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 1
+      IsFiller: False
+      dataSubNestedGlobal (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [Global, WORKING_STORAGE]
+      Owner: MainProgram::Nested::SubNested
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 1
+      IsFiller: False
+    Functions:
+      procInSubNested (.NET Type=FunctionSymbol, Kind=Function)
+      Flags: [Private]
+      Owner: MainProgram::Nested::SubNested
+      Type:
+        (.NET Type=ScopeType, Tag=Scope)
+        Parameters: [MainProgram::Nested::SubNested::procInSubNested::paramSubNested]
+      WorkingStorageData:
+        dataProcSubNested (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE]
+        Owner: MainProgram::Nested::SubNested::procInSubNested
+        Type:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+        Level: 1
+        IsFiller: False
+      LinkageData:
+        paramSubNested (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [LINKAGE, Input, Parameter]
+        Owner: MainProgram::Nested::SubNested::procInSubNested
+        Type:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+        Level: 1
+        IsFiller: False
+    IsNested: True
+  IsNested: True
+IsNested: False
+

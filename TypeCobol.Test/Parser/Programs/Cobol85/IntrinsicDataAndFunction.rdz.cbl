@@ -20,10 +20,10 @@
            move WHEN-COMPILED to MyVar(MyInt:unknown2)
            move WHEN-COMPILED to MyVar(MyInt:MyInt)
            move WHEN-COMPILED to notDeclared1
-           move function Current-Date() to MyVar
+           move function Current-Date to MyVar
            move length of MyVar to MyInt
            move length of myvar to MyInt
            move length of notDeclared2 to MyInt
            set address of MyVar2 to address of MyVar
 000000     .
-000000 END PROGRAM MYPGM.
+000000 END PROGRAM StringStatement.

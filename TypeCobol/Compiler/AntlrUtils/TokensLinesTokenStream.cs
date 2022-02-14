@@ -36,11 +36,11 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         /// <summary>
         /// Advance the stream to one specific token.
-        /// Throw an exception if the token is not found.
+        /// <return>false if the token is not found, true otherwise</return>
         /// </summary>
-        public void SeekToToken(IToken searchedToken)
+        public bool SeekToToken(IToken searchedToken)
         {
-            Reset();
+            Seek(0);
             ResetStopTokenLookup();
 
             // TO DO : optimize this naive implementation
@@ -55,13 +55,18 @@ namespace TypeCobol.Compiler.AntlrUtils
                 }
                 if (!currentToken.Equals(searchedToken) && searchedToken.Type != TokenConstants.Eof)
                 {
-                    throw new InvalidOperationException("Token not found in this stream");
+                    // See GitHub #2053:
+                    // Assert here the problem in debug mode.
+                    // Avoid to throw an uncaught exception in a bad context, return false.
+                    System.Diagnostics.Debug.Assert(false, "Token not found in this stream");
+                    return false;
                 }
             }
+            return true;
         }
 
         /// <summary>
-        /// Start monitoring if the token stream reached a specific token which marks the end of an instersting section
+        /// Start monitoring if the token stream reached a specific token which marks the end of an interesting section
         /// </summary>
         public void StartLookingForStopToken(Token stopToken)
         {
@@ -69,7 +74,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             if (stopToken != null)
             {
                 StopToken = stopToken;
-                stopTokenReplacedByEOF = new ReplacedToken(Token.END_OF_FILE, stopToken);
+                stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
                 StreamReachedStopToken = false;
             }
         }

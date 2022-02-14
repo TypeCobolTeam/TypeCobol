@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
@@ -14,7 +13,10 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.VsCodeProtocol;
-using TypeCobol.LanguageServices.Editor;
+using TypeCobol.Analysis;
+using TypeCobol.Analysis.Graph;
+using TypeCobol.LanguageServer.Context;
+
 using TokenType = TypeCobol.Compiler.Scanner.TokenType;
 
 namespace TypeCobol.LanguageServer
@@ -276,6 +278,44 @@ namespace TypeCobol.LanguageServer
             System.Diagnostics.Debug.Assert(sender is CompilationDocument);
             CompilationDocument compilationDocument = (CompilationDocument) sender;
             UpdateTokensLines(compilationDocument);
+        }
+
+        /// <summary>
+        /// Method to update CFG/DFA information.
+        /// </summary>
+        /// <param name="fileCompiler">The underlying File Compiler</param>
+        /// <param name="writeToFile">True if CfgDfaParams shall write the dot content to a temporary file, 
+        /// false if the dot content shall be put in the CfgDfaParams.dotContent field.</param>
+        /// <returns>CFG/DFA Data information</returns>
+        public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool writeToFile)
+        {
+            CfgDfaParams result;
+            var analyzerResults = docContext.FileCompiler.CompilationResultsForProgram.TemporaryProgramClassDocumentSnapshot?.AnalyzerResults;
+            string analyzerIdentifier = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.Standard);
+            if (analyzerResults != null && analyzerResults.TryGetResult(analyzerIdentifier, out IList<ControlFlowGraph<Node, object>> cfgs) && cfgs.Count > 0)
+            {                
+                //Create a temporary dot file.
+                string tempFile = Path.GetTempFileName();
+                using (TextWriter writer = writeToFile ? File.CreateText(tempFile)  : (TextWriter)new StringWriter())
+                {
+                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), writeToFile ? tempFile : null);
+                    CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
+                    gen.FullInstruction = true;
+                    gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
+                    gen.Report(writer);
+                    result = builder.GetParams();
+                    if (!writeToFile)
+                    {
+                        result.dotContent = writer.ToString();
+                    }
+                }
+            }
+            else
+            {
+                //An Empty
+                result = new CfgDfaParams(new TextDocumentIdentifier(docContext.TextDocument.uri));
+            }
+            return result;
         }
 
         /// <summary>

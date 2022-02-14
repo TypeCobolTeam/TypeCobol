@@ -1,0 +1,20 @@
+﻿--- Diagnostics ---
+Line 7[25,31] <27, Error, Syntax> - Syntax error : "REPLACE" Empty Comparison Pseudo Text.
+Line 7[20,55] <27, Error, Syntax> - Error in copy 'YxxxENT' at line 1 : Syntax error : no viable alternative at input '05 ... xxxENT::-FCT01' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[16,29:xxxENT::-FCT01]<PartialCobolWord> in COPY YxxxENT <REPLACE[SingleToken] ? BY ?>
+Line 7[20,55] <27, Error, Syntax> - Error in copy 'YxxxENT' at line 2 : Syntax error : no viable alternative at input '10 ... xxxENT::-FCT01-Var1' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[19,37:xxxENT::-FCT01-Var1]<PartialCobolWord> in COPY YxxxENT <REPLACE[SingleToken] ? BY ?>
+Line 7[20,55] <27, Error, Syntax> - Error in copy 'YxxxENT' at line 1 : Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader} OffendingSymbol=[[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
+
+Line 7[12,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[12,17:xxxENT]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: CPYRPL4C common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  xxxENT:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

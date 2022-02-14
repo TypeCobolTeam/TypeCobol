@@ -4,16 +4,16 @@
        DATA DIVISION.
 
        WORKING-STORAGE SECTION.
-       01 W-myDate TYPE DATE.
-       01 W-myDate2 TYPE DATE.
+       01 W-myDate PIC 9(8).
+       01 W-myDate2 PIC 9(8).
        01 W-PicVar PIC X(10).
        01 W-PointerVar POINTER.
 
        linkage SECTION.
-       01 myDate TYPE DATE.
-       01 myDate2 TYPE DATE.
+       01 myDate PIC 9(8).
+       01 myDate2 PIC 9(8).
        01 PicVar PIC X(10).
-       01 MyBool TYPE BOOL.
+
 
 
        PROCEDURE DIVISION.
@@ -44,10 +44,8 @@
        SET ADDRESS OF myDate TO ADDRESS OF PicVar
       * No error
        SET ADDRESS OF PicVar TO ADDRESS OF mydate.
-      *KO
+      *OK
        SET ADDRESS OF myDate TO W-PointerVar.
-      *OK, use of unsafe in SET
-       SET UNSAFE ADDRESS OF myDate TO W-PointerVar.
       *OK
        SET W-PointerVar TO ADDRESS OF myDate.
 

@@ -36,7 +36,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Index of this line when it first appeared in the document.
         /// </summary>
-        int LineIndex { get; set; }
+        int LineIndex { get; }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document

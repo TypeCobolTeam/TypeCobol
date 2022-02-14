@@ -6,7 +6,7 @@
 
 -- Line 3 --
 [1,1:.]<PeriodSeparator>
-Line 0[1,1] <12, Error, Tokens> - Invalid character found after . : expecting space or digit
+Line 0[1,1] <12, Warning, Tokens> - A blank was missing before character "a" in column 2. A blank was assumed.
 
 -- Line 4 --
 [2,2: ]<SpaceSeparator>
@@ -15,7 +15,7 @@ Line 0[2,2] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 
 -- Line 5 --
 [1,1:.]<PeriodSeparator>
-Line 0[1,1] <12, Error, Tokens> - Invalid character found after . : expecting space or digit
+Line 0[1,1] <12, Warning, Tokens> - A blank was missing before character "a" in column 2. A blank was assumed.
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>
@@ -63,7 +63,6 @@ Line 0[1,1] <3, Error, Tokens> - Semicolon separator should be followed by a spa
 
 -- Line 18 --
 =>continuation:[2,4:.025]<DecimalLiteral>{25|3>0.025}
-[5,5: ]<SpaceSeparator>
 [6,7:* ]<MultiplyOperator>
 =>continued:[8,8:.44]<DecimalLiteral>{44|2>0.44}
 Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
@@ -74,7 +73,6 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 
 -- Line 20 --
 [2,2:)]<RightParenthesisSeparator>
-[3,3: ]<SpaceSeparator>
 [4,5:+ ]<PlusOperator>
 =>continued:[6,6:1.18]<DecimalLiteral>{118|2>1.18}
 Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line

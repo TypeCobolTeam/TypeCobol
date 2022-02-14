@@ -1,0 +1,1 @@
+-i input\CustomAnalyzers.rdz.tcbl -o output\CustomAnalyzers.cbl -d output\errors.txt -ext "..\..\TypeCobol.Analysis.Test.dll" --exectostep=QualityCheck

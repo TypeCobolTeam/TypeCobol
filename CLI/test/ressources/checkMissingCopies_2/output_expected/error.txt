@@ -1,0 +1,4 @@
+ReturnCode=MissingCopy_
+2 errors in "input\MissingCopy.rdz.tcbl":
+Line 5[8,18] <28, Error, Directives> - Error in copy 'COPY1' at line 2 : Error in copy 'COPY2' at line 2 : Failed to load COPY : Cobol source file not found: COPY3
+Line 5[8,18] <28, Error, Directives> - Error in copy 'COPY1' at line 2 : Error in copy 'COPY2' at line 3 : Failed to load COPY : Cobol source file not found: COPY4

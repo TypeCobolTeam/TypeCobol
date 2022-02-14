@@ -1,0 +1,108 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{MAIN. Block1|}"
+]
+Block2 [
+label = "{Block2|    PERFORM a\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "a";
+Block17 [
+label = "{A. Block17|}"
+]
+Block18 [
+label = "{Block18|    PERFORM b\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "b";
+Block30 [
+label = "{B. Block30|}"
+]
+Block23 [
+label = "{Block23|    PERFORM d\l}"
+]
+subgraph cluster_4{
+color = blue;
+label = "d";
+Block34 [
+label = "{D. Block34|    DISPLAY \"end\"\l}"
+]
+
+}
+Block23 -> Block34 [style=dashed]
+
+Block24 [
+label = "{Block24|}"
+]
+
+}
+Block18 -> Block30 [style=dashed]
+
+Block19 [
+label = "{Block19|}"
+]
+Block20 [
+label = "{Block20|    PERFORM c\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "c";
+Block32 [
+label = "{C. Block32|}"
+]
+Block26 [
+label = "{Block26|    PERFORM d\l}"
+]
+subgraph cluster_5{
+color = blue;
+label = "d";
+Block35 [
+label = "{D. Block35|    DISPLAY \"end\"\l}"
+]
+
+}
+Block26 -> Block35 [style=dashed]
+
+Block27 [
+label = "{Block27|}"
+]
+
+}
+Block20 -> Block32 [style=dashed]
+
+Block21 [
+label = "{Block21|}"
+]
+
+}
+Block2 -> Block17 [style=dashed]
+
+Block3 [
+label = "{Block3|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block17 -> Block18
+Block30 -> Block23
+Block23 -> Block24
+Block18 -> Block19
+Block19 -> Block20
+Block32 -> Block26
+Block26 -> Block27
+Block20 -> Block21
+Block2 -> Block3
+
+}

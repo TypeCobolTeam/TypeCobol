@@ -10,6 +10,8 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Logging;
+using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
 {
@@ -67,25 +69,29 @@ namespace TypeCobol.LanguageServer
         public static ServerLogLevel LogLevel { get; set; }
 
         /// <summary>
-        /// Lstr Testing Source document
+        /// Lsr Testing Source document
         /// </summary>
         public static bool LsrSourceTesting { get; set; }
         /// <summary>
-        /// Lstr Testing Scanning of the document.
+        /// Lsr Testing Scanning of the document.
         /// </summary>
         public static bool LsrScannerTesting { get; set; }
         /// <summary>
-        /// Lstr Testing preprocessed Source document
+        /// Lsr Testing preprocessed Source document
         /// </summary>
         public static bool LsrPreprocessTesting { get; set; }
         /// <summary>
-        /// Lstr Testing parsing
+        /// Lsr Testing parsing
         /// </summary>
         public static bool LsrParserTesting { get; set; }
         /// <summary>
-        /// Lstr Testing semantic phase
+        /// Lsr Testing semantic phase
         /// </summary>
         public static bool LsrSemanticTesting { get; set; }
+        /// <summary>
+        /// Lsr code quality check phase
+        /// </summary>
+        public static bool LsrCodeAnalysisTesting { get; set; }
 
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
@@ -117,7 +123,34 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// No Copy and Dependency files watchers.
+        /// </summary>
+        public static bool NoCopyDependencyWatchers { get; set; }
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// A Path to a file of CPY Copy names
+        /// </summary>
+        private static string CpyCopyNamesMapFilePath { get; set; }
+#endif
+
+        /// <summary>
+        /// Are we supporting CFG/DFA Refresh Notifications.
+        /// </summary>
+        public static TypeCobolCustomLanguageServer.UseCfgMode UseCfg { get; set; }
+
+        /// <summary>
+        /// Client identifier. Stored but not used directly, will be logged as part of the command-line.
+        /// </summary>
+        public static string UserAgent { get; set; }
+
         public static System.Diagnostics.Process Process;
+
+        /// <summary>
+        /// Custom extensions Dll Paths
+        /// </summary>
+        public static List<string> Extensions = new List<string>();
 
         /// <summary>
         /// Run the Lsr Process
@@ -201,10 +234,21 @@ namespace TypeCobol.LanguageServer
                 { "tpreprocess",  "Preprocessing testing mode.", _ => LsrPreprocessTesting = true},
                 { "tparser",  "parsing testing mode.", _ => LsrParserTesting = true},
                 { "tsemantic",  "Semantic analysis testing mode.", _ => LsrSemanticTesting = true},
+                { "tcodeanalysis",  "Code quality analysis testing mode.", _ => LsrCodeAnalysisTesting = true},
                 { "antlrp",  "Use ANTLR to parse a Program.", _ => UseAntlrProgramParsing = true},
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
+#if EUROINFO_RULES
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => CpyCopyNamesMapFilePath = v },
+#endif
+                { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
+                    (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
+                        Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
+                { "ca|customanalyzer=", "OBSOLETE - Use 'ext' option instead.", v => Extensions.Add(v) },
+                { "ext|extension=", "{PATH} to a custom DLL file containing parser extension(s). This option can be specified more than once.", v => Extensions.Add(v) },
+                { "now|nowatchers",  "No Copy and Dependency files watchers.", _ => NoCopyDependencyWatchers = true},
+                { "ua|useragent=", "Optional descriptive string to help identify the client of the parser", v => UserAgent = v }
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -220,6 +264,15 @@ namespace TypeCobol.LanguageServer
             {
                 System.Console.WriteLine(Version);
                 return 0;
+            }
+
+            //TODO #2091 Add DebugLogger and FileLogger
+
+            //External loggers if extensions have been provided
+            var extensionManager = new ExtensionManager(Extensions);
+            foreach (var externalLogger in extensionManager.Activate<ILogger>())
+            {
+                LoggingSystem.RegisterLogger(externalLogger);
             }
 
             TextWriter logWriter = null;
@@ -275,13 +328,18 @@ namespace TypeCobol.LanguageServer
                 if (LsrPreprocessTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrPreprocessingPhaseTesting;
                 if (LsrParserTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrParsingPhaseTesting;
                 if (LsrSemanticTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrSemanticPhaseTesting;
+                if (LsrCodeAnalysisTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrCodeAnalysisPhaseTesting;
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
                 typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
-
-
+                typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
+                typeCobolServer.ExtensionManager = extensionManager;
+                typeCobolServer.NoCopyDependencyWatchers = NoCopyDependencyWatchers;
+#if EUROINFO_RULES
+                typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+#endif
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };
                 backgroundExecutionThread.Start();

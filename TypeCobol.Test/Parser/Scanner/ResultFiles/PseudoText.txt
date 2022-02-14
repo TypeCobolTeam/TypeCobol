@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,2:==]<PseudoTextDelimiter>
 [3,4:un]<UserDefinedWord>
 [5,5: ]<SpaceSeparator>
@@ -16,7 +16,6 @@
 -- Line 2 --
 [1,2:==]<PseudoTextDelimiter>
 [3,4:==]<PseudoTextDelimiter>
-[5,5: ]<SpaceSeparator>
 [6,7:= ]<EqualOperator>
 [8,9:==]<PseudoTextDelimiter>
 [10,11:= ]<EqualOperator>
@@ -34,7 +33,6 @@ Line 0[12,13] <15, Error, Tokens> - Invalid character found after pseudo-text de
 Line 0[9,10] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
 
 -- Line 4 --
-[1,1: ]<SpaceSeparator>
 [2,3:==]<PseudoTextDelimiter>
 [4,4: ]<SpaceSeparator>
 [5,7:pas]<UserDefinedWord>
@@ -45,9 +43,7 @@ Line 0[9,10] <15, Error, Tokens> - Invalid character found after pseudo-text del
 -- Line 5 --
 [1,1: ]<SpaceSeparator>
 [2,3:==]<PseudoTextDelimiter>
-[4,4: ]<SpaceSeparator>
 [5,7:pas]<UserDefinedWord>
-[8,8: ]<SpaceSeparator>
 [9,12:fini]<UserDefinedWord>
 [13,14:==]<PseudoTextDelimiter>
 [15,15:a]<UserDefinedWord>

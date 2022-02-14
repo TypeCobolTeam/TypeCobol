@@ -9819,7 +9819,7 @@
                           88 LS-T11-FL-CNAPRG-RSIN2       VALUE         CGLKPIMO
                                              'RSIN2'.                   CGLKPIMO
       *                                                                 CGLKPIMO
-                    25 LS-T11-POS-PELEM        PIC S9(9) COMP-5 SYNC.   CGLKPIMO
+                    25 LS-T11-POS-PELEM        PIC S9(9) COMP-5     .   CGLKPIMO
                     25 LS-T11-EVALPRX.                                  CGLKPIMO
                        30 LS-T11-EVALPR        PIC 9(08).               CGLKPIMO
                     25 LS-T11-FVALPRX.                                  CGLKPIMO

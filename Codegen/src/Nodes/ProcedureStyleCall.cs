@@ -105,6 +105,24 @@ namespace TypeCobol.Codegen.Nodes {
                     var callTextLine = new TextLineSnapshot(-1, callString, null);
                     _cache.Add(callTextLine);
                 }
+
+                //Find and set computed hash (if any) to each DataOrConditionStorageArea used by the CALL node
+                var hashes = Node.Root.GeneratedCobolHashes;
+                if (Node.QualifiedStorageAreas != null)
+                {
+                    foreach (var qualifiedStorageArea in Node.QualifiedStorageAreas)
+                    {
+                        if (qualifiedStorageArea.Value != null
+                            &&
+                            hashes.TryGetValue(qualifiedStorageArea.Value.ToString("."), out var indexHash)
+                            &&
+                            qualifiedStorageArea.Key is DataOrConditionStorageArea dataOrConditionStorageArea)
+                        {
+                            dataOrConditionStorageArea.Hash = indexHash;
+                        }
+                    }
+                }
+
                 //Hanle Input parameters
                 //Rule: TCCODEGEN-FUNCALL-PARAMS
                 TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode = (TypeCobol.Compiler.CodeElements.ParameterSharingMode)(-1);

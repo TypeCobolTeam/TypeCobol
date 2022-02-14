@@ -104,4 +104,4 @@
            .
        END-DECLARE.
 
-       END PROGRAM DVZZDAT.
+       END PROGRAM DVZZDATE.

@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Timers;
 using Analytics;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -15,10 +15,10 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.LanguageServer.Context;
-using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
-using TypeCobol.LanguageServices.Editor;
+using TypeCobol.Logging;
+using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.LanguageServer
@@ -34,7 +34,6 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     public class Workspace
     {
-
         private SymbolTable _customSymbols;
         private string _rootDirectoryFullName;
         private string _workspaceName;
@@ -47,16 +46,21 @@ namespace TypeCobol.LanguageServer
 
         internal CompilationProject CompilationProject { get; private set; }
 
-        private List<FileCompiler> _fileCompilerWaittingForNodePhase;
+        private List<FileCompiler> _fileCompilerWaitingForNodePhase;
         public TypeCobolConfiguration Configuration { get; private set; }
-        public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
-        public EventHandler<EventArgs> DocumentModifiedEvent { get; set; }
-        public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
-        public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
-        public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
-        public EventHandler<string> WarningTrigger { get; set; }
+        public event EventHandler<DiagnosticEvent> DiagnosticsEvent;
+        public event EventHandler<EventArgs> DocumentModifiedEvent;
+        public event EventHandler<MissingCopiesEvent> MissingCopiesEvent;
+        public event EventHandler<LoadingIssueEvent> LoadingIssueEvent;
+        public event EventHandler<ThreadExceptionEventArgs> ExceptionTriggered;
+        public event EventHandler<string> WarningTrigger;
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
-        private Func<string, Uri, bool> _Logger;
+        private Func<string, Uri, bool> _Logger;       
+        /// <summary>
+        /// Custom Analyzer Providers Loaded
+        /// </summary>
+        private IAnalyzerProvider[] _customAnalyzerProviders;
+
 
         #region Testing Options
 
@@ -108,6 +112,11 @@ namespace TypeCobol.LanguageServer
         public bool IsLsrSemanticTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrSemanticPhaseTesting);
 
         /// <summary>
+        /// Testing everything from source document to quality check using quality rules.
+        /// </summary>
+        public bool IsLsrCodeAnalysisTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrCodeAnalysisPhaseTesting);
+
+        /// <summary>
         /// True to use ANTLR for parsing a program
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
@@ -121,10 +130,18 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting Syntax Coloring Notifications.    
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
+
         /// <summary>
-        /// Are we supporting OutlineRefresh Notifications.    
+        /// Are we using the CFG view in the client.
         /// </summary>
-        public bool UseOutlineRefresh { get; set; }
+        public bool UseCfgDfaDataRefresh { get; set; }
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Cpy Copy names file
+        /// </summary>
+        public string CpyCopyNamesMapFilePath { get; set; }
+#endif
 
         /// <summary>
         /// Indicates whether this workspace has opened documents or not.
@@ -139,35 +156,35 @@ namespace TypeCobol.LanguageServer
                 }
             }
         }
-
         #endregion
-
 
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             MessagesActionsQueue = messagesActionsQueue;
             Configuration = new TypeCobolConfiguration();
             _openedDocuments = new Dictionary<Uri, DocumentContext>();
-            _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
+            _fileCompilerWaitingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
 
             this._rootDirectoryFullName = rootDirectoryFullName;
             this._workspaceName = workspaceName;
 
+            var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
             this.CompilationProject = new CompilationProject(
-                _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS,
-                Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat,
-                new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+                _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
+                new TypeCobolOptions(), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
                 this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
 
             this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
+        }
 
+        internal void InitCopyDependencyWatchers()
+        {
             // Create the refresh action that will be used by file watchers
             Action refreshAction = RefreshOpenedFiles;
-
             _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
             _CopyWatcher = new CopyWatcher(this, refreshAction);
         }
@@ -177,12 +194,13 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="docContext">The Document context</param>
         /// <param name="sourceText">The source text</param>
-        /// <param name="lsrOptions">LSR options</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
+        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText) => OpenTextDocument(docContext, sourceText, LsrTestOptions);
+
+        private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
-            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, sourceText);
+            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
             FileCompiler fileCompiler = null;
 
 #if EUROINFO_RULES //Issue #583
@@ -210,17 +228,13 @@ namespace TypeCobol.LanguageServer
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() {prog.ToList()});
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
+
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
                 CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
-                false, CompilationProject);
+                CompilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, CompilationProject);
 #endif
-            //Set Any Language Server Connection Options.
-            docContext.FileCompiler = fileCompiler;
-            docContext.LanguageServerConnection(true);
-
-            fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
             lock (_lockForOpenedDocuments)
             {
@@ -228,14 +242,19 @@ namespace TypeCobol.LanguageServer
                     CloseSourceFile(docContext.Uri); //Close and remove the previous opened file.
 
                 _openedDocuments.Add(docContext.Uri, docContext);
-                fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
             }
 
+            //Set Any Language Server Connection Options.
+            docContext.FileCompiler = fileCompiler;
+            docContext.LanguageServerConnection(true);
+
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
+            fileCompiler.CompilationResultsForProgram.CodeAnalysisCompleted += FinalCompilationStepCompleted;
+            fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
             if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
             {
-                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy, fileCompiler.CompilerOptions.UseAntlrProgramParsing); //Let's parse file for the first time after opening. 
+                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
             }
 
             return fileCompiler;
@@ -247,6 +266,16 @@ namespace TypeCobol.LanguageServer
             {
                 return _openedDocuments.TryGetValue(fileUri, out openedDocumentContext);
             }
+        }
+
+        /// <summary>
+        /// Load Custom Analyzers
+        /// </summary>
+        /// <param name="extensionManager"></param>
+        internal void LoadCustomAnalyzers(ExtensionManager extensionManager)
+        {
+            System.Diagnostics.Debug.Assert(extensionManager != null);
+            this._customAnalyzerProviders = extensionManager.Activate<IAnalyzerProvider>().ToArray();
         }
 
         /// <summary>
@@ -278,22 +307,22 @@ namespace TypeCobol.LanguageServer
                                                           //further it's for semantic, which is handle by NodeRefresh method
 
 
-                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy, fileCompilerToUpdate.CompilerOptions.UseAntlrProgramParsing);
+                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy);
                 fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
                 
 
-                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || LsrTestOptions == LsrTestingOptions.LsrSemanticPhaseTesting)
+                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || IsLsrSemanticTesting)
                 {
                     if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
                     {
-                        lock (_fileCompilerWaittingForNodePhase)
+                        lock (_fileCompilerWaitingForNodePhase)
                         {
-                            if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
-                                _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
+                            if (!_fileCompilerWaitingForNodePhase.Contains(fileCompilerToUpdate))
+                                _fileCompilerWaitingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
                         }
 
                         _semanticUpdaterTimer = new System.Timers.Timer(750);
-                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(fileUri);
                         _semanticUpdaterTimer.Start();
                     }
                 }
@@ -323,7 +352,7 @@ namespace TypeCobol.LanguageServer
                     {
                         //Return log information about updated processed tokens
                         var sb = new StringBuilder();
-                        foreach (var token in fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.ProcessedTokensSource)
+                        foreach (var token in fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
                             sb.AppendLine(token.ToString());
                         _Logger(sb.ToString(), fileUri);
                     }
@@ -340,6 +369,7 @@ namespace TypeCobol.LanguageServer
                     break;
                 case ExecutionStep.SemanticCheck:
                 case ExecutionStep.CrossCheck:
+                case ExecutionStep.QualityCheck:
                 case ExecutionStep.Generate:
                 default:
                     return;
@@ -352,42 +382,108 @@ namespace TypeCobol.LanguageServer
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
         /// <param name="fileCompiler"></param>
-        private void TimerEvent(object sender, ElapsedEventArgs eventArgs, FileCompiler fileCompiler)
+        private void TimerEvent(Uri fileUri)
         {
             try
             {
                 _semanticUpdaterTimer.Stop();
-                Action nodeRefreshAction = () => { RefreshSyntaxTree(fileCompiler); };
                 lock (MessagesActionsQueue)
                 {
-                    MessagesActionsQueue.Enqueue(new MessageActionWrapper(nodeRefreshAction));
+                    MessagesActionsQueue.Enqueue(new MessageActionWrapper(Refresh));
                 }
             }
             catch (Exception e)
             {
                 //In case Timer Thread crash
-                ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
+                if (ExceptionTriggered != null)
+                    ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
             }
-           
+
+            void Refresh()
+            {
+                if (TryGetOpenedDocumentContext(fileUri, out var docContext))
+                {
+                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Lists all supported refresh modes for the RefreshSyntaxTree method.
+        /// </summary>
+        public enum SyntaxTreeRefreshLevel
+        {
+            /// <summary>
+            /// Do not perform any refresh
+            /// </summary>
+            NoRefresh,
+
+            /// <summary>
+            /// Rebuilds semantic document and run CrossCheck on updated version
+            /// </summary>
+            RebuildNodes,
+
+            /// <summary>
+            /// Same as RebuildNodes but also launches code quality analysis
+            /// </summary>
+            RebuildNodesAndPerformQualityCheck,
+
+            /// <summary>
+            /// Rebuild nodes and run code quality analysis even if the file hasn't changed
+            /// </summary>
+            ForceFullRefresh
         }
 
         /// <summary>
         /// Use this method to force a node phase if there is a filecompiler waiting for node refresh. 
         /// </summary>
         /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
-        public void RefreshSyntaxTree(FileCompiler fileCompiler, bool forceRefresh = false)
+        /// <param name="refreshLevel">Desired level of refresh</param>
+        public void RefreshSyntaxTree(FileCompiler fileCompiler, SyntaxTreeRefreshLevel refreshLevel)
         {
-            lock (_fileCompilerWaittingForNodePhase)
+            if (refreshLevel == SyntaxTreeRefreshLevel.NoRefresh) return; //nothing to do
+
+            lock (_fileCompilerWaitingForNodePhase)
             {
-                var fileCompilerContained = _fileCompilerWaittingForNodePhase.Contains(fileCompiler);
-                if (!fileCompilerContained && !forceRefresh) return;   
-                else if(fileCompilerContained)             
-                    _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
+                var fileCompilerNeedsRefresh = _fileCompilerWaitingForNodePhase.Contains(fileCompiler);
+                if (fileCompilerNeedsRefresh)
+                {
+                    _fileCompilerWaitingForNodePhase.Remove(fileCompiler);
+                }
+                else
+                {
+                    if (refreshLevel < SyntaxTreeRefreshLevel.ForceFullRefresh)
+                    {
+                        //The file compiler does not need to be refreshed and the refresh was not forced, we abort
+                        return;
+                    }
+                }
+                
+                //Perform refresh according to desired level
+                switch (refreshLevel)
+                {
+                    case SyntaxTreeRefreshLevel.RebuildNodes:
+                        RefreshNodes();
+                        break;
+                    case SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck:
+                    case SyntaxTreeRefreshLevel.ForceFullRefresh:
+                        RefreshNodes();
+                        RefreshCodeAnalysisResults();
+                        break;
+                }
+            }
 
-
+            void RefreshNodes()
+            {
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
                 fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
+            }
+
+            void RefreshCodeAnalysisResults()
+            {
+                if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrCodeAnalysisTesting) return;
+                fileCompiler.CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //Do a Quality check
             }
         }
 
@@ -396,33 +492,43 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public void CloseSourceFile(Uri fileUri)
         {
+            FileCompiler fileCompilerToClose = null;
+
+            //Remove from opened documents dictionary
             lock (_lockForOpenedDocuments)
             {
-                if (_openedDocuments.ContainsKey(fileUri))
+                if (_openedDocuments.TryGetValue(fileUri, out var contextToClose))
                 {
-                    var contextToClose = _openedDocuments[fileUri];
-                    FileCompiler fileCompilerToClose = contextToClose.FileCompiler;
+                    fileCompilerToClose = contextToClose.FileCompiler;
                     _openedDocuments.Remove(fileUri);
-                    fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
+                    fileCompilerToClose.CompilationResultsForProgram.CodeAnalysisCompleted -= FinalCompilationStepCompleted;
                 }
-            }            
-        }
+            }
 
-        public void DidChangeConfigurationParams(string settings)
-        {
-            DidChangeConfigurationParams(settings.Split(' '));
+            //Remove from pending semantic analysis list
+            if (fileCompilerToClose != null)
+            {
+                lock (_fileCompilerWaitingForNodePhase)
+                {
+                    _fileCompilerWaitingForNodePhase.Remove(fileCompilerToClose);
+                }
+            }
         }
 
         /// <summary>
         /// Handle the Configuration change notification.
         /// </summary>
         /// <param name="arguments">The arguments</param>
-        public void DidChangeConfigurationParams(IEnumerable<string> arguments)
+        public void DidChangeConfigurationParams(string[] arguments)
         {
+#if EUROINFO_RULES
+            var previouslyLoadedCpyCopyNamesMap = Configuration.CpyCopyNameMap;
+#endif
+            
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
-            var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
+            TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -438,11 +544,36 @@ namespace TypeCobol.LanguageServer
                 UseEuroInformationLegacyReplacingSyntax = true;
 
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
-                Configuration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
+                Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
+#if EUROINFO_RULES
+            if (previouslyLoadedCpyCopyNamesMap != null)
+            {
+                //re-use already loaded file
+                Configuration.CpyCopyNameMap = previouslyLoadedCpyCopyNamesMap;
+            }
+            else
+            {
+                //load file according to user-supplied value in command line
+                Configuration.LoadCpyCopyNameMap(CpyCopyNamesMapFilePath);
+            }
+#endif
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format.Encoding, Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength, Configuration.Format.ColumnsLayout, typeCobolOptions);
+            //Configure CFG/DFA analyzer(s) + external analyzers if any
+            var analyzerProviderWrapper = new AnalyzerProviderWrapper(str => _Logger(str, null));
+            analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode, o));
+            if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
+            {
+                analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard, o));
+            }
+            System.Diagnostics.Debug.Assert(this._customAnalyzerProviders != null);
+            foreach (var a in this._customAnalyzerProviders)
+            {
+                analyzerProviderWrapper.AddProvider(a);
+            }
+
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProviderWrapper);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {
@@ -451,8 +582,7 @@ namespace TypeCobol.LanguageServer
                     CompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
                         new[] {".cpy"}, Configuration.Format.Encoding,
                         Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength);
-                }
-                
+                }                
             }
 
             if (!IsEmpty)
@@ -460,43 +590,41 @@ namespace TypeCobol.LanguageServer
             else
                 RefreshCustomSymbols();
 
-            //Dispose previous watcher before setting new ones
-            _DepWatcher.Dispose();
-            _CopyWatcher.Dispose();
-            foreach (var depFolder in Configuration.CopyFolders)
+            //Dispose previous watchers before setting new ones            
+            if (_CopyWatcher != null)
             {
-                _CopyWatcher.SetDirectoryWatcher(depFolder);
+                _CopyWatcher.Dispose();
+                foreach (var copyFolder in Configuration.CopyFolders)
+                {
+                    _CopyWatcher.SetDirectoryWatcher(copyFolder);
+                }
             }
-            foreach (var depFolder in Configuration.Dependencies)
+            if (_DepWatcher != null)
             {
-                _DepWatcher.SetDirectoryWatcher(depFolder);
-            }
-            foreach (var intrinsicFolder in Configuration.Copies)
-            {
-                _DepWatcher.SetDirectoryWatcher(intrinsicFolder);
+                _DepWatcher.Dispose();
+                foreach (var depFolder in Configuration.Dependencies)
+                {
+                    _DepWatcher.SetDirectoryWatcher(depFolder);
+                }
+                foreach (var intrinsicFolder in Configuration.Copies)
+                {
+                    _DepWatcher.SetDirectoryWatcher(intrinsicFolder);
+                }
             }
         }
 
+        /// <summary>
+        /// The method is called in response to a MissingCopyNotification from the client.
+        /// The RemainingMissingCopies list can contain a list of COPY that the client fails to load,
+        /// or an empty list if all COPY have been loaded.
+        /// </summary>
+        /// <param name="fileUri">Uri of the document from wich the response is emitted</param>
+        /// <param name="RemainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
         public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
         {
-            if (IsEmpty)
-                return;
-
-            if (TryGetOpenedDocumentContext(fileUri, out var context))
-            {
-                FileCompiler fileCompiler = context.FileCompiler;
-                if (fileCompiler == null)
-                    return;
-
-                if (RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
-                {
-                    fileCompiler.CompilationResultsForProgram.MissingCopies.RemoveAll(c => true);
-                    return;
-                }
-
-                fileCompiler.CompilationResultsForProgram.MissingCopies =
-                    fileCompiler.CompilationResultsForProgram.MissingCopies.Where(
-                        c => RemainingMissingCopies.Any(rc => rc == c.TextName)).ToList();
+            if (_CopyWatcher == null)
+            {// No Copy Watcher ==> Refresh ourself opened file.
+                RefreshOpenedFiles();
             }
         }
 
@@ -506,6 +634,7 @@ namespace TypeCobol.LanguageServer
         public void RefreshOpenedFiles()
         {
             RefreshCustomSymbols();
+            this.CompilationProject.ClearImportedCompilationDocumentsCache();
 
             lock (_lockForOpenedDocuments)
             {
@@ -550,7 +679,7 @@ namespace TypeCobol.LanguageServer
                 _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
                 _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, _customSymbols, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
 
-                if (missingCopies.Count > 0)
+                if (MissingCopiesEvent != null && missingCopies.Count > 0)
                 {
                     MissingCopiesEvent(missingCopies.First().Key, new MissingCopiesEvent() { Copies = missingCopies.SelectMany(c => c.Value).Distinct().ToList() });
                     return;//Do not report diagnostics if copies are missing
@@ -559,7 +688,8 @@ namespace TypeCobol.LanguageServer
                 if (diagDetected)
                 {
                     var message = "An error occured while trying to load Intrinsics or Dependencies files.";
-                    LoadingIssueEvent(null, new LoadingIssueEvent() {Message = message}); //Send notification to client
+                    if (LoadingIssueEvent!= null)
+                        LoadingIssueEvent(null, new LoadingIssueEvent() {Message = message}); //Send notification to client
 
                     var sb = new StringBuilder();
                     sb.AppendLine(message);
@@ -572,38 +702,32 @@ namespace TypeCobol.LanguageServer
                             sb.AppendLine(" - " + diagText); //Add associated diagnostics
                         }
                     }
-                    WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
+                    if (WarningTrigger != null)
+                        WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
                 }
                 else
                 {//Send an LoadingIssueEvent with an empty message to tell the client that there are no issues.
-                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
+                    if (LoadingIssueEvent != null)
+                        LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
                 }
             }
-            catch (TypeCobolException typeCobolException)
+            catch (Exception exception)
             {
-                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
+                if (LoadingIssueEvent != null)
+                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
-
-                if (typeCobolException.NeedMail)
-                    AnalyticsWrapper.Telemetry.SendMail(typeCobolException, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
-            }
-            catch (Exception e)
-            {
-                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
-
-                AnalyticsWrapper.Telemetry.TrackException(e, null);
-                AnalyticsWrapper.Telemetry.SendMail(e, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
+                LoggingSystem.LogException(exception);
+                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles, Configuration.CopyFolders, Environment.CommandLine);
             }
 
         }
 
         /// <summary>
-        /// Called by a ProgramClass changed event trigger. 
+        /// CodeAnalysis completion event handler.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
+        /// <param name="cUnit">Sender of the event is the CompilationUnit.</param>
+        /// <param name="programEvent">Event arg, contains the version number of the most up-to-date InspectedProgramClassDocument.</param>
+        private void FinalCompilationStepCompleted(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
 
@@ -631,11 +755,12 @@ namespace TypeCobol.LanguageServer
                     diags = diags.Any() ? diags.Concat(group) : group;
                 }
             }
-            
-            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
 
-            if (compilationUnit?.MissingCopies.Count > 0)
-                MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
+            if (DiagnosticsEvent != null)
+                DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
+
+            if (MissingCopiesEvent != null && compilationUnit?.MissingCopies.Count > 0)
+                MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = new List<string>(compilationUnit.MissingCopies) });
 
             DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }
@@ -649,7 +774,8 @@ namespace TypeCobol.LanguageServer
         LsrScanningPhaseTesting = LsrSourceDocumentTesting | 0x1 << 1,
         LsrPreprocessingPhaseTesting = LsrScanningPhaseTesting | 0x01 << 2,
         LsrParsingPhaseTesting = LsrPreprocessingPhaseTesting | 0x01 << 3,
-        LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4
+        LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4,
+        LsrCodeAnalysisPhaseTesting = LsrSemanticPhaseTesting | 0x1 << 5
     }
 
     public class DiagnosticEvent : EventArgs

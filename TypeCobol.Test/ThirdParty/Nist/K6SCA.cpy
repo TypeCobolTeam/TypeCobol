@@ -165,8 +165,9 @@
 016500 CLOSE-FILES.                                                     K6SCA4.2
 016600     PERFORM END-ROUTINE THRU END-ROUTINE-13. CLOSE PRINT-FILE.   K6SCA4.2
 016700 TERMINATE-CCVS.                                                  K6SCA4.2
-016800S    EXIT PROGRAM.                                                K6SCA4.2
-016900STERMINATE-CALL.                                                  K6SCA4.2
+      *Initially next two lines had the 'S' indicator which is unknown
+016800     EXIT PROGRAM.                                                K6SCA4.2
+016900 TERMINATE-CALL.                                                  K6SCA4.2
 017000     STOP     RUN.                                                K6SCA4.2
 017100 INSPT. MOVE "INSPT" TO P-OR-F. ADD 1 TO INSPECT-COUNTER.         K6SCA4.2
 017200 PASS.  MOVE "PASS " TO P-OR-F.  ADD 1 TO PASS-COUNTER.           K6SCA4.2
@@ -229,19 +230,20 @@
 022900     MOVE CCVS-E-3 TO DUMMY-RECORD. PERFORM WRITE-LINE.           K6SCA4.2
 023000 WRITE-LINE.                                                      K6SCA4.2
 023100     ADD 1 TO RECORD-COUNT.                                       K6SCA4.2
-023200Y    IF RECORD-COUNT GREATER 42                                   K6SCA4.2
-023300Y        MOVE DUMMY-RECORD TO DUMMY-HOLD                          K6SCA4.2
-023400Y        MOVE SPACE TO DUMMY-RECORD                               K6SCA4.2
-023500Y        WRITE DUMMY-RECORD AFTER ADVANCING PAGE                  K6SCA4.2
-023600Y        MOVE CCVS-H-1  TO DUMMY-RECORD PERFORM WRT-LN 2 TIMES    K6SCA4.2
-023700Y        MOVE CCVS-H-2A TO DUMMY-RECORD PERFORM WRT-LN 2 TIMES    K6SCA4.2
-023800Y        MOVE CCVS-H-2B TO DUMMY-RECORD PERFORM WRT-LN 3 TIMES    K6SCA4.2
-023900Y        MOVE CCVS-H-3  TO DUMMY-RECORD PERFORM WRT-LN 3 TIMES    K6SCA4.2
-024000Y        MOVE CCVS-C-1  TO DUMMY-RECORD PERFORM WRT-LN            K6SCA4.2
-024100Y        MOVE CCVS-C-2  TO DUMMY-RECORD PERFORM WRT-LN            K6SCA4.2
-024200Y        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN          K6SCA4.2
-024300Y        MOVE DUMMY-HOLD TO DUMMY-RECORD                          K6SCA4.2
-024400Y        MOVE ZERO TO RECORD-COUNT.                               K6SCA4.2
+      *Initially next 13 lines had the 'Y' indicator which is unknown
+023200     IF RECORD-COUNT GREATER 42                                   K6SCA4.2
+023300         MOVE DUMMY-RECORD TO DUMMY-HOLD                          K6SCA4.2
+023400         MOVE SPACE TO DUMMY-RECORD                               K6SCA4.2
+023500         WRITE DUMMY-RECORD AFTER ADVANCING PAGE                  K6SCA4.2
+023600         MOVE CCVS-H-1  TO DUMMY-RECORD PERFORM WRT-LN 2 TIMES    K6SCA4.2
+023700         MOVE CCVS-H-2A TO DUMMY-RECORD PERFORM WRT-LN 2 TIMES    K6SCA4.2
+023800         MOVE CCVS-H-2B TO DUMMY-RECORD PERFORM WRT-LN 3 TIMES    K6SCA4.2
+023900         MOVE CCVS-H-3  TO DUMMY-RECORD PERFORM WRT-LN 3 TIMES    K6SCA4.2
+024000         MOVE CCVS-C-1  TO DUMMY-RECORD PERFORM WRT-LN            K6SCA4.2
+024100         MOVE CCVS-C-2  TO DUMMY-RECORD PERFORM WRT-LN            K6SCA4.2
+024200         MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN          K6SCA4.2
+024300         MOVE DUMMY-HOLD TO DUMMY-RECORD                          K6SCA4.2
+024400         MOVE ZERO TO RECORD-COUNT.                               K6SCA4.2
 024500     PERFORM WRT-LN.                                              K6SCA4.2
 024600 WRT-LN.                                                          K6SCA4.2
 024700     WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES.               K6SCA4.2

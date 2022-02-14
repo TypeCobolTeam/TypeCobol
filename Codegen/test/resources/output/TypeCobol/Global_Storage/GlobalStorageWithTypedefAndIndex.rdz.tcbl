@@ -14,24 +14,10 @@
       *      10 Ligne OCCURS 10
       *               ASCENDING KEY IS Obj
       *               INDEXED BY IdxA.
-      *         15 Obj PIC X(12).
-
-       PROCEDURE DIVISION.
-
-       INIT-LIBRARY.
-           CONTINUE.
-
-      *DECLARE PROCEDURE DisplayTable.
-
-       END PROGRAM TCOZDR03.
-      *
-      *DECLARE PROCEDURE DisplayTable.
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. c8f713a3.
-       DATA DIVISION.
+      *         15 Obj  PIC X(12).
+      *         15 Flag Type Bool.
        LINKAGE SECTION.
-      *TCOZDR03.DisplayTable  - No Params
+
        01 TC-GlobalData.
 
 
@@ -42,11 +28,86 @@
                       ASCENDING KEY IS Obj
                       INDEXED BY a14c7288IdxA.
                05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+
+
+
+       PROCEDURE DIVISION.
+
+       INIT-LIBRARY.
+      * Get the data from the global storage section
+           CALL 'b8131d02' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                    
+           CONTINUE.
+
+       MAIN.
+      *    SET GlobalTab::IdxA TO 1
+           SET a14c7288IdxA TO 1
+      *    SET GlobalTab::Flag(GlobalTab::IdxA) TO false
+           SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
+      *    SET GlobalTab::Flag(IdxA) TO false
+           SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
+      *    CALL DisplayTable INPUT GlobalTab::Flag(GlobalTab::IdxA)
+           CALL 'aff15808' USING
+                                 Flag-value IN GlobalTab(a14c7288IdxA)
+           end-call
+                                                                   
+      *    CALL DisplayTable INPUT GlobalTab::Flag(IdxA)
+           CALL 'aff15808' USING
+                                 Flag-value IN GlobalTab(a14c7288IdxA)
+           end-call
+                                                        
+           GOBACK
+           .
+           
+      *DECLARE PROCEDURE DisplayTable
+      *        INPUT myBool Type Bool.
+
+       END PROGRAM TCOZDR03.
+      *
+      *DECLARE PROCEDURE DisplayTable
+      *        INPUT myBool Type Bool.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. aff15808.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *TCOZDR03.DisplayTable - Params :
+      *     input(myBool: BOOL)
+       01 myBool-value PIC X     VALUE LOW-VALUE.
+           88 myBool       VALUE 'T'.
+           88 myBool-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+       01 TC-GlobalData.
+
+
+      *01 GlobalTab Type TypeA.
+       02 GlobalTab.
+           03 Contenu.
+             04 Ligne OCCURS 10
+                      ASCENDING KEY IS Obj
+                      INDEXED BY a14c7288IdxA.
+               05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
 
 
        PROCEDURE DIVISION
+             USING BY REFERENCE myBool-value
            .
-      *TCOZDR03.DisplayTable  - No Params
+      *TCOZDR03.DisplayTable - Params :
+      *     input(myBool: BOOL)
       * Get the data from the global storage section
            CALL 'b8131d02' USING
                by reference address of TC-GlobalData
@@ -59,7 +120,7 @@
              DISPLAY 'Test' Obj OF GlobalTab(a14c7288IdxA)
            END-PERFORM
            .
-       END PROGRAM c8f713a3.
+       END PROGRAM aff15808.
 
 
       *
@@ -80,6 +141,11 @@
                       ASCENDING KEY IS Obj
                       INDEXED BY a14c7288IdxA.
                05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                
 
        LINKAGE SECTION.

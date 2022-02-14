@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using Analytics;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -11,7 +8,6 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler
 {
@@ -20,11 +16,6 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class FileCompiler
     {
-        /// <summary>
-        /// Source text file on disk
-        /// </summary>
-        public CobolFile CobolFile { get; private set; }
-
         /// <summary>
         /// Source text buffer in memory
         /// </summary>
@@ -82,51 +73,63 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
-        public FileCompiler([NotNull] CompilationProject compilationProject, string fileName, bool isCopyFile) :
-            this(null, fileName, null, compilationProject.SourceFileProvider, compilationProject, compilationProject.ColumnsLayout, null, compilationProject.CompilationOptions, null, isCopyFile, null, compilationProject, null)
-        { }
-        /// <summary>
-        /// Load a Cobol source file in memory
-        /// </summary>
-        public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, CompilationProject compilationProject) :
-            this(libraryName, fileName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, null, compilationProject, null)
+        public FileCompiler([NotNull] CompilationProject compilationProject, string fileName, bool isCopyFile)
+            : this(null, fileName, compilationProject.ColumnsLayout, isCopyFile,
+                compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, null,
+                compilationProject)
         { }
 
         /// <summary>
-        /// Load a Cobol source file in an pre-existing text document
+        /// Load a Cobol source file in memory
         /// </summary>
-        public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ITextDocument textDocument, TypeCobolOptions compilerOptions, bool isCopyFile, CompilationProject compilationProject) :
-            this(libraryName, fileName, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile, null, compilationProject, null)
+        public FileCompiler(string libraryName, string fileName, ColumnsLayout columnsLayout, bool isCopyFile,
+            SourceFileProvider sourceFileProvider, IDocumentImporter documentImporter, TypeCobolOptions compilerOptions, SymbolTable customSymbols,
+            CompilationProject compilationProject)
+            : this(libraryName, fileName, columnsLayout, isCopyFile,
+                sourceFileProvider, documentImporter, compilerOptions, customSymbols,
+                null, compilationProject, null)
+        { }
+
+        /// <summary>
+        /// Load a Cobol source file in memory
+        /// </summary>
+        public FileCompiler(string libraryName, string fileName, ColumnsLayout columnsLayout, bool isCopyFile,
+            SourceFileProvider sourceFileProvider, IDocumentImporter documentImporter, TypeCobolOptions compilerOptions, SymbolTable customSymbols,
+            MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+            : this(new Tuple<string, string, ColumnsLayout, bool>(libraryName, fileName, columnsLayout, isCopyFile), null,
+                sourceFileProvider, documentImporter, compilerOptions, customSymbols,
+                scanState, compilationProject, copyTextNameVariations)
         { }
 
         /// <summary>
         /// Use a pre-existing text document, not yet associated with a Cobol file
         /// </summary>
-        public FileCompiler(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions, bool isCopyFile, CompilationProject compilationProject) :
-            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile, null, compilationProject, null)
+        public FileCompiler(ITextDocument textDocument,
+            SourceFileProvider sourceFileProvider, IDocumentImporter documentImporter, TypeCobolOptions compilerOptions,
+            CompilationProject compilationProject)
+            : this(textDocument,
+                sourceFileProvider, documentImporter, compilerOptions, null,
+                compilationProject)
         { }
 
         /// <summary>
         /// Use a pre-existing text document, not yet associated with a Cobol file + Existing SymbolTable
         /// </summary>
-        public FileCompiler(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile, CompilationProject compilationProject) :
-            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, customSymbols, isCopyFile, null, compilationProject, null)
-        { }
-
-        /// <summary>
-        /// Use a pre-existing text document, already initialized from a Cobol file
-        /// </summary>
-        public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
-            this(libraryName, fileName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, scanState, compilationProject, copyTextNameVariations)
+        public FileCompiler(ITextDocument textDocument,
+            SourceFileProvider sourceFileProvider, IDocumentImporter documentImporter, TypeCobolOptions compilerOptions, SymbolTable customSymbols,
+            CompilationProject compilationProject)
+            : this(null, textDocument,
+                sourceFileProvider, documentImporter, compilerOptions, customSymbols,
+                null, compilationProject, null)
         { }
 
         /// <summary>
         /// Common internal implementation for all constructors above
         /// </summary>
-        private FileCompiler(string libraryName, string fileName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
+        private FileCompiler(Tuple<string, string, ColumnsLayout, bool> fileInfo, ITextDocument textDocument,
+            SourceFileProvider sourceFileProvider, IDocumentImporter documentImporter, TypeCobolOptions compilerOptions, SymbolTable customSymbols,
             [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
-
             var chrono = new Stopwatch();
             chrono.Start();
 
@@ -134,47 +137,40 @@ namespace TypeCobol.Compiler
             CobolFile sourceFile = null;
             CompilationProject = compilationProject;
 
-            if (fileName != null)
+            if (textDocument == null)
             {
-                if (sourceFileProvider.TryGetFile(libraryName, fileName, out sourceFile))
+                //No textDocument provided, use fileInfo to find the file
+                Debug.Assert(fileInfo != null);
+                string libraryName = fileInfo.Item1;
+                string fileName = fileInfo.Item2;
+                if (!sourceFileProvider.TryGetFile(libraryName, fileName, out sourceFile))
                 {
-                    CobolFile = sourceFile;
-                }
-                else
-                {
-                    var message = string.IsNullOrEmpty(libraryName) ? string.Format("Cobol source file not found: {0}", fileName)
-                                                                    : string.Format("Cobol source file not found: {0} in {1}", fileName, libraryName);
+                    var message = string.IsNullOrEmpty(libraryName)
+                        ? $"Cobol source file not found: {fileName}"
+                        : $"Cobol source file not found: {fileName} in {libraryName}";
                     throw new Exception(message);
                 }
-
             }
-            // 1.b Register a Cobol source file which was already loaded
-            else if (loadedCobolFile != null)
+            else
             {
-                CobolFile = loadedCobolFile;
+                Debug.Assert(fileInfo == null);
             }
 
             chrono.Stop();
             SourceFileSearchTime = (int)chrono.ElapsedMilliseconds;
             chrono.Reset();
 
-            // 2.a Load it in a new text document in memory
             chrono.Start();
+
             if (textDocument == null)
             {
-                TextDocument = new ReadOnlyTextDocument(sourceFile?.Name, sourceFile?.Encoding, columnsLayout, sourceFile?.ReadChars());
+                // 2.a Load it in a new text document in memory
+                Debug.Assert(sourceFile != null);
+                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, fileInfo.Item3, fileInfo.Item4, sourceFile.ReadChars());
             }
-            // 2.b Load it in an existing text document in memory
-            else if (sourceFile != null)
+            else
             {
-                TextDocument = textDocument;
-                textDocument.LoadChars(sourceFile.ReadChars());
-            }
-            // 2.c Use a pre-existing text document 
-            //     - not yet associated with a Cobol source file
-            //     - with a Cobol source file already loaded
-            else if (sourceFile == null || loadedCobolFile != null)
-            {
+                // 2.b Use existing text document in memory, assuming that source is already loaded
                 TextDocument = textDocument;
             }
 
@@ -183,14 +179,30 @@ namespace TypeCobol.Compiler
             chrono.Reset();
 
             // 3. Prepare the data structures used by the different steps of the compiler
-            if (isCopyFile)
+            if (TextDocument.Source.IsCopy)
             {
-                CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                if (scanState != null)
+                {
+                    //This is an imported copy
+                    Debug.Assert(scanState.InsideCopy);
+                    CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, true, TextDocument.Lines, compilerOptions, documentImporter, scanState, copyTextNameVariations);
+                }
+                else
+                {
+                    //Direct copy parsing, copy is assumed to be part of Data Division and using comma as the decimal point.
+                    var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals, true, true, insideCopy: true);
+                    CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, false, TextDocument.Lines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                    CompilationResultsForCopy = CompilationResultsForProgram;
+                }
+
                 CompilationResultsForCopy.CustomSymbols = customSymbols;
             }
             else
             {
-                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, copyTextNameVariations);
+                //This is a regular program
+                Debug.Assert(scanState == null);
+                var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals);
+                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, false, TextDocument.Lines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
             CompilerOptions = compilerOptions;
@@ -201,45 +213,35 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void CompileOnce()
         {
-            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy, CompilerOptions.UseAntlrProgramParsing);
+            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy);
         }
 
         /// <summary>
-        /// Perform a cmpilation based on an execution step.
+        /// Perform a compilation based on an execution step.
         /// </summary>
         /// <param name="exec2Step">The execution step</param>
         /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
-        /// <param name="useAntlrProgramParsing">Shall Antlr be used to parse the program</param>
-        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy, bool useAntlrProgramParsing)
+        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
         {
             if (exec2Step == null)
                 exec2Step = ExecutionStep.CrossCheck;
 
-            if (CompilationResultsForCopy != null)
-            {
-                CompilationResultsForCopy.UpdateTokensLines(); //Scanner
-
-                if (!(exec2Step > ExecutionStep.Scanner)) return;
-
-                CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
-                CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
-            }
-            else
+            if (CompilationResultsForProgram != null)
             {
                 CompilationResultsForProgram.UpdateTokensLines(); //Scanner
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() {ExecutionStep = ExecutionStep.Scanner});
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.Scanner });
 
                 if (!(exec2Step > ExecutionStep.Scanner)) return;
 
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.Preprocessor});
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.Preprocessor });
 
                 if (!(exec2Step > ExecutionStep.Preprocessor)) return;
                 if (haltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
 
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SyntaxCheck});
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SyntaxCheck });
 
                 if (!(exec2Step > ExecutionStep.SyntaxCheck)) return;
 
@@ -250,6 +252,21 @@ namespace TypeCobol.Compiler
 
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CrossCheck });
+
+                if (!(exec2Step > ExecutionStep.CrossCheck)) return;
+
+                CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //QualityCheck step
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.QualityCheck });
+            }
+            else
+            {
+                Debug.Assert(CompilationResultsForCopy != null);
+                CompilationResultsForCopy.UpdateTokensLines(); //Scanner
+
+                if (!(exec2Step > ExecutionStep.Scanner)) return;
+
+                CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
+                CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
             }
         }
     }

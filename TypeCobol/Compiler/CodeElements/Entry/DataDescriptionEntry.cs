@@ -166,6 +166,11 @@ namespace TypeCobol.Compiler.CodeElements {
         /// </summary>
         public AlphanumericValue Picture { get; set; }
 
+        /// <summary>
+        /// Stores the result of Picture validation process
+        /// </summary>
+        internal PictureValidator.Result PictureValidationResult { get; set; }
+
 // [COBOL 2002]        
         /// <summary>
         /// COBOL 2002 TYPE clause.
@@ -466,7 +471,7 @@ namespace TypeCobol.Compiler.CodeElements {
         ///   - Must be subordinate to the subject of the table entry itself
         ///   - Must not be subordinate to, or follow, any other entry that contains an
         ///     OCCURS clause
-        //    - Must not contain an OCCURS clause
+        ///   - Must not contain an OCCURS clause
         ///   data-name-2 must not have subordinate items that contain OCCURS
         ///   DEPENDING ON clauses.
         /// </summary>
@@ -582,7 +587,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// effect on the execution of the program.
         /// The length of an elementary item is not affected by the SYNCHRONIZED clause.
         /// </summary>
-        public SyntaxProperty<bool> IsSynchronized { get; set; }
+        public SyntaxProperty<SyncAlignment> Synchronized { get; set; }
 
         /// <summary>
         /// p228:
@@ -800,7 +805,7 @@ namespace TypeCobol.Compiler.CodeElements {
                                                                 OccursDependingOn,
                                                                 SignIsSeparate,
                                                                 SignPosition,
-                                                                IsSynchronized,
+                                                                Synchronized,
                                                                 Usage,
                                                                 ObjectReferenceClass,
                                                                 InitialValue)
@@ -835,6 +840,9 @@ namespace TypeCobol.Compiler.CodeElements {
     public class FunctionCallResultDescriptionEntry : DataDescriptionEntry
     {
         public FunctionCallResultDescriptionEntry(FunctionCall functionCall, int callSiteId) {
+            System.Diagnostics.Debug.Assert(functionCall != null);
+            System.Diagnostics.Debug.Assert(functionCall.FunctionName != null);
+            System.Diagnostics.Debug.Assert(functionCall.FunctionNameToken != null);
             // Generate a unique symbol name for the function call at this specific call site
             var generatedSymbolName = new GeneratedSymbolName(functionCall.FunctionNameToken, functionCall.FunctionName + "-" + callSiteId);
             DataName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
@@ -1180,10 +1188,19 @@ namespace TypeCobol.Compiler.CodeElements {
 	/// </summary>
 	public enum SignPosition
 	{
-		None,
-		Leading,
+        Leading,
 		Trailing
 	}
+
+    /// <summary>
+    /// The alignment of a SYNCHRONIZED data item.
+    /// </summary>
+    public enum SyncAlignment
+    {
+        None, //No alignment specified, i.e. neither LEFT nor RIGHT keywords were found
+        Left,
+        Right
+    }
 
 	/// <summary>
 	/// The USAGE clause specifies the format in which data is represented in storage.
@@ -1207,7 +1224,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		PackedDecimal,
 		/// <summary>
-		//// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
+		/// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
 		/// </summary>
 		FloatingPoint,
 		/// <summary>

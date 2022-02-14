@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TypeCobol.Analysis;
 using TypeCobol.CLI.CustomExceptions;
 using TypeCobol.Codegen;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -15,6 +15,8 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Logging;
+using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 using TypeCobol.Tools.Options_Config;
 
@@ -31,7 +33,7 @@ namespace TypeCobol.Server
         /// runOnce method to parse the input file(s).
         /// </summary>
         /// <param name="config">Config</param>
-        internal static ReturnCode runOnce(TypeCobolConfiguration config)
+        internal static ReturnCode runOnce(TypeCobolConfiguration config, ExtensionManager extensionManager)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -41,26 +43,37 @@ namespace TypeCobol.Server
                 debugLine += Path.GetFileName(config.InputFiles[0]);
             }
             debugLine += "\n";
-            //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
+            Logger(config, debugLine);
             Console.WriteLine(debugLine);
             TextWriter textWriter = config.ErrorFile == null ?  Console.Error : File.CreateText(config.ErrorFile);
-            AbstractErrorWriter errorWriter = config.IsErrorXML ? (AbstractErrorWriter) new XMLWriter(textWriter) : new ConsoleWriter(textWriter);
+            AbstractErrorWriter errorWriter;
+            switch (Path.GetExtension(config.ErrorFile)?.ToLower())
+            {
+                case ".xml":
+                    errorWriter = new XMLWriter(textWriter);
+                    break;
+                case ".xmldiag":
+                    errorWriter = new XmlDiagWriter(textWriter);
+                    break;
+                default:
+                    errorWriter = new ConsoleWriter(textWriter);
+                    break;
+            }
             errorWriter.Outputs = config.OutputFiles;
 
             ReturnCode returnCode;
             try
             {
-                CLI cli = new CLI(config, errorWriter);
+                CLI cli = new CLI(config, extensionManager, errorWriter);
                 returnCode = cli.Compile();
             }
             catch (Exception unexpected)
             {
-                var typeCobolException = new ParsingException(MessageCode.GenerationFailled, null, config.InputFiles.FirstOrDefault(), unexpected);
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
-                AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, config.CommandLine);
+                LoggingSystem.LogException(unexpected); //TODO add more context data ?
+                AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, Environment.CommandLine);
 
-                Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, unexpected.Message + Environment.NewLine + unexpected.StackTrace, string.Empty);
+                string message = unexpected.Message + Environment.NewLine + unexpected.StackTrace;
+                Server.AddError(errorWriter, string.Empty, new Diagnostic(MessageCode.SyntaxErrorInParser, Diagnostic.Position.Default, message));
                 returnCode = ReturnCode.FatalError;
             }
 
@@ -71,16 +84,16 @@ namespace TypeCobol.Server
 
             stopWatch.Stop();
             debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
-            //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
+            Logger(config, debugLine);
             Console.WriteLine(debugLine);
 
-            AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds);
+            LoggingSystem.LogMetric("ExecutionTime", stopWatch.Elapsed.TotalMilliseconds, "ms");
 
             return returnCode;
         }
 
         private readonly TypeCobolConfiguration _configuration;
+        private readonly ExtensionManager _extensionManager;
         private readonly AbstractErrorWriter _errorWriter;
         private readonly List<DiagnosticsErrorEvent> _intrinsicsDiagnostics;
         private readonly List<DiagnosticsErrorEvent> _dependenciesDiagnostics;
@@ -90,9 +103,10 @@ namespace TypeCobol.Server
         private readonly HashSet<string> _missingCopies;
         private readonly Dictionary<string, List<GenerationException>> _generationExceptions;
 
-        private CLI(TypeCobolConfiguration configuration, AbstractErrorWriter errorWriter)
+        private CLI(TypeCobolConfiguration configuration, ExtensionManager extensionManager, AbstractErrorWriter errorWriter)
         {
             _configuration = configuration;
+            _extensionManager = extensionManager;
             _errorWriter = errorWriter;
             _intrinsicsDiagnostics = new List<DiagnosticsErrorEvent>();
             _dependenciesDiagnostics = new List<DiagnosticsErrorEvent>();
@@ -105,14 +119,24 @@ namespace TypeCobol.Server
 
         private ReturnCode Compile()
         {
-            //Load intrinsics and dependencies, it will build the root symbol table
-            var rootSymbolTable = LoadIntrinsicsAndDependencies();
+            //Force whitespace token creation if code generation has been requested
+            bool optimizeWhitespaceScanning = _configuration.ExecToStep < ExecutionStep.Generate;
 
-            //Add report listeners
-            var reports = InitializeReports();
+            //Load intrinsics and dependencies, it will build the root symbol table
+            var rootSymbolTable = LoadIntrinsicsAndDependencies(optimizeWhitespaceScanning);
+
+            //Add analyzers
+            var analyzerProvider = new AnalyzerProviderWrapper(str => Logger(_configuration, str));
+            var reports = RegisterAnalyzers(analyzerProvider);
+
+            //Add external analyzers
+            foreach (var customAnalyzerProvider in _extensionManager.Activate<IAnalyzerProvider>())
+            {
+                analyzerProvider.AddProvider(customAnalyzerProvider);
+            }
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
-            var typeCobolOptions = new TypeCobolOptions(_configuration);
+            var typeCobolOptions = new TypeCobolOptions(_configuration) { OptimizeWhitespaceScanning = optimizeWhitespaceScanning };
             if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
             {
                 typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;
@@ -122,7 +146,8 @@ namespace TypeCobol.Server
             foreach (var inputFilePath in _configuration.InputFiles)
             {
                 var parser = new Parser(rootSymbolTable);
-                parser.Init(inputFilePath, typeCobolOptions, _configuration.Format, _configuration.CopyFolders);
+                //TODO issue #1876 we have to now beforehand whether source file is a copy or a program
+                parser.Init(inputFilePath, false, typeCobolOptions, _configuration.Format, _configuration.CopyFolders, analyzerProvider);
                 parser.Parse(inputFilePath);
 
                 //Collect results : parsing results, used and missing copies
@@ -152,6 +177,9 @@ namespace TypeCobol.Server
                     //Force CrossCheck
                     compilationUnit.RefreshProgramClassDocumentSnapshot();
 
+                    //Perform QualityCheck
+                    if (_configuration.ExecToStep > ExecutionStep.CrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
+
                     //Since collecting diagnostics may be costly, we cache them here
                     var currentFileDiagnostics = compilationUnit.AllDiagnostics();
                     _inputsDiagnosticsCache.Add(inputFilePath, currentFileDiagnostics);
@@ -161,7 +189,7 @@ namespace TypeCobol.Server
                     if (!currentFileHasErrors)
                     {
                         //Generate reports
-                        CreateReports(inputFilePath, reports);
+                        CreateReports(inputFilePath, compilationUnit, reports);
 
                         //Generate COBOL code
                         if (_configuration.ExecToStep >= ExecutionStep.Generate)
@@ -178,18 +206,33 @@ namespace TypeCobol.Server
             //Write used and missing copies files
             WriteCopiesFile(_configuration.ExtractedCopiesFilePath, _usedCopies);
             WriteCopiesFile(_configuration.HaltOnMissingCopyFilePath, _missingCopies);
+#if EUROINFO_RULES
+            WriteUsedCopiesFile();
+#endif
 
             return AddErrorsAndComputeReturnCode();
         }
 
-        private SymbolTable LoadIntrinsicsAndDependencies()
+        /// <summary>
+        /// Log a string in the LogFile provided by the configuration.
+        /// </summary>
+        /// <param name="config">Configuration containing the log file.</param>
+        /// <param name="message">String to log.</param>
+        private static void Logger(TypeCobolConfiguration config, string message)
+        {
+            //Use user-defined log path if -log option used, otherwise use default location for log file
+            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, message);
+        }
+
+        private SymbolTable LoadIntrinsicsAndDependencies(bool optimizeWhitespaceScanning)
         {
             var intrinsicsAndDependenciesParser = new Parser();
 
-            intrinsicsAndDependenciesParser.CustomSymbols = LoadIntrinsic(_configuration.Copies, _configuration.Format, OnDiagnosticsInIntrinsics);
+            intrinsicsAndDependenciesParser.CustomSymbols = LoadIntrinsic(_configuration.Copies, _configuration.Format, OnDiagnosticsInIntrinsics, optimizeWhitespaceScanning);
             intrinsicsAndDependenciesParser.CustomSymbols = LoadDependencies(_configuration, intrinsicsAndDependenciesParser.CustomSymbols, OnDiagnosticsInDependencies,
                 out List<RemarksDirective.TextNameVariation> usedCopies,
-                out IDictionary<string, IEnumerable<string>> missingCopies);
+                out IDictionary<string, IEnumerable<string>> missingCopies,
+                optimizeWhitespaceScanning);
 
             CollectUsedCopies(usedCopies);
             CollectMissingCopies(missingCopies.SelectMany(fileMissingCopiesPair => fileMissingCopiesPair.Value));
@@ -230,30 +273,36 @@ namespace TypeCobol.Server
             }
         }
 
-        private List<AbstractReport> InitializeReports()
+        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProviderWrapper analyzerProviderWrapper)
         {
-            List<AbstractReport> reports = new List<AbstractReport>();
+            var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
-                if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
-                {
-                    Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                        () =>
-                        {
-                            var report = new CopyMoveInitializeReport(_configuration.ReportCopyMoveInitializeFilePath);
-                            reports.Add(report);
-                            return report;
-                        });
+                //All purpose CFG/DFA
+                analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
 
-                }
-
+                //CFG/DFA for ZCALL report
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
                 {
-                    Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                        () =>
+                    if (_configuration.CfgBuildingMode != CfgBuildingMode.WithDfa)
+                    {
+                        //Need to create a dedicated CFG builder with DFA activated
+                        analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa, o));
+                    }
+
+                    string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);
+                    var report = new TypeCobol.Analysis.Report.ZCallPgmReport(zCallCfgDfaId);
+                    reports.Add(_configuration.ReportZCallFilePath, report);
+                }
+
+                //CopyMoveInitializeReport
+                if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
+                {
+                    analyzerProviderWrapper.AddActivator(
+                        (o, t) =>
                         {
-                            var report = new ZCallPgmReport(_configuration.ReportZCallFilePath);
-                            reports.Add(report);
+                            var report = new CopyMoveInitializeReport();
+                            reports.Add(_configuration.ReportCopyMoveInitializeFilePath, report);
                             return report;
                         });
 
@@ -293,7 +342,7 @@ namespace TypeCobol.Server
                 try
                 {
                     StringBuilder output = new StringBuilder();
-                    var generator = GeneratorFactoryManager.Instance.Create(OutputFormat.ExpandingCopy.ToString(), compilationUnit, output, null, null, false);
+                    var generator = GeneratorFactoryManager.Instance.Create(OutputFormat.ExpandingCopy.ToString(), compilationUnit, output, null, false);
                     var streamWriter = new StreamWriter(_configuration.ExpandingCopyFilePath);
                     generator.Generate(compilationUnit, ColumnsLayout.CobolReferenceFormat);
                     streamWriter.Write(output);
@@ -319,19 +368,29 @@ namespace TypeCobol.Server
             generationExceptions.Add(generationException);
         }
 
-        private void CreateReports(string inputFilePath, IEnumerable<AbstractReport> reports)
+        /// <summary>
+        /// Create a Report for the given Input File and Compilation Unit.
+        /// </summary>
+        /// <param name="inputFilePath">The Original input file path</param>
+        /// <param name="unit">The target Compilation Unit</param>
+        /// <param name="reports"></param>
+        private void CreateReports(string inputFilePath, CompilationUnit unit, Dictionary<string, IReport> reports)
         {
             foreach (var report in reports)
             {
+                string filePath = report.Key;
                 try
                 {
-                    report.Report();
-                    Console.WriteLine($"Succeed to emit report '{report.Filepath}'");
+                    using (var writer = File.CreateText(filePath))
+                    {
+                        report.Value.Report(writer, unit);
+                    }
+                    Console.WriteLine($"Succeed to emit report '{filePath}'");
                 }
                 catch (Exception exception)
                 {
                     Console.Error.WriteLine(exception.Message);
-                    var generationException = new GenerationException(exception.Message, report.Filepath, exception);
+                    var generationException = new GenerationException(exception.Message, filePath, exception);
                     StoreGenerationException(inputFilePath, generationException);
                 }
             }
@@ -341,19 +400,12 @@ namespace TypeCobol.Server
         {
             try
             {
-                //Load skeletons if necessary
-                List<Skeleton> skeletons = null;
-                if (!string.IsNullOrEmpty(_configuration.skeletonPath))
-                {
-                    skeletons = Codegen.Config.Config.Parse(_configuration.skeletonPath);
-                }
-
                 //Get Generator from specified config.OutputFormat
                 var sb = new StringBuilder();
                 bool needLineMap = _configuration.LineMapFiles.Count > fileIndex;
                 var generator = GeneratorFactoryManager.Instance.Create(_configuration.OutputFormat.ToString(),
                     compilationUnit,
-                    sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
+                    sb, Parser.Version, needLineMap);
                 if (generator == null)
                 {
                     throw new GenerationException("Unknown OutputFormat=" + _configuration.OutputFormat + "_", inputFilePath);
@@ -431,10 +483,46 @@ namespace TypeCobol.Server
             }
         }
 
+#if EUROINFO_RULES
+        private void WriteUsedCopiesFile()
+        {
+            if (_configuration.ReportUsedCopyNamesPath != null)
+            {
+                using (var output = File.CreateText(_configuration.ReportUsedCopyNamesPath))
+                {
+                    foreach (var parserResult in _parserResults)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(parserResult.Key);
+                        var usedCopies = parserResult.Value.CollectedCopyNames;
+
+                        if (usedCopies == null)
+                        {
+                            output.WriteLine(fileName);
+                            continue;
+                        }
+
+                        foreach (var usedCopy in usedCopies)
+                        {
+                            output.Write(fileName);
+                            output.Write(';');
+                            output.Write(usedCopy.Key);
+                            foreach (var suffixedName in usedCopy.Value)
+                            {
+                                output.Write(';');
+                                output.Write(suffixedName);
+                            }
+                            output.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+#endif
+
         private ReturnCode AddErrorsAndComputeReturnCode()
         {
             /*
-             * Here we start with a Sucesss return code, then we check all diagnostics from
+             * Here we start with a Success return code, then we check all diagnostics from
              * lowest to highest priority.
              */
 
@@ -442,10 +530,12 @@ namespace TypeCobol.Server
 
             foreach (var inputFilePath in _configuration.InputFiles)
             {
+                var parserResult = _parserResults[inputFilePath];
+
                 //Update the diagnostics cache
                 if (!_inputsDiagnosticsCache.TryGetValue(inputFilePath, out var diagnostics))
                 {
-                    diagnostics = _parserResults[inputFilePath].AllDiagnostics();
+                    diagnostics = parserResult.AllDiagnostics();
                 }
 
                 //Do not output more diagnostics than allowed
@@ -454,14 +544,14 @@ namespace TypeCobol.Server
                     : _configuration.MaximumDiagnostics);
                 _errorWriter.AddErrors(inputFilePath, trimmedDiagnostics);
 
-                //Analytics
+                //Logging
+                var context = new Dictionary<string, object>() { { LoggingSystem.ContextKeys.TextSourceName , parserResult.TextSourceInfo.Name } };
                 foreach (var diagnostic in diagnostics)
                 {
-                    if (diagnostic.CatchedException != null)
+                    if (diagnostic.CaughtException != null)
                     {
-                        AnalyticsWrapper.Telemetry.TrackException(diagnostic.CatchedException, inputFilePath);
-                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CatchedException, _configuration.InputFiles,
-                            _configuration.CopyFolders, _configuration.CommandLine);
+                        LoggingSystem.LogException(diagnostic.CaughtException, context);
+                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
                     }
                 }
 
@@ -473,49 +563,41 @@ namespace TypeCobol.Server
 
                     foreach (var generationException in generationExceptions)
                     {
-                        AnalyticsWrapper.Telemetry.TrackException(generationException, generationException.Path);
+                        LoggingSystem.LogException(generationException, context);
 
                         if (generationException.NeedMail)
                         {
-                            AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, _configuration.CommandLine);
+                            AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
                         }
 
                         if (generationException.Logged)
                         {
-                            Server.AddError(_errorWriter, generationException.MessageCode,
-                                generationException.ColumnStartIndex,
-                                generationException.ColumnEndIndex, generationException.LineNumber,
-                                generationException.Message + "\n" + generationException.StackTrace,
-                                generationException.Path);
+                            string message = generationException.Message + Environment.NewLine + generationException.StackTrace;
+                            var position = new Diagnostic.Position(generationException.LineNumber, generationException.ColumnStartIndex, generationException.LineNumber, generationException.ColumnEndIndex, null);
+                            Server.AddError(_errorWriter, generationException.Path, new Diagnostic(generationException.MessageCode, position, message));
                         }
                     }
                 }
             }
 
-            //Check diagnostics in dependencies
-            if (_dependenciesDiagnostics.Count > 0)
+            //Check diagnostics in dependencies, then intrinsics
+            CheckExternalDiagnostics(_dependenciesDiagnostics);
+            CheckExternalDiagnostics(_intrinsicsDiagnostics);
+
+            //Avoid returning MissingCopy for users who are only interested in copies extraction
+            if (_configuration.ExecToStep <= ExecutionStep.Preprocessor)
             {
-                foreach (var diagnosticsErrorEvent in _dependenciesDiagnostics)
-                {
-                    Server.AddError(_errorWriter, diagnosticsErrorEvent.Path, diagnosticsErrorEvent.Diagnostic);
-                }
-                UpdateReturnCode(_dependenciesDiagnostics.Select(dee => dee.Diagnostic).ToList());
+	            if (_configuration.ExtractedCopiesFilePath != null
+#if EUROINFO_RULES
+	                || _configuration.ReportUsedCopyNamesPath != null
+#endif
+	               )
+	            {
+		            return returnCode;
+	            }
             }
 
-            //Check diagnostics in intrinsics
-            if (_intrinsicsDiagnostics.Count > 0)
-            {
-                foreach (var diagnosticsErrorEvent in _intrinsicsDiagnostics)
-                {
-                    var diagnostic = diagnosticsErrorEvent.Diagnostic;
-                    Server.AddError(_errorWriter, MessageCode.IntrinsicLoading, diagnostic.ColumnStart, diagnostic.ColumnEnd,
-                        diagnostic.Line, "Error while parsing " + diagnosticsErrorEvent.Path + ": " + diagnostic,
-                        diagnosticsErrorEvent.Path);
-                }
-                UpdateReturnCode(_intrinsicsDiagnostics.Select(dee => dee.Diagnostic).ToList());
-            }
-
-            //Always retrun MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
+            //Return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
             if (_missingCopies.Count > 0)
             {
                 returnCode = ReturnCode.MissingCopy;
@@ -533,6 +615,19 @@ namespace TypeCobol.Server
                 if (returnCode < ReturnCode.ParsingDiagnostics && diagnostics.Any(diagnostic => diagnostic.Info.Severity == Severity.Error))
                 {
                     returnCode = ReturnCode.ParsingDiagnostics;
+                }
+            }
+
+            //Local function to report diagnostics either from intrinsics or dependencies
+            void CheckExternalDiagnostics(IList<DiagnosticsErrorEvent> externalDiagEvents)
+            {
+                if (externalDiagEvents.Count > 0)
+                {
+                    foreach (var diagnosticsErrorEvent in externalDiagEvents)
+                    {
+                        Server.AddError(_errorWriter, diagnosticsErrorEvent.Path, diagnosticsErrorEvent.Diagnostic);
+                    }
+                    UpdateReturnCode(externalDiagEvents.Select(dee => dee.Diagnostic).ToList());
                 }
             }
         }

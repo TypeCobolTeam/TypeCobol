@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -12,7 +12,6 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
-using Analytics;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.APIHelpers;
 
@@ -20,7 +19,15 @@ namespace TypeCobol
 {
 	public class Parser
 	{
-	    public List<string> MissingCopys { get; set; }
+        public static readonly string Version;
+
+        static Parser()
+        {
+            //Read current version from assembly attribute
+            Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        }
+
+        public IEnumerable<string> MissingCopys { get; private set; }
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
@@ -41,7 +48,7 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null) {
+		public void Init([NotNull] string path, bool isCopy, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
@@ -49,14 +56,14 @@ namespace TypeCobol
 			if (format == null) format = GetFormat(path);
             
             CompilationProject project = new CompilationProject(path, root.FullName, Helpers.DEFAULT_EXTENSIONS,
-				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
+				format, options, analyzerProvider);
 			//Add copy folder into sourceFileProvider
 			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
 			copies = copies ?? new List<string>();
 			foreach (var folder in copies) {
 				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
-			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false, project);
+			compiler = new FileCompiler(null, filename, format.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, CustomSymbols, project);
             
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
@@ -65,15 +72,12 @@ namespace TypeCobol
 
 		public void Parse(string path, TextChangedEvent e=null)
 		{
-            //if the server is restarted during Eclipse lifetime, then we need to init the parser
-            //This is useful when debugging. Perhaps it'll be deleted at the end
-            if (!Compilers.ContainsKey(path))
-			{
-				Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.Generate});
-			}
-			Compiler = Compilers[path];
+            if (!Compilers.TryGetValue(path, out Compiler))
+            {
+                throw new InvalidOperationException($"Parser error: compiler for path '{path}' has not been initialized.");
+            }
 
-			Compiler.CompilationResultsForProgram.TextLinesChanged += OnTextLine;
+            Compiler.CompilationResultsForProgram.TextLinesChanged += OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged += OnCodeElementLine;
 
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
@@ -84,7 +88,7 @@ namespace TypeCobol
                 throw new ParsingException(MessageCode.SyntaxErrorInParser, ex.Message, path, ex, true, true);
 			}
 
-		    MissingCopys = Compiler.CompilationResultsForProgram.MissingCopies.Select(c => c.TextName).Distinct().ToList();
+		    MissingCopys = Compiler.CompilationResultsForProgram.MissingCopies;
 
 			Compiler.CompilationResultsForProgram.TextLinesChanged -= OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;
@@ -127,34 +131,16 @@ namespace TypeCobol
 			System.Console.WriteLine("--- --> "+(c>0?(""+c):(e.DocumentChanges==null?"?":"0"))+" changes");
 		}
 
-		public IEnumerable<CodeElement> CodeElements
-		{
-			get
-			{
-				// TODO test if compilation is done
-				if (Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot == null) return new List<CodeElement>();
-				return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements;
-			}
-		}
-
-		public ITextDocument Source {
-			get { return Compiler.TextDocument; }
-		}
 
 		public CompilationUnit Results {
 			get { return Compiler.CompilationResultsForProgram; }
 		}
 
-
-
-		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null) {
-			var parser = new Parser();
-            var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
-#if EUROINFO_RULES
-		    typeCobolOption.AutoRemarksEnable = autoRemarks;
-#endif
-            parser.Init(path, typeCobolOption, format, copies);
-
+        public static Parser Parse(string path, bool isCopy, TypeCobolOptions options, DocumentFormat format, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null)
+        {
+            var parser = new Parser();
+            options.ExecToStep = ExecutionStep.Generate;
+            parser.Init(path, isCopy, options, format, copies, analyzerProvider);
             parser.Parse(path);
 			return parser;
 		}

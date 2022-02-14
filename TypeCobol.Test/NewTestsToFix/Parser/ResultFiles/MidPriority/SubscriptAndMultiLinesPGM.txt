@@ -1,6 +1,0 @@
-﻿--- Program ---
-PROGRAM: C6LIST1B common:False initial:False recursive:False
- author: ? written: ? compiled: ? installation: ? security: ?
-SYMBOL TABLE:
-  W-CPT-LUS {1} Numeric
-  ENTREE-ENR {1} Alphanumeric

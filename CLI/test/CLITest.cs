@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Server;
 using TypeCobol.Tools.Options_Config;
 
 namespace CLI.Test
@@ -105,12 +104,30 @@ namespace CLI.Test
         /// Tests with a dependency that depends on a dependency which is loaded after itself.
         /// </summary>
         [TestMethod]
-        public void TestDpendenciesNotLoadedInCorrectOrder() {
+        public void TestDependenciesNotLoadedInCorrectOrder() {
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder", ReturnCode.ParsingDiagnostics);
 #if EUROINFO_RULES
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2", ReturnCode.Success);
 #else
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2NoZ", ReturnCode.Success);
+#endif
+        }
+
+        [TestMethod]
+        public void TestDependenciesSignatureOverload()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("dependenciesSignatureOverload", ReturnCode.Success);
+            CLITestHelper.Test("dependenciesSignatureOverload_2", ReturnCode.Success);
+#else
+            CLITestHelper.Test("dependenciesSignatureOverloadNoZ", ReturnCode.Success);
+            CLITestHelper.Test("dependenciesSignatureOverload_2NoZ", ReturnCode.Success);
+#endif
+            CLITestHelper.Test("dependenciesSignatureOverload_3", ReturnCode.ParsingDiagnostics);
+#if EUROINFO_RULES
+            CLITestHelper.Test("dependenciesSignatureOverload_4", ReturnCode.Success);
+#else
+            CLITestHelper.Test("dependenciesSignatureOverload_4NoZ", ReturnCode.Success);
 #endif
         }
 
@@ -152,6 +169,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Check that missing copies found inside copies are also listed in output MissingCopy file
+        /// </summary>
+        [TestMethod]
+        public void CheckMissingCopies_2()
+        {
+            CLITestHelper.Test("checkMissingCopies_2", ReturnCode.MissingCopy);
+        }
+
+        /// <summary>
         /// This test should return MissingCopy.
         /// It tests if in case of missing copy and with the proper arguments extracted copies file and missing copies file are present and well formed.
         /// </summary>
@@ -178,6 +204,16 @@ namespace CLI.Test
             CLITestHelper.Test("CopyInsideTypeDefInsideDependency", ReturnCode.Success);
 #endif
 
+        }
+
+        /// <summary>
+        /// This test checks that a diagnostic is reported for copies with broken format
+        /// (after some characters have been turned into unwanted newline).
+        /// </summary>
+        [TestMethod]
+        public void TestCopyBrokenFormat()
+        {
+            CLITestHelper.Test("CopyBrokenFormat", ReturnCode.ParsingDiagnostics);
         }
 
         /// <summary>
@@ -235,6 +271,16 @@ namespace CLI.Test
         public void TestDocGen()
         {
             CLITestHelper.Test("documentation", ReturnCode.Warning);
+        }
+
+        /// <summary>
+        /// Try parsing to parse a Pure Cobol Which maybe unparsed because of the presence of
+        /// specific TypeCobol Language feature..
+        /// </summary>
+        [TestMethod]
+        public void TestFailParseNonPureCobol()
+        {
+            CLITestHelper.Test("failcoboloptionparse", ReturnCode.ParsingDiagnostics);
         }
 
         /// <summary>
@@ -299,6 +345,26 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Test the reporting of modules call via ZCall Pgm like instructions.
+        /// This test is for the MOVE instruction.
+        /// </summary>
+        [TestMethod]
+        public void TestZCallPgmReportDFA_1()
+        {
+            CLITestHelper.Test("zcallpgmreportdfa_1", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test the reporting of modules call via ZCall Pgm like instructions.
+        /// This test is for the SET instruction on level 88 variables.
+        /// </summary>
+        [TestMethod]
+        public void TestZCallPgmReportDFA_2()
+        {
+            CLITestHelper.Test("zcallpgmreportdfa_2", ReturnCode.Success);
+        }
+
+        /// <summary>
         /// Test multiple files parsing.
         /// </summary>
         [TestMethod]
@@ -311,6 +377,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// This is a duplicate of 'mass_generation_dependent_programs_2' but with alternate .xmldiag error format.
+        /// </summary>
+        [TestMethod]
+        public void TestXmlDiagFormat()
+        {
+            CLITestHelper.Test("mass_generation_xmldiagformat", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test override of UTF-8 encoding for RDZ format.
         /// </summary>
         [TestMethod]
@@ -319,6 +394,27 @@ namespace CLI.Test
             CLITestHelper.Test("rdzformat_inputencoding_wrong", ReturnCode.Success);
             CLITestHelper.Test("rdzformat_inputencoding_good", ReturnCode.Success);
         }
+
+        /// <summary>
+        /// Test custom analyzers defined in TypeCobol.Analysis.Test.dll.
+        /// </summary>
+        [TestMethod]
+        public void TestCustomAnalyzers()
+        {
+            CLITestHelper.Test("custom_analyzers", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("custom_analyzers_withcfg", ReturnCode.ParsingDiagnostics);
+        }
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// Test the usage of option -ycpl
+        /// </summary>
+        [TestMethod]
+        public void TestCpyList()
+        {
+            CLITestHelper.Test("ycopylist", ReturnCode.Success);
+        }
+#endif
     }
 
     public class CLITestHelper {
@@ -528,7 +624,7 @@ namespace CLI.Test
             {
                 var targetFileContent = File.ReadAllLines(commonTargetFiles[i].FullName);
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
-                if (!targetFileContent.SequenceEqual(actualFileContent))
+                if (!HaveSameContent(targetFileContent, actualFileContent))
                 {
                     if (autoReplace && testPlaylistDirectory != null)
                     {
@@ -600,6 +696,29 @@ namespace CLI.Test
 
             return dirIdentical;
         }
+
+        private static bool HaveSameContent(string[] targetFileContent, string[] actualFileContent)
+        {
+            //Compare line count
+            bool sameLineCount = targetFileContent.Length == actualFileContent.Length;
+            if (!sameLineCount) return false;
+
+            //Compare each line
+            for (int i = 0; i < targetFileContent.Length; i++)
+            {
+                //Parser version hack: the version number is dynamic depending on CI/CD pipeline...
+                //So we use a placeholder for version number in expected result files and replace the value here.
+                string targetLine = targetFileContent[i].Replace("[[ParserVersion]]", TypeCobol.Parser.Version);
+                string actualLine = actualFileContent[i];
+                if (targetLine != actualLine)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Replacement logic for cli tests
         /// </summary>

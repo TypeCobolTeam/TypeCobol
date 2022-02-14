@@ -91,7 +91,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                     try
                     {
                         // Compile program
-                        FileCompiler fileCompiler = new FileCompiler(null, textName, project.SourceFileProvider, project, project.ColumnsLayout, project.CompilationOptions.Clone(), null, false, project);
+                        FileCompiler fileCompiler = new FileCompiler(project, textName, false);
                         fileCompiler.CompileOnce();
                         CompilationUnit compilationResult = fileCompiler.CompilationResultsForProgram;
                         programCopiesNotFound = 0;
@@ -294,9 +294,9 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                         }
 
                         // Iterate over tokens AFTER preprocessing
-                        ITokensLinesIterator processedTokensIterator = compilationResult.ProcessedTokensDocumentSnapshot.ProcessedTokens;
+                        ITokensLinesIterator processedTokensIterator = compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokensIterator();
                         Token processedToken = null;
-                        while ((processedToken = processedTokensIterator.NextToken()) != Token.END_OF_FILE)
+                        while ((processedToken = processedTokensIterator.NextToken()).TokenType != TokenType.EndOfFile)
                         {
                             tokensCounter.OnElement((int)processedToken.TokenType);
                             ReplacedToken replacedToken = processedToken as ReplacedToken;

@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
 Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>

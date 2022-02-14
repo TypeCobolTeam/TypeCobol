@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Json;
-using Castle.Core.Internal;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 
@@ -119,12 +118,12 @@ namespace TypeCobol.Compiler.Nodes
                 {
                     FormCom     = ce.FormalizedCommentDocumentation;
                     // Avoid set empty string or list to have less data to transfer
-                    Needs       = FormCom.Needs.IsNullOrEmpty()       ? null : FormCom.Needs;
-                    ToDo        = FormCom.ToDo.IsNullOrEmpty()        ? null : FormCom.ToDo;
-                    Description = FormCom.Description.IsNullOrEmpty() ? null : FormCom.Description;
-                    ReplacedBy  = FormCom.ReplacedBy.IsNullOrEmpty()  ? null : FormCom.ReplacedBy;
-                    Restriction = FormCom.Restriction.IsNullOrEmpty() ? null : FormCom.Restriction;
-                    See         = FormCom.See.IsNullOrEmpty()         ? null : FormCom.See;
+                    Needs       = FormCom.Needs.Any() ? FormCom.Needs : null;
+                    ToDo        = FormCom.ToDo.Any()  ? FormCom.ToDo  : null;
+                    Description = string.IsNullOrEmpty(FormCom.Description) ? null : FormCom.Description;
+                    ReplacedBy  = string.IsNullOrEmpty(FormCom.ReplacedBy)  ? null : FormCom.ReplacedBy;
+                    Restriction = string.IsNullOrEmpty(FormCom.Restriction) ? null : FormCom.Restriction;
+                    See         = string.IsNullOrEmpty(FormCom.See)         ? null : FormCom.See;
                     Deprecated  = FormCom.Deprecated;
                 }
             }
@@ -294,9 +293,10 @@ namespace TypeCobol.Compiler.Nodes
                 MaxValue = maxValue;
             }
         }
+
         [XmlIgnore]
         [IgnoreDataMember]
-        public bool IsSubGroup => !Childrens.IsNullOrEmpty();
+        public bool IsSubGroup => Childrens != null && Childrens.Any();
 
         [XmlArray("Childrens")]
         [XmlArrayItem("Children", typeof(DocumentationTypeChildren))]
@@ -572,7 +572,7 @@ namespace TypeCobol.Compiler.Nodes
             Info = info;
             DocDataType = new DocumentationDataType(dataDef);
 
-            if (determinePassing && !info.IsNullOrEmpty())
+            if (determinePassing && !string.IsNullOrEmpty(info))
             {
                 var processedData = DetermineType(info);
                 PassingType = processedData.Item1;

@@ -1,6 +1,4 @@
 ﻿//#define DEBUG_ANTRL_CUP_TIME
-using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
@@ -8,17 +6,14 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Nodes;
-using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupParser;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using TypeCobolProgramParser = TypeCobol.Compiler.CupParser.TypeCobolProgramParser;
+using TypeCobol.Analysis;
+using TypeCobol.Compiler.Domain;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -28,9 +23,6 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     static class ProgramClassParserStep
     {
-        // When not null, optionnaly used to gather Antlr performance profiling information
-        public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
-
         private static bool CupPrepared = false;
         /// <summary>
         /// This static prepare the parser generated method CUP_TypeCobolProgramParser_do_action.
@@ -48,7 +40,15 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
         }
-        public static void CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, 
+        public static void CupParseProgramOrClass(
+            TextSourceInfo textSourceInfo,
+            ISearchableReadOnlyList<CodeElementsLine> codeElementsLines,
+            TypeCobolOptions compilerOptions,
+            SymbolTable customSymbols,
+            PerfStatsForParserInvocation perfStatsForParserInvocation,
+            ISyntaxDrivenAnalyzer[] customAnalyzers,
+            out SourceFile root,
+            out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
             out List<DataDefinition> typedVariablesOutsideTypedef,
             out List<TypeDefinition> typeThatNeedTypeLinking)
@@ -57,7 +57,15 @@ namespace TypeCobol.Compiler.Parser
 #if DEBUG_ANTRL_CUP_TIME
             var t1 = DateTime.UtcNow;            
 #endif
-            CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines);
+            IEnumerable<CodeElement> before = null;
+            IEnumerable<CodeElement> after = null;
+            if (textSourceInfo.IsCopy)
+            {
+                var programSkeleton = new CopyParsing.ProgramSkeleton(textSourceInfo);
+                before = programSkeleton.Before();
+                after = programSkeleton.After();
+            }
+            CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines, before, after);
             CupParser.TypeCobolProgramParser parser = new CupParser.TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
             parser.ErrorReporter = diagReporter;
@@ -68,7 +76,17 @@ namespace TypeCobol.Compiler.Parser
             builder.SyntaxTree = new SyntaxTree(); //Initialize SyntaxTree for the current source file
             builder.CustomSymbols = customSymbols;
             builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
-            builder.Dispatcher.CreateListeners();
+            //Add mandatory ProgramSymbolTableBuilder
+            builder.Dispatcher.AddListener(new ProgramSymbolTableBuilder());
+
+            //Add custom additional analyzers
+            if (customAnalyzers != null)
+            {
+                foreach (var customAnalyzer in customAnalyzers)
+                {
+                    builder.Dispatcher.AddListener(customAnalyzer);
+                }
+            }
 
             // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
             perfStatsForParserInvocation.OnStartParsing();
@@ -79,9 +97,10 @@ namespace TypeCobol.Compiler.Parser
             catch (Exception ex)
             {
                 var code = Diagnostics.MessageCode.ImplementationError;
-                programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
+                programClassBuilderError = new ParserDiagnostic(ex.ToString(), Diagnostic.Position.Default, null, code, ex);
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
+
 
 #if DEBUG_ANTRL_CUP_TIME
             var t2 = DateTime.UtcNow;
@@ -101,6 +120,15 @@ namespace TypeCobol.Compiler.Parser
             nodeCodeElementLinkers = builder.NodeCodeElementLinkers;
             typedVariablesOutsideTypedef = builder.TypedVariablesOutsideTypedef;
             typeThatNeedTypeLinking = builder.TypeThatNeedTypeLinking;
+
+            //Collect analyzer diagnostics
+            if (customAnalyzers != null)
+            {
+                foreach (var customAnalyzer in customAnalyzers)
+                {
+                    diagnostics.AddRange(customAnalyzer.Diagnostics);
+                }
+            }
 
             if (programClassBuilderError != null)
             {

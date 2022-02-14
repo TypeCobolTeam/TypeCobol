@@ -328,6 +328,7 @@ non terminal TypeCobol.Compiler.CodeElements.CodeElement whenEvaluateCondition;
 non terminal TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList whenEvaluateConditions;
 non terminal evaluateStatementWithBody;
 non terminal ifStatementWithBody;
+non terminal elseContinuation;
 non terminal invokeStatementConditional;
 non terminal jsonGenerateStatementConditional;
 non terminal jsonParseStatementConditional;
@@ -1214,7 +1215,9 @@ whenConditionClauses ::=
 	|	whenConditionClauses error whenConditionClause
 	;
 
-whenConditionClause ::= whenEvaluateConditionsStart  statements
+whenConditionClause ::=  whenEvaluateConditionsStart
+    {: my_parser.Builder.EndWhenConditionClause(); :}
+	| whenEvaluateConditionsStart  statements
 	{: my_parser.Builder.EndWhenConditionClause(); :}
 	;
 
@@ -1244,36 +1247,39 @@ whenOtherCondition ::= WhenOtherCondition:woc
 	;
 
 ifStatementWithBody ::=
-	ifstatement statements
-	{: my_parser.Builder.EndIfStatementWithBody(); :}
-	| ifstatement statements IfStatementEnd:end
-	{: my_parser.Builder.EndIfStatementWithBody(end); :}
-
+	ifstatement
+    {: my_parser.Builder.EndIfStatementWithBody(); :}
+    | ifstatement elseContinuation
+    | ifstatement IfStatementEnd:end
+    {: my_parser.Builder.EndIfStatementWithBody(end); :}
+	
+    | ifstatement statements
+    {: my_parser.Builder.EndIfStatementWithBody(); :}
+    | ifstatement statements elseContinuation
+    | ifstatement statements IfStatementEnd:end
+    {: my_parser.Builder.EndIfStatementWithBody(end); :}
+    
 	| ifstatement nextSentenceStatement
-	{:  my_parser.Builder.EndIfStatementWithBody(); :}
-	| ifstatement nextSentenceStatement IfStatementEnd:end
-	{: my_parser.Builder.EndIfStatementWithBody(end); :}
-
-	| ifstatement statements elseCondition statements
-	{: my_parser.Builder.EndIfStatementWithBody(); :}
-	| ifstatement statements elseCondition nextSentenceStatement
-	{: my_parser.Builder.EndIfStatementWithBody(); :}
-
-	| ifstatement statements elseCondition statements IfStatementEnd:end
-	{: my_parser.Builder.EndIfStatementWithBody(end); :}
-	| ifstatement statements elseCondition nextSentenceStatement IfStatementEnd:end
-	{: my_parser.Builder.EndIfStatementWithBody(end); :}
-
-	| ifstatement nextSentenceStatement elseCondition statements
-	{: my_parser.Builder.EndIfStatementWithBody(); :}
-	| ifstatement nextSentenceStatement elseCondition nextSentenceStatement
-	{: my_parser.Builder.EndIfStatementWithBody(); :}
-
-	| ifstatement nextSentenceStatement elseCondition statements IfStatementEnd:end
-	{: my_parser.Builder.EndIfStatementWithBody(end); :}
-	| ifstatement nextSentenceStatement elseCondition nextSentenceStatement IfStatementEnd:end
-	{: my_parser.Builder.EndIfStatementWithBody(end); :}
+    {: my_parser.Builder.EndIfStatementWithBody(); :}
+    | ifstatement nextSentenceStatement elseContinuation
+    | ifstatement nextSentenceStatement IfStatementEnd:end
+    {: my_parser.Builder.EndIfStatementWithBody(end); :}
 	;
+
+elseContinuation ::=
+    elseCondition
+    {: my_parser.Builder.EndIfStatementWithBody(); :}
+    | elseCondition IfStatementEnd:end
+    {: my_parser.Builder.EndIfStatementWithBody(end); :}
+    | elseCondition statements
+    {: my_parser.Builder.EndIfStatementWithBody(); :}
+    | elseCondition statements IfStatementEnd:end
+    {: my_parser.Builder.EndIfStatementWithBody(end); :}
+    | elseCondition nextSentenceStatement
+    {: my_parser.Builder.EndIfStatementWithBody(); :}
+    | elseCondition nextSentenceStatement IfStatementEnd:end
+    {: my_parser.Builder.EndIfStatementWithBody(end); :}
+    ;
 
 ifstatement ::= IfStatement:ifs
 	{: my_parser.Builder.StartIfStatementWithBody(ifs); :}

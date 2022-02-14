@@ -1,31 +1,21 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,11:X"A396A396"]<HexadecimalAlphanumericLiteral>(",Y,Y){toto}
-[12,12: ]<SpaceSeparator>
 [13,23:X'A389A389']<HexadecimalAlphanumericLiteral>(',Y,Y){titi}
-[24,24: ]<SpaceSeparator>
 [25,25:X]<UserDefinedWord>
-[26,26: ]<SpaceSeparator>
 [27,46:NX"7400610074006100"]<HexadecimalNationalLiteral>(",Y,Y){tata}
-[47,47: ]<SpaceSeparator>
 [48,67:NX'7400750074007500']<HexadecimalNationalLiteral>(',Y,Y){tutu}
-[68,68: ]<SpaceSeparator>
 [69,70:NX]<UserDefinedWord>
-[71,71: ]<SpaceSeparator>
 [72,74:X""]<HexadecimalAlphanumericLiteral>(",Y,Y){}
-[75,75: ]<SpaceSeparator>
 [76,79:NX'']<HexadecimalNationalLiteral>(',Y,Y){}
-[80,80: ]<SpaceSeparator>
 [81,81:X]<UserDefinedWord>
 [82,82+:.]<PeriodSeparator>
 
 -- Line 2 --
 [1,11:X"A396A396"]<HexadecimalAlphanumericLiteral>(",Y,Y){toto}
-[12,12: ]<SpaceSeparator>
 [13,20:X'A389A3]<HexadecimalAlphanumericLiteral>(',Y,N){tit}
 
 -- Line 3 --
 [1,20:NX"7400610074006100"]<HexadecimalNationalLiteral>(",Y,Y){tata}
-[21,21: ]<SpaceSeparator>
 [22,28:NX'7400]<HexadecimalNationalLiteral>(',Y,N){t}
 
 -- Line 4 --

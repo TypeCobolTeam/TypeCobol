@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -376,7 +377,6 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.ZEROES:
                         return "0";
                     case TokenType.PictureCharacterString:
-                        return ApplyDecimalPointIsComma(Token.Text);
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
                     case TokenType.IntrinsicFunctionName:
@@ -404,7 +404,7 @@ namespace TypeCobol.Compiler.CodeElements
                     switch (Token.TokenType)
                     {
                         case TokenType.PictureCharacterString:
-                            return NormalizePictureText(ApplyDecimalPointIsComma(Token.Text));
+                            return NormalizePictureText(Token.Text);
                         default:
                             return Value;
                     }
@@ -427,30 +427,6 @@ namespace TypeCobol.Compiler.CodeElements
                 }
             }
             return picText.ToUpper();
-        }
-
-        private string ApplyDecimalPointIsComma(string picText)
-        {
-            if (picText.Contains(",") || picText.Contains("."))
-            {
-                var tokensLine = Token.TokensLine as TokensLine;
-                if (tokensLine != null && tokensLine.InitialScanState.DecimalPointIsComma)
-                {
-                    System.Text.StringBuilder parsedPicture = new System.Text.StringBuilder();
-                    foreach (char c in picText)
-                    {
-                        if (c == '.')
-                            parsedPicture.Append(',');
-                        else if (c == ',')
-                            parsedPicture.Append('.');
-                        else
-                            parsedPicture.Append(c);
-                    }
-                    return parsedPicture.ToString();
-                }
-            }
-
-            return picText;
         }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
@@ -542,7 +518,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class EnumeratedValue : AlphanumericValue
     {
-        public EnumeratedValue(Token t, Type enumType) : base(t)
+        public EnumeratedValue([NotNull] Token t, Type enumType) : base(t)
         {
             EnumType = enumType;
 

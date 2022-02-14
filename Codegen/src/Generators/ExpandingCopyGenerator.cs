@@ -437,11 +437,9 @@ namespace TypeCobol.Codegen.Generators
         public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
             this.Layout = columns;
-            Compiler.Preprocessor.ProcessedTokensDocument processedTokensDocument = compilationUnit.ProcessedTokensDocumentSnapshot;
 
             // Create a token iterator on top of pre-processed tokens lines
-            Compiler.Scanner.ITokensLinesIterator tokensIterator = Compiler.Preprocessor.ProcessedTokensDocument.GetProcessedTokensIterator(
-                compilationUnit.TextSourceInfo, processedTokensDocument.Lines, compilationUnit.CompilerOptions);
+            ITokensLinesIterator tokensIterator = compilationUnit.ProcessedTokensDocumentSnapshot.GetProcessedTokensIterator();
 
             var stopwatch = Stopwatch.StartNew();
 

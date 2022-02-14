@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<build return-code="ParsingDiagnostics">
+  <filetable>
+    <file index="1" path="input\DVZZPGM1.tcbl" />
+    <file index="2" path="input\DVZZPGM2.tcbl" />
+    <file index="3" path="input\DVZZPGM3.tcbl" />
+  </filetable>
+  <diagnostics>
+    <diagnostic file-index="1">
+      <range line-start="5" column-start="8" line-end="5" column-end="43" />
+      <message>Semantic error: TYPE 'DVZZPGM2.Type1' is not referenced</message>
+      <info severity="Error" code="30" source="Page" />
+    </diagnostic>
+    <diagnostic file-index="1">
+      <range line-start="7" column-start="33" line-end="7" column-end="36" />
+      <message>Semantic error: Symbol str-message.var1 is not referenced</message>
+      <info severity="Error" code="30" source="Page" />
+    </diagnostic>
+    <diagnostic file-index="2">
+      <range line-start="6" column-start="18" line-end="6" column-end="25" />
+      <message>Syntax error : no viable alternative at input '01 ... typedef%'</message>
+      <info severity="Error" code="27" source="Find the syntax diagram describing the statement in error in the language reference" />
+    </diagnostic>
+    <diagnostic file-index="2">
+      <range line-start="6" column-start="40" line-end="6" column-end="40" />
+      <message>Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}</message>
+      <info severity="Error" code="27" source="Find the syntax diagram describing the statement in error in the language reference" />
+    </diagnostic>
+  </diagnostics>
+</build>

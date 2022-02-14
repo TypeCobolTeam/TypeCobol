@@ -1,73 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
+using TypeCobol.Logging;
 
-namespace TypeCobol.Tools {
+namespace TypeCobol.Tools
+{
+    public static class Reflection
+    {
+        public static bool IsTypeOf(Type type, Type targetType)
+        {
+            if (!targetType.IsGenericType)
+            {
+                return targetType.IsAssignableFrom(type);
+            }
+            
+            if (type.IsGenericType && targetType.IsGenericType)
+            {
+                Type instType = type.MakeGenericType(targetType.GetGenericArguments());
+                return targetType.IsAssignableFrom(instType);
+            }
 
-public class Reflection {
+            return false;
+        }
+    }
 
-	public static bool IsTypeOf(Type type, Type iface) {
-	    if (!iface.IsGenericType)
-	    {
-	        return iface.IsAssignableFrom(type);
-	    }
-	    else if (type.IsGenericType && iface.IsGenericType)
-	    {
-	        System.Type instType = type.MakeGenericType(iface.GetGenericArguments());
-	        return iface.IsAssignableFrom(instType);
-	    }
-	    else
-	    {
-	        return false;
-	    }
-	}
+    /// <summary>
+    /// Provides methods to help working with custom parser extensions.
+    /// </summary>
+    public class ExtensionManager
+    {
+        private readonly List<Assembly> _loadedExtensions;
 
-	public static List<Type> GetTypesInNamespace(string nspace, Assembly assembly = null) {
-		var types = new List<Type>();
-		if (assembly == null) assembly = Assembly.GetExecutingAssembly();
-		foreach(var type in assembly.GetTypes()) {
-			if (type.Namespace == null) continue;
-			if (type.Namespace.StartsWith(nspace)) {
-				types.Add(type);
-			}
-		}
-		return types;
-	}
-
-	public static List<Type> GetTypesInNamespace<T>(string nspace, Assembly assembly = null) {
-		var types = new List<Type>();
-		if (assembly == null) assembly = Assembly.GetExecutingAssembly();
-		foreach(var type in assembly.GetTypes()) {
-			if (type.Namespace == null) continue;
-			if (type.Namespace.StartsWith(nspace)) {
-				if (IsTypeOf(type, typeof(T))) types.Add(type);
-			}
-		}
-		return types;
-	}
-
-	public static List<T> GetInstances<T>(Assembly assembly, string nspace) {
-		var instances = new List<T>();
-		var types = GetTypesInNamespace<T>(nspace, assembly);
-	    System.Type iface = typeof(T);
-		foreach (var type in types) {
-			if (type.IsAbstract) continue;//cannot instanciate abstract types
-		    if (!type.IsGenericType && !iface.IsGenericType)
-		    {
-		        instances.Add((T) System.Activator.CreateInstance(type));
-		    }
-            else if (type.IsGenericType && iface.IsGenericType)
-		    {
-                System.Type instType = type.MakeGenericType(iface.GetGenericArguments());
-                instances.Add((T)System.Activator.CreateInstance(instType));
+        /// <summary>
+        /// Creates a new ExtensionManager. All extensions are dynamically loaded during
+        /// the call. Errors are traced into LoggingSystem so a basic logger has to be registered
+        /// prior calling this constructor.
+        /// </summary>
+        /// <param name="extensions">A non-null list of assembly file paths.</param>
+        public ExtensionManager([NotNull] List<string> extensions)
+        {
+            Debug.Assert(extensions != null);
+            _loadedExtensions = new List<Assembly>(extensions.Count);
+            foreach (var extension in extensions)
+            {
+                try
+                {
+                    var assembly = Assembly.LoadFrom(extension);
+                    _loadedExtensions.Add(assembly);
+                }
+                catch (Exception exception)
+                {
+                    LoggingSystem.LogException(exception);
+                }
             }
         }
-		return instances;
-	}
 
-	public static IEnumerable<T> GetValues<T>() {
-		return (T[])Enum.GetValues(typeof(T));
-	}
-}
+        /// <summary>
+        /// Creates instances of implementations found in parser extensions for the given interface type.
+        /// </summary>
+        /// <typeparam name="TInterface">Non-generic interface type.</typeparam>
+        /// <param name="parameters">Constructor parameters to use at instantiation time.</param>
+        /// <returns>Deferred enumeration of new instances.</returns>
+        public IEnumerable<TInterface> Activate<TInterface>(params object[] parameters)
+            where TInterface : class
+        {
+            Type targetType = typeof(TInterface);
 
+            if (!targetType.IsInterface)
+            {
+                throw new ArgumentException($"Target type '{targetType.FullName}' must be an interface type.");
+            }
+
+            if (targetType.IsGenericType)
+            {
+                throw new NotSupportedException("Activation of generic types is not supported.");
+            }
+
+            foreach (var extension in _loadedExtensions)
+            {
+                foreach (var type in extension.GetTypes())
+                {
+                    if (type.IsPublic && type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(targetType))
+                    {
+                        TInterface instance = null;
+                        try
+                        {
+                            instance = (TInterface) Activator.CreateInstance(type, parameters);
+                        }
+                        catch (Exception exception)
+                        {
+                            LoggingSystem.LogException(exception);
+                        }
+
+                        if (instance != null)
+                        {
+                            yield return instance;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

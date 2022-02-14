@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TypeCobol.LanguageServer.StdioHttp;
 using Analytics;
+using TypeCobol.Logging;
 
 namespace TypeCobol.LanguageServer.JsonRPC
 {
@@ -82,6 +83,11 @@ namespace TypeCobol.LanguageServer.JsonRPC
         private IDictionary<string, ResponseWaitState> responsesExpected = new Dictionary<string, ResponseWaitState>();
 
         /// <summary>
+        /// An Unhandled Exception handler
+        /// </summary>
+        public UnhandledExceptionEventHandler Handler { get; set; }
+
+        /// <summary>
         /// Send an async request to the client and await later for the response or error
         /// </summary>
         public Task<ResponseResultOrError> SendRequest(RequestType requestType, object parameters)
@@ -146,17 +152,11 @@ namespace TypeCobol.LanguageServer.JsonRPC
         
         private void HandleNotification(string method, JToken parameters)
         {
-            NotificationMethod notificationMethod = null;
-            notificationMethods.TryGetValue(method, out notificationMethod);
-            if(notificationMethod == null)
-            {
-                WriteServerLog(String.Format("No notification handler was registered for method \"{0}\"", method));
-            }
-            else
+            if (notificationMethods.TryGetValue(method, out var notificationMethod))
             {
                 NotificationType notificationType = notificationMethod.Type;
                 object objParams = null;
-                if(parameters != null)
+                if (parameters != null)
                 {
                     objParams = parameters.ToObject(notificationType.ParamsType);
                 }
@@ -164,11 +164,20 @@ namespace TypeCobol.LanguageServer.JsonRPC
                 {
                     notificationMethod.HandleNotification(notificationType, objParams);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    WriteServerLog(String.Format("Notification handler for {0} failed : {1}", notificationType.GetType().Name, e.Message));
-                    ResponseResultOrError error = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message , data = parameters?.ToString() };
+                    Handler?.Invoke(this, new UnhandledExceptionEventArgs(e, false));
+                    WriteServerLog($"Notification handler for {notificationType.GetType().Name} failed : {e.Message}");
+                    ResponseResultOrError error = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message, data = parameters?.ToString() };
                     Reply(method, error);
+                }
+            }
+            else
+            {
+                //No notification handler, write error except for '$/' methods which are optional
+                if (!method.StartsWith("$/"))
+                {
+                    WriteServerLog($"No notification handler was registered for method \"{method}\"");
                 }
             }
         }
@@ -196,6 +205,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
                 }
                 catch(Exception e)
                 {
+                    Handler?.Invoke(this, new UnhandledExceptionEventArgs(e, false));
                     ResponseResultOrError error = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
                     Reply(requestId, error);
                 }
@@ -259,7 +269,8 @@ namespace TypeCobol.LanguageServer.JsonRPC
                 }
                 catch (Exception e)
                 {
-                    WriteServerLog(String.Format("Task completion for the response expected by request {0} of type {1} failed : {1}", requestId, requestType.GetType().Name, e.Message));
+                    Handler?.Invoke(this, new UnhandledExceptionEventArgs(e, false));
+                    WriteServerLog(String.Format("Task completion for the response expected by request {0} of type {1} failed : {2}", requestId, requestType.GetType().Name, e.Message));
                 }
             }
         }
@@ -269,8 +280,10 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// </summary>
         public void WriteServerLog(string trace)
         {
+            //TODO #2091 May produce duplicate traces, remove or use LoggingSystem instead of logWriter in StdioHttpServer
+            LoggingSystem.LogMessage(LogLevel.Error, trace);
+
             messageServer.WriteServerLog(trace);
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Diagnostic, trace, LogType.Completion);
-        }       
+        }
     }
 }

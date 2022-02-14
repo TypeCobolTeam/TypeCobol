@@ -27,7 +27,7 @@ Line 20[15,32] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLO
            88 zedzed                VALUE 'TEST'.
       *External clause is not authorized inside Global Storage
 Line 23[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
-       01 ForbiddenExternalVar   PIC 10 EXTERNAL.
+       01 ForbiddenExternalVar   PIC X(10) EXTERNAL.
 
        01 DefInGlobalStorageAndNested pic X.
 

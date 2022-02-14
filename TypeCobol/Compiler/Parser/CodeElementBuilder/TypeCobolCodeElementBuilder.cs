@@ -115,15 +115,6 @@ namespace TypeCobol.Compiler.Parser
             return parameters;
         }
 
-        private ParameterDescriptionEntry CreateFunctionDataParameter(DataConditionEntry condition)
-        {
-            var data = new ParameterDescriptionEntry();
-            data.LevelNumber = condition.LevelNumber;
-            data.DataName = condition.DataName;
-            data.DataType = DataType.Unknown;
-            return data;
-        }
-
         public ParameterDescriptionEntry CreateFunctionDataParameter(
             CodeElementsParser.FunctionDataParameterContext context)
         {
@@ -132,9 +123,14 @@ namespace TypeCobol.Compiler.Parser
             parameter.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
             if (context.pictureClause() != null)
             {
-                parameter.Picture =
-                    CobolWordsBuilder.CreateAlphanumericValue(context.pictureClause().pictureCharacterString);
-                parameter.DataType = DataType.Create(parameter.Picture.Value);
+                var pictureClauseContext = context.pictureClause();
+                if (pictureClauseContext.pictureCharacterString != null)
+                {
+                    System.Diagnostics.Debug.Assert(pictureClauseContext.pictureCharacterString is Token);
+                    //TokenType is PictureCharacterString so it's ok to create an AlphanumericValue
+                    parameter.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
+                    parameter.DataType = DataType.Create(parameter.Picture.Value);
+                }
             }
             else if (context.cobol2002TypeClause() != null)
             {
@@ -183,15 +179,20 @@ namespace TypeCobol.Compiler.Parser
             if (context.synchronizedClause() != null)
             {
                 var synchronizedClauseContext = context.synchronizedClause();
-                if (synchronizedClauseContext.SYNCHRONIZED() != null)
+                if (synchronizedClauseContext.LEFT() != null)
                 {
-                    parameter.IsSynchronized = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED()));
+                    parameter.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.Left,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.LEFT()));
+                }
+                else if (synchronizedClauseContext.RIGHT() != null)
+                {
+                    parameter.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.Right,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.RIGHT()));
                 }
                 else
                 {
-                    parameter.IsSynchronized = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNC()));
+                    parameter.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.None,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED() ?? synchronizedClauseContext.SYNC()));
                 }
             }
 
@@ -317,6 +318,7 @@ namespace TypeCobol.Compiler.Parser
                 parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTION_MARK()));
             }
 
+            DataDescriptionChecker.CheckPicture(parameter, context);
             return parameter;
         }
 
@@ -378,7 +380,7 @@ namespace TypeCobol.Compiler.Parser
         private static CallTargetParameter CreateCallTargetParameter(ParameterDescriptionEntry param)
         {
             var symbolReference = new SymbolReference(param.DataName);
-            var storageArea = new DataOrConditionStorageArea(symbolReference);
+            var storageArea = new DataOrConditionStorageArea(symbolReference, false);
             var callParameter = new CallTargetParameter {StorageArea = storageArea};
             return callParameter;
         }
@@ -396,31 +398,15 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterTcCallStatement(CodeElementsParser.TcCallStatementContext context)
         {
-            var cbCallProc = context.procedurePointerOrFunctionPointerVariableOrfunctionNameReference;
-
             // Register call parameters (shared storage areas) information at the CodeElement level
-            CallSite callSite = null;
-            ProcedureStyleCallStatement statement = null;
+            CallSite callSite;
+            ProcedureStyleCallStatement statement;
             Context = context;
-
-            //Incomplete CallStatement, create an empty CodeElement and return + Error due to issue #774
-            if (cbCallProc == null)
-            {
-                CodeElement = new ProcedureStyleCallStatement
-                {
-                    Diagnostics = new List<Diagnostic>
-                    {
-                        new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column,
-                            context.Stop.Column, context.Start.Line, "Empty CALL is not authorized")
-                    }
-                };
-                return;
-            }
-
 
             //Here ambiguousSymbolReference with either CandidatesType:
             // - ProgramNameOrProgramEntry
             // - data, condition, UPSISwitch, TCFunctionName
+            var cbCallProc = context.procedurePointerOrFunctionPointerVariableOrfunctionNameReference;
             var ambiguousSymbolReference = CobolExpressionsBuilder.CreateProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(cbCallProc);
           
 
@@ -593,9 +579,7 @@ namespace TypeCobol.Compiler.Parser
                             ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference,
                             Diagnostics = new List<Diagnostic>
                             {
-                                new Diagnostic(MessageCode.ImplementationError, context.Start.Column,
-                                    context.Stop.Column, context.Start.Line,
-                                    "A call with arguments is not a TCFunctionName")
+                                new Diagnostic(MessageCode.ImplementationError, context.Start.Position(), "A call with arguments is not a TCFunctionName")
                             },
                         };
 
@@ -640,8 +624,7 @@ namespace TypeCobol.Compiler.Parser
                             ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction =
                                 ambiguousSymbolReference.MainSymbolReference,
                         };
-                    statement.Diagnostics.Add(new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column,
-                        context.Stop.Column, context.Start.Line, "Error in detecting Procedure Call type"));
+                    statement.Diagnostics.Add(new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Position(), "Error in detecting Procedure Call type"));
                     callSite = new CallSite();
                     callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction;
                 }
@@ -652,6 +635,8 @@ namespace TypeCobol.Compiler.Parser
                 if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
                 statement.CallSites.Add(callSite);
             }
+
+            LanguageLevelChecker.Check(statement, context);
 
             CodeElement = statement;
         }
@@ -678,6 +663,18 @@ namespace TypeCobol.Compiler.Parser
                 if (mode != null) by = mode.Value;
                 mode = new SyntaxProperty<ParameterSharingMode>(by, null);
             }
+        }
+
+        public override void ExitDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            System.Diagnostics.Debug.Assert(CodeElement is DataDefinitionEntry);
+            LanguageLevelChecker.Check((DataDefinitionEntry) CodeElement, context);
+        }
+
+        public override void ExitTcCodeElement(CodeElementsParser.TcCodeElementContext context)
+        {
+            System.Diagnostics.Debug.Assert(CodeElement != null);
+            LanguageLevelChecker.Check(CodeElement, context);
         }
     }
 }

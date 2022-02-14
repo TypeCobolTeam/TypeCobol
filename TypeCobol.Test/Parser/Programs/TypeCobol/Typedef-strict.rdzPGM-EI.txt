@@ -1,9 +1,9 @@
 --- Diagnostics ---
-Line 1[8,29] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 10[8,40] <30, Error, Semantics> - Semantic error: TYPE 'bool' has already been declared
 Line 13[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared
 Line 14[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared
-Line 17[22,28] <27, Error, Syntax> - Syntax error : SYNC clause cannot be used with a STRICT type definition RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[22,28:TYPEDEF]<TYPEDEF>
+Line 17[8,41] <27, Error, Syntax> - Syntax error : Cannot declare Type definition MySyncType with Sync clause because it is Strict.
+Line 18[11,31] <27, Error, Syntax> - Syntax error : SyncVar is part of a declaration using Sync clause in Strict Type definition MySyncType.
 Line 50[20,26] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
 Line 56[36,42] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[36,42:TYPEDEF]<TYPEDEF>
 Line 57[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
@@ -27,9 +27,19 @@ Line 156[41,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symb
 Line 160[37,43] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[37,43:typedef]<TYPEDEF>
 Line 174[40,56] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART1 IN usestrictType1' is strictly-typed OffendingSymbol=[40,56:strictType1-PART1]<UserDefinedWord>
 Line 176[39,55] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART2 IN usestrictType1' is strictly-typed OffendingSymbol=[39,55:strictType1-PART2]<UserDefinedWord>
-Line 194[30,43] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable varCanBeStrict:canBeStrict. OffendingSymbol=[30,43:varCanBeStrict]<UserDefinedWord>
-Line 196[35,40] <30, Error, Semantics> - Semantic error: Cannot write canBeStrict to strictly typed variable Point2:Vect2. OffendingSymbol=[35,40:Point2]<UserDefinedWord>
-Line 198[27,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to strictly typed variable varCanBeStrict:canBeStrict. OffendingSymbol=[27,40:varCanBeStrict]<UserDefinedWord>
+Line 183[8,39] <27, Error, Syntax> - Syntax error : Cannot declare Type definition SyncType with Sync clause because it is Strict.
+Line 184[8,34] <27, Error, Syntax> - Syntax error : MyVar is part of a declaration using Sync clause in Strict Type definition SyncType.
+Line 186[11,42] <27, Error, Syntax> - Syntax error : SyncVar1 is part of a declaration using Sync clause in Strict Type definition SyncType.
+Line 191[11,42] <27, Error, Syntax> - Syntax error : SyncVar2 is part of a declaration using Sync clause in Strict Type definition MyType.
+Line 194[8,44] <27, Error, Syntax> - Syntax error : MyTypeVar cannot be declared or have a parent declared with Sync clause because its Type definition MyType is Strict.
+Line 201[12,40] <27, Error, Syntax> - Syntax error : MyTypeVar2 cannot be declared or have a parent declared with Sync clause because its Type definition MyType is Strict.
+Line 205[11,35] <27, Error, Syntax> - Syntax error : MyGroupInTypeDef is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 207[13,43] <27, Error, Syntax> - Syntax error : MyTypeVar3 is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 208[13,41] <27, Error, Syntax> - Syntax error : MyVar4 is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 210[11,48] <27, Error, Syntax> - Syntax error : MyTypeVar4 is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 228[30,43] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable varCanBeStrict:canBeStrict. OffendingSymbol=[30,43:varCanBeStrict]<UserDefinedWord>
+Line 230[35,40] <30, Error, Semantics> - Semantic error: Cannot write canBeStrict to strictly typed variable Point2:Vect2. OffendingSymbol=[35,40:Point2]<UserDefinedWord>
+Line 232[27,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to strictly typed variable varCanBeStrict:canBeStrict. OffendingSymbol=[27,40:varCanBeStrict]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -80,6 +90,14 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   MyVariable:Alphanumeric
   usestrictType1:strictType1
   TYPE-GRP-STRICT-REN:?
+  SyncVar:Alphanumeric
+  MyTypeVar:MyType
+  MyGroup:Alphanumeric
+  MySubGroup2:Alphanumeric
+  MySubGroup3:Alphanumeric
+  MySubGroup4:Alphanumeric
+  MyTypeVar2:MyType
+  MyVar3:Alphanumeric
 -- TYPES -------
   bool:bool
   DuplicatedType:DuplicatedType
@@ -99,6 +117,9 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   TYPE-GRP-STRICT:TYPE-GRP-STRICT
   GroupWithLevel77JustAfter:GroupWithLevel77JustAfter
   strictType1:strictType1
+  SyncType:SyncType
+  MyType:MyType
+  MyType2:MyType2
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

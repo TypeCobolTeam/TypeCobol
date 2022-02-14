@@ -31,6 +31,8 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public string TextSegment(int startIndex, int endIndexInclusive)
         {
+            // Implication: If the Text is empty then request should only be for startIndex == 0 and endIndexInclusive == -1
+            System.Diagnostics.Debug.Assert(Text.Length > 0 || (startIndex == 0 && endIndexInclusive == -1));
             return Text.Substring(startIndex, endIndexInclusive - startIndex + 1);
         }
 

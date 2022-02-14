@@ -734,10 +734,50 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Paragraphs, paragraph);
         }
 
-        public IList<Paragraph> GetParagraph(string name)
+        public IList<Paragraph> GetParagraph(SymbolReference symbolRef, Section sectionNode)
         {
-            Paragraphs.TryGetValue(name, out var values);
-            if (values != null) return values.ToList();  //.ToList so the caller cannot modify our stored list
+            //First extract expected paragraph and section names from symbol ref
+            string paragraphName, parentSectionName;
+            if (symbolRef.IsQualifiedReference)
+            {
+                //If paragraph is qualified we get a paragraph and a section name
+                var qualifiedSymbolReference = (QualifiedSymbolReference) symbolRef;
+                paragraphName = qualifiedSymbolReference.NameLiteral.Value;
+                parentSectionName = qualifiedSymbolReference.Tail.Name;
+            }
+            else
+            {
+                //Otherwise expected parent section is null
+                paragraphName = symbolRef.Name;
+                parentSectionName = null;
+            }
+
+            //Retrieve all paragraphs with matching name, then apply additional filters
+            if (Paragraphs.TryGetValue(paragraphName, out var candidates))
+            {
+                if (parentSectionName != null)
+                {
+                    //We're looking for a paragraph inside a specific section, so we keep only paragraphs whose parent section matches
+                    return candidates.FindAll(p => p.Parent.Name.Equals(parentSectionName, StringComparison.OrdinalIgnoreCase));
+                }
+
+                //Priority is given to paragraphs located in the same section as the caller node
+                Predicate<Paragraph> matchParentSection;
+                if (sectionNode != null)
+                {
+                    //Match paragraphs located inside the given section node
+                    matchParentSection = p => p.Parent == sectionNode;
+                }
+                else
+                {
+                    //Match paragraphs located directly in the PROCEDURE DIVISION
+                    matchParentSection = p => p.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
+                }
+
+                //If we get results in the same section, we return them. Otherwise, just return candidates with correct name.
+                var inSameSection = candidates.FindAll(matchParentSection);
+                return inSameSection.Count > 0 ? inSameSection : candidates.ToList();
+            }
 
             return EmptyParagraphList;
         }
@@ -751,7 +791,60 @@ namespace TypeCobol.Compiler.CodeModel
             return Paragraphs.Values.SelectMany(p => p).AsQueryable().Where(predicate).Distinct();
         }
 
+        /// <summary>
+        /// Get all paragraphs with the given name and declared as a child of the specified node
+        /// </summary>
+        /// <returns>The collection of paragraph</returns>
+        public IEnumerable<Paragraph> GetParagraphs(string paragraphName, Node owner)
+        {
+            if (Paragraphs.TryGetValue(paragraphName, out var paragraphs))
+            {
+                return paragraphs.Where(p => p.Parent == owner);
+            }
+            return null;
+        }
+
         #endregion
+
+        /// <summary>
+        /// Try to disambiguate between Section or Paragraph reference.
+        /// </summary>
+        /// <param name="target">A non-null SymbolReference.</param>
+        /// <param name="callerNodeSection">The Section node in which the statement making the reference appears.</param>
+        /// <returns>A tuple made of both list of sections and list of paragraphs. The lists may be null,
+        /// this indicates that the search has not been performed for the corresponding type.
+        /// They also may be empty, this means the search has been performed but yielded no results.</returns>
+        public (IList<Section>, IList<Paragraph>) GetSectionOrParagraph([NotNull] SymbolReference target, Section callerNodeSection)
+        {
+            IList<Section> sections = null;
+            IList<Paragraph> paragraphs = null;
+
+            //Check target type to avoid useless search if the type is already known
+            if (target.IsAmbiguous)
+            {
+                //Have to search for both sections and paragraphs
+                sections = GetSections();
+                paragraphs = GetParagraphs();
+            }
+            else
+            {
+                switch (target.Type)
+                {
+                    case SymbolType.SectionName:
+                        sections = GetSections();
+                        break;
+                    case SymbolType.ParagraphName:
+                        paragraphs = GetParagraphs();
+                        break;
+                }
+            }
+
+            return (sections, paragraphs);
+
+            IList<Section> GetSections() => GetSection(target.Name);
+
+            IList<Paragraph> GetParagraphs() => GetParagraph(target, callerNodeSection);
+        }
 
         #region TYPES
 
@@ -938,12 +1031,12 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Functions, function);
         }
 
-        public List<FunctionDeclaration> GetFunction(StorageArea storageArea, ParameterList profile = null)
+        public List<FunctionDeclaration> GetFunction(StorageArea storageArea, IProfile profile = null)
         {
             return GetFunction(storageArea.SymbolReference, profile);
         }
 
-        private List<FunctionDeclaration> GetFunction(SymbolReference symbolReference, ParameterList profile = null)
+        private List<FunctionDeclaration> GetFunction(SymbolReference symbolReference, IProfile profile = null)
         {
             var uri = new URI(symbolReference.Name);
             return GetFunction(uri, profile);
@@ -981,7 +1074,7 @@ namespace TypeCobol.Compiler.CodeModel
             return foundedFunctions.Distinct();
         }
 
-        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, string nameSpace = null)
+        public List<FunctionDeclaration> GetFunction(QualifiedName name, IProfile profile = null, string nameSpace = null)
         {
             var found = GetFunction(name, nameSpace);
             
@@ -999,46 +1092,47 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        private bool Matches(ParametersProfileNode p1, ParameterList p2, string pgmName)
+        private bool Matches(ParametersProfileNode expected, IProfile actual, string pgmName)
         {
-            if (p1.InputParameters.Count != p2.InputParameters.Count) return false;
-            if (p1.InoutParameters.Count != p2.InoutParameters.Count) return false;
-            if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
+            if (expected.InputParameters.Count != actual.Inputs.Count) return false;
+            if (expected.InoutParameters.Count != actual.Inouts.Count) return false;
+            if (expected.OutputParameters.Count != actual.Outputs.Count) return false;
 
-            for (int c = 0; c < p1.InputParameters.Count; c++)
-                if (!TypeCompare(p1.InputParameters[c], p2.InputParameters[c], pgmName)) return false;
-            for (int c = 0; c < p1.InoutParameters.Count; c++)
-                if (!TypeCompare(p1.InoutParameters[c], p2.InoutParameters[c], pgmName)) return false;
-            for (int c = 0; c < p1.OutputParameters.Count; c++)
-                if (!TypeCompare(p1.OutputParameters[c], p2.OutputParameters[c], pgmName)) return false;
+            for (int c = 0; c < expected.InputParameters.Count; c++)
+                if (!TypeCompare(expected.InputParameters[c], actual.Inputs[c], pgmName)) return false;
+            for (int c = 0; c < expected.InoutParameters.Count; c++)
+                if (!TypeCompare(expected.InoutParameters[c], actual.Inouts[c], pgmName)) return false;
+            for (int c = 0; c < expected.OutputParameters.Count; c++)
+                if (!TypeCompare(expected.OutputParameters[c], actual.Outputs[c], pgmName)) return false;
             return true;
         }
-        /// <summary>
-        /// Type comparaison
-        /// </summary>
-        /// <param name="p1">Represent the DataType from the called function/procedure</param>
-        /// <param name="p2">Represent the DataType from the caller function/procedure</param>
-        /// <param name="pgmName">Corresponds to the progam containing the called function/procedure</param>
-        /// <returns></returns>
-        private bool TypeCompare(ParameterDescription p1, DataType p2, string pgmName)
+
+        private bool TypeCompare(ParameterDescription parameter, TypeInfo argumentTypeInfo, string pgmName)
         {
             //Omitted accepted only if parameter is Omittable
-            if (p2 == DataType.Omitted) {
-                return p1.IsOmittable;
+            if (argumentTypeInfo.DataType == DataType.Omitted)
+            {
+                return parameter.IsOmittable;
             }
-            
-            var p1Types = p1.Name.Contains(".") ? this.GetType(p1) : this.GetType(p1.DataType, pgmName);
-            var p2Types = this.GetType(p2);
 
-            if (p1Types.Count > 1 || p2Types.Count > 1)
-                return false; //Means that a type is declare many times. Case already handle by checker.
-            var p1Type = p1Types.FirstOrDefault();
-            var p2Type = p2Types.FirstOrDefault();
+            var parameterType = parameter.TypeDefinition;
+            if (parameterType == null)
+            {
+                var parameterTypes = parameter.Name.Contains(".") ? this.GetType(parameter) : this.GetType(parameter.DataType, pgmName);
+                if (parameterTypes.Count > 1)
+                {
+                    return false;
+                }
+                parameterType = parameterTypes.FirstOrDefault();
+            }
 
-            if (p1Type != p2Type)
-                return false;
+            var argumentType = argumentTypeInfo.TypeDefinition;
+            if (argumentType == null)
+            {
+                return parameterType == null && parameter.DataType == argumentTypeInfo.DataType;
+            }
 
-            return true;
+            return parameterType == argumentType;
         }
 
         [NotNull]

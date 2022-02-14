@@ -2,12 +2,14 @@ using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -28,6 +30,66 @@ namespace TypeCobol.Compiler.CodeElements
         /// The Cobol syntax can be decomposed in 116 elementary code elements
         /// </summary>
         public CodeElementType Type { get; }
+
+        /// <summary>
+        /// Describe how the CodeElement is debugged
+        /// Takes in account if CodeElement is spanned across lines
+        /// </summary>
+        public DebugType DebugMode
+        {
+            get
+            {
+                if (!_debugMode.HasValue) ComputeDebugMode();
+                Debug.Assert(_debugMode.HasValue);
+                return _debugMode.Value;
+
+                void ComputeDebugMode()
+                {
+                    var consumedTokensCount = ConsumedTokens.Count;
+                    // CodeElement should be at least one token
+                    Debug.Assert(consumedTokensCount > 0);
+
+                    bool atLeastOneDebug = false, atLeastOneWithoutDebug = false;
+                    // CodeElement is on one line
+                    if (ConsumedTokens.First().Line == ConsumedTokens.Last().Line)
+                    {
+                        atLeastOneDebug = ConsumedTokens[0].TokensLine.Type == CobolTextLineType.Debug;
+                        atLeastOneWithoutDebug = !atLeastOneDebug;
+                    }
+                    else
+                    {
+                        // CodeElement is on multiple lines
+                        for (var i = 0; i < consumedTokensCount; i++)
+                        {
+                            var isDebugType = ConsumedTokens[i].TokensLine.Type == CobolTextLineType.Debug;
+                            atLeastOneDebug |= isDebugType;
+                            atLeastOneWithoutDebug |= !isDebugType;
+                            if (atLeastOneDebug && atLeastOneWithoutDebug)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (atLeastOneDebug && !atLeastOneWithoutDebug)
+                    {
+                        // Only debug lines
+                        _debugMode = DebugType.All;
+                    }
+                    else if (!atLeastOneDebug && atLeastOneWithoutDebug)
+                    {
+                        // Only not debug lines
+                        _debugMode = DebugType.None;
+                    }
+                    else
+                    {
+                        // Some debug lines and some not debug lines
+                        _debugMode = DebugType.Mix;
+                    }
+                }
+            }
+        }
+
+        private DebugType? _debugMode;
 
         private IList<Token> _consumedTokens;
         /// <summary>
@@ -338,6 +400,15 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
+        public int LineEnd
+        {
+            get
+            {
+                if (ConsumedTokens.Count < 1) return -1;
+                return ConsumedTokens[ConsumedTokens.Count - 1].Line;
+            }
+        }
+
         public int Channel
         {
             get
@@ -388,7 +459,24 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-       
+        /// <summary>
+        /// Describe how a CodeElement debugging is set
+        /// </summary>
+        public enum DebugType
+        {
+            /// <summary>
+            /// Contain no debugging at all
+            /// </summary>
+            None,
+            /// <summary>
+            /// Contain some elements in debug, some without debug
+            /// </summary>
+            Mix,
+            /// <summary>
+            /// Contain only elements in debug
+            /// </summary>
+            All
+        }
     }
 
     // --- Temporary base classes for data definition code elements ---

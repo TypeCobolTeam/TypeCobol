@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using TypeCobol.Codegen.Actions;
-using TypeCobol.Codegen.Nodes;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
@@ -17,14 +13,6 @@ namespace TypeCobol.Codegen
     /// </summary>
     public class GeneratorActions : List<TypeCobol.Codegen.Actions.Action>, NodeVisitor
     {
-        /// <summary>
-        /// Skeletons patterns
-        /// </summary>
-        public List<Skeleton> Skeletons
-        {
-            get;
-            private set;
-        }
         /// <summary>
         /// CompilationDocument that contains all the code parsing results
         /// </summary>
@@ -53,10 +41,11 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Skeletons">Skeletons pattern for actions</param>
-        public GeneratorActions(Generator generator, List<Skeleton> skeletons, CompilationDocument compilationDocument, IActionsProvider actionsProvider = null) {
+        /// <param name="generator">Associated generator for this collection of actions.</param>
+        /// <param name="compilationDocument">Current compilation document</param>
+        /// <param name="actionsProvider">Actions provider</param>
+        public GeneratorActions(Generator generator, CompilationDocument compilationDocument, IActionsProvider actionsProvider) {
             Generator = generator;
-            Skeletons = skeletons ?? new List<Skeleton>();
             CompilationDocument = compilationDocument;
             ActionsProvider = actionsProvider;
         }
@@ -69,26 +58,7 @@ namespace TypeCobol.Codegen
         /// <returns>The collection of actiosn.</returns>
         public ICollection<TypeCobol.Codegen.Actions.Action> GetActions(Node node)
         {
-            if (ActionsProvider != null)
-            {
-                return ActionsProvider.GetActions(node, this);
-            }
-            else
-            {
-                var actions = new List<TypeCobol.Codegen.Actions.Action>();
-                var skeleton = GetActiveSkeleton(node);
-                if (skeleton != null)
-                {
-                    var properties = GetProperties(node, skeleton.Properties);
-                    foreach (var pattern in skeleton)
-                    {
-                        var action = GetAction(node, properties, pattern);
-                        if (action != null)
-                            actions.Add(action);
-                    }
-                }
-                return actions;
-            }
+            return ActionsProvider.GetActions(node, this);
         }
 
         /// <summary>
@@ -147,56 +117,11 @@ namespace TypeCobol.Codegen
                     if (action.Group != null)
                         groups.Add(action.Group);
                 } catch (Exception e) {
-                    Diagnostic diag = new Diagnostic(MessageCode.ImplementationError, 0, 0, 0, e.Message + "\n" + e.StackTrace);
+                    string message = e.Message + Environment.NewLine + e.StackTrace;
+                    Diagnostic diag = new Diagnostic(MessageCode.ImplementationError, Diagnostic.Position.Default, message);
                     Generator.AddDiagnostic(diag);
                 }
             }
-        }
-
-        /// <summary>
-        /// Give the first skeleton that match a node.
-        /// </summary>
-        /// <param name="node">The node to get the active skeleton</param>
-        /// <returns>The first matching skeleton if any, null otherwise.</returns>
-        public Skeleton GetActiveSkeleton(Node node)
-        {
-            foreach (var skeleton in Skeletons)
-            {
-                bool active = false;
-                foreach (var condition in skeleton.Conditions)
-                {
-                    active = active || condition.Verify(node); // OR
-                }
-                if (active) 
-                    return skeleton;//TODO: what if more than 1 skel activates?
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Compute all dynamic values corresponding to a set of properties.
-        /// </summary>
-        /// <param name="node">The node to get properties values</param>
-        /// <param name="properties">All properties value</param>
-        /// <returns>A dictionary of properties values Dictionary<property:string, value:object></returns>
-        public Dictionary<string, object> GetProperties(Node node, IEnumerable<string> properties)
-        {
-            var result = new Dictionary<string, object>();
-            var errors = new System.Text.StringBuilder();
-            foreach (var pname in properties)
-            {
-                var property = node[pname];
-                if (property != null) result[pname] = property;
-                else errors.Append(pname).Append(", ");
-            }
-            if (errors.Length > 0)
-            {
-                errors.Length -= 2;
-                errors.Insert(0, "Undefined properties for " + node.GetType().Name + ": ");
-                errors.Append(". (line:\"").Append(node.CodeElement.InputStream).Append("\")");
-                throw new System.ArgumentException(errors.ToString());
-            }
-            return result;
         }
 
         /// <summary>
@@ -225,11 +150,11 @@ namespace TypeCobol.Codegen
             var destination = GetLocation(source, location, out index);
             if ("create".Equals(action))
             {
-                return new CreateCode(destination, pattern, code, group, index, newline);
+                return new Create(destination, pattern, code, group, index, newline);
             }
             if ("replace".Equals(action))
             {
-                return new ReplaceCode(destination, pattern, code, group);
+                return new Replace(destination, pattern, code, group);
             }
             if ("comment".Equals(action))
             {
@@ -259,59 +184,6 @@ namespace TypeCobol.Codegen
             System.Console.WriteLine("Unknown action: \"" + action + "\"");
             return null;
 
-        }
-
-        /// <summary>
-        /// Create the action associated to a node using a pattern.
-        /// </summary>
-        /// <param name="source">The source node</param>
-        /// <param name="properties">The dictonary of property values</param>
-        /// <param name="pattern">The action pattern</param>
-        /// <returns>The create action if any, null otherwise</returns>
-        public TypeCobol.Codegen.Actions.Action GetAction(Node source, Dictionary<string, object> properties, Pattern pattern)
-        {
-            //Ignore any deprecated pattern.
-            if (pattern.IsDeprecated)
-                return null;
-            
-            //Evaluate Any Proprty
-            if (!pattern.EvalBooleanProperty(properties))
-            {
-                return null;
-            }
-            int? index;
-            string group = pattern.Group;
-            if (group != null && ProgramGroupPrefix != null)
-            {                
-                group = ProgramGroupPrefix + group;
-            }
-            var destination = GetLocation(source, pattern.Location, out index);
-            if ("create".Equals(pattern.Action))
-            {
-                return new Create(destination, pattern, properties, group, index);
-            }
-            if ("replace".Equals(pattern.Action))
-            {
-                return new Replace(destination, pattern, properties, group);
-            }
-            if ("comment".Equals(pattern.Action))
-            {
-                return new Comment(destination);
-            }
-            if ("expand".Equals(pattern.Action))
-            {
-                return new Expand(source, destination, pattern.Location);
-            }
-            if ("erase".Equals(pattern.Action))
-            {
-                return new Erase(destination, pattern.Template);
-            }
-            if ("remarks".Equals(pattern.Action))
-            {
-                return new Remarks(source, destination, pattern.Location, CompilationDocument);
-            }
-            System.Console.WriteLine("Unknown action: \"" + pattern.Action + "\"");
-            return null;
         }
 
         /// <summary>

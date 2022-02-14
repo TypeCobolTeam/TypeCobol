@@ -1,0 +1,69 @@
+--- Diagnostics ---
+Line 189[12,15] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN OffendingSymbol=[12,15:STOP]<STOP>
+Line 189[12,23] <37, Warning, General> - Warning: Unreachable code detected
+Line 190[15,36] <37, Warning, General> - Warning: Unreachable code detected
+Line 190[39,62] <37, Warning, General> - Warning: Unreachable code detected
+Line 193[18,39] <37, Warning, General> - Warning: Unreachable code detected
+Line 193[43,61] <37, Warning, General> - Warning: Unreachable code detected
+Line 194[12,49] <37, Warning, General> - Warning: Unreachable code detected
+Line 196[12,38] <37, Warning, General> - Warning: "end-if" is missing
+Line 200[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 205[12,38] <37, Warning, General> - Warning: "end-if" is missing
+Line 230[12,50] <37, Warning, General> - Warning: "end-if" is missing
+Line 237[12,41] <37, Warning, General> - Warning: "end-if" is missing
+Line 242[13,46] <37, Warning, General> - Warning: "end-if" is missing
+Line 250[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 266[12,43] <37, Warning, General> - Warning: "end-if" is missing
+Line 267[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 269[41,66] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                      PERFORM WRT-LN'.
+Line 269[41,66] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                      PERFORM WRT-LN 2 TIMES'.
+Line 269[41,66] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                         PERFORM WRT-LN'.
+Line 269[41,66] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '    PERFORM WRT-LN'.
+Line 276[12,43] <37, Warning, General> - Warning: "end-if" is missing
+Line 277[12,38] <37, Warning, General> - Warning: "end-if" is missing
+Line 293[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 302[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 307[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 310[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 318[12,26] <37, Warning, General> - Warning: Unreachable code detected
+Line 325[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 331[12,35] <37, Warning, General> - Warning: Unreachable code detected
+Line 332[12,47] <37, Warning, General> - Warning: Unreachable code detected
+Line 333[12,29] <37, Warning, General> - Warning: Unreachable code detected
+Line 336[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 350[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 356[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 364[12,26] <37, Warning, General> - Warning: Unreachable code detected
+Line 380[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 397[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 407[12,40] <37, Warning, General> - Warning: "end-if" is missing
+Line 411[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 426[12,39] <37, Warning, General> - Warning: Statement '    GO TO TEST-5A' located at line 597, column 12 prevents this PERFORM statement to reach its exit.
+Line 427[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 436[12,26] <37, Warning, General> - Warning: Unreachable code detected
+Line 448[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 451[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 459[12,26] <37, Warning, General> - Warning: Unreachable code detected
+Line 470[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 485[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 495[12,26] <37, Warning, General> - Warning: Statement '        GO TO TEST-3-WRITE' located at line 516, column 16 prevents this PERFORM statement to reach its exit.
+Line 495[12,26] <37, Warning, General> - Warning: Statement '    GO TO TEST-3-WRITE' located at line 520, column 12 prevents this PERFORM statement to reach its exit.
+Line 496[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 497[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 498[12,42] <37, Warning, General> - Warning: Statement '        GO TO TEST-3-WRITE' located at line 516, column 16 prevents this PERFORM statement to reach its exit.
+Line 498[12,42] <37, Warning, General> - Warning: Statement '    GO TO TEST-3-WRITE' located at line 520, column 12 prevents this PERFORM statement to reach its exit.
+Line 503[12,26] <37, Warning, General> - Warning: Unreachable code detected
+Line 514[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 526[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 539[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 547[12,26] <37, Warning, General> - Warning: Unreachable code detected
+Line 559[12,39] <37, Warning, General> - Warning: Statement '    GO TO SEG-TEST-2' located at line 369, column 12 prevents this PERFORM statement to reach its exit.
+Line 559[12,39] <37, Warning, General> - Warning: Statement '    GO TO SEG-TEST8' located at line 372, column 12 prevents this PERFORM statement to reach its exit.
+Line 560[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 568[12,26] <37, Warning, General> - Warning: Unreachable code detected
+Line 576[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 578[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 594[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 595[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 604[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 605[12,16] <37, Warning, General> - Warning: ALTER should not be used

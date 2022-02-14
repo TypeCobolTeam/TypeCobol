@@ -1,0 +1,20 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm2.
+       PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE Foo PUBLIC
+                   INPUT Dat     PIC X(100)
+                         Len     pic S9(5) comp-5
+                  OUTPUT RC      pic 99
+               .
+       END-DECLARE.
+
+       DECLARE PROCEDURE Foo PUBLIC
+                   INPUT Dat     PIC X(100)
+                         Len     pic S9(5) comp-5
+                         Pos     pic S9(5) comp-5
+                  OUTPUT RC      pic 99
+               .
+       END-DECLARE.
+
+       END PROGRAM Pgm2.

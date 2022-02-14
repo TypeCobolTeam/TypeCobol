@@ -12,7 +12,6 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.AntlrUtils;
-using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.Compiler
 {
@@ -35,10 +34,10 @@ namespace TypeCobol.Compiler
         public CodeModel.SymbolTable CustomSymbols = null;
 
         /// <summary>
-        /// The build system implements an efficient way to retrieve ProcessedTokensDocuments
+        /// The build system implements an efficient way to retrieve CompilationDocument
         /// for all COPY compiler directives
         /// </summary>
-        private IProcessedTokensDocumentProvider processedTokensDocumentProvider;
+        private IDocumentImporter _documentImporter;
 
         // Internal storage of the document lines :
         // - the document lines are stored in a tree structure, allowing efficient updates
@@ -47,18 +46,29 @@ namespace TypeCobol.Compiler
         // - accessing an element by index requires traversing the tree from its root, a O(log n) operation
         private ImmutableList<CodeElementsLine>.Builder compilationDocumentLines;
 
-
         /// <summary>
         /// Text names variations declared in REMARKS compiler directives or automaticly detected in CompilerDirectiveBuilder.
         /// </summary>
         public List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
 
-        public List<CopyDirective> MissingCopies { get; set; }
+        public HashSet<string> MissingCopies { get; }
 
         /// <summary>
         /// Issue #315
         /// </summary>
-        private MultilineScanState initialScanStateForCopy;
+        private MultilineScanState InitialScanState { get; }
+
+        /// <summary>
+        /// Special compilation mode for copies that are not imported from another document.
+        /// </summary>
+        protected bool UseDirectCopyParsing { get; }
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// Collected CopyNames if -cpyr report is selected.
+        /// </summary>
+        public IDictionary<string, HashSet<string>> CollectedCopyNames { get; private set; }
+#endif
 
         /// <summary>
         /// Informations used to track the performance of each compilation step
@@ -146,21 +156,18 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines,
-            TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
-            this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null, copyTextNameVariations)
+        public CompilationDocument(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter,
+            [NotNull] MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
-        }
+            //Cannot import a program
+            if (isImported) Debug.Assert(textSourceInfo.IsCopy);
 
-        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
-            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
-        {
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
             CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
-            MissingCopies = new List<CopyDirective>();
+            MissingCopies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            this.processedTokensDocumentProvider = processedTokensDocumentProvider;
+            this._documentImporter = documentImporter;
 
             // Initialize the compilation document lines
             compilationDocumentLines = ImmutableList<CodeElementsLine>.Empty.ToBuilder();
@@ -181,7 +188,8 @@ namespace TypeCobol.Compiler
             PerfStatsForScanner = new PerfStatsForCompilationStep(CompilationStep.Scanner);
             PerfStatsForPreprocessor = new PerfStatsForParsingStep(CompilationStep.Preprocessor);
 
-            initialScanStateForCopy = scanState;
+            InitialScanState = initialScanState;
+            UseDirectCopyParsing = textSourceInfo.IsCopy && !isImported;
         }
 
         /// <summary>
@@ -288,8 +296,7 @@ namespace TypeCobol.Compiler
                                 if (!encounteredCodeElement)
                                     lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
 
-                                lineToUpdate.LineIndex++;
-                                lineToUpdate.UpdateDiagnositcsLine();
+                                lineToUpdate.ShiftDown();
                                  
                                 if (lineToUpdate.CodeElements != null)
                                     encounteredCodeElement = true;
@@ -331,8 +338,7 @@ namespace TypeCobol.Compiler
                                 if (!encounteredCodeElement)
                                     lineToUpdate.ResetDiagnostics();
 
-                                lineToUpdate.LineIndex--;
-                                lineToUpdate.UpdateDiagnositcsLine();
+                                lineToUpdate.ShiftUp();
 
                                 if (lineToUpdate.CodeElements != null)
                                     encounteredCodeElement = true; 
@@ -476,15 +482,15 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
+                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, InitialScanState);
                     // Notify all listeners that the whole document has changed.
                     EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
                     wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
-
+                    IList<DocumentChange<ITokensLine>> documentChanges = null;
+                    documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, InitialScanState);
                     // Create a new version of the document to track these changes
                     currentTokensLinesVersion.changes = documentChanges;
                     currentTokensLinesVersion.next = new DocumentVersion<ITokensLine>(currentTokensLinesVersion);
@@ -620,21 +626,30 @@ namespace TypeCobol.Compiler
                 DocumentChangedEvent<IProcessedTokensLine> documentChangedEvent = null;
 
                 // Apply text changes to the compilation document
+                bool refreshMissingCopies = true;
+                List<string> missingCopies = null;
                 if (scanAllDocumentLines)
                 {
                     if (tokensDocument != null)
                     {
                         // Process all lines of the document for the first time
-                        PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations, perfStatsForParserInvocation, this.MissingCopies);
+                        PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
-                        ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions);
+                        ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ISearchableReadOnlyList<CodeElementsLine>) tokensDocument.Lines);
+                    }
+                    else
+                    {
+                        // No new ProcessedTokensDocument created, so no need to refresh missing copies
+                        refreshMissingCopies = false;
                     }
                 }
                 else
                 {
-                    ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>)tokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(TextSourceInfo, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations, perfStatsForParserInvocation, this.MissingCopies);
+                    ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>) tokensDocument.Lines).ToBuilder();
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessChanges(this,
+                        processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate,
+                        _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
@@ -646,7 +661,25 @@ namespace TypeCobol.Compiler
                     currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
 
                     // Update the processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable(), CompilerOptions);
+                    ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
+                }
+
+                ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)
+                {
+                    //Apply automatic replacing of partial-words for direct copy parsing mode
+                    return UseDirectCopyParsing
+                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions)
+                        : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions);
+                }
+
+                // Refresh missing copies
+                if (refreshMissingCopies)
+                {
+                    MissingCopies.Clear();
+                    foreach (var missingCopy in missingCopies)
+                    {
+                        MissingCopies.Add(missingCopy);
+                    }
                 }
 
                 // Stop perf measurement
@@ -752,5 +785,27 @@ namespace TypeCobol.Compiler
 
             return allDiagnostics;
         }
+
+#if EUROINFO_RULES
+        internal void CollectUsedCopy(CopyDirective copy)
+        {
+            if (CollectedCopyNames == null)
+            {
+                CollectedCopyNames = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            if (!CollectedCopyNames.TryGetValue(copy.TextName, out var suffixedNames))
+            {
+                suffixedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                CollectedCopyNames.Add(copy.TextName, suffixedNames);
+            }
+
+            if (copy.Suffix != null)
+            {
+                suffixedNames.Add(copy.TextName + copy.Suffix);
+            }
+        }
+#endif
+
     }
 }

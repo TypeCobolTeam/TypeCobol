@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\TypeCobol\Common.props" />
+  <PropertyGroup>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C3250314-C22B-4EB6-9174-17D0791AF7BE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TypeCobol.Analysis</RootNamespace>
+    <AssemblyName>TypeCobol.Analysis</AssemblyName>
+    <DoNotCopyLocalIfInGac>false</DoNotCopyLocalIfInGac>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=2019.1.3.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2019.1.3\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CfgDfaAnalyzerFactory.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNode.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNodeGroup.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.CfgAfterIterativePerformProcedureTransformer.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.DeclarativesContext.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.MultiBranchContext.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.Paragraph.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.Procedure.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.ProcedureDivisionRegion.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.Section.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.Sentence.cs" />
+    <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
+    <Compile Include="Dfa\DataFlowGraphBuilder.cs" />
+    <Compile Include="Dfa\DfaBasicBlockInfo.cs" />
+    <Compile Include="Dfa\DfaDefPoint.cs" />
+    <Compile Include="Dfa\DfaUsePoint.cs" />
+    <Compile Include="Dfa\DefaultDataFlowGraphBuilder.cs" />
+    <Compile Include="Dfa\ValueOrigin.cs" />
+    <Compile Include="Graph\BasicBlock.cs" />
+    <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
+    <Compile Include="Graph\ControlFlowGraph.cs" />
+    <Compile Include="Graph\ControlFlowGraph.Dominator.cs" />
+    <Compile Include="Graph\ICfgFileGenerator.cs" />
+    <Compile Include="Graph\ICfgTransform.cs" />
+    <Compile Include="Graph\IMultiBranchContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report\ZCallPgmReport.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Util\BitSet.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
+      <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
+      <Name>TypeCobol</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Util\Antlr4_license.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

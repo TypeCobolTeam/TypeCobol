@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,26] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 32[3,35] <27, Error, Syntax> - Syntax error : Function 'MyTestProc' expected parameter 'myCurrencyVar' of type CURRENCY and received 'oldCurrency' of type Alphanumeric 
 
 --- Program ---

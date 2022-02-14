@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
@@ -11,14 +12,16 @@ namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolStatementsBuilder
 	{
-		public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder)
+		public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, UnsupportedLanguageLevelFeaturesChecker languageLevelChecker)
 		{
+			LanguageLevelChecker = languageLevelChecker;
 			CobolWordsBuilder = cobolWordsBuilder;
 			CobolExpressionsBuilder = cobolExpressionsBuilder;
 		}
 
-		private CobolWordsBuilder CobolWordsBuilder { get; set; }
-		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
+		private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+		private CobolWordsBuilder CobolWordsBuilder { get; }
+		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 
 		  ///////////////////////////////
 		 // PROCEDURE DIVISION HEADER //
@@ -49,22 +52,19 @@ namespace TypeCobol.Compiler.Parser
 		 // ACCEPT STATEMENT //
 		//////////////////////
 
-		internal AcceptFromInputDeviceStatement CreateAcceptDataTransferStatement(CodeElementsParser.AcceptDataTransferContext context) {
+		internal AcceptFromInputDeviceStatement CreateAcceptDataTransferStatement(ReceivingStorageArea receivingStorageArea, CodeElementsParser.FromEnvironmentContext context) {
 			var statement = new AcceptFromInputDeviceStatement();
-			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
-			statement.ReceivingStorageArea.DataSourceType = DataSourceType.ReadFromInputDevice;
-			if (context.mnemonicForEnvironmentNameReferenceOrEnvironmentName() != null) {
+            statement.ReceivingStorageArea = receivingStorageArea;
+			if (context?.mnemonicForEnvironmentNameReferenceOrEnvironmentName() != null) {
 				statement.InputDevice = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(context.mnemonicForEnvironmentNameReferenceOrEnvironmentName());
 			}
 			return statement;
 		}
 
-		internal AcceptFromSystemDateStatement CreateAcceptSystemDateTime(CodeElementsParser.AcceptSystemDateTimeContext context)
+		internal AcceptFromSystemDateStatement CreateAcceptSystemDateTime(ReceivingStorageArea receivingStorageArea, CodeElementsParser.FromSystemDateTimeContext context)
 		{
 			var statement = new AcceptFromSystemDateStatement();
-
-			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
-			statement.ReceivingStorageArea.DataSourceType = DataSourceType.ReadFromSystemCall;
+            statement.ReceivingStorageArea = receivingStorageArea;
 			if (context.yyyyMmDd() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYYYMMDD,
@@ -219,13 +219,11 @@ namespace TypeCobol.Compiler.Parser
 			}
 
 			// Register call parameters (shared storage areas) information at the CodeElement level
-			var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference };
-			int parametersCount =
-				(statement.InputParameters != null ? statement.InputParameters.Count : 0)
-				+ (statement.OutputParameter != null ? 1 : 0);
+			var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction?.SymbolReference };
+			int parametersCount = statement.InputParameters.Count + (statement.OutputParameter != null ? 1 : 0);
 			callSite.Parameters = new CallSiteParameter[parametersCount];
 			int i = 0;
-			if (statement.InputParameters != null && statement.InputParameters.Count > 0) {
+			if (statement.InputParameters.Count > 0) {
 				foreach (var param in statement.InputParameters) {
 					callSite.Parameters[i] = param;
 					i++;
@@ -432,16 +430,10 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		internal CodeElement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
+		internal GotoConditionalStatement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
 			var statement = new GotoConditionalStatement();
 			statement.ProcedureNames = BuildObjectArrayFromParserRules(context.procedureName(), ctx => CobolWordsBuilder.CreateProcedureName(ctx));
 			statement.DependingOn = CobolExpressionsBuilder.CreateVariable(context.variable1());
-			if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
-				DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
-			if (statement.ProcedureNames.Length < 1 && statement.DependingOn != null)
-				DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
-			if (statement.ProcedureNames.Length > 255)
-				DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
 			return statement;
 		}
 
@@ -821,17 +813,21 @@ namespace TypeCobol.Compiler.Parser
 		 // MOVE STATEMENT //
 		////////////////////
 
-		internal MoveSimpleStatement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context) {
-		    var statement = new MoveSimpleStatement(CobolExpressionsBuilder.CreateVariable(context.variable7()),
-						BuildObjectArrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
-// [TYPECOBOL]
-						CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
-			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
-// [/TYPECOBOL]
-			return statement;
-		}
+        internal MoveSimpleStatement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context)
+        {
+            var statement = new MoveSimpleStatement(CobolExpressionsBuilder.CreateVariable(context.variable7()),
+                BuildObjectArrayFromParserRules(context.storageArea1(),
+                    ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
+                CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
+            if (context.UNSAFE() != null)
+                statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 
-		internal MoveCorrespondingStatement CreateMoveStatement(CodeElementsParser.MoveCorrespondingContext context) {
+            LanguageLevelChecker.Check(statement, context);
+
+            return statement;
+        }
+
+        internal MoveCorrespondingStatement CreateMoveStatement(CodeElementsParser.MoveCorrespondingContext context) {
 			var statement = new MoveCorrespondingStatement();
 			statement.FromGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.fromGroupItem);
 			statement.ToGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
@@ -849,6 +845,9 @@ namespace TypeCobol.Compiler.Parser
                     ReceivingGroupIsAlsoSending = false
                 };
             }
+
+            //No need to check for unsupported TC feature here, as the TC statement only differs on the UNSAFE keyword
+
             return statement;
 		}
 
@@ -1108,6 +1107,8 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 
+            //No need to check for unsupported TC feature here, as the TC statement only differs on the UNSAFE keyword
+
             return statement;
 		}
 
@@ -1139,7 +1140,10 @@ namespace TypeCobol.Compiler.Parser
 				statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Down, context.DOWN());
 			}
 			statement.SendingVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
-			return statement;
+
+            LanguageLevelChecker.Check(statement, context);
+
+            return statement;
 		}
 
 		internal CodeElement CreateSetStatementForSwitches(CodeElementsParser.SetStatementForSwitchesContext context) {
@@ -1171,6 +1175,9 @@ namespace TypeCobol.Compiler.Parser
 			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionStorageArea(), ctx => CobolExpressionsBuilder.CreateConditionStorageArea(ctx));
             if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
+
+            LanguageLevelChecker.Check(statement, context);
+
             return statement;
 		}
 
@@ -1420,7 +1427,7 @@ namespace TypeCobol.Compiler.Parser
         // WHEN EVALUATE CONDITION //
         /////////////////////////////
 
-        internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
+        internal WhenCondition CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
 			statement.SelectionObjects = BuildObjectArrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
 			return statement;

@@ -191,7 +191,6 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("FirstLineEditCommentBeforeIdentDiv", LsrTestingOptions.NoLsrTesting, false, true);
         }
 
-
         /// <summary>
         /// Test for the fix of:https://github.com/TypeCobolTeam/TypeCobol/issues/1370 
         /// </summary>
@@ -200,7 +199,19 @@ namespace TypeCobol.LanguageServer.Test
         public void IncrementalThruTokenInsideCopies()
         {
             LSRTestHelper.Test("IncrementalThruTokenInsideCopies", LsrTestingOptions.NoLsrTesting, false, true);
-        }        
+        }
+
+        /// <summary>
+        /// Test the error reporting when modifying a continued line
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        [Ignore] //Not fixed yet ! No error should be reported when adding a blank line after a continued line
+        public void InsertWithinContinuations()
+        {
+            LSRTestHelper.Test("InsertWithinContinuations", LsrTestingOptions.NoLsrTesting, false);
+        }
+
         #endregion
 
         #region SyntaxColoring
@@ -243,6 +254,7 @@ namespace TypeCobol.LanguageServer.Test
         public void SimpleMoveToCompletion()
         {
             LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("SimpleMoveToCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
         }
 
         [TestMethod]
@@ -271,6 +283,13 @@ namespace TypeCobol.LanguageServer.Test
         public void CompletionAfterDotFromTypedDataDef()
         {
             LSRTestHelper.Test("CompletionAfterDotFromTypedDataDef", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionAfterWhen()
+        {
+            LSRTestHelper.Test("CompletionAfterWhen", LsrTestingOptions.NoLsrTesting, true, false, true);
         }
 
         [TestMethod]
@@ -306,6 +325,7 @@ namespace TypeCobol.LanguageServer.Test
         public void DisplayCompletion()
         {
             LSRTestHelper.Test("DisplayCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("DisplayCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
         }
 
         [TestMethod]
@@ -429,6 +449,21 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionOutputParamEmptyType", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionCallDuplicateProcedure()
+        {
+            LSRTestHelper.Test("CompletionCallDuplicateProcedure", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void AmbiguousVariablesCompletion()
+        {
+            LSRTestHelper.Test("AmbiguousVariablesCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("AmbiguousVariablesCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
+        }
         #endregion
 
         [TestMethod]
@@ -469,6 +504,27 @@ namespace TypeCobol.LanguageServer.Test
             {
                 Assert.Fail("Set AutoReplace to false in UnitTestHelper.CompareDirectory()\n\n");
             }
+        }
+
+        [TestMethod]
+        [TestCategory("CfgDfa")]
+        public void CfgDataInformation()
+        {
+            LSRTestHelper.Test("CfgDataInformation", LsrTestingOptions.NoLsrTesting, true, useCfg:true);
+        }
+
+        [TestMethod]
+        public void EmptyExecStatement()
+        {
+            //Issue #1900, initially a NullReferenceException was thrown instead of a proper diagnostic
+            LSRTestHelper.Test("EmptyExecStatement", LsrTestingOptions.NoLsrTesting);
+        }
+
+        [TestMethod]
+        [TestCategory("CopyEdit")]
+        public void CopyEditAddDataItem()
+        {
+            LSRTestHelper.Test("CopyEditAddDataItem", LsrTestingOptions.NoLsrTesting, true);
         }
     }
 }

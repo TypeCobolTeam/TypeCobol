@@ -2,7 +2,6 @@
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
@@ -10,34 +9,22 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Parser.Preprocessor
 {
-    internal class PreprocessorUtils {
-        public static readonly string Root = "Parser" + Path.DirectorySeparatorChar +"Preprocessor";
+    internal static class PreprocessorUtils
+    {
+        public static readonly DocumentFormat Format = new DocumentFormat(Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
 
-        public static CompilationProject DirectivesProject;
-        public static CompilationProject CopyProject;
-        public static CompilationProject ReplaceProject;
+        public static readonly string Root = "Parser" + Path.DirectorySeparatorChar + "Preprocessor";
 
-        static PreprocessorUtils()
+        private static ProcessedTokensDocument GetProcessedTokensDocument(CompilationProject currentProject, string testName)
         {
-            DirectivesProject = new CompilationProject("directives",
-                PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar+"DirectiveTestFiles"), new string[] { ".cbl", ".cpy" },
-                Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
-
-            CopyProject = new CompilationProject("copy",
-                PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "CopyTestFiles"), new string[] { ".cbl", ".cpy" },
-                Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
-
-            ReplaceProject = new CompilationProject("replace",
-                PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "ReplaceTestFiles"), new string[] { ".cbl", ".cpy" },
-                Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
+            FileCompiler fileCompiler = new FileCompiler(currentProject, testName, false);
+            fileCompiler.CompileOnce(ExecutionStep.Preprocessor, false);
+            return fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot;
         }
 
-        public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();
-
-        public static string ProcessCompilerDirectives(string testName)
+        public static string ProcessCompilerDirectives(CompilationProject project, string testName)
         {
-            PerfStatsForImportedDocument perfStats;
-            ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(null, testName, out perfStats);
+            ProcessedTokensDocument processedDoc = GetProcessedTokensDocument(project, testName);
 
             StringBuilder sbResult = new StringBuilder();
             int lineNumber = 1;
@@ -76,17 +63,17 @@ namespace TypeCobol.Test.Parser.Preprocessor
         public static void CheckWithDirectiveResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "DirectiveResultFiles", testName + ".txt");
-            string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
 
-        private static string ProcessTokensDocument(string testName, ProcessedTokensDocument processedDoc)
+        private static string ProcessTokensDocument(ProcessedTokensDocument processedDoc)
         {
             // Tokens
             StringBuilder sbTokens = new StringBuilder();
-            ITokensLinesIterator tokens = processedDoc.ProcessedTokens;
+            ITokensLinesIterator tokens = processedDoc.GetProcessedTokensIterator();
             Token token = tokens.NextToken();
-            if (token != Token.END_OF_FILE)
+            if (token.TokenType != TokenType.EndOfFile)
             {
                 string documentPath = null;
                 int lineIndex = -1;
@@ -104,7 +91,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
                     }
                     sbTokens.AppendLine(token.ToString());
                 }
-                while ((token = tokens.NextToken()) != Token.END_OF_FILE);
+                while ((token = tokens.NextToken()).TokenType != TokenType.EndOfFile);
             }
 
             // Errors
@@ -130,32 +117,28 @@ namespace TypeCobol.Test.Parser.Preprocessor
             return sbTokens.ToString() + (hasDiagnostic ? sbDiagnostics.ToString() : "");
         }
 
-        public static string ProcessCopyDirectives(string name)
+        public static string ProcessCopyDirectives(CompilationProject project, string name)
         {
-            PerfStatsForImportedDocument perfStats;
-            return ProcessTokensDocument(name, CopyProject.GetProcessedTokensDocument(null, name, out perfStats));
+            return ProcessTokensDocument(GetProcessedTokensDocument(project, name));
         }
 
         public static void CheckWithCopyResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "CopyResultFiles", testName + ".txt");
-            string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
 
-        public static string ProcessReplaceDirectives(string name)
+        public static string ProcessReplaceDirectives(CompilationProject project, string name)
         {
-            PerfStatsForImportedDocument perfStats;
-            return ProcessTokensDocument(name, ReplaceProject.GetProcessedTokensDocument(null, name, out perfStats));
+            return ProcessTokensDocument(GetProcessedTokensDocument(project, name));
         }
 
         public static void CheckWithReplaceResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "ReplaceResultFiles", testName + ".txt");
-            string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
-
     }
-
 }

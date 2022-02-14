@@ -1,4 +1,4 @@
-      *TypeCobol_Version:0.1(alpha)
+      *TypeCobol_Version:[[ParserVersion]]
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
        DATA DIVISION.

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
@@ -89,12 +90,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
 
                 // TODO#249: use a COPY for these
-                foreach (var type in DataType.BuiltInCustomTypes)
+                foreach (var type in DataType.BuiltInCustomTypeDefinitions)
                 {
-                    var createdType = DataType.CreateBuiltIn(type);
-                    TableOfIntrinsics.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
+                    //Add default TypeCobol types BOOLEAN, DATE, STRING and CURRENCY
+                    TableOfIntrinsics.AddType(type); 
                     //Add type and children to DataTypeEntries dictionary in Intrinsic symbol table
-                    TableOfIntrinsics.AddDataDefinitionsUnderType(createdType);
+                    TableOfIntrinsics.AddDataDefinitionsUnderType(type);
                 }
             }
         }
@@ -148,19 +149,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
         }
 
-        private Node GetTopLevelItem(long level)
-        {
-            var parent = CurrentNode;
-            while (parent != null)
-            {
-                var data = parent.CodeElement as DataDefinitionEntry;
-                if (data == null) return null;
-                if (data.LevelNumber == null || data.LevelNumber.Value < level) return parent;
-                parent = parent.Parent;
-            }
-            return null;
-        }
-
         /// <summary>Exit() every Node that is not the top-level item for a data of a given level.</summary>
         /// <param name="levelnumber">
         /// Level number of the next data definition that will be Enter()ed.
@@ -168,25 +156,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </param>
         private void SetCurrentNodeToTopLevelItem(IntegerValue levelnumber)
         {
-            long level = levelnumber != null ? levelnumber.Value : 1;
-            Node parent;
-
+            long level = levelnumber?.Value ?? 1;
             if (level == 1 || level == 77)
             {
-                parent = null;
-            }
-            else
-            {
-                parent = GetTopLevelItem(level);
-            }
-            if (parent != null)
-            {
-                // Exit() previous sibling and all of its last children
-                while (parent != CurrentNode) Exit();
-            }
-            else
-            {
+                //level-1 and level-77 should be attached directly into the section.
                 ExitLastLevel1Definition();
+            }
+            else
+            {
+                long parentLevel = level == 66 ? 1 : level - 1; //level-66 should be attached to their corresponding level-1.
+                while (CurrentNode.CodeElement is DataDefinitionEntry entry)
+                {
+                    //Exit() till we reach or get over expected parent level.
+                    if (entry.LevelNumber == null) break;
+                    if (entry.LevelNumber.Value <= parentLevel) break;
+                    Exit();
+                }
             }
         }
 
@@ -194,14 +179,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private void ExitLastLevel1Definition()
         {
             _CurrentTypeDefinition = null;
-            Node LastLevel1Def = null;
-            while (CurrentNode.CodeElement != null && CurrentNode.CodeElement is DataDefinitionEntry)
+            Node lastLevel1Definition = null;
+            while (CurrentNode.CodeElement is DataDefinitionEntry)
             {
-                LastLevel1Def = CurrentNode;
+                lastLevel1Definition = CurrentNode;
                 Exit();
             }
-            if (LastLevel1Def != null)
-                Dispatcher.OnLevel1Definition((DataDefinition)LastLevel1Def);
+            if (lastLevel1Definition != null)
+                Dispatcher.OnLevel1Definition((DataDefinition) lastLevel1Definition);//Call is made also for level-77.
         }
 
         public virtual void StartCobolCompilationUnit()
@@ -246,12 +231,37 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartCobolProgram(programIdentification, libraryCopy);
         }
 
-        public virtual void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
+        public virtual void EndCobolProgram(ProgramEnd end)
         {
-            AttachEndIfExists(end);
-            Exit();
-            programsStack.Pop();
-            Dispatcher.EndCobolProgram(end);
+            var endedProgramName = end?.ProgramName?.Name;
+            if (endedProgramName != null)
+            {
+                // Find the program in the stack that has the name specified by END PROGRAM
+                var matchingProgram = programsStack.FirstOrDefault(p => p.Name.Equals(endedProgramName, StringComparison.OrdinalIgnoreCase));
+                if (matchingProgram != null)
+                {
+                    // Pop all programs to have CurrentProgram as the program whose name match
+                    if (matchingProgram != CurrentProgram)
+                    {
+                        // Recursively close all nested programs
+                        EndCobolProgram(null);
+                    }
+                }
+            }
+
+            if (CurrentProgram != null)
+            {
+                // Add end to current program
+                AttachEndIfExists(end);
+                Exit();
+                programsStack.Pop();
+                Dispatcher.EndCobolProgram(end);
+            }
+            else
+            {
+                // End is attached to the SourceFile and will be checked later to produce a diagnostic
+                AttachEndIfExists(end);
+            }
         }
 
         public virtual void StartEnvironmentDivision(EnvironmentDivisionHeader header)
@@ -352,6 +362,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileControlEntry(FileControlEntry entry)
         {
+            var currentProg = CurrentProgram;
+            if (currentProg.FileConnectors == null)
+            {
+                currentProg.FileConnectors = new Dictionary<SymbolDefinition, FileControlEntry>();
+            }
+
+            if (entry.FileName != null)
+            {
+                currentProg.FileConnectors.Add(entry.FileName, entry);
+            }
+
             var fileControlEntry = new FileControlEntryNode(entry);
             Enter(fileControlEntry, entry);
             Dispatcher.StartFileControlEntry(entry);
@@ -788,9 +809,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFunctionProcedureDivision(ProcedureDivisionHeader header)
         {
-            if (header.UsingParameters != null && header.UsingParameters.Count > 0)
-                DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
-
             Enter(new ProcedureDivision(header), header);
             Dispatcher.StartFunctionProcedureDivision(header);
         }
@@ -873,32 +891,39 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartExecStatement(ExecStatement execStmt)
         {
-            ExitLastLevel1Definition();
             Enter(new Exec(execStmt), execStmt);
             Dispatcher.StartExecStatement(execStmt);
         }
 
         public virtual void EndExecStatement()
         {
-            //Code duplicated in OnExecStatement
             //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
             //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+            ExitExecStatement();
+            Dispatcher.EndExecStatement();
+        }
 
-            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
-            //This might be helpful for later
-            //if (_ProcedureDeclaration != null)
-            //{
-            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
-            //}
-
+        private void ExitExecStatement()
+        {
             //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
             //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
             if (_ProcedureDeclaration != null)
             {
                 CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
+
+            var exec = CurrentNode;
             Exit();
-            Dispatcher.EndExecStatement();
+
+            //EXECs inside a DataDefinition are moved to the parent data division section
+            //Children of a DataDefinition are thus guaranteed to be DataDefinition themselves
+            var targetParent = CurrentNode;
+            while (targetParent is DataDefinition)
+            {
+                targetParent = targetParent.Parent;
+            }
+            exec.Parent.Remove(exec);
+            targetParent.Add(exec);
         }
 
         public virtual void OnContinueStatement(ContinueStatement stmt)
@@ -1080,25 +1105,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void OnExecStatement(ExecStatement stmt)
         {
             Enter(new Exec(stmt), stmt);
-
-            //Code duplicated in OnExecStatement
             //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
             //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
-
-            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
-            //This might be helpful for later
-            //if (_ProcedureDeclaration != null)
-            //{
-            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
-            //}
-
-            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
-            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
-            if (_ProcedureDeclaration != null)
-            {
-                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
-            }
-            Exit();
+            ExitExecStatement();
             Dispatcher.OnExecStatement(stmt);
         }
 

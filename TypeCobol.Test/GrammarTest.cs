@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
-using TypeCobol.Codegen.Config;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
@@ -23,20 +22,9 @@ namespace TypeCobol.Test {
 	        string samples = @"Samples";
 	        string root = PlatformUtils.GetPathForProjectFile(samples);
 	        CheckTests(root, @"GrammarTest", @"CheckGrammarResults.txt", regex);
-
-	    }
-
-
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null, bool ignoreWarningDiag = false) {
-	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, expectedResultFile, ignoreWarningDiag);
-	    }
-
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex,
-	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null, bool ignoreWarningDiag = false) {
-            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks, expectedResultFile, ignoreWarningDiag);
         }
 
-	    private static void AppendTextToFiles(string tetxToAppend, params string[] files)
+        private static void AppendTextToFiles(string tetxToAppend, params string[] files)
 	    {
 	        foreach (var file in files)
 	        {
@@ -48,10 +36,24 @@ namespace TypeCobol.Test {
 	            
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
+        public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile,
+            string regex = "*.cbl",
+            string[] include = null,
+            string[] exclude = null,
+            string[] copiesFolder = null,
+            bool codegen = true,
+            int stopAfterAsManyErrors = 10000,
+            TypeCobolOptions options = null,
+            string expectedResultFile = null,
+            bool ignoreWarningDiag = false)
+        { 
+            //Normalize optional arguments
+            include = include ?? new string[0];
+            exclude = exclude ?? new string[0];
+            options = options ?? new TypeCobolOptions();
+
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
-			bool codegen = false;
-			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+            var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 	        string resultFile = "GeneratedResultFile.txt";
 
             //Initialize both files
@@ -81,15 +83,10 @@ namespace TypeCobol.Test {
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
                 var document = new TypeCobol.Parser();
-			    var options = new TypeCobolOptions
-			    {
-			        ExecToStep = ExecutionStep.CrossCheck,
-#if EUROINFO_RULES
-			        AutoRemarksEnable = autoRemarks,
-#endif
-                };
+                options.ExecToStep = ExecutionStep.CrossCheck;
 
-                document.Init(path, options, format, copiesFolder);
+                //We assume here that all sources are programs (not copies)
+                document.Init(path, false, options, format, copiesFolder);
                 document.Parse(path);
                 
 
@@ -126,7 +123,8 @@ namespace TypeCobol.Test {
 
                 
 				if (!okay) {
-					nbFilesInError++;
+                    AppendTextToFiles("\n", timedResultFile, resultFile);
+                    nbFilesInError++;
 					if (nbFilesInError >= stopAfterAsManyErrors) break;
 				}
 
@@ -135,11 +133,8 @@ namespace TypeCobol.Test {
 			        watch.Start();
 
                     var writer = new StringWriter();
-                    //Retrieve skeletons
-                    var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : new List<Codegen.Skeletons.Skeleton>();
-
                     var generatedCobolStringBuilder = new StringBuilder();
-			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, skeletons, null);
+			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, null);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(document.Results, columns);
                     writer.Write(generatedCobolStringBuilder);
@@ -222,11 +217,6 @@ namespace TypeCobol.Test {
                             if (okay) nbFilesInError++;
                         }
                     }
-
-                    
-			    } else {
-                    if (!okay)
-                        AppendTextToFiles("\n", timedResultFile, resultFile);
                 }
 			}
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;

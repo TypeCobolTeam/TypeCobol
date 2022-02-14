@@ -1,0 +1,1 @@
+﻿-i input\COMPCOPY.pgm -o output\COMPCOPY.generated.pgm -d output\error.txt -e rdz -c input\Copies

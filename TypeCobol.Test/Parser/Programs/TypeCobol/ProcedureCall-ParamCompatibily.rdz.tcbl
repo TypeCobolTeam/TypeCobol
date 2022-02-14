@@ -2,7 +2,7 @@
        PROGRAM-ID. ProcedureCall-ParamCompatibily.
        DATA DIVISION .
        local-STORAGE SECTION.
-      
+
        01  picAlpha10       pic X(10).
        01  picAlpha20       pic X(20).
        01  picNum10         pic 9(10).
@@ -14,9 +14,11 @@
            05 tabNum5     pic 9(10) occurs 5.
            05 tabAlpha5   pic X(10) occurs 5.
 
-       01  picNum10Sync     pic 9(10) sync.
-       01  picAlpha10Just   pic X(10) just.
-      
+       01  picNum10Sync         pic 9(10) sync.
+       01  picNum10SyncLeft     pic 9(10) sync left.
+       01  picNum10SyncRight    pic 9(10) sync right.
+       01  picAlpha10Just       pic X(10) just.
+
        PROCEDURE DIVISION.
 
        declare proc1 private input param1  pic 9(10).
@@ -26,6 +28,12 @@
        end-declare.
 
        declare proc3 private input param1  pic 9(10) sync.
+       end-declare.
+
+       declare proc31 private input param1  pic 9(10) sync left.
+       end-declare.
+
+       declare proc32 private input param1  pic 9(10) sync right.
        end-declare.
 
        declare proc4 private input param1  pic X(10) just.
@@ -73,9 +81,19 @@
 
 
       *KO
-           call proc3 input picNum10
+           call proc3  input picNum10
+           call proc31 input picNum10
+           call proc32 input picNum10
       *OK
-           call proc3 input picNum10Sync 
+           call proc3  input picNum10Sync
+           call proc31 input picNum10Sync
+           call proc32 input picNum10Sync
+           call proc3  input picNum10SyncLeft
+           call proc31 input picNum10SyncLeft
+           call proc32 input picNum10SyncLeft
+           call proc3  input picNum10SyncRight
+           call proc31 input picNum10SyncRight
+           call proc32 input picNum10SyncRight
       *KO
            call proc4 input picAlpha10
       *OK
@@ -83,4 +101,4 @@
 
            .
 
-       END PROGRAM DVZF0OSM.
+       END PROGRAM ProcedureCall-ParamCompatibily.

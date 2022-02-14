@@ -1,0 +1,4 @@
+--- Diagnostics ---
+Line 10[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 12[12,30] <37, Warning, General> - Warning: Unreachable code detected
+Line 13[12,17] <37, Warning, General> - Warning: Unreachable code detected

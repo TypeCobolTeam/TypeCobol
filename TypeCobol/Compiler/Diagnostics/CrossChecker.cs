@@ -7,10 +7,10 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -19,9 +19,20 @@ namespace TypeCobol.Compiler.Diagnostics
         public CrossCompleteChecker([NotNull]TypeCobolOptions compilerOptions)
         {
             _compilerOptions = compilerOptions;
+            _searchTables = new Dictionary<Search, List<DataDefinition>>();
         }
 
         private readonly TypeCobolOptions _compilerOptions;
+
+        /// <summary>
+        /// For each encountered Search statement, stores target table and its parent table definitions.
+        /// If the target table could not be resolved or if it's actually not a table, no entry is added.
+        /// Every entry is either null (if table is part of a TC typedef) or not empty (the searched table itself is always part of the list).
+        /// </summary>
+        private readonly Dictionary<Search, List<DataDefinition>> _searchTables;
+
+        //Holds a reference to the last section node visited as to know in which current section we are
+        private Section _currentSection;
 
         private Node CurrentNode { get; set; }
 
@@ -72,7 +83,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(FunctionDeclaration functionDeclaration)
         {
             FunctionDeclarationChecker.OnNode(functionDeclaration);
-            CheckMultipleFormComParam(functionDeclaration.CodeElement);
+            FormalizedCommentsChecker.CheckFunctionComments(functionDeclaration);
             return true;
         }
 
@@ -95,7 +106,24 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
-            SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
+            var performCE = performProcedureNode.CodeElement;
+
+            (performProcedureNode.ProcedureParagraphSymbol, performProcedureNode.ProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.Procedure, _currentSection);
+            (performProcedureNode.ThroughProcedureParagraphSymbol, performProcedureNode.ThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.ThroughProcedure, _currentSection);
+
+            return true;
+        }
+
+        public override bool Visit(Sort sort)
+        {
+            var sortStatement = sort.CodeElement;
+
+            (sort.InputProcedureParagraphSymbol, sort.InputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.InputProcedure, _currentSection);
+            (sort.InputThroughProcedureParagraphSymbol, sort.InputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughInputProcedure, _currentSection);
+
+            (sort.OutputProcedureParagraphSymbol, sort.OutputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.OutputProcedure, _currentSection);
+            (sort.OutputThroughProcedureParagraphSymbol, sort.OutputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughOutputProcedure, _currentSection);
+
             return true;
         }
 
@@ -108,18 +136,15 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(ProcedureDivision procedureDivision)
         {
             LibraryChecker.CheckLibrary(procedureDivision);
-            ProcedureDivisionHeader ce = procedureDivision.CodeElement as ProcedureDivisionHeader;
-            if (ce?.FormalizedCommentDocumentation != null && procedureDivision.Parent is FunctionDeclaration)
-            {
-                DiagnosticUtils.AddError(ce,
-                    "Formalized Comments can be placed above Procedure Division only for Programs",
-                    MessageCode.ErrorFormalizedCommentMissplaced);
-            }
+            //initializing the current section to null
+            _currentSection = null;
             return true;
         }
 
         public override bool Visit(Section section)
         {
+            //Save current scope node for paragraph resolution
+            _currentSection = section;
             SectionOrParagraphUsageChecker.CheckSection(section);
             return true;
         }
@@ -190,23 +215,274 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     return true;
                 }
+
+                var senderIsAlphanumeric = false;
+                DataDefinition senderDataDefinition = null;
+                if (moveSimple.SendingVariable?.StorageArea?.Kind == StorageAreaKind.DataOrCondition
+                    && move.StorageAreaReadsDataDefinition?.TryGetValue(moveSimple.SendingVariable.StorageArea, out senderDataDefinition) == true)
+                {
+                    senderIsAlphanumeric = senderDataDefinition.DataType == DataType.Alphanumeric;
+                }
+
                 foreach (var area in moveSimple.StorageAreaWrites)
                 {
                     var receiver = area.StorageArea;
-                    if (receiver is FunctionCallResult)
+                    if (receiver == null) continue;
+
+                    if (receiver.Kind == StorageAreaKind.FunctionCallResult)
+                    {
                         DiagnosticUtils.AddError(move, "MOVE: illegal <function call> after TO");
+                    }
+                    else if (senderIsAlphanumeric
+                              && receiver.Kind == StorageAreaKind.DataOrCondition
+                              && move.StorageAreaWritesDataDefinition != null
+                              && move.StorageAreaWritesDataDefinition.TryGetValue(receiver, out var receiverDataDefinition))
+                    {
+                        if (receiverDataDefinition.DataType == DataType.Numeric || receiverDataDefinition.DataType == DataType.NumericEdited)
+                        {
+                            if (receiverDataDefinition.Usage != null && receiverDataDefinition.Usage != DataUsage.None)
+                            {
+                                DiagnosticUtils.AddError(move, $"Moving alphanumeric '{senderDataDefinition.Name}' to numeric '{receiverDataDefinition.Name}' declared with an USAGE may lead to unexpected results.", code: MessageCode.Warning);
+                            }
+                        }
+                    }
                 }
             }
 
+            return true;
+        }
+
+        public override bool Visit(Search search)
+        {
+            var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
+            if (tableToSearch != null)
+            {
+                var searchedTable = search.GetDataDefinitionFromStorageAreaDictionary(tableToSearch);
+                if (searchedTable != null)
+                {
+                    if (searchedTable.IsTableOccurence)
+                    {
+                        var parentTableDefinitions = searchedTable.GetParentTableDefinitions();
+                        _searchTables.Add(search, parentTableDefinitions);
+
+                        //Check keys and indexes for binary search
+                        if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
+                        {
+                            //Searched table must have at least one KEY
+                            var keys = searchedTable.GetTableSortingKeys();
+                            if (keys == null || keys.Length == 0)
+                            {
+                                DiagnosticUtils.AddError(search, $"Cannot use binary SEARCH on '{searchedTable.Name}' because it has no KEY.");
+                            }
+
+                            //Main table and all parent tables must have at least one index
+                            if (parentTableDefinitions != null)
+                            {
+                                foreach (var table in parentTableDefinitions)
+                                {
+                                    var indexes = table.GetIndexes();
+                                    if (indexes == null || indexes.Length == 0)
+                                    {
+                                        var message = table == searchedTable
+                                            ? $"Cannot use binary SEARCH on '{searchedTable.Name}' because it is not indexed."
+                                            : $"Cannot use binary SEARCH on '{searchedTable.Name}' because parent table '{table.Name}' is not indexed.";
+                                        DiagnosticUtils.AddError(search, message);
+                                    }
+                                }
+                            }
+                            //else TC not supported
+                        }
+                    }
+                    else
+                    {
+                        //Not a table
+                        DiagnosticUtils.AddError(search, $"Cannot SEARCH in '{searchedTable.Name}', data item is not a table.");
+                    }
+                }
+                //else undefined reference
+            }
+            //else it's a syntax error
+
+            return true;
+        }
+
+        public override bool Visit(WhenSearch whenSearch)
+        {
+            System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
+            var search = (Search) whenSearch.Parent;
+
+            if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
+            {
+                //TC not supported
+                if (tableDefinitions == null) return true;
+
+                //Main table
+                System.Diagnostics.Debug.Assert(tableDefinitions.Count > 0);
+                var searchedTable = tableDefinitions[0];
+
+                //Init a dictionary of used keys
+                Dictionary<string, bool> usedKeys = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+                var keys = searchedTable.GetTableSortingKeys();
+                if (keys != null)
+                {
+                    foreach (var key in keys)
+                    {
+                        if (key.SortDirection != null && key.SortDirection.Value != SortDirection.None)
+                        {
+                            usedKeys.Add(key.SortKey.Name, false);//Set initial status of the key to 'not used'
+                        }
+                    }
+                }
+
+                //Collect every first index of searched table and its parent tables (multidimensional search)
+                //Reverse order because parent tables are from child to parent but subscripts are from parent to child
+                var expectedIndexes = tableDefinitions.Select(table => table.GetIndexes()?.FirstOrDefault()).Reverse().ToArray();
+
+                //WHEN condition must use keys and first index of the table
+                if (!CheckCondition(whenSearch.CodeElement.Condition))
+                {
+                    return true;
+                }
+
+                //Check all keys are properly used
+                bool expectKeyUsed = true;
+                foreach (var isKeyUsed in usedKeys.Values)
+                {
+                    if (isKeyUsed)
+                    {
+                        if (expectKeyUsed) continue; //OK
+
+                        //KO all keys from first to "highest" used must be used
+                        DiagnosticUtils.AddError(whenSearch, "All the table keys that precede a referenced key must be used.");
+                        break;
+                    }
+
+                    if (expectKeyUsed)
+                    {
+                        //First time we see an unused key, so all following keys must not be used
+                        expectKeyUsed = false;
+                    }
+                }
+
+                //Check syntax of a whenSearchCondition (in a binary search)
+                bool CheckCondition(ConditionalExpression whenSearchCondition)
+                {
+                    switch (whenSearchCondition)
+                    {
+                        case ConditionNameConditionOrSwitchStatusCondition _:
+                            //TODO add check for condition names
+                            return true;
+
+                        case RelationCondition relationCondition:
+                            if (relationCondition.Operator?.SemanticOperator != RelationalOperatorSymbol.EqualTo)
+                            {
+                                DiagnosticUtils.AddError(whenSearch, "Invalid relational operator in WHEN SEARCH condition, EqualTo operator expected.");
+                                return false;
+                            }
+                            return CheckOperand(relationCondition.LeftOperand);
+
+                        case LogicalOperation logicalOperation:
+                            if (logicalOperation.Operator.Value != LogicalOperator.AND)
+                            {
+                                DiagnosticUtils.AddError(whenSearch, "Invalid logical operator in WHEN SEARCH condition, AND operator expected.");
+                            }
+                            return CheckCondition(logicalOperation.LeftOperand) && CheckCondition(logicalOperation.RightOperand);
+
+                        default:
+                            DiagnosticUtils.AddError(whenSearch, "Invalid condition in WHEN SEARCH, only condition-names and key to value comparison are allowed.");
+                            return false;
+                    }
+                }
+
+                bool CheckOperand(ConditionOperand operand)
+                {
+                    if (operand.ArithmeticExpression is NumericVariableOperand numericVariableOperand
+                        && numericVariableOperand.NumericVariable?.StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea
+                        && dataOrConditionStorageArea.Subscripts.Length > 0)
+                    {
+                        //Check indexes for every dimension
+                        if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
+                        {
+                            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
+                            {
+                                var expectedIndex = expectedIndexes[i];
+                                var subscript = dataOrConditionStorageArea.Subscripts[i];
+
+                                //Check use of first table index for the current dimension
+                                var usedIndexStorageArea = ((NumericVariableOperand) subscript.NumericExpression).IntegerVariable.StorageArea;
+                                var usedIndex = whenSearch.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
+                                if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    //Not the first index (or no index defined for the table)
+                                    DiagnosticUtils.AddError(whenSearch, "When subscripting, only first index declared for the table is allowed.");
+                                    return false;
+                                }
+                            }
+                        }
+                        //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
+
+                        //Collect used key
+                        var usedKey = whenSearch.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
+                        if (usedKey != null)
+                        {
+                            if (usedKeys.ContainsKey(usedKey.Name))
+                            {
+                                //Valid key, set key status to 'used'
+                                usedKeys[usedKey.Name] = true;
+                            }
+                            else
+                            {
+                                //Not a key
+                                DiagnosticUtils.AddError(whenSearch, $"'{usedKey.Name}' is not a sorting key of table '{searchedTable.Name}'.");
+                                return false;
+                            }
+                        }
+                        //else undefined reference
+
+                        return true;
+                    }
+
+                    DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
+                    return false;
+                }
+            }
 
             return true;
         }
 
         public override bool Visit(Evaluate evaluate)
         {
-            if (evaluate.GetChildren<WhenOther>().Count == 0)
-                DiagnosticUtils.AddError(evaluate,
-                    "\"when other\" is missing", MessageCode.Warning);
+            bool whenOtherSeen = false;
+            //Start to loop on children from the end because:
+            //- Grammar enforce that there is 0 to 1 "whenOther" and that it's the last element of an "evaluate"
+            //- Invalid empty "when" can only be the last "when"
+            for (int i = evaluate.ChildrenCount - 1; i >= 0; i--)
+            {
+                if (evaluate.Children[i] is WhenOther)
+                {
+                    whenOtherSeen = true;
+                }
+                else if (evaluate.Children[i] is Then then)
+                {
+                    if (then.ChildrenCount == 0)
+                    {
+                        // i is the Then node
+                        // i-1 is the When group
+                        var whenGroup = then.Parent.Children[i - 1];
+                        System.Diagnostics.Debug.Assert(whenGroup.ChildrenCount > 0);
+                        //Get the last When of the WhenGroup. This is the invalid empty When
+                        var whenNode = whenGroup.Children[whenGroup.ChildrenCount - 1];
+                        System.Diagnostics.Debug.Assert(whenNode.CodeElement?.Type == CodeElementType.WhenCondition);
+                        //Syntax error.
+                        DiagnosticUtils.AddError(whenNode, "Missing statement in \"when\" clause");
+                    }
+                    break; //Previous "when" are allowed to have no instructions (#1593)
+                }
+            }
+            if (!whenOtherSeen)
+            {
+                DiagnosticUtils.AddError(evaluate, "\"when other\" is missing", MessageCode.Warning);
+            }
             return true;
         }
 
@@ -220,73 +496,71 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Then thenNode)
+        {
+            //This check only applies to THEN nodes coming from IF statements.
+            if (thenNode.ChildrenCount == 0 && thenNode.Parent.CodeElement?.Type == CodeElementType.IfStatement)
+            {
+                //THEN has no CodeElement, report on Parent IF.
+                DiagnosticUtils.AddError(thenNode.Parent, "Missing statement or NEXT SENTENCE after IF condition.");
+            }
+            return true;
+        }
+
+        public override bool Visit(Else elseNode)
+        {
+            if (elseNode.ChildrenCount == 0)
+            {
+                DiagnosticUtils.AddError(elseNode, "Missing statement or NEXT SENTENCE after ELSE keyword.");
+            }
+            return true;
+        }
+
         public override bool Visit(TypeDefinition typeDefinition)
         {
             //Cobol 2002 rule
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
-            CheckMultipleFormComParam(typeDefinition.CodeElement);
+            FormalizedCommentsChecker.CheckTypeComments(typeDefinition);
             return true;
         }
 
         public override bool Visit(Program program)
         {
-            ProgramChecker.OnNode(program);
-
-            //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
-
-            ProcedureDivisionHeader procedureDivision =
-                program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
-            var formCom = procedureDivision?.FormalizedCommentDocumentation;
-
-            if (formCom != null && procedureDivision.UsingParameters != null)
+            // Check that program has a closing end
+            CheckEndProgram(program);
+            if (program.IsNested)
             {
-                CheckMultipleFormComParam(procedureDivision);
-                // Get the parameters inside the Formalized Comment that are not inside the program parameters
-                var formComParamOrphan = formCom.Parameters.Keys.Except(
-                                             procedureDivision.UsingParameters.Select(p =>
-                                                 p.StorageArea.SymbolReference?.Name)) ?? Enumerable.Empty<string>();
-
-                // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
-                foreach (var orphan in formComParamOrphan)
+                NestedProgram nestedProgram = (NestedProgram)program;
+                if (nestedProgram.ContainingProgram.CodeElement.IsRecursive)
                 {
-                    var tokens =
-                        procedureDivision.ConsumedTokens.Where(t =>
-                            t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
-                    foreach (var token in tokens)
-                    {
-                        DiagnosticUtils.AddError(procedureDivision,
-                            "Parameter name does not match to any program parameter: " + orphan,
-                            token, code: MessageCode.Warning);
-                    }
+                    DiagnosticUtils.AddError(program, "A Nested Program cannot be declared in a RECURSIVE program.");
                 }
-
-
-                // Get the parameters inside the program parameters that are not inside the Formalized Comment
-                var sameParameters = procedureDivision.UsingParameters.Where(p =>
-                    formCom.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
-
-                var programParamWithoutDesc = procedureDivision.UsingParameters.Except(sameParameters);
-
-                // For each of them, place a warning on the parameter definition
-                foreach (var param in programParamWithoutDesc)
+                if (program.CodeElement.IsRecursive)
                 {
-                    var tokens = procedureDivision.ConsumedTokens.Where(t =>
-                        t.TokenType == TokenType.UserDefinedWord &&
-                        t.Text == param.StorageArea.SymbolReference?.Name);
-                    foreach (var token in tokens)
-                    {
-                        DiagnosticUtils.AddError(procedureDivision,
-                            "Parameter does not have any description inside the formalized comments: " +
-                            param.StorageArea.SymbolReference?.Name,
-                            token, code: MessageCode.Warning);
-                    }
+                    DiagnosticUtils.AddError(program, "A Nested Program cannot have a RECURSIVE attribute.");
                 }
             }
-
+            else if (program.CodeElement.IsCommon)
+            {
+                DiagnosticUtils.AddError(program, "A Root Program cannot have a COMMON attribute.");
+            }
+            FormalizedCommentsChecker.CheckProgramComments(program);
+          
             return true;
         }
+
+        public override bool Visit(ConfigurationSection configurationSection)
+        {
+            Program program = configurationSection.GetProgramNode();
+            if (program != null && program.IsNested)
+            {
+                DiagnosticUtils.AddError(configurationSection, "A Nested Program cannot have a CONFIGURATION SECTION.");
+            }
+            return true;
+        }
+
 
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {
@@ -299,17 +573,10 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             TypedDeclarationChecker.OnNode(dataDefinition);
 
-            var commonDataDataDefinitionCodeElement =
-                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
-            if (commonDataDataDefinitionCodeElement != null)
-            {
-                CheckPicture(dataDefinition);
-            }
-
-
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
-
             if (dataDefinitionEntry == null) return true;
+
+            var commonDataDataDefinitionCodeElement = dataDefinitionEntry as CommonDataDescriptionAndDataRedefines;
 
             var levelNumber = dataDefinitionEntry.LevelNumber;
             if (levelNumber != null)
@@ -359,6 +626,32 @@ namespace TypeCobol.Compiler.Diagnostics
 
             }
 
+            if (dataDefinition.SemanticData != null)
+            {
+                //Check if Strict Typedef declaration uses Sync clause
+                if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.InsideTypedef) &&
+                dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+                {
+                    //Typedef instruction => check if it's marked Strict
+                    if (dataDefinition.SemanticData.Kind == Symbol.Kinds.Typedef && dataDefinition.SemanticData.HasFlag(Symbol.Flags.Strict))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition, $"Cannot declare Type definition {dataDefinition.Name} with Sync clause because it is Strict.");
+                    }
+                    //Variable inside Typedef => check if parent typedef is marked Strict
+                    else if (dataDefinition.SemanticData.NearestParent(Symbol.Kinds.Typedef).HasFlag(Symbol.Flags.Strict))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} is part of a declaration using Sync clause in Strict Type definition {dataDefinition.ParentTypeDefinition?.Name}.");
+                    }
+
+                }
+                //Check if variable of user defined Strict Type is declared or has a parent declared with Sync clause (flag is inherited so no need to iterate through parents)
+                else if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.HasATypedefType) &&
+                    dataDefinition.TypeDefinition?.RestrictionLevel == RestrictionLevel.STRICT &&
+                    dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} cannot be declared or have a parent declared with Sync clause because its Type definition {dataDefinition.DataType.Name} is Strict.");
+                }
+            }
 
             if (HasChildrenThatDeclareData(dataDefinition))
             {
@@ -391,13 +684,22 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(End end)
         {
+            // Check if PROGRAM END is orphan
+            if (_compilerOptions.CheckEndProgram.IsActive)
+            {
+                if (end.CodeElement.Type == CodeElementType.ProgramEnd && !(end.Parent is Program))
+                {
+                    DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\".", _compilerOptions.CheckEndProgram.GetMessageCode());
+                }
+            }
+
             // Check end statement is aligned with the matching opening statement
             if (_compilerOptions.CheckEndAlignment.IsActive && end.CodeElement.Type != CodeElementType.SentenceEnd)
             {
                 CodeElement parentCodeElement = end.Parent.CodeElement; ;
                 if (parentCodeElement?.IsInsideCopy() == false && end.IsInsideCopy() == false)
                 {
-                    CheckEndNode(parentCodeElement, end.CodeElement);
+                    CheckEndNode(parentCodeElement, end);
                 }
             }
             return true;
@@ -412,7 +714,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
                 {
                     Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
-                    CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
+                    CheckEndNode(openingDeclareToken, functionEnd);
                 }
             }
             return true;
@@ -429,32 +731,21 @@ namespace TypeCobol.Compiler.Diagnostics
                 var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
                 //Get sibling nodes
                 var siblingNodes = dataDescription.Parent.Children;
-                //Check if next node is inside a copy when this isn't the last node
-                if (siblingNodes.Count > nodeIndex + 1 && siblingNodes[nodeIndex + 1].IsInsideCopy())
+                //Get immediately following DataDefinition
+                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
+                if (nextData != null && nextData.IsInsideCopy())
                 {
-                    //Get next sibling node
-                    var nextSibling = siblingNodes[nodeIndex + 1];
-                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextSibling.CodeElement?.FirstCopyDirective.TextName} " +
+                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
                                                               $"under level {dataDescriptionEntry.LevelNumber} " +
-                                                              $"because copy starts at level {((DataDescription)nextSibling).CodeElement.LevelNumber}.", dataDescriptionEntry);
+                                                              $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataDescriptionEntry);
                 }
-                //Last node so this is an empty group item
                 else
                 {
+                    //Last node so this is an empty group item
                     DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
                 }
             }
 
-            return true;
-        }
-
-        public override bool Visit(SourceComputer sourceComputer)
-        {
-            if (sourceComputer.CodeElement.DebuggingMode?.Value == true)
-            {
-                Token token = sourceComputer.CodeElement.DebuggingMode.Token;
-                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning);
-            }
             return true;
         }
 
@@ -495,40 +786,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
             }
             return true;
-        }
-
-        public static void CheckPicture(Node node, CommonDataDescriptionAndDataRedefines customCodeElement = null)
-        {
-            var codeElement = customCodeElement ?? node.CodeElement as CommonDataDescriptionAndDataRedefines;
-            if (codeElement?.Picture == null) return;
-
-
-            // if there is not the same number of '(' than of ')'
-            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
-            {
-                DiagnosticUtils.AddError(node, "missing '(' or ')'");
-            }
-            // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
-                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
-                DiagnosticUtils.AddError(node, "missing '(' or ')'");
-            else
-            {
-                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
-                {
-                    try //Try catch is here because of the risk to parse a non numerical value
-                    {
-                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                    }
-                    catch (Exception)
-                    {
-                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(node, m, codeElement);
-                    }
-                }
-            }
         }
 
         public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
@@ -603,34 +860,67 @@ namespace TypeCobol.Compiler.Diagnostics
                     //Check if we're dealing with an input parameter
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
-                        var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
-                        //Unless this is a format 5 set statement, we have an error. So we're checking we're not in the following format  :
+                        //We allow modification on indices because semantically they are value types, the procedure uses a copy of the input (issue #1789).
+                        //Also format 5 set statements are allowed because it does not affect the input for the caller (issue #1625).
                         //set (address of)? identifier(pointer) TO (address of)? identifier | NULL
-                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS)
+                        bool isModificationAllowed = dataDefinitionFound.IsTableIndex
+                                                     ||
+                                                     (storageArea is StorageAreaPropertySpecialRegister register && register.SpecialRegisterName.TokenType == TokenType.ADDRESS);
+                        if (!isModificationAllowed)
                         {
                             DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
                         }
                     }
                 }
 
-                //add the found DataDefinition to a dictionary depending on the storage area type
+                //Initialize node caches for DataDef and Symbol.
+                IDictionary<StorageArea, DataDefinition> dataDefinitionStorage;
+                IDictionary<StorageArea, VariableSymbol> symbolStorage;
                 if (isReadStorageArea)
                 {
-                    //need to initialize the dictionaries
+                    //Initialize reads dictionaries
                     if (node.StorageAreaReadsDataDefinition == null)
-                    {
                         node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, DataDefinition>();
-                    }
-                    node.StorageAreaReadsDataDefinition.Add(storageArea, dataDefinitionFound);
+                    if (node.StorageAreaReadsSymbol == null)
+                        node.StorageAreaReadsSymbol = new Dictionary<StorageArea, VariableSymbol>();
+
+                    //Target read dictionaries
+                    dataDefinitionStorage = node.StorageAreaReadsDataDefinition;
+                    symbolStorage = node.StorageAreaReadsSymbol;
                 }
                 else
                 {
-                    //need to initialize the dictionaries
+                    //Initialize writes dictionaries
                     if (node.StorageAreaWritesDataDefinition == null)
-                    {
                         node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, DataDefinition>();
-                    }
-                    node.StorageAreaWritesDataDefinition.Add(storageArea, dataDefinitionFound);
+                    if (node.StorageAreaWritesSymbol == null)
+                        node.StorageAreaWritesSymbol = new Dictionary<StorageArea, VariableSymbol>();
+
+                    //Target writes dictionaries
+                    dataDefinitionStorage = node.StorageAreaWritesDataDefinition;
+                    symbolStorage = node.StorageAreaWritesSymbol;
+                }
+
+                //Add DataDefinition found and corresponding VariableSymbol into caches
+                dataDefinitionStorage.Add(storageArea, dataDefinitionFound);
+                var variableSymbol = dataDefinitionFound.SemanticData as VariableSymbol;
+                symbolStorage.Add(storageArea, variableSymbol);//Beware, variableSymbol my be null !
+
+                //SemanticDomain validation : check that the symbol has been built.
+                if (dataDefinitionFound.ParentTypeDefinition == null)
+                {
+                    //TODO SemanticDomain: requires support for RENAMES.
+                    System.Diagnostics.Debug.Assert(variableSymbol != null || dataDefinitionFound is DataRenames);
+                }
+                else
+                {
+                    //TODO SemanticDomain: requires type expansion.
+                }
+
+                //Check subscripts
+                if (storageArea is DataOrConditionStorageArea dataOrConditionStorageArea)
+                {
+                    CheckSubscripts(node, dataOrConditionStorageArea, dataDefinitionFound);
                 }
 
                 return dataDefinitionFound;
@@ -639,11 +929,75 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
+        private static void CheckSubscripts(Node node, DataOrConditionStorageArea dataOrConditionStorageArea, DataDefinition dataDefinition)
+        {
+            if (dataOrConditionStorageArea.IsPartOfFunctionArgument)
+            {
+                //Avoid checking uncertain subscripts, see issue #2001
+                return;
+            }
+
+            switch (node.CodeElement?.Type)
+            {
+                //Those have their own specific subscript checking
+                case CodeElementType.SearchStatement:
+                case CodeElementType.ProcedureStyleCall:
+                    return;
+            }
+
+            //Create a list of all parent OCCURS
+            var tableDefinitions = dataDefinition.IsTableIndex ? new List<DataDefinition>() : dataDefinition.GetParentTableDefinitions();
+            //TC not supported
+            if (tableDefinitions == null) return;
+
+            if (dataOrConditionStorageArea.Subscripts.Length < tableDefinitions.Count)
+            {
+                //Not enough subscripts
+                DiagnosticUtils.AddError(node, $"Not enough subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            if (dataOrConditionStorageArea.Subscripts.Length > tableDefinitions.Count)
+            {
+                //Too many subscripts
+                DiagnosticUtils.AddError(node, $"Too many subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
+                return;
+            }
+
+            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
+            {
+                var subscript = dataOrConditionStorageArea.Subscripts[i];
+                var tableDefinition = tableDefinitions[tableDefinitions.Count - 1 - i];//OCCURS are stored in reverse order
+
+                //Do not check expressions, only literal values are checked
+                if (!(subscript.NumericExpression is NumericVariableOperand subscriptNumeric)) continue;
+
+                //Do not check variables, only literal values are checked
+                System.Diagnostics.Debug.Assert(subscriptNumeric.NumericVariable == null);
+                System.Diagnostics.Debug.Assert(subscriptNumeric.IntegerVariable != null);
+                if (subscriptNumeric.IntegerVariable.Value == null) continue;
+
+                var subscriptLiteral = subscriptNumeric.IntegerVariable.Value;
+
+                //Check the value against the first allowed index
+                if (subscriptLiteral.Value < 1)
+                {
+                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' is invalid. Subscript must be a strictly positive integer.", subscriptLiteral.Token);
+                }
+
+                //Check the value against the max
+                if (!tableDefinition.HasUnboundedNumberOfOccurences && subscriptLiteral.Value > tableDefinition.MaxOccurencesCount)
+                {
+                    DiagnosticUtils.AddError(node, $"Subscript value '{subscriptLiteral.Value}' exceeds the maximum occurrence count '{tableDefinition.MaxOccurencesCount}' of the table.", subscriptLiteral.Token);
+                }
+            }
+        }
+
         private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath,
             DataDefinition dataDefinition,
             Node node, StorageArea area, StorageArea storageArea)
         {
-            if (dataDefinition.IsIndex)
+            if (dataDefinition.IsTableIndex)
             {
                 var index = dataDefinition;
 
@@ -734,26 +1088,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        /// <summary>
-        /// Add a warning if a Field is set more than one time
-        /// </summary>
-        private static void CheckMultipleFormComParam(CodeElement codeElement)
-        {
-            var tokenGroups = codeElement.ConsumedTokens.GroupBy(t => t.TokenType);
-            foreach (var tokenGroup in tokenGroups)
-            {
-                if ((int) tokenGroup.Key >= 513 && (int) tokenGroup.Key <= 520 && tokenGroup.Count() > 1)
-                {
-                    foreach (var token in tokenGroup)
-                    {
-                        DiagnosticUtils.AddError(codeElement,
-                            "Formalized comment field is declared more than once : " + token.Text,
-                            token, code: MessageCode.Warning);
-                    }
-                }
-            }
-        }
-
         private static void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
             DataDefinitionPath dataDefinitionPath)
         {
@@ -765,82 +1099,127 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
-        private void CheckEndNode([CanBeNull]IToken openingToken, CodeElement endCodeElement)
+        private void CheckEndNode([CanBeNull]IToken openingToken, Node endNode)
         {
+            System.Diagnostics.Debug.Assert(endNode is End || endNode is FunctionEnd);
+            System.Diagnostics.Debug.Assert(endNode.CodeElement != null);
+
             // Check end statement is aligned with the matching opening statement
+            var endCodeElement = endNode.CodeElement;
             if (openingToken != null && openingToken.Line != endCodeElement.Line &&
                 openingToken.StartIndex != endCodeElement.StartIndex)
             {
-                DiagnosticUtils.AddError(endCodeElement,
+                DiagnosticUtils.AddError(endNode,
                     "a End statement is not aligned with the matching opening statement",
                     _compilerOptions.CheckEndAlignment.GetMessageCode());
             }
         }
-    }
 
-    class SectionOrParagraphUsageChecker
-    {
-        public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
+        private void CheckEndProgram(Program node)
         {
-            var performCE = perform.CodeElement;
-            SymbolReference symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference,
-                perform);
-            if (symbol != null) performCE.Procedure = symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference,
-                perform);
-            if (symbol != null) performCE.ThroughProcedure = symbol;
-        }
-
-        /// <summary>Disambiguate between section and paragraph names</summary>
-        /// <param name="table">Symbol table used for name resolution</param>
-        /// <param name="symbol">Symbol to disambiguate</param>
-        /// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
-        /// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
-        private static SymbolReference ResolveProcedureName(SymbolTable table, SymbolReference symbol, Node node)
-        {
-            if (symbol == null) return null;
-
-            SymbolReference sname = null, pname = null;
-            var sfound = table.GetSection(symbol.Name);
-            if (sfound.Count > 0) sname = new SymbolReference(symbol.NameLiteral, SymbolType.SectionName);
-            var pfound = table.GetParagraph(symbol.Name);
-            if (pfound.Count > 0) pname = new SymbolReference(symbol.NameLiteral, SymbolType.ParagraphName);
-
-            if (pname == null)
+            var checkEndProgramOption = _compilerOptions.CheckEndProgram;
+            var lastChild = node.Children.LastOrDefault();
+            if (lastChild is End end)
             {
-                if (sname == null)
+                // END PROGRAM is present
+                node.SetFlag(Node.Flag.MissingEndProgram, false);
+                if (checkEndProgramOption.IsActive)
                 {
-                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol, MessageCode.SemanticTCErrorInParser);
-                }
-                else
-                {
-                    if (sfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to section " + symbol.Name, symbol);
-                    return sname;
+                    var programEnd = (ProgramEnd)end.CodeElement;
+                    if (programEnd.ProgramName?.Name == null)
+                    {
+                        // No name is specified after END PROGRAM
+                        DiagnosticUtils.AddError(end, $"\"PROGRAM END\" should have a program name. \"{node.Name}\" was assumed.", checkEndProgramOption.GetMessageCode());
+                    }
+                    else
+                    {
+                        if (!node.Name.Equals(programEnd.ProgramName.Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Wrong name is specified after END PROGRAM
+                            DiagnosticUtils.AddError(end, $"Program name \"{programEnd.ProgramName.Name}\" did not match the name of any open program. The \"END PROGRAM\" marker was assumed to have ended program \"{node.Name}\".", checkEndProgramOption.GetMessageCode());
+                        }
+                    }
                 }
             }
             else
             {
-                if (sname == null)
+                // END PROGRAM is missing
+                node.SetFlag(Node.Flag.MissingEndProgram, true);
+                if (checkEndProgramOption.IsActive)
                 {
-                    if (pfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph " + symbol.Name, symbol);
-                    return pname;
-                }
-                else
-                {
-                    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure " + symbol.Name, symbol);
+                    if (node is SourceProgram && node.Parent.Children.OfType<SourceProgram>().Last() == node)
+                    {
+                        // Node is last program
+                        if (!node.NestedPrograms.Any())
+                        {
+                            // Exception if only last program is not closed and has no nested program
+                            // No diagnostic in this case
+                            return;
+                        }
+                    }
+                    DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", checkEndProgramOption.GetMessageCode());
                 }
             }
-            return null;
+        }
+    }
+
+    static class SectionOrParagraphUsageChecker
+    {
+        /// <summary>
+        /// Disambiguate between Paragraph or Section reference.
+        /// </summary>
+        /// <param name="callerNode">Node using the paragraph or the reference.</param>
+        /// <param name="target">A Symbol reference to disambiguate.</param>
+        /// <param name="currentSection">The node scope in which the perform statement is declared</param>
+        /// <returns>A tuple corresponding to the paragraph OR section found.
+        /// The returned tuple has one null value and one filled value if the reference is non-ambiguous.</returns>
+        /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
+        public static (ParagraphSymbol, SectionSymbol) ResolveParagraphOrSection(Node callerNode, SymbolReference target, Section currentSection)
+        {
+            if (target == null) return (null, null);
+
+            var (sections, paragraphs) = callerNode.SymbolTable.GetSectionOrParagraph(target, currentSection);
+            if (paragraphs == null || paragraphs.Count == 0)
+            {
+                if (sections == null || sections.Count == 0)
+                {
+                    //Nothing found
+                    DiagnosticUtils.AddError(callerNode, $"Symbol {target.Name} is not referenced", target, MessageCode.SemanticTCErrorInParser);
+                    return (null, null);
+                }
+
+                //We know for sure it's a section but is it ambiguous ?
+                if (sections.Count > 1)
+                {
+                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to section {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                    return (null, null);
+                }
+
+                //Return single section found
+                return (null, (SectionSymbol)sections[0].SemanticData);
+            }
+
+            //No section matches the name so it's a paragraph
+            if (sections == null || sections.Count == 0)
+            {
+                //Check if paragraph is ambiguous
+                if (paragraphs.Count > 1)
+                {
+                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                    return (null, null);
+                }
+
+                //Return single paragraph found
+                return ((ParagraphSymbol)paragraphs[0].SemanticData, null);
+            }
+
+            //The reference is ambiguous, we don't know what we're dealing with
+            DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to procedure {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+            return (null, null);
         }
 
-        private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
+        private static void CheckIsNotEmpty<T>(string nodeTypeName, T node) where T : Node
         {
-            if (found.Count > 1)
-                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
-
             // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
             bool empty = true; // default value
             foreach (Node child in node.Children)  
@@ -871,12 +1250,43 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public static void CheckSection(Section section)
         {
-            Check("Section", section, section.SymbolTable.GetSection(section.Name));
+            //Get all sections with the same name
+            var sections = section.SymbolTable.GetSection(section.Name);
+
+            //Sections can be declared with the same name but then "perform thru" is not possible
+            if (sections.Count > 1)
+            {
+                DiagnosticUtils.AddError(section, $"Section \'{section.Name}\' already declared", MessageCode.Warning);
+            }
+
+            //Check if any paragraphs also have that name
+            var paragraphs = section.SymbolTable.GetParagraphs(p => p.Name.Equals(section.Name, StringComparison.OrdinalIgnoreCase)).ToList();
+            
+            //A section cannot have the same name as a paragraph
+            if (paragraphs.Count > 0)
+            {
+                DiagnosticUtils.AddError(section, $"Section {section.Name} is also declared as a paragraph", MessageCode.SemanticTCErrorInParser);
+                foreach (var paragraph in paragraphs)
+                {
+                    DiagnosticUtils.AddError(paragraph, $"Paragraph {paragraph.Name} is also declared as a section", MessageCode.SemanticTCErrorInParser);
+                }
+            }
+
+            CheckIsNotEmpty("Section", section);
         }
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            Check("Paragraph", paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
+            //Get all paragraphs with the same name and having the same parent
+            var paragraphs = paragraph.SymbolTable.GetParagraphs(paragraph.Name, paragraph.Parent);
+            if (paragraphs?.Count() > 1)
+            {
+                //Get the name of the scope to display in diagnostic message
+                var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name;
+                DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}", MessageCode.Warning);
+            }
+
+            CheckIsNotEmpty("Paragraph", paragraph);
         }
     }
 
@@ -937,8 +1347,8 @@ namespace TypeCobol.Compiler.Diagnostics
             else
             {
                 //This will resolve the following cases MOVE 1 TO myVar / MOVE true TO myVar / MOVE "test" TO myVar. 
-                if (sent is bool?) sendingTypeDefinition = GeneratedDefinition.BooleanGeneratedDefinition;
-                if (sent is double?) sendingTypeDefinition = GeneratedDefinition.NumericGeneratedDefinition;
+                if (sent is bool) sendingTypeDefinition = GeneratedDefinition.BooleanGeneratedDefinition;
+                if (sent is double) sendingTypeDefinition = GeneratedDefinition.NumericGeneratedDefinition;
                 if (sent is string) sendingTypeDefinition = GeneratedDefinition.AlphanumericGeneratedDefinition;
             }
 
@@ -1023,12 +1433,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         entry = GetDataDescriptionEntry(node, redefines, isReadDictionary);
                     }
                 }
-                else if (data is IndexDefinition)
+                else
                 {
+                    //TODO Unsupported DataRenames (and IndexDefinition ?)
                     entry = null;
                 }
-                else
-                    throw new NotImplementedException(data.CodeElement.GetType().Name);
 
                 if (entry == null)
                     return null;
@@ -1041,7 +1450,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 return null;
             }
 
-            if (data?.TypeDefinition != null)
+            if (data.TypeDefinition != null)
                 return data.TypeDefinition;
 
             var types = node.SymbolTable.GetType(data);
@@ -1061,20 +1470,17 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var searchedDataDefinition =
                 node.GetDataDefinitionForQualifiedName(dataRedefinesEntry.RedefinesDataName.URI, isReadDictionary);
-            if (searchedDataDefinition == null)
-            {
-                return null;
-            }
+
             if (searchedDataDefinition is DataDescription)
             {
                 return (DataDescriptionEntry) searchedDataDefinition.CodeElement;
             }
             if (searchedDataDefinition is DataRedefines)
             {
-                return GetDataDescriptionEntry(node, (DataRedefinesEntry) searchedDataDefinition.CodeElement,
-                    isReadDictionary);
+                return GetDataDescriptionEntry(node, (DataRedefinesEntry) searchedDataDefinition.CodeElement, isReadDictionary);
             }
-            throw new NotImplementedException(searchedDataDefinition.Name);
+
+            return null;
         }
 
     }

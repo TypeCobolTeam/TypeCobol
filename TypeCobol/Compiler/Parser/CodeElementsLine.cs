@@ -105,19 +105,26 @@ namespace TypeCobol.Compiler.Parser
             {
                 foreach (var codeElement in CodeElements)
                 {
-                    codeElement.Diagnostics = null; //Delete all diganostics on every codeelement of this line
+                    codeElement.Diagnostics = null; //Delete all diagnostics on every codeelement of this line
                 }
             }
         }
 
-        internal void UpdateDiagnositcsLine()
+        internal void ShiftUp() => Shift(-1);
+
+        internal void ShiftDown() => Shift(+1);
+
+        private void Shift(int offset)
         {
+            //Update line index
+            LineIndex += offset;
+
             //Update ParserDiag lines index
             if (_ParserDiagnostics != null)
             {
                 foreach (var parserDiagnostic in _ParserDiagnostics)
                 {
-                    parserDiagnostic.Line = LineIndex + 1;
+                    parserDiagnostic.Shift(offset);
                 }
             }
 
@@ -130,7 +137,7 @@ namespace TypeCobol.Compiler.Parser
                     {
                         foreach (var codeElementDiagnostic in codeElement.Diagnostics)
                         {
-                            codeElementDiagnostic.Line = LineIndex + 1;
+                            codeElementDiagnostic.Shift(offset);
                         }
                     }
                 }

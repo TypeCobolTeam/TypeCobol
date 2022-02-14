@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Types;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -48,18 +47,78 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 //Retrieve VALUE token through context
-                var valueToken =
-                    (Token)context?.children.OfType<CodeElementsParser.ValueClauseContext>().SingleOrDefault()?.Start;
+                var valueClauseContexts = context?.children.OfType<CodeElementsParser.ValueClauseContext>();
+                Token valueToken = null;
+                bool multipleContexts = false;
+                if (valueClauseContexts != null)
+                {
+                    foreach (var valueClauseContext in valueClauseContexts)
+                    {
+                        if (valueToken != null)
+                        {
+                            multipleContexts = true;
+                            break;
+                        }
+
+                        valueToken = (Token) valueClauseContext.Start;
+                    }
+                }
 
                 if (valueToken != null)
                 {
+                    if (multipleContexts)
+                    {
+                        //This is a parsing error
+                        DiagnosticUtils.AddError(data, "Invalid VALUE clause", valueToken);
+                    }
                     //In Cobol reference format check that VALUE clause starts in Area B
-                    if (((CodeElementsLine)valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat &&
-                          DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB) {
+                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat
+                             &&
+                             DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB)
+                    {
                         DiagnosticUtils.AddError(data, "VALUE clause must start in area B", valueToken);
                     }
                 }
             }
+
+            //Check Picture character string format
+            CheckPicture(data, context);
+        }
+
+        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement, ParserRuleContextWithDiagnostics context)
+        {
+            if (codeElement.Picture == null) return;
+
+            /*
+             * Validate using PictureValidator
+             * We use the scan state of the first token in ANTLR context for this code element to retrieve special-names information,
+             * namely DecimalPointIsComma and the custom currency descriptors (if any).
+             */
+            bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
+            var specialNamesContext = (context?.Start as Token)?.TokensLine.ScanState.SpecialNames;
+            bool decimalPointIsComma = specialNamesContext?.DecimalPointIsComma ?? false;
+            var customCurrencyDescriptors = specialNamesContext?.CustomCurrencyDescriptors;
+            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate, decimalPointIsComma, customCurrencyDescriptors);
+            var pictureValidationResult = pictureValidator.Validate(out var validationMessages);
+
+            //Report validation errors as diagnostics
+            if (!pictureValidationResult.IsValid)
+            {
+                var pictureToken = codeElement.Picture.Token;
+                foreach (var validationMessage in validationMessages)
+                {
+                    DiagnosticUtils.AddError(codeElement, validationMessage, pictureToken);
+                }
+            }
+
+            //Store validation result for future usages
+            codeElement.PictureValidationResult = pictureValidationResult;
+        }
+
+        public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            TypeDefinitionEntryChecker.CheckRedefines(redefines, context);
+            CheckPicture(redefines, context);
         }
 
         /// <summary>
@@ -132,55 +191,66 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(CallStatement statement, CodeElementsParser.CallStatementContext c)
         {
             var context = c?.cobolCallStatement();
-            if (context != null) //if null it's certainly a CallStatementContext
+            if (context != null) //if null it's certainly a TcCallStatementContext
             {
-                foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
+                if (context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable() == null)
+                    DiagnosticUtils.AddError(statement, "Empty CALL is not authorized", context.Start);
+
+                // Check each parameter of the CALL
+                CheckCallUsings(statement);
 
                 if (context.callReturningParameter() != null && statement.OutputParameter == null)
                     DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
             }
-
         }
 
-        private static void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
+        /// <summary>
+        /// Check the parameters of the CALL
+        /// </summary>
+        /// <param name="statement">CALL to check the parameters</param>
+        private static void CheckCallUsings(CallStatement statement)
         {
-            foreach (var input in statement.InputParameters)
+            foreach (var inputParameter in statement.InputParameters)
             {
+                var errorPosition = inputParameter.StorageAreaOrValue?.MainSymbolReference?.NameLiteral.Token;
+
                 // TODO#249 these checks should be done during semantic phase, after symbol type resolution
                 // TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
-                //	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
-                bool isFunctionCallResult = input.StorageAreaOrValue != null &&
-                                            input.StorageAreaOrValue.StorageArea is FunctionCallResult;
+                bool isFunctionCallResult = inputParameter.StorageAreaOrValue != null &&
+                                            inputParameter.StorageAreaOrValue.StorageArea is FunctionCallResult;
 
                 //SpecialRegister if LENGTH OF, LINAGE-COUNTER, ...
-                var specialRegister = input.StorageAreaOrValue != null
-                    ? input.StorageAreaOrValue.StorageArea as StorageAreaPropertySpecialRegister
+                var specialRegister = inputParameter.StorageAreaOrValue != null
+                    ? inputParameter.StorageAreaOrValue.StorageArea as StorageAreaPropertySpecialRegister
                     : null;
 
                 if (isFunctionCallResult)
-                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
+                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", errorPosition);
 
                 if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LINAGE_COUNTER)
-                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
+                    DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", errorPosition);
 
 
-                if (input.SharingMode != null)
+                if (inputParameter.SharingMode != null)
                 {
                     //BY REFERENCE
-                    if (input.SharingMode.Value == ParameterSharingMode.ByReference)
+                    if (inputParameter.SharingMode.Value == ParameterSharingMode.ByReference)
                     {
                         if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LENGTH)
                             DiagnosticUtils.AddError(statement,
-                                "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
+                                "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", errorPosition);
 
-                        if (input.StorageAreaOrValue != null && input.StorageAreaOrValue.IsLiteral)
+                        if (inputParameter.StorageAreaOrValue != null && inputParameter.StorageAreaOrValue.IsLiteral)
                             DiagnosticUtils.AddError(statement,
-                                "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
+                                "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", errorPosition);
                     }
 
                     //BY VALUE
-                    if (input.IsOmitted && input.SharingMode.Value == ParameterSharingMode.ByValue)
-                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
+                    if (inputParameter.IsOmitted && inputParameter.SharingMode.Value == ParameterSharingMode.ByValue)
+                    {
+                        // Placing error on the token Omitted
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", inputParameter.Omitted.Token);
+                    }
                 }
             }
         }
@@ -245,7 +315,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (statement.TableToSearch == null) return; // syntax error
             if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea &&
-                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Count > 0)
+                ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Length > 0)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(context));
             if (statement.TableToSearch.StorageArea?.ReferenceModifier != null)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier",
@@ -285,8 +355,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (set.SendingVariable == null)
             {
-                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown",
-                    context?.variableOrExpression2());
+                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
             }
         }
     }
@@ -296,10 +365,10 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(StartStatement statement, CodeElementsParser.StartStatementContext context)
         {
             if (context?.relationalOperator() != null)
-                if (statement.RelationalOperator.Value != RelationalOperator.EqualTo &&
-                    statement.RelationalOperator.Value != RelationalOperator.GreaterThan &&
-                    statement.RelationalOperator.Value != RelationalOperator.GreaterThanOrEqualTo)
-                    DiagnosticUtils.AddError(statement, "START: Illegal operator " + statement.RelationalOperator.Value,
+                if (statement.RelationalOperator.SemanticOperator != RelationalOperatorSymbol.EqualTo &&
+                    statement.RelationalOperator.SemanticOperator != RelationalOperatorSymbol.GreaterThan &&
+                    statement.RelationalOperator.SemanticOperator != RelationalOperatorSymbol.GreaterThanOrEqualTo)
+                    DiagnosticUtils.AddError(statement, "START: Illegal operator " + statement.RelationalOperator,
                         context.relationalOperator());
         }
     }
@@ -318,22 +387,9 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (isDebuggingModeEnabled)
             {
-                // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode
-                int consumedTokensCount = codeElement.ConsumedTokens.Count;
-                if (consumedTokensCount > 1)
+                if (codeElement.DebugMode == CodeElement.DebugType.Mix)
                 {
-                    bool isDebug = false, isNoDebug = false;
-                    for (int i = 0; i < consumedTokensCount; i++)
-                    {
-                        bool isDebugType = char.ToLower(codeElement.ConsumedTokens[i].TokensLine.IndicatorChar) == 'd';
-                        isDebug |= isDebugType;
-                        isNoDebug |= !isDebugType;
-                        if (isDebug && isNoDebug)
-                        {
-                            DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
-                            break;
-                        }
-                    }
+                    DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
                 }
             }
         }
@@ -348,6 +404,262 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(statement, "GOBACK should be used instead of STOP RUN", ParseTreeUtils.GetFirstToken(context), 
                     null, MessageCode.Warning);
             }
+        }
+    }
+
+    internal static class ReferenceModifierChecker
+    {
+        private static Diagnostic CreateDiagnostic(string message, IParseTree location)
+        {
+            var position = ParseTreeUtils.GetFirstToken(location).Position();
+            return new Diagnostic(MessageCode.SyntaxErrorInParser, position, message);
+        }
+
+        public static void Check(ReferenceModifier referenceModifier, CodeElementsParser.ReferenceModifierContext context)
+        {
+            if (referenceModifier.LeftmostCharacterPosition == null)
+            {
+                context.AttachDiagnostic(CreateDiagnostic("Left-most position of a reference modifier is required.", context));
+            }
+            else
+            {
+                ValidateModifierValue(referenceModifier.LeftmostCharacterPosition);
+            }
+
+            if (referenceModifier.Length != null)
+            {
+                ValidateModifierValue(referenceModifier.Length);
+            }
+
+            void ValidateModifierValue(ArithmeticExpression arithmeticExpression)
+            {
+                switch (arithmeticExpression.NodeType)
+                {
+                    case ExpressionNodeType.ArithmeticOperation:
+                        // Cannot do anything in that case
+                        break;
+                    case ExpressionNodeType.NumericVariable:
+                        var numericVariableOperand = (NumericVariableOperand)arithmeticExpression;
+                        var numericVariable = numericVariableOperand.NumericVariable;
+                        // Only negative literals are erroneous
+                        if (numericVariable?.Value?.Value <= 0)
+                        {
+                            context.AttachDiagnostic(CreateDiagnostic("Reference modifiers should be positive non-zero values.", context));
+                        }
+                        break;
+                    default:
+                        throw new InvalidOperationException("Unexpected expression type: " + arithmeticExpression.NodeType);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Create diagnostics for language level restricted elements used in a lower level parsing context
+    /// (typically TypeCobol syntax used in Cobol85 code).
+    /// </summary>
+    internal class UnsupportedLanguageLevelFeaturesChecker
+    {
+        private static Diagnostic CreateDiagnostic(string message, IParseTree location, CobolLanguageLevel minLevel)
+        {
+            var position = ParseTreeUtils.GetFirstToken(location).Position();
+            return new Diagnostic(MessageCode.UnsupportedLanguageFeature, position, minLevel, message);
+        }
+
+        private static void AddError(CodeElement codeElement, string message, IParseTree location, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        {
+            if (codeElement.Diagnostics == null) codeElement.Diagnostics = new List<Diagnostic>();
+            codeElement.Diagnostics.Add(CreateDiagnostic(message, location, minLevel));
+        }
+
+        private static void AddError(ParserRuleContextWithDiagnostics context, string message, IParseTree location = null, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        {
+            location = location ?? context;
+            context.AttachDiagnostic(CreateDiagnostic(message, location, minLevel));
+        }
+
+        private readonly CobolLanguageLevel _targetLevel;
+
+        public UnsupportedLanguageLevelFeaturesChecker(CobolLanguageLevel targetLevel)
+        {
+            _targetLevel = targetLevel;
+        }
+
+        public void Check(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.booleanValue() != null)
+            {
+                AddError(statement, "moving boolean values is not supported.", context.booleanValue());
+            }
+
+            //No need to check UNSAFE keyword, it will be picked up as a syntax error by ANTLR
+        }
+
+        public void Check(SetStatementForIndexes statement, CodeElementsParser.SetStatementForIndexesContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.variableOrExpression2()?.arithmeticExpression() != null)
+            {
+                AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.", context.variableOrExpression2().arithmeticExpression());
+            }
+        }
+
+        public void Check(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.FALSE() != null)
+            {
+                AddError(statement, "SET TO FALSE statement is not supported.", context.FALSE());
+            }
+        }
+
+        public void Check(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.INPUT() != null)
+            {
+                AddErrorOnUnsupportedKeyword(context.INPUT());
+            }
+
+            if (context.OUTPUT() != null)
+            {
+                AddErrorOnUnsupportedKeyword(context.OUTPUT());
+            }
+
+            //No need to check IN-OUT keyword, it will be picked up as a syntax error by ANTLR
+
+            void AddErrorOnUnsupportedKeyword(ITerminalNode unsupportedKeyword)
+                => AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword);
+        }
+
+        //dataDescriptionEntry ANTLR rule translates to DataDefinitionEntry CodeElement
+        public void Check(DataDefinitionEntry entry, CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            var minLevel = CobolLanguageLevel.TypeCobol;
+            if (_targetLevel >= minLevel) return;
+
+            //TC-only
+            if (context.formalizedComment() != null)
+            {
+                AddError(entry, "formalized comments are not supported.", context.formalizedComment(), minLevel);
+            }
+
+            if (context.valueClauseWithBoolean() != null && context.valueClauseWithBoolean().Length > 0)
+            {
+                AddError(entry, "initial value for boolean data is not supported.", context.valueClauseWithBoolean()[0], minLevel);
+            }
+
+            /*
+             * TYPEDEF : in Cobol85 TYPEDEF is not a keyword so entire clause is not parsed => no need to check here.
+             * In Cobol2002 or Cobol2014, TYPEDEF is a keyword but STRICT, PUBLIC and PRIVATE remain user-defined words => no need to check here
+             */
+
+            minLevel = CobolLanguageLevel.Cobol2002;
+            if (_targetLevel >= minLevel) return;
+
+            //Cobol2002 and above only
+            if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0)
+            {
+                AddError(entry, "TYPE clause is not supported.", context.cobol2002TypeClause()[0], minLevel);
+            }
+        }
+
+        public void Check(ProcedureDivisionHeader procedureDivisionHeader, CodeElementsParser.ProcedureDivisionHeaderContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.formalizedComment() != null)
+            {
+                AddError(procedureDivisionHeader, "formalized comments are not supported.", context.formalizedComment());
+            }
+        }
+
+        public void Check(CodeElementsParser.FunctionIdentifierContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            //User-defined function call
+            if (context.userDefinedFunctionCall() != null)
+            {
+                AddError(context.userDefinedFunctionCall().functionNameReference(), "calling user-defined function is not supported.");
+            }
+
+            //Use of 'FUNCTION func1()' instead of 'FUNCTION func1'
+            //Do not check for user-defined function calls as they would already get an error
+            if (context.intrinsicFunctionCall() != null)
+            {
+                var intrinsicFunctionCall = context.intrinsicFunctionCall();
+                if (intrinsicFunctionCall.LeftParenthesisSeparator() != null
+                    && intrinsicFunctionCall.RightParenthesisSeparator() != null
+                    && intrinsicFunctionCall.argument().Length == 0)
+                {
+                    var name = intrinsicFunctionCall.IntrinsicFunctionName().GetText();
+                    AddError(intrinsicFunctionCall, $"using empty brackets is not allowed, use 'FUNCTION {name}'.", intrinsicFunctionCall.IntrinsicFunctionName());
+                }
+            }
+        }
+
+        public void Check(CodeElement codeElement, CodeElementsParser.TcCodeElementContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.globalStorageSectionHeader() != null)
+            {
+                AddError(codeElement, "GLOBAL-STORAGE SECTION is not supported.", context.globalStorageSectionHeader());
+            }
+
+            if (context.libraryCopy() != null)
+            {
+                AddError(codeElement, "service include feature is not supported.", context.libraryCopy());
+            }
+
+            if (context.functionDeclarationHeader() != null)
+            {
+                AddError(codeElement, "defining custom functions/procedures is not supported.", context.functionDeclarationHeader());
+            }
+
+            //If a functionDeclarationEnd is present without any header, there will be a Cup parsing error so no need to check it here.
+        }
+    }
+
+    static class AcceptStatementChecker
+    {
+        public static void OnCodeElement(AcceptStatement acceptStatement, CodeElementsParser.AcceptStatementContext context)
+        {
+            if (acceptStatement.ReceivingStorageArea == null)
+            {
+                DiagnosticUtils.AddError(acceptStatement, "Invalid ACCEPT statement, receiving area for data is required.", context);
+            }
+        }
+    }
+
+    class WhenConditionStatementChecker
+    {
+        public static void OnCodeElement(WhenCondition statement, CodeElementsParser.WhenConditionContext context)
+        {
+            var rhsExprs = context.comparisonRHSExpression();
+            if (rhsExprs.Length == 0)
+            {
+                DiagnosticUtils.AddError(statement, "Missing condition in \"when\" clause", context);
+            }
+        }
+    }
+
+    class GotoConditionalStatementChecker
+    {
+        public static void OnCodeElement(GotoConditionalStatement statement, CodeElementsParser.GotoConditionalContext context)
+        {
+            if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
+                DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
+            if (statement.ProcedureNames.Length < 1 && statement.DependingOn != null)
+                DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
+            if (statement.ProcedureNames.Length > 255)
+                DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
         }
     }
 

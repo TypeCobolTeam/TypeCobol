@@ -1,0 +1,34 @@
+-- Line 1 --
+[1,2:==]<PseudoTextDelimiter>
+[3,4:==]<PseudoTextDelimiter>
+[5,6:==]<PseudoTextDelimiter>
+[7,7: ]<SpaceSeparator>
+[8,9+:==]<PseudoTextDelimiter>
+Line 0[3,4] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
+
+-- Line 2 --
+[1,2:==]<PseudoTextDelimiter>
+[3,4:==]<PseudoTextDelimiter>
+[6,7:==]<PseudoTextDelimiter>
+[8,9:==]<PseudoTextDelimiter>
+[10,10+:.]<PeriodSeparator>
+
+-- Line 3 --
+[1,2:==]<PseudoTextDelimiter>
+[3,4:::]<PartialCobolWord>
+[5,6:==]<PseudoTextDelimiter>
+[7,8:==]<PseudoTextDelimiter>
+[9,9: ]<SpaceSeparator>
+[10,11:==]<PseudoTextDelimiter>
+[12,12+:.]<PeriodSeparator>
+Line 0[5,6] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
+
+-- Line 4 --
+[1,2:==]<PseudoTextDelimiter>
+[3,4:::]<PartialCobolWord>
+[5,6:==]<PseudoTextDelimiter>
+[8,9:==]<PseudoTextDelimiter>
+[10,11:::]<PartialCobolWord>
+[12,13:==]<PseudoTextDelimiter>
+[14,14+:.]<PeriodSeparator>
+

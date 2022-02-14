@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.SignatureHelper;
@@ -12,9 +12,8 @@ using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer
 {
-    public static class CompletionFactoryHelpers
+    internal static class CompletionFactoryHelpers
     {
-
         /// <summary>
         /// Help to resolve procedure name inside consumed tokens.
         /// Will return a string containing only a proc name or an entire qualified name for the procedure (depending on the given tokens)
@@ -31,6 +30,22 @@ namespace TypeCobol.LanguageServer
                                 && t.TokenType != TokenType.IN_OUT) // Take tokens until keyword found
                 .Where(t => t.TokenType == TokenType.UserDefinedWord)
                 .Select(t => t.Text));
+        }
+
+        /// <summary>
+        /// Get the matching node for the given CodeElement, returns null if not found.
+        /// </summary>
+        /// <param name="fileCompiler">Current file being compiled with its compilation results</param>
+        /// <param name="codeElement">Target CodeElement</param>
+        /// <returns>Corresponding Node instance, null if not found.</returns>
+        public static Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
+        {
+            var codeElementToNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
+            if (codeElementToNode != null && codeElementToNode.TryGetValue(codeElement, out var node))
+            {
+                return node;
+            }
+            return null;
         }
 
         public static IEnumerable<string> AggregateTokens(IEnumerable<Token> tokensToAggregate)
@@ -176,59 +191,101 @@ namespace TypeCobol.LanguageServer
                 ((object[])completionItem.data)[1] = signatureInformation;
 
                 //Store the link between the hash and the procedure. This will help to determine the procedure parameter completion context later. 
-                functionDeclarationSignatureDictionary.Add(signatureInformation, proc);
-                completionItems.Add(completionItem);
+                if (!functionDeclarationSignatureDictionary.ContainsKey(signatureInformation))
+                {
+                    functionDeclarationSignatureDictionary.Add(signatureInformation, proc);
+                    completionItems.Add(completionItem);
+                }
             }
 
             return completionItems;
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, bool useQualifiedName = true)
+        public static List<CompletionItem> CreateCompletionItemsForVariableSetAndDisambiguate(IEnumerable<KeyValuePair<DataDefinitionPath, DataDefinition>> variables, TypeCobolOptions options, bool forceUnqualifiedName = false)
         {
-            var completionItems = new List<CompletionItem>();
+            var results = new List<CompletionItem>();
 
-            foreach (var variable in variables)
+            //Group variables by name
+            var variablesGroupedByName = variables
+                .GroupBy(p => p.Value.Name, StringComparer.OrdinalIgnoreCase)
+                .Select(g => g.ToList());
+            foreach (var variableGroup in variablesGroupedByName)
             {
-                completionItems.Add(CreateCompletionItemForVariable(variable, useQualifiedName));
+                if (variableGroup.Count > 1)
+                {
+                    //Ambiguity: use qualified name for completion items (except if forceUnqualifiedName is set, in that case it may lead to ambiguities in completion list...)
+                    foreach (var pair in variableGroup)
+                    {
+                        var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, options, !forceUnqualifiedName);
+                        results.Add(completionItem);
+                    }
+                }
+                else
+                {
+                    //Non ambiguous name, remove qualifier for pure Cobol 
+                    var pair = variableGroup[0];
+                    bool qualify = !options.IsCobolLanguage && !forceUnqualifiedName;
+                    var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, options, qualify);
+                    results.Add(completionItem);
+                }
             }
 
-            return completionItems;
+            return results;
         }
 
-        public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
+        public static CompletionItem CreateCompletionItemForSingleVariable(DataDefinition parent, DataDefinition variable, TypeCobolOptions options, bool qualify)
         {
+            string name = variable.Name;
+            string type = variable.DataType.Name;
 
-            var qualifiedName = variable.VisualQualifiedName.Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
-
-            var finalQualifiedName = qualifiedName.ToList();
-
-            if (variable.CodeElement != null && variable.CodeElement.IsInsideCopy())
+            string insertText;
+            if (qualify)
             {
-                finalQualifiedName.Clear();
-               
+                List<string> nameParts;
+                if (parent != null)
+                {
+                    nameParts = parent.VisualQualifiedNameWithoutProgram.ToList();
+                    nameParts.Add(name);
+                }
+                else
+                {
+                    nameParts = variable.VisualQualifiedNameWithoutProgram.ToList();
+                }
+
+                //For copies
+                if (variable.CodeElement != null && variable.CodeElement.IsInsideCopy())
+                {
+                    nameParts.Clear();
+                    string owner = parent?.VisualQualifiedNameWithoutProgram[0] ?? variable.VisualQualifiedNameWithoutProgram[0];
 #if EUROINFO_RULES
-                var lastSplited = qualifiedName.Last().Split('-');
-                if(!qualifiedName.First().Contains(lastSplited.First()))
-                    finalQualifiedName.Add(qualifiedName.First());
+                    var parts = name.Split('-');
+                    if (parts.Length > 0 && !owner.Contains(parts[0]))
+                        nameParts.Add(owner);
 #else
-                finalQualifiedName.Add(qualifiedName.First());
-                
+                    nameParts.Add(owner);
 #endif
-                if (qualifiedName.First() != qualifiedName.Last())
-                    finalQualifiedName.Add(qualifiedName.Last());
+                    if (owner != name)
+                        nameParts.Add(name);
+                }
 
+                //Qualifying style depending on target language
+                if (options.IsCobolLanguage)
+                {
+                    nameParts.Reverse();
+                    insertText = string.Join(" OF ", nameParts);
+                }
+                else
+                {
+                    insertText = string.Join("::", nameParts);
+                }
+            }
+            else
+            {
+                insertText = name;
             }
 
-            var variableArrangedQualifiedName = useQualifiedName ? string.Join("::", finalQualifiedName) : variable.Name;
-
-            var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
-            return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind = CompletionItemKind.Variable };
-        }
-
-        public static CompletionItem CreateCompletionItemForIndex(Compiler.CodeElements.SymbolInformation index, DataDefinition variable)
-        {
-            var display = string.Format("{0} (from {1})", index.Name, variable.Name);
-            return new CompletionItem(display) {insertText = index.Name, kind = CompletionItemKind.Variable};
+            string label = $"{name} ({type}) ({insertText})";
+            return new CompletionItem(label) { insertText = insertText, kind = CompletionItemKind.Variable };
         }
 
         public static Case GetTextCase(string tokenText)
@@ -283,12 +340,14 @@ namespace TypeCobol.LanguageServer
             { ParameterDescription.PassingTypes.Output, "OUTPUT" },
             { ParameterDescription.PassingTypes.InOut, "IN-OUT" }
         };
+
         private static readonly Dictionary<ParameterDescription.PassingTypes, string> _CamelParams = new Dictionary<ParameterDescription.PassingTypes, string>()
         {
             { ParameterDescription.PassingTypes.Input, "Input"},
             { ParameterDescription.PassingTypes.Output, "Output" },
             { ParameterDescription.PassingTypes.InOut, "In-Out" }
         };
+
         private static readonly Dictionary<ParameterDescription.PassingTypes, string> _LowerParams = new Dictionary<ParameterDescription.PassingTypes, string>()
         {
             { ParameterDescription.PassingTypes.Input, "input"},
@@ -308,6 +367,7 @@ namespace TypeCobol.LanguageServer
                     return _LowerParams;
             }
         }
+
         public enum Case
         {
             Lower = 0,   // default value

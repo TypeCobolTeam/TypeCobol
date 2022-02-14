@@ -1,0 +1,2 @@
+--- Diagnostics ---
+Line 4[12,20] <37, Warning, General> - Warning: Statement '    go to b' located at line 10, column 12 prevents this PERFORM statement to reach its exit.

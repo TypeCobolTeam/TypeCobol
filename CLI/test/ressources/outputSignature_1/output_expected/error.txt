@@ -1,5 +1,8 @@
 ﻿ReturnCode=Warning_
-4 errors in "input\Callee.rdz.tcbl":
+7 errors in "input\Callee.rdz.tcbl":
+Line 48[15,21] <37, Warning, General> - Warning: Parameter name does not match to any program parameter: MyType2
+Line 49[15,21] <37, Warning, General> - Warning: Parameter name does not match to any program parameter: MyType3
+Line 50[15,20] <37, Warning, General> - Warning: Parameter name does not match to any program parameter: Mydate
 Line 78[17,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: mydate
 Line 79[17,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate2
 Line 90[17,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: mydate

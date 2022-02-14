@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Nodes {
+﻿using TypeCobol.Compiler.Symbols;
+
+namespace TypeCobol.Compiler.Nodes {
     using System;
     using System.Collections.Generic;
     using TypeCobol.Compiler.CodeElements;
@@ -290,6 +292,17 @@
 
     public class Sort: GenericNode<SortStatement>, Statement {
 	    public Sort(SortStatement statement): base(statement) { }
+
+        public ParagraphSymbol InputProcedureParagraphSymbol { get; internal set; }
+        public ParagraphSymbol InputThroughProcedureParagraphSymbol { get; internal set; }
+        public SectionSymbol InputProcedureSectionSymbol { get; internal set; }
+        public SectionSymbol InputThroughProcedureSectionSymbol { get; internal set; }
+
+        public ParagraphSymbol OutputProcedureParagraphSymbol { get; internal set; }
+        public ParagraphSymbol OutputThroughProcedureParagraphSymbol { get; internal set; }
+        public SectionSymbol OutputProcedureSectionSymbol { get; internal set; }
+        public SectionSymbol OutputThroughProcedureSectionSymbol { get; internal set; }
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -579,6 +592,11 @@
         }
     public class PerformProcedure: GenericNode<PerformProcedureStatement>, Statement {
 	    public PerformProcedure(PerformProcedureStatement statement): base(statement) { }
+
+            public ParagraphSymbol ProcedureParagraphSymbol { get; internal set; }
+            public ParagraphSymbol ThroughProcedureParagraphSymbol { get; internal set; }
+            public SectionSymbol ProcedureSectionSymbol { get; internal set; }
+            public SectionSymbol ThroughProcedureSectionSymbol { get; internal set; }
 
             public override bool VisitNode(IASTVisitor astVisitor)
             {

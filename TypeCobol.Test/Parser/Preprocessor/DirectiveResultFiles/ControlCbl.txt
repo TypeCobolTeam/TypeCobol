@@ -1,70 +1,62 @@
-﻿-- Line 1 --
+-- Line 1 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>) ***
-[15,15: ]<SpaceSeparator>
 [16,21:SOURCE]<SOURCE>
 Line 1[16,21] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 2 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>) ***
-[11,11: ]<SpaceSeparator>
 [12,17:SOURCE]<SOURCE>
 Line 2[12,17] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 3 --
-*** DIRECTIVE ASTERISK_CONTROL|NOSOURCE ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,23:NOSOURCE]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CONTROL|NOSOURCE ([7,14:*CONTROL]<ASTERISK_CONTROL>[16,23:NOSOURCE]<UserDefinedWord>) ***
 
 -- Line 4 --
-*** DIRECTIVE ASTERISK_CBL|NOSOURCE ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,19:NOSOURCE]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CBL|NOSOURCE ([7,10:*CBL]<ASTERISK_CBL>[12,19:NOSOURCE]<UserDefinedWord>) ***
 
 -- Line 5 --
-*** DIRECTIVE ASTERISK_CONTROL|LIST ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,19:LIST]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CONTROL|LIST ([7,14:*CONTROL]<ASTERISK_CONTROL>[16,19:LIST]<UserDefinedWord>) ***
 
 -- Line 6 --
-*** DIRECTIVE ASTERISK_CBL|LIST ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,15:LIST]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CBL|LIST ([7,10:*CBL]<ASTERISK_CBL>[12,15:LIST]<UserDefinedWord>) ***
 
 -- Line 7 --
-*** DIRECTIVE ASTERISK_CONTROL|NOLIST ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,21:NOLIST]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CONTROL|NOLIST ([7,14:*CONTROL]<ASTERISK_CONTROL>[16,21:NOLIST]<UserDefinedWord>) ***
 
 -- Line 8 --
-*** DIRECTIVE ASTERISK_CBL|NOLIST ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,17:NOLIST]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CBL|NOLIST ([7,10:*CBL]<ASTERISK_CBL>[12,17:NOLIST]<UserDefinedWord>) ***
 
 -- Line 9 --
-*** DIRECTIVE ASTERISK_CONTROL|MAP ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,18:MAP]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CONTROL|MAP ([7,14:*CONTROL]<ASTERISK_CONTROL>[16,18:MAP]<UserDefinedWord>) ***
 
 -- Line 10 --
-*** DIRECTIVE ASTERISK_CBL|MAP ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,14:MAP]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CBL|MAP ([7,10:*CBL]<ASTERISK_CBL>[12,14:MAP]<UserDefinedWord>) ***
 
 -- Line 11 --
-*** DIRECTIVE ASTERISK_CONTROL|NOMAP ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,20:NOMAP]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CONTROL|NOMAP ([7,14:*CONTROL]<ASTERISK_CONTROL>[16,20:NOMAP]<UserDefinedWord>) ***
 
 -- Line 12 --
-*** DIRECTIVE ASTERISK_CBL|NOMAP ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,16:NOMAP]<UserDefinedWord>) ***
+*** DIRECTIVE ASTERISK_CBL|NOMAP ([7,10:*CBL]<ASTERISK_CBL>[12,16:NOMAP]<UserDefinedWord>) ***
 
 -- Line 13 --
 
 -- Line 14 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([6,13:*CONTROL]<ASTERISK_CONTROL>) ***
-[14,14: ]<SpaceSeparator>
 [15,20:SOURCE]<SOURCE>
 Line 14[15,20] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 15 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([6,9:*CBL]<ASTERISK_CBL>) ***
-[10,10: ]<SpaceSeparator>
 [11,16:SOURCE]<SOURCE>
 Line 15[11,16] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 16 --
-[8,12:     ]<SpaceSeparator>
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([13,20:*CONTROL]<ASTERISK_CONTROL>) ***
-[21,21: ]<SpaceSeparator>
 [22,27:SOURCE]<SOURCE>
 Line 16[22,27] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 17 --
-[8,12:     ]<SpaceSeparator>
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([13,16:*CBL]<ASTERISK_CBL>) ***
-[17,17: ]<SpaceSeparator>
 [18,23:SOURCE]<SOURCE>
 Line 17[18,23] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
@@ -79,50 +71,42 @@ Line 20[7,10] <27, Error, Syntax> - Syntax error : mismatched input '*CBL' expec
 Line 21[7,14] <27, Error, Syntax> - Syntax error : mismatched input '*CONTROL' expecting user defined word
 
 -- Line 21 --
-*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,20:SOURC]<UserDefinedWord>) ***
+*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>[16,20:SOURC]<UserDefinedWord>) ***
 Line 21[16,20] <26, Error, Directives> - Invalid option specified for *CONTROL or *CBL compiler directive, expecting : SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
 
 -- Line 22 --
-*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,16:SOURC]<UserDefinedWord>) ***
+*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>[12,16:SOURC]<UserDefinedWord>) ***
 Line 22[12,16] <26, Error, Directives> - Invalid option specified for *CONTROL or *CBL compiler directive, expecting : SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
 
 -- Line 23 --
 
 -- Line 24 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>) ***
-[15,15: ]<SpaceSeparator>
 [16,21:SOURCE]<SOURCE>
-[22,22: ]<SpaceSeparator>
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([23,26:*CBL]<ASTERISK_CBL>) ***
-[27,27: ]<SpaceSeparator>
 [28,33:SOURCE]<SOURCE>
 Line 24[16,21] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 Line 24[28,33] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 25 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>) ***
-[15,15: ]<SpaceSeparator>
 Line 26[8,13] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 26 --
 [8,13:SOURCE]<SOURCE>
 
 -- Line 27 --
-*** DIRECTIVE ASTERISK_CBL|MAP|NOMAP ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,14:MAP]<UserDefinedWord>[15,15: ]<SpaceSeparator>[16,20:NOMAP]<UserDefinedWord>) ***
-[21,21: ]<SpaceSeparator>
+*** DIRECTIVE ASTERISK_CBL|MAP|NOMAP ([7,10:*CBL]<ASTERISK_CBL>[12,14:MAP]<UserDefinedWord>[16,20:NOMAP]<UserDefinedWord>) ***
 [22,27:SOURCE]<SOURCE>
-[28,30:   ]<SpaceSeparator>
 [31,38:NOSOURCE]<UserDefinedWord>
 
 -- Line 28 --
 
 -- Line 29 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>) ***
-[15,15: ]<SpaceSeparator>
 [16,21:SOURCE]<SOURCE>
 [22,23:. ]<PeriodSeparator>
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([24,27:*CBL]<ASTERISK_CBL>) ***
-[28,28: ]<SpaceSeparator>
 Line 29[16,21] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 Line 30[8,13] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
@@ -130,14 +114,11 @@ Line 30[8,13] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' exp
 [8,13:SOURCE]<SOURCE>
 [14,15:. ]<PeriodSeparator>
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([16,23:*CONTROL]<ASTERISK_CONTROL>) ***
-[24,24: ]<SpaceSeparator>
 [25,30:SOURCE]<SOURCE>
 Line 30[25,30] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 31 --
-*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>[11,12:. ]<PeriodSeparator>) ***
-[13,18:SOURCE]<SOURCE>
-Line 31[11,12] <27, Error, Syntax> - Syntax error : mismatched input '. ' expecting user defined word
+[8,18:CBL. SOURCE]<CommentLine>
 
 -- Line 32 --
 
@@ -148,4 +129,13 @@ Line 31[11,12] <27, Error, Syntax> - Syntax error : mismatched input '. ' expect
 [8,72:CBLENDRIER ANNUEL                                                ]<CommentLine>
 
 -- Line 35 --
+
+-- Line 36 --
+[8,17:CBL/SOURCE]<CommentLine>
+
+-- Line 37 --
+*** DIRECTIVE ASTERISK_CBL|LIST ([7,10:*CBL]<ASTERISK_CBL>[12,15:LIST]<UserDefinedWord>) ***
+
+-- Line 38 --
+*** DIRECTIVE ASTERISK_CBL|MAP ([7,10:*CBL]<ASTERISK_CBL>[11,11:,]<CommaSeparator>[12,14:MAP]<UserDefinedWord>) ***
 

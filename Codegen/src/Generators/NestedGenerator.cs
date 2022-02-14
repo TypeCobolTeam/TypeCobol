@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Codegen.Skeletons;
+﻿using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
@@ -15,7 +8,8 @@ namespace TypeCobol.Codegen.Generators
 {
     public class NestedGenerator : DefaultGenerator
     {
-        public NestedGenerator(CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion) : base(document, destination, skeletons, typeCobolVersion)
+        public NestedGenerator(CompilationDocument document, StringBuilder destination, string typeCobolVersion)
+            : base(document, destination, typeCobolVersion)
         {
         }
 

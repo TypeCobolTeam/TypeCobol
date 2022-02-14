@@ -1,0 +1,31 @@
+-- Line 1 --
+[1,7:TYPEDEF]<UserDefinedWord>
+[9,14:STRONG]<UserDefinedWord>
+[16,21:UNSAFE]<UserDefinedWord>
+[23,28:PUBLIC]<UserDefinedWord>
+[30,36:PRIVATE]<UserDefinedWord>
+[38,43:IN-OUT]<UserDefinedWord>
+[45,50:STRICT]<UserDefinedWord>
+
+-- Line 2 --
+[1,7:TyPeDeF]<UserDefinedWord>
+[9,14:StRoNg]<UserDefinedWord>
+[16,21:UnSaFe]<UserDefinedWord>
+[23,28:PuBlIc]<UserDefinedWord>
+[30,36:PrIvAtE]<UserDefinedWord>
+[38,43:In-oUt]<UserDefinedWord>
+[45,50:StRiCt]<UserDefinedWord>
+
+-- Line 3 --
+[1,4:MOVE]<MOVE>
+[6,11:public]<UserDefinedWord>
+[13,14:TO]<TO>
+[16,22:private]<UserDefinedWord>
+
+-- Line 4 --
+[1,4:MOVE]<MOVE>
+[6,11:UNSAFE]<UserDefinedWord>
+[13,18:strong]<UserDefinedWord>
+[20,21:TO]<TO>
+[23,28:strict]<UserDefinedWord>
+

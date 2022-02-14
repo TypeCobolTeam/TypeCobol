@@ -139,18 +139,13 @@ namespace TypeCobol.Compiler.CodeElements
         public SyntaxProperty<ParameterSharingMode> SharingMode { get; set; }
 
         /// <summary>
-        /// Direction in which the data flows to or from a program, method, or function entry point
-        /// </summary>
-        public SyntaxProperty<ParameterPassingDirection> PassingDirection { get; set; }
-
-        /// <summary>
         /// Reference to a storage area shared with the caller
         /// </summary>
         public StorageArea StorageArea { get; set; }
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this) && 
-                   this.ContinueVisitToChildren(astVisitor, SharingMode, PassingDirection, StorageArea);
+                   this.ContinueVisitToChildren(astVisitor, SharingMode, StorageArea);
         }
     }
 

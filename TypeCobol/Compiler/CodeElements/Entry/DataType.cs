@@ -4,8 +4,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
-using Object = System.Object;
-using String = System.String;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -34,8 +33,8 @@ namespace TypeCobol.Compiler.CodeElements
 
         public bool Equals(DataType dataType)
         {
-            if (Object.ReferenceEquals(this, dataType)) return true;
-            if (Object.ReferenceEquals(null, dataType)) return false;
+            if (object.ReferenceEquals(this, dataType)) return true;
+            if (object.ReferenceEquals(null, dataType)) return false;
 
             return string.Equals(Name, dataType.Name, StringComparison.OrdinalIgnoreCase)
                    && RestrictionLevel.Equals(dataType.RestrictionLevel)
@@ -178,20 +177,32 @@ namespace TypeCobol.Compiler.CodeElements
         //String built in type
         public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
-        public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
+        public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String };
+
+        private static Nodes.TypeDefinition CreateBuiltIn(DataType type)
         {
             var dataTypeDescriptionEntry = CreateBuiltInDataTypeDescriptionEntry(type);
             Nodes.TypeDefinition typeDefinition;
             if (type == DataType.Date)
             {
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
-                typeDefinition.Add(CreateData(5, "YYYY", '9', 4, typeDefinition));
-                typeDefinition.Add(CreateData(5, "MM", '9', 2, typeDefinition));
-                typeDefinition.Add(CreateData(5, "DD", '9', 2, typeDefinition));
+                typeDefinition.Add(CreateNumericData(5, "YYYY", 4, typeDefinition));
+                typeDefinition.Add(CreateNumericData(5, "MM", 2, typeDefinition));
+                typeDefinition.Add(CreateNumericData(5, "DD", 2, typeDefinition));
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Date;
             }
             else if (type == DataType.Currency)
             {
-                dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", 'X', 3));
+                dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue("X(03)");
+                dataTypeDescriptionEntry.PictureValidationResult = new PictureValidator.Result(
+                    new[] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    null,
+                    PictureCategory.Alphanumeric,
+                    0,
+                    0,
+                    false,
+                    0,
+                    3);
                 var tokenLine = TokensLine.CreateVirtualLineForInsertedToken(dataTypeDescriptionEntry.Line, "01 CURRENCY TYPEDEF STRICT PUBLIC PIC X(03).");
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.LevelNumber, 0, 1, tokenLine));
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.UserDefinedWord, 3, 10, tokenLine));
@@ -202,10 +213,21 @@ namespace TypeCobol.Compiler.CodeElements
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PictureCharacterString, 38, 42, tokenLine));
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Currency;
             }
-            else // Boolean and String
+            else if (type == DataType.Boolean)
             {
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Boolean;
+            }
+            else if (type == DataType.String)
+            {
+                typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.String;
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported built-in type '{type.Name}'.");
             }
             typeDefinition.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
             return typeDefinition;
@@ -218,22 +240,38 @@ namespace TypeCobol.Compiler.CodeElements
                 Visibility = AccessModifier.Public,
                 LevelNumber = new GeneratedIntegerValue(1),
                 DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName),
-                DataType = type
+                DataType = type,
+                Strong = new SyntaxProperty<bool>(true, null)
             };
         }
 
-        private static Nodes.DataDescription CreateData(int level, string name, char type, int length, TypeDefinition parentTypeDef) {
+        private static Nodes.DataDescription CreateNumericData(int level, string name, int length, TypeDefinition parentTypeDef) {
             var data = new DataDescriptionEntry();
             data.LevelNumber = new GeneratedIntegerValue(level);
             data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
-            data.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", type, length));
+            string pictureCharacterString = $"9({length})";
+            data.Picture = new GeneratedAlphanumericValue(pictureCharacterString);
+            data.PictureValidationResult = new PictureValidator.Result(
+                new[] { new PictureValidator.Character(PictureValidator.SC.NINE, length) },
+                null,
+                PictureCategory.Numeric,
+                length,
+                length,
+                false,
+                0,
+                length);
             data.DataType = DataType.Create(data.Picture.Value);
             var node = new Nodes.DataDescription(data);
             node.ParentTypeDefinition = parentTypeDef;
             return node;
         }
 
-        public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String};
+        public static readonly TypeDefinition BooleanType = CreateBuiltIn(Boolean);
+        public static readonly TypeDefinition DateType = CreateBuiltIn(Date);
+        public static readonly TypeDefinition CurrencyType = CreateBuiltIn(Currency);
+        public static readonly TypeDefinition StringType = CreateBuiltIn(String);
+
+        public static readonly TypeDefinition[] BuiltInCustomTypeDefinitions = { BooleanType, DateType, CurrencyType, StringType };
         // [/TYPECOBOL]
     }
     public enum RestrictionLevel

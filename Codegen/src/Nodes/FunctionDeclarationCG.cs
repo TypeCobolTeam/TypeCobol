@@ -61,7 +61,7 @@ namespace TypeCobol.Codegen.Nodes {
                         var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(originalNode), dataDivision);
 
                         ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
-                        workingStorageSection.Add(new GeneratedNode2("01 TypeCobol-Generated.", true));
+                        workingStorageSection.Add(new GeneratedNode("01 TypeCobol-Generated.", true));
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
                     }
                     else if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
@@ -111,7 +111,7 @@ namespace TypeCobol.Codegen.Nodes {
 
             foreach (var pgm in imports.Programs.Values) {
                 workingStorageSection.Add(
-                    new GeneratedNode2("    05 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.", true));
+                    new GeneratedNode("    05 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.", true));
             }
             foreach (var pgm in imports.Programs.Values)
             {
@@ -119,13 +119,13 @@ namespace TypeCobol.Codegen.Nodes {
                 {
                     string name = pgm.Name + "-Fct-" + proc.Hash + "-" + proc.Name;
                     if (name.Length > 30) name = name.Substring(0, 30);
-                    workingStorageSection.Add(new GeneratedNode2("    05 " + name + " PIC X(30)", true));
+                    workingStorageSection.Add(new GeneratedNode("    05 " + name + " PIC X(30)", true));
                     name = "Fct=" + proc.Hash + "-" + proc.Name;
                     if (name.Length > 30) name = name.Substring(0, 30);
-                    workingStorageSection.Add(new GeneratedNode2("        value '" + name + "'.", true));
+                    workingStorageSection.Add(new GeneratedNode("        value '" + name + "'.", true));
                 }
             }
-            workingStorageSection.Add(new GeneratedNode2(" ", true));
+            workingStorageSection.Add(new GeneratedNode(" ", true));
         }
 
         private void DeclareProceduresParametersIntoLinkage(Compiler.Nodes.FunctionDeclaration node, Compiler.Nodes.LinkageSection linkage, ParametersProfileNode profile) {
@@ -165,10 +165,10 @@ namespace TypeCobol.Codegen.Nodes {
         {
             return new Node[]
             {
-                new GeneratedNode2("* Get the data from the global storage section", false),
-                new GeneratedNode2($"{new string(' ', columnOffset)}CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
-                new GeneratedNode2($"{new string(' ', columnOffset)}    by reference address of TC-GlobalData", true),
-                new GeneratedNode2($"{new string(' ', columnOffset)}end-call", true),
+                new GeneratedNode("* Get the data from the global storage section", false),
+                new GeneratedNode($"{new string(' ', columnOffset)}CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
+                new GeneratedNode($"{new string(' ', columnOffset)}    by reference address of TC-GlobalData", true),
+                new GeneratedNode($"{new string(' ', columnOffset)}end-call", true),
             };
         }
 

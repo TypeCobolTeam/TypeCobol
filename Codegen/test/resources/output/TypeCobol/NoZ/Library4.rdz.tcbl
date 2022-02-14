@@ -35,7 +35,7 @@
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result PIC 9(08).
 
-       END PROGRAM DVZZDAT.
+       END PROGRAM DVZZDATE.
       *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result PIC 9(08).

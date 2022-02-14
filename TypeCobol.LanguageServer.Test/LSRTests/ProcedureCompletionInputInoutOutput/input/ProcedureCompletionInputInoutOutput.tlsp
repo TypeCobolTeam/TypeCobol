@@ -55,7 +55,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
       "category": 2,
@@ -115,7 +115,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":18,\"character\":12},\"end\":{\"line\":18,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":18,\"character\":12},\"end\":{\"line\":18,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":17,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric)\"}]}}"
     },
     {
       "category": 2,
@@ -147,7 +147,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric) in-out(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":18,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric) in-out(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -183,7 +183,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric) in-out(DATE) output(Alphanumeric)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":18,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric) in-out(DATE) output(Alphanumeric)\"}]}}"
     },
     {
       "category": 2,
@@ -331,7 +331,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
       "category": 2,
@@ -427,7 +427,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric, Alphanumeric)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":20,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric, Alphanumeric)\"}]}}"
     },
     {
       "category": 2,
@@ -463,7 +463,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric, Alphanumeric) output(Alphanumeric)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":20,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric, Alphanumeric) output(Alphanumeric)\"}]}}"
     },
     {
       "category": 2,

@@ -19,4 +19,4 @@
        PROCEDURE DIVISION.
        declare procedure Foo public.
        end-declare.
-       END PROGRAM DVZF0OSM.
+       END PROGRAM DVZF0OS2.

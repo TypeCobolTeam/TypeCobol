@@ -1,22 +1,22 @@
 -- Line 1 --
-[1,1:1]<IntegerLiteral>{1}
+=>continued:[1,1:123456]<IntegerLiteral>{123456}
 
 -- Line 2 --
 [2,29:This is a comment line ! ***]<CommentLine>
 
 -- Line 3 --
 [2,5:    ]<SpaceSeparator>
-[6,10:23456]<IntegerLiteral>{23456}
+=>continuation:[6,10:123456]<IntegerLiteral>{123456}
 
 -- Line 4 --
-[1,5:12345]<IntegerLiteral>{12345}
+=>continued:[1,5:123456]<IntegerLiteral>{123456}
 
 -- Line 5 --
 [1,4:    ]<SpaceSeparator>
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>
-[6,6:6]<IntegerLiteral>{6}
+=>continuation:[6,6:123456]<IntegerLiteral>{123456}
 
 -- Line 7 --
 =>continued:[1,1:+123]<IntegerLiteral>{123}
@@ -26,7 +26,6 @@
 Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 9 --
-[1,1: ]<SpaceSeparator>
 =>continued:[2,3:-123]<IntegerLiteral>{-123}
 
 -- Line 10 --
@@ -70,7 +69,6 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 [6,7:23]<IntegerLiteral>{23}
 
 -- Line 21 --
-[1,1: ]<SpaceSeparator>
 =>continued:[2,6:-1.231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.231E+20}
 
 -- Line 22 --
