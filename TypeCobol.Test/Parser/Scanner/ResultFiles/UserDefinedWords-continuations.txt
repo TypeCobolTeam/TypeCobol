@@ -1,10 +1,9 @@
-﻿-- Line 1 --
+-- Line 1 --
 =>continued:[1,13:laurent_prud-on10]<UserDefinedWord>
 
 -- Line 2 --
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,9:laurent_prud-on10]<UserDefinedWord>
-[10,10: ]<SpaceSeparator>
 
 -- Line 3 --
 [2,5:    ]<SpaceSeparator>

@@ -254,11 +254,15 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
-            
+
+            var list = search.GetChildren<WhenSearch>();
+            if (list.Count == 0)
+            {
+                DiagnosticUtils.AddError(search, "Search statement must have at least one when element.");
+            }
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
             {
                 int i=0;
-                var list = search.GetChildren<WhenSearch>();
                 foreach (var whenSearch in list)
                 {
                     if (i > 0) 
@@ -267,7 +271,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                     i++;
                 }
-      
             }
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
             if (tableToSearch != null)
@@ -551,10 +554,37 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             // Check that program has a closing end
             CheckEndProgram(program);
-            
+            if (program.IsNested)
+            {
+                NestedProgram nestedProgram = (NestedProgram)program;
+                if (nestedProgram.ContainingProgram.CodeElement.IsRecursive)
+                {
+                    DiagnosticUtils.AddError(program, "A Nested Program cannot be declared in a RECURSIVE program.");
+                }
+                if (program.CodeElement.IsRecursive)
+                {
+                    DiagnosticUtils.AddError(program, "A Nested Program cannot have a RECURSIVE attribute.");
+                }
+            }
+            else if (program.CodeElement.IsCommon)
+            {
+                DiagnosticUtils.AddError(program, "A Root Program cannot have a COMMON attribute.");
+            }
             FormalizedCommentsChecker.CheckProgramComments(program);
+          
             return true;
         }
+
+        public override bool Visit(ConfigurationSection configurationSection)
+        {
+            Program program = configurationSection.GetProgramNode();
+            if (program != null && program.IsNested)
+            {
+                DiagnosticUtils.AddError(configurationSection, "A Nested Program cannot have a CONFIGURATION SECTION.");
+            }
+            return true;
+        }
+
 
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {

@@ -1,113 +1,107 @@
 -- Line 1 --
-*** DIRECTIVE COPY TEXTNAME1 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME1]<UserDefinedWord>[22,22+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME1 ([8,11:COPY]<COPY>[13,21:TEXTNAME1]<UserDefinedWord>[22,22+:.]<PeriodSeparator>) ***
 
 -- Line 2 --
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME2 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME2]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,30:SUPPRESS]<SUPPRESS>[31,31+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME2 ([8,11:COPY]<COPY>[13,21:TEXTNAME2]<UserDefinedWord>[23,30:SUPPRESS]<SUPPRESS>[31,31+:.]<PeriodSeparator>) ***
 Line 2[23,30] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 3 --
-*** DIRECTIVE COPY TEXTNAME3.OF(LIBRARY1) ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME3]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:OF]<OF>[25,25: ]<SpaceSeparator>[26,33:LIBRARY1]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME3.OF(LIBRARY1) ([8,11:COPY]<COPY>[13,21:TEXTNAME3]<UserDefinedWord>[23,24:OF]<OF>[26,33:LIBRARY1]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
 
 -- Line 4 --
-*** DIRECTIVE COPY TEXTNAME4.OF(LIBRARY2) ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME4]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:IN]<IN>[25,25: ]<SpaceSeparator>[26,33:LIBRARY2]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME4.OF(LIBRARY2) ([8,11:COPY]<COPY>[13,21:TEXTNAME4]<UserDefinedWord>[23,24:IN]<IN>[26,33:LIBRARY2]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
 
 -- Line 5 --
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME5.OF(LIBRARY3) ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME5]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:IN]<IN>[25,25: ]<SpaceSeparator>[26,33:LIBRARY3]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:SUPPRESS]<SUPPRESS>[43,43: ]<SpaceSeparator>[44,44+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME5.OF(LIBRARY3) ([8,11:COPY]<COPY>[13,21:TEXTNAME5]<UserDefinedWord>[23,24:IN]<IN>[26,33:LIBRARY3]<UserDefinedWord>[35,42:SUPPRESS]<SUPPRESS>[44,44+:.]<PeriodSeparator>) ***
 Line 5[35,42] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 6 --
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME6.OF(LIBRARY4) ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME6]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:OF]<OF>[25,25: ]<SpaceSeparator>[26,33:LIBRARY4]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:SUPPRESS]<SUPPRESS>[43,43+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME6.OF(LIBRARY4) ([8,11:COPY]<COPY>[13,21:TEXTNAME6]<UserDefinedWord>[23,24:OF]<OF>[26,33:LIBRARY4]<UserDefinedWord>[35,42:SUPPRESS]<SUPPRESS>[43,43+:.]<PeriodSeparator>) ***
 Line 6[35,42] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 7 --
-*** DIRECTIVE COPY TEXTNAME7 <REPLACE[SingleToken] TOTO1 BY TITI1> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME7]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,31:REPLACING]<REPLACING>[32,32: ]<SpaceSeparator>[33,34:==]<PseudoTextDelimiter>[35,35: ]<SpaceSeparator>[36,40:TOTO1]<UserDefinedWord>[41,41: ]<SpaceSeparator>[42,43:==]<PseudoTextDelimiter>[44,44: ]<SpaceSeparator>[45,46:BY]<BY>[47,47: ]<SpaceSeparator>[48,49:==]<PseudoTextDelimiter>[50,54:TITI1]<UserDefinedWord>[55,56:==]<PseudoTextDelimiter>[57,57+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME7 <REPLACE[SingleToken] TOTO1 BY TITI1> ([8,11:COPY]<COPY>[13,21:TEXTNAME7]<UserDefinedWord>[23,31:REPLACING]<REPLACING>[33,34:==]<PseudoTextDelimiter>[35,35: ]<SpaceSeparator>[36,40:TOTO1]<UserDefinedWord>[41,41: ]<SpaceSeparator>[42,43:==]<PseudoTextDelimiter>[45,46:BY]<BY>[48,49:==]<PseudoTextDelimiter>[50,54:TITI1]<UserDefinedWord>[55,56:==]<PseudoTextDelimiter>[57,57+:.]<PeriodSeparator>) ***
 
 -- Line 8 --
-*** DIRECTIVE COPY TEXTNAME8 <REPLACE[SingleToken] TOTO2 BY TITI2> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME8]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,31:REPLACING]<REPLACING>[32,32: ]<SpaceSeparator>[33,37:TOTO2]<UserDefinedWord>[38,38: ]<SpaceSeparator>[39,40:BY]<BY>[41,41: ]<SpaceSeparator>[42,46:TITI2]<UserDefinedWord>[47,47+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME8 <REPLACE[SingleToken] TOTO2 BY TITI2> ([8,11:COPY]<COPY>[13,21:TEXTNAME8]<UserDefinedWord>[23,31:REPLACING]<REPLACING>[33,37:TOTO2]<UserDefinedWord>[39,40:BY]<BY>[42,46:TITI2]<UserDefinedWord>[47,47+:.]<PeriodSeparator>) ***
 
 -- Line 9 --
-*** DIRECTIVE COPY TEXTNAME9 <REPLACE[SingleToken] TOTO3 BY TITI3> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME9]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,31:REPLACING]<REPLACING>[32,32: ]<SpaceSeparator>[33,39:'TOTO3']<AlphanumericLiteral>(',Y,Y){TOTO3}[40,40: ]<SpaceSeparator>[41,42:BY]<BY>[43,43: ]<SpaceSeparator>[44,50:"TITI3"]<AlphanumericLiteral>(",Y,Y){TITI3}[51,51+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME9 <REPLACE[SingleToken] TOTO3 BY TITI3> ([8,11:COPY]<COPY>[13,21:TEXTNAME9]<UserDefinedWord>[23,31:REPLACING]<REPLACING>[33,39:'TOTO3']<AlphanumericLiteral>(',Y,Y){TOTO3}[41,42:BY]<BY>[44,50:"TITI3"]<AlphanumericLiteral>(",Y,Y){TITI3}[51,51+:.]<PeriodSeparator>) ***
 
 -- Line 10 --
-*** DIRECTIVE COPY TEXTNAME10 <REPLACE[SingleToken] DISPLAY BY MOVE> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME10]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,32:REPLACING]<REPLACING>[33,33: ]<SpaceSeparator>[34,40:DISPLAY]<DISPLAY>[41,41: ]<SpaceSeparator>[42,43:BY]<BY>[44,44: ]<SpaceSeparator>[45,48:MOVE]<MOVE>[49,49+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME10 <REPLACE[SingleToken] DISPLAY BY MOVE> ([8,11:COPY]<COPY>[13,22:TEXTNAME10]<UserDefinedWord>[24,32:REPLACING]<REPLACING>[34,40:DISPLAY]<DISPLAY>[42,43:BY]<BY>[45,48:MOVE]<MOVE>[49,49+:.]<PeriodSeparator>) ***
 
 -- Line 11 --
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME11.OF(LIBRARY4) <REPLACE[SingleToken] TOTO5 BY TITI6> <REPLACE[MultipleTokens] TOTO6,TOTO7 BY TITI6,TITI7> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME11]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:OF]<OF>[26,26: ]<SpaceSeparator>[27,34:LIBRARY4]<UserDefinedWord>[35,35: ]<SpaceSeparator>[36,43:SUPPRESS]<SUPPRESS>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME11.OF(LIBRARY4) <REPLACE[SingleToken] TOTO5 BY TITI6> <REPLACE[MultipleTokens] TOTO6,TOTO7 BY TITI6,TITI7> ([8,11:COPY]<COPY>[13,22:TEXTNAME11]<UserDefinedWord>[24,25:OF]<OF>[27,34:LIBRARY4]<UserDefinedWord>[36,43:SUPPRESS]<SUPPRESS>) ***
 Line 11[36,43] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 12 --
-+++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,16:REPLACING]<REPLACING>[17,17: ]<SpaceSeparator>[18,22:TOTO5]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:BY]<BY>[26,26: ]<SpaceSeparator>[27,31:TITI6]<UserDefinedWord>) +++
++++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,16:REPLACING]<REPLACING>[18,22:TOTO5]<UserDefinedWord>[24,25:BY]<BY>[27,31:TITI6]<UserDefinedWord>) +++
 
 -- Line 13 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:==]<PseudoTextDelimiter>[10,10: ]<SpaceSeparator>[11,15:TOTO6]<UserDefinedWord>[16,16: ]<SpaceSeparator>[17,21:TOTO7]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:==]<PseudoTextDelimiter>[25,25: ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:==]<PseudoTextDelimiter>[10,10: ]<SpaceSeparator>[11,15:TOTO6]<UserDefinedWord>[16,16: ]<SpaceSeparator>[17,21:TOTO7]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:==]<PseudoTextDelimiter>) +++
 
 -- Line 14 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:BY]<BY>[10,10: ]<SpaceSeparator>[11,12:==]<PseudoTextDelimiter>[13,13: ]<SpaceSeparator>[14,18:TITI6]<UserDefinedWord>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:BY]<BY>[11,12:==]<PseudoTextDelimiter>[13,13: ]<SpaceSeparator>[14,18:TITI6]<UserDefinedWord>) +++
 
 -- Line 15 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,12:TITI7]<UserDefinedWord>[13,13: ]<SpaceSeparator>[14,15:==]<PseudoTextDelimiter>[16,16+:.]<PeriodSeparator>) +++
 
 -- Line 16 --
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME12 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME12]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,31:SUPPRESS]<SUPPRESS>[32,33:. ]<PeriodSeparator>) ***
-*** DIRECTIVE COPY TEXTNAME13 ([34,37:COPY]<COPY>[38,38: ]<SpaceSeparator>[39,48:TEXTNAME13]<UserDefinedWord>[49,49+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME12 ([8,11:COPY]<COPY>[13,22:TEXTNAME12]<UserDefinedWord>[24,31:SUPPRESS]<SUPPRESS>[32,33:. ]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME13 ([34,37:COPY]<COPY>[39,48:TEXTNAME13]<UserDefinedWord>[49,49+:.]<PeriodSeparator>) ***
 Line 16[24,31] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 17 --
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME12 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME12]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,31:SUPPRESS]<SUPPRESS>[32,33:. ]<PeriodSeparator>) ***
-*** DIRECTIVE COPY TEXTNAME13 ([34,37:COPY]<COPY>[38,38: ]<SpaceSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME12 ([8,11:COPY]<COPY>[13,22:TEXTNAME12]<UserDefinedWord>[24,31:SUPPRESS]<SUPPRESS>[32,33:. ]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME13 ([34,37:COPY]<COPY>) ***
 Line 17[24,31] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 18 --
 +++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,17:TEXTNAME13]<UserDefinedWord>[18,19:. ]<PeriodSeparator>) +++
-*** DIRECTIVE COPY TEXTNAME14 ([20,23:COPY]<COPY>[24,24: ]<SpaceSeparator>[25,34:TEXTNAME14]<UserDefinedWord>[35,35+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME14 ([20,23:COPY]<COPY>[25,34:TEXTNAME14]<UserDefinedWord>[35,35+:.]<PeriodSeparator>) ***
 
 -- Line 19 --
 
 -- Line 20 --
-*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME1]<UserDefinedWord>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[13,21:TEXTNAME1]<UserDefinedWord>) ***
 Line 21[8,11] <27, Error, Syntax> - Syntax error : mismatched input 'COPY' expecting  expecting {EOF, '.', END-EXEC, IN, OF, REPLACING, SUPPRESS}
 
 -- Line 21 --
-*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME2]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,30:SUPPRESS]<SUPPRESS>) ***
-[31,31: ]<SpaceSeparator>
-*** DIRECTIVE INVALID SYNTAX -> COPY ([32,35:COPY]<COPY>[36,36: ]<SpaceSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[13,21:TEXTNAME2]<UserDefinedWord>[23,30:SUPPRESS]<SUPPRESS>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY ([32,35:COPY]<COPY>) ***
 Line 21[32,35] <27, Error, Syntax> - Syntax error : mismatched input 'COPY' expecting  expecting {'.', END-EXEC, REPLACING}
 Line 22[19,22] <27, Error, Syntax> - Syntax error : mismatched input 'COPY' expecting  expecting {EOF, '.', END-EXEC, IN, OF, REPLACING, SUPPRESS}
 
 -- Line 22 --
 +++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,17:TEXTNAME13]<UserDefinedWord>) +++
-[18,18: ]<SpaceSeparator>
-*** DIRECTIVE COPY TEXTNAME14 ([19,22:COPY]<COPY>[23,23: ]<SpaceSeparator>[24,33:TEXTNAME14]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
+*** DIRECTIVE COPY TEXTNAME14 ([19,22:COPY]<COPY>[24,33:TEXTNAME14]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
 
 -- Line 23 --
-*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME4]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,30:SUPPRESS]<SUPPRESS>) ***
-[31,31: ]<SpaceSeparator>
+*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[13,21:TEXTNAME4]<UserDefinedWord>[23,30:SUPPRESS]<SUPPRESS>) ***
 [32,33:IN]<IN>
-[34,34: ]<SpaceSeparator>
 [35,42:LIBRARY2]<UserDefinedWord>
 [43,43+:.]<PeriodSeparator>
 Line 23[32,33] <27, Error, Syntax> - Syntax error : mismatched input 'IN' expecting  expecting {'.', END-EXEC, REPLACING}
 
 -- Line 24 --
-*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME6]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:OF]<OF>) ***
-[25,25: ]<SpaceSeparator>
+*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[13,21:TEXTNAME6]<UserDefinedWord>[23,24:OF]<OF>) ***
 [26,33:SUPPRESS]<SUPPRESS>
 [34,34+:.]<PeriodSeparator>
 Line 24[26,33] <27, Error, Syntax> - Syntax error : mismatched input 'SUPPRESS' expecting  expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word}
 
 -- Line 25 --
-*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME7]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,31:REPLACING]<REPLACING>[32,32: ]<SpaceSeparator>[33,34:==]<PseudoTextDelimiter>[35,35: ]<SpaceSeparator>[36,40:TOTO1]<UserDefinedWord>[41,41: ]<SpaceSeparator>[42,43:= ]<EqualOperator>[44,45:BY]<BY>[46,46: ]<SpaceSeparator>[47,48:==]<PseudoTextDelimiter>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[13,21:TEXTNAME7]<UserDefinedWord>[23,31:REPLACING]<REPLACING>[33,34:==]<PseudoTextDelimiter>[35,35: ]<SpaceSeparator>[36,40:TOTO1]<UserDefinedWord>[41,41: ]<SpaceSeparator>[42,43:= ]<EqualOperator>[44,45:BY]<BY>[46,46: ]<SpaceSeparator>[47,48:==]<PseudoTextDelimiter>) ***
 [49,53:TITI1]<UserDefinedWord>
 [54,55:==]<PseudoTextDelimiter>
 Line 25[49,53] <27, Error, Syntax> - Syntax error : mismatched input 'TITI1' expecting BY
 
 -- Line 26 --
-*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME11]<UserDefinedWord>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY ([8,11:COPY]<COPY>[13,22:TEXTNAME11]<UserDefinedWord>) ***
 Line 27[24,28] <27, Error, Syntax> - Syntax error : mismatched input 'TITI6' expecting BY
 
 -- Line 27 --
-+++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,16:REPLACING]<REPLACING>[17,17: ]<SpaceSeparator>[18,22:TOTO5]<UserDefinedWord>) +++
-[23,23: ]<SpaceSeparator>
++++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,16:REPLACING]<REPLACING>[18,22:TOTO5]<UserDefinedWord>) +++
 [24,28:TITI6]<UserDefinedWord>
 
 -- Line 28 --
@@ -121,7 +115,6 @@ Line 27[24,28] <27, Error, Syntax> - Syntax error : mismatched input 'TITI6' exp
 [17,21:TOTO7]<UserDefinedWord>
 [22,22: ]<SpaceSeparator>
 [23,24:==]<PseudoTextDelimiter>
-[25,25: ]<SpaceSeparator>
 
 -- Line 30 --
 [8,8+:.]<PeriodSeparator>
@@ -130,7 +123,6 @@ Line 27[24,28] <27, Error, Syntax> - Syntax error : mismatched input 'TITI6' exp
 
 -- Line 32 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22:"error"]<AlphanumericLiteral>(",Y,Y){error}
 [23,23+:.]<PeriodSeparator>
 
@@ -141,21 +133,15 @@ Line 27[24,28] <27, Error, Syntax> - Syntax error : mismatched input 'TITI6' exp
 
 -- Line 35 --
 [8,9:01]<IntegerLiteral>{1}
-[10,11:  ]<SpaceSeparator>
 [12,18:YIDCAT1]<UserDefinedWord>
 [19,20:. ]<PeriodSeparator>
-[21,41:                     ]<SpaceSeparator>
-*** DIRECTIVE COPY YIDCAT1 ([42,45:COPY]<COPY>[46,46: ]<SpaceSeparator>[47,53:YIDCAT1]<UserDefinedWord>[54,55:. ]<PeriodSeparator>) ***
-[56,72:                 ]<SpaceSeparator>
+*** DIRECTIVE COPY YIDCAT1 ([42,45:COPY]<COPY>[47,53:YIDCAT1]<UserDefinedWord>[54,55:. ]<PeriodSeparator>) ***
 
 -- Line 36 --
 [8,9:01]<IntegerLiteral>{1}
-[10,11:  ]<SpaceSeparator>
 [12,17:INIPGM]<UserDefinedWord>
 [18,19:. ]<PeriodSeparator>
-[20,32:             ]<SpaceSeparator>
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS YINIPGM ([33,36:COPY]<COPY>[37,37: ]<SpaceSeparator>[38,44:YINIPGM]<UserDefinedWord>[45,45: ]<SpaceSeparator>[46,53:SUPPRESS]<SUPPRESS>[54,55:. ]<PeriodSeparator>) ***
-[56,72:                 ]<SpaceSeparator>
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS YINIPGM ([33,36:COPY]<COPY>[38,44:YINIPGM]<UserDefinedWord>[46,53:SUPPRESS]<SUPPRESS>[54,55:. ]<PeriodSeparator>) ***
 Line 36[46,53] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 37 --
@@ -165,17 +151,13 @@ Line 36[46,53] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be u
 [8,72:     GENT.COPY.COBOL(EPXX067W)                                 * ]<CommentLine>
 
 -- Line 39 --
-[8,11:    ]<SpaceSeparator>
-*** DIRECTIVE COPY YEPSU00 <REPLACE[SingleToken] YEPSU00 BY EPSZ0230E> ([12,15:COPY]<COPY>[16,17:  ]<SpaceSeparator>[18,24:YEPSU00]<UserDefinedWord>[25,29:     ]<SpaceSeparator>[30,38:REPLACING]<REPLACING>[39,39: ]<SpaceSeparator>[40,46:YEPSU00]<UserDefinedWord>[47,47: ]<SpaceSeparator>[48,49:BY]<BY>[50,51:  ]<SpaceSeparator>[52,60:EPSZ0230E]<UserDefinedWord>[61,62:. ]<PeriodSeparator>) ***
-[63,72:          ]<SpaceSeparator>
+*** DIRECTIVE COPY YEPSU00 <REPLACE[SingleToken] YEPSU00 BY EPSZ0230E> ([12,15:COPY]<COPY>[18,24:YEPSU00]<UserDefinedWord>[30,38:REPLACING]<REPLACING>[40,46:YEPSU00]<UserDefinedWord>[48,49:BY]<BY>[52,60:EPSZ0230E]<UserDefinedWord>[61,62:. ]<PeriodSeparator>) ***
 
 -- Line 40 --
-*** DIRECTIVE COPY MSVCINP <REPLACE[PartialWord] :MSVCINP: BY MSVCINP> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,19:MSVCINP]<UserDefinedWord>[20,21:  ]<SpaceSeparator>[22,30:REPLACING]<REPLACING>[31,31: ]<SpaceSeparator>[32,33:==]<PseudoTextDelimiter>[34,42::MSVCINP:]<PartialCobolWord>[43,44:==]<PseudoTextDelimiter>[45,46:  ]<SpaceSeparator>[47,48:BY]<BY>[49,49: ]<SpaceSeparator>[50,51:==]<PseudoTextDelimiter>[52,58:MSVCINP]<UserDefinedWord>[59,60:==]<PseudoTextDelimiter>[61,62:. ]<PeriodSeparator>) ***
-[63,72:          ]<SpaceSeparator>
+*** DIRECTIVE COPY MSVCINP <REPLACE[PartialWord] :MSVCINP: BY MSVCINP> ([8,11:COPY]<COPY>[13,19:MSVCINP]<UserDefinedWord>[22,30:REPLACING]<REPLACING>[32,33:==]<PseudoTextDelimiter>[34,42::MSVCINP:]<PartialCobolWord>[43,44:==]<PseudoTextDelimiter>[47,48:BY]<BY>[50,51:==]<PseudoTextDelimiter>[52,58:MSVCINP]<UserDefinedWord>[59,60:==]<PseudoTextDelimiter>[61,62:. ]<PeriodSeparator>) ***
 
 -- Line 41 --
-*** DIRECTIVE COPY MSVCOUT <REPLACE[PartialWord] :MSVCOUT: BY MSVCOUT> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,19:MSVCOUT]<UserDefinedWord>[20,21:  ]<SpaceSeparator>[22,30:REPLACING]<REPLACING>[31,31: ]<SpaceSeparator>[32,33:==]<PseudoTextDelimiter>[34,42::MSVCOUT:]<PartialCobolWord>[43,44:==]<PseudoTextDelimiter>[45,46:  ]<SpaceSeparator>[47,48:BY]<BY>[49,49: ]<SpaceSeparator>[50,51:==]<PseudoTextDelimiter>[52,58:MSVCOUT]<UserDefinedWord>[59,60:==]<PseudoTextDelimiter>[61,62:. ]<PeriodSeparator>) ***
-[63,72:          ]<SpaceSeparator>
+*** DIRECTIVE COPY MSVCOUT <REPLACE[PartialWord] :MSVCOUT: BY MSVCOUT> ([8,11:COPY]<COPY>[13,19:MSVCOUT]<UserDefinedWord>[22,30:REPLACING]<REPLACING>[32,33:==]<PseudoTextDelimiter>[34,42::MSVCOUT:]<PartialCobolWord>[43,44:==]<PseudoTextDelimiter>[47,48:BY]<BY>[50,51:==]<PseudoTextDelimiter>[52,58:MSVCOUT]<UserDefinedWord>[59,60:==]<PseudoTextDelimiter>[61,62:. ]<PeriodSeparator>) ***
 
 -- Line 42 --
 [8,72:                                                                 ]<SpaceSeparator>
@@ -185,33 +167,28 @@ Line 36[46,53] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be u
 
 -- Line 44 --
 [8,9:01]<IntegerLiteral>{1}
-[10,10: ]<SpaceSeparator>
 [11,17:MAUC1XX]<UserDefinedWord>
-[18,38:                     ]<SpaceSeparator>
 [39,41:PIC]<PIC>
-[42,42: ]<SpaceSeparator>
 [43,43:X]<PictureCharacterString>
 [44,45:. ]<PeriodSeparator>
-[46,72:                           ]<SpaceSeparator>
 
 -- Line 45 --
-*** DIRECTIVE COPY MAUC120 <REPLACE[PartialWord] :MAUC120: BY MAUC120> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,19:MAUC120]<UserDefinedWord>[20,21:  ]<SpaceSeparator>[22,30:REPLACING]<REPLACING>[31,31: ]<SpaceSeparator>[32,33:==]<PseudoTextDelimiter>[34,42::MAUC120:]<PartialCobolWord>[43,44:==]<PseudoTextDelimiter>[45,45: ]<SpaceSeparator>[46,47:BY]<BY>[48,48: ]<SpaceSeparator>[49,50:==]<PseudoTextDelimiter>[51,57:MAUC120]<UserDefinedWord>[58,59:==]<PseudoTextDelimiter>[60,61:. ]<PeriodSeparator>) ***
-[62,72:           ]<SpaceSeparator>
+*** DIRECTIVE COPY MAUC120 <REPLACE[PartialWord] :MAUC120: BY MAUC120> ([8,11:COPY]<COPY>[13,19:MAUC120]<UserDefinedWord>[22,30:REPLACING]<REPLACING>[32,33:==]<PseudoTextDelimiter>[34,42::MAUC120:]<PartialCobolWord>[43,44:==]<PseudoTextDelimiter>[46,47:BY]<BY>[49,50:==]<PseudoTextDelimiter>[51,57:MAUC120]<UserDefinedWord>[58,59:==]<PseudoTextDelimiter>[60,61:. ]<PeriodSeparator>) ***
 
 -- Line 46 --
 [8,7:]<SpaceSeparator>
 
 -- Line 47 --
-*** DIRECTIVE COPY TEST1.OF(LIBRARY1) <REPLACE[MultipleTokens] :,createError,(,: BY set, ,CCTERR-FCT-CRE-INN, ,to, ,true,                           ,       ,call, ,CREATE-ERROR, ,using, ,CCTERR, ,CCTEXT, ,CCTFAL, ,CCTZON, ,                                    ,CCTFRE> <REPLACE[MultipleTokens] :,),: BY omitted, ,end-call> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,17:TEST1]<UserDefinedWord>[18,18: ]<SpaceSeparator>[19,20:OF]<OF>[21,21: ]<SpaceSeparator>[22,29:LIBRARY1]<UserDefinedWord>) ***
+*** DIRECTIVE COPY TEST1.OF(LIBRARY1) <REPLACE[MultipleTokens] :,createError,(,: BY set, ,CCTERR-FCT-CRE-INN, ,to, ,true,                           ,       ,call, ,CREATE-ERROR, ,using, ,CCTERR, ,CCTEXT, ,CCTFAL, ,CCTZON, ,                                    ,CCTFRE> <REPLACE[MultipleTokens] :,),: BY omitted, ,end-call> ([8,11:COPY]<COPY>[13,17:TEST1]<UserDefinedWord>[19,20:OF]<OF>[22,29:LIBRARY1]<UserDefinedWord>) ***
 
 -- Line 48 --
-+++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,16:replacing]<REPLACING>[17,72:                                                        ]<SpaceSeparator>) +++
++++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,16:replacing]<REPLACING>) +++
 
 -- Line 49 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:  ]<SpaceSeparator>[10,11:==]<PseudoTextDelimiter>[12,12::]<ColonSeparator>[13,23:createError]<UserDefinedWord>[24,24:(]<LeftParenthesisSeparator>[25,25::]<ColonSeparator>[26,27:==]<PseudoTextDelimiter>[28,28: ]<SpaceSeparator>[29,30:by]<BY>[31,72:                                          ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([10,11:==]<PseudoTextDelimiter>[12,12::]<ColonSeparator>[13,23:createError]<UserDefinedWord>[24,24:(]<LeftParenthesisSeparator>[25,25::]<ColonSeparator>[26,27:==]<PseudoTextDelimiter>[29,30:by]<BY>) +++
 
 -- Line 50 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,12:     ]<SpaceSeparator>[13,14:==]<PseudoTextDelimiter>[15,15: ]<SpaceSeparator>[16,18:set]<SET>[19,19: ]<SpaceSeparator>[20,37:CCTERR-FCT-CRE-INN]<UserDefinedWord>[38,38: ]<SpaceSeparator>[39,40:to]<TO>[41,41: ]<SpaceSeparator>[42,45:true]<TRUE>[46,72:                           ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([13,14:==]<PseudoTextDelimiter>[15,15: ]<SpaceSeparator>[16,18:set]<SET>[19,19: ]<SpaceSeparator>[20,37:CCTERR-FCT-CRE-INN]<UserDefinedWord>[38,38: ]<SpaceSeparator>[39,40:to]<TO>[41,41: ]<SpaceSeparator>[42,45:true]<TRUE>[46,72:                           ]<SpaceSeparator>) +++
 
 -- Line 51 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,14:       ]<SpaceSeparator>[15,18:call]<CALL>[19,19: ]<SpaceSeparator>[20,33:'CREATE-ERROR']<AlphanumericLiteral>(',Y,Y){CREATE-ERROR}[34,34: ]<SpaceSeparator>[35,39:using]<USING>[40,40: ]<SpaceSeparator>[41,46:CCTERR]<UserDefinedWord>[47,47: ]<SpaceSeparator>[48,53:CCTEXT]<UserDefinedWord>[54,54: ]<SpaceSeparator>[55,60:CCTFAL]<UserDefinedWord>[61,61: ]<SpaceSeparator>[62,67:CCTZON]<UserDefinedWord>[68,68: ]<SpaceSeparator>) +++
@@ -220,34 +197,33 @@ Line 36[46,53] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be u
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,43:                                    ]<SpaceSeparator>[44,49:CCTFRE]<UserDefinedWord>[50,72:                       ]<SpaceSeparator>) +++
 
 -- Line 53 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,43:                                    ]<SpaceSeparator>[44,45:==]<PseudoTextDelimiter>[46,72:                           ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,43:                                    ]<SpaceSeparator>[44,45:==]<PseudoTextDelimiter>) +++
 
 -- Line 54 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,72:                                                                 ]<SpaceSeparator>) +++
 
 -- Line 55 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:  ]<SpaceSeparator>[10,11:==]<PseudoTextDelimiter>[12,12::]<ColonSeparator>[13,13:)]<RightParenthesisSeparator>[14,14::]<ColonSeparator>[15,16:==]<PseudoTextDelimiter>[17,17: ]<SpaceSeparator>[18,19:by]<BY>[20,72:                                                     ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([10,11:==]<PseudoTextDelimiter>[12,12::]<ColonSeparator>[13,13:)]<RightParenthesisSeparator>[14,14::]<ColonSeparator>[15,16:==]<PseudoTextDelimiter>[18,19:by]<BY>) +++
 
 -- Line 56 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,12:     ]<SpaceSeparator>[13,14:==]<PseudoTextDelimiter>[15,21:omitted]<OMITTED>[22,22: ]<SpaceSeparator>[23,30:end-call]<END_CALL>[31,31: ]<SpaceSeparator>[32,33:==]<PseudoTextDelimiter>[34,59:                          ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([13,14:==]<PseudoTextDelimiter>[15,21:omitted]<OMITTED>[22,22: ]<SpaceSeparator>[23,30:end-call]<END_CALL>[31,31: ]<SpaceSeparator>[32,33:==]<PseudoTextDelimiter>) +++
 
 -- Line 57 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:. ]<PeriodSeparator>) +++
 [10,16:DISPLAY]<DISPLAY>
-[17,17: ]<SpaceSeparator>
 [18,21:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 [22,23:. ]<PeriodSeparator>
-*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEST2.OF(LIBRARY2) <REPLACE[SingleToMultipleTokens] :TRAC: BY CCTLOG-LVL-I, ,or, ,TRC-I,                                  ,          ,call, ,ZCALLPGM, ,using, ,CCTZXLOG, ,CCTEXT, ,CCTFAL, ,CCTZON,                                ,CCTFRE, ,CCTLOG> <REPLACE[SingleToMultipleTokens] :FIN-LOG: BY omitted,                                       ,             ,end-call,                                         ,             ,end-if> ([24,27:COPY]<COPY>[28,28: ]<SpaceSeparator>[29,33:TEST2]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,36:IN]<IN>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEST2.OF(LIBRARY2) <REPLACE[SingleToMultipleTokens] :TRAC: BY CCTLOG-LVL-I, ,or, ,TRC-I,                                  ,          ,call, ,ZCALLPGM, ,using, ,CCTZXLOG, ,CCTEXT, ,CCTFAL, ,CCTZON,                                ,CCTFRE, ,CCTLOG> <REPLACE[SingleToMultipleTokens] :FIN-LOG: BY omitted,                                       ,             ,end-call,                                         ,             ,end-if> ([24,27:COPY]<COPY>[29,33:TEST2]<UserDefinedWord>[35,36:IN]<IN>) ***
 Line 58[17,24] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 58 --
-+++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,15:LIBRARY2]<UserDefinedWord>[16,16: ]<SpaceSeparator>[17,24:SUPPRESS]<SUPPRESS>) +++
++++ CONTINUATION OF COPY_IMPORT_DIRECTIVE ([8,15:LIBRARY2]<UserDefinedWord>[17,24:SUPPRESS]<SUPPRESS>) +++
 
 -- Line 59 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,16:REPLACING]<REPLACING>[17,17: ]<SpaceSeparator>[18,19:==]<PseudoTextDelimiter>[20,25::TRAC:]<PartialCobolWord>[26,27:==]<PseudoTextDelimiter>[28,29:  ]<SpaceSeparator>[30,31:by]<BY>[32,72:                                         ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,16:REPLACING]<REPLACING>[18,19:==]<PseudoTextDelimiter>[20,25::TRAC:]<PartialCobolWord>[26,27:==]<PseudoTextDelimiter>[30,31:by]<BY>) +++
 
 -- Line 60 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,12:     ]<SpaceSeparator>[13,14:==]<PseudoTextDelimiter>[15,26:CCTLOG-LVL-I]<UserDefinedWord>[27,27: ]<SpaceSeparator>[28,29:or]<OR>[30,30: ]<SpaceSeparator>[31,35:TRC-I]<UserDefinedWord>[36,69:                                  ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([13,14:==]<PseudoTextDelimiter>[15,26:CCTLOG-LVL-I]<UserDefinedWord>[27,27: ]<SpaceSeparator>[28,29:or]<OR>[30,30: ]<SpaceSeparator>[31,35:TRC-I]<UserDefinedWord>[36,69:                                  ]<SpaceSeparator>) +++
 
 -- Line 61 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,17:          ]<SpaceSeparator>[18,21:call]<CALL>[22,22: ]<SpaceSeparator>[23,32:'ZCALLPGM']<AlphanumericLiteral>(',Y,Y){ZCALLPGM}[33,33: ]<SpaceSeparator>[34,38:using]<USING>[39,39: ]<SpaceSeparator>[40,47:CCTZXLOG]<UserDefinedWord>[48,48: ]<SpaceSeparator>[49,54:CCTEXT]<UserDefinedWord>[55,55: ]<SpaceSeparator>[56,61:CCTFAL]<UserDefinedWord>[62,62: ]<SpaceSeparator>[63,68:CCTZON]<UserDefinedWord>) +++
@@ -259,21 +235,20 @@ Line 58[17,24] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be u
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,69:                                                              ]<SpaceSeparator>) +++
 
 -- Line 64 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,30:                       ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[33,69:                                     ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,30:                       ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>) +++
 
 -- Line 65 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,16:         ]<SpaceSeparator>[17,18:==]<PseudoTextDelimiter>[19,27::FIN-LOG:]<PartialCobolWord>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,32:by]<BY>[33,69:                                     ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([17,18:==]<PseudoTextDelimiter>[19,27::FIN-LOG:]<PartialCobolWord>[28,29:==]<PseudoTextDelimiter>[31,32:by]<BY>) +++
 
 -- Line 66 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,18:           ]<SpaceSeparator>[19,20:==]<PseudoTextDelimiter>[21,23:   ]<SpaceSeparator>[24,30:omitted]<OMITTED>[31,69:                                       ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([19,20:==]<PseudoTextDelimiter>[21,23:   ]<SpaceSeparator>[24,30:omitted]<OMITTED>[31,69:                                       ]<SpaceSeparator>) +++
 
 -- Line 67 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,20:             ]<SpaceSeparator>[21,28:end-call]<END_CALL>[29,69:                                         ]<SpaceSeparator>) +++
 
 -- Line 68 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,20:             ]<SpaceSeparator>[21,26:end-if]<END_IF>[27,28:==]<PseudoTextDelimiter>[29,31:   ]<SpaceSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,20:             ]<SpaceSeparator>[21,26:end-if]<END_IF>[27,28:==]<PseudoTextDelimiter>) +++
 
 -- Line 69 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:. ]<PeriodSeparator>) +++
-[10,46:                                     ]<SpaceSeparator>
 

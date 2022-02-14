@@ -119,8 +119,11 @@ namespace TypeCobol.Server
 
         private ReturnCode Compile()
         {
+            //Force whitespace token creation if code generation has been requested
+            bool optimizeWhitespaceScanning = _configuration.ExecToStep < ExecutionStep.Generate;
+
             //Load intrinsics and dependencies, it will build the root symbol table
-            var rootSymbolTable = LoadIntrinsicsAndDependencies();
+            var rootSymbolTable = LoadIntrinsicsAndDependencies(optimizeWhitespaceScanning);
 
             //Add analyzers
             var analyzerProvider = new AnalyzerProviderWrapper(str => Logger(_configuration, str));
@@ -133,7 +136,7 @@ namespace TypeCobol.Server
             }
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
-            var typeCobolOptions = new TypeCobolOptions(_configuration);
+            var typeCobolOptions = new TypeCobolOptions(_configuration) { OptimizeWhitespaceScanning = optimizeWhitespaceScanning };
             if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
             {
                 typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;
@@ -221,14 +224,15 @@ namespace TypeCobol.Server
             File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, message);
         }
 
-        private SymbolTable LoadIntrinsicsAndDependencies()
+        private SymbolTable LoadIntrinsicsAndDependencies(bool optimizeWhitespaceScanning)
         {
             var intrinsicsAndDependenciesParser = new Parser();
 
-            intrinsicsAndDependenciesParser.CustomSymbols = LoadIntrinsic(_configuration.Copies, _configuration.Format, OnDiagnosticsInIntrinsics);
+            intrinsicsAndDependenciesParser.CustomSymbols = LoadIntrinsic(_configuration.Copies, _configuration.Format, OnDiagnosticsInIntrinsics, optimizeWhitespaceScanning);
             intrinsicsAndDependenciesParser.CustomSymbols = LoadDependencies(_configuration, intrinsicsAndDependenciesParser.CustomSymbols, OnDiagnosticsInDependencies,
                 out List<RemarksDirective.TextNameVariation> usedCopies,
-                out IDictionary<string, IEnumerable<string>> missingCopies);
+                out IDictionary<string, IEnumerable<string>> missingCopies,
+                optimizeWhitespaceScanning);
 
             CollectUsedCopies(usedCopies);
             CollectMissingCopies(missingCopies.SelectMany(fileMissingCopiesPair => fileMissingCopiesPair.Value));
