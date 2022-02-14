@@ -45,14 +45,16 @@ Line 37[15,34] <37, Warning, General> - Warning: Missing statement in when claus
               when var2(idx) = 'b'
                 display "when"
       *KO at end must be before when statement
-Line 46[15,20] <27, Error, Syntax> - Syntax error : extraneous input 'atend' expecting {SentenceEnd, AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}
+Line 46[15,20] <27, Error, Syntax> - Syntax error : ON AT END clause must appear before WHEN.
               at end
                 display "end"
            end-search
       
            search all var1
+Line 51[15,34] <37, Warning, General> - Warning: Missing statement in when clause
               when var2(idx) = 'b'
       *KO at end must be before when statement
+Line 53[15,20] <27, Error, Syntax> - Syntax error : ON AT END clause must appear before WHEN.
               at end
                 display "end"
            end-search

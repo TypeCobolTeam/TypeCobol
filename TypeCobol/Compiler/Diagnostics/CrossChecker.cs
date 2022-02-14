@@ -254,24 +254,50 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
+            var list = new List<WhenSearch>();
+            bool onAtEndExist = false;
+            int index = 0;
+            foreach (var child in search.Children)
+            {
+                if (child is OnAtEnd)
+                {
+                    if (index > 0)
+                    {
+                        DiagnosticUtils.AddError(child, "ON AT END clause must appear before WHEN.");
+                    }
+                    if (onAtEndExist)
+                    {
+                        DiagnosticUtils.AddError(child, "ON AT END clause must be unique.");
+                    }
+                    else
+                    {
+                        onAtEndExist = true;
+                    }
+                }
+                else if (child is WhenSearch whenSearch)
+                {
+                    list.Add(whenSearch);
+                }
 
-            var list = search.GetChildren<WhenSearch>();
+                index++;
+            }
+
             if (list.Count == 0)
             {
                 DiagnosticUtils.AddError(search, "Search statement must have at least one when element.");
             }
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
             {
-                int i=0;
-                foreach (var whenSearch in list)
+                int i = 1;
+                while (i < list.Count)
                 {
-                    if (i > 0) 
-                    {
-                        DiagnosticUtils.AddError(whenSearch, "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
-                    }
+                    var whenSearch = list[i];
+                    DiagnosticUtils.AddError(whenSearch,
+                        "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
                     i++;
                 }
             }
+
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
             if (tableToSearch != null)
             {
@@ -324,6 +350,7 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        
         public override bool Visit(WhenSearch whenSearch)
         {
             System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
