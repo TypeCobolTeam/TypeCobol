@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Divides a line of text into a list of tokens
     /// </summary>
-    public class Scanner
+    public class Scanner : AbstractScanner
     {
         /// <summary>
         /// Issue #428, quick fix for this issue.
@@ -713,6 +713,22 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         private readonly BitArray multiStringConcatBitPosition;
 
+        private SqlScanner.SqlScanner _sqlScanner;
+
+        private SqlScanner.SqlScanner SqlScanner
+        {
+            get
+            {
+                if (_sqlScanner == null)
+                {
+                    _sqlScanner = new SqlScanner.SqlScanner(line, currentIndex, lastIndex, tokensLine, compilerOptions);
+                }
+
+                return _sqlScanner;
+            }
+        }
+
+
         private bool InterpretDoubleColonAsQualifiedNameSeparator
         {
             get
@@ -748,7 +764,7 @@ namespace TypeCobol.Compiler.Scanner
             this.multiStringConcatBitPosition = multiStringConcatBitPosition;
         }
 
-        public Token GetNextToken()
+        public override Token GetNextToken()
         {
             // Cannot read past end of line
             if(currentIndex > lastIndex)
@@ -843,14 +859,14 @@ namespace TypeCobol.Compiler.Scanner
                 }
             }
             // New token after a previous ExecStatementText
-            else if (currentState.AfterExecStatementText)
+            else if (currentState.AfterExecStatementText || currentState.InsideSql)
             {
                 tryScanExecStatementText = true;
             }
             // Previous state tests show that we should try to scan an exec statement text at this point
             if (tryScanExecStatementText)
             {
-                return ScanExecStatementTextOrExecSqlInclude(startIndex);
+                return ScanSqlCodeOrExecStatementTextOrExecSqlInclude(startIndex);
             }
 
             // -- Special case 3 : PictureCharacterString --
@@ -2140,7 +2156,7 @@ namespace TypeCobol.Compiler.Scanner
             return new Token(TokenType.ExecTranslatorName, startIndex, endIndex, tokensLine);
         }
 
-        private Token ScanExecStatementTextOrExecSqlInclude(int startIndex)
+        private Token ScanSqlCodeOrExecStatementTextOrExecSqlInclude(int startIndex)
         {
             // --- Special treatment for EXEC SQL(IMS) INCLUDE ---
 
@@ -2172,7 +2188,7 @@ namespace TypeCobol.Compiler.Scanner
             if (endExecIndex > startIndex)
             {
                 endIndex = endExecIndex - 1;
-                // Remove all witespace just before END-EXEC
+                // Remove all whitespace just before END-EXEC
                 for (; endIndex > startIndex && line[endIndex] == ' '; endIndex--) { }
 
                 // If only whitespace just before END-EXEC, return a whitespace token
@@ -2185,10 +2201,28 @@ namespace TypeCobol.Compiler.Scanner
             else if (endExecIndex == startIndex)
             {
                 // Directly scan END-EXEC keyword
-                return ScanKeywordOrUserDefinedWord(startIndex);
+                Token endExecToken = ScanKeywordOrUserDefinedWord(startIndex);
+                System.Diagnostics.Debug.Assert(endExecToken.TokenType == TokenType.END_EXEC);
+                tokensLine.ScanState.InsideSql = false;
             }
-            // Fall into SQL mode: either a SQL Token or an ExecStatementText token.
-            return TypeCobol.Compiler.SqlScanner.SqlScanner.ScanSqlKeywordOrExecStatementText(startIndex, endIndex, line, tokensLine, out currentIndex);
+
+            if (tokensLine.ScanState.AfterExecSql)
+            {
+                // Expect SQL code
+                tokensLine.ScanState.InsideSql = true;
+            }
+
+            if (tokensLine.ScanState.InsideSql)
+            {
+                // Use dedicated SQL scanner
+                var sqlToken = SqlScanner.GetNextToken();
+                currentIndex = SqlScanner.CurrentIndex;
+                return sqlToken;
+            }
+
+            // Not SQL code, consume all chars as ExecStatementText
+            currentIndex = endIndex + 1;
+            return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
         }
 
         private Token ScanKeywordOrUserDefinedWord(int startIndex)
@@ -2252,7 +2286,7 @@ namespace TypeCobol.Compiler.Scanner
                 //   as a system-name.
 
                 // Try to match keyword text
-                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, targetLanguageLevel);
+                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, false, targetLanguageLevel);
 
                 // Special cases of user defined words : 
                 // - symbolic characters

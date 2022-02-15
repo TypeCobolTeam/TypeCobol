@@ -72,23 +72,35 @@ namespace TypeCobol.Compiler.Scanner
 
         private static IDictionary<string, TokenType> tokenTypeFromTokenString;
 
-        internal static TokenType GetTokenTypeFromTokenString(string tokenString, CobolLanguageLevel targetLanguageLevel)
+        internal static TokenType GetTokenTypeFromTokenString(string tokenString, bool includeSqlTokens, CobolLanguageLevel targetLanguageLevel)
         {
             if (tokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
             {
-                if (targetLanguageLevel == CobolLanguageLevel.TypeCobol) return tokenType;
-
                 var family = GetTokenFamilyFromTokenType(tokenType);
+                if (targetLanguageLevel == CobolLanguageLevel.TypeCobol) return FilterSqlTokens();
+
                 if (targetLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
                     //Cobol2002 or Cobol2014 -> exclude TC keywords
-                    return family == TokenFamily.TypeCobolKeyword ? TokenType.UserDefinedWord : tokenType;
+                    return family == TokenFamily.TypeCobolKeyword ? TokenType.UserDefinedWord : FilterSqlTokens();
                 }
 
                 //Cobol85 -> exclude TC and 2002 keywords
-                return family == TokenFamily.TypeCobolKeyword || family == TokenFamily.Cobol2002Keyword ? TokenType.UserDefinedWord : tokenType;
+                return family == TokenFamily.TypeCobolKeyword || family == TokenFamily.Cobol2002Keyword ? TokenType.UserDefinedWord : FilterSqlTokens();
+
+                //Filter out SQL-only keywords if we have been instructed to exclude them
+                TokenType FilterSqlTokens()
+                {
+                    if (!includeSqlTokens && family == TokenFamily.SqlFamily)
+                    {
+                        return TokenType.UserDefinedWord;
+                    }
+
+                    return tokenType;
+                }
             }
 
+            //Not a known keyword
             return TokenType.UserDefinedWord;
         }
         

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.SqlScanner
 {
     /// <summary>
-    /// A Sql Scanner related to a Scanner 
+    /// A Sql Scanner related to a Scanner
     /// </summary>
-    public static class SqlScanner
+    public class SqlScanner : AbstractScanner
     {
         /// <summary>
         /// True if the given char can be part of an SQL keyword.
@@ -15,35 +15,53 @@ namespace TypeCobol.Compiler.SqlScanner
         /// <returns>True if yes, no otherwise</returns>
         public static bool IsSqlKeywordPart(char c)
         {
-            return c == '-' || Char.IsLetter(c);
+            return c == '-' || char.IsLetter(c);
         }
 
-        /// <summary>
-        /// Scan a SQL keyword if one is recognized or a ExecStatementText token otherwise.
-        /// </summary>
-        /// <param name="startIndex">Start scanning index in the line</param>
-        /// <param name="endIndex">End scanning index in the line</param>
-        /// <param name="line">The line to be scanned</param>
-        /// <param name="tokensLine">The associed TokensLine instance to be asociated with the token to create.</param>
-        /// <param name="currentIndex">[out] the new end index</param>
-        /// <returns>Either a SQL keyword token or a ExecStatementText token otherwise</returns>
-        public static Token ScanSqlKeywordOrExecStatementText(int startIndex, int endIndex, string line, TokensLine tokensLine, out int currentIndex)
+        private readonly string _line;
+        private readonly int _startIndex;
+        private readonly int _lastIndex;
+        private readonly TokensLine _tokensLine;
+        private readonly TypeCobolOptions _compilerOptions;
+
+        public int CurrentIndex { get; private set; }
+
+        public SqlScanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
+            : base()
         {
-            int curIndex = startIndex;
-            if (IsSqlKeywordPart(line[curIndex]))
+            _line = line;
+            _startIndex = startIndex;
+            _lastIndex = lastIndex;
+            _tokensLine = tokensLine;
+            _compilerOptions = compilerOptions;
+            CurrentIndex = startIndex;
+        }
+
+        public override Token GetNextToken()
+        {
+            int curIndex = CurrentIndex;
+            if (IsSqlKeywordPart(_line[curIndex]))
             {
-                for (++curIndex; curIndex <= endIndex && IsSqlKeywordPart(line[curIndex]); curIndex++) { }
+                for (++curIndex; curIndex <= _lastIndex && IsSqlKeywordPart(_line[curIndex]); curIndex++) { }
                 int curEndIndex = curIndex - 1;
-                string text = line.Substring(startIndex, curEndIndex - startIndex + 1);
-                if (text.Equals("COMMIT", StringComparison.OrdinalIgnoreCase))
+                string tokenText = _line.Substring(_startIndex, curEndIndex - _startIndex + 1);
+
+                // Try to match keyword text
+                var tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, true, CobolLanguageLevel.Cobol85);
+
+                //TODO we need to distinguish between cobol words and SQL words !
+
+                //So far this scanner only recognize 'COMMIT' keyword
+                if (tokenType == TokenType.COMMIT)
                 {
-                    currentIndex = curIndex;
-                    return new Token(TokenType.COMMIT, startIndex, curEndIndex, tokensLine);
+                    CurrentIndex = curIndex;
+                    return new Token(TokenType.COMMIT, _startIndex, curEndIndex, _tokensLine);
                 }
             }
+
             // Consume all chars as ExecStatementText
-            currentIndex = endIndex + 1;
-            return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
+            CurrentIndex = _lastIndex + 1;
+            return new Token(TokenType.ExecStatementText, _startIndex, _lastIndex, _tokensLine);
         }
     }
 }
