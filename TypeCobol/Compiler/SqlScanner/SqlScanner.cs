@@ -19,7 +19,6 @@ namespace TypeCobol.Compiler.SqlScanner
         }
 
         private readonly string _line;
-        private readonly int _startIndex;
         private readonly int _lastIndex;
         private readonly TokensLine _tokensLine;
         private readonly TypeCobolOptions _compilerOptions;
@@ -30,7 +29,6 @@ namespace TypeCobol.Compiler.SqlScanner
             : base()
         {
             _line = line;
-            _startIndex = startIndex;
             _lastIndex = lastIndex;
             _tokensLine = tokensLine;
             _compilerOptions = compilerOptions;
@@ -39,29 +37,35 @@ namespace TypeCobol.Compiler.SqlScanner
 
         public override Token GetNextToken()
         {
-            int curIndex = CurrentIndex;
-            if (IsSqlKeywordPart(_line[curIndex]))
-            {
-                for (++curIndex; curIndex <= _lastIndex && IsSqlKeywordPart(_line[curIndex]); curIndex++) { }
-                int curEndIndex = curIndex - 1;
-                string tokenText = _line.Substring(_startIndex, curEndIndex - _startIndex + 1);
+            int startIndex = CurrentIndex;
+            int currentIndex = CurrentIndex;
 
-                // Try to match keyword text
+            if (IsSqlKeywordPart(_line[currentIndex]))
+            {
+                //Consume all sql-keyword compatible chars
+                for (; currentIndex <= _lastIndex && IsSqlKeywordPart(_line[currentIndex]); currentIndex++) { }
+                string tokenText = _line.Substring(startIndex, currentIndex - startIndex);
+
+                //Try to match keyword text
                 var tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, true, CobolLanguageLevel.Cobol85);
 
-                //TODO we need to distinguish between cobol words and SQL words !
+                //TODO we need to distinguish between Cobol-only words and SQL words !
 
                 //So far this scanner only recognize 'COMMIT' keyword
+                CurrentIndex = currentIndex;
                 if (tokenType == TokenType.COMMIT)
                 {
-                    CurrentIndex = curIndex;
-                    return new Token(TokenType.COMMIT, _startIndex, curEndIndex, _tokensLine);
+                    return new Token(TokenType.COMMIT, startIndex, currentIndex - 1, _tokensLine);
                 }
+
+                //Unrecognized keyword (for now) return as ExecStatementText
+                return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, _tokensLine);
             }
 
-            // Consume all chars as ExecStatementText
-            CurrentIndex = _lastIndex + 1;
-            return new Token(TokenType.ExecStatementText, _startIndex, _lastIndex, _tokensLine);
+            //Consume all sql-keyword incompatible chars
+            for (; currentIndex <= _lastIndex && !IsSqlKeywordPart(_line[currentIndex]); currentIndex++) { }
+            CurrentIndex = currentIndex;
+            return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, _tokensLine);
         }
     }
 }

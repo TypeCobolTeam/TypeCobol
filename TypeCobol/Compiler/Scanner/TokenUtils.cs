@@ -27,10 +27,9 @@ namespace TypeCobol.Compiler.Scanner
             int keywordBegin = (int)TokenType.UserDefinedWord + 1;
             int keywordEnd = (int)TokenType.QUESTION_MARK - 1;
             tokenStringFromTokenType = new string[types.Length];
-            for (int c = keywordBegin; c < types.Length; c++)
+            for (int c = keywordBegin; c <= keywordEnd; c++)
             {
                 var current = types[c];
-                if ((int)current > keywordEnd) break;
                 tokenStringFromTokenType[(int)current] = current.ToString().Replace('_', '-');
             }
             tokenStringFromTokenType[(int)TokenType.ASTERISK_CBL] = "*CBL";
@@ -38,6 +37,15 @@ namespace TypeCobol.Compiler.Scanner
             tokenStringFromTokenType[(int)TokenType.DELETE_CD] = "DELETE";
             tokenStringFromTokenType[(int)TokenType.SERVICE_CD] = "SERVICE";
             tokenStringFromTokenType[(int)TokenType.EXEC_SQL] = "EXEC-SQL";
+
+            //Add SQL keywords
+            keywordBegin = (int)TokenFamily.SqlFamily;
+            keywordEnd = types.Length - 2; //EndOfFile is the last TokenType
+            for (int c = keywordBegin; c <= keywordEnd; c++)
+            {
+                var current = types[c];
+                tokenStringFromTokenType[(int)current] = current.ToString().Replace('_', '-');
+            }
 
             // Map token string to token type
             tokenTypeFromTokenString = new Dictionary<string, TokenType>(types.Length - 1, StringComparer.OrdinalIgnoreCase);
@@ -49,6 +57,7 @@ namespace TypeCobol.Compiler.Scanner
                     tokenTypeFromTokenString[tokenString] = (TokenType)tokenType;
                 }
             }
+
             // Token type DELETE is much more frequent than DELETE_CD, it should have priority
             tokenTypeFromTokenString["DELETE"] = TokenType.DELETE;
             // Token type SERVICE is much more frequent than SERVICE_CD, it should have priority

@@ -2204,6 +2204,7 @@ namespace TypeCobol.Compiler.Scanner
                 Token endExecToken = ScanKeywordOrUserDefinedWord(startIndex);
                 System.Diagnostics.Debug.Assert(endExecToken.TokenType == TokenType.END_EXEC);
                 tokensLine.ScanState.InsideSql = false;
+                return endExecToken;
             }
 
             if (tokensLine.ScanState.AfterExecSql)
