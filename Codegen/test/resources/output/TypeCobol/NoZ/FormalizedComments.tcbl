@@ -3,6 +3,7 @@
       * Line 52[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
       * Line 57[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
       * Line 59[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DocCodeGen.

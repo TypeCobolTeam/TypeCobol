@@ -1,5 +1,6 @@
       * 1 errors
       * Line 42[9,21] <37, Warning, General> - Warning: "when other" is missing
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        IDENTIFICATION DIVISION.
        PROGRAM-ID. BooleanTester.
 

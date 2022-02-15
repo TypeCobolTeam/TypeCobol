@@ -1,5 +1,6 @@
       * 1 errors
       * Line 13[43,50] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        IDENTIFICATION DIVISION.
        PROGRAM-ID. VARTYPEXT.
        DATA DIVISION.

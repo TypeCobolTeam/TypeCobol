@@ -1,3 +1,4 @@
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *TypeCobol_Version:[[ParserVersion]]
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MYCPYTST. 
