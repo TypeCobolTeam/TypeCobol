@@ -17,7 +17,6 @@ namespace TypeCobol.Tools.Options_Config
     /// </summary>
     public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
-        public string CommandLine { get; set; }
         public DocumentFormat Format;
         public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
@@ -31,8 +30,8 @@ namespace TypeCobol.Tools.Options_Config
         public List<string> OutputFiles = new List<string>();
         public List<string> LineMapFiles = new List<string>();
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
-        public string ErrorFile = null;
-        public string LogFile = null;
+        public string ErrorFile;
+        public string LogFile;
 
         //Log file name
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
@@ -298,7 +297,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
 #if EUROINFO_RULES
-                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v },
+                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
 #endif
             };
             return commonOptions;

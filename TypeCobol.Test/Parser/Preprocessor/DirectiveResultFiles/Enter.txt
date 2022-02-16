@@ -1,8 +1,8 @@
-﻿-- Line 1 --
-*** DIRECTIVE ENTER Java ([8,12:ENTER]<ENTER>[13,13: ]<SpaceSeparator>[14,17:Java]<UserDefinedWord>[18,18+:.]<PeriodSeparator>) ***
+-- Line 1 --
+*** DIRECTIVE ENTER Java ([8,12:ENTER]<ENTER>[14,17:Java]<UserDefinedWord>[18,18+:.]<PeriodSeparator>) ***
 
 -- Line 2 --
-*** DIRECTIVE ENTER Java ComputeSum ([8,12:ENTER]<ENTER>[13,13: ]<SpaceSeparator>[14,17:Java]<UserDefinedWord>[18,18: ]<SpaceSeparator>[19,28:ComputeSum]<UserDefinedWord>[29,29+:.]<PeriodSeparator>) ***
+*** DIRECTIVE ENTER Java ComputeSum ([8,12:ENTER]<ENTER>[14,17:Java]<UserDefinedWord>[19,28:ComputeSum]<UserDefinedWord>[29,29+:.]<PeriodSeparator>) ***
 
 -- Line 3 --
 
@@ -11,12 +11,11 @@
 Line 5[8,12] <27, Error, Syntax> - Syntax error : mismatched input 'ENTER' expecting user defined word
 
 -- Line 5 --
-*** DIRECTIVE INVALID SYNTAX -> ENTER  ([8,12:ENTER]<ENTER>[13,13: ]<SpaceSeparator>[14,17:Java]<UserDefinedWord>) ***
+*** DIRECTIVE INVALID SYNTAX -> ENTER  ([8,12:ENTER]<ENTER>[14,17:Java]<UserDefinedWord>) ***
 Line 6[8,12] <27, Error, Syntax> - Syntax error : mismatched input 'ENTER' expecting  expecting {'.', user defined word}
 
 -- Line 6 --
-*** DIRECTIVE INVALID SYNTAX -> ENTER  ([8,12:ENTER]<ENTER>[13,13: ]<SpaceSeparator>[14,17:Java]<UserDefinedWord>[18,18: ]<SpaceSeparator>[19,26:Compute1]<UserDefinedWord>) ***
-[27,27: ]<SpaceSeparator>
+*** DIRECTIVE INVALID SYNTAX -> ENTER  ([8,12:ENTER]<ENTER>[14,17:Java]<UserDefinedWord>[19,26:Compute1]<UserDefinedWord>) ***
 [28,35:Compute2]<UserDefinedWord>
 Line 6[28,35] <27, Error, Syntax> - Syntax error : mismatched input 'Compute2' expecting '.'
 

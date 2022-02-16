@@ -1,6 +1,5 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,6:AUTHOR]<AUTHOR>
-[7,7: ]<SpaceSeparator>
 [8,25:comment on several]<CommentEntry>
 
 -- Line 2 --
@@ -20,61 +19,50 @@
 [1,12:INSTALLATION]<INSTALLATION>
 
 -- Line 6 --
-[1,5:     ]<SpaceSeparator>
 [6,13:comment1]<CommentEntry>
 
 -- Line 7 --
 [1,8:comment2]<UserDefinedWord>
 
 -- Line 8 --
-[1,4:    ]<SpaceSeparator>
 [5,12:comment3]<UserDefinedWord>
 
 -- Line 9 --
-[1,1: ]<SpaceSeparator>
 [2,13:DATE-WRITTEN]<DATE_WRITTEN>
 [14,14+:.]<PeriodSeparator>
 
 -- Line 10 --
-[1,7:       ]<SpaceSeparator>
 [8,15:comment1]<CommentEntry>
 
 -- Line 11 --
 [1,12:    comment2]<CommentEntry>
 
 -- Line 12 --
-[1,2:  ]<SpaceSeparator>
 [3,15:DATE-COMPILED]<DATE_COMPILED>
 [16,16+:.]<PeriodSeparator>
 
 -- Line 13 --
-[1,4:    ]<SpaceSeparator>
 [5,12:comment1]<CommentEntry>
 
 -- Line 14 --
 [1,15:       comment2]<CommentEntry>
 
 -- Line 15 --
-[1,3:   ]<SpaceSeparator>
 [4,11:SECURITY]<SECURITY>
 
 -- Line 16 --
-[1,6:      ]<SpaceSeparator>
 [7,14:comment1]<CommentEntry>
 
 -- Line 17 --
 [1,12:    comment2]<CommentEntry>
 
 -- Line 18 --
-[1,1: ]<SpaceSeparator>
 [2,9:SECURITY]<SECURITY>
 [10,10+:.]<PeriodSeparator>
 
 -- Line 19 --
-[1,4:    ]<SpaceSeparator>
 [5,12:comment1]<CommentEntry>
 
 -- Line 20 --
-[1,3:   ]<SpaceSeparator>
 [4,11:comment2]<UserDefinedWord>
 

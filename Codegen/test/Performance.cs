@@ -59,7 +59,7 @@ namespace TypeCobol.Codegen
                 Path.GetDirectoryName(path),
                 new[] { ".tcbl", ".cbl", ".cpy" },
                 DocumentFormat.RDZReferenceFormat,
-                new TypeCobolOptions(),
+                new TypeCobolOptions() { OptimizeWhitespaceScanning = false },
                 null);
             FileCompiler fileCompiler = new FileCompiler(compilationProject, fileName, false);
             fileCompiler.CompileOnce();
