@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Scanner
         // 525 -> 526 : Multilines Comments Tokens
         MultilinesCommentsFamily = 525,
 
-        // 527 : SQL-only keywords
+        // 527 -> 527 : SQL-only keywords
         SqlFamily = 527
     }
 
