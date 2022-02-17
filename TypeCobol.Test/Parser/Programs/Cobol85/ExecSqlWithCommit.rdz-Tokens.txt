@@ -31,7 +31,12 @@ _   EXEC SQL DELETE FROM CUSTOMERS	   _
     _ _    [15,15: ]<SpaceSeparator>
     _SQL_    [16,18:SQL]<ExecTranslatorName>
     _ _    [19,19: ]<SpaceSeparator>
-    _DELETE FROM CUSTOMERS	   _    [20,44:DELETE FROM CUSTOMERS	   ]<ExecStatementText>
+    _DELETE_    [20,25:DELETE]<ExecStatementText>
+    _ _    [26,26: ]<ExecStatementText>
+    _FROM_    [27,30:FROM]<ExecStatementText>
+    _ _    [31,31: ]<ExecStatementText>
+    _CUSTOMERS_    [32,40:CUSTOMERS]<ExecStatementText>
+    _	   _    [41,44:	   ]<ExecStatementText>
 ---------------------------------
 _COMMIT_
     _COMMIT_    [8,13:COMMIT]<COMMIT>
