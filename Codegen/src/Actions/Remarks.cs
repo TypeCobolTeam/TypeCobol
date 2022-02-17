@@ -43,8 +43,11 @@ namespace TypeCobol.Codegen.Actions
         public IList<Action> Execute()
         {
 #if EUROINFO_RULES
-            if (CompilationDocument.CompilerOptions.IsCobolLanguage)
-                return null; //When generating from pure Cobol document, do not attempt to recreate the REMARKS directive
+            if (!CompilationDocument.CompilerOptions.UseEuroInformationLegacyReplacingSyntax || CompilationDocument.CompilerOptions.IsCobolLanguage)
+            {
+
+                return null;
+            }
 
             if (!((Program) Source).IsMainProgram)
                 return null; //We don't have to care about nested/stacked programs. It prevents from generating REMARKS directive multiple times

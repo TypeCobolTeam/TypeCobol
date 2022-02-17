@@ -1,10 +1,6 @@
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
-      *REMARKS. COPY=(
-      *        Codegen-SecondCopy
-      *        ).
-                                                             
        data division.
        WORKING-STORAGE SECTION.
        01 TC-DVZF0OS2 pic X(08) value 'DVZF0OS2'.

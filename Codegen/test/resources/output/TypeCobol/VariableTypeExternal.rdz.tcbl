@@ -2,10 +2,6 @@
       * Line 13[43,50] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
        IDENTIFICATION DIVISION.
        PROGRAM-ID. VARTYPEXT.
-      *REMARKS. COPY=(
-      *        MyDataCopy
-      *        ).
-                                                              
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *Données immuables et stable pendant toute

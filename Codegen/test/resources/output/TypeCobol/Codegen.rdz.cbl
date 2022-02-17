@@ -1,12 +1,7 @@
       * 1 errors
       * Line 19[43,50] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 000010 IDENTIFICATION DIVISION.                                         000010
-000020 PROGRAM-ID. Codegen. 
-      *REMARKS. COPY=(
-      *        Codegen-FirstCopy
-      *        Codegen-SECONDCOPY
-      *        ).
-                                                                                                               
+000020 PROGRAM-ID. Codegen.    
 000031* If you want to write                                            000031
 000032* a block-commented Haiku                            
       * you'll need three star signs                                    000033
