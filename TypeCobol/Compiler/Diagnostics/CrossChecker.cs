@@ -254,6 +254,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
+            if (search.GetChildren<WhenSearch>().Count == 0)
+            {
+                DiagnosticUtils.AddError(search, "Search statement must have at least one when element.");
+            }
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
             if (tableToSearch != null)
             {
@@ -369,8 +373,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     switch (whenSearchCondition)
                     {
-                        case ConditionNameConditionOrSwitchStatusCondition _:
-                            //TODO add check for condition names
+                        case ConditionNameConditionOrSwitchStatusCondition conditionInstance:
+                            DataOrConditionStorageArea dataOrConditionStorageArea = conditionInstance.ConditionReference;
+                            if (dataOrConditionStorageArea.Subscripts.Length > 0)
+                            {
+                                return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
+                            }
                             return true;
 
                         case RelationCondition relationCondition:
@@ -400,35 +408,53 @@ namespace TypeCobol.Compiler.Diagnostics
                         && numericVariableOperand.NumericVariable?.StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea
                         && dataOrConditionStorageArea.Subscripts.Length > 0)
                     {
-                        //Check indexes for every dimension
-                        if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
-                        {
-                            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
-                            {
-                                var expectedIndex = expectedIndexes[i];
-                                var subscript = dataOrConditionStorageArea.Subscripts[i];
+                        return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
+                    }
 
-                                //Check use of first table index for the current dimension
-                                var usedIndexStorageArea = ((NumericVariableOperand) subscript.NumericExpression).IntegerVariable.StorageArea;
-                                var usedIndex = whenSearch.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
-                                if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
-                                {
-                                    //Not the first index (or no index defined for the table)
-                                    DiagnosticUtils.AddError(whenSearch, "When subscripting, only first index declared for the table is allowed.");
-                                    return false;
-                                }
+                    DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
+                    return false;
+                }
+
+                bool CheckDataOrConditionStorageArea(DataOrConditionStorageArea dataOrConditionStorageArea)
+                {
+                    //Check indexes for every dimension
+                    if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
+                    {
+                        for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
+                        {
+                            var expectedIndex = expectedIndexes[i];
+                            var subscript = dataOrConditionStorageArea.Subscripts[i];
+
+                            //Check use of first table index for the current dimension
+                            var usedIndexStorageArea = ((NumericVariableOperand)subscript.NumericExpression).IntegerVariable.StorageArea;
+                            var usedIndex = whenSearch.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
+                            if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                //Not the first index (or no index defined for the table)
+                                DiagnosticUtils.AddError(whenSearch, "When subscripting, only first index declared for the table is allowed.");
+                                return false;
                             }
                         }
-                        //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
+                    }
+                    //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
 
-                        //Collect used key
-                        var usedKey = whenSearch.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
-                        if (usedKey != null)
+                    //Collect used key
+                    var usedKey = whenSearch.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
+                    if (usedKey != null)
+                    {
+                        if (usedKeys.ContainsKey(usedKey.Name))
                         {
-                            if (usedKeys.ContainsKey(usedKey.Name))
+                            //Valid key, set key status to 'used'
+                            usedKeys[usedKey.Name] = true;
+                        }
+                        else 
+                        {
+                            //Special check for 88 level definitions that are children of a selected used key.
+                            if (usedKey.CodeElement?.LevelNumber?.Value == 88 &&
+                                usedKey.Parent is DataDefinition parentUsedKey &&
+                                usedKeys.ContainsKey(parentUsedKey.Name))
                             {
-                                //Valid key, set key status to 'used'
-                                usedKeys[usedKey.Name] = true;
+                                usedKeys[parentUsedKey.Name] = true;
                             }
                             else
                             {
@@ -437,13 +463,10 @@ namespace TypeCobol.Compiler.Diagnostics
                                 return false;
                             }
                         }
-                        //else undefined reference
-
-                        return true;
                     }
+                    //else undefined reference
 
-                    DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
-                    return false;
+                    return true;
                 }
             }
 
