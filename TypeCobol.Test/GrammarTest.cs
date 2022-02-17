@@ -47,6 +47,9 @@ namespace TypeCobol.Test {
             string expectedResultFile = null,
             bool ignoreWarningDiag = false)
         { 
+            //Simplified Codegen alters results (error preamble) so we deactivate it here
+            codegen = false;
+
             //Normalize optional arguments
             include = include ?? new string[0];
             exclude = exclude ?? new string[0];
