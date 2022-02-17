@@ -1,1 +1,1 @@
--i input\CopyTestwithOrWithoutReplace.rdz.cbl -o output\CopyTestwithOrWithoutReplace.rdz.cbl -d output\error.txt -e rdz -ycpl="input\CpyCopies.lst" -a -c input\
+-i input\CopyTestwithOrWithoutReplace.rdz.cbl -o output\CopyTestwithOrWithoutReplace.rdz.cbl -d output\error.txt -e rdz -ycpl="input\CpyCopies.lst" -c input\
