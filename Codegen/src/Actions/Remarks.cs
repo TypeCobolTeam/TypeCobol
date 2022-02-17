@@ -30,7 +30,7 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="source">The source Node to be expanded</param>
         /// <param name="destination">The destination node of the new expanded node, the new new node will added in
         /// Destination's parent node at the right index.</param>
-        /// <param name="destinationURI">The dotted path of the destination, that willl be used to calculate the
+        /// <param name="destinationURI">The dotted path of the destination, that will be used to calculate the
         /// Destination parent's node index to which to insert the new expanded node as child.</param>
         public Remarks(Node source, Node destination, string destinationURI, CompilationDocument compilationDocument)
         {
@@ -45,7 +45,16 @@ namespace TypeCobol.Codegen.Actions
 #if EUROINFO_RULES
             if (!CompilationDocument.CompilerOptions.UseEuroInformationLegacyReplacingSyntax || CompilationDocument.CompilerOptions.IsCobolLanguage)
             {
-
+                /*
+                 * The original REMARKS directive (if any) is parsed only when UseEuroInformationLegacyReplacingSyntax is active
+                 * and only for TypeCobol. So here we use the negation: if the legacy syntax is disabled or if we are in pure cobol mode,
+                 * we do not attempt to generate the REMARKS directive.
+                 *
+                 * Note 1: to auto-generate the directive, we need to parse the one found in source (to know which lines are replaced by
+                 *         our own auto REMARKS).
+                 * Note 2: if the source contains a REMARKS directive and we don't parse it, it is treated as comments and returned
+                 *         without change in generated code.
+                 */
                 return null;
             }
 
