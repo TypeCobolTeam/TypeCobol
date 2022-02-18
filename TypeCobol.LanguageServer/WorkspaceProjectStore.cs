@@ -97,7 +97,7 @@ namespace TypeCobol.LanguageServer
             if (projectKey == null)
                 return DefaultWorkspaceProject;
             WorkspaceProject project = null;
-            if (_workspaceProjects.TryGetValue(project.ProjectKey, out project))
+            if (_workspaceProjects.TryGetValue(projectKey, out project))
                 return project;
             return null;
         }
