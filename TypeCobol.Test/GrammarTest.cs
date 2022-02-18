@@ -54,8 +54,10 @@ namespace TypeCobol.Test {
             include = include ?? new string[0];
             exclude = exclude ?? new string[0];
             options = options ?? new TypeCobolOptions();
+            options.ExecToStep = ExecutionStep.CrossCheck;
+            options.IsCobolLanguage = true; //Designed for Cobol85 only because we expect generated code to be identical to input code
 
-			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
             var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 	        string resultFile = "GeneratedResultFile.txt";
 
@@ -86,7 +88,6 @@ namespace TypeCobol.Test {
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
                 var document = new TypeCobol.Parser();
-                options.ExecToStep = ExecutionStep.CrossCheck;
 
                 //We assume here that all sources are programs (not copies)
                 document.Init(path, false, options, format, copiesFolder);

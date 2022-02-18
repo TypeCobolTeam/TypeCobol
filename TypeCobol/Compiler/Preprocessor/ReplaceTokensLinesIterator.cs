@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
@@ -320,9 +318,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
                 {
                     string originalText = nextToken.Text;
-                    if (originalText.Contains(CopyReplacingDirective.PreSuffix))
+                    if (originalText.IndexOf(CopyReplacingDirective.PreSuffix, StringComparison.OrdinalIgnoreCase) > -1)
                     {
-                        string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix , CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix));
+                        string replacement = CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix);
+                        string replacedText = Regex.Replace(originalText, CopyReplacingDirective.PreSuffix, replacement, RegexOptions.IgnoreCase);
                         TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
                         Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
                             virtualTokensLine);

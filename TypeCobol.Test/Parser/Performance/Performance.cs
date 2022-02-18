@@ -400,14 +400,7 @@ namespace TypeCobol.Test.Parser.Performance
             stats.IterationNumber = 20;
             //Warmup before measurement
             var documentWarmup = new TypeCobol.Parser();
-            var options = new TypeCobolOptions
-            {
-                ExecToStep = ExecutionStep.CrossCheck,
-#if EUROINFO_RULES
-                AutoRemarksEnable = true
-#endif
-            };
-
+            var options = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
 
             //Warmup
             documentWarmup = ParseDocument(fullPath, options, format, copiesFolder);
