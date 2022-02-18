@@ -4366,7 +4366,7 @@ whenCondition:
 	)?;
 
 comparisonRHSExpression: 
-	ANY | booleanValueOrExpression | NOT? comparisonRHSValue;
+	ANY | booleanValueOrExpression | NOT? (comparisonRHSValue | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator));
 
 comparisonRHSValue:
 	variableOrExpression2 | allFigurativeConstant | alphanumericExpressionsRange;

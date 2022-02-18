@@ -19,3 +19,7 @@
 
 [[WhenCondition]] [8,11:WHEN]<WHEN> --> [17,19+:"a"]<AlphanumericLiteral>(",Y,Y){a}
 
+[[WhenCondition]] [8,11:WHEN]<WHEN> --> [17,21:SPACE]<SPACE>
+
+[[WhenCondition]] [8,11:WHEN]<WHEN> --> [22,22:)]<RightParenthesisSeparator>
+
