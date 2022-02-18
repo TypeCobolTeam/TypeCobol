@@ -84,7 +84,7 @@ namespace TypeCobol.Compiler
         public int FixedLineLength { get; private set; }
         public ColumnsLayout ColumnsLayout { get; private set; }
         public TypeCobolOptions CompilationOptions { get; set; }
-        public IAnalyzerProvider AnalyzerProvider { get; private set; }
+        public IAnalyzerProvider AnalyzerProvider { get; set; }
 
         // -- Files manipulation --
 

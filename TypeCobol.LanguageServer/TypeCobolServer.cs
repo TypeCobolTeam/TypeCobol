@@ -172,22 +172,9 @@ namespace TypeCobol.LanguageServer
                 var missingCopiesParam = new MissingCopiesParams();
                 missingCopiesParam.textDocument = textDocument;
 
-#if EUROINFO_RULES
-                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
-                //----------------------------------------------------------
-                // We need to review this mechanism with RTC.
-                // Because actually it produces bad results and it will
-                // be clarified with RTC specifications. (see TFS 117645)
-                //----------------------------------------------------------
-                //missingCopiesParam.Copies = lookup[false].ToList();
-                //missingCopiesParam.CpyCopies = lookup[true].ToList();
-                //----------------------------------------------------------
                 missingCopiesParam.Copies = copiesName;
                 missingCopiesParam.CpyCopies = new List<string>();
-#else
-                missingCopiesParam.Copies = copiesName;
-                missingCopiesParam.CpyCopies = new List<string>();
-#endif
+
                 this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
             }
         }
@@ -244,7 +231,7 @@ namespace TypeCobol.LanguageServer
         protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
-            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var context))
+            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(objUri, out var context, out var _))
             {
                 System.Diagnostics.Debug.Assert(context.FileCompiler != null);
                 //Refresh context
@@ -334,7 +321,7 @@ namespace TypeCobol.LanguageServer
         protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
-            if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocumentContext(docContext.Uri, out _))
+            if (docContext.Uri.IsFile && this.Workspace.WorkspaceProjectStore.DefaultWorkspaceProject.AddDocument(docContext))
             {
                 //Create a ILanguageServer instance for the document.
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, parameters.textDocument);
@@ -344,7 +331,7 @@ namespace TypeCobol.LanguageServer
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, text);
+                this.Workspace.OpenTextDocument(docContext, text, true);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
@@ -388,7 +375,7 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        this.Workspace.OpenTextDocument(docContext, contentChange.text);
+                        this.Workspace.OpenTextDocument(docContext, contentChange.text, false);
                         return;
                     }
                     catch (Exception e)
@@ -952,7 +939,7 @@ namespace TypeCobol.LanguageServer
         {
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
-            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var docContext))
+            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(objUri, out var docContext, out var _))
             {
                 System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 

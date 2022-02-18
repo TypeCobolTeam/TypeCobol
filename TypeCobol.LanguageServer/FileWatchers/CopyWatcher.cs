@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServer
             if (File.Exists(directory.FullName + Path.DirectorySeparatorChar + "~.lock"))
                 return;
 
-            _TypeCobolWorkSpace.CompilationProject.ClearImportedCompilationDocumentsCache();
+            _TypeCobolWorkSpace.WorkspaceProjectStore.DefaultWorkspaceProject.Project.ClearImportedCompilationDocumentsCache();
 
             lock (_TypeCobolWorkSpace.MessagesActionsQueue)
             {

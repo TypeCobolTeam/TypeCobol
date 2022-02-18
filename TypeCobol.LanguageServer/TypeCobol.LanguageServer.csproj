@@ -171,6 +171,8 @@
     <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolParams.cs" />
     <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolRequest.cs" />
     <Compile Include="Workspace.cs" />
+    <Compile Include="WorkspaceProject.cs" />
+    <Compile Include="WorkspaceProjectStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
