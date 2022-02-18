@@ -125,7 +125,7 @@ namespace TypeCobol.LanguageServer
         internal WorkspaceProject CreateWorkspaceProject(string projectKey)
         {
             System.Diagnostics.Debug.Assert(projectKey != null);
-            if (!_workspaceProjects.ContainsKey(projectKey))
+            if (_workspaceProjects.ContainsKey(projectKey))
             {
                 throw new DuplicatedProjectException(projectKey);
             }
