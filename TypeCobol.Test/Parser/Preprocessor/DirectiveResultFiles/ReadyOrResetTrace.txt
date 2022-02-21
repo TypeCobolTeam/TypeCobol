@@ -1,8 +1,8 @@
 -- Line 1 --
-*** DIRECTIVE READY_TRACE ([8,12:READY]<READY>[13,13: ]<SpaceSeparator>[14,18:TRACE]<TRACE>[19,19+:.]<PeriodSeparator>) ***
+*** DIRECTIVE READY_TRACE ([8,12:READY]<READY>[14,18:TRACE]<TRACE>[19,19+:.]<PeriodSeparator>) ***
 
 -- Line 2 --
-*** DIRECTIVE RESET_TRACE ([8,12:reset]<RESET>[13,13: ]<SpaceSeparator>[14,18:TRACE]<TRACE>[19,19+:.]<PeriodSeparator>) ***
+*** DIRECTIVE RESET_TRACE ([8,12:reset]<RESET>[14,18:TRACE]<TRACE>[19,19+:.]<PeriodSeparator>) ***
 
 -- Line 3 --
 
@@ -15,11 +15,11 @@ Line 4[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expectin
 Line 5[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting TRACE
 
 -- Line 6 --
-*** DIRECTIVE INVALID SYNTAX -> READY_TRACE ([8,12:READY]<READY>[13,13: ]<SpaceSeparator>[14,18:trace]<TRACE>) ***
+*** DIRECTIVE INVALID SYNTAX -> READY_TRACE ([8,12:READY]<READY>[14,18:trace]<TRACE>) ***
 Line 7[8,12] <27, Error, Syntax> - Syntax error : mismatched input 'reset' expecting '.'
 
 -- Line 7 --
-*** DIRECTIVE INVALID SYNTAX -> RESET_TRACE ([8,12:reset]<RESET>[13,13: ]<SpaceSeparator>[14,18:TRACE]<TRACE>) ***
+*** DIRECTIVE INVALID SYNTAX -> RESET_TRACE ([8,12:reset]<RESET>[14,18:TRACE]<TRACE>) ***
 Line 10[8,12] <27, Error, Syntax> - Syntax error : mismatched input 'ready' expecting '.'
 
 -- Line 8 --
@@ -30,7 +30,6 @@ Line 10[8,12] <27, Error, Syntax> - Syntax error : mismatched input 'ready' expe
 
 -- Line 10 --
 *** DIRECTIVE INVALID SYNTAX -> READY_TRACE ([8,12:ready]<READY>) ***
-[13,13: ]<SpaceSeparator>
 *** DIRECTIVE RESET_TRACE ([14,18:reset]<RESET>) ***
 Line 10[14,18] <27, Error, Syntax> - Syntax error : mismatched input 'reset' expecting TRACE
 

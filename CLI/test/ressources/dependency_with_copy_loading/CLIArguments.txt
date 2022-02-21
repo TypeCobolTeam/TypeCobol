@@ -1,1 +1,1 @@
-﻿-i input\MainPgm.rdz.tcbl -o output\MainPgm.rdz.tcbl -d output\error.txt --exectostep=SemanticCheck -e rdz --autoremarks --dependencies input\Dep.rdz.tcbl -c input\copy
+﻿-i input\MainPgm.rdz.tcbl -o output\MainPgm.rdz.tcbl -d output\error.txt --exectostep=SemanticCheck -e rdz --dependencies input\Dep.rdz.tcbl -c input\copy

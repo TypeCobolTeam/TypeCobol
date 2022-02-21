@@ -183,7 +183,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
                 var _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(this.Workspace.WorkspaceProjectStore.Configuration.Copies, this.Workspace.WorkspaceProjectStore.Configuration.Format, null); //Refresh Intrinsics
-                IEnumerable<string> dependenciesMissingCopies = Tools.APIHelpers.Helpers.GetDependenciesMissingCopies(this.Workspace.WorkspaceProjectStore.Configuration, _customSymbols, null);
+                IEnumerable<string> dependenciesMissingCopies = Tools.APIHelpers.Helpers.GetDependenciesMissingCopies(this.Workspace.WorkspaceProjectStore.Configuration, _customSymbols);
 
                 List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
                 copiesName.AddRange(dependenciesMissingCopies);

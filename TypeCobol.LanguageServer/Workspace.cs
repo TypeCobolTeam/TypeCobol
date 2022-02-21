@@ -599,7 +599,7 @@ namespace TypeCobol.LanguageServer
             Uri docUri = new Uri(docChangeConfParams.textDocument.uri);
             if (docUri.IsFile)
             {
-                // Check if the docUri is already associated to a WorkspaceJoject
+                // Check if the docUri is already associated to a WorkspaceProject
                 DocumentContext docContext = null;
                 WorkspaceProject workspaceProject = null;
                 if (!this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(docUri, out docContext, out workspaceProject))
@@ -632,7 +632,7 @@ namespace TypeCobol.LanguageServer
                     RefreshOpenedDocument(docContext, true);
                 }
                 else if (refreshAll)
-                {   // All document of thr WorkspaceProjet must be refreshed.
+                {   // All documents of the WorkspaceProjet must be refreshed.
                     newWorkspaceProject.DoRefreshOpenedFiles(this);
                 }
             }
@@ -749,7 +749,7 @@ namespace TypeCobol.LanguageServer
 
                 LoggingSystem.LogException(exception);
                 AnalyticsWrapper.Telemetry.SendMail(exception, this.WorkspaceProjectStore.Configuration.InputFiles,
-                    this.WorkspaceProjectStore.Configuration.CopyFolders, this.WorkspaceProjectStore.Configuration.CommandLine);
+                    this.WorkspaceProjectStore.Configuration.CopyFolders, Environment.CommandLine);
             }
 
         }

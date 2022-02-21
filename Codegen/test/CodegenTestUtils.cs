@@ -21,19 +21,21 @@ namespace TypeCobol.Codegen {
         /// Parse and generate using DocumentFormat.RDZReferenceFormat by default, because it's our only real target 
         /// for now and we don't have specifications for FreeFormat.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="autoRemarks"></param>
-        /// <param name="typeCobolVersion"></param>
-        /// <param name="copies"></param>
-        public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null
+        /// <param name="path">Path to file to parse</param>
+        /// <param name="enableRemarksParsingAndGeneration">Enable parsing of REMARKS directive and its auto generation</param>
+        /// <param name="typeCobolVersion">TypeCobol parser version to write in generated header</param>
+        /// <param name="copies">List of copy folders</param>
+        public static void ParseGenerateCompare(string path, bool enableRemarksParsingAndGeneration = false, string typeCobolVersion = null, IList<string> copies = null
 #if EUROINFO_RULES
             , string cpyCopyNamesMapFilePath = null
 #endif
         )
         {
-            var options = new TypeCobolOptions();
+            var options = new TypeCobolOptions() {
+                                                     OptimizeWhitespaceScanning = false,
+                                                     UseEuroInformationLegacyReplacingSyntax = enableRemarksParsingAndGeneration
+                                                 };
 #if EUROINFO_RULES
-            options.AutoRemarksEnable = autoRemarks;
             if (cpyCopyNamesMapFilePath != null) options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesMapFilePath);
 #endif
             ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, null);
@@ -87,16 +89,12 @@ namespace TypeCobol.Codegen {
         /// for now and we don't have specifications for FreeFormat.
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="autoRemarks"></param>
         /// <param name="typeCobolVersion"></param>
-        /// <param name="copies"></param>        
-        public static void ParseGenerateCompareWithLineMapping(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null)
+        /// <param name="copies"></param>
+        /// <remarks>CpyCopyNameMap option is not supported yet in this method</remarks>
+        public static void ParseGenerateCompareWithLineMapping(string path, string typeCobolVersion = null, IList<string> copies = null)
         {
-            var options = new TypeCobolOptions();
-#if EUROINFO_RULES
-            options.AutoRemarksEnable = autoRemarks;
-            //No CPY copy list support yet
-#endif
+            var options = new TypeCobolOptions() { OptimizeWhitespaceScanning = false };
             ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, new MemoryStream());
         }
 

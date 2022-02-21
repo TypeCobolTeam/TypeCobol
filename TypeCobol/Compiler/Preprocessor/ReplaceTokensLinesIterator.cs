@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
@@ -320,9 +318,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
                 {
                     string originalText = nextToken.Text;
-                    if (originalText.Contains(CopyReplacingDirective.PreSuffix))
+                    if (originalText.IndexOf(CopyReplacingDirective.PreSuffix, StringComparison.OrdinalIgnoreCase) > -1)
                     {
-                        string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix , CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix));
+                        string replacement = CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix);
+                        string replacedText = Regex.Replace(originalText, CopyReplacingDirective.PreSuffix, replacement, RegexOptions.IgnoreCase);
                         TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
                         Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
                             virtualTokensLine);
@@ -446,7 +445,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
                     var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
                     string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
-                    var generatedToken = GenerateReplacementToken(originalToken, replacedTokenText);
+                    var generatedToken = GenerateReplacementToken(originalToken, replacedTokenText, CompilerOptions);
                     return new ReplacedPartialCobolWord(generatedToken, partialWordReplaceOperation.PartialReplacementToken, originalToken);
 
                 // One comparison token => more than one replacement tokens
@@ -485,17 +484,17 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText)
+        internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, TypeCobolOptions scanOptions)
         {
             // Transfer the scanner context the of original token to the call below
             MultilineScanState scanState = originalToken.ScanStateSnapshot;
             System.Diagnostics.Debug.Assert(scanState != null);
 
-            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, out _);
+            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, out _);
             // TODO : find a way to report the error above ...
 
             if (originalToken.PreviousTokenType != null)
-                //In case orignial token was previously an other type of token reset it back to it's original type. 
+                //In case original token was previously an other type of token reset it back to it's original type. 
                 generatedToken.TokenType = originalToken.PreviousTokenType.Value;
 
             return generatedToken;
@@ -506,9 +505,9 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         /// <param name="creator">A function that create a Replaced Token from a replacement</param>
         /// <param name="firstOriginalToken">The first original token to be replaced</param>
-        /// <param name="replacedTokens">The array of replacement tokens.</param>
+        /// <param name="replacementTokens">The array of replacement tokens.</param>
         /// <returns>An array of new calculated replaced tokens</returns>
-        private static T[] RescanReplacedTokenTypes<T>(Func<Token, T> creator, Token firstOriginalToken, params Token[] replacementTokens)
+        private T[] RescanReplacedTokenTypes<T>(Func<Token, T> creator, Token firstOriginalToken, params Token[] replacementTokens)
             where T : Token
         {
             MultilineScanState scanState = firstOriginalToken?.ScanStateSnapshot;
@@ -529,7 +528,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 List<T> newReplacedTokens = new List<T>(replacementTokens.Length);
                 TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
                 tempTokensLine.InitializeScanState(scanState);
-                var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), true);
+                var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, CompilerOptions, true);
                 Token rescannedToken = null;
                 List<Token> tokens = new List<Token>((replacementTokens.Length / 2) + 1);
                 while ((rescannedToken = tempScanner.GetNextToken()) != null)

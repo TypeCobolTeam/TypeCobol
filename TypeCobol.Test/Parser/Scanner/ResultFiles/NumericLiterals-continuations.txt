@@ -26,7 +26,6 @@
 Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 9 --
-[1,1: ]<SpaceSeparator>
 =>continued:[2,3:-123]<IntegerLiteral>{-123}
 
 -- Line 10 --
@@ -70,7 +69,6 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 [6,7:23]<IntegerLiteral>{23}
 
 -- Line 21 --
-[1,1: ]<SpaceSeparator>
 =>continued:[2,6:-1.231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.231E+20}
 
 -- Line 22 --

@@ -1,11 +1,11 @@
 -- Line 1 --
-*** DIRECTIVE BASIS file1 ([1,5:BASIS]<BASIS>[6,6: ]<SpaceSeparator>[7,11:file1]<UserDefinedWord>) ***
+*** DIRECTIVE BASIS file1 ([1,5:BASIS]<BASIS>[7,11:file1]<UserDefinedWord>) ***
 
 -- Line 2 --
-*** DIRECTIVE BASIS file1 ([8,12:BASIS]<BASIS>[13,13: ]<SpaceSeparator>[14,20+:"file1"]<AlphanumericLiteral>(",Y,Y){file1}) ***
+*** DIRECTIVE BASIS file1 ([8,12:BASIS]<BASIS>[14,20+:"file1"]<AlphanumericLiteral>(",Y,Y){file1}) ***
 
 -- Line 3 --
-*** DIRECTIVE BASIS FILE2 ([4,8:basis]<BASIS>[9,9: ]<SpaceSeparator>[10,14:FILE2]<UserDefinedWord>) ***
+*** DIRECTIVE BASIS FILE2 ([4,8:basis]<BASIS>[10,14:FILE2]<UserDefinedWord>) ***
 
 -- Line 4 --
 *** DIRECTIVE BASIS file2 ([1,5:BASIS]<BASIS>) ***
@@ -17,52 +17,39 @@
 [7,6:]<SpaceSeparator>
 
 -- Line 7 --
-*** DIRECTIVE BASIS file1 ([1,5:Basis]<BASIS>[6,6: ]<SpaceSeparator>[7,13:'file1']<AlphanumericLiteral>(',Y,Y){file1}) ***
-[14,14: ]<SpaceSeparator>
+*** DIRECTIVE BASIS file1 ([1,5:Basis]<BASIS>[7,13:'file1']<AlphanumericLiteral>(',Y,Y){file1}) ***
 [15,19:file2]<UserDefinedWord>
 
 -- Line 8 --
 [8,11:TOTO]<UserDefinedWord>
-[12,12: ]<SpaceSeparator>
-*** DIRECTIVE BASIS file3 ([13,17:BASIS]<BASIS>[18,18: ]<SpaceSeparator>[19,23:file3]<UserDefinedWord>) ***
+*** DIRECTIVE BASIS file3 ([13,17:BASIS]<BASIS>[19,23:file3]<UserDefinedWord>) ***
 
 -- Line 9 --
-*** DIRECTIVE BASIS file4 ([8,12:BASIS]<BASIS>[13,13: ]<SpaceSeparator>[14,18:file4]<UserDefinedWord>) ***
-[19,19: ]<SpaceSeparator>
+*** DIRECTIVE BASIS file4 ([8,12:BASIS]<BASIS>[14,18:file4]<UserDefinedWord>) ***
 [20,23:TITI]<UserDefinedWord>
 
 -- Line 10 --
 [8,11:TOTO]<UserDefinedWord>
-[12,12: ]<SpaceSeparator>
-*** DIRECTIVE BASIS file5 ([13,17:BASIS]<BASIS>[18,18: ]<SpaceSeparator>[19,23:file5]<UserDefinedWord>) ***
-[24,24: ]<SpaceSeparator>
+*** DIRECTIVE BASIS file5 ([13,17:BASIS]<BASIS>[19,23:file5]<UserDefinedWord>) ***
 [25,28:TITI]<UserDefinedWord>
 
 -- Line 11 --
 [8,11:TOTO]<UserDefinedWord>
-[12,12: ]<SpaceSeparator>
-*** DIRECTIVE BASIS file6 ([13,17:BASIS]<BASIS>[18,18: ]<SpaceSeparator>[19,23:file6]<UserDefinedWord>) ***
-[24,24: ]<SpaceSeparator>
+*** DIRECTIVE BASIS file6 ([13,17:BASIS]<BASIS>[19,23:file6]<UserDefinedWord>) ***
 [25,28:TITI]<UserDefinedWord>
-[29,29: ]<SpaceSeparator>
-*** DIRECTIVE BASIS file7 ([30,34:BASIS]<BASIS>[35,35: ]<SpaceSeparator>[36,40:file7]<UserDefinedWord>) ***
-[41,41: ]<SpaceSeparator>
+*** DIRECTIVE BASIS file7 ([30,34:BASIS]<BASIS>[36,40:file7]<UserDefinedWord>) ***
 [42,45:TUTU]<UserDefinedWord>
 
 -- Line 12 --
 [8,11:TOTO]<UserDefinedWord>
-[12,12: ]<SpaceSeparator>
 *** DIRECTIVE BASIS file8 ([13,17:BASIS]<BASIS>) ***
 
 -- Line 13 --
 +++ CONTINUATION OF COMPILER_DIRECTIVE ([8,12:file8]<UserDefinedWord>) +++
-[13,13: ]<SpaceSeparator>
 [14,17:TITI]<UserDefinedWord>
-[18,18: ]<SpaceSeparator>
 *** DIRECTIVE BASIS file9 ([19,23:BASIS]<BASIS>) ***
 
 -- Line 14 --
 +++ CONTINUATION OF COMPILER_DIRECTIVE ([8,12:file9]<UserDefinedWord>) +++
-[13,13: ]<SpaceSeparator>
 [14,17:TUTU]<UserDefinedWord>
 

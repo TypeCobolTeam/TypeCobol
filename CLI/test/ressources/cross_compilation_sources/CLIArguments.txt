@@ -1,1 +1,1 @@
-﻿-i input\DVZFSCTX.tcbl -i input\DVZFSCTX2.tcbl -o output\gen1.tcbl -o output\gen2.tcbl -d output\error.txt -e rdz --autoremarks -f PublicSignatures
+﻿-i input\DVZFSCTX.tcbl -i input\DVZFSCTX2.tcbl -o output\gen1.tcbl -o output\gen2.tcbl -d output\error.txt -e rdz -f PublicSignatures

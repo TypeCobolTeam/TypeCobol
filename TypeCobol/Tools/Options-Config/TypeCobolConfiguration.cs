@@ -17,9 +17,7 @@ namespace TypeCobol.Tools.Options_Config
     /// </summary>
     public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
-        public string CommandLine { get; set; }
         public DocumentFormat Format;
-        public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
@@ -31,8 +29,8 @@ namespace TypeCobol.Tools.Options_Config
         public List<string> OutputFiles = new List<string>();
         public List<string> LineMapFiles = new List<string>();
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
-        public string ErrorFile = null;
-        public string LogFile = null;
+        public string ErrorFile;
+        public string LogFile;
 
         //Log file name
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
@@ -270,7 +268,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "o|output=","{PATH} to an output file where to generate code. This option can be specified more than once.", v => typeCobolConfig.OutputFiles.Add(v) },
                 { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => typeCobolConfig.ErrorFile = v },
                 { "s|skeletons=", "{PATH} to the skeletons file. DEPRECATED : generation using dynamic skeleton is no longer supported.", v => {}},
-                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol.", v => typeCobolConfig.AutoRemarks = true },
+                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol. DEPRECATED, this option is always activated.", v => {}},
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies.", v => typeCobolConfig.HaltOnMissingCopyFilePath = v },
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, QualityCheck/5, Generate/6).", v => typeCobolConfig.RawExecToStep = v},
                 { "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -298,7 +296,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
 #if EUROINFO_RULES
-                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v },
+                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
 #endif
             };
             return commonOptions;

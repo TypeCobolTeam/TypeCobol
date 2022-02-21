@@ -1,94 +1,62 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,4:toto]<UserDefinedWord>
-[5,5: ]<SpaceSeparator>
 [6,13:FUNCTION]<FUNCTION>
-[14,14: ]<SpaceSeparator>
 [15,18:toto]<UserDefinedWord>
-[19,19: ]<SpaceSeparator>
 [20,23:toto]<UserDefinedWord>
-[24,24: ]<SpaceSeparator>
 [25,32:FUNCTION]<FUNCTION>
 
 -- Line 2 --
 [1,4:toto]<UserDefinedWord>
-[5,5: ]<SpaceSeparator>
 [6,11:DELETE]<DELETE>
-[12,12: ]<SpaceSeparator>
 [13,16:toto]<UserDefinedWord>
-[17,17: ]<SpaceSeparator>
 [18,23:DELETE]<DELETE>
 
 -- Line 3 --
 [1,4:toto]<UserDefinedWord>
-[5,5: ]<SpaceSeparator>
 [6,11:DELETE]<DELETE_CD>
-[12,12: ]<SpaceSeparator>
 [13,19:0000001]<IntegerLiteral>{1}
-[20,20: ]<SpaceSeparator>
 [21,26:DELETE]<DELETE_CD>
 
 -- Line 4 --
 [1,8:00000001]<IntegerLiteral>{1}
-[9,9: ]<SpaceSeparator>
 [10,13:DATA]<DATA>
-[14,14: ]<SpaceSeparator>
 [15,20:RECORD]<RECORD>
-[21,21: ]<SpaceSeparator>
 [22,28:DISPLAY]<DISPLAY>
-[29,29: ]<SpaceSeparator>
 [30,33:DATA]<DATA>
 
 -- Line 5 --
 [1,8:DIVISION]<DIVISION>
-[9,9: ]<SpaceSeparator>
 [10,16:DISPLAY]<DISPLAY>
-[17,17: ]<SpaceSeparator>
 [18,26:PROCEDURE]<PROCEDURE>
-[27,27: ]<SpaceSeparator>
 [28,34:POINTER]<POINTER>
 
 -- Line 6 --
 [1,7:DISPLAY]<DISPLAY>
-[8,8: ]<SpaceSeparator>
 [9,17:PROCEDURE]<PROCEDURE>
 
 -- Line 7 --
 [1,8:DIVISION]<DIVISION>
-[9,9: ]<SpaceSeparator>
 [10,16:DISPLAY]<DISPLAY>
-[17,17: ]<SpaceSeparator>
 [18,22:ENTRY]<ENTRY>
 
 -- Line 8 --
 [1,2:TO]<TO>
-[3,3: ]<SpaceSeparator>
 [4,8:ENTRY]<ENTRY>
-[9,9: ]<SpaceSeparator>
 [10,14:ENTRY]<ENTRY>
-[15,15: ]<SpaceSeparator>
 [16,17:TO]<TO>
-[18,18: ]<SpaceSeparator>
 [19,22:TOTO]<UserDefinedWord>
-[23,23: ]<SpaceSeparator>
 [24,25:TO]<TO>
 
 -- Line 9 --
 [1,5:ENTRY]<ENTRY>
-[6,6: ]<SpaceSeparator>
 [7,10:SAME]<SAME>
-[11,11: ]<SpaceSeparator>
 [12,15:SORT]<SORT>
-[16,16: ]<SpaceSeparator>
 [17,20:SAME]<SAME>
-[21,21: ]<SpaceSeparator>
 [22,25:TOTO]<UserDefinedWord>
-[26,26: ]<SpaceSeparator>
 [27,30:SORT]<SORT>
-[31,31: ]<SpaceSeparator>
 [32,35:SAME]<SAME>
 
 -- Line 10 --
 [1,4:SORT]<SORT>
-[5,5: ]<SpaceSeparator>
 [6,9:TOTO]<UserDefinedWord>
 

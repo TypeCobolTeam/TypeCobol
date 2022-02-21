@@ -202,7 +202,6 @@ namespace CLI.Test
 #if EUROINFO_RULES
             CLITestHelper.Test("replacingSyntaxOption", ReturnCode.ParsingDiagnostics);
 #endif
-
         }
 
         /// <summary>
@@ -224,7 +223,11 @@ namespace CLI.Test
         [TestMethod]
         public void TestTypeDefCopy()
         {
+#if EUROINFO_RULES
+            CLITestHelper.Test("typedefCopy_EI", ReturnCode.Success);
+#else
             CLITestHelper.Test("typedefCopy", ReturnCode.Success);
+#endif
         }
 
         /// <summary>
@@ -601,7 +604,7 @@ namespace CLI.Test
             {
                 var targetFileContent = File.ReadAllLines(commonTargetFiles[i].FullName);
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
-                if (!targetFileContent.SequenceEqual(actualFileContent))
+                if (!HaveSameContent(targetFileContent, actualFileContent))
                 {
                     if (autoReplace && testPlaylistDirectory != null)
                     {
@@ -673,6 +676,29 @@ namespace CLI.Test
 
             return dirIdentical;
         }
+
+        private static bool HaveSameContent(string[] targetFileContent, string[] actualFileContent)
+        {
+            //Compare line count
+            bool sameLineCount = targetFileContent.Length == actualFileContent.Length;
+            if (!sameLineCount) return false;
+
+            //Compare each line
+            for (int i = 0; i < targetFileContent.Length; i++)
+            {
+                //Parser version hack: the version number is dynamic depending on CI/CD pipeline...
+                //So we use a placeholder for version number in expected result files and replace the value here.
+                string targetLine = targetFileContent[i].Replace("[[ParserVersion]]", TypeCobol.Parser.Version);
+                string actualLine = actualFileContent[i];
+                if (targetLine != actualLine)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Replacement logic for cli tests
         /// </summary>
