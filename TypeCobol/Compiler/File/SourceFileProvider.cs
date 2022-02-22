@@ -31,9 +31,9 @@ namespace TypeCobol.Compiler.File
         }
         
         /// <summary>
-        /// Clear all Cobol Libraries
+        /// Remove all Cobol Libraries
         /// </summary>
-        public void Clear()
+        public void RemoveAllLibraries()
         {
             CobolLibraries.Clear();
         }

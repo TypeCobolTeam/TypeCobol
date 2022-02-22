@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
@@ -20,27 +17,27 @@ namespace TypeCobol.LanguageServer
     /// A class that represents a Workspace project. 
     /// A Workspace Project is the association of a CompilationProject instance and a set of Document contexts.
     /// </summary>
-    class WorkspaceProject : IEnumerable<DocumentContext>
+    class WorkspaceProject
     {
         /// <summary>
         /// The Key associated to the instance of WorkspaceProject.
         /// Keys are not case sensitive.
         /// </summary>
-        internal string ProjectKey { get; }
+        public string ProjectKey { get; }
         /// <summary>
         /// Associated CompilationProject instance.
         /// </summary>
-        internal CompilationProject Project { get; private set; }
+        public CompilationProject Project { get; private set; }
         /// <summary>
         /// A Dictionary to associate an Uri of a Document to its Context.
         /// it represents all documents belonging to the associated project.
         /// </summary>
-        private ConcurrentDictionary<Uri, DocumentContext> _openedDocuments;
+        private readonly ConcurrentDictionary<Uri, DocumentContext> _openedDocuments;
         /// <summary>
         /// Constructor of a WorkspaceProject instance.
         /// </summary>
-        /// <param name="projectKey"></param>
-        /// <param name="project">The associated ComilationProject instance</param>
+        /// <param name="projectKey">The Project's key</param>
+        /// <param name="project">The associated CompilationProject instance</param>
         public WorkspaceProject(string projectKey, CompilationProject project)
         {
             this.ProjectKey = projectKey;
@@ -52,10 +49,10 @@ namespace TypeCobol.LanguageServer
         /// Check if the given document is in this WorkspaceProject instance.
         /// </summary>
         /// <param name="documentCtx">The DocumentContext instance to be checked</param>
-        /// <returns>return trus if yes, false if fno</returns>
+        /// <returns>return true if yes, false if no</returns>
         internal bool Contains(DocumentContext documentCtx)
         {
-            return (documentCtx != null || documentCtx.Uri == null)
+            return (documentCtx != null)
                 ? this._openedDocuments.TryGetValue(documentCtx.Uri, out var docCtx) && docCtx == documentCtx
                 : false;
         }
@@ -73,12 +70,12 @@ namespace TypeCobol.LanguageServer
             {
                 if (documentCtx.FileCompiler != null)
                 {
-                    // Asociate the document compilation projet's to this one.
+                    // Associate the document compilation projet's to this one.
                     documentCtx.FileCompiler.CompilationProject = this.Project;
                 }
                 return true;
             }
-            return false;//This docuument already exists
+            return false;//This document already exists
         }
 
         /// <summary>
@@ -100,15 +97,15 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Determines if the given list of copy folders is differentt from those of the current SourceFileProvider instance.
+        /// Determines if the given list of copy folders is different from those of the current SourceFileProvider instance.
         /// </summary>
         /// <param name="copyFolders">The list of copy folders</param>
         /// <returns>True if copyFolders represents a new set of copy folders, false otherwise.</returns>
-        private bool IsSourceProviderChanged(List<string> copyFolders)
+        private bool SourceProviderNeedsToBeUpdated(List<string> copyFolders)
         {
             if (copyFolders.Count != Project.SourceFileProvider.CobolLibraries.Count)
                 return true;// The size of the list are different
-            HashSet<string> srcFileProviderFolders = new HashSet<string>();
+            HashSet<string> srcFileProviderFolders = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var cblLib in Project.SourceFileProvider.CobolLibraries)
             {
                 if (cblLib is LocalDirectoryLibrary localDirLib)
@@ -118,8 +115,8 @@ namespace TypeCobol.LanguageServer
             }
             foreach (var cpyFolder in copyFolders)
             {
-                DirectoryInfo di = new DirectoryInfo(cpyFolder);
-                if (!srcFileProviderFolders.Contains(di.FullName))
+                string fullPath = Path.GetFullPath(cpyFolder);
+                if (!srcFileProviderFolders.Contains(fullPath))
                     return true;
             }
             return false;
@@ -133,16 +130,16 @@ namespace TypeCobol.LanguageServer
         /// <returns>true if the SourcefileProvider has changed, false otherwise.</returns>
         internal bool UpdateSourceFileProvider(List<string> copyFolders, TypeCobolConfiguration configuration)
         {
-            if (!IsSourceProviderChanged(copyFolders))
+            if (!SourceProviderNeedsToBeUpdated(copyFolders))
             {
                 return false;
             }
             // Now set new copy Directories
-            Project.SourceFileProvider.Clear();
+            Project.SourceFileProvider.RemoveAllLibraries();
             foreach (var copyFolder in copyFolders)
             {
                 Project.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
-                    new[] { ".cpy" }, configuration.Format.Encoding,
+                    Helpers.DEFAULT_COPY_EXTENSIONS, configuration.Format.Encoding,
                     configuration.Format.EndOfLineDelimiter, configuration.Format.FixedLineLength);
             }
             return true;
@@ -160,17 +157,17 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Try to get a DocumentContext associated to the given CompilationUnit
+        /// Try to get a DocumentContext associated to the given name
         /// </summary>
-        /// <param name="cunit">The CompilationUnit</param>
+        /// <param name="name">The Document's name</param>
         /// <param name="openedDocumentContext"></param>
         /// <returns>true if the DocumentContext has been found, false otherwise</returns>
-        internal bool TryGetOpenedDocumentContext(CompilationUnit cunit, out DocumentContext openedDocumentContext)
+        internal bool TryGetOpenedDocumentByName(string name, out DocumentContext openedDocumentContext)
         {
             openedDocumentContext = null;
-            if (cunit == null)
+            if (name == null)
                 return false;
-            Uri fileUri = this._openedDocuments.Keys.FirstOrDefault(k => k.LocalPath.Contains(cunit.TextSourceInfo.Name));
+            Uri fileUri = this._openedDocuments.Keys.FirstOrDefault(k => k.LocalPath.Contains(name));
             if (fileUri != null)
             {
                 openedDocumentContext = this._openedDocuments[fileUri];
@@ -199,7 +196,7 @@ namespace TypeCobol.LanguageServer
             foreach (var contextEntry in _openedDocuments)
             {
                 DocumentContext docContext = contextEntry.Value;
-                docContext.FileCompiler.CompilationProject = Project;
+                System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == Project);
                 workspace.RefreshOpenedDocument(docContext, false);
             }
         }
@@ -225,26 +222,20 @@ namespace TypeCobol.LanguageServer
         {
             Project = new CompilationProject(Project.Name, Project.RootDirectory, Helpers.DEFAULT_EXTENSIONS,
                 configuration.Format, compilationOptions, analyzerProvider);
-
+            // Change the target CompilationProject instance for each document.
+            foreach(var docCtx in _openedDocuments.Values)
+            {
+                docCtx.FileCompiler.CompilationProject = Project;
+            }
             if (configuration.CopyFolders != null && configuration.CopyFolders.Count > 0)
             {
                 foreach (var copyFolder in configuration.CopyFolders)
                 {
                     Project.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
-                        new[] { ".cpy" }, configuration.Format.Encoding,
+                        Helpers.DEFAULT_COPY_EXTENSIONS, configuration.Format.Encoding,
                         configuration.Format.EndOfLineDelimiter, configuration.Format.FixedLineLength);
                 }
             }
-        }
-
-        public IEnumerator<DocumentContext> GetEnumerator()
-        {
-            return this._openedDocuments.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
         }
     }
 }

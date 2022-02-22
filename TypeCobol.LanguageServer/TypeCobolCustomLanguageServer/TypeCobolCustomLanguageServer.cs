@@ -169,7 +169,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             DocumentConfigurationChangedParams docChangeConfParams = (DocumentConfigurationChangedParams)parameters;
             try
             {
-                this.Workspace.UpdateDocumentConfiguration(docChangeConfParams);
+                Uri docUri = new Uri(docChangeConfParams.textDocument.uri);
+                this.Workspace.UpdateDocumentConfiguration(docUri, docChangeConfParams.ProjectKey, docChangeConfParams.CopyFolders);
             }
             catch (Exception e)
             {
@@ -182,8 +183,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
-                var _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(this.Workspace.WorkspaceProjectStore.Configuration.Copies, this.Workspace.WorkspaceProjectStore.Configuration.Format, null); //Refresh Intrinsics
-                IEnumerable<string> dependenciesMissingCopies = Tools.APIHelpers.Helpers.GetDependenciesMissingCopies(this.Workspace.WorkspaceProjectStore.Configuration, _customSymbols);
+                var _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(this.Workspace.Configuration.Copies, this.Workspace.Configuration.Format, null); //Refresh Intrinsics
+                IEnumerable<string> dependenciesMissingCopies = Tools.APIHelpers.Helpers.GetDependenciesMissingCopies(this.Workspace.Configuration, _customSymbols);
 
                 List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
                 copiesName.AddRange(dependenciesMissingCopies);

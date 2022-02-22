@@ -83,7 +83,15 @@ namespace TypeCobol.Compiler
         public EndOfLineDelimiter EndOfLineDelimiter { get; private set; }
         public int FixedLineLength { get; private set; }
         public ColumnsLayout ColumnsLayout { get; private set; }
+        /// <summary>
+        /// Changing the value of this property work only if we discard current FileCompilers and recreate them. 
+        /// So it is a bit misleading.
+        /// </summary>
         public TypeCobolOptions CompilationOptions { get; set; }
+        /// <summary>
+        /// Changing the value of this property work only if we discard current FileCompilers and recreate them. 
+        /// So it is a bit misleading.
+        /// </summary>
         public IAnalyzerProvider AnalyzerProvider { get; set; }
 
         // -- Files manipulation --

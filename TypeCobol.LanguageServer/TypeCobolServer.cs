@@ -231,7 +231,7 @@ namespace TypeCobol.LanguageServer
         protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
-            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(objUri, out var context, out var _))
+            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(objUri, out var context, out _))
             {
                 System.Diagnostics.Debug.Assert(context.FileCompiler != null);
                 //Refresh context
@@ -331,7 +331,7 @@ namespace TypeCobol.LanguageServer
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, text, true);
+                this.Workspace.OpenTextDocument(docContext, text);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
@@ -375,7 +375,7 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        this.Workspace.OpenTextDocument(docContext, contentChange.text, false);
+                        this.Workspace.OpenTextDocument(docContext, contentChange.text);
                         return;
                     }
                     catch (Exception e)
