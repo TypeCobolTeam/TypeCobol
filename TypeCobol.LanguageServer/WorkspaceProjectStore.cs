@@ -56,7 +56,7 @@ namespace TypeCobol.LanguageServer
         internal WorkspaceProject DefaultWorkspaceProject { get; private set; }
 
         /// <summary>
-        /// Create a default initial workspace project
+        /// Create the default workspace project
         /// </summary>
         /// <param name="projectKey"></param>
         /// <param name="useAntlrProgramParsing"></param>

@@ -70,7 +70,7 @@ namespace TypeCobol.LanguageServer
             {
                 if (documentCtx.FileCompiler != null)
                 {
-                    // Associate the document compilation projet's to this one.
+                    // Associate the document compilation project's to this one.
                     documentCtx.FileCompiler.CompilationProject = this.Project;
                 }
                 return true;
