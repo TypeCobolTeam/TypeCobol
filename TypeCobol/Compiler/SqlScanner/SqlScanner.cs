@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Directives;
+﻿using System;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.SqlScanner
@@ -23,22 +24,23 @@ namespace TypeCobol.Compiler.SqlScanner
         private readonly TokensLine _tokensLine;
         private readonly TypeCobolOptions _compilerOptions;
 
-        public int CurrentIndex { get; private set; }
-
-        public SqlScanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
+        public SqlScanner(string line, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
             : base()
         {
             _line = line;
             _lastIndex = lastIndex;
             _tokensLine = tokensLine;
             _compilerOptions = compilerOptions;
-            CurrentIndex = startIndex;
         }
 
-        public override Token GetNextToken()
+        public Token GetNextToken(ref int currentIndex)
         {
-            int startIndex = CurrentIndex;
-            int currentIndex = CurrentIndex;
+            if (currentIndex < 0 || currentIndex > _lastIndex)
+            {
+                throw new ArgumentOutOfRangeException(nameof(currentIndex), "Start index must be positive and cannot exceed last index");
+            }
+
+            int startIndex = currentIndex;
 
             if (IsSqlKeywordPart(_line[currentIndex]))
             {
@@ -52,7 +54,6 @@ namespace TypeCobol.Compiler.SqlScanner
                 //TODO we need to distinguish between Cobol-only words and SQL words !
 
                 //So far this scanner only recognize 'COMMIT' keyword
-                CurrentIndex = currentIndex;
                 if (tokenType == TokenType.COMMIT)
                 {
                     return new Token(TokenType.COMMIT, startIndex, currentIndex - 1, _tokensLine);
@@ -64,7 +65,6 @@ namespace TypeCobol.Compiler.SqlScanner
 
             //Consume all sql-keyword incompatible chars
             for (; currentIndex <= _lastIndex && !IsSqlKeywordPart(_line[currentIndex]); currentIndex++) { }
-            CurrentIndex = currentIndex;
             return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, _tokensLine);
         }
     }

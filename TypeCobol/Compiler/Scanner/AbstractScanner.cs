@@ -9,7 +9,5 @@
         {
 
         }
-
-        public abstract Token GetNextToken();
     }
 }

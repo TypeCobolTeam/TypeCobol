@@ -721,7 +721,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 if (_sqlScanner == null)
                 {
-                    _sqlScanner = new SqlScanner.SqlScanner(line, currentIndex, lastIndex, tokensLine, compilerOptions);
+                    _sqlScanner = new SqlScanner.SqlScanner(line, lastIndex, tokensLine, compilerOptions);
                 }
 
                 return _sqlScanner;
@@ -764,10 +764,10 @@ namespace TypeCobol.Compiler.Scanner
             this.multiStringConcatBitPosition = multiStringConcatBitPosition;
         }
 
-        public override Token GetNextToken()
+        public Token GetNextToken()
         {
             // Cannot read past end of line
-            if(currentIndex > lastIndex)
+            if (currentIndex > lastIndex)
             {
                 return null;
             }
@@ -2216,8 +2216,7 @@ namespace TypeCobol.Compiler.Scanner
             if (tokensLine.ScanState.InsideSql)
             {
                 // Use dedicated SQL scanner
-                var sqlToken = SqlScanner.GetNextToken();
-                currentIndex = SqlScanner.CurrentIndex;
+                var sqlToken = SqlScanner.GetNextToken(ref currentIndex);
                 return sqlToken;
             }
 
