@@ -231,7 +231,7 @@ namespace TypeCobol.LanguageServer
         protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
-            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(objUri, out var context, out _))
+            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(objUri, out var context, out _))
             {
                 System.Diagnostics.Debug.Assert(context.FileCompiler != null);
                 //Refresh context
@@ -507,10 +507,11 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
-                this.Workspace.CloseSourceFile(objUri);
-
-                // DEBUG information
-                RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
+                if (this.Workspace.TryCloseSourceFile(objUri))
+                {
+                    // DEBUG information
+                    RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
+                }
             }
         }
 
@@ -939,7 +940,7 @@ namespace TypeCobol.LanguageServer
         {
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
-            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(objUri, out var docContext, out var _))
+            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(objUri, out var docContext, out var _))
             {
                 System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 

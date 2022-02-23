@@ -185,9 +185,9 @@ namespace TypeCobol.LanguageServer
         /// <returns></returns>
         private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
-            this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(docContext.Uri, out var curDocContext, out var workspaceProject);
+            this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(docContext.Uri, out var curDocContext, out var workspaceProject);
             System.Diagnostics.Debug.Assert(docContext == curDocContext);
-            CompilationProject compilationProjet = workspaceProject.Project;
+            CompilationProject compilationProject = workspaceProject.Project;
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding,
                 Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
@@ -219,18 +219,17 @@ namespace TypeCobol.LanguageServer
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
 
-            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProjet.SourceFileProvider,
-                compilationProjet, compilationProjet.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
-                compilationProjet);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider,
+                compilationProject, compilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
+                compilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProjet.SourceFileProvider, compilationProjet, compilationProjet.CompilationOptions, _customSymbols, compilationProjet);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, _customSymbols, compilationProject);
 #endif
 
-            if (workspaceProject.RemoveDocument(docContext))
-            {
-                CloseSourceFile(docContext.Uri); //Close and remove the previous opened file.
+            if (TryCloseSourceFile(docContext.Uri))
+            { // Previous Opened file is Closed and removed, so re-add it.
+                workspaceProject.AddDocument(docContext);
             }
-            workspaceProject.AddDocument(docContext);
 
             //Set Any Language Server Connection Options.
             docContext.FileCompiler = fileCompiler;
@@ -263,7 +262,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
         {
-            if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(fileUri, out var contextToUpdate, out _))
+            if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(fileUri, out var contextToUpdate, out _))
             {
                 FileCompiler fileCompilerToUpdate = contextToUpdate.FileCompiler;
                 _semanticUpdaterTimer?.Stop();
@@ -381,7 +380,7 @@ namespace TypeCobol.LanguageServer
 
             void Refresh()
             {
-                if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(fileUri, out var docContext, out _))
+                if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(fileUri, out var docContext, out _))
                 {
                     RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck);
                 }
@@ -470,10 +469,12 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Stop continuous background compilation after a file has been closed
         /// </summary>
-        public void CloseSourceFile(Uri fileUri)
+        /// <param name="fileUri">The Uri of the document to be closed</param>
+        /// <returns>True if the document has been removed un closed, false</returns>
+        public bool TryCloseSourceFile(Uri fileUri)
         {
             //Remove from opened documents dictionary
-            if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(fileUri, out DocumentContext contextToClose, out WorkspaceProject workspaceProject))
+            if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(fileUri, out DocumentContext contextToClose, out WorkspaceProject workspaceProject))
             {
                 FileCompiler fileCompilerToClose = contextToClose.FileCompiler;
                 workspaceProject.RemoveDocument(contextToClose);
@@ -485,7 +486,9 @@ namespace TypeCobol.LanguageServer
                         _fileCompilerWaitingForNodePhase.Remove(fileCompilerToClose);
                     }
                 }
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -608,7 +611,7 @@ namespace TypeCobol.LanguageServer
         {
             if (_CopyWatcher == null)
             {// No Copy Watcher ==> Refresh ourself opened file.
-                if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProjet(fileUri, out var docContext, out var workspaceProjet))
+                if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(fileUri, out var docContext, out var workspaceProjet))
                 {
                     workspaceProjet.DoRefreshOpenedFiles(this);
                 }

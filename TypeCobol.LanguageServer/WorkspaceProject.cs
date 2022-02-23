@@ -101,7 +101,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="copyFolders">The list of copy folders</param>
         /// <returns>True if copyFolders represents a new set of copy folders, false otherwise.</returns>
-        private bool SourceProviderNeedsToBeUpdated(List<string> copyFolders)
+        private bool SourceFileProviderNeedsToBeUpdated(List<string> copyFolders)
         {
             if (copyFolders.Count != Project.SourceFileProvider.CobolLibraries.Count)
                 return true;// The size of the list are different
@@ -130,7 +130,7 @@ namespace TypeCobol.LanguageServer
         /// <returns>true if the SourcefileProvider has changed, false otherwise.</returns>
         internal bool UpdateSourceFileProvider(List<string> copyFolders, TypeCobolConfiguration configuration)
         {
-            if (!SourceProviderNeedsToBeUpdated(copyFolders))
+            if (!SourceFileProviderNeedsToBeUpdated(copyFolders))
             {
                 return false;
             }
@@ -167,11 +167,13 @@ namespace TypeCobol.LanguageServer
             openedDocumentContext = null;
             if (name == null)
                 return false;
-            Uri fileUri = this._openedDocuments.Keys.FirstOrDefault(k => k.LocalPath.Contains(name));
-            if (fileUri != null)
+            foreach (var openedDoc in _openedDocuments)
             {
-                openedDocumentContext = this._openedDocuments[fileUri];
-                return true;
+                if (openedDoc.Key.LocalPath.Contains(name))
+                {
+                    openedDocumentContext = openedDoc.Value;
+                    return true;
+                }
             }
             return false;
         }
@@ -204,7 +206,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Update for this WorkspaceProject instance its compilation options and analyzer provider instance.
         /// </summary>
-        /// <param name="compilationOptions">Tne new Compilation Options</param>
+        /// <param name="compilationOptions">The new Compilation Options</param>
         /// <param name="analyzerProvider">The new Analyzer Provider instance</param>
         internal void UpdateProjectOptionsAndAnalyzerProvider(TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
         {

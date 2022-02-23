@@ -19,10 +19,10 @@ namespace TypeCobol.LanguageServer
     /// A class representing a concept to store all WorkspaceProject instances known by the Workspace.
     /// Internally it is a concurrent dictionary from WorkspaceProject Keys to WorkspaceProject instances.
     /// </summary>
-    class WorkspaceProjectStore : IEnumerable<WorkspaceProject>
+    class WorkspaceProjectStore
     {
         /// <summary>
-        /// Exception thrown when project key are duplicated.
+        /// Exception thrown when project keys are duplicated.
         /// </summary>
         internal class DuplicatedProjectException : Exception
         {
@@ -41,7 +41,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="rootDirectoryFullName">The root directory of the workspace session</param>
         /// <param name="defaultProjectKey">The key of the default workspace project</param>
-        /// <param name="useAntlrProgramParsing">Using ANTLR parsing or note</param>
+        /// <param name="useAntlrProgramParsing">Using ANTLR parsing or not</param>
         /// <param name="useEuroInformationLegacyReplacingSyntax">Use E-I options or not</param>
         internal WorkspaceProjectStore(string rootDirectoryFullName, string defaultProjectKey, bool useAntlrProgramParsing, bool useEuroInformationLegacyReplacingSyntax)
         {
@@ -87,7 +87,7 @@ namespace TypeCobol.LanguageServer
 
         /// <summary>
         /// Find a WorkspaceProject instance by its key.
-        /// Il the key is null the Default Workspace Project is returned.
+        /// If the key is null the Default Workspace Project is returned.
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
         /// <returns>The WorkspaceProject instance if one exists, null otherwise</returns>
@@ -95,8 +95,7 @@ namespace TypeCobol.LanguageServer
         {
             if (projectKey == null)
                 return DefaultWorkspaceProject;
-            WorkspaceProject project = null;
-            if (_workspaceProjects.TryGetValue(projectKey, out project))
+            if (_workspaceProjects.TryGetValue(projectKey, out WorkspaceProject project))
                 return project;
             return null;
         }
@@ -121,7 +120,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">The Project's key</param>
         /// <param name="configuration">The configuration to be applied</param>
         /// <returns>The WorkspaceProject instance created</returns>
-        /// <exception cref="DuplicatedProjectException">Sent if the given Project's key is already associted to a project.</exception>
+        /// <exception cref="DuplicatedProjectException">Sent if the given Project's key is already associated to a project.</exception>
         internal WorkspaceProject CreateWorkspaceProject(string projectKey, TypeCobolConfiguration configuration)
         {
             System.Diagnostics.Debug.Assert(projectKey != null);
@@ -139,17 +138,17 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Try to get the DocumentContext and the corresponding WokspaceProject instance associated to the given Uri
+        /// Try to get the DocumentContext and the corresponding WorkspaceProject instance associated to the given Uri
         /// </summary>
         /// <param name="fileUri">The File Uri</param>
         /// <param name="openedDocumentContext"></param>
         /// <param name="workspaceProject"></param>
-        /// <returns>true if the DocumentContext and the corresponding WokspaceProject instance have been found, false otherwise</returns>
-        internal bool TryGetOpenedWorkspaceDocumentProjet(Uri fileUri, out DocumentContext openedDocumentContext, out WorkspaceProject workspaceProject)
+        /// <returns>true if the DocumentContext and the corresponding WorkspaceProject instance have been found, false otherwise</returns>
+        internal bool TryGetOpenedWorkspaceDocumentProject(Uri fileUri, out DocumentContext openedDocumentContext, out WorkspaceProject workspaceProject)
         {
             openedDocumentContext = null;
             workspaceProject = null;
-            foreach (var wksProject in this)
+            foreach (var wksProject in _workspaceProjects.Values)
             {
                 if (wksProject.TryGetOpenedDocumentContext(fileUri, out openedDocumentContext))
                 {
@@ -161,16 +160,16 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Try to get the DocumentContext and the corresponding WokspaceProject instance by name
+        /// Try to get the DocumentContext and the corresponding WorkspaceProject instance by name
         /// </summary>
         /// <param name="name">The document's name</param>
         /// <param name="openedDocumentContext"></param>
-        /// <returns>true if the DocumentContext and the corresponding WokspaceProject instance have been found, false otherwise</returns>
+        /// <returns>true if the DocumentContext and the corresponding WorkspaceProject instance have been found, false otherwise</returns>
         internal bool TryGetOpenedDocumentByName(string name, out DocumentContext openedDocumentContext, out WorkspaceProject workspaceProject)
         {
             openedDocumentContext = null;
             workspaceProject = null;
-            foreach (var wksProject in this)
+            foreach (var wksProject in _workspaceProjects.Values)
             {
                 if (wksProject.TryGetOpenedDocumentByName(name, out openedDocumentContext))
                 {
@@ -188,7 +187,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="analyzerProvider">new Analyzer Provider instance</param>
         internal void UpdateProjectOptionsAndAnalyzerProvider(TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
         {
-            foreach (var wksProject in this)
+            foreach (var wksProject in _workspaceProjects.Values)
             {
                 wksProject.UpdateProjectOptionsAndAnalyzerProvider(compilationOptions, analyzerProvider);
             }
@@ -200,7 +199,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="workspace">The main Workspace instance</param>
         internal void DoRefreshOpenedFiles(Workspace workspace)
         {
-            foreach (var wksProject in this)
+            foreach (var wksProject in _workspaceProjects.Values)
             {
                 wksProject.DoRefreshOpenedFiles(workspace);
             }
@@ -212,7 +211,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="docContext">The Document Context instance to move</param>
         /// <param name="fromWorkspaceProject">The Source WorkspaceProject instance</param>
         /// <param name="toWorkspaceProject">The Target WorkspaceProject instance.</param>
-        internal void MoveWorkspaceProjectDocument(DocumentContext docContext, WorkspaceProject fromWorkspaceProject, WorkspaceProject toWorkspaceProject)
+        private void MoveWorkspaceProjectDocument(DocumentContext docContext, WorkspaceProject fromWorkspaceProject, WorkspaceProject toWorkspaceProject)
         {
             System.Diagnostics.Debug.Assert(docContext != null && fromWorkspaceProject != null && toWorkspaceProject != null);
             System.Diagnostics.Debug.Assert(fromWorkspaceProject.Contains(docContext));
@@ -223,18 +222,18 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Associate a document to a Workspace Project
+        /// Associate a document to a Workspace Project.
+        /// It creates a project if the one indicated by the key does not exist and it updates the source file provider with the copy folder.
+        /// It also refreshes all impacted documents if source file provider changes.
         /// </summary>
-        /// <param name="docUri">The Uri of the document to be associated to workspace projet</param>
+        /// <param name="docUri">The Uri of the document to be associated to workspace project</param>
         /// <param name="projectKey">The project key to which the document shall be associated</param>
         /// <param name="copyFolders">List of Copy Folders to be associated with the underlying CompilationProject instance.</param>
-        /// <param name="workspace">The Workspace project instance</param>
+        /// <param name="workspace">The Workspace instance</param>
         internal void AssociateDocumentToProject(Uri docUri, string projectKey, List<string> copyFolders, Workspace workspace)
         {
             // Check if the docUri is already associated to a WorkspaceProject
-            DocumentContext docContext = null;
-            WorkspaceProject workspaceProject = null;
-            if (!TryGetOpenedWorkspaceDocumentProjet(docUri, out docContext, out workspaceProject))
+            if (!TryGetOpenedWorkspaceDocumentProject(docUri, out var docContext, out var workspaceProject))
             {   // hum... It is a new file without corresponding DidOpenDocument notification sent
                 // Ignore such file.
                 return;
@@ -264,23 +263,9 @@ namespace TypeCobol.LanguageServer
                 workspace.RefreshOpenedDocument(docContext, true);
             }
             else if (refreshAll)
-            {   // All documents of the WokspaceProject must be refreshed.
+            {   // All documents of the WorkspaceProject must be refreshed.
                 newWorkspaceProject.DoRefreshOpenedFiles(workspace);
             }
-        }
-
-        /// <summary>
-        /// Get an Enumerator instance on all WorkspaceProject instances.
-        /// </summary>
-        /// <returns>The enumerator instance</returns>
-        public IEnumerator<WorkspaceProject> GetEnumerator()
-        {
-            return _workspaceProjects.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
         }
     }
 }
