@@ -197,11 +197,11 @@ namespace TypeCobol.LanguageServer
         /// Refresh all documents in all WorkspaceProject instances
         /// </summary>
         /// <param name="workspace">The main Workspace instance</param>
-        internal void DoRefreshOpenedFiles(Workspace workspace)
+        internal void RefreshOpenedFiles(Workspace workspace)
         {
             foreach (var wksProject in _workspaceProjects.Values)
             {
-                wksProject.DoRefreshOpenedFiles(workspace);
+                wksProject.RefreshOpenedFiles(workspace);
             }
         }
 
@@ -264,7 +264,7 @@ namespace TypeCobol.LanguageServer
             }
             else if (refreshAll)
             {   // All documents of the WorkspaceProject must be refreshed.
-                newWorkspaceProject.DoRefreshOpenedFiles(workspace);
+                newWorkspaceProject.RefreshOpenedFiles(workspace);
             }
         }
     }

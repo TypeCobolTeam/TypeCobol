@@ -146,7 +146,7 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Try to get DocumentContext in this Workspace Project, it the given Uri instance exists
+        /// Try to get DocumentContext in this Workspace Project, if the given Uri instance exists
         /// </summary>
         /// <param name="fileUri">The Uri instance to get the DocumentContext instance</param>
         /// <param name="openedDocumentContext">[out] the DocumentContext instance if the Uri exists</param>
@@ -192,7 +192,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all documents of this WorkspaceProject instance
         /// </summary>
-        internal void DoRefreshOpenedFiles(Workspace workspace)
+        internal void RefreshOpenedFiles(Workspace workspace)
         {
             this.Project.ClearImportedCompilationDocumentsCache();
             foreach (var contextEntry in _openedDocuments)

@@ -549,7 +549,8 @@ namespace TypeCobol.LanguageServer
                 analyzerProviderWrapper.AddProvider(a);
             }
 
-            // DidChangeConfiguration notification is always for the Default Workspace Project
+            // DidChangeConfiguration notification is always for the Default Workspace Project.
+            // The is for compatibility with for instance TypeCobol plugin and fallback.
             this.WorkspaceProjectStore.DefaultWorkspaceProject.ReplaceCompilationProject(
                 Configuration, typeCobolOptions, analyzerProviderWrapper);
 
@@ -613,7 +614,7 @@ namespace TypeCobol.LanguageServer
             {// No Copy Watcher ==> Refresh ourself opened file.
                 if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(fileUri, out var docContext, out var workspaceProjet))
                 {
-                    workspaceProjet.DoRefreshOpenedFiles(this);
+                    workspaceProjet.RefreshOpenedFiles(this);
                 }
             }
         }
@@ -624,7 +625,7 @@ namespace TypeCobol.LanguageServer
         private void RefreshOpenedFiles()
         {
             RefreshCustomSymbols();
-            this.WorkspaceProjectStore.DoRefreshOpenedFiles(this);
+            this.WorkspaceProjectStore.RefreshOpenedFiles(this);
         }
 
         /// <summary>
