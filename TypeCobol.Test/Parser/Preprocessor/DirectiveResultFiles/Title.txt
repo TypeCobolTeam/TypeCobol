@@ -36,12 +36,12 @@
 
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>[13,13+:.]<PeriodSeparator>) ***
-Line 13[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting  expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, dbcs literal}
+Line 13[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting  expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal}
 
 -- Line 14 --
 *** DIRECTIVE TITLE "Unfinished title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,30:"Unfinished title]<AlphanumericLiteral>(",Y,N){Unfinished title}) ***
 
 -- Line 15 --
 *** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>) ***
-Line 15[8,12] <27, Error, Syntax> - Syntax error : missing  {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, dbcs literal} at 'TITLE'
+Line 15[8,12] <27, Error, Syntax> - Syntax error : missing  {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal} at 'TITLE'
 

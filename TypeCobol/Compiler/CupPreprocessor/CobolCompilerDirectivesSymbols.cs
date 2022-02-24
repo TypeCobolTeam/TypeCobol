@@ -112,6 +112,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int ANY = 222;
   public const int MultiplyOperator = 20;
   public const int THAN = 421;
+  public const int SQL_COMMIT = 532;
   public const int PeriodSeparator = 11;
   public const int COMPUTE = 71;
   public const int CBL = 48;
@@ -437,7 +438,6 @@ public class CobolCompilerDirectivesSymbols {
   public const int IS = 318;
   public const int END_RECEIVE = 464;
   public const int END_SEARCH = 97;
-  public const int COMMIT = 532;
   public const int PURGE = 483;
   public const int RESET = 57;
   public const int SEQUENTIAL = 403;

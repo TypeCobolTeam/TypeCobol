@@ -2116,7 +2116,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 119: // codeElementStartingKeyword ::= COMMIT 
+          case 119: // codeElementStartingKeyword ::= SQL_COMMIT 
             {
               object RESULT = null;
 

@@ -8254,7 +8254,7 @@ execStatementText: ExecStatementText;
 execStatementEnd: END_EXEC;
 
 //FOR SQL
-commitStatement: COMMIT;
+commitStatement: SQL_COMMIT;
 
 // ------------------------------
 // End of DB2 coprocessor

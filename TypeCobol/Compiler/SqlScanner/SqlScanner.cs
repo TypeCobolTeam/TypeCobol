@@ -49,14 +49,12 @@ namespace TypeCobol.Compiler.SqlScanner
                 string tokenText = _line.Substring(startIndex, currentIndex - startIndex);
 
                 //Try to match keyword text
-                var tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, true, CobolLanguageLevel.Cobol85);
-
-                //TODO we need to distinguish between Cobol-only words and SQL words !
+                var tokenType = TokenUtils.GetSqlKeywordTokenTypeFromTokenString(tokenText);
 
                 //So far this scanner only recognize 'COMMIT' keyword
-                if (tokenType == TokenType.COMMIT)
+                if (tokenType == TokenType.SQL_COMMIT)
                 {
-                    return new Token(TokenType.COMMIT, startIndex, currentIndex - 1, _tokensLine);
+                    return new Token(TokenType.SQL_COMMIT, startIndex, currentIndex - 1, _tokensLine);
                 }
 
                 //Unrecognized keyword (for now) return as ExecStatementText

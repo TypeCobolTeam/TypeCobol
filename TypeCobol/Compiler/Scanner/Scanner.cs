@@ -2258,7 +2258,7 @@ namespace TypeCobol.Compiler.Scanner
             // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
             // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR |
             // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
-            if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.COBOL_INTRINSIC_FUNCTIONS.IsMatch(tokenText))
+            if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.CobolIntrinsicFunctions.IsMatch(tokenText))
             {
                 tokenType = TokenType.IntrinsicFunctionName;
             }
@@ -2286,7 +2286,7 @@ namespace TypeCobol.Compiler.Scanner
                 //   as a system-name.
 
                 // Try to match keyword text
-                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, false, targetLanguageLevel);
+                tokenType = TokenUtils.GetCobolKeywordTokenTypeFromTokenString(tokenText, targetLanguageLevel);
 
                 // Special cases of user defined words : 
                 // - symbolic characters

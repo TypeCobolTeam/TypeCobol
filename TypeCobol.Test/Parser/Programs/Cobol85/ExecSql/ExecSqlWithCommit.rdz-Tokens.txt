@@ -40,7 +40,7 @@ _  EXEC SQL DELETE FROM CUSTOMERS	   _
 ---------------------------------
 _  COMMIT_
     _  _    [8,9:  ]<ExecStatementText>
-    _COMMIT_    [10,15:COMMIT]<COMMIT>
+    _COMMIT_    [10,15:COMMIT]<SQL_COMMIT>
 ---------------------------------
 _  END-EXEC._
     _  _    [8,9:  ]<SpaceSeparator>
@@ -59,7 +59,7 @@ _    EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT_
     _ _    [16,16: ]<SpaceSeparator>
     _SQL_    [17,19:SQL]<ExecTranslatorName>
     _ _    [20,20: ]<SpaceSeparator>
-    _COMMIT_    [21,26:COMMIT]<COMMIT>
+    _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
     _ _    [27,27: ]<SpaceSeparator>
     _END-EXEC_    [28,35:END-EXEC]<END_EXEC>
     _ _    [36,36: ]<SpaceSeparator>
@@ -71,7 +71,7 @@ _    EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT_
     _ _    [57,57: ]<SpaceSeparator>
     _SQL_    [58,60:SQL]<ExecTranslatorName>
     _ _    [61,61: ]<SpaceSeparator>
-    _COMMIT_    [62,67:COMMIT]<COMMIT>
+    _COMMIT_    [62,67:COMMIT]<SQL_COMMIT>
 ---------------------------------
 _    END-EXEC_
     _    _    [8,11:    ]<SpaceSeparator>

@@ -587,7 +587,7 @@ tokens
 	MULTILINES_COMMENTS_STOP,
 
 	//Sql
-	COMMIT
+	SQL_COMMIT
 }
 
 
