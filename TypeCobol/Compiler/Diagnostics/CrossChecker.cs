@@ -359,7 +359,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (whenSearch.ChildrenCount == 0)
             {
                 var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
-                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause",messageCode);
+                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause", messageCode);
             }
 
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
