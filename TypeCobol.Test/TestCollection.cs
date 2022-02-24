@@ -246,7 +246,7 @@ namespace TypeCobol.Test {
 
             var folderTester = new FolderTester(tempRoot, tempRoot, tempRoot, extensions);
 
-            folderTester.Test(false, false, true);
+            folderTester.Test();
 
             nbOfTests += folderTester.GetTestCount();
             Console.Write("\n");
