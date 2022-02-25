@@ -1,0 +1,27 @@
+﻿--- Nodes ---
+?
+  MyPGM
+    data-division
+      working-storage
+        var1
+          var1-A
+    procedure-division
+      sentence-0
+        [[EvaluateStatement]] [12,19:EVALUATE]<EVALUATE> --> [21,24:TRUE]<TRUE>
+
+          ?
+            [[WhenCondition]] [12,15:WHEN]<WHEN> --> [17,22:var1-A]<UserDefinedWord>
+
+          ?
+            [[DisplayStatement]] [14,20:DISPLAY]<DISPLAY> --> [22,24+:'A']<AlphanumericLiteral>(',Y,Y){A}
+- variables = 'A'
+
+          [[WhenOtherCondition]] [12,17:When]<WHEN> --> [12,17:Other]<OTHER>
+
+            [[ContinueStatement]] [12,17:Continue]<CONTINUE> --> [12,17:Continue]<CONTINUE>
+
+          end
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

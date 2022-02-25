@@ -185,15 +185,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 {
                     if (followingComparisonTokens == null && operandTokens.Count == 1)
                     {
-                        replacementToken = (Token)operandTokens[0];
+                        replacementToken = operandTokens[0];
                     }
                     else
                     {
-                        replacementTokens = new Token[operandTokens.Count];
-                        for (int i = 0; i < operandTokens.Count; i++)
-                        {
-                            replacementTokens[i] = (Token)operandTokens[i];
-                        }
+                        replacementTokens = operandTokens.Where(t => t.TokenFamily != TokenFamily.Comments).ToArray();
                     }
                 }
 
