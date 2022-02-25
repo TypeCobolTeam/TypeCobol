@@ -1,5 +1,4 @@
-﻿using System;
-using TypeCobol.Compiler.Directives;
+﻿using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.SqlScanner
@@ -14,7 +13,7 @@ namespace TypeCobol.Compiler.SqlScanner
         /// </summary>
         /// <param name="c">The character to test</param>
         /// <returns>True if yes, no otherwise</returns>
-        public static bool IsSqlKeywordPart(char c)
+        private static bool IsSqlKeywordPart(char c)
         {
             return c == '-' || char.IsLetter(c);
         }
@@ -24,8 +23,8 @@ namespace TypeCobol.Compiler.SqlScanner
         private readonly TokensLine _tokensLine;
         private readonly TypeCobolOptions _compilerOptions;
 
-        public SqlScanner(string line, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
-            : base()
+        public SqlScanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
+            : base(startIndex)
         {
             _line = line;
             _lastIndex = lastIndex;
@@ -33,14 +32,16 @@ namespace TypeCobol.Compiler.SqlScanner
             _compilerOptions = compilerOptions;
         }
 
-        public Token GetNextToken(ref int currentIndex)
+        public override Token GetTokenStartingFrom(int startIndex)
         {
-            if (currentIndex < 0 || currentIndex > _lastIndex)
+            // Cannot read past end of line or before its beginning
+            if (startIndex < 0 || startIndex > _lastIndex)
             {
-                throw new ArgumentOutOfRangeException(nameof(currentIndex), "Start index must be positive and cannot exceed last index");
+                return null;
             }
 
-            int startIndex = currentIndex;
+            // Start scanning at the given index
+            currentIndex = startIndex;
 
             if (IsSqlKeywordPart(_line[currentIndex]))
             {

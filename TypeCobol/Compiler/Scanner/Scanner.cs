@@ -703,7 +703,6 @@ namespace TypeCobol.Compiler.Scanner
 
         private TokensLine tokensLine;
         private string line;
-        private int currentIndex;
         private int lastIndex;
 
         private readonly TypeCobolOptions compilerOptions;
@@ -714,20 +713,6 @@ namespace TypeCobol.Compiler.Scanner
         private readonly BitArray multiStringConcatBitPosition;
 
         private SqlScanner.SqlScanner _sqlScanner;
-
-        private SqlScanner.SqlScanner SqlScanner
-        {
-            get
-            {
-                if (_sqlScanner == null)
-                {
-                    _sqlScanner = new SqlScanner.SqlScanner(line, lastIndex, tokensLine, compilerOptions);
-                }
-
-                return _sqlScanner;
-            }
-        }
-
 
         private bool InterpretDoubleColonAsQualifiedNameSeparator
         {
@@ -751,10 +736,10 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="beSmartWithLevelNumber"></param>
         /// <param name="multiStringConcatBitPosition">Bit array of Multi String concatenation positions</param>
         public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true, BitArray multiStringConcatBitPosition = null)
+            : base(startIndex)
         {
             this.tokensLine = tokensLine;
             this.line = line;
-            this.currentIndex = startIndex;
             this.lastIndex = lastIndex;
 
             this.compilerOptions = compilerOptions;
@@ -764,16 +749,16 @@ namespace TypeCobol.Compiler.Scanner
             this.multiStringConcatBitPosition = multiStringConcatBitPosition;
         }
 
-        public Token GetNextToken()
+        public override Token GetTokenStartingFrom(int startIndex)
         {
-            // Cannot read past end of line
-            if (currentIndex > lastIndex)
+            // Cannot read past end of line or before its beginning
+            if (startIndex < 0 || startIndex > lastIndex)
             {
                 return null;
             }
 
-            // Start scanning at the current index
-            int startIndex = currentIndex;
+            // Start scanning at the given index
+            currentIndex = startIndex;
             MultilineScanState currentState = tokensLine.ScanState;
 
             //  -- Special case 1 : Comment Entries in the IDENTIFICATION DIVISION --
@@ -2216,7 +2201,13 @@ namespace TypeCobol.Compiler.Scanner
             if (tokensLine.ScanState.InsideSql)
             {
                 // Use dedicated SQL scanner
-                var sqlToken = SqlScanner.GetNextToken(ref currentIndex);
+                if (_sqlScanner == null)
+                {
+                    _sqlScanner = new SqlScanner.SqlScanner(line, currentIndex, lastIndex, tokensLine, compilerOptions);
+                }
+
+                var sqlToken = _sqlScanner.GetTokenStartingFrom(currentIndex);
+                currentIndex = _sqlScanner.CurrentIndex;
                 return sqlToken;
             }
 
