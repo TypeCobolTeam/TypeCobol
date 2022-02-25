@@ -18,24 +18,16 @@ namespace TypeCobol.Compiler.SqlScanner
             return c == '-' || char.IsLetter(c);
         }
 
-        private readonly string _line;
-        private readonly int _lastIndex;
-        private readonly TokensLine _tokensLine;
-        private readonly TypeCobolOptions _compilerOptions;
-
         public SqlScanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
-            : base(startIndex)
+            : base(line, startIndex, lastIndex, tokensLine, compilerOptions)
         {
-            _line = line;
-            _lastIndex = lastIndex;
-            _tokensLine = tokensLine;
-            _compilerOptions = compilerOptions;
+
         }
 
         public override Token GetTokenStartingFrom(int startIndex)
         {
             // Cannot read past end of line or before its beginning
-            if (startIndex < 0 || startIndex > _lastIndex)
+            if (startIndex < 0 || startIndex > lastIndex)
             {
                 return null;
             }
@@ -43,11 +35,11 @@ namespace TypeCobol.Compiler.SqlScanner
             // Start scanning at the given index
             currentIndex = startIndex;
 
-            if (IsSqlKeywordPart(_line[currentIndex]))
+            if (IsSqlKeywordPart(line[currentIndex]))
             {
                 //Consume all sql-keyword compatible chars
-                for (; currentIndex <= _lastIndex && IsSqlKeywordPart(_line[currentIndex]); currentIndex++) { }
-                string tokenText = _line.Substring(startIndex, currentIndex - startIndex);
+                for (; currentIndex <= lastIndex && IsSqlKeywordPart(line[currentIndex]); currentIndex++) { }
+                string tokenText = line.Substring(startIndex, currentIndex - startIndex);
 
                 //Try to match keyword text
                 var tokenType = TokenUtils.GetSqlKeywordTokenTypeFromTokenString(tokenText);
@@ -55,16 +47,16 @@ namespace TypeCobol.Compiler.SqlScanner
                 //So far this scanner only recognize 'COMMIT' keyword
                 if (tokenType == TokenType.SQL_COMMIT)
                 {
-                    return new Token(TokenType.SQL_COMMIT, startIndex, currentIndex - 1, _tokensLine);
+                    return new Token(TokenType.SQL_COMMIT, startIndex, currentIndex - 1, tokensLine);
                 }
 
                 //Unrecognized keyword (for now) return as ExecStatementText
-                return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, _tokensLine);
+                return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
             }
 
             //Consume all sql-keyword incompatible chars
-            for (; currentIndex <= _lastIndex && !IsSqlKeywordPart(_line[currentIndex]); currentIndex++) { }
-            return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, _tokensLine);
+            for (; currentIndex <= lastIndex && !IsSqlKeywordPart(line[currentIndex]); currentIndex++) { }
+            return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.Scanner
         /// correctly. But the caller of this method doesn't have the scanState. It only has the scanState at the beginning of the line.
         /// A solution would be to rescan all the line.
         /// </summary>
-        public bool BeSmartWithLevelNumber { get; set; }
+        public bool BeSmartWithLevelNumber { get; }
 
         /// <summary>
         /// Scan a line of a document
@@ -699,18 +699,12 @@ namespace TypeCobol.Compiler.Scanner
             return candidateToken;
         }
 
-        // --- State machine ---
-
-        private TokensLine tokensLine;
-        private string line;
-        private int lastIndex;
-
-        private readonly TypeCobolOptions compilerOptions;
-        private readonly CobolLanguageLevel targetLanguageLevel;
+        private readonly CobolLanguageLevel _targetLanguageLevel;
+        
         /// <summary>
         /// Bit array of Multi String concatenation positions if any.
         /// </summary>
-        private readonly BitArray multiStringConcatBitPosition;
+        private readonly BitArray _multiStringConcatBitPosition;
 
         private SqlScanner.SqlScanner _sqlScanner;
 
@@ -736,17 +730,11 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="beSmartWithLevelNumber"></param>
         /// <param name="multiStringConcatBitPosition">Bit array of Multi String concatenation positions</param>
         public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true, BitArray multiStringConcatBitPosition = null)
-            : base(startIndex)
+            : base(line, startIndex, lastIndex, tokensLine, compilerOptions)
         {
-            this.tokensLine = tokensLine;
-            this.line = line;
-            this.lastIndex = lastIndex;
-
-            this.compilerOptions = compilerOptions;
-            this.targetLanguageLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
-
+            this._targetLanguageLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
+            this._multiStringConcatBitPosition = multiStringConcatBitPosition;
             this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
-            this.multiStringConcatBitPosition = multiStringConcatBitPosition;
         }
 
         public override Token GetTokenStartingFrom(int startIndex)
@@ -1799,7 +1787,7 @@ namespace TypeCobol.Compiler.Scanner
             if (numberString.Contains('E') || numberString.Contains('e'))
             {
                 //FloatingPointLiteral = 29,
-                Match fpMatch = floatingPointLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
+                Match fpMatch = _FloatingPointLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
                 if (fpMatch.Success && fpMatch.Index == startIndex)
                 {
                     currentIndex += fpMatch.Length;
@@ -1830,7 +1818,7 @@ namespace TypeCobol.Compiler.Scanner
             else
             {
                 //DecimalLiteral = 28,
-                Match decMatch = decimalLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
+                Match decMatch = _DecimalLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
                 if (decMatch.Success && decMatch.Index == startIndex)
                 {
                     currentIndex += decMatch.Length;
@@ -1859,8 +1847,8 @@ namespace TypeCobol.Compiler.Scanner
             }   
         }
 
-        private static Regex decimalLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?", RegexOptions.Compiled);
-        private static Regex floatingPointLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?[eE]([-+]?)([0-9]+)", RegexOptions.Compiled);
+        private static readonly Regex _DecimalLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?", RegexOptions.Compiled);
+        private static readonly Regex _FloatingPointLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?[eE]([-+]?)([0-9]+)", RegexOptions.Compiled);
 
         private Token ScanAlphanumericLiteral(int startIndex, TokenType tokenType)
         {
@@ -1918,7 +1906,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (currentIndex < lastIndex)
                 {
                     // continue in case of a double delimiter
-                    if (line[currentIndex + 1] == delimiter && !(multiStringConcatBitPosition?.Get(currentIndex + 1)??false))
+                    if (line[currentIndex + 1] == delimiter && !(_multiStringConcatBitPosition?.Get(currentIndex + 1)??false))
                     {
                         // consume the two delimiters
                         currentIndex += 2;
@@ -2277,7 +2265,7 @@ namespace TypeCobol.Compiler.Scanner
                 //   as a system-name.
 
                 // Try to match keyword text
-                tokenType = TokenUtils.GetCobolKeywordTokenTypeFromTokenString(tokenText, targetLanguageLevel);
+                tokenType = TokenUtils.GetCobolKeywordTokenTypeFromTokenString(tokenText, _targetLanguageLevel);
 
                 // Special cases of user defined words : 
                 // - symbolic characters
