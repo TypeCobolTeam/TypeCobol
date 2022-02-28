@@ -91,11 +91,6 @@
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGMSTK1.
-      *REMARKS. COPY=(
-      *        YPRTD20
-      *        YCONVEA
-      *        ).
-                                                            
       
        DATA DIVISION.
        Working-STORAGE SECTION.

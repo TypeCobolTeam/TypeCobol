@@ -1,21 +1,14 @@
 -- Line 1 --
 [1,4:*CBL]<ASTERISK_CBL>
-[5,5: ]<SpaceSeparator>
 [6,13:*CONTROL]<ASTERISK_CONTROL>
-[14,14: ]<SpaceSeparator>
 [15,19:BASIS]<BASIS>
-[20,20: ]<SpaceSeparator>
 [21,23:COP]<UserDefinedWord>
 
 -- Line 2 --
 [1,1:Y]<UserDefinedWord>
-[2,2: ]<SpaceSeparator>
 [3,8:delete]<DELETE>
-[9,9: ]<SpaceSeparator>
 [10,13:eXeC]<EXEC>
-[14,14: ]<SpaceSeparator>
 [15,18:ADDI]<ExecTranslatorName>
-[19,19: ]<SpaceSeparator>
 [20,22:ALT]<ExecStatementText>
 
 -- Line 3 --
@@ -23,11 +16,9 @@
 
 -- Line 4 --
 [1,5:TITLE]<ExecStatementText>
-[6,6: ]<SpaceSeparator>
 [7,14:end-EXEC]<END_EXEC>
 [15,15+:.]<PeriodSeparator>
 
 -- Line 5 --
-[1,1: ]<SpaceSeparator>
 *** DIRECTIVE CBL|ARCH=6 ([2,12:CBL ARCH(6)]<COMPILER_DIRECTIVE>) ***
 

@@ -18,7 +18,6 @@ namespace TypeCobol.Tools.Options_Config
     public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
         public DocumentFormat Format;
-        public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
@@ -269,7 +268,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "o|output=","{PATH} to an output file where to generate code. This option can be specified more than once.", v => typeCobolConfig.OutputFiles.Add(v) },
                 { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => typeCobolConfig.ErrorFile = v },
                 { "s|skeletons=", "{PATH} to the skeletons file. DEPRECATED : generation using dynamic skeleton is no longer supported.", v => {}},
-                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol.", v => typeCobolConfig.AutoRemarks = true },
+                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol. DEPRECATED, this option is always activated.", v => {}},
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies.", v => typeCobolConfig.HaltOnMissingCopyFilePath = v },
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, QualityCheck/5, Generate/6).", v => typeCobolConfig.RawExecToStep = v},
                 { "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
