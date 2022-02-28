@@ -1,4 +1,4 @@
-Line 7[10,17] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 --- Tokens ---
 ---------------------------------
 _IDENTIFICATION DIVISION._
@@ -25,16 +25,22 @@ _WORKING-STORAGE SECTION._
     _SECTION_    [24,30:SECTION]<SECTION>
     _._    [31,31+:.]<PeriodSeparator>
 ---------------------------------
-_   EXEC SQL DELETE FROM CUSTOMERS	   _
-    _   _    [8,10:   ]<SpaceSeparator>
-    _EXEC_    [11,14:EXEC]<EXEC>
-    _ _    [15,15: ]<SpaceSeparator>
-    _SQL_    [16,18:SQL]<ExecTranslatorName>
-    _ _    [19,19: ]<SpaceSeparator>
-    _DELETE FROM CUSTOMERS	   _    [20,44:DELETE FROM CUSTOMERS	   ]<ExecStatementText>
+_  EXEC SQL DELETE FROM CUSTOMERS	   _
+    _  _    [8,9:  ]<SpaceSeparator>
+    _EXEC_    [10,13:EXEC]<EXEC>
+    _ _    [14,14: ]<SpaceSeparator>
+    _SQL_    [15,17:SQL]<ExecTranslatorName>
+    _ _    [18,18: ]<SpaceSeparator>
+    _DELETE_    [19,24:DELETE]<ExecStatementText>
+    _ _    [25,25: ]<ExecStatementText>
+    _FROM_    [26,29:FROM]<ExecStatementText>
+    _ _    [30,30: ]<ExecStatementText>
+    _CUSTOMERS_    [31,39:CUSTOMERS]<ExecStatementText>
+    _	   _    [40,43:	   ]<ExecStatementText>
 ---------------------------------
-_COMMIT_
-    _COMMIT_    [8,13:COMMIT]<COMMIT>
+_  COMMIT_
+    _  _    [8,9:  ]<ExecStatementText>
+    _COMMIT_    [10,15:COMMIT]<SQL_COMMIT>
 ---------------------------------
 _  END-EXEC._
     _  _    [8,9:  ]<SpaceSeparator>
@@ -46,6 +52,30 @@ _PROCEDURE DIVISION._
     _ _    [17,17: ]<SpaceSeparator>
     _DIVISION_    [18,25:DIVISION]<DIVISION>
     _._    [26,26+:.]<PeriodSeparator>
+---------------------------------
+_    EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT_
+    _    _    [8,11:    ]<SpaceSeparator>
+    _EXEC_    [12,15:EXEC]<EXEC>
+    _ _    [16,16: ]<SpaceSeparator>
+    _SQL_    [17,19:SQL]<ExecTranslatorName>
+    _ _    [20,20: ]<SpaceSeparator>
+    _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
+    _ _    [27,27: ]<SpaceSeparator>
+    _END-EXEC_    [28,35:END-EXEC]<END_EXEC>
+    _ _    [36,36: ]<SpaceSeparator>
+    _display_    [37,43:display]<DISPLAY>
+    _ _    [44,44: ]<SpaceSeparator>
+    _"hello"_    [45,51:"hello"]<AlphanumericLiteral>(",Y,Y){hello}
+    _ _    [52,52: ]<SpaceSeparator>
+    _EXEC_    [53,56:EXEC]<EXEC>
+    _ _    [57,57: ]<SpaceSeparator>
+    _SQL_    [58,60:SQL]<ExecTranslatorName>
+    _ _    [61,61: ]<SpaceSeparator>
+    _COMMIT_    [62,67:COMMIT]<SQL_COMMIT>
+---------------------------------
+_    END-EXEC_
+    _    _    [8,11:    ]<SpaceSeparator>
+    _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
 ---------------------------------
 _    GOBACK_
     _    _    [8,11:    ]<SpaceSeparator>

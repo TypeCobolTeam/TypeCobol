@@ -104,5 +104,5 @@ codeElementStartingKeyword ::=
 |WRITE
 |XML
 //FOR SQL
-|COMMIT
+|SQL_COMMIT
 ;

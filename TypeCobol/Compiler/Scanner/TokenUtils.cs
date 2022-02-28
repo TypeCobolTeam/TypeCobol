@@ -1,80 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Scanner
 {
     internal static class TokenUtils
     {
+        public static readonly Regex CobolIntrinsicFunctions = new Regex("^(ACOS|ANNUITY|ASIN|ATAN|CHAR|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|FACTORIAL|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|ORD|ORD-MAX|ORD-MIN|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly TokenFamily[] _TokenFamilyFromTokenType;
+        private static readonly string[] _TokenStringFromTokenType;
+        private static readonly IDictionary<string, TokenType> _TokenTypeFromTokenString;
+        private static readonly IDictionary<string, TokenType> _SqlTokenTypeFromTokenString;
 
         static TokenUtils()
         {
             // Map token types to token families
             var types = (TokenType[])Enum.GetValues(typeof(TokenType));
             var families = (TokenFamily[])Enum.GetValues(typeof(TokenFamily));
-
-            tokenFamilyFromTokenType = new TokenFamily[types.Length];
+            _TokenFamilyFromTokenType = new TokenFamily[types.Length];
             int family = 0;
             for (int tokenType = 0; tokenType < types.Length - 1; tokenType++)
             {
                 if (family < (families.Length - 1) && tokenType == (int)families[family + 1]) family++;
-                tokenFamilyFromTokenType[tokenType] = families[family];
+                _TokenFamilyFromTokenType[tokenType] = families[family];
             }
+
             // Register the token strings corresponding to each token type (for keywords only)
             int keywordBegin = (int)TokenType.UserDefinedWord + 1;
             int keywordEnd = (int)TokenType.QUESTION_MARK - 1;
-            tokenStringFromTokenType = new string[types.Length];
-            for (int c = keywordBegin; c < types.Length; c++)
+            _TokenStringFromTokenType = new string[types.Length];
+            for (int c = keywordBegin; c <= keywordEnd; c++)
             {
                 var current = types[c];
-                if ((int)current > keywordEnd) break;
-                tokenStringFromTokenType[(int)current] = current.ToString().Replace('_', '-');
+                _TokenStringFromTokenType[(int)current] = current.ToString().Replace('_', '-');
             }
-            tokenStringFromTokenType[(int)TokenType.ASTERISK_CBL] = "*CBL";
-            tokenStringFromTokenType[(int)TokenType.ASTERISK_CONTROL] = "*CONTROL";
-            tokenStringFromTokenType[(int)TokenType.DELETE_CD] = "DELETE";
-            tokenStringFromTokenType[(int)TokenType.SERVICE_CD] = "SERVICE";
-            tokenStringFromTokenType[(int)TokenType.EXEC_SQL] = "EXEC-SQL";
+            _TokenStringFromTokenType[(int)TokenType.ASTERISK_CBL] = "*CBL";
+            _TokenStringFromTokenType[(int)TokenType.ASTERISK_CONTROL] = "*CONTROL";
+            _TokenStringFromTokenType[(int)TokenType.DELETE_CD] = "DELETE";
+            _TokenStringFromTokenType[(int)TokenType.SERVICE_CD] = "SERVICE";
+            _TokenStringFromTokenType[(int)TokenType.EXEC_SQL] = "EXEC-SQL";
+
+            // Same thing for SQL keywords
+            keywordBegin = (int)TokenFamily.SqlFamily;
+            keywordEnd = types.Length - 2; //EndOfFile is the last TokenType
+            for (int c = keywordBegin; c <= keywordEnd; c++)
+            {
+                var current = types[c];
+                string name = current.ToString();
+                _TokenStringFromTokenType[(int)current] = name.Substring(4, name.Length - 4); //Remove 'SQL_' prefix
+            }
 
             // Map token string to token type
-            tokenTypeFromTokenString = new Dictionary<string, TokenType>(types.Length - 1, StringComparer.OrdinalIgnoreCase);
-            for (int tokenType = 0; tokenType < types.Length; tokenType++)
+            _TokenTypeFromTokenString = new Dictionary<string, TokenType>(StringComparer.OrdinalIgnoreCase);
+            _SqlTokenTypeFromTokenString = new Dictionary<string, TokenType>(StringComparer.OrdinalIgnoreCase);
+            for (int tokenType = 0; tokenType < _TokenStringFromTokenType.Length; tokenType++)
             {
-                string tokenString = tokenStringFromTokenType[tokenType];
-                if (!String.IsNullOrEmpty(tokenString) && !tokenTypeFromTokenString.ContainsKey(tokenString))
+                string tokenString = _TokenStringFromTokenType[tokenType];
+                if (tokenString == null)
                 {
-                    tokenTypeFromTokenString[tokenString] = (TokenType)tokenType;
+                    continue;
+                }
+
+                if (_TokenFamilyFromTokenType[tokenType] == TokenFamily.SqlFamily)
+                {
+                    //SQL token
+                    _SqlTokenTypeFromTokenString.Add(tokenString, (TokenType)tokenType);
+                }
+                else
+                {
+                    //Cobol token
+                    _TokenTypeFromTokenString[tokenString] = (TokenType)tokenType;
+                    //Token type DELETE is much more frequent than DELETE_CD, it should have priority
+                    //Token type SERVICE is much more frequent than SERVICE_CD, it should have priority
+                    //As DELETE and SERVICE appear after DELETE_CD and SERVICE_CD they overwrite previous values and are prioritized
                 }
             }
-            // Token type DELETE is much more frequent than DELETE_CD, it should have priority
-            tokenTypeFromTokenString["DELETE"] = TokenType.DELETE;
-            // Token type SERVICE is much more frequent than SERVICE_CD, it should have priority
-            tokenTypeFromTokenString["SERVICE"] = TokenType.SERVICE;
         }
-
-        private static TokenFamily[] tokenFamilyFromTokenType;
 
         public static TokenFamily GetTokenFamilyFromTokenType(TokenType tokenType)
         {
             if (tokenType == TokenType.EndOfFile) return TokenFamily.SyntaxSeparator;
-            return tokenFamilyFromTokenType[(int)tokenType];
+            return _TokenFamilyFromTokenType[(int)tokenType];
         }
-
-        private static string[] tokenStringFromTokenType;
 
         public static string GetTokenStringFromTokenType(TokenType tokenType)
         {
-            return tokenStringFromTokenType[(int)tokenType];
+            return _TokenStringFromTokenType[(int)tokenType];
         }
 
-        private static IDictionary<string, TokenType> tokenTypeFromTokenString;
-
-        internal static TokenType GetTokenTypeFromTokenString(string tokenString, CobolLanguageLevel targetLanguageLevel)
+        internal static TokenType GetCobolKeywordTokenTypeFromTokenString(string tokenString, CobolLanguageLevel targetLanguageLevel)
         {
-            if (tokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
+            if (_TokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
             {
                 if (targetLanguageLevel == CobolLanguageLevel.TypeCobol) return tokenType;
 
@@ -91,7 +108,17 @@ namespace TypeCobol.Compiler.Scanner
 
             return TokenType.UserDefinedWord;
         }
-        
+
+        internal static TokenType GetSqlKeywordTokenTypeFromTokenString(string tokenString)
+        {
+            if (_SqlTokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
+            {
+                return tokenType;
+            }
+
+            return TokenType.UserDefinedWord;
+        }
+
         // Formalized Comments only to avoid Formalized Comments tokens detection in Cobol and Cobol tokens in Formalized Comments
         internal static TokenType GetFormalComTokenTypeFromTokenString(string tokenString)
         {
@@ -136,8 +163,6 @@ namespace TypeCobol.Compiler.Scanner
 
             return tokenType;
         }
-
-        public static Regex COBOL_INTRINSIC_FUNCTIONS = new Regex("^(ACOS|ANNUITY|ASIN|ATAN|CHAR|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|FACTORIAL|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|ORD|ORD-MAX|ORD-MIN|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public static string GetDisplayNameForTokenFamily(TokenFamily tokenFamily)
         {
@@ -190,97 +215,101 @@ namespace TypeCobol.Compiler.Scanner
 
         public static string GetDisplayNameForTokenType(TokenType tokenType)
         {
-            if ((int)TokenFamily.TypeCobolOperators > (int)tokenType && (int)tokenType >= (int)TokenFamily.CompilerDirectiveStartingKeyword && tokenType != TokenType.SymbolicCharacter )
+            if ((int)TokenFamily.TypeCobolOperators > (int)tokenType && (int)tokenType >= (int)TokenFamily.CompilerDirectiveStartingKeyword && tokenType != TokenType.SymbolicCharacter)
             {
                 return tokenType.ToString().Replace('_', '-');
             }
-            else
+            
+            if (_TokenFamilyFromTokenType[(int)tokenType] == TokenFamily.SqlFamily)
             {
-                switch (tokenType)
-                {
-                    case TokenType.EndOfFile:
-                        return "end of file";
-                    case TokenType.SpaceSeparator:
-                        return "space";
-                    case TokenType.CommaSeparator:
-                        return "','";
-                    case TokenType.SemicolonSeparator:
-                        return "';'";
-                    case TokenType.PeriodSeparator:
-                        return "'.'";
-                    case TokenType.ColonSeparator:
-                        return "':'";
-                    case TokenType.QualifiedNameSeparator:
-                        return "'::'";
-                    case TokenType.LeftParenthesisSeparator:
-                        return "'('";
-                    case TokenType.RightParenthesisSeparator:
-                        return "')'";
-                    case TokenType.PseudoTextDelimiter:
-                        return "'=='";
-                    case TokenType.PlusOperator:
-                        return "'+'";
-                    case TokenType.MinusOperator:
-                        return "'-'";
-                    case TokenType.DivideOperator:
-                        return "'/'";
-                    case TokenType.MultiplyOperator:
-                        return "'*'";
-                    case TokenType.PowerOperator:
-                        return "'**'";
-                    case TokenType.LessThanOperator:
-                        return "'<'";
-                    case TokenType.GreaterThanOperator:
-                        return "'>'";
-                    case TokenType.LessThanOrEqualOperator:
-                        return "'<='";
-                    case TokenType.GreaterThanOrEqualOperator:
-                        return "'>='";
-                    case TokenType.EqualOperator:
-                        return "'='";
-                    case TokenType.AlphanumericLiteral:
-                        return "alphanumeric literal";
-                    case TokenType.HexadecimalAlphanumericLiteral:
-                        return "hexadecimal alphanumeric literal";
-                    case TokenType.NullTerminatedAlphanumericLiteral:
-                        return "null terminated alphanumeric literal";
-                    case TokenType.NationalLiteral:
-                        return "national literal";
-                    case TokenType.HexadecimalNationalLiteral:
-                        return "hexadecimal national literal";
-                    case TokenType.DBCSLiteral:
-                        return "dbcs literal";
-                    case TokenType.LevelNumber:
-                        return "level number";
-                    case TokenType.IntegerLiteral:
-                        return "integer literal";
-                    case TokenType.DecimalLiteral:
-                        return "decimal literal";
-                    case TokenType.FloatingPointLiteral:
-                        return "floating point literal";
-                    case TokenType.PictureCharacterString:
-                        return "picture character string";
-                    case TokenType.CommentEntry:
-                        return "comment entry";
-                    case TokenType.ExecStatementText:
-                        return "exec statement text";
-                    case TokenType.SectionParagraphName:
-                        return "section or pargraph name";
-                    case TokenType.IntrinsicFunctionName:
-                        return "intrinsic function name";
-                    case TokenType.ExecTranslatorName:
-                        return "exec translator name";
-                    case TokenType.PartialCobolWord:
-                        return "partial cobol word";
-                    case TokenType.UserDefinedWord:
-                        return "user defined word";
-                    case TokenType.SymbolicCharacter:
-                        return "symbolic character";
-                    case TokenType.QUESTION_MARK:
-                        return "?";
-                    default:
-                        return "...";
-                }
+                string name = tokenType.ToString();
+                return name.Substring(4, name.Length - 4);
+            }
+
+            switch (tokenType)
+            {
+                case TokenType.EndOfFile:
+                    return "end of file";
+                case TokenType.SpaceSeparator:
+                    return "space";
+                case TokenType.CommaSeparator:
+                    return "','";
+                case TokenType.SemicolonSeparator:
+                    return "';'";
+                case TokenType.PeriodSeparator:
+                    return "'.'";
+                case TokenType.ColonSeparator:
+                    return "':'";
+                case TokenType.QualifiedNameSeparator:
+                    return "'::'";
+                case TokenType.LeftParenthesisSeparator:
+                    return "'('";
+                case TokenType.RightParenthesisSeparator:
+                    return "')'";
+                case TokenType.PseudoTextDelimiter:
+                    return "'=='";
+                case TokenType.PlusOperator:
+                    return "'+'";
+                case TokenType.MinusOperator:
+                    return "'-'";
+                case TokenType.DivideOperator:
+                    return "'/'";
+                case TokenType.MultiplyOperator:
+                    return "'*'";
+                case TokenType.PowerOperator:
+                    return "'**'";
+                case TokenType.LessThanOperator:
+                    return "'<'";
+                case TokenType.GreaterThanOperator:
+                    return "'>'";
+                case TokenType.LessThanOrEqualOperator:
+                    return "'<='";
+                case TokenType.GreaterThanOrEqualOperator:
+                    return "'>='";
+                case TokenType.EqualOperator:
+                    return "'='";
+                case TokenType.AlphanumericLiteral:
+                    return "alphanumeric literal";
+                case TokenType.HexadecimalAlphanumericLiteral:
+                    return "hexadecimal alphanumeric literal";
+                case TokenType.NullTerminatedAlphanumericLiteral:
+                    return "null terminated alphanumeric literal";
+                case TokenType.NationalLiteral:
+                    return "national literal";
+                case TokenType.HexadecimalNationalLiteral:
+                    return "hexadecimal national literal";
+                case TokenType.DBCSLiteral:
+                    return "DBCS literal";
+                case TokenType.LevelNumber:
+                    return "level number";
+                case TokenType.IntegerLiteral:
+                    return "integer literal";
+                case TokenType.DecimalLiteral:
+                    return "decimal literal";
+                case TokenType.FloatingPointLiteral:
+                    return "floating point literal";
+                case TokenType.PictureCharacterString:
+                    return "picture character string";
+                case TokenType.CommentEntry:
+                    return "comment entry";
+                case TokenType.ExecStatementText:
+                    return "exec statement text";
+                case TokenType.SectionParagraphName:
+                    return "section or paragraph name";
+                case TokenType.IntrinsicFunctionName:
+                    return "intrinsic function name";
+                case TokenType.ExecTranslatorName:
+                    return "exec translator name";
+                case TokenType.PartialCobolWord:
+                    return "partial cobol word";
+                case TokenType.UserDefinedWord:
+                    return "user defined word";
+                case TokenType.SymbolicCharacter:
+                    return "symbolic character";
+                case TokenType.QUESTION_MARK:
+                    return "?";
+                default:
+                    return "...";
             }
         }
     }
