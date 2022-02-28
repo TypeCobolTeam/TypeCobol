@@ -254,48 +254,42 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
-            var list = new List<WhenSearch>();
-            bool onAtEndExist = false;
+            int whenSearchCount = 0;
+            bool onAtEndFound = false;
             int index = 0;
             foreach (var child in search.Children)
             {
                 if (child is OnAtEnd)
                 {
-                    if (index > 0)
-                    {
-                        DiagnosticUtils.AddError(child, "ON AT END clause must appear before WHEN.");
-                    }
-                    if (onAtEndExist)
+                    if (onAtEndFound)
                     {
                         DiagnosticUtils.AddError(child, "ON AT END clause must be unique.");
                     }
                     else
                     {
-                        onAtEndExist = true;
+                        onAtEndFound = true;
+                        if (index > 0)
+                        {
+                            DiagnosticUtils.AddError(child, "ON AT END clause must appear before WHEN.");
+                        }
                     }
                 }
                 else if (child is WhenSearch whenSearch)
                 {
-                    list.Add(whenSearch);
+                    whenSearchCount++;
+                    if (whenSearchCount > 1 && search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
+                    {
+                        DiagnosticUtils.AddError(whenSearch,
+                            "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
+                    }
                 }
 
                 index++;
             }
 
-            if (list.Count == 0)
+            if (whenSearchCount == 0)
             {
                 DiagnosticUtils.AddError(search, "Search statement must have at least one when element.");
-            }
-            if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
-            {
-                int i = 1;
-                while (i < list.Count)
-                {
-                    var whenSearch = list[i];
-                    DiagnosticUtils.AddError(whenSearch,
-                        "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
-                    i++;
-                }
             }
 
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
