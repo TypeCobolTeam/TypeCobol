@@ -41,7 +41,7 @@ namespace TypeCobol.Tools.CommandLine
                     Console.Write(textName + " ... ");
                     try
                     {
-                        FileCompiler fileCompiler = new FileCompiler(null, textName, ColumnsLayout.CobolReferenceFormat, false, project.SourceFileProvider, project, compilerOptions.Clone(), null, project);
+                        FileCompiler fileCompiler = new FileCompiler(project, textName, false);
                         fileCompiler.CompileOnce();
                         Console.WriteLine(" OK");
                     }

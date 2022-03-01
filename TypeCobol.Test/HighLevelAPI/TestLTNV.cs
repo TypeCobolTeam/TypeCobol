@@ -29,7 +29,7 @@ namespace TypeCobol.Test.HighLevelAPI {
 
             string cpyCopyNamesFile = Path.Combine(Root, "LTNV", "FO200001.copylist");
 
-            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", true, cpyCopyNamesFile, errors, new List<string> {"FO200001"},
+            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", cpyCopyNamesFile, errors, new List<string> {"FO200001"},
                 new Dictionary<string, string>()
                 {
                     {"YFO2FAW", "YFO2FAL"},
@@ -40,7 +40,7 @@ namespace TypeCobol.Test.HighLevelAPI {
 
             cpyCopyNamesFile = Path.Combine(Root, "LTNV", "FOOABCDE.copylist");
 
-            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", true, cpyCopyNamesFile, errors, new List<string> { "FOOABCDE" },
+            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", cpyCopyNamesFile, errors, new List<string> { "FOOABCDE" },
                 new Dictionary<string, string>()
                 {
                     { "YFOOFAW", "FOOFAW" },
@@ -62,12 +62,12 @@ namespace TypeCobol.Test.HighLevelAPI {
             }
         }
 
-        private static void ParseAndTestGetLTNVCopys(string rootPath, string path, bool autoRemarks, string cpyCopyNamesFile, List < Exception> errors, IList<string> programsName ,params IDictionary<string, string>[] expected)
+        private static void ParseAndTestGetLTNVCopys(string rootPath, string path, string cpyCopyNamesFile, List < Exception> errors, IList<string> programsName ,params IDictionary<string, string>[] expected)
         {
             Assert.IsTrue(programsName.Count == expected.Length);//check if parameter of this method are coherent
             try
             {
-                var result = ParseAndGetLTNVCopys(rootPath, path, autoRemarks, cpyCopyNamesFile);
+                var result = ParseAndGetLTNVCopys(rootPath, path, cpyCopyNamesFile);
                 Assert.IsTrue(result.Count == expected.Length);
 
                 var actualPgmNames = result.Keys.ToList();
@@ -90,9 +90,9 @@ namespace TypeCobol.Test.HighLevelAPI {
             }
         }
 
-        private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false, string cpyCopyNamesFile = null)
+        private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, string cpyCopyNamesFile = null)
         {
-            var options = new TypeCobolOptions() { AutoRemarksEnable = autoRemarks };
+            var options = new TypeCobolOptions();
             if (cpyCopyNamesFile != null)
             {
                 options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesFile);

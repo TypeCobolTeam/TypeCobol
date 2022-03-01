@@ -202,7 +202,6 @@ namespace CLI.Test
 #if EUROINFO_RULES
             CLITestHelper.Test("replacingSyntaxOption", ReturnCode.ParsingDiagnostics);
 #endif
-
         }
 
         /// <summary>
@@ -224,7 +223,11 @@ namespace CLI.Test
         [TestMethod]
         public void TestTypeDefCopy()
         {
+#if EUROINFO_RULES
+            CLITestHelper.Test("typedefCopy_EI", ReturnCode.Success);
+#else
             CLITestHelper.Test("typedefCopy", ReturnCode.Success);
+#endif
         }
 
         /// <summary>

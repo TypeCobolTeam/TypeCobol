@@ -83,7 +83,7 @@ namespace TypeCobol.Compiler.Text
             return new CobolTextLine(isolatedTextLine, ColumnsLayout.FreeTextFormat);
         }
 
-        public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, int index = -1)
+        public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, TypeCobolOptions scannerOptions, int index = -1)
         {
             if (layout == ColumnsLayout.FreeTextFormat)
             {
@@ -103,20 +103,19 @@ namespace TypeCobol.Compiler.Text
                     indent = text.Substring(0, i);
                     text = text.Substring(i + 1);
                 }
-                return CreateCobolLines(layout, index, indicator, indent, text);
+                return CreateCobolLines(layout, scannerOptions, index, indicator, indent, text);
             }
             throw new System.NotImplementedException("Unsuported ITextLine type: " + layout);
         }
 
-        public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text)
+        public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, TypeCobolOptions scannerOptions, int index, char indicator, string indent, string text)
         {
-            return CreateCobolLines(layout, index, indicator, indent, text, 65, 61, true);
+            return CreateCobolLines(layout, scannerOptions, index, indicator, indent, text, 65, 61, true);
         }
 
-        public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text, int pmax, int pmin, bool bConvertFirstLine)
+        public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, TypeCobolOptions scannerOptions, int index, char indicator, string indent, string text, int pmax, int pmin, bool bConvertFirstLine)
         {
             var result = new List<ITextLine>();
-            var scannerOptions = new TypeCobolOptions();
             foreach (var part in text.Split(new[] { Environment.NewLine, "\n", "\r" }, StringSplitOptions.None))
             {
                 int max = pmax;

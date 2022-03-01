@@ -1,40 +1,25 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,2:01]<IntegerLiteral>{1}
-[3,3: ]<SpaceSeparator>
 [4,5:50]<IntegerLiteral>{50}
-[6,6: ]<SpaceSeparator>
 [7,8:00]<IntegerLiteral>{0}
-[9,9: ]<SpaceSeparator>
 [10,17:17870154]<IntegerLiteral>{17870154}
-[18,18: ]<SpaceSeparator>
 [19,22:+197]<IntegerLiteral>{197}
-[23,23: ]<SpaceSeparator>
 [24,27:-254]<IntegerLiteral>{-254}
-[28,28: ]<SpaceSeparator>
 [29,30:-0]<IntegerLiteral>{0}
-[31,31: ]<SpaceSeparator>
 [32,33:+0]<IntegerLiteral>{0}
-[34,34: ]<SpaceSeparator>
 [35,36:- ]<MinusOperator>
 [37,37:0]<IntegerLiteral>{0}
-[38,38: ]<SpaceSeparator>
 [39,39:0]<IntegerLiteral>{0}
 [40,41:+ ]<PlusOperator>
 [42,44:A10]<UserDefinedWord>
 
 -- Line 2 --
 [1,4:1.23]<DecimalLiteral>{123|2>1.23}
-[5,5: ]<SpaceSeparator>
 [6,10:+0.47]<DecimalLiteral>{47|2>0.47}
-[11,11: ]<SpaceSeparator>
 [12,16:-9.38]<DecimalLiteral>{-938|2>-9.38}
-[17,17: ]<SpaceSeparator>
 [18,19:.2]<DecimalLiteral>{2|1>0.2}
-[20,20: ]<SpaceSeparator>
 [21,24:+.45]<DecimalLiteral>{45|2>0.45}
-[25,25: ]<SpaceSeparator>
 [26,28:-.4]<DecimalLiteral>{-4|1>-0.4}
-[29,29: ]<SpaceSeparator>
 [30,31:15]<IntegerLiteral>{15}
 [32,33:. ]<PeriodSeparator>
 [34,35:10]<IntegerLiteral>{10}
@@ -42,19 +27,12 @@
 
 -- Line 3 --
 [1,5:2.3e8]<FloatingPointLiteral>{23|1>2.3E8>230000000}
-[6,6: ]<SpaceSeparator>
 [7,14:-.35e-17]<FloatingPointLiteral>{-35|2>-0.35E-17>-3.5E-18}
-[15,15: ]<SpaceSeparator>
 [16,27:-50.7851E+20]<FloatingPointLiteral>{-507851|4>-50.7851E20>-5.07851E+21}
-[28,28: ]<SpaceSeparator>
 [29,41:+.45486756E+1]<FloatingPointLiteral>{45486756|8>0.45486756E1>4.5486756}
-[42,42: ]<SpaceSeparator>
 [43,47:10.E2]<InvalidToken>
-[48,48: ]<SpaceSeparator>
 [49,53:10e+4]<FloatingPointLiteral>{10|0>10E4>100000}
-[54,54: ]<SpaceSeparator>
 [55,63:.55E+9847]<FloatingPointLiteral>{55|2>0.55E9847>Infinity}
-[64,64: ]<SpaceSeparator>
 [65,68:.25e]<InvalidToken>
 Line 0[43,47] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
 Line 0[49,53] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
@@ -71,7 +49,6 @@ Line 0[65,68] <16, Error, Tokens> - Invalid numeric literal format : expecting i
 [1,8:.1234567]<DecimalLiteral>{1234567|7>0.1234567}
 
 -- Line 7 --
-[1,1: ]<SpaceSeparator>
 [2,9:-.321E18]<FloatingPointLiteral>{-321|3>-0.321E18>-3.21E+17}
 [10,10+:.]<PeriodSeparator>
 

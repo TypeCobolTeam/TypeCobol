@@ -1,27 +1,18 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,7:PICTURE]<PICTURE>
-[8,8: ]<SpaceSeparator>
 [9,14:SYMBOL]<SYMBOL>
-[15,15: ]<SpaceSeparator>
 [16,19:sym1]<UserDefinedWord>
-[20,20: ]<SpaceSeparator>
 [21,23:PIC]<PIC>
-[24,24: ]<SpaceSeparator>
 [25,30:SYMBOL]<SYMBOL>
-[31,31: ]<SpaceSeparator>
 [32,35:sym2]<UserDefinedWord>
-[36,36: ]<SpaceSeparator>
 [37,43:PICTURE]<PICTURE>
 
 -- Line 2 --
 [1,2:IS]<IS>
-[3,3: ]<SpaceSeparator>
 [4,6:X.4]<PictureCharacterString>
 [7,8:. ]<PeriodSeparator>
 [9,11:PIC]<PIC>
-[12,12: ]<SpaceSeparator>
 [13,14:IS]<IS>
-[15,15: ]<SpaceSeparator>
 [16,18:Y.3]<PictureCharacterString>
 [19,20:. ]<PeriodSeparator>
 [21,27:PICTURE]<PICTURE>
@@ -31,20 +22,15 @@
 
 -- Line 4 --
 [1,3:PIC]<PIC>
-[4,4: ]<SpaceSeparator>
 [5,8:X(3)]<PictureCharacterString>
 
 -- Line 5 --
 [1,7:PICTURE]<PICTURE>
-[8,8: ]<SpaceSeparator>
 [9,14:abcd,a]<PictureCharacterString>
-[15,15: ]<SpaceSeparator>
 [16,18:PIc]<PIC>
-[19,19: ]<SpaceSeparator>
 [20,25:cdef;y]<PictureCharacterString>
 [26,27:; ]<SemicolonSeparator>
 [28,34:picTURE]<PICTURE>
-[35,35: ]<SpaceSeparator>
 [36,40:yuv.1]<PictureCharacterString>
 [41,41+:.]<PeriodSeparator>
 
@@ -52,9 +38,7 @@
 [1,4:abcd]<UserDefinedWord>
 [5,5:,]<CommaSeparator>
 [6,6:a]<UserDefinedWord>
-[7,7: ]<SpaceSeparator>
 [8,10:PIC]<PIC>
-[11,11: ]<SpaceSeparator>
 [12,15:abcd]<PictureCharacterString>
 [16,16+:,]<CommaSeparator>
 
@@ -64,18 +48,14 @@
 [6,6:y]<UserDefinedWord>
 [7,8:; ]<SemicolonSeparator>
 [9,11:PIC]<PIC>
-[12,12: ]<SpaceSeparator>
 [13,16:cdef]<PictureCharacterString>
 [17,17+:;]<SemicolonSeparator>
 Line 0[5,5] <3, Error, Tokens> - Semicolon separator should be followed by a space
 
 -- Line 8 --
 [1,3:PIC]<PIC>
-[4,4: ]<SpaceSeparator>
 [5,8:9(3)]<PictureCharacterString>
-[9,9: ]<SpaceSeparator>
 [10,12:PIC]<PIC>
-[13,13: ]<SpaceSeparator>
 [14,20:+$$$9.9]<PictureCharacterString>
 [21,21+:.]<PeriodSeparator>
 

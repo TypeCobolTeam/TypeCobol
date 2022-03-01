@@ -191,7 +191,7 @@ namespace TypeCobol.Test.Utils
             return _nbOfTests;
         }
 
-		public void Test(bool debug = false, bool json = false, bool autoRemarks = false, bool isCobolLanguage = false) {
+		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
 				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
@@ -203,9 +203,6 @@ namespace TypeCobol.Test.Utils
                 foreach (var comparator in comparators) {
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
                     var unit = new TestUnit(comparator, _copyExtensions);
-#if EUROINFO_RULES
-                    unit.Compiler.CompilerOptions.AutoRemarksEnable = autoRemarks;
-#endif
                     unit.Compiler.CompilerOptions.IsCobolLanguage = isCobolLanguage;
                     unit.Parse();
 				    if (unit.Observer.HasErrors)
