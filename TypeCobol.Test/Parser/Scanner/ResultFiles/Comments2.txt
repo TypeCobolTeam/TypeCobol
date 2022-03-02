@@ -1,5 +1,3 @@
-﻿[1,2:01]<IntegerLiteral>{1}
-[3,3: ]<SpaceSeparator>
+[1,2:01]<IntegerLiteral>{1}
 [4,7:TOTO]<UserDefinedWord>
-[8,8: ]<SpaceSeparator>
 [9,39:*> Comment until end of line 1.]<FloatingComment>( ,Y,Y)

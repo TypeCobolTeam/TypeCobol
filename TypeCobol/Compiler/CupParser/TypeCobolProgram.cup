@@ -1466,7 +1466,9 @@ rewriteStatement ::= RewriteStatement:stmt
 	;
 
 searchStatementWithBody ::=
-		searchStatement whenSearchConditionClauses
+		searchStatement SearchStatementEnd:end
+		{: my_parser.Builder.EndSearchStatementWithBody(end); :} 
+	|	searchStatement whenSearchConditionClauses
 		{: my_parser.Builder.EndSearchStatementWithBody(); :}
 	|	searchStatement whenSearchConditionClauses SearchStatementEnd:end
 		{: my_parser.Builder.EndSearchStatementWithBody(end); :}

@@ -1,27 +1,26 @@
 -- Line 1 --
-*** DIRECTIVE TITLE "A title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,22+:"A title"]<AlphanumericLiteral>(",Y,Y){A title}) ***
+*** DIRECTIVE TITLE "A title" ([8,12:TITLE]<TITLE>[14,22+:"A title"]<AlphanumericLiteral>(",Y,Y){A title}) ***
 
 -- Line 2 --
-*** DIRECTIVE TITLE "A national title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,32+:N'A national title']<NationalLiteral>(',Y,Y){A national title}) ***
+*** DIRECTIVE TITLE "A national title" ([8,12:TITLE]<TITLE>[14,32+:N'A national title']<NationalLiteral>(',Y,Y){A national title}) ***
 
 -- Line 3 --
-*** DIRECTIVE TITLE "A DBCS title"" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,29:G"A DBCS title""]<DBCSLiteral>(",Y,N){A DBCS title"}) ***
+*** DIRECTIVE TITLE "A DBCS title"" ([8,12:TITLE]<TITLE>[14,29:G"A DBCS title""]<DBCSLiteral>(",Y,N){A DBCS title"}) ***
 
 -- Line 4 --
-*** DIRECTIVE TITLE "A title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,22:"A title"]<AlphanumericLiteral>(",Y,Y){A title}[23,23+:.]<PeriodSeparator>) ***
+*** DIRECTIVE TITLE "A title" ([8,12:TITLE]<TITLE>[14,22:"A title"]<AlphanumericLiteral>(",Y,Y){A title}[23,23+:.]<PeriodSeparator>) ***
 
 -- Line 5 --
-*** DIRECTIVE TITLE "A national title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,32:N'A national title']<NationalLiteral>(',Y,Y){A national title}[33,33+:.]<PeriodSeparator>) ***
+*** DIRECTIVE TITLE "A national title" ([8,12:TITLE]<TITLE>[14,32:N'A national title']<NationalLiteral>(',Y,Y){A national title}[33,33+:.]<PeriodSeparator>) ***
 
 -- Line 6 --
-*** DIRECTIVE TITLE "A DBCS title"." ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,30:G"A DBCS title"".]<DBCSLiteral>(",Y,N){A DBCS title".}) ***
+*** DIRECTIVE TITLE "A DBCS title"." ([8,12:TITLE]<TITLE>[14,30:G"A DBCS title"".]<DBCSLiteral>(",Y,N){A DBCS title".}) ***
 
 -- Line 7 --
 
 -- Line 8 --
-*** DIRECTIVE TITLE "A title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,22:"A title"]<AlphanumericLiteral>(",Y,Y){A title}) ***
-[23,23: ]<SpaceSeparator>
-*** DIRECTIVE TITLE "Another title" ([24,28:TITLE]<TITLE>[29,29: ]<SpaceSeparator>) ***
+*** DIRECTIVE TITLE "A title" ([8,12:TITLE]<TITLE>[14,22:"A title"]<AlphanumericLiteral>(",Y,Y){A title}) ***
+*** DIRECTIVE TITLE "Another title" ([24,28:TITLE]<TITLE>) ***
 
 -- Line 9 --
 +++ CONTINUATION OF COMPILER_DIRECTIVE ([8,22+:"Another title"]<AlphanumericLiteral>(",Y,Y){Another title}) +++
@@ -39,7 +38,7 @@
 Line 13[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting  expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal}
 
 -- Line 14 --
-*** DIRECTIVE TITLE "Unfinished title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,30:"Unfinished title]<AlphanumericLiteral>(",Y,N){Unfinished title}) ***
+*** DIRECTIVE TITLE "Unfinished title" ([8,12:TITLE]<TITLE>[14,30:"Unfinished title]<AlphanumericLiteral>(",Y,N){Unfinished title}) ***
 
 -- Line 15 --
 *** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>) ***

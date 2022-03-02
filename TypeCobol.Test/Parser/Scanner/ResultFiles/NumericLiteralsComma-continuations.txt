@@ -1,8 +1,6 @@
 -- Line 1 --
 [1,13:DECIMAL-POINT]<DECIMAL_POINT>
-[14,14: ]<SpaceSeparator>
 [15,16:IS]<IS>
-[17,17: ]<SpaceSeparator>
 [18,22:COMMA]<COMMA>
 
 -- Line 2 --
@@ -33,7 +31,6 @@
 Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 10 --
-[1,1: ]<SpaceSeparator>
 =>continued:[2,3:-123]<IntegerLiteral>{-123}
 
 -- Line 11 --
@@ -77,7 +74,6 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 [6,7:23]<IntegerLiteral>{23}
 
 -- Line 22 --
-[1,1: ]<SpaceSeparator>
 =>continued:[2,6:-1,231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.231E+20}
 
 -- Line 23 --
