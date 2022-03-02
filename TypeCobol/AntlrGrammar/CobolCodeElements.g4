@@ -4360,11 +4360,16 @@ comparisonLHSExpression:
 	variableOrExpression2 | booleanValueOrExpression;
 
 whenCondition:
-	WHEN (LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*)?;
+    WHEN (
+		(comparisonRHSExpression | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator))
+		(ALSO (comparisonRHSExpression | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator)))*
+	)?;
 
 comparisonRHSExpression: 
-	ANY | booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
+	ANY | booleanValueOrExpression | NOT? (comparisonRHSValue | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator));
+
+comparisonRHSValue:
+	variableOrExpression2 | allFigurativeConstant | alphanumericExpressionsRange;
 
 alphanumericExpressionsRange: 
 	startExpression=variableOrExpression2 (THROUGH | THRU) endExpression=variableOrExpression2;
