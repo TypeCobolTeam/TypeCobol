@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Sql.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -706,7 +707,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         private readonly BitArray _multiStringConcatBitPosition;
 
-        private SqlScanner.SqlScanner _sqlScanner;
+        private SqlScanner _sqlScanner;
 
         private bool InterpretDoubleColonAsQualifiedNameSeparator
         {
@@ -2199,7 +2200,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Use dedicated SQL scanner
                 if (_sqlScanner == null)
                 {
-                    _sqlScanner = new SqlScanner.SqlScanner(line, currentIndex, lastIndex, tokensLine, compilerOptions);
+                    _sqlScanner = new SqlScanner(line, currentIndex, lastIndex, tokensLine, compilerOptions);
                 }
 
                 var sqlToken = _sqlScanner.GetTokenStartingFrom(currentIndex);

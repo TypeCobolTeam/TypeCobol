@@ -4,12 +4,9 @@ using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.SqlCodeElements.Statement;
-using TypeCobol.Compiler.SqlNodes;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
+using TypeCobol.Compiler.Sql.Nodes;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {

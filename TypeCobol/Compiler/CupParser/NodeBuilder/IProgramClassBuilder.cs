@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.SqlNodes;
-using TypeCobol.Compiler.SqlCodeElements.Statement;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {

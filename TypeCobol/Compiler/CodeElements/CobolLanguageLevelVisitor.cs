@@ -1,12 +1,10 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.SqlCodeElements.Statement;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.SqlNodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
+using TypeCobol.Compiler.Sql.Nodes;
 using Object = TypeCobol.Compiler.Nodes.Object;
 using String = TypeCobol.Compiler.Nodes.String;
 

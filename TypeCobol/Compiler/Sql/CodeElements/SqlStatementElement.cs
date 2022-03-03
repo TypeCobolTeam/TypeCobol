@@ -1,6 +1,6 @@
 using TypeCobol.Compiler.CodeElements;
 
-namespace TypeCobol.Compiler.SqlCodeElements
+namespace TypeCobol.Compiler.Sql.CodeElements
 {
     /// <summary>
     /// Base class for all Sql statement CodeElements
@@ -12,4 +12,4 @@ namespace TypeCobol.Compiler.SqlCodeElements
         {
         }
     }
-};
+}

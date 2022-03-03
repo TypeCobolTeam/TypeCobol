@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.SqlCodeElements.Statement;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {

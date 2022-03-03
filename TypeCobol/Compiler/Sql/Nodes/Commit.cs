@@ -1,8 +1,8 @@
 ﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.SqlCodeElements.Statement;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
-namespace TypeCobol.Compiler.SqlNodes
+namespace TypeCobol.Compiler.Sql.Nodes
 {
     /// <summary>
     /// Sql COMMIT Node

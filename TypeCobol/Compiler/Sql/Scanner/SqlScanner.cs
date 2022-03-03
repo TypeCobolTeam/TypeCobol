@@ -1,7 +1,7 @@
 ﻿using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.SqlScanner
+namespace TypeCobol.Compiler.Sql.Scanner
 {
     /// <summary>
     /// A Sql Scanner related to a Scanner

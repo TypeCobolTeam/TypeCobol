@@ -1,6 +1,6 @@
 ﻿using TypeCobol.Compiler.CodeElements;
 
-namespace TypeCobol.Compiler.SqlCodeElements.Statement
+namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     /// <summary>
     /// SQL COMMIT Statement Code Element.

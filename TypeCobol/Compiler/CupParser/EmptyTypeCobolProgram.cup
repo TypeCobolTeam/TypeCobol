@@ -137,7 +137,7 @@ terminal TypeCobol.Compiler.CodeElements.WriteStatementEnd WriteStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
 
 // FOR SQL
-terminal TypeCobol.Compiler.SqlCodeElements.Statement.CommitStatement CommitStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;

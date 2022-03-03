@@ -4666,7 +4666,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 113: // sqlStatement ::= CommitStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.SqlCodeElements.Statement.CommitStatement stmt = (TypeCobol.Compiler.SqlCodeElements.Statement.CommitStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
+		TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement stmt = (TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnCommitStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(177/*sqlStatement*/, RESULT);
             }

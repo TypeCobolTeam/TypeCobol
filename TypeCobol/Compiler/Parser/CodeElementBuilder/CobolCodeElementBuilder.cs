@@ -9,7 +9,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
-using TypeCobol.Compiler.SqlCodeElements;
+using TypeCobol.Compiler.Sql.CodeElements;
 using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Parser
