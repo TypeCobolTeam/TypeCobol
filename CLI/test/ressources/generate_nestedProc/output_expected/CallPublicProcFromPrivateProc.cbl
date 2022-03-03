@@ -47,9 +47,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                   call 'a0508f35' using arg1
                when Fct-cd991005-GetPersonById
                   call 'cd991005' using arg1
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.

@@ -376,9 +376,9 @@ Handle-Error.
         }
         }
         }
-        items2 += "    when other\n";
-        items2 += "       Perform Handle-Error\n";
-        items2 += "  end-evaluate\n";
+        items2 += "        when other\n";
+        items2 += "          Perform Handle-Error\n";
+        items2 += "    end-evaluate\n";
         }
         }
 

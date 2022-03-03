@@ -55,9 +55,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                                         arg2
                when Fct-a02a7aa5-checkName
                   call 'a02a7aa5' using arg1
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.

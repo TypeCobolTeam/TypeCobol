@@ -83,9 +83,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                when Fct-ea2e07d4-GetTecMsg
                   call 'ea2e07d4' using arg1
                                         arg2
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.

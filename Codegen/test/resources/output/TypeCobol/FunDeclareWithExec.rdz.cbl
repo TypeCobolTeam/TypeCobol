@@ -63,9 +63,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                   call 'a02a7aa5' using arg1
                when Fct-f6b6da00-GetPersonByName
                   call 'f6b6da00' using arg1
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.

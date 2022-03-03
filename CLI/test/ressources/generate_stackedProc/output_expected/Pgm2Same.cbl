@@ -34,9 +34,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            evaluate true
                when Fct-a4ee502d-Proc1
                   call 'a4ee502d' using arg1
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.

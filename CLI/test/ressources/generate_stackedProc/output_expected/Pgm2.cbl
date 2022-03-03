@@ -37,9 +37,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                   call 'b49bb8ce' using arg1
                when Fct-a4ee502d-Proc1
                   call 'a4ee502d' using arg1
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.
@@ -124,9 +124,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                   call 'c420cf71' using arg1
                when Fct-b4a83777-FooPgm2
                   call 'b4a83777' using arg1
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.
@@ -172,9 +172,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            evaluate true
                when Fct-f22bfcb0-Foo
                   call 'f22bfcb0' using arg1
-           when other
-              Perform Handle-Error
-         end-evaluate
+               when other
+                 Perform Handle-Error
+           end-evaluate
 
                .
        Handle-Error.
