@@ -35,6 +35,7 @@ namespace TypeCobol.Compiler.Sql
                 foreach (var sqlObject in sqlObjects)
                 {
                     if (!continueVisit) break;
+                    if (sqlObject == null) continue;
                     continueVisit = sqlObject.AcceptVisitor(visitor);
                 }
             }
@@ -47,9 +48,9 @@ namespace TypeCobol.Compiler.Sql
             return ContinueVisit(visitor, (IEnumerable<IVisitable>) sqlObjects);
         }
 
-        public static bool ContinueVisit(this ISqlVisitor visitor, params IEnumerable<IVisitable>[] sqlObjects)
+        public static bool ContinueVisit(this ISqlVisitor visitor, params IEnumerable<IVisitable>[] sqlObjectCollections)
         {
-            return ContinueVisit(visitor, sqlObjects.SelectMany(sqlObject => sqlObject));
+            return ContinueVisit(visitor, sqlObjectCollections.SelectMany(sqlObjectCollection => sqlObjectCollection));
         }
     }
 }
