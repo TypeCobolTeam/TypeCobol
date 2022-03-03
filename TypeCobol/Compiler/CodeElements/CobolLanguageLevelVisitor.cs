@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Sql;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Nodes;
 using Object = TypeCobol.Compiler.Nodes.Object;
@@ -80,6 +81,12 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get;
         }
+
+        /// <summary>
+        /// Returns the instance of ISqlVisitor to continue visit inside
+        /// SQL object model.
+        /// </summary>
+        ISqlVisitor SqlVisitor { get; }
 
         /// <summary>
         /// Can this visitor modify Node children?
@@ -406,6 +413,11 @@ namespace TypeCobol.Compiler.CodeElements
                 return true;
             }
         }
+
+        /// <summary>
+        /// By default the visitor does not have the capability to visit SQL objects
+        /// </summary>
+        public virtual ISqlVisitor SqlVisitor => null;
 
         /// <summary>
         /// By default the visitor cannot modify Node's children
