@@ -42,7 +42,34 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
 
        PROCEDURE DIVISiON USING TC-FunctionCode
-                          
+                          arg1
+                          arg2.
+
+
+
+
+                   PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+        FctList-Process-Mode.
+           evaluate true
+               when Fct-a0508f35-check
+                  call 'a0508f35' using arg1
+               when Fct-efd9419f-check
+                  call 'efd9419f' using arg1
+                                        arg2
+               when Fct-a02a7aa5-checkName
+                  call 'a02a7aa5' using arg1
+               when Fct-f6b6da00-GetPersonByName
+                  call 'f6b6da00' using arg1
+           when other
+              Perform Handle-Error
+         end-evaluate
+
+               .
+       Handle-Error.
+           continue
            .
                           
 
@@ -63,24 +90,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
             EXIT.
        
        TRAITEMENT.
-       PA-ALL-ENTRIES.
-           ENTRY 'a0508f35' USING TC-A1
-               CALL "a0508f35" USING TC-A1
-               GOBACK.
-
-           ENTRY 'efd9419f' USING TC-A1 TC-A2
-               CALL "efd9419f" USING TC-A1 TC-A2
-               GOBACK.
-
-           ENTRY 'a02a7aa5' USING TC-A1
-               CALL "a02a7aa5" USING TC-A1
-               GOBACK.
-
-           ENTRY 'f6b6da00' USING TC-A1
-               CALL "f6b6da00" USING TC-A1
-               GOBACK.
-
-
       *OK  call check of PGM1
       *   call check input mydate1
       *    .

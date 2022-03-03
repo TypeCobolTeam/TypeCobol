@@ -38,6 +38,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
+
               when Fct-bafc76cb-MyProcedure2
                  call 'bafc76cb' using arg1
               when other

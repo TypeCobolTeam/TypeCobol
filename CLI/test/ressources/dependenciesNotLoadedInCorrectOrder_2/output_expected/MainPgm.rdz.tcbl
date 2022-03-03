@@ -68,7 +68,28 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
       
        procedure division USING TC-FunctionCode
-                          
+                          arg1
+                          arg2.
+
+
+
+
+                   PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+        FctList-Process-Mode.
+           evaluate true
+               when Fct-ea2e07d4-GetTecMsg
+                  call 'ea2e07d4' using arg1
+                                        arg2
+           when other
+              Perform Handle-Error
+         end-evaluate
+
+               .
+       Handle-Error.
+           continue
            .
                           
        INIT-LIBRARY.
@@ -92,12 +113,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       
       
            goback.
-       PA-ALL-ENTRIES.
-           ENTRY 'ea2e07d4' USING TC-A1 TC-A2
-               CALL "ea2e07d4" USING TC-A1 TC-A2
-               GOBACK.
-
-
       *----------------------------------------------------------------
       *declare procedure GetTecMsg public
       *    input capt     type DVZTEST2::Span

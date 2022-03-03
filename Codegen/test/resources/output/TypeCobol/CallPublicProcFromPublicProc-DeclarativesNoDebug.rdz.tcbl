@@ -21,6 +21,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
+
               when Fct-e3685b69-StartCheckpoint
                  call 'e3685b69'
               when other
@@ -65,6 +66,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
+
               when Fct-bfc74757-testos
                  call 'bfc74757'
               when other

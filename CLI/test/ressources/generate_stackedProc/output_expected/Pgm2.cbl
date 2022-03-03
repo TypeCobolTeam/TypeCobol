@@ -22,22 +22,33 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 arg1 PIC X.
 
        PROCEDURE DIVISION USING TC-FunctionCode
-                          
+                          arg1.
+
+
+
+
+                   PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+        FctList-Process-Mode.
+           evaluate true
+               when Fct-b49bb8ce-GetTechnicalContext
+                  call 'b49bb8ce' using arg1
+               when Fct-a4ee502d-Proc1
+                  call 'a4ee502d' using arg1
+           when other
+              Perform Handle-Error
+         end-evaluate
+
+               .
+       Handle-Error.
+           continue
            .
                           
        INIT-LIBRARY.
            continue.
            .
-       PA-ALL-ENTRIES.
-           ENTRY 'b49bb8ce' USING TC-A1
-               CALL "b49bb8ce" USING TC-A1
-               GOBACK.
-
-           ENTRY 'a4ee502d' USING TC-A1
-               CALL "a4ee502d" USING TC-A1
-               GOBACK.
-
-
       *declare procedure GetTechnicalContext public
       *    input myname1 pic X.
 
@@ -98,19 +109,30 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 arg1 PIC X.
 
        PROCEDURE DIVISION USING TC-FunctionCode
-                          
+                          arg1.
+
+
+
+
+                   PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+        FctList-Process-Mode.
+           evaluate true
+               when Fct-c420cf71-Foo
+                  call 'c420cf71' using arg1
+               when Fct-b4a83777-FooPgm2
+                  call 'b4a83777' using arg1
+           when other
+              Perform Handle-Error
+         end-evaluate
+
+               .
+       Handle-Error.
+           continue
            .
                           
-       PA-ALL-ENTRIES.
-           ENTRY 'c420cf71' USING TC-A1
-               CALL "c420cf71" USING TC-A1
-               GOBACK.
-
-           ENTRY 'b4a83777' USING TC-A1
-               CALL "b4a83777" USING TC-A1
-               GOBACK.
-
-
       *declare procedure Foo public
       *    input t pic x.
       *declare procedure FooPgm2 public
@@ -137,15 +159,28 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 arg1 PIC X.
 
        PROCEDURE DIVISION USING TC-FunctionCode
-                          
+                          arg1.
+
+
+
+
+                   PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+        FctList-Process-Mode.
+           evaluate true
+               when Fct-f22bfcb0-Foo
+                  call 'f22bfcb0' using arg1
+           when other
+              Perform Handle-Error
+         end-evaluate
+
+               .
+       Handle-Error.
+           continue
            .
                           
-       PA-ALL-ENTRIES.
-           ENTRY 'f22bfcb0' USING TC-A1
-               CALL "f22bfcb0" USING TC-A1
-               GOBACK.
-
-
       *declare procedure Foo public
       *    input t pic x.
        END PROGRAM STACKED2.
