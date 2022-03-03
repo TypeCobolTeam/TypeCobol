@@ -52,35 +52,23 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               88 isEndPack value -1 -2.
               88 isOverflow value -2.
                                  
+       01  TC-TCOSMPL2-FctList-Loaded PIC X(02).
+           88 TC-TCOSMPL2-FctList-IsLoaded      VALUE 'OK'.
 
-       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program ea2e07d4
       * Which is generated code for TCOSMPL2.GetTecMsg
-           88 Fct-ea2e07d4-GetTecMsg
+           08 Fct-ea2e07d4-GetTecMsg
               value 'Fct=ea2e07d4-GetTecMsg'.
 
-       01 arg1 pic X.
-       01 arg2 pic X.
+       LINKAGE SECTION.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
+       01 arg2 PIC X.
+
       
        procedure division USING TC-FunctionCode
-                          arg1
-                          arg2.
-           PERFORM INIT-LIBRARY
-           PERFORM FctList-Process-Mode
-           GOBACK.
-
-       FctList-Process-Mode.
-           evaluate true
-              when Fct-ea2e07d4-GetTecMsg
-                 call 'ea2e07d4' using arg1
-                                        arg2
-              when other
-                 Perform Handle-Error
-           end-evaluate
-           .
-       Handle-Error.
-           continue
+                          
            .
                           
        INIT-LIBRARY.
@@ -104,13 +92,18 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       
       
            goback.
+       PA-ALL-ENTRIES.
+           ENTRY 'ea2e07d4' USING TC-A1 TC-A2
+               CALL "ea2e07d4" USING TC-A1 TC-A2
+               GOBACK.
+
+
       *----------------------------------------------------------------
       *declare procedure GetTecMsg public
       *    input capt     type DVZTEST2::Span
       *    in-out msg     type DVZTEST2::Span
       *    .
       
-       end program TCOSMPL2.
       *
       *declare procedure GetTecMsg public
       *    input capt     type DVZTEST2::Span
@@ -118,7 +111,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ea2e07d4.
+       PROGRAM-ID. ea2e07d4 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *TCOSMPL2.GetTecMsg - Params :
@@ -152,3 +145,4 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        END PROGRAM ea2e07d4.
 
 
+       end program TCOSMPL2.

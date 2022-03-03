@@ -88,37 +88,12 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *declare procedure MyProc2
       *     input myType2 type DVZDEP1::Type2.
 
-       END PROGRAM PGM1.
-      
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. PGMSTK1.
-      
-       DATA DIVISION.
-       Working-STORAGE SECTION.
-      *01 MyCopyInsideTypeDef
-      *    TYPE PGM1::ConventionalTypeDefInMainProgram.
-       01 MyCopyInsideTypeDef.
-           02 DATA1 PIC X.
-           02 DATA2 PIC X.
-                                                       
-      
-      *01 MyCopyTypeDefInMainProgram
-      *    TYPE PGM1::CopyTypeDefInMainProgram.
-       01 MyCopyTypeDefInMainProgram.
-           COPY YPRTD20 REPLACING
-           ==:Foo:==
-           BY ==Flouf==.
-                                               
-      
-       PROCEDURE DIVISION.
-            .
-       END PROGRAM PGMSTK1.
       *
       *declare procedure MyProc
       *     input myType1 type DVZDEP1::Type1.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd31ff38.
+       PROGRAM-ID. cd31ff38 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.MyProc - Params :
@@ -145,7 +120,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *     input myType2 type DVZDEP1::Type2.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a82f46f0.
+       PROGRAM-ID. a82f46f0 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.MyProc2 - Params :
@@ -162,3 +137,28 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        END PROGRAM a82f46f0.
 
 
+       END PROGRAM PGM1.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGMSTK1.
+      
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+      *01 MyCopyInsideTypeDef
+      *    TYPE PGM1::ConventionalTypeDefInMainProgram.
+       01 MyCopyInsideTypeDef.
+           02 DATA1 PIC X.
+           02 DATA2 PIC X.
+                                                       
+      
+      *01 MyCopyTypeDefInMainProgram
+      *    TYPE PGM1::CopyTypeDefInMainProgram.
+       01 MyCopyTypeDefInMainProgram.
+           COPY YPRTD20 REPLACING
+           ==:Foo:==
+           BY ==Flouf==.
+                                               
+      
+       PROCEDURE DIVISION.
+            .
+       END PROGRAM PGMSTK1.

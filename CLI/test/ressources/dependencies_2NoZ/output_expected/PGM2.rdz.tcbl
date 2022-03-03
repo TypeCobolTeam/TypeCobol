@@ -105,14 +105,12 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            end-call
                                                          
         .
-       END PROGRAM PGM2.
-
       *
       *declare procedure check private
       *   input mydate        TYPE Date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c2c7ee3a.
+       PROGRAM-ID. c2c7ee3a IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM2.check - Params :
@@ -129,4 +127,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            CONTINUE.
        END PROGRAM c2c7ee3a.
 
+
+       END PROGRAM PGM2.
 

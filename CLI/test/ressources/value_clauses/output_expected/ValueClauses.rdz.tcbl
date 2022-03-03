@@ -52,7 +52,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *         paramScalar        TYPE ScalarType    VALUE 'E'
       *         paramInline        PIC X(1)           VALUE 'F'.
           .
-       END PROGRAM DVZZMFT0.
       *
       *DECLARE PROCEDURE Proc PRIVATE
       *   INPUT paramIntrinsicDate TYPE Date VALUE '20190102'
@@ -62,7 +61,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *         paramInline        PIC X(1)           VALUE 'F'.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a08ffb8d.
+       PROGRAM-ID. a08ffb8d IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZZMFT0.Proc - Params :
@@ -98,3 +97,4 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        END PROGRAM a08ffb8d.
 
 
+       END PROGRAM DVZZMFT0.

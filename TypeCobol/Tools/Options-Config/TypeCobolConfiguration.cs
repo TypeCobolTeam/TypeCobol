@@ -61,7 +61,7 @@ namespace TypeCobol.Tools.Options_Config
         public string RawInputCodepageOrEncoding;
         public string RawExecToStep = "6";
         public string RawMaximumDiagnostics;
-        public string RawOutputFormat = "0";
+        public string RawOutputFormat = "4";
         public string RawCfgBuildingMode = "0";
         public bool IsCobolLanguage;
 
@@ -279,7 +279,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => typeCobolConfig.Dependencies.Add(v) },
                 { "t|telemetry", "If set to true telemetry will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => typeCobolConfig.Telemetry = true },
                 { "md|maximumdiagnostics=", "Wait for an int value that will represent the maximum number of diagnostics that TypeCobol have to return.", v =>  typeCobolConfig.RawMaximumDiagnostics = v},
-                { "f|outputFormat=", "Output format (default is Cobol 85). (Cobol85/0, PublicSignature/1, Cobol85Mixed/3, Cobol85Nested/4, Documentation/5).", v =>typeCobolConfig.RawOutputFormat = v},
+                { "f|outputFormat=", "Output format (default is Cobol 85 with nested programs for procedures). (Cobol85/0, PublicSignature/1, Cobol85Mixed/3, Cobol85Nested/4, Documentation/5).", v =>typeCobolConfig.RawOutputFormat = v},
                 { "ec|expandingcopy=", "Generate a file with all COPY directives expanded in the source code. This option will be executed if the Preprocessor step is enabled.", v => typeCobolConfig.ExpandingCopyFilePath = v },
                 { "exc|extractusedcopy=", "Generate a file with all COPIES detected by the parser.", v => typeCobolConfig.ExtractedCopiesFilePath = v },
                 { "alr|antlrprogparse", "Use ANTLR to parse a program.", v => typeCobolConfig.UseAntlrProgramParsing = true},
