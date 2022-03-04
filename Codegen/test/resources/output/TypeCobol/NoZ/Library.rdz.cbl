@@ -77,6 +77,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
+
               when Fct-db42865c-currentDate
                  call 'db42865c'
               when Fct-fa5ee5e9-currentDateDB2

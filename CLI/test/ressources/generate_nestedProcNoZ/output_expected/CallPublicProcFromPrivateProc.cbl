@@ -1,5 +1,5 @@
 Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
-      *TypeCobol_Version:[[ParserVersion]]
+      *TypeCobol_Version:v0.0.0-local
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 
@@ -32,7 +32,28 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
 
        PROCEDURE DIVISiON USING TC-FunctionCode
-                          
+                          arg1.
+
+
+
+
+                   PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+        FctList-Process-Mode.
+           evaluate true
+               when Fct-a0508f35-check
+                  call 'a0508f35' using arg1
+               when Fct-cd991005-GetPersonById
+                  call 'cd991005' using arg1
+               when other
+                 Perform Handle-Error
+           end-evaluate
+
+               .
+       Handle-Error.
+           continue
            .
                           
 
@@ -55,16 +76,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            end-call
                                    
            .
-       PA-ALL-ENTRIES.
-           ENTRY 'a0508f35' USING TC-A1
-               CALL "a0508f35" USING TC-A1
-               GOBACK.
-
-           ENTRY 'cd991005' USING TC-A1
-               CALL "cd991005" USING TC-A1
-               GOBACK.
-
-
 
       *PersonService contains public procedure
        IDENTIFICATION DIVISION.

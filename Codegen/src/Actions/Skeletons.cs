@@ -661,20 +661,20 @@ namespace TypeCobol.Codegen.Actions
                                                                                 SkeleTonFUN_DECLARE_PUBLICModel @Model = new SkeleTonFUN_DECLARE_PUBLICModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
-		  var items = "01 TC-FunctionCode pic X(30).\n";
-		  foreach (var f in @Model.definitions.functions.Public) {
-		  items += "* Function which call program " + f.Hash + "\n";
-		  items += "* Which is generated code for " + f.QualifiedName + "\n";
-		  items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
-		  items += "       value 'Fct=" + f.Hash + "-" + f.ID + "'.\n";
-		  }
-		  items += "\n";
-		  for(var i=1; i != (@Model.definitions.MaxArgsCount + 1); i++) {
-		  items += "01 arg" + i + " pic X.\n";
-		  }
-		  items = items.Substring(0, items.Length - 1);
-		  @SelfResult.Append(@"
-");@SelfResult.Append(@"		  ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
+          var items = "01 TC-FunctionCode pic X(30).\n";
+          foreach (var f in @Model.definitions.functions.Public) {
+          items += "* Function which call program " + f.Hash + "\n";
+          items += "* Which is generated code for " + f.QualifiedName + "\n";
+          items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
+          items += "       value 'Fct=" + f.Hash + "-" + f.ID + "'.\n";
+          }
+          items += "\n";
+          for(var i=1; i != (@Model.definitions.MaxArgsCount + 1); i++) {
+          items += "01 arg" + i + " pic X.\n";
+          }
+          items = items.Substring(0, items.Length - 1);
+          @SelfResult.Append(@"
+");@SelfResult.Append(@"          ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_LINKAGE", "program.data-division.linkage", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {
@@ -701,54 +701,54 @@ namespace TypeCobol.Codegen.Actions
                                                                                 SkeleTonFUN_DECLARE_PUBLICModel @Model = new SkeleTonFUN_DECLARE_PUBLICModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
-		  var items = "";
-		  if (@Model.definitions.MaxArgsCount == 0) {
-		  items += "                 .\n";
-		  }
-		  if (@Model.definitions.MaxArgsCount == 1) {
-		  items += "                 arg1.\n";
-		  }
-		  if (@Model.definitions.MaxArgsCount > 1) {
-		  items += "                 arg1\n";
-		  for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
-		  items += "                   arg" + i + "\n";
-		  }
-		  items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
-		  }
-		  items = items.Substring(0, items.Length - 1);
-		  @SelfResult.Append(@"
-");@SelfResult.Append(@"		  ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"
-		  PERFORM INIT-LIBRARY
-		  PERFORM FctList-Process-Mode
-		  GOBACK.
-");		  
-		  var entries = "";
-		  foreach (var f in @Model.definitions.functions.Public) {
-		  entries += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
-		  entries += "          call '" + f.Hash + "'";
-		  int nbr = f.Profile.Parameters.Count;
-		  if (nbr == 0) {
-		  entries += "\n";
-		  }
-		  else {
-		  entries += " using arg1\n";
-		  if (nbr > 1) {
-		  for(int i=2; i != (nbr+1); i++) {
-		  entries += "                                 arg" + i + "\n";
-		  }
-		  }
-		  }
-		  }
-		  entries += "       when other\n";
-		  entries += "          Perform Handle-Error\n";
-		  entries += "    end-evaluate";
-		  @SelfResult.Append(@"
-		  FctList-Process-Mode.
-		  evaluate true
-");@SelfResult.Append(@"		  ");@SelfResult.Append($@"{@entries}");@SelfResult.Append(@"
-		  .
-		  Handle-Error.
-		  continue");
+          var items = "";
+          if (@Model.definitions.MaxArgsCount == 0) {
+          items += "                 .\n";
+          }
+          if (@Model.definitions.MaxArgsCount == 1) {
+          items += "                 arg1.\n";
+          }
+          if (@Model.definitions.MaxArgsCount > 1) {
+          items += "                 arg1\n";
+          for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
+          items += "                   arg" + i + "\n";
+          }
+          items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
+          }
+          items = items.Substring(0, items.Length - 1);
+          @SelfResult.Append(@"
+");@SelfResult.Append(@"          ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"
+    PERFORM INIT-LIBRARY
+    PERFORM FctList-Process-Mode
+    GOBACK.
+");          
+          var entries = "\n";
+          foreach (var f in @Model.definitions.functions.Public) {
+          entries += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
+          entries += "          call '" + f.Hash + "'";
+          int nbr = f.Profile.Parameters.Count;
+          if (nbr == 0) {
+          entries += "\n";
+          }
+          else {
+          entries += " using arg1\n";
+          if (nbr > 1) {
+          for(int i=2; i != (nbr+1); i++) {
+          entries += "                                 arg" + i + "\n";
+          }
+          }
+          }
+          }
+          entries += "       when other\n";
+          entries += "          Perform Handle-Error\n";
+          entries += "    end-evaluate";
+          @SelfResult.Append(@"
+FctList-Process-Mode.
+    evaluate true
+");@SelfResult.Append(@"          ");@SelfResult.Append($@"{@entries}");@SelfResult.Append(@"
+    .
+Handle-Error.
+    continue");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {
@@ -823,11 +823,11 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-		if(@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
+        if(@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
         items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
         items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
         }
-		@SelfResult.Append(@"
+        @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_IS_LOADED", "program.data-division.working-storage", null, false);
                                                                                 if (@SelfAction != null)
@@ -908,15 +908,15 @@ namespace TypeCobol.Codegen.Actions
         }
         }
         }
-		}
-        items2 += "    when other\n";
-        items2 += "       Perform Handle-Error\n";
-        items2 += "  end-evaluate\n";
+        }
+        items2 += "        when other\n";
+        items2 += "          Perform Handle-Error\n";
+        items2 += "    end-evaluate\n";
         }
         @SelfResult.Append(@"
-		
+
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items2}");@SelfResult.Append(@"
-    . 
+        . 
 Handle-Error.
     continue");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, false);
