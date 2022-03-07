@@ -1,0 +1,35 @@
+﻿using System.Collections.Generic;
+using TypeCobol.LanguageServer.VsCodeProtocol;
+
+namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
+{
+    /// <summary>
+    /// The parameters send in a open project text document notification
+    /// </summary>
+    public class DidOpenProjectTextDocumentParams : DidOpenTextDocumentParams
+    {
+        /// <summary>
+        /// The uniquely identified project's key to which belongs the text document opened.
+        /// </summary>
+        public string ProjectKey;
+
+        /// <summary>
+        /// List of copy folders, associated to the Project whose key is given by projectKey property.
+        /// </summary>
+        public List<string> CopyFolders;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="textDocument"></param>
+        /// <param name="text"></param>
+        /// <param name="ProjectKey"></param>
+        /// <param name="CopyFolders"></param>
+        public DidOpenProjectTextDocumentParams(VsCodeProtocol.TextDocumentItem textDocument, string text, string projectKey, List<string> copyFolders)
+            : base(textDocument, text)
+        {
+            this.ProjectKey = projectKey;
+            this.CopyFolders = copyFolders;
+        }
+    }
+}

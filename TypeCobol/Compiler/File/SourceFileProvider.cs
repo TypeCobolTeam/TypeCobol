@@ -31,6 +31,14 @@ namespace TypeCobol.Compiler.File
         }
         
         /// <summary>
+        /// Remove all Cobol Libraries
+        /// </summary>
+        public void RemoveAllLibraries()
+        {
+            CobolLibraries.Clear();
+        }
+
+        /// <summary>
         /// Add all Cobol files contained in a local directory, filtered by a set of extensions, to the default text library
         /// </summary>
         /// <param name="rootPath">Local directory containing all the Cobol files of this library</param>

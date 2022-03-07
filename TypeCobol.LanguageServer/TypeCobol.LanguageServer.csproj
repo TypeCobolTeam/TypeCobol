@@ -56,6 +56,10 @@
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Request\NodeRefreshRequest.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Project Configuration Notification\DidChangeProjectConfigurationNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Project Configuration Notification\DidChangeProjectConfigurationParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Project Text Document Notification\DidOpenProjectTextDocumentNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Project Text Document Notification\DidOpenProjectTextDocumentParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\OutlineNode.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\RefreshOutlineNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\RefreshOutlineParams.cs" />
@@ -169,6 +173,8 @@
     <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolParams.cs" />
     <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolRequest.cs" />
     <Compile Include="Workspace.cs" />
+    <Compile Include="WorkspaceProject.cs" />
+    <Compile Include="WorkspaceProjectStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -194,6 +200,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

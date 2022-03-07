@@ -11,15 +11,12 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
-using TypeCobol.CustomExceptions;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
-using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.LanguageServer
 {
@@ -35,16 +32,10 @@ namespace TypeCobol.LanguageServer
     public class Workspace
     {
         private SymbolTable _customSymbols;
-        private string _rootDirectoryFullName;
-        private string _workspaceName;
         private DependenciesFileWatcher _DepWatcher;
         private CopyWatcher _CopyWatcher;
         private System.Timers.Timer _semanticUpdaterTimer;
         private bool _timerDisabled;
-        private readonly Dictionary<Uri, DocumentContext> _openedDocuments;
-        private readonly object _lockForOpenedDocuments = new object();
-
-        internal CompilationProject CompilationProject { get; private set; }
 
         private List<FileCompiler> _fileCompilerWaitingForNodePhase;
         public TypeCobolConfiguration Configuration { get; private set; }
@@ -60,6 +51,10 @@ namespace TypeCobol.LanguageServer
         /// Custom Analyzer Providers Loaded
         /// </summary>
         private IAnalyzerProvider[] _customAnalyzerProviders;
+        /// <summary>
+        /// Storage of all active workspace projects
+        /// </summary>
+        internal WorkspaceProjectStore WorkspaceProjectStore { get; }
 
 
         #region Testing Options
@@ -115,6 +110,7 @@ namespace TypeCobol.LanguageServer
         /// Testing everything from source document to quality check using quality rules.
         /// </summary>
         public bool IsLsrCodeAnalysisTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrCodeAnalysisPhaseTesting);
+        #endregion
 
         /// <summary>
         /// True to use ANTLR for parsing a program
@@ -150,35 +146,18 @@ namespace TypeCobol.LanguageServer
         {
             get
             {
-                lock (_lockForOpenedDocuments)
-                {
-                    return _openedDocuments.Count == 0;
-                }
+                return this.WorkspaceProjectStore.IsEmpty;
             }
-        }
-        #endregion
+        }        
 
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             MessagesActionsQueue = messagesActionsQueue;
-            Configuration = new TypeCobolConfiguration();
-            _openedDocuments = new Dictionary<Uri, DocumentContext>();
             _fileCompilerWaitingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
 
-            this._rootDirectoryFullName = rootDirectoryFullName;
-            this._workspaceName = workspaceName;
-
-            var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
-            this.CompilationProject = new CompilationProject(
-                _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
-                new TypeCobolOptions(), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
-            this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
-                this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
-
-            this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
-                this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
-                UseEuroInformationLegacyReplacingSyntax;
+            this.Configuration = new TypeCobolConfiguration();
+            WorkspaceProjectStore = new WorkspaceProjectStore(rootDirectoryFullName, workspaceName, UseAntlrProgramParsing, UseEuroInformationLegacyReplacingSyntax);
         }
 
         internal void InitCopyDependencyWatchers()
@@ -197,10 +176,21 @@ namespace TypeCobol.LanguageServer
         /// <returns>The corresponding FileCompiler instance.</returns>
         public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText) => OpenTextDocument(docContext, sourceText, LsrTestOptions);
 
+        /// <summary>
+        /// Open a Text Document
+        /// </summary>
+        /// <param name="docContext">The Document Context</param>
+        /// <param name="sourceText">The source text</param>
+        /// <param name="lsrOptions">LST testing options</param>
+        /// <returns></returns>
         private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
+            this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(docContext.Uri, out var curDocContext, out var workspaceProject);
+            System.Diagnostics.Debug.Assert(docContext == curDocContext);
+            CompilationProject compilationProject = workspaceProject.Project;
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
-            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
+            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding,
+                Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
             FileCompiler fileCompiler = null;
 
 #if EUROINFO_RULES //Issue #583
@@ -229,22 +219,17 @@ namespace TypeCobol.LanguageServer
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
 
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
-                CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
-                CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider,
+                compilationProject, compilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
+                compilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, _customSymbols, compilationProject);
 #endif
 
-            lock (_lockForOpenedDocuments)
-            {
-                if (_openedDocuments.ContainsKey(docContext.Uri))
-                    CloseSourceFile(docContext.Uri); //Close and remove the previous opened file.
+            // Stop pending backgound compilation on the document
+            StopDocumentBackgroundCompilation(docContext);
 
-                _openedDocuments.Add(docContext.Uri, docContext);
-            }
-
-            //Set Any Language Server Connection Options.
+            // Set Any Language Server Connection Options.
             docContext.FileCompiler = fileCompiler;
             docContext.LanguageServerConnection(true);
 
@@ -258,14 +243,6 @@ namespace TypeCobol.LanguageServer
             }
 
             return fileCompiler;
-        }
-
-        public bool TryGetOpenedDocumentContext(Uri fileUri, out DocumentContext openedDocumentContext)
-        {
-            lock (_lockForOpenedDocuments)
-            {
-                return _openedDocuments.TryGetValue(fileUri, out openedDocumentContext);
-            }
         }
 
         /// <summary>
@@ -283,7 +260,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
         {
-            if (TryGetOpenedDocumentContext(fileUri, out var contextToUpdate))
+            if (this.WorkspaceProjectStore.TryGetOpenedocument(fileUri, out var contextToUpdate))
             {
                 FileCompiler fileCompilerToUpdate = contextToUpdate.FileCompiler;
                 _semanticUpdaterTimer?.Stop();
@@ -401,7 +378,7 @@ namespace TypeCobol.LanguageServer
 
             void Refresh()
             {
-                if (TryGetOpenedDocumentContext(fileUri, out var docContext))
+                if (this.WorkspaceProjectStore.TryGetOpenedocument(fileUri, out var docContext))
                 {
                     RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck);
                 }
@@ -488,31 +465,44 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Stop continuous background compilation after a file has been closed
+        /// Try to close the document corresponding to the given uri.
+        /// The document is removed from the workspace store and from its owner workspace project.
+        /// Any pending background compilation will be stopped.
         /// </summary>
-        public void CloseSourceFile(Uri fileUri)
+        /// <param name="fileUri">The Uri of the document to be closed</param>
+        /// <returns>True if the document has been closed, false if the document is unknowned</returns>
+        public bool TryCloseSourceFile(Uri fileUri)
         {
-            FileCompiler fileCompilerToClose = null;
-
-            //Remove from opened documents dictionary
-            lock (_lockForOpenedDocuments)
+            // Remove from opened documents store and target workspace project.
+            DocumentContext contextToClose = this.WorkspaceProjectStore.RemoveDocumentFromUri(fileUri);
+            if (contextToClose != null)
             {
-                if (_openedDocuments.TryGetValue(fileUri, out var contextToClose))
-                {
-                    fileCompilerToClose = contextToClose.FileCompiler;
-                    _openedDocuments.Remove(fileUri);
-                    fileCompilerToClose.CompilationResultsForProgram.CodeAnalysisCompleted -= FinalCompilationStepCompleted;
+                // Stop any pending compilation on the document.
+                StopDocumentBackgroundCompilation(contextToClose);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Stop continuous background compilation of a document.
+        /// </summary>
+        /// <param name="contextToStop">The Document Context to stop background compilation</param>
+        /// <returns>True if a background compilation was stopped, false otherwise</returns>
+        private bool StopDocumentBackgroundCompilation(DocumentContext contextToStop)
+        {
+            if (contextToStop != null)
+            {
+                FileCompiler fileCompilerToClose = contextToStop.FileCompiler;
+                if (fileCompilerToClose != null)
+                {                    
+                    lock (_fileCompilerWaitingForNodePhase)
+                    {
+                        return _fileCompilerWaitingForNodePhase.Remove(fileCompilerToClose);
+                    }
                 }
             }
-
-            //Remove from pending semantic analysis list
-            if (fileCompilerToClose != null)
-            {
-                lock (_fileCompilerWaitingForNodePhase)
-                {
-                    _fileCompilerWaitingForNodePhase.Remove(fileCompilerToClose);
-                }
-            }
+            return false;
         }
 
         /// <summary>
@@ -524,7 +514,7 @@ namespace TypeCobol.LanguageServer
 #if EUROINFO_RULES
             var previouslyLoadedCpyCopyNamesMap = Configuration.CpyCopyNameMap;
 #endif
-            
+
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
@@ -573,20 +563,18 @@ namespace TypeCobol.LanguageServer
                 analyzerProviderWrapper.AddProvider(a);
             }
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProviderWrapper);
+            // DidChangeConfiguration notification is always for the Default Workspace Project.
+            // The is for compatibility with for instance TypeCobol plugin and fallback.
+            this.WorkspaceProjectStore.DefaultWorkspaceProject.ReplaceCompilationProject(
+                Configuration, typeCobolOptions, analyzerProviderWrapper);
 
-            if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
-            {
-                foreach (var copyFolder in Configuration.CopyFolders)
-                {
-                    CompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
-                        new[] {".cpy"}, Configuration.Format.Encoding,
-                        Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength);
-                }                
-            }
+            // Update All WorkspaceProject instances because global configurations have change
+            this.WorkspaceProjectStore.UpdateProjectOptionsAndAnalyzerProvider(typeCobolOptions, analyzerProviderWrapper);
 
             if (!IsEmpty)
+            {   //Refresh all workspace project instances.
                 RefreshOpenedFiles();
+            }
             else
                 RefreshCustomSymbols();
 
@@ -614,6 +602,19 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
+        /// Handle a Did Change Project Configuration notification from the client.
+        /// If a document uri is given, then if the corresponding document does not belong to the target project
+        /// the document will be dettached from its current project and associated to the project corresponding the projectKey value.
+        /// </summary>
+        /// <param name="docUri">The Uri of the document source of notification if any, null otherwise</param>
+        /// <param name="projectKey">The project key whose configuration has changed</param>
+        /// <param name="copyFolders">List of Copy Folders to be associated with the underlying CompilationProject instance.</param>
+        internal void UpdateWorkspaceProjectConfiguration(Uri docUri, string projectKey, List<string> copyFolders)
+        {
+            this.WorkspaceProjectStore.UpdateProjectConfiguration(docUri, projectKey, copyFolders, this);
+        }
+
+        /// <summary>
         /// The method is called in response to a MissingCopyNotification from the client.
         /// The RemainingMissingCopies list can contain a list of COPY that the client fails to load,
         /// or an empty list if all COPY have been loaded.
@@ -624,35 +625,40 @@ namespace TypeCobol.LanguageServer
         {
             if (_CopyWatcher == null)
             {// No Copy Watcher ==> Refresh ourself opened file.
-                RefreshOpenedFiles();
+                if (this.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(fileUri, out var docContext, out var workspaceProjet))
+                {
+                    workspaceProjet.RefreshOpenedFiles(this);
+                }
             }
         }
 
         /// <summary>
-        /// Refresh all opened files' parser.
+        /// Refresh all opened files in all WorspaceProject instances
         /// </summary>
-        public void RefreshOpenedFiles()
+        private void RefreshOpenedFiles()
         {
             RefreshCustomSymbols();
-            this.CompilationProject.ClearImportedCompilationDocumentsCache();
+            this.WorkspaceProjectStore.RefreshOpenedFiles(this);
+        }
 
-            lock (_lockForOpenedDocuments)
-            {
-                var tempOpeneContexts = new Dictionary<Uri, DocumentContext >(_openedDocuments);
-                foreach (var contextEntry in tempOpeneContexts)
-                {
-                    Uri uri = contextEntry.Key;
-                    DocumentContext docContext = contextEntry.Value;
-                    var sourceText = new StringBuilder();
-                    foreach (var line in docContext.FileCompiler.TextDocument.Lines)
-                        sourceText.AppendLine(line.Text);
+        /// <summary>
+        /// Refresh One opened document
+        /// </summary>
+        /// <param name="docContext">The Document context to be refreshed</param>
+        /// <param name="clearCopyCache">true if the imported document cache must be cleared, false otherwise</param>
+        public void RefreshOpenedDocument(DocumentContext docContext, bool clearCopyCache)
+        {
+            if (clearCopyCache)
+                docContext.FileCompiler.CompilationProject.ClearImportedCompilationDocumentsCache();
 
-                    //Disconnect previous LanguageServer connection
-                    docContext.LanguageServerConnection(false);                    
+            var sourceText = new StringBuilder();
+            foreach (var line in docContext.FileCompiler.TextDocument.Lines)
+                sourceText.AppendLine(line.Text);
 
-                    OpenTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
-                }
-            }
+            //Disconnect previous LanguageServer connection
+            docContext.LanguageServerConnection(false);
+
+            OpenTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
         }
 
         private void RefreshCustomSymbols()
@@ -676,7 +682,8 @@ namespace TypeCobol.LanguageServer
             _customSymbols = null;
             try
             {
-                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
+                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies,
+                    Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
                 _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, _customSymbols, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
 
                 if (MissingCopiesEvent != null && missingCopies.Count > 0)
@@ -717,7 +724,8 @@ namespace TypeCobol.LanguageServer
                     LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 LoggingSystem.LogException(exception);
-                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles, Configuration.CopyFolders, Environment.CommandLine);
+                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles,
+                    Configuration.CopyFolders, Environment.CommandLine);
             }
 
         }
@@ -732,11 +740,10 @@ namespace TypeCobol.LanguageServer
             var compilationUnit = cUnit as CompilationUnit;
 
             // Search for corresponding opened document.
-            Uri fileUri;
-            lock (_lockForOpenedDocuments)
+            Uri fileUri = null;
+            if (this.WorkspaceProjectStore.TryGetOpenedDocumentByName(compilationUnit.TextSourceInfo.Name, out var documentCtx))
             {
-                fileUri = _openedDocuments.Keys.FirstOrDefault(k =>
-                    compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
+                fileUri = documentCtx.Uri;
             }
 
             // No document found
@@ -757,7 +764,8 @@ namespace TypeCobol.LanguageServer
             }
 
             if (DiagnosticsEvent != null)
-                DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
+                DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 
+                    ? 200 : Configuration.MaximumDiagnostics) });
 
             if (MissingCopiesEvent != null && compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = new List<string>(compilationUnit.MissingCopies) });
