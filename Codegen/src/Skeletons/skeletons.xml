@@ -181,21 +181,21 @@
       </pattern>
       <!-- CALLEE LINKAGE SECTION WITHOUT EXTERNAL -->
       <pattern location="program.data-division.linkage" action="create" newline="false" group="TCRFUN_CODEGEN_POINTER_LINKAGE" deprecated="false">
-          @{
-          var items = "01 TC-FunctionCode pic X(30).\n";
-          foreach (var f in @Model.definitions.functions.Public) {
-          items += "* Function which call program " + f.Hash + "\n";
-          items += "* Which is generated code for " + f.QualifiedName + "\n";
-          items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
-          items += "       value 'Fct=" + f.Hash + "-" + f.ID + "'.\n";
-          }
-          items += "\n";
-          for(var i=1; i != (@Model.definitions.MaxArgsCount + 1); i++) {
-          items += "01 arg" + i + " pic X.\n";
-          }
-          items = items.Substring(0, items.Length - 1);
-          }
-          @items
+        @{
+        var items = "01 TC-FunctionCode pic X(30).\n";
+        foreach (var f in @Model.definitions.functions.Public) {
+        items += "* Function which call program " + f.Hash + "\n";
+        items += "* Which is generated code for " + f.QualifiedName + "\n";
+        items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
+        items += "       value 'Fct=" + f.Hash + "-" + f.ID + "'.\n";
+        }
+        items += "\n";
+        for(var i=1; i != (@Model.definitions.MaxArgsCount + 1); i++) {
+        items += "01 arg" + i + " pic X.\n";
+        }
+        items = items.Substring(0, items.Length - 1);
+        }
+        @items
       </pattern>
 
       <pattern action="expand" location="program.end" newline="false">
@@ -203,52 +203,51 @@
 
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
       <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="false" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
-          @{
-          var items = "";
-          if (@Model.definitions.MaxArgsCount == 0) {
-          items += "                 .\n";
-          }
-          if (@Model.definitions.MaxArgsCount == 1) {
-          items += "                 arg1.\n";
-          }
-          if (@Model.definitions.MaxArgsCount > 1) {
-          items += "                 arg1\n";
-          for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
-          items += "                   arg" + i + "\n";
-          }
-          items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
-          }
-          items = items.Substring(0, items.Length - 1);
-          }
-          @items
+        @{
+        var items = "";
+        if (@Model.definitions.MaxArgsCount == 0) {
+        items += "                 .\n";
+        }
+        if (@Model.definitions.MaxArgsCount == 1) {
+        items += "                 arg1.\n";
+        }
+        if (@Model.definitions.MaxArgsCount > 1) {
+        items += "                 arg1\n";
+        for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
+        items += "                   arg" + i + "\n";
+        }
+        items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
+        }
+        items = items.Substring(0, items.Length - 1);
+        }
+        @items
     PERFORM INIT-LIBRARY
     PERFORM FctList-Process-Mode
     GOBACK.
-          @{
-          var entries = "\n";
-          foreach (var f in @Model.definitions.functions.Public) {
-          entries += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
-          entries += "          call '" + f.Hash + "'";
-          int nbr = f.Profile.Parameters.Count;
-          if (nbr == 0) {
-          entries += "\n";
-          }
-          else {
-          entries += " using arg1\n";
-          if (nbr > 1) {
-          for(int i=2; i != (nbr+1); i++) {
-          entries += "                                 arg" + i + "\n";
-          }
-          }
-          }
-          }
-          entries += "       when other\n";
-          entries += "          Perform Handle-Error\n";
-          entries += "    end-evaluate";
-          }
+       @{
+       var entries = "    evaluate true\n";
+       foreach (var f in @Model.definitions.functions.Public) {
+       entries += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
+       entries += "          call '" + f.Hash + "'";
+       int nbr = f.Profile.Parameters.Count;
+       if (nbr == 0) {
+       entries += "\n";
+       }
+       else {
+       entries += " using arg1\n";
+       if (nbr > 1) {
+       for(int i=2; i != (nbr+1); i++) {
+       entries += "                                 arg" + i + "\n";
+       }
+       }
+       }
+       }
+       entries += "       when other\n";
+       entries += "          Perform Handle-Error\n";
+       entries += "    end-evaluate";
+       }
 FctList-Process-Mode.
-    evaluate true
-          @entries
+@entries
     .
 Handle-Error.
     continue
