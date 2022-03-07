@@ -323,7 +323,7 @@ Handle-Error.
         foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
         items += "* Function which call program " + f.Hash + "\n";
         items += "* Which is generated code for " + f.QualifiedName + "\n";
-        items += "    08 Fct-" + f.Hash + "-" + f.ID + "\n";
+        items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
         items += "       value 'Fct=" + f.Hash +"-" + f.ID + "'.\n";
         }
         }

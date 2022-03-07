@@ -29,7 +29,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
-
               when Fct-efe09ace-GetPersonById
                  call 'efe09ace' using arg1
               when other

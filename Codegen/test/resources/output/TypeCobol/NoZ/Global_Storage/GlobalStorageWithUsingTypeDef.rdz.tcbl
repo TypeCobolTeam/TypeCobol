@@ -70,7 +70,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
-
               when Fct-dc31cc72-ReadEconomicData
                  call 'dc31cc72'
               when other

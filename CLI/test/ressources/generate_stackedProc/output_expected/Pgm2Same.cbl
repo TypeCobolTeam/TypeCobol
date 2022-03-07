@@ -11,7 +11,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 TC-FunctionCode pic X(30).
       * Function which call program a4ee502d
       * Which is generated code for PGM2.Proc1
-           08 Fct-a4ee502d-Proc1
+           88 Fct-a4ee502d-Proc1
               value 'Fct=a4ee502d-Proc1'.
 
        

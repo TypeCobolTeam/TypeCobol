@@ -24,7 +24,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
-
               when Fct-b8721d20-currentDateString
                  call 'b8721d20'
               when other

@@ -1,5 +1,5 @@
 Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
-      *TypeCobol_Version:v0.0.0-local
+      *TypeCobol_Version:[[ParserVersion]]
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 
@@ -19,11 +19,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 TC-FunctionCode pic X(30).
       * Function which call program a0508f35
       * Which is generated code for PGM1.check
-           08 Fct-a0508f35-check
+           88 Fct-a0508f35-check
               value 'Fct=a0508f35-check'.
       * Function which call program cd991005
       * Which is generated code for PersonService.GetPersonById
-           08 Fct-cd991005-GetPersonById
+           88 Fct-cd991005-GetPersonById
               value 'Fct=cd991005-GetPersonById'.
 
        LINKAGE SECTION.

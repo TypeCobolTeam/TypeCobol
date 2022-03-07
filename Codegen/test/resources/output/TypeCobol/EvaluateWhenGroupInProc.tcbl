@@ -22,7 +22,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
-
               when Fct-af117577-InFct
                  call 'af117577' using arg1
               when other

@@ -18,15 +18,15 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 TC-FunctionCode pic X(30).
       * Function which call program a0508f35
       * Which is generated code for PGM1.check
-           08 Fct-a0508f35-check
+           88 Fct-a0508f35-check
               value 'Fct=a0508f35-check'.
       * Function which call program efd9419f
       * Which is generated code for PGM1.check
-           08 Fct-efd9419f-check
+           88 Fct-efd9419f-check
               value 'Fct=efd9419f-check'.
       * Function which call program a02a7aa5
       * Which is generated code for PGM1.checkName
-           08 Fct-a02a7aa5-checkName
+           88 Fct-a02a7aa5-checkName
               value 'Fct=a02a7aa5-checkName'.
 
        LINKAGE SECTION.

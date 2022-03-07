@@ -23,7 +23,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
        FctList-Process-Mode.
            evaluate true
-
               when Fct-b173dd7b-currentDateString
                  call 'b173dd7b'
               when other

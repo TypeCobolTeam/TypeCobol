@@ -10,11 +10,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 TC-FunctionCode pic X(30).
       * Function which call program b49bb8ce
       * Which is generated code for PGM2.GetTechnicalContext
-           08 Fct-b49bb8ce-GetTechnicalContext
+           88 Fct-b49bb8ce-GetTechnicalContext
               value 'Fct=b49bb8ce-GetTechnicalContext'.
       * Function which call program a4ee502d
       * Which is generated code for PGM2.Proc1
-           08 Fct-a4ee502d-Proc1
+           88 Fct-a4ee502d-Proc1
               value 'Fct=a4ee502d-Proc1'.
 
        LINKAGE SECTION.
@@ -96,11 +96,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 TC-FunctionCode pic X(30).
       * Function which call program c420cf71
       * Which is generated code for STACKED.Foo
-           08 Fct-c420cf71-Foo
+           88 Fct-c420cf71-Foo
               value 'Fct=c420cf71-Foo'.
       * Function which call program b4a83777
       * Which is generated code for STACKED.FooPgm2
-           08 Fct-b4a83777-FooPgm2
+           88 Fct-b4a83777-FooPgm2
               value 'Fct=b4a83777-FooPgm2'.
 
        
@@ -150,7 +150,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        01 TC-FunctionCode pic X(30).
       * Function which call program f22bfcb0
       * Which is generated code for STACKED2.Foo
-           08 Fct-f22bfcb0-Foo
+           88 Fct-f22bfcb0-Foo
               value 'Fct=f22bfcb0-Foo'.
 
        
