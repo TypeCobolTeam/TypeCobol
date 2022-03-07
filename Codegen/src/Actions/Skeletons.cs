@@ -914,7 +914,7 @@ Handle-Error.
         }
         @SelfResult.Append(@"
 
-");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items2}");@SelfResult.Append(@"
+");@SelfResult.Append($@"{@items2}");@SelfResult.Append(@"
         . 
 Handle-Error.
     continue");

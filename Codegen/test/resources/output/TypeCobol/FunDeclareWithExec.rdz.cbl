@@ -48,7 +48,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 
 
 
-                   PERFORM INIT-LIBRARY
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
