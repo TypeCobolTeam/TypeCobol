@@ -78,12 +78,12 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
+       FctList-Process-Mode.
            evaluate true
-               when Fct-ea2e07d4-GetTecMsg
-                  call 'ea2e07d4' using arg1
+              when Fct-ea2e07d4-GetTecMsg
+                 call 'ea2e07d4' using arg1
                                         arg2
-               when other
+              when other
                  Perform Handle-Error
            end-evaluate
 

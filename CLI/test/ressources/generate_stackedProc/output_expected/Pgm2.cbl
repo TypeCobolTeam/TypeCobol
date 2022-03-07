@@ -31,13 +31,13 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
+       FctList-Process-Mode.
            evaluate true
-               when Fct-b49bb8ce-GetTechnicalContext
-                  call 'b49bb8ce' using arg1
-               when Fct-a4ee502d-Proc1
-                  call 'a4ee502d' using arg1
-               when other
+              when Fct-b49bb8ce-GetTechnicalContext
+                 call 'b49bb8ce' using arg1
+              when Fct-a4ee502d-Proc1
+                 call 'a4ee502d' using arg1
+              when other
                  Perform Handle-Error
            end-evaluate
 
@@ -118,13 +118,13 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
+       FctList-Process-Mode.
            evaluate true
-               when Fct-c420cf71-Foo
-                  call 'c420cf71' using arg1
-               when Fct-b4a83777-FooPgm2
-                  call 'b4a83777' using arg1
-               when other
+              when Fct-c420cf71-Foo
+                 call 'c420cf71' using arg1
+              when Fct-b4a83777-FooPgm2
+                 call 'b4a83777' using arg1
+              when other
                  Perform Handle-Error
            end-evaluate
 
@@ -168,11 +168,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
+       FctList-Process-Mode.
            evaluate true
-               when Fct-f22bfcb0-Foo
-                  call 'f22bfcb0' using arg1
-               when other
+              when Fct-f22bfcb0-Foo
+                 call 'f22bfcb0' using arg1
+              when other
                  Perform Handle-Error
            end-evaluate
 

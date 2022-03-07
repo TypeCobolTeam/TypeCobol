@@ -30,11 +30,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
+       FctList-Process-Mode.
            evaluate true
-               when Fct-a4ee502d-Proc1
-                  call 'a4ee502d' using arg1
-               when other
+              when Fct-a4ee502d-Proc1
+                 call 'a4ee502d' using arg1
+              when other
                  Perform Handle-Error
            end-evaluate
 

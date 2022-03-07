@@ -356,12 +356,12 @@ Handle-Error.
         items2 += "    PERFORM INIT-LIBRARY\n";
         items2 += "    PERFORM FctList-Process-Mode\n";
         items2 += "    GOBACK.\n\n";
-        items2 += " FctList-Process-Mode.\n";
+        items2 += "FctList-Process-Mode.\n";
         items2 += "    evaluate true\n";
 
         foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
-        items2 += "        when Fct-"+ f.Hash + "-" + f.ID + "\n";
-        items2 += "           call '" + f.Hash + "'";
+        items2 += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
+        items2 += "          call '" + f.Hash + "'";
         int nbr = f.Profile.Parameters.Count;
         if (nbr == 0) {
         items2 += "\n";
@@ -375,7 +375,7 @@ Handle-Error.
         }
         }
         }
-        items2 += "        when other\n";
+        items2 += "       when other\n";
         items2 += "          Perform Handle-Error\n";
         items2 += "    end-evaluate\n";
         }

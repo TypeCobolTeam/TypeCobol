@@ -46,16 +46,16 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
+       FctList-Process-Mode.
            evaluate true
-               when Fct-a0508f35-check
-                  call 'a0508f35' using arg1
-               when Fct-efd9419f-check
-                  call 'efd9419f' using arg1
+              when Fct-a0508f35-check
+                 call 'a0508f35' using arg1
+              when Fct-efd9419f-check
+                 call 'efd9419f' using arg1
                                         arg2
-               when Fct-a02a7aa5-checkName
-                  call 'a02a7aa5' using arg1
-               when other
+              when Fct-a02a7aa5-checkName
+                 call 'a02a7aa5' using arg1
+              when other
                  Perform Handle-Error
            end-evaluate
 
