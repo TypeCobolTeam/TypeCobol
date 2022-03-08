@@ -43,7 +43,7 @@
 Line 43[16,23] <27, Error, Syntax> - Syntax error : no viable alternative at input 'SET ... tab::idx'
            SET tab::idx UP BY 2
       *KO qualifiedParagraphNameReference
-Line 45[20,24] <27, Error, Syntax> - Syntax error : extraneous input 's1::b' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements}
+Line 45[20,24] <27, Error, Syntax> - Syntax error : extraneous input 's1::b' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
            PERFORM s1::b
       *KO qualifiedDataName1
 Line 47[42,67] <27, Error, Syntax> - Syntax error : mismatched input 'WORK-STUDENT::STUDENT-ID-W' expecting user defined word

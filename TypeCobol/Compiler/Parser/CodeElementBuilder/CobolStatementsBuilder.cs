@@ -404,9 +404,14 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateExecStatement(CodeElementsParser.ExecStatementContext context) {
 			var statement = new ExecStatement();
 			statement.ExecTranslatorName = CobolWordsBuilder.CreateExecTranslatorName(context.execTranslatorName());
-			statement.CodeLines = BuildObjectArrayFromParserRules(context.ExecStatementText(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
 			return statement;
 		}
+
+        internal CodeElement CreateExecStatementText(CodeElementsParser.ExecStatementTextContext context) {
+            var statement = new ExecStatementText();
+            statement.CodeLine = CobolWordsBuilder.CreateAlphanumericValue(context.ExecStatementText());
+            return statement;
+        }
 
         ////////////////////
         // FREE STATEMENT //
