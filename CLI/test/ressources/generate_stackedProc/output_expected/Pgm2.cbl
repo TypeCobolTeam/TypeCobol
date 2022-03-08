@@ -4,6 +4,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROGRAM-ID. PGM2.
        data division.
        working-storage section.
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program b49bb8ce
       * Which is generated code for PGM2.GetTechnicalContext
@@ -13,9 +14,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       * Which is generated code for PGM2.Proc1
            88 Fct-a4ee502d-Proc1
               value 'Fct=a4ee502d-Proc1'.
-
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
 
        PROCEDURE DIVISION USING TC-FunctionCode
@@ -82,7 +80,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROGRAM-ID. STACKED.
        DATA DIVISION.
                                                             
-       WORKING-STORAGE SECTION.
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program c420cf71
       * Which is generated code for STACKED.Foo
@@ -92,12 +90,9 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       * Which is generated code for STACKED.FooPgm2
            88 Fct-b4a83777-FooPgm2
               value 'Fct=b4a83777-FooPgm2'.
-
-       
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
 
+       
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
 
@@ -129,18 +124,15 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROGRAM-ID. STACKED2.
        DATA DIVISION.
                                                              
-       WORKING-STORAGE SECTION.
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program f22bfcb0
       * Which is generated code for STACKED2.Foo
            88 Fct-f22bfcb0-Foo
               value 'Fct=f22bfcb0-Foo'.
-
-       
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
 
+       
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
 

@@ -286,7 +286,13 @@ Handle-Error.
         @{
         var items = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01 FunctionCode pic X(30).\n";
+        items += "01 TC-FunctionCode pic X(30).\n";
+        }
+		foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
+        items += "* Function which call program " + f.Hash + "\n";
+        items += "* Which is generated code for " + f.QualifiedName + "\n";
+        items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
+        items += "       value 'Fct=" + f.Hash +"-" + f.ID + "'.\n";
         }
         int maxVarCount = 0;
         foreach (var function in @Model.definitions.functionsGeneratedAsNested.Public) {
@@ -296,23 +302,6 @@ Handle-Error.
         }
         for (int i = 1; i &lt;= maxVarCount; i++) {
         items += "01 arg" + i + " PIC X.\n";
-        }
-        }
-        @items
-      </pattern>
-
-      <!--CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="false">
-        @{
-        var items = "";
-        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01 TC-FunctionCode pic X(30).\n";
-        }
-        foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
-        items += "* Function which call program " + f.Hash + "\n";
-        items += "* Which is generated code for " + f.QualifiedName + "\n";
-        items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
-        items += "       value 'Fct=" + f.Hash +"-" + f.ID + "'.\n";
         }
         }
         @items

@@ -14,6 +14,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            02 DD PIC 9(2).
                                  
        01  myname1      PIC X(15).
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program a0508f35
       * Which is generated code for PGM1.check
@@ -31,9 +32,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       * Which is generated code for PersonService.GetPersonByName
            88 Fct-f6b6da00-GetPersonByName
               value 'Fct=f6b6da00-GetPersonByName'.
-
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
        01 arg2 PIC X.
 

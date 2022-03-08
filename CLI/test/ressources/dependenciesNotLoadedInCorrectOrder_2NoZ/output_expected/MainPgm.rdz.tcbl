@@ -52,14 +52,12 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               88 isEndPack value -1 -2.
               88 isOverflow value -2.
                                  
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program ea2e07d4
       * Which is generated code for TCOSMPL2.GetTecMsg
            88 Fct-ea2e07d4-GetTecMsg
               value 'Fct=ea2e07d4-GetTecMsg'.
-
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
        01 arg2 PIC X.
 

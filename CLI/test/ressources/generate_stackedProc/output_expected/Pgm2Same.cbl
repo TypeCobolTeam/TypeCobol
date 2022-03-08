@@ -4,18 +4,15 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROGRAM-ID. PGM2.
        DATA DIVISION.
                                                          
-       WORKING-STORAGE SECTION.
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program a4ee502d
       * Which is generated code for PGM2.Proc1
            88 Fct-a4ee502d-Proc1
               value 'Fct=a4ee502d-Proc1'.
-
-       
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
 
+       
       * same name PGM2
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
