@@ -703,19 +703,18 @@ namespace TypeCobol.Codegen.Actions
                                                                                 @SelfResult.Append(@"");
         var items = "";
         if (@Model.definitions.MaxArgsCount == 0) {
-        items += "                 .\n";
+        items += "                 .";
         }
-        if (@Model.definitions.MaxArgsCount == 1) {
-        items += "                 arg1.\n";
+        else if (@Model.definitions.MaxArgsCount == 1) {
+        items += "                 arg1.";
         }
-        if (@Model.definitions.MaxArgsCount > 1) {
+        else if (@Model.definitions.MaxArgsCount > 1) {
         items += "                 arg1\n";
         for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
         items += "                   arg" + i + "\n";
         }
-        items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
+        items += "                   arg" + @Model.definitions.MaxArgsCount + ".";
         }
-        items = items.Substring(0, items.Length - 1);
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"
     PERFORM INIT-LIBRARY
@@ -868,21 +867,20 @@ Handle-Error.
                                                                                 @SelfResult.Append(@"");
         var items = "";
         if (@Model.definitions.MaxArgsCount == 0) {
-        items += "                 .\n";
+        items += "                 .";
         }
         if (@Model.definitions.MaxArgsCount == 1) {
-        items += "                 arg1.\n";
+        items += "                 arg1.";
         }
         if (@Model.definitions.MaxArgsCount > 1) {
             items += "                 arg1\n";
             for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
                 items += "                   arg" + i + "\n";
             }
-            items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
+            items += "                   arg" + @Model.definitions.MaxArgsCount + ".";
         }
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"
-
 ");        
         var items2 = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
@@ -910,10 +908,9 @@ Handle-Error.
         }
         items2 += "       when other\n";
         items2 += "          Perform Handle-Error\n";
-        items2 += "    end-evaluate\n";
+        items2 += "    end-evaluate";
         }
         @SelfResult.Append(@"
-
 ");@SelfResult.Append($@"{@items2}");@SelfResult.Append(@"
         . 
 Handle-Error.

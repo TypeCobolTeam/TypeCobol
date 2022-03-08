@@ -24,9 +24,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
 
-
-
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
@@ -40,7 +37,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when other
                  Perform Handle-Error
            end-evaluate
-
                .
        Handle-Error.
            continue
@@ -111,9 +107,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
 
-
-
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
@@ -127,7 +120,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when other
                  Perform Handle-Error
            end-evaluate
-
                .
        Handle-Error.
            continue
@@ -161,9 +153,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
 
-
-
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
@@ -175,7 +164,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when other
                  Perform Handle-Error
            end-evaluate
-
                .
        Handle-Error.
            continue

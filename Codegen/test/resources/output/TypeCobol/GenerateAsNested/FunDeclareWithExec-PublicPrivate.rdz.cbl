@@ -35,9 +35,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                           arg1
                           arg2.
 
-
-
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
@@ -52,7 +49,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when other
                  Perform Handle-Error
            end-evaluate
-
                .
        Handle-Error.
            continue
