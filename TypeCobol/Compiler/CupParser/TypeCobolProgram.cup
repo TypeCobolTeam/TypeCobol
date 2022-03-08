@@ -978,10 +978,9 @@ sentences ::= sentence
 	;
 
 sentence ::= SentenceEnd:send
-	  {: my_parser.Builder.StartSentence(); my_parser.Builder.EndSentence(send); :}
+	{: my_parser.Builder.StartSentence(); my_parser.Builder.EndSentence(send); :}
     | statements SentenceEnd:send
-	  {: my_parser.Builder.EndSentence(send, true); :}
-	//JCM RESOLVE THIS TODO
+	{: my_parser.Builder.EndSentence(send, true); :}
 	| execStatement:stmt
 	{:  :}
 	| error SentenceEnd:send
