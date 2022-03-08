@@ -641,6 +641,8 @@ namespace TypeCobol.LanguageServer
 
         /// <summary>
         /// Refresh all opened files' parser.
+        /// <remarks>This method is designed to run on background worker thread as it uses compilation results to recreate source code.
+        /// Callers must enqueue a new message to schedule a refresh of opened files instead of calling this directly.</remarks>
         /// </summary>
         private void RefreshOpenedFiles()
         {
