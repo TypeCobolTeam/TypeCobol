@@ -5,9 +5,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        DATA DIVISION.
                                                          
        WORKING-STORAGE SECTION.
-       01  TC-PGM2-FctList-Loaded PIC X(02).
-           88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
-
        01 TC-FunctionCode pic X(30).
       * Function which call program a4ee502d
       * Which is generated code for PGM2.Proc1

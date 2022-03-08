@@ -301,17 +301,6 @@ Handle-Error.
         @items
       </pattern>
 
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
-        @{
-        var items = "";
-        if(@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
-        items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
-        }
-        }
-        @items
-      </pattern>
-
       <!--CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="false">
         @{

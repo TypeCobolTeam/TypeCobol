@@ -4,9 +4,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        PROGRAM-ID. PGM2.
        data division.
        working-storage section.
-       01  TC-PGM2-FctList-Loaded PIC X(02).
-           88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
-
        01 TC-FunctionCode pic X(30).
       * Function which call program b49bb8ce
       * Which is generated code for PGM2.GetTechnicalContext
@@ -86,9 +83,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        DATA DIVISION.
                                                             
        WORKING-STORAGE SECTION.
-       01  TC-STACKED-FctList-Loaded PIC X(02).
-           88 TC-STACKED-FctList-IsLoaded      VALUE 'OK'.
-
        01 TC-FunctionCode pic X(30).
       * Function which call program c420cf71
       * Which is generated code for STACKED.Foo
@@ -136,9 +130,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        DATA DIVISION.
                                                              
        WORKING-STORAGE SECTION.
-       01  TC-STACKED2-FctList-Loaded PIC X(02).
-           88 TC-STACKED2-FctList-IsLoaded      VALUE 'OK'.
-
        01 TC-FunctionCode pic X(30).
       * Function which call program f22bfcb0
       * Which is generated code for STACKED2.Foo
