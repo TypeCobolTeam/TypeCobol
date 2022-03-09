@@ -52,20 +52,20 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               88 isEndPack value -1 -2.
               88 isOverflow value -2.
                                  
-
        LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program ea2e07d4
       * Which is generated code for TCOSMPL2.GetTecMsg
            88 Fct-ea2e07d4-GetTecMsg
               value 'Fct=ea2e07d4-GetTecMsg'.
+       01 arg1 PIC X.
+       01 arg2 PIC X.
 
-       01 arg1 pic X.
-       01 arg2 pic X.
       
        procedure division USING TC-FunctionCode
                           arg1
                           arg2.
+
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
@@ -78,7 +78,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when other
                  Perform Handle-Error
            end-evaluate
-           .
+               .
        Handle-Error.
            continue
            .
@@ -110,7 +110,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *    in-out msg     type DVZTEST2::Span
       *    .
       
-       end program TCOSMPL2.
       *
       *declare procedure GetTecMsg public
       *    input capt     type DVZTEST2::Span
@@ -118,7 +117,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ea2e07d4.
+       PROGRAM-ID. ea2e07d4 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *TCOSMPL2.GetTecMsg - Params :
@@ -152,3 +151,4 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        END PROGRAM ea2e07d4.
 
 
+       end program TCOSMPL2.

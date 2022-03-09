@@ -27,12 +27,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
        
-       END PROGRAM FunDeclare.
       *
       *DECLARE FUNCTION DoesNothing PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c49a4761.
+       PROGRAM-ID. c49a4761 IS COMMON.
        PROCEDURE DIVISION
            .
       *FunDeclare.DoesNothing  - No Params
@@ -46,7 +45,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *      RETURNING result PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e61a1c43.
+       PROGRAM-ID. e61a1c43 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.ReturnsZero  - No Params
@@ -67,7 +66,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *      INPUT x PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd51a7fd.
+       PROGRAM-ID. cd51a7fd IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.DoesNothing - Params :
@@ -90,7 +89,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c498f2f1.
+       PROGRAM-ID. c498f2f1 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.StrangelyReturnsItsInput - Params :
@@ -119,7 +118,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *         input  x pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e7b552c0.
+       PROGRAM-ID. e7b552c0 IS COMMON.
        data division.
        working-storage section.
       *FunDeclare.UseACopy - Params :
@@ -140,3 +139,4 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        END PROGRAM e7b552c0.
 
 
+       END PROGRAM FunDeclare.

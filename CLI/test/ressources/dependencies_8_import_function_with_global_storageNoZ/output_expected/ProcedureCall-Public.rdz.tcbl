@@ -56,13 +56,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *DECLARE PROCEDURE MyProcedureImportProc.
 
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
-       END PROGRAM PGM1.
-
       *
       *DECLARE PROCEDURE MyProcedureUsingNothing.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. dc113db8.
+       PROGRAM-ID. dc113db8 IS COMMON.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureUsingNothing  - No Params
@@ -85,7 +83,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bf501b85.
+       PROGRAM-ID. bf501b85 IS COMMON.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureUsingGlobalStorage  - No Params
@@ -132,7 +130,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *DECLARE PROCEDURE MyProcedureImportProc.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bd627c4b.
+       PROGRAM-ID. bd627c4b IS COMMON.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureImportProc  - No Params
@@ -167,7 +165,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bd34ecc2.
+       PROGRAM-ID. bd34ecc2 IS COMMON.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
@@ -215,6 +213,8 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            CONTINUE.
        END PROGRAM bd34ecc2.
 
+
+       END PROGRAM PGM1.
 
       *
       * Global Storage Section variables

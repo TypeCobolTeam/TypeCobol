@@ -703,48 +703,46 @@ namespace TypeCobol.Codegen.Actions
                                                                                 @SelfResult.Append(@"");
         var items = "";
         if (@Model.definitions.MaxArgsCount == 0) {
-        items += "                 .\n";
+        items += "                 .";
         }
-        if (@Model.definitions.MaxArgsCount == 1) {
-        items += "                 arg1.\n";
+        else if (@Model.definitions.MaxArgsCount == 1) {
+        items += "                 arg1.";
         }
-        if (@Model.definitions.MaxArgsCount > 1) {
+        else if (@Model.definitions.MaxArgsCount > 1) {
         items += "                 arg1\n";
         for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
         items += "                   arg" + i + "\n";
         }
-        items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
+        items += "                   arg" + @Model.definitions.MaxArgsCount + ".";
         }
-        items = items.Substring(0, items.Length - 1);
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"
     PERFORM INIT-LIBRARY
     PERFORM FctList-Process-Mode
     GOBACK.
-");        
-        var entries = "";
-        foreach (var f in @Model.definitions.functions.Public) {
-        entries += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
-        entries += "          call '" + f.Hash + "'";
-        int nbr = f.Profile.Parameters.Count;
-        if (nbr == 0) {
-        entries += "\n";
-        }
-        else {
-        entries += " using arg1\n";
-        if (nbr > 1) {
-        for(int i=2; i != (nbr+1); i++) {
-        entries += "                                 arg" + i + "\n";
-        }
-        }
-        }
-        }
-        entries += "       when other\n";
-        entries += "          Perform Handle-Error\n";
-        entries += "    end-evaluate";
-        @SelfResult.Append(@"
+");       
+       var entries = "    evaluate true\n";
+       foreach (var f in @Model.definitions.functions.Public) {
+       entries += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
+       entries += "          call '" + f.Hash + "'";
+       int nbr = f.Profile.Parameters.Count;
+       if (nbr == 0) {
+       entries += "\n";
+       }
+       else {
+       entries += " using arg1\n";
+       if (nbr > 1) {
+       for(int i=2; i != (nbr+1); i++) {
+       entries += "                                 arg" + i + "\n";
+       }
+       }
+       }
+       }
+       entries += "       when other\n";
+       entries += "          Perform Handle-Error\n";
+       entries += "    end-evaluate";
+       @SelfResult.Append(@"
 FctList-Process-Mode.
-    evaluate true
 ");@SelfResult.Append($@"{@entries}");@SelfResult.Append(@"
     .
 Handle-Error.
@@ -796,7 +794,13 @@ Handle-Error.
                                                                                 @SelfResult.Append(@"");
         var items = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01 FunctionCode pic X(30).\n";
+        items += "01 TC-FunctionCode pic X(30).\n";
+        }
+		foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
+        items += "* Function which call program " + f.Hash + "\n";
+        items += "* Which is generated code for " + f.QualifiedName + "\n";
+        items += "    88 Fct-" + f.Hash + "-" + f.ID + "\n";
+        items += "       value 'Fct=" + f.Hash +"-" + f.ID + "'.\n";
         }
         int maxVarCount = 0;
         foreach (var function in @Model.definitions.functionsGeneratedAsNested.Public) {
@@ -823,83 +827,55 @@ Handle-Error.
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "PA-ALL-ENTRIES.\n";
-        string usingVariables;
-
-        foreach (var functionNode in @Model.definitions.functionsGeneratedAsNested.Public) {
-
-        TypeCobol.Compiler.Nodes.FunctionDeclaration function = (TypeCobol.Compiler.Nodes.FunctionDeclaration) functionNode;
-        usingVariables = string.Empty;
-
-        for (int i = 1; i <= function.Profile.Parameters.Count; i++) {
-        usingVariables += " TC-A" + i;
+        if (@Model.definitions.MaxArgsCount == 0) {
+        items += "                 .";
         }
-
-        items += "    ENTRY '" + function.Hash + "' USING" + usingVariables + '\n';
-        items += "        CALL \"" + function.Hash + "\" USING" + usingVariables + '\n';
-        items += "        GOBACK.\n\n";
+        if (@Model.definitions.MaxArgsCount == 1) {
+        items += "                 arg1.";
         }
+        if (@Model.definitions.MaxArgsCount > 1) {
+            items += "                 arg1\n";
+            for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
+                items += "                   arg" + i + "\n";
+            }
+            items += "                   arg" + @Model.definitions.MaxArgsCount + ".";
         }
         @SelfResult.Append(@"
-");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
-                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ENTRYPOINT", "program.procedure-division.end", null, false);
-                                                                                if (@SelfAction != null)
-                                                                                {
-                                                                                                @SelfActions.Add(@SelfAction);
-                                                                                }
-                                                                }
-                                                }
-                                                {
-                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
-                                                                {
-                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
-                                                                                StringBuilder @SelfResult = new StringBuilder();
-                                                                                @SelfResult.Append(@"");
-        var items = "";
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"
+");        
+        var items2 = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
-        items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
-        }
-        @SelfResult.Append(@"
-");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
-                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_IS_LOADED", "program.data-division.working-storage", null, false);
-                                                                                if (@SelfAction != null)
-                                                                                {
-                                                                                                @SelfActions.Add(@SelfAction);
-                                                                                }
-                                                                }
-                                                }
-                                                {
-                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
-                                                                {
-                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
-                                                                                StringBuilder @SelfResult = new StringBuilder();
-                                                                                @SelfResult.Append(@"");
-        var items = "";
-        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01 TC-FunctionCode pic X(30).\n";
-        }
+        items2 += "    PERFORM INIT-LIBRARY\n";
+        items2 += "    PERFORM FctList-Process-Mode\n";
+        items2 += "    GOBACK.\n\n";
+        items2 += "FctList-Process-Mode.\n";
+        items2 += "    evaluate true\n";
+
         foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
-        items += "* Function which call program " + f.Hash + "\n";
-        items += "* Which is generated code for " + f.QualifiedName + "\n";
-        items += "    08 Fct-" + f.Hash + "-" + f.ID + "\n";
-        items += "       value 'Fct=" + f.Hash +"-" + f.ID + "'.\n";
+        items2 += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
+        items2 += "          call '" + f.Hash + "'";
+        int nbr = f.Profile.Parameters.Count;
+        if (nbr == 0) {
+        items2 += "\n";
+        }
+        else {
+        items2 += " using arg1\n";
+        if (nbr > 1) {
+        for(int i=2; i != (nbr+1); i++) {
+        items2 += "                                 arg" + i + "\n";
+        }
+        }
+        }
+        }
+        items2 += "       when other\n";
+        items2 += "          Perform Handle-Error\n";
+        items2 += "    end-evaluate";
         }
         @SelfResult.Append(@"
-");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
-                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_ARRAY", "program.data-division.working-storage", null, false);
-                                                                                if (@SelfAction != null)
-                                                                                {
-                                                                                                @SelfActions.Add(@SelfAction);
-                                                                                }
-                                                                }
-                                                }
-                                                {
-                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
-                                                                {
-                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
-                                                                                StringBuilder @SelfResult = new StringBuilder();
+");@SelfResult.Append($@"{@items2}");@SelfResult.Append(@"
+        . 
+Handle-Error.
+    continue");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {

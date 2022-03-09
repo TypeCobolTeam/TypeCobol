@@ -12,31 +12,47 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            02 DD PIC 9(2).
                                  
        01  myname1      PIC X(15).
-       01  TC-PGM1-FctList-Loaded PIC X(02).
-           88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
-
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program a0508f35
       * Which is generated code for PGM1.check
-           08 Fct-a0508f35-check
+           88 Fct-a0508f35-check
               value 'Fct=a0508f35-check'.
       * Function which call program efd9419f
       * Which is generated code for PGM1.check
-           08 Fct-efd9419f-check
+           88 Fct-efd9419f-check
               value 'Fct=efd9419f-check'.
       * Function which call program a02a7aa5
       * Which is generated code for PGM1.checkName
-           08 Fct-a02a7aa5-checkName
+           88 Fct-a02a7aa5-checkName
               value 'Fct=a02a7aa5-checkName'.
-
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
        01 arg2 PIC X.
 
 
        PROCEDURE DIVISiON USING TC-FunctionCode
-                          
+                          arg1
+                          arg2.
+
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-a0508f35-check
+                 call 'a0508f35' using arg1
+              when Fct-efd9419f-check
+                 call 'efd9419f' using arg1
+                                        arg2
+              when Fct-a02a7aa5-checkName
+                 call 'a02a7aa5' using arg1
+              when other
+                 Perform Handle-Error
+           end-evaluate
+               .
+       Handle-Error.
+           continue
            .
                           
 
@@ -55,20 +71,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            
        INIT-LIBRARY.
             EXIT.
-       PA-ALL-ENTRIES.
-           ENTRY 'a0508f35' USING TC-A1
-               CALL "a0508f35" USING TC-A1
-               GOBACK.
-
-           ENTRY 'efd9419f' USING TC-A1 TC-A2
-               CALL "efd9419f" USING TC-A1 TC-A2
-               GOBACK.
-
-           ENTRY 'a02a7aa5' USING TC-A1
-               CALL "a02a7aa5" USING TC-A1
-               GOBACK.
-
-
 
 
       *

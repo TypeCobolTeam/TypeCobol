@@ -560,9 +560,10 @@ internal class DefinitionsAttribute: Attribute {
     {
         get
         {
-            if (this.functions.Public.Count == 0) return 0;
-            return this.functions.Public.OfType<FunctionDeclaration>().Max(f => f.Profile.Parameters.Count);
-        }
+            var maxArgsForFunctions = this.functions.Public.Count > 0 ? this.functions.Public.OfType<FunctionDeclaration>().Max(f => f.Profile.Parameters.Count) : 0;
+            var maxArgsForFunctionsGeneratedAsNested = this.functionsGeneratedAsNested.Count > 0 ? this.functionsGeneratedAsNested.Public.OfType<FunctionDeclaration>().Max(f => f.Profile.Parameters.Count) : 0;
+            return maxArgsForFunctions + maxArgsForFunctionsGeneratedAsNested;
+         }
     }
 
         public override string ToString() {
@@ -574,7 +575,10 @@ internal class DefinitionsAttribute: Attribute {
 		foreach(var item in functions) str.Append(item.Name).Append(',');
 		if (functions.Count > 0) str.Length -= 1;
 		str.Append(']');
-		return str.ToString();
+        foreach (var item in functionsGeneratedAsNested) str.Append(item.Name).Append(',');
+        if (functions.Count > 0) str.Length -= 1;
+        str.Append(']');
+        return str.ToString();
 	}
 
 	public class NList: List<Node> {

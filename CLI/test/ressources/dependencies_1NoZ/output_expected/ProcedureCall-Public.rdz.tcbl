@@ -125,15 +125,13 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            end-call
                                            
         .
-       END PROGRAM PGM1.
-
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35.
+       PROGRAM-ID. a0508f35 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check - Params :
@@ -160,7 +158,7 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fde394fb.
+       PROGRAM-ID. fde394fb IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
@@ -189,4 +187,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            CONTINUE.
        END PROGRAM fde394fb.
 
+
+       END PROGRAM PGM1.
 

@@ -13,26 +13,38 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            02 DD PIC 9(2).
                                  
        01  myname1      PIC X(15).
-       01  TC-PGM1-FctList-Loaded PIC X(02).
-           88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
-
+       LINKAGE SECTION.
        01 TC-FunctionCode pic X(30).
       * Function which call program a0508f35
       * Which is generated code for PGM1.check
-           08 Fct-a0508f35-check
+           88 Fct-a0508f35-check
               value 'Fct=a0508f35-check'.
       * Function which call program cd991005
       * Which is generated code for PersonService.GetPersonById
-           08 Fct-cd991005-GetPersonById
+           88 Fct-cd991005-GetPersonById
               value 'Fct=cd991005-GetPersonById'.
-
-       LINKAGE SECTION.
-       01 FunctionCode pic X(30).
        01 arg1 PIC X.
 
 
        PROCEDURE DIVISiON USING TC-FunctionCode
-                          
+                          arg1.
+
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-a0508f35-check
+                 call 'a0508f35' using arg1
+              when Fct-cd991005-GetPersonById
+                 call 'cd991005' using arg1
+              when other
+                 Perform Handle-Error
+           end-evaluate
+               .
+       Handle-Error.
+           continue
            .
                           
 
@@ -55,16 +67,6 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
            end-call
                                    
            .
-       PA-ALL-ENTRIES.
-           ENTRY 'a0508f35' USING TC-A1
-               CALL "a0508f35" USING TC-A1
-               GOBACK.
-
-           ENTRY 'cd991005' USING TC-A1
-               CALL "cd991005" USING TC-A1
-               GOBACK.
-
-
 
       *PersonService contains public procedure
        IDENTIFICATION DIVISION.
