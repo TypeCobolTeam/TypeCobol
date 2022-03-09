@@ -1617,5 +1617,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnCommitStatement(commit);
         }
+        public void OnSelectStatement([NotNull] SelectStatement select)
+        {
+            Enter(new Select(select), select);
+            Exit();
+            Dispatcher.OnSelectStatement(select);
+        }
     }
 }

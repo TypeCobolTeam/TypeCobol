@@ -1,6 +1,28 @@
 {
-  "success": true,
+  "success": false,
   "diff_index": [
-    -1
+    4
+  ],
+  "result_messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL065238009446171796607.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL065238009446171796607.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. TCOMFL06.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n\\r\\n\\r\\n           goback\\r\\n           .\\r\\n       END PROGRAM TCOMFL06.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL065238009446171796607.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL065238009446171796607.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL065238009446171796607.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":4,\"character\":0},\"end\":{\"line\":4,\"character\":0}},\"rangeLength\":0,\"text\":\"           exec\"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL065238009446171796607.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":7,\"character\":12},\"end\":{\"line\":7,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : missing exec translator name at ''\"},{\"range\":{\"start\":{\"line\":7,\"character\":12},\"end\":{\"line\":7,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'goback' expecting {ExecStatementText, ExecStatementEnd, CommitStatement, SelectStatement}\"}]}}"
+    }
   ]
 }

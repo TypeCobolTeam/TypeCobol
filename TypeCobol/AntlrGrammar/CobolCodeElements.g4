@@ -212,6 +212,7 @@ codeElement:
 
 // FOR SQL	
 	| commitStatement
+	| selectStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8260,6 +8261,11 @@ execStatementEnd: END_EXEC;
 
 //FOR SQL
 commitStatement: SQL_COMMIT;
+selectStatement: fullselect;
+fullselect: subselect;
+subselect: sql_selectClause;
+sql_selectClause: 
+  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? star;
 
 // ------------------------------
 // End of DB2 coprocessor
