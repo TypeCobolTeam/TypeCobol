@@ -34,7 +34,15 @@ namespace TypeCobol.Compiler.Sql.Scanner
 
             // Start scanning at the given index
             currentIndex = startIndex;
-
+            switch (line[startIndex])
+            {
+                case ' ':
+                    //SpaceSeparator=1,
+                    return ScanWhitespace(startIndex);
+                case '*':
+                    currentIndex++;
+                    return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
+            }
             if (IsSqlKeywordPart(line[currentIndex]))
             {
                 //Consume all sql-keyword compatible chars
@@ -45,18 +53,25 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 var tokenType = TokenUtils.GetSqlKeywordTokenTypeFromTokenString(tokenText);
 
                 //So far this scanner only recognize 'COMMIT' keyword
-                if (tokenType == TokenType.SQL_COMMIT)
+
+                switch (tokenType)
                 {
-                    return new Token(TokenType.SQL_COMMIT, startIndex, currentIndex - 1, tokensLine);
+                    case TokenType.SQL_COMMIT:
+                    case TokenType.SQL_SELECT:
+                    case TokenType.SQL_ALL:
+                    case TokenType.SQL_DISTINCT:
+                        return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
+                    default:
+                        return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
                 }
 
                 //Unrecognized keyword (for now) return as ExecStatementText
-                return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
-            }
 
+            }
             //Consume all sql-keyword incompatible chars
             for (; currentIndex <= lastIndex && !IsSqlKeywordPart(line[currentIndex]); currentIndex++) { }
             return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
         }
+
     }
 }
