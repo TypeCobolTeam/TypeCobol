@@ -404,9 +404,14 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateExecStatement(CodeElementsParser.ExecStatementContext context) {
 			var statement = new ExecStatement();
 			statement.ExecTranslatorName = CobolWordsBuilder.CreateExecTranslatorName(context.execTranslatorName());
-			statement.CodeLines = BuildObjectArrayFromParserRules(context.ExecStatementText(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
 			return statement;
 		}
+
+        internal CodeElement CreateExecStatementText(CodeElementsParser.ExecStatementTextContext context) {
+            var statement = new ExecStatementText();
+            statement.CodeLine = CobolWordsBuilder.CreateAlphanumericValue(context.ExecStatementText());
+            return statement;
+        }
 
         ////////////////////
         // FREE STATEMENT //
@@ -1433,27 +1438,51 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		private EvaluateSelectionObject CreateEvaluateSelectionObject(CodeElementsParser.ComparisonRHSExpressionContext context) {
-			var selectionObject = new EvaluateSelectionObject();
-			if(context.ANY() != null) {
-				selectionObject.IsAny = CreateSyntaxProperty(true, context.ANY());
-			} else
-			if (context.booleanValueOrExpression() != null) {
-				selectionObject.BooleanComparisonVariable = CobolExpressionsBuilder.CreateBooleanValueOrExpression(context.booleanValueOrExpression());
-			} else {
-				selectionObject.InvertAlphanumericComparison = CreateSyntaxProperty(true, context.NOT());
-				if (context.variableOrExpression2() != null) {
-					selectionObject.AlphanumericComparisonVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
-				} else
-				if(context.alphanumericExpressionsRange() != null) {
-					selectionObject.AlphanumericComparisonVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.alphanumericExpressionsRange().startExpression);
-					selectionObject.AlphanumericComparisonVariable2 = CobolExpressionsBuilder.CreateVariableOrExpression(context.alphanumericExpressionsRange().endExpression);
+        private EvaluateSelectionObject CreateEvaluateSelectionObject(
+            CodeElementsParser.ComparisonRHSExpressionContext context)
+        {
+            var selectionObject = new EvaluateSelectionObject();
+            if (context.ANY() != null)
+            {
+                selectionObject.IsAny = CreateSyntaxProperty(true, context.ANY());
+            }
+            else if (context.booleanValueOrExpression() != null)
+            {
+                selectionObject.BooleanComparisonVariable =
+                    CobolExpressionsBuilder.CreateBooleanValueOrExpression(context.booleanValueOrExpression());
+            }
+            else
+            {
+                selectionObject.InvertAlphanumericComparison = CreateSyntaxProperty(true, context.NOT());
+                if (context.comparisonRHSValue() != null)
+                {
+                    var comparisonRHSValue = context.comparisonRHSValue();
+                    if (comparisonRHSValue.variableOrExpression2() != null)
+                    {
+                        selectionObject.AlphanumericComparisonVariable =
+                            CobolExpressionsBuilder.CreateVariableOrExpression(comparisonRHSValue.variableOrExpression2());
+                    }
+                    else if (comparisonRHSValue.allFigurativeConstant() != null)
+                    {
+                        var repeatedCharacterValue = CobolWordsBuilder.CreateRepeatedCharacterValue(comparisonRHSValue.allFigurativeConstant());
+                        selectionObject.AlphanumericComparisonVariable = new VariableOrExpression(repeatedCharacterValue);
+                    }
+                    else if (comparisonRHSValue.alphanumericExpressionsRange() != null)
+                    {
+                        selectionObject.AlphanumericComparisonVariable =
+                            CobolExpressionsBuilder.CreateVariableOrExpression(comparisonRHSValue.alphanumericExpressionsRange()
+                                .startExpression);
+                        selectionObject.AlphanumericComparisonVariable2 =
+                            CobolExpressionsBuilder.CreateVariableOrExpression(comparisonRHSValue.alphanumericExpressionsRange()
+                                .endExpression);
+                    }
 				}
-			}
-			return selectionObject;
-		}
+            }
 
-		  ///////////////////////////
+            return selectionObject;
+        }
+
+          ///////////////////////////
 		 // WHEN SEARCH CONDITION //
 		///////////////////////////
 

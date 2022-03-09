@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -98,6 +100,16 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void EndExecStatement()
         {
 
+        }
+
+        public virtual void OnExecStatementText(ExecStatementText text)
+        {
+
+        }
+
+        public virtual void EndExecStatement(ExecStatementEnd end)
+        {
+            
         }
 
         public virtual void EndFileControlEntry()
@@ -821,6 +833,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         }
 
         public virtual void StartXmlParseStatementConditional(XmlParseStatement stmt)
+        {
+
+        }
+
+        // FOR SQL
+        public void OnCommitStatement([NotNull] CommitStatement commit)
         {
 
         }
