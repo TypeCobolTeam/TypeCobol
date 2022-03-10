@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
@@ -47,19 +48,19 @@ namespace TypeCobol.Compiler.Sql.Model
     {
         private readonly Selection[] _selections;
 
-        public SelectClause(SelectionModifier? selectionModifier, StarSelection starSelection)
+        public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, StarSelection starSelection)
             : this(selectionModifier, new [] { starSelection })
         {
 
         }
 
-        public SelectClause(SelectionModifier? selectionModifier, IEnumerable<Selection> selections)
+        public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, IEnumerable<Selection> selections)
         {
             SelectionModifier = selectionModifier;
             _selections = selections?.ToArray() ?? Array.Empty<Selection>();
         }
 
-        public SelectionModifier? SelectionModifier { get; }
+        public SyntaxProperty<SelectionModifier> SelectionModifier { get; }
 
         public IEnumerable<Selection> Selections => _selections;
 
