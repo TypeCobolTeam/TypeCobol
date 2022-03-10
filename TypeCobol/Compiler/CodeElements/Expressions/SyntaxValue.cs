@@ -258,7 +258,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.IntegerLiteral: // See: GitHub #2054
                     default:
                         System.Diagnostics.Debug.Assert(false, "Unexpected literal value: " + Token.TokenType);
-                        LoggingSystem.LogMessage(LogLevel.Error, "Unexpected literal value: " + Token.TokenType);
+                        LoggingSystem.LogMessage(LogLevel.Error, "Unexpected literal value: " + Token.TokenType + Environment.NewLine + new System.Diagnostics.StackTrace().ToString());
                         return false;
                 }
             }
