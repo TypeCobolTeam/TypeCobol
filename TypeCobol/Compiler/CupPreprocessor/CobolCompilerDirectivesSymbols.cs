@@ -112,6 +112,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int ANY = 222;
   public const int MultiplyOperator = 20;
   public const int THAN = 421;
+  public const int SQL_COMMIT = 532;
   public const int PeriodSeparator = 11;
   public const int COMPUTE = 71;
   public const int CBL = 48;

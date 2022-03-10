@@ -169,60 +169,42 @@ namespace TypeCobol.Compiler.Parser
             return valueToken != null ? new EnumeratedValue(valueToken, enumType) : null;
         }
 
-        private RepeatedCharacterValue CreateRepeatedCharacterValue(
-            CodeElementsParser.FigurativeConstantContext figurativeConstantContext,
-            ParserRuleContext parentContext,
-            Token optionalALLToken)
+        [NotNull]
+        private RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull] Token allToken, [NotNull] CodeElementsParser.FigurativeConstantContext context)
         {
-            IParseTree parseTree;
-            if (figurativeConstantContext != null)
+            if (context.symbolicCharacterReference() != null)
             {
-                if (figurativeConstantContext.symbolicCharacterReference() != null)
-                {
-                    var symbolicCharacterReference = CreateSymbolicCharacterReference(figurativeConstantContext.symbolicCharacterReference());
-                    return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
-                }
-
-                parseTree = figurativeConstantContext;
-            }
-            else
-            {
-                parseTree = parentContext;
+                var symbolicCharacterReference = CreateSymbolicCharacterReference(context.symbolicCharacterReference());
+                return new RepeatedCharacterValue(allToken, symbolicCharacterReference);
             }
 
-            Token valueToken = ParseTreeUtils.GetFirstToken(parseTree);
-            return new RepeatedCharacterValue(optionalALLToken, valueToken);
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new RepeatedCharacterValue(allToken, valueToken);
         }
 
         [CanBeNull]
-        internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull]CodeElementsParser.RepeatedCharacterValue1Context context)
+        internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull] CodeElementsParser.RepeatedCharacterValue1Context context)
         {
-            if (context == null) return null;
-            return CreateRepeatedCharacterValue(context.figurativeConstant(), context, null);
+            if (context == null || context.figurativeConstant() == null) return null;
+            return CreateRepeatedCharacterValue(null, context.figurativeConstant());
         }
 
-        internal RepeatedCharacterValue CreateRepeatedCharacterValue(CodeElementsParser.RepeatedCharacterValue2Context context)
+        [CanBeNull]
+        internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull] CodeElementsParser.RepeatedCharacterValue2Context context)
         {
-            Token optionalALLToken = null;
-            var figurativeConstantContext = context.figurativeConstant();
-            if (context.allFigurativeConstant() != null)
+            if (context == null) return null;
+
+            if (context.figurativeConstant() != null)
             {
-                optionalALLToken = ParseTreeUtils.GetFirstToken(context); //Grab the ALL token
-                figurativeConstantContext = context.allFigurativeConstant().figurativeConstant();
-
-                if (context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken() != null)
-                {
-                    var terminal = context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken();
-                    return new RepeatedCharacterValue(optionalALLToken, ParseTreeUtils.GetFirstToken(terminal));
-                }
-
-                if (figurativeConstantContext == null)
-                {
-                    return null;
-                }
+                return CreateRepeatedCharacterValue(null, context.figurativeConstant());
             }
 
-            return CreateRepeatedCharacterValue(figurativeConstantContext, context, optionalALLToken);
+            if (context.allFigurativeConstant() != null)
+            {
+                return CreateRepeatedCharacterValue(context.allFigurativeConstant());
+            }
+
+            return null;
         }
 
         [CanBeNull]
@@ -235,6 +217,26 @@ namespace TypeCobol.Compiler.Parser
                 return new RepeatedCharacterValue(null, token);
             }
             catch (InvalidOperationException) { return null; }
+        }
+
+        [CanBeNull]
+        internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull] CodeElementsParser.AllFigurativeConstantContext context)
+        {
+            if (context == null) return null;
+
+            Token allToken = ParseTreeUtils.GetFirstToken(context);
+            if (context.notNullTerminatedAlphanumericOrNationalLiteralToken() != null)
+            {
+                var terminal = context.notNullTerminatedAlphanumericOrNationalLiteralToken();
+                return new RepeatedCharacterValue(allToken, ParseTreeUtils.GetFirstToken(terminal));
+            }
+
+            if (context.figurativeConstant() != null)
+            {
+                return CreateRepeatedCharacterValue(allToken, context.figurativeConstant());
+            }
+
+            return null;
         }
 
         internal NullPointerValue CreateNullPointerValue(CodeElementsParser.NullPointerValueContext context)

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -350,7 +346,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <summary>
         /// End an Exec Statement
         /// </summary>
-        void EndExecStatement();
+        void EndExecStatement(ExecStatementEnd end);
 
         void EnterUseStatement(UseStatement useStatement);
 
@@ -510,6 +506,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="stmt">Exec Statement code element</param>
         void OnExecStatement([NotNull] ExecStatement stmt);
+
+        /// <summary>
+        /// Exec Statement Text seen
+        /// </summary>
+        /// <param name="stmt">Exec Statement Text code element</param>
+        void OnExecStatementText([NotNull] ExecStatementText stmt);
 
         #region CompoundStatements
         /// <summary>
@@ -806,6 +808,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void EndOnAtEnd();
         void StartNoAtEnd([NotNull] TypeCobol.Compiler.CodeElements.NotAtEndCondition cond);
         void EndNoAtEnd();
+        #endregion
+
+        #region Sql
+        /// <summary>
+        /// Enter a Commit Statement Node
+        /// </summary>
+        /// <param name="commit">The correponding Commit Statement Code Element</param>
+        void OnCommitStatement([NotNull] CommitStatement commit);
         #endregion
     }
 }
