@@ -155,6 +155,7 @@ terminal TypeCobol.Compiler.CodeElements.DivideStatement DivideStatement;
 terminal TypeCobol.Compiler.CodeElements.EntryStatement EntryStatement;
 terminal TypeCobol.Compiler.CodeElements.EvaluateStatement EvaluateStatement;
 terminal TypeCobol.Compiler.CodeElements.ExecStatement ExecStatement;
+terminal TypeCobol.Compiler.CodeElements.ExecStatementText ExecStatementText;
 terminal TypeCobol.Compiler.CodeElements.ExitMethodStatement ExitMethodStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitProgramStatement ExitProgramStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitStatement ExitStatement;
@@ -212,6 +213,7 @@ terminal TypeCobol.Compiler.CodeElements.ComputeStatementEnd ComputeStatementEnd
 terminal TypeCobol.Compiler.CodeElements.DeleteStatementEnd DeleteStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.DivideStatementEnd DivideStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.EvaluateStatementEnd EvaluateStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ExecStatementEnd ExecStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.IfStatementEnd IfStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatementEnd InvokeStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.JsonStatementEnd JsonStatementEnd;
@@ -227,6 +229,10 @@ terminal TypeCobol.Compiler.CodeElements.SubtractStatementEnd SubtractStatementE
 terminal TypeCobol.Compiler.CodeElements.UnstringStatementEnd UnstringStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.WriteStatementEnd WriteStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
+
+// FOR SQL
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
+
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd FunctionDeclarationEnd;
@@ -392,6 +398,11 @@ non terminal onOverflowCondition;
 non terminal notOnOverflowCondition;
 non terminal onSizeErrorCondition;
 non terminal notOnSizeErrorCondition;
+
+non terminal execStatement;
+non terminal execStatementBody;
+non terminal sqlStatement;
+non terminal execStatementEnd;
 
 start with starts;
 
@@ -757,12 +768,35 @@ storageEntry ::= dataDefinitionEntry
 	{:  :}
 	;
 
-execSqlStatement ::= ExecStatement
+execStatement ::= ExecStatement:stmt
+	{: my_parser.Builder.StartExecStatement(stmt); :}
+	execStatementBody
+	execStatementEnd	
+;
+
+execStatementBody ::= /* empty */
+|	ExecStatementText:text
+{: my_parser.Builder.OnExecStatementText(text); :}
+|	execStatementBody ExecStatementText:text
+{: my_parser.Builder.OnExecStatementText(text); :}
+|	sqlStatement
+{:  :}
+|	execStatementBody sqlStatement
+{:  :}
+;
+
+sqlStatement ::= CommitStatement:stmt
+{: my_parser.Builder.OnCommitStatement(stmt); :}
+;
+
+execStatementEnd ::= ExecStatementEnd:stmt
+{: my_parser.Builder.EndExecStatement(stmt); :}
+;
+
+execSqlStatement ::= execStatement:stmt
 	{:  :}
-	| ExecStatement:stmt
-	{: my_parser.Builder.StartExecStatement(stmt); my_parser.Builder.EndExecStatement(); :}
-	SentenceEnd
-	{:  :}
+	| execStatement SentenceEnd
+	{: /*Have End*/ :}
 	;
 
 localStorageSection ::= /*empty*/
@@ -944,12 +978,11 @@ sentences ::= sentence
 	;
 
 sentence ::= SentenceEnd:send
-	  {: my_parser.Builder.StartSentence(); my_parser.Builder.EndSentence(send); :}
+	{: my_parser.Builder.StartSentence(); my_parser.Builder.EndSentence(send); :}
     | statements SentenceEnd:send
-	  {: my_parser.Builder.EndSentence(send, true); :}
-	//JCM RESOLVE THIS TODO
-	| ExecStatement:stmt
-	{: my_parser.Builder.StartExecStatement(stmt); my_parser.Builder.EndExecStatement(); :}
+	{: my_parser.Builder.EndSentence(send, true); :}
+	| execStatement:stmt
+	{:  :}
 	| error SentenceEnd:send
 	{: my_parser.Builder.EndSentence(send, true); :}
 	| error statements SentenceEnd:send
@@ -1033,8 +1066,8 @@ singleStatement ::=
 	| CancelStatement:stmt
 	{: my_parser.Builder.OnCancelStatement(stmt); :}
 // -- DB2 & CICS integration --
-	| ExecStatement:stmt
-	{: my_parser.Builder.OnExecStatement(stmt); :}
+	| execStatement:stmt
+	{: :}
 // -- dynamic allocation --
 	| AllocateStatement:stmt
 	{: my_parser.Builder.OnAllocateStatement(stmt); :}

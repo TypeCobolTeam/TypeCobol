@@ -61,6 +61,7 @@ terminal TypeCobol.Compiler.CodeElements.DivideStatement DivideStatement;
 terminal TypeCobol.Compiler.CodeElements.EntryStatement EntryStatement;
 terminal TypeCobol.Compiler.CodeElements.EvaluateStatement EvaluateStatement;
 terminal TypeCobol.Compiler.CodeElements.ExecStatement ExecStatement;
+terminal TypeCobol.Compiler.CodeElements.ExecStatementText ExecStatementText;
 terminal TypeCobol.Compiler.CodeElements.ExitMethodStatement ExitMethodStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitProgramStatement ExitProgramStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitStatement ExitStatement;
@@ -118,6 +119,7 @@ terminal TypeCobol.Compiler.CodeElements.ComputeStatementEnd ComputeStatementEnd
 terminal TypeCobol.Compiler.CodeElements.DeleteStatementEnd DeleteStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.DivideStatementEnd DivideStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.EvaluateStatementEnd EvaluateStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ExecStatementEnd ExecStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.IfStatementEnd IfStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatementEnd InvokeStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.JsonStatementEnd JsonStatementEnd;
@@ -133,6 +135,10 @@ terminal TypeCobol.Compiler.CodeElements.SubtractStatementEnd SubtractStatementE
 terminal TypeCobol.Compiler.CodeElements.UnstringStatementEnd UnstringStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.WriteStatementEnd WriteStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
+
+// FOR SQL
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
+
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd FunctionDeclarationEnd;
@@ -141,7 +147,9 @@ terminal TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader GlobalStorag
 terminal TypeCobol.Compiler.CodeElements.Program Program;
 
 /* Non terminals */
-non terminal cobolCompilationUnit, cobolProgram, cobolClass, cobolProgramBase, nestedProgram;
+non terminal starts, statementEntry;
+non terminal compilationUnit, cobolCompilationUnit;
+non terminal cobolProgram, cobolClass, cobolProgramBase, nestedProgram;
 non terminal classEndOpt;
 non terminal factoryIdentificationOpt;
 non terminal factoryIdentification;
@@ -160,11 +168,11 @@ non terminal methodEnvironmentDivisionOpt;
 non terminal methodEnvironmentDivision;
 
 non terminal programAttributes;
-non terminal LibraryCopyOpt;
-non terminal ProgramEndOpt;
+non terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement libraryCopyOpt;
+non terminal TypeCobol.Compiler.CodeElements.ProgramEnd programEndOpt;
 non terminal nestedProgramOpt;
 
-non terminal environmentDivisionOpt, environmentDivision;
+non terminal TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader environmentDivisionOpt, environmentDivision;
 non terminal configurationSectionOpt, configurationSection;
 non terminal inputOutputSectionOpt, inputOutputSection;
 non terminal configurationParagraphs;
@@ -190,7 +198,7 @@ non terminal linkageSection;
 non terminal dataDivisionOpt, dataDivision;
 
 non terminal procedureDivision, procedureDivisionOpt;
-non terminal statement, singleStatement, compoundStatement;
+non terminal TypeCobol.Compiler.Nodes.Node statement, singleStatement, compoundStatement;
 non terminal statements;
 non terminal sentence;
 non terminal sentences, sentencesOpt;
@@ -204,6 +212,7 @@ non terminal functionDeclaration;
 non terminal functionProcedureDivision, functionProcedureDivisionOpt;
 non terminal functionOrSectionDeclaration;
 non terminal functionOrSectionDeclarations;
+non terminal configurationSectionHeader;
 
 non terminal onAtEnd, noAtEnd;
 non terminal endConditions;
@@ -227,10 +236,11 @@ non terminal whenConditionClauses;
 non terminal whenSearchConditionClauses;
 non terminal whenOtherClause;
 non terminal whenSearchConditionClause;
-non terminal whenEvaluateCondition;
-non terminal whenEvaluateConditions;
+non terminal TypeCobol.Compiler.CodeElements.CodeElement whenEvaluateCondition;
+non terminal TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList whenEvaluateConditions;
 non terminal evaluateStatementWithBody;
 non terminal ifStatementWithBody;
+non terminal elseContinuation;
 non terminal invokeStatementConditional;
 non terminal jsonGenerateStatementConditional;
 non terminal jsonParseStatementConditional;
@@ -250,10 +260,75 @@ non terminal writeStatementConditional;
 non terminal xmlGenerateStatementConditional;
 non terminal xmlParseStatementConditional;
 
+non terminal procedureDivisionHeader;
+non terminal functionProcedureDivisionHeader;
+non terminal sectionHeader;
+non terminal paragraphHeader;
+
+non terminal ifstatement;
+non terminal elseCondition;
+non terminal nextSentenceStatement;
+non terminal addStatement;
+non terminal callStatement;
+non terminal computeStatement;
+non terminal deleteStatement;
+non terminal divideStatement;
+non terminal evaluateStatement;
+non terminal invokeStatement;
+non terminal jsonGenerateStatement;
+non terminal jsonParseStatement;
+non terminal multiplyStatement;
+non terminal performStatement;
+non terminal readStatement;
+non terminal returnStatement;
+non terminal rewriteStatement;
+non terminal searchStatement;
+non terminal whenSearchCondition;
+non terminal whenEvaluateConditionsStart;
+non terminal whenOtherCondition;
+non terminal startStatement;
+non terminal stringStatement;
+non terminal subtractStatement;
+non terminal unstringStatement;
+non terminal writeStatement;
+non terminal xmlGenerateStatement;
+non terminal xmlParseStatement;
+
+non terminal atEndCondition;
+non terminal notAtEndCondition;
+non terminal onExceptionCondition;
+non terminal notOnExceptionCondition;
+non terminal invalidKeyCondition;
+non terminal notInvalidKeyCondition;
+non terminal onOverflowCondition;
+non terminal notOnOverflowCondition;
+non terminal onSizeErrorCondition;
+non terminal notOnSizeErrorCondition;
+
+non terminal execStatement;
+non terminal execStatementBody;
+non terminal sqlStatement;
+non terminal execStatementEnd;
+
+start with starts;
+
+starts ::= compilationUnit		/* rule for starting analyzing a compilation unit */
+	| StatementEntryPoint statementEntry /* rule for starting analyzing a TypeCobol statement */
+	;
+
+compilationUnit ::= {: :} cobolCompilationUnit
+	| {: :} /*empty*/
+	;
+
 /* The grammar */
-cobolCompilationUnit ::= cobolProgram:cp
-	| cobolClass:cc
-	{:  :}
+cobolCompilationUnit ::= cobolProgram
+	{: :}
+	|  cobolClass
+	{: :}
+	|  cobolCompilationUnit cobolProgram
+	{: :}
+	|  cobolCompilationUnit cobolClass
+	{: :}
 	;
 
 /*
@@ -261,142 +336,143 @@ cobolCompilationUnit ::= cobolProgram:cp
 */
 
 cobolProgram ::=
-	cobolProgramBase:cpb
-    nestedProgramOpt:nsp
-	ProgramEndOpt:pe
+	cobolProgramBase
+    nestedProgramOpt
+	programEndOpt:pe
 	{: :}
 	;
 
 cobolProgramBase ::=
-	programAttributes:pas
-	environmentDivisionOpt:ed
-	dataDivisionOpt:dv
-	procedureDivisionOpt:pdiv
+	programAttributes
+	{: :}
+	environmentDivisionOpt
+	dataDivisionOpt
+	procedureDivisionOpt
 	{: :}
 	;
 
 cobolClass ::= 
-	ClassIdentification:ci
-	EnvironmentDivisionHeader:edh
-	factoryIdentificationOpt:fi
-	objectIdentificationOpt:oi
-	classEndOpt:ce
+	ClassIdentification
+	EnvironmentDivisionHeader
+	factoryIdentificationOpt
+	objectIdentificationOpt
+	classEndOpt
 	{: :}
 	;
 
 classEndOpt ::= /*Empty*/
 		{: :}
-	|	ClassEnd:ce
+	|	ClassEnd
 		{: :}
 		;
 
 factoryIdentificationOpt ::= /*empty*/
 		{: :}
-	| factoryIdentification:fi
+	| factoryIdentification
 		{: :}
 	;
 
-factoryIdentification ::= FactoryIdentification:fi factoryDataDivisionOpt:fdd factoryObjectprocedureDivisionOpt:pdd factoryEndOpt:fe
+factoryIdentification ::= FactoryIdentification factoryDataDivisionOpt factoryObjectprocedureDivisionOpt factoryEndOpt
 		{: :}
 	;
 
 factoryEndOpt ::= /*empty*/
 	{: :}
-	| FactoryEnd:fe
+	| FactoryEnd
 	{: :}
 	;
 		
 factoryDataDivisionOpt ::= /*empty*/
 		{: :}
-	|	factoryDataDivision:fdd
+	|	factoryDataDivision
 		{: :}
 	;	
 
-factoryDataDivision ::= DataDivisionHeader:ddh workingStorageSection:ws factoryObjectprocedureDivisionOpt:pdd
+factoryDataDivision ::= DataDivisionHeader workingStorageSection factoryObjectprocedureDivisionOpt
 		{: :}
 	;	
 
 factoryObjectprocedureDivisionOpt ::= /*empty*/
 		{: :}
-	|	factoryObjectprocedureDivision:pdd
+	|	factoryObjectprocedureDivision
 		{: :}
 	;	
 
-factoryObjectprocedureDivision ::= ProcedureDivisionHeader:pdh methodDefitionsOpt:mdefs
+factoryObjectprocedureDivision ::= ProcedureDivisionHeader methodDefitionsOpt
 		{: :}
 	;	
 
 objectIdentificationOpt ::= /*empty*/
 		{: :}
-	|	objectIdentification:oi
+	|	objectIdentification
 		{: :}
 	;	
 
-objectIdentification ::= ObjectIdentification:oi workingStorageSection:ws factoryObjectprocedureDivisionOpt:pdd objectEndOpt:oe
+objectIdentification ::= ObjectIdentification workingStorageSection factoryObjectprocedureDivisionOpt objectEndOpt
 		{: :}
 	;	
 
 objectEndOpt ::= /* empty */
 		{: :}
-	| ObjectEnd:oe
+	| ObjectEnd
 		{: :}
 	;
 
 methodDefitionsOpt ::= /* empty */
 		{: :}
-	|	methodDefitions:mdefs
+	|	methodDefitions
 		{: :}
 	;	
 
-methodDefitions ::= methodDefition:md
+methodDefitions ::= methodDefition
 		{: :}
-	| methodDefitions:mdefs methodDefition:md
+	| methodDefitions methodDefition
 		{: :}
 	;
 
-methodDefition ::= MethodIdentification:mi methodEnvironmentDivisionOpt:med dataDivisionOpt:dv procedureDivisionOpt:pdiv MethodEnd:me
+methodDefition ::= MethodIdentification methodEnvironmentDivisionOpt dataDivisionOpt procedureDivisionOpt MethodEnd
 	{: :}
 	;
 
 methodEnvironmentDivisionOpt ::= /*empty*/
-	{:  :}
-	| methodEnvironmentDivision:ed
-	{:  :}
+	{: :}
+	| methodEnvironmentDivision
+	{: :}
 	;
 
 methodEnvironmentDivision ::=
-	EnvironmentDivisionHeader:edh  
-	inputOutputSectionOpt:ioc
-	{:  :}
+	EnvironmentDivisionHeader
+	inputOutputSectionOpt
+	{: :}
 	;
 
 // TCRFUN_LIBRARY_COPY
-programAttributes ::= ProgramIdentification:pid LibraryCopyOpt:lc
-	{:  :}
+programAttributes ::= ProgramIdentification:pid libraryCopyOpt:lc
+	{: :}
 	;
 
-LibraryCopyOpt ::= /*empty */
-	{:  :}
+libraryCopyOpt ::= /*empty */
+	{: :}
 	| LibraryCopy:lc
-	{:  :}
+	{: :}
 	;
 
-ProgramEndOpt ::= /* empty */
+programEndOpt ::= /* empty */
 	| ProgramEnd:pe
-	{:  :}
+	{: :}
 	;
 
 nestedProgram ::= 	
-	cobolProgramBase:cpb
-    nestedProgramOpt:nsp
+	cobolProgramBase
+    nestedProgramOpt
 	ProgramEnd:pe
 	{: :}
 	;
 
 nestedProgramOpt ::= /* Empty */
-	{:  :}
-	| nestedProgramOpt:nsp nestedProgram:np
-	{:  :}
+	{: :}
+	| nestedProgramOpt nestedProgram
+	{: :}
 	;
 
 /*
@@ -404,105 +480,114 @@ nestedProgramOpt ::= /* Empty */
 */
 
 environmentDivisionOpt ::= /*empty*/
-	{:  :}
-	| environmentDivision:ed
-	{:  :}
+	{: :}
+	| environmentDivision
+	{: :}
 	;
 
 environmentDivision ::=
 	EnvironmentDivisionHeader:edh  
-	configurationSectionOpt:cs
-	inputOutputSectionOpt:ioc
-	{:  :}
+	{: :}
+	configurationSectionOpt
+	inputOutputSectionOpt
+	{: :}
 	;
 
 configurationSectionOpt ::= /*empty*/
-	{:  :}
-	| configurationSection:cs
-	{:  :}
+	{: :}
+	| configurationSection
+	{: :}
 	;
 
-configurationSection ::= ConfigurationSectionHeader:csh
-	{:  :}
-	| ConfigurationSectionHeader:csh configurationParagraphs:cps
-	{:  :}
+configurationSection ::= configurationSectionHeader 
+	{: :}
+	| configurationSectionHeader
+	  configurationParagraphs
+	{: :}
 	;
 
-configurationParagraphs ::= configurationParagraph:cp
-		{:  :}
-	| configurationParagraphs:cps configurationParagraph:cp
-		{:  :}
+configurationSectionHeader ::= ConfigurationSectionHeader:csh
+	{: :}
 	;
 
-configurationParagraph ::= SourceComputerParagraph:scp
-	{:  :}
+configurationParagraphs ::= configurationParagraph
+		{: :}
+	| configurationParagraphs configurationParagraph
+		{: :}
+	;
+
+configurationParagraph ::= 
+      SourceComputerParagraph:scp
+	{: :}
 	| ObjectComputerParagraph:ocp
-	{:  :}
+	{: :}
 	| SpecialNamesParagraph:snp
-	{:  :}
+	{: :}
 	| RepositoryParagraph:rp
-	{:  :}
+	{: :}
 	;
 
 inputOutputSectionOpt ::= /*empty*/
-	{:  :}
-	| inputOutputSection:ios
-	{:  :}
+	{: :}
+	| inputOutputSection
+	{: :}
 	;
 
 inputOutputSection ::= 
 	InputOutputSectionHeader:iosh
-	fileControlParagraphOpt:fcp
-	ioControlParagraphOpt:iocp
-	{:  :}
+	{: :}
+	fileControlParagraphOpt
+	ioControlParagraphOpt
+	{: :}
 	;
 
 fileControlParagraphOpt ::= /*empty*/
-	{:  :}
-	| fileControlParagraph:fcp
-	{:  :}
+	{: :}
+	| fileControlParagraph
+	{: :}
 	;
 
 fileControlParagraph ::=
 	FileControlParagraphHeader:fcph
-	fileControlEntriesOpt:fces
+	{: :}
+	fileControlEntriesOpt
 	{: :}
 	;
 
 fileControlEntriesOpt ::= /*empty*/
-		{:  :}
-	| fileControlEntries:fces
-		{:  :}
+		{: :}
+	| fileControlEntries
+		{: :}
 	;
 
 fileControlEntries ::= FileControlEntry:fce
-		{:  :}
+		{: :}
 	| fileControlEntries:fces FileControlEntry:fce
-		{:  :}
+		{: :}
 	;
 
 ioControlParagraphOpt ::= /*empty*/
-		{:  :}
-	| ioControlParagraph:iocp
-		{:  :}
+		{: :}
+	| ioControlParagraph
+		{: :}
 	;
 
 ioControlParagraph ::= 
-	IOControlParagraphHeader:iocph
-	ioControlSentencesOpt:iocs
-	{:  :}
+	IOControlParagraphHeader
+	ioControlSentencesOpt
+	{: :}
 	;
 
 ioControlSentencesOpt ::= /* empty */	
-		{:  :}
-	| ioControlEntries:ioces SentenceEnd:se
+		{: :}
+	| ioControlEntries SentenceEnd
 		{:	:}
 	;
 
-ioControlEntries ::= IOControlEntry:ioce
-		{:  :}
-	| ioControlEntries:ioces IOControlEntry:ioce
-		{:  :}
+ioControlEntries ::= IOControlEntry
+		{: :}
+	| ioControlEntries IOControlEntry
+		{: :}
 	;
 
 
@@ -510,133 +595,183 @@ ioControlEntries ::= IOControlEntry:ioce
 // --- DATA DIVISION ---
 */
 dataDivisionOpt ::= /*empty*/
-	{:  :}
-	| dataDivision:dv
-	{:  :}
+	{: :}
+	| dataDivision
+	{: :}
 	;
 
 dataDivision ::=
 	DataDivisionHeader:ddh
-	fileSection:fs
-	globalStorageSection:gss
-	workingStorageSection :wss
-	localStorageSection:lss
-	linkageSection:ls
 	{: :}
+	fileSection
+	globalStorageSection
+	workingStorageSection
+	localStorageSection
+	linkageSection
+	{: :}
+//|	error FileSectionHeader
+//| error GlobalStorageSection
+//|	error WorkingStorageSectionHeader
+//|	error LocalStorageSectionHeader
+//|	error LinkageSectionHeader
 	;
 
 fileSection ::= /*empty*/
-	{:  :}
-	| FileSectionHeader:feh fileDescriptionEntries:des
-	{:  :}
+	{: :}
+	| FileSectionHeader:feh 
+	{: :}
+	fileDescriptionEntriesOpt
+	{: :}
+	| error fileDescriptionEntries
+	{: :}
 	;
 
 fileDescriptionEntriesOpt ::= /*empty*/
-	{:  :}
-	| fileDescriptionEntries:fdes
-	{:  :}
+	{: :}
+	| fileDescriptionEntries
+	{: :}
 	;
 
 fileDescriptionEntries ::=
-	fileDescriptionEntry:fde
-	{:  :}
-	| fileDescriptionEntries:fdes fileDescriptionEntry:fde
-	{:  :}
+	fileDescriptionEntry
+	{: :}
+	| fileDescriptionEntries fileDescriptionEntry
+	{: :}
 	;
 
-fileDescriptionEntry ::= FileDescriptionEntry:fde dataDefinitionEntries:dfes
-	{:  :}
-	;
-
-globalStorageSection ::= /*empty*/
-	{:  :}
-	| GlobalStorageSectionHeader:gssh storageEntries:ses
-	{:  :}
+fileDescriptionEntry ::= 
+	FileDescriptionEntry:fde 
+	{: :}
+	dataDefinitionEntries
+	{: :}
 	;
 
 workingStorageSection ::= /*empty*/
-	{:  :}
-	| WorkingStorageSectionHeader:wssh storageEntries:ses
-	{:  :}
+	{: :}
+	| WorkingStorageSectionHeader:wssh 
+	{: :}
+	  storageEntries
+	{: :}
+	;
+
+	globalStorageSection ::= /*empty*/
+	{: :}
+	| GlobalStorageSectionHeader:gssh 
+	{: :}
+	  storageEntries
+	{: :}
 	;
 
 storageEntries ::= /*empty*/
-	{:  :}
-	| storageEntries:ses storageEntry:se
-	{:  :}
+	{: :}
+	| storageEntries storageEntry
+	{: :}
 	;
 
-storageEntry ::= dataDefinitionEntry:dde
-	{:  :}
-	| execSqlStatement:ess
-	{:  :}
+storageEntry ::= dataDefinitionEntry
+	{: :}
+	| execSqlStatement
+	{: :}
 	;
 
-execSqlStatement ::= ExecStatement:es
-	{:  :}
-	| ExecStatement:es SentenceEnd:se
-	{:  :}
+execStatement ::= ExecStatement:stmt
+	{: :}
+	execStatementBody
+	execStatementEnd	
+;
+
+execStatementBody ::= /* empty */
+|	ExecStatementText:text
+{: :}
+|	execStatementBody ExecStatementText:text
+{: :}
+|	sqlStatement
+{: :}
+|	execStatementBody sqlStatement
+{: :}
+;
+
+sqlStatement ::= CommitStatement:stmt
+{: :}
+;
+
+execStatementEnd ::= ExecStatementEnd:stmt
+{: :}
+;
+
+execSqlStatement ::= execStatement:stmt
+	{: :}
+	| execStatement SentenceEnd
+	{: /*Have End*/ :}
 	;
 
 localStorageSection ::= /*empty*/
-	{:  :}
-	| LocalStorageSectionHeader:lsh storageEntries:ses
-	{:  :}
+	{: :}
+	| LocalStorageSectionHeader:lsh 
+	{: :}
+	storageEntries
+	{: :}
 	;
 
 dataDefinitionEntriesOpt ::= /*empty*/
-	{:  :}
-	| dataDefinitionEntries:ddes
-	{:  :}
+	{: :}
+	| dataDefinitionEntries
+	{: :}
 	;
 
-dataDefinitionEntries ::= dataDefinitionEntry:dde
-	{:  :}
-	| dataDefinitionEntries:ddes dataDefinitionEntry:dde
-	{:  :}
+dataDefinitionEntries ::= dataDefinitionEntry
+	{: :}
+	| dataDefinitionEntries dataDefinitionEntry
+	{: :}
 	;
 
 dataDefinitionEntry ::=
 	  DataDescriptionEntry:dde
-	{:  :}
+	{: :}
 	| DataRedefinesEntry:dre
-	{:  :}
+	{: :}
 	| DataRenamesEntry:dre
-	{:  :}
+	{: :}
 	| DataConditionEntry:dce
-	{:  :}
+	{: :}
 	;
 
 linkageSection ::= /*empty*/
-	{:  :}
-	| LinkageSectionHeader:lsh dataDefinitionEntriesOpt:ddes
-	{:  :}
+	{: :}
+	| LinkageSectionHeader:lsh 
+	{: :}
+	dataDefinitionEntriesOpt
+	{: :}
 	;
 
 procedureDivisionOpt ::= /*empty*/
-	{:  :}
-	| procedureDivision:pdiv
-	{:  :}
+	{: :}
+	| procedureDivision
+	{: :}
 	;
 
 // TCRFUN_DECLARATION_AS_NESTED_PROGRAM
 procedureDivision ::=
-	ProcedureDivisionHeader:pdh 
-	declarativesOpt:decls
-	functionOrSectionDeclarations:elems
+	procedureDivisionHeader
+	declarativesOpt
+	functionOrSectionDeclarations
+	{: :}
+	;
+
+procedureDivisionHeader ::= ProcedureDivisionHeader:pdh 
 	{: :}
 	;
 
 functionOrSectionDeclarations ::= /*empty*/
-	{:  :}
-	| functionOrSectionDeclarations:elems functionOrSectionDeclaration:elem
-	{:  :}
+	{: :}
+	| functionOrSectionDeclarations functionOrSectionDeclaration
+	{: :}
 	;
 
-functionOrSectionDeclaration ::= functionDeclaration:fd
-	{:  :}
-	| section:s
-	{:  :}
+functionOrSectionDeclaration ::= functionDeclaration
+	{: :}
+	| section
+	{: :}
 	;
 
 // - custom header
@@ -645,668 +780,866 @@ functionOrSectionDeclaration ::= functionDeclaration:fd
 // TCRFUN_MANDATORY_END_DECLARE
 functionDeclaration ::=
 	FunctionDeclarationHeader:fdh
-	dataDivisionOpt:dv
-	functionProcedureDivisionOpt:fpd
+	{: :}
+	dataDivisionOpt
+	functionProcedureDivisionOpt
 	FunctionDeclarationEnd:fe
 	{: :}
 	;
 
 functionProcedureDivisionOpt ::= /*empty*/
-	{:  :}
-	| functionProcedureDivision:fpd
-	{:  :}
+	{: :}
+	| functionProcedureDivision
+	{: :}
 	;
 
 functionProcedureDivision ::=
-	ProcedureDivisionHeader:pdh 
-	{:  :}
-| 	ProcedureDivisionHeader:pdh sections:alls
-	{:  :}
-
+	functionProcedureDivisionHeader 
+	{: :}
+| 	functionProcedureDivisionHeader
+	sections
+	{: :}
 	;
 
+functionProcedureDivisionHeader ::= ProcedureDivisionHeader:pdh 
+	{: :}
+	declarativesOpt
+	;
 
 declarativesOpt ::= /*empty*/
-	{:  :}
-	| declaratives:decls
-	{:  :}
+	{: :}
+	| declaratives
+	{: :}
 	;
 
 declaratives ::=
 	DeclarativesHeader:dh
-	declarativesSections:decls
+	{: :}
+	declarativesSections
 	DeclarativesEnd:de
-	{:  :}
+	{: :}
 	;
 
 
-declarativesSections ::= declarativesSection:ds
-	{:  :}
-	| declarativesSections:decls declarativesSection:ds
-	{:  :}
+declarativesSections ::= declarativesSection
+	{: :}
+	| declarativesSections declarativesSection
+	{: :}
 	;
 
 declarativesSection ::= 
-	SectionHeader:sh UseStatement:us
-	{:  :}
-	| SectionHeader:sh UseStatement:us paragraphs:p
-	{:  :}	
+	sectionHeader
+	UseStatement :us
+	{: :}
+	| sectionHeader
+	UseStatement :us
+	{: :} 
+	paragraphs
+	{: :}
 	;
 
-sections ::= section:s
-	{:  :}
-	| sections:alls section:s
-	{:  :}
+sections ::= section
+	{: :}
+	| sections section
+	{: :}
 	;
 
-section ::= SectionHeader:sh 
-	{:  :}
-	| SectionHeader:sh paragraphs:ps
-	{:  :}
-	| ParagraphHeader:ph 
-	{:  :}
-	| ParagraphHeader:ph paragraphs:ps
-	{:  :}
-	| sentences:alls
-	{:  :}
+section ::= sectionHeader 
+	{: :}
+	| sectionHeader paragraphs
+	{: :}
+	| paragraphs
+	{: :}
+	| sentences
+	{: :}
 	;
 
-paragraphs ::= paragraph:p
-	{:  :}
-	| paragraphs:ps paragraph:p
-	{:  :}
+sectionHeader ::= SectionHeader:sh 
+	{: :}
 	;
 
-paragraph ::= ParagraphHeader:ph sentencesOpt:alls
-	{:  :}
-	| sentences:alls
-	{:  :}
+paragraphHeader ::= ParagraphHeader:ph 
+	{: :}
 	;
 
-sentencesOpt ::= /*empty*/
-	{:  :}
-	| sentences:alls
-	{:  :}
+paragraphs ::= paragraph
+	{: :}
+	| paragraphs paragraph
+	{: :}
 	;
 
-sentences ::= sentence:s
-	{:  :}
-	| sentences:alls sentence:s
-	{:  :}
+paragraph ::= 
+	paragraphHeader	
+	{: :}
+	| paragraphHeader sentences
+	{: :}
+	| sentences
+	{: :}
+	;
+
+sentences ::= sentence
+	{: :}
+	| sentences sentence
 	;
 
 sentence ::= SentenceEnd:send
-	{:  :}
-    | statements:stmts SentenceEnd:send
-	{:  :}
-	//JCM RESOLVE THIS TODO
-	| ExecStatement:stmt
-	{:  :}
+	  {: :}
+    | statements SentenceEnd:send
+	  {: :}
+	| execStatement:stmt
+	{: :}
+	| error SentenceEnd:send
+	{: :}
+	| error statements SentenceEnd:send
+	{: :}
 	;
 
-statements ::= statement:stmt
-	{:  :}
-	| statements:stmts statement:stmt
-	{:  :}
+statementEntry ::= statement
+	| StatementEntryPoint ifstatement
+	{: :}
+	| StatementEntryPoint searchStatement
+	{: :}
 	;
 
-statement ::= singleStatement:stmt
-	{:  :}
-	| compoundStatement:stmt
-	{:  :}
+statements ::= statement
+	{: :}
+	| statements statement
+	{: :}
+	;
+
+statement ::= singleStatement
+	{: :}
+	| compoundStatement
+	{: :}
 	;
 
 singleStatement ::=
 	ContinueStatement:stmt
-	{:  :}
+	{: :}
 	| EntryStatement:stmt
-	{:  :}
+	{: :}
 // -- arithmetic --
 // -- see computeStatementConditional --
 // -- data movement --
 	| AcceptStatement:stmt // (DATE, DAY, DAY-OF-WEEK, TIME)
-	{:  :} 
+	{: :}
 	| InitializeStatement:stmt
-	{:  :}
+	{: :}
 	| InspectStatement:stmt
-	{:  :}
+	{: :}
 	| MoveStatement:stmt
-	{:  :}
+	{: :}
 	| SetStatement:stmt
-	{:  :}
+	{: :}
 // -- ending --
 	| StopStatement:stmt
-	{:  :}
+	{: :}
 	| ExitMethodStatement:stmt
-	{:  :}
+	{: :}
 	| ExitProgramStatement:stmt
-	{:  :}
+	{: :}
 	| GobackStatement:stmt
-	{:  :}
+	{: :}
 // -- input-output --
 	| CloseStatement:stmt
-	{:  :}
+	{: :}
 	| DisplayStatement:stmt
-	{:  :}
+	{: :}
 	| OpenStatement:stmt
-	{:  :}
+	{: :}
 // -- ordering --
 	| MergeStatement:stmt
-	{:  :}
+	{: :}
 	| ReleaseStatement:stmt
-	{:  :}
+	{: :}
 	| SortStatement:stmt
-	{:  :}
+	{: :}
 // -- procedure-branching --
 	| AlterStatement:stmt
-	{:  :}
+	{: :}
 	| ExitStatement:stmt
-	{:  :}
+	{: :}
 	| GotoStatement:stmt
-	{:  :}
+	{: :}
 	| PerformProcedureStatement:stmt
-	{:  :}
+	{: :}
 // -- program or method linkage --// TYPECOBOL
 	| ProcedureStyleCall:stmt
-	{:  :}
+	{: :}
 	| ProcedureStyleCall:stmt CallStatementEnd:end
-	{:  :}
+	{: :}
 	| CancelStatement:stmt
-	{:  :}
+	{: :}
 // -- DB2 & CICS integration --
-	| ExecStatement:stmt
-	{:  :}
+	| execStatement:stmt
+	{: :}
 // -- dynamic allocation --
 	| AllocateStatement:stmt
-	{:  :}
+	{: :}
 	| FreeStatement:stmt
-	{:  :}
+	{: :}
 	;
 	
 // Statements with optional body  
-compoundStatement ::= addStatementConditional:stmt
-		{:  :}
-	|	callStatementConditional:stmt
-		{:  :}
-	|	computeStatementConditional:stmt
-		{:  :}
-	|	deleteStatementConditional:stmt
-		{:  :}
-	|	evaluateStatementWithBody:stmt
-		{:  :}
-	|	ifStatementWithBody:stmt
-		{:  :}
-	|	invokeStatementConditional:stmt
-		{:  :}
-	|	jsonGenerateStatementConditional:stmt
-		{:  :}
-	|	jsonParseStatementConditional:stmt
-		{:  :}
-	|	divideStatementConditional:stmt
-		{:  :}
-	|	multiplyStatementConditional:stmt
-		{:  :}
-	|	performStatementWithBody:stmt
-		{:  :}
-	|	readStatementConditional:stmt
-		{:  :}
-	|	returnStatementConditional:stmt
-		{:  :}
-	|	rewriteStatementConditional:stmt
-		{:  :}
-	|	searchStatementWithBody:stmt
-		{:  :}
-	|	startStatementConditional:stmt
-		{:  :}
-	|	stringStatementConditional:stmt
-		{:  :}
-	|	subtractStatementConditional:stmt
-		{:  :}
-	|	unstringStatementConditional:stmt
-		{:  :}
-	|	writeStatementConditional:stmt
-		{:  :}
-	|	xmlGenerateStatementConditional:stmt
-		{:  :}
-	|	xmlParseStatementConditional:stmt
-		{:  :}
+compoundStatement ::= addStatementConditional
+		{: :}
+	|	callStatementConditional
+		{: :}
+	|	computeStatementConditional
+		{: :}
+	|	deleteStatementConditional
+		{: :}
+	|	evaluateStatementWithBody
+		{: :}
+	|	ifStatementWithBody
+		{: :}
+	|	invokeStatementConditional
+		{: :}
+	|	jsonGenerateStatementConditional
+		{: :}
+	|	jsonParseStatementConditional
+		{: :}
+	|	divideStatementConditional
+		{: :}
+	|	multiplyStatementConditional
+		{: :}
+	|	performStatementWithBody
+		{: :}
+	|	readStatementConditional
+		{: :}
+	|	returnStatementConditional
+		{: :}
+	|	rewriteStatementConditional
+		{: :}
+	|	searchStatementWithBody
+		{: :}
+	|	startStatementConditional
+		{: :}
+	|	stringStatementConditional
+		{: :}
+	|	subtractStatementConditional
+		{: :}
+	|	unstringStatementConditional
+		{: :}
+	|	writeStatementConditional
+		{: :}
+	|	xmlGenerateStatementConditional
+		{: :}
+	|	xmlParseStatementConditional
+		{: :}
 	;
 
 addStatementConditional ::=
-		AddStatement:stmt
-		{:  :}
-	|	AddStatement:stmt AddStatementEnd:end
-		{:  :}
-	|	AddStatement:stmt sizeErrorConditions:conds
-		{:  :}
-	|	AddStatement:stmt sizeErrorConditions:conds AddStatementEnd:end
-		{:  :}
+		addStatement
+		{: :}
+	|	addStatement AddStatementEnd:end
+		{: :}
+	|	addStatement sizeErrorConditions
+		{: :}
+	|	addStatement sizeErrorConditions AddStatementEnd:end
+		{: :}
+	;
+
+addStatement ::= AddStatement:stmt
+	{: :}
 	;
 
 callStatementConditional ::=
-		CallStatement:stmt
-		{:  :}
-	|	CallStatement:stmt CallStatementEnd:end
-		{:  :}
-	|	CallStatement:stmt callStatementConditions:conds
-		{:  :}
-	|	CallStatement:stmt callStatementConditions:conds CallStatementEnd:end
-		{:  :}
+		callStatement
+		{: :}
+	|	callStatement CallStatementEnd:end
+		{: :}
+	|	callStatement callStatementConditions
+		{: :}
+	|	callStatement callStatementConditions CallStatementEnd:end
+		{: :}
+	;
+
+callStatement ::= CallStatement:stmt
+	{: :}
 	;
 
 callStatementConditions ::=
-	  onException:on
-	{:  :}
-	| noException:not_on
-	{:  :}
-	| onOverflow:on
-	{:  :}
+	  onException
+	{: :}
+	| noException
+	{: :}
+	| onOverflow
+	{: :}
 	;
 
 computeStatementConditional ::=
-		ComputeStatement:stmt
-		{:  :}
-	|	ComputeStatement:stmt ComputeStatementEnd:end
-		{:  :}
-	|	ComputeStatement:stmt sizeErrorConditions:conds
-		{:  :}
-	|	ComputeStatement:stmt sizeErrorConditions:conds ComputeStatementEnd:end
-		{:  :}
+		computeStatement
+		{: :}
+	|	computeStatement ComputeStatementEnd:end
+		{: :}
+	|	computeStatement sizeErrorConditions
+		{: :}
+	|	computeStatement sizeErrorConditions ComputeStatementEnd:end
+		{: :}
+	;
+
+computeStatement ::= ComputeStatement:stmt
+	{: :}
 	;
 
 deleteStatementConditional ::=
-		DeleteStatement:stmt
-		{:  :}
-	|	DeleteStatement:stmt DeleteStatementEnd:end
-		{:  :}
-	|	DeleteStatement:stmt keyConditions:conds
-		{:  :}
-	|	DeleteStatement:stmt keyConditions:conds DeleteStatementEnd:end
-		{:  :}
+		deleteStatement
+		{: :}
+	|	deleteStatement DeleteStatementEnd:end
+		{: :}
+	|	deleteStatement keyConditions
+		{: :}
+	|	deleteStatement keyConditions DeleteStatementEnd:end
+		{: :}
 	;
 
+deleteStatement ::= DeleteStatement:stmt
+	{: :}
+	;
+
+
 divideStatementConditional ::=
-		DivideStatement:stmt
-		{:  :}
-	|	DivideStatement:stmt DivideStatementEnd:end
-		{:  :}
-	|	DivideStatement:stmt sizeErrorConditions:conds
-		{:  :}
-	|	DivideStatement:stmt sizeErrorConditions:conds DivideStatementEnd:end
-		{:  :}
+		divideStatement
+		{: :}
+	|	divideStatement DivideStatementEnd:end
+		{: :}
+	|	divideStatement sizeErrorConditions
+		{: :}
+	|	divideStatement sizeErrorConditions DivideStatementEnd:end
+		{: :}
+	;
+
+divideStatement ::= DivideStatement:stmt
+	{: :}
 	;
 
 evaluateStatementWithBody ::=
-		EvaluateStatement:est
-		{:  :}
-	|	EvaluateStatement:est EvaluateStatementEnd:ese
-		{:  :}
-	|	EvaluateStatement:est whenConditionClauses:wccs
-		{:  :}
-	|	EvaluateStatement:est whenConditionClauses:wccs EvaluateStatementEnd:ese
-		{:  :}
-	|	EvaluateStatement:est whenOtherClause:woc
-		{:  :}
-	|	EvaluateStatement:est whenOtherClause:woc EvaluateStatementEnd:ese
-		{:  :}
-	|	EvaluateStatement:est whenConditionClauses:wccs whenOtherClause:woc
-		{:  :}
-	|	EvaluateStatement:est whenConditionClauses:wccs whenOtherClause:woc EvaluateStatementEnd:ese
-		{:  :}
+		evaluateStatement
+		{: :}
+	|	evaluateStatement EvaluateStatementEnd:ese
+		{: :}
+	|	evaluateStatement whenConditionClauses
+		{: :}
+	|	evaluateStatement whenConditionClauses  EvaluateStatementEnd:ese
+		{: :}
+	|	evaluateStatement whenOtherClause
+		{: :}
+	|	evaluateStatement whenOtherClause EvaluateStatementEnd:ese
+		{: :}
+	|	evaluateStatement whenConditionClauses whenOtherClause
+		{: :}
+	|	evaluateStatement whenConditionClauses whenOtherClause EvaluateStatementEnd:ese
+		{: :}
+
+	|	evaluateStatement whenConditionClauses error EvaluateStatementEnd:ese
+		{: :}
+	|	evaluateStatement whenConditionClauses error whenOtherClause
+		{: :}
+	|	evaluateStatement whenConditionClauses error whenOtherClause EvaluateStatementEnd:ese
+		{: :}
+	;
+
+evaluateStatement ::= EvaluateStatement:est
+	{: :}
 	;
 
 whenConditionClauses ::= 
-		whenConditionClause:wcc
-		{:  :}
-	|	whenConditionClauses:wccs whenConditionClause:wcc
-		{:  :}
+		whenConditionClause
+		{: :}
+	|	whenConditionClauses whenConditionClause
+		{: :}
+	|	error whenConditionClause
+	|	whenConditionClauses error whenConditionClause
 	;
 
-whenConditionClause ::= whenEvaluateConditions:wecs statements:stmts
-	{:  :}
+whenConditionClause ::=  whenEvaluateConditionsStart
+    {: :}
+	| whenEvaluateConditionsStart  statements
+	{: :}
 	;
 
 whenEvaluateCondition ::= WhenSearchCondition:wec
-	{:  :}
+	{: :}
 	| WhenCondition:wec
-	{:  :}
+	{: :}
 	;
 
 whenEvaluateConditions ::= whenEvaluateCondition:wec
 	{: :}
 	| whenEvaluateConditions:wecs whenEvaluateCondition:wec
-	{:  :}
+	{: :}
 	;
 
-whenOtherClause ::= WhenOtherCondition:woc statements:stmts
-	{:  :}
+whenEvaluateConditionsStart ::= whenEvaluateConditions:wecs
+	{: :}
+	;
+
+
+whenOtherClause ::= whenOtherCondition:woc statements
+	{: :}
+	;
+
+whenOtherCondition ::= WhenOtherCondition:woc 
+	{: :}
 	;
 
 ifStatementWithBody ::=
-	IfStatement:ifs statements:thenStmts
-	{:  :}
-	| IfStatement:ifs statements:thenStmts IfStatementEnd:end
-	{:  :}
+	ifstatement
+    {: :}
+    | ifstatement elseContinuation
+    | ifstatement IfStatementEnd:end
+    {: :}
+	
+    | ifstatement statements
+    {: :}
+    | ifstatement statements elseContinuation
+    | ifstatement statements IfStatementEnd:end
+    {: :}
+    
+	| ifstatement nextSentenceStatement
+    {: :}
+    | ifstatement nextSentenceStatement elseContinuation
+    | ifstatement nextSentenceStatement IfStatementEnd:end
+    {: :}
+	;
 
-	| IfStatement:ifs NextSentenceStatement:thenNext
-	{:  :}
-	| IfStatement:ifs NextSentenceStatement:thenNext IfStatementEnd:end
-	{:  :}
+elseContinuation ::=
+    elseCondition
+    {: :}
+    | elseCondition IfStatementEnd:end
+    {: :}
+    | elseCondition statements
+    {: :}
+    | elseCondition statements IfStatementEnd:end
+    {: :}
+    | elseCondition nextSentenceStatement
+    {: :}
+    | elseCondition nextSentenceStatement IfStatementEnd:end
+    {: :}
+    ;
 
-	| IfStatement:ifs statements:thenStmts ElseCondition:ec statements:elseStmts
-	{:  :}
-	| IfStatement:ifs statements:thenStmts ElseCondition:ec NextSentenceStatement:elseNext
-	{:  :}
-
-	| IfStatement:ifs statements:thenStmts ElseCondition:ec statements:elseStmts IfStatementEnd:end
-	{:  :}
-	| IfStatement:ifs statements:thenStmts ElseCondition:ec NextSentenceStatement:elseNext IfStatementEnd:end
-	{:  :}
-
-	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec statements:elseStmts
-	{:  :}
-	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec NextSentenceStatement:elseNext
+ifstatement ::= IfStatement:ifs
 	{: :}
+	;
 
-	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec statements:elseStmts IfStatementEnd:end
-	{:  :}
-	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec NextSentenceStatement:elseNext IfStatementEnd:end
-	{:  :}
+elseCondition ::= ElseCondition:ec 
+	{: :}
+	;
+
+nextSentenceStatement ::= NextSentenceStatement:next
+	{: :}
 	;
 
 invokeStatementConditional ::=
-		InvokeStatement:stmt
-		{:  :}
-	|	InvokeStatement:stmt InvokeStatementEnd:end
-		{:  :}
-	|	InvokeStatement:stmt exceptionConditions:conds
-		{:  :}
-	|	InvokeStatement:stmt exceptionConditions:conds InvokeStatementEnd:end
-		{:  :}
+		invokeStatement
+		{: :}
+	|	invokeStatement InvokeStatementEnd:end
+		{: :}
+	|	invokeStatement exceptionConditions
+		{: :}
+	|	invokeStatement exceptionConditions InvokeStatementEnd:end
+		{: :}
+	;
+
+invokeStatement ::= InvokeStatement:stmt
+	{: :}
 	;
 
 jsonGenerateStatementConditional ::=
-		JsonGenerateStatement:stmt
-		{:  :}
-	|	JsonGenerateStatement:stmt JsonStatementEnd:end
-		{:  :}
-	|	JsonGenerateStatement:stmt exceptionConditions:conds
-		{:  :}
-	|	JsonGenerateStatement:stmt exceptionConditions:conds JsonStatementEnd:end
-		{:  :}
+		jsonGenerateStatement
+		{: :}
+	|	jsonGenerateStatement JsonStatementEnd:end
+		{: :}
+	|	jsonGenerateStatement exceptionConditions
+		{: :}
+	|	jsonGenerateStatement exceptionConditions JsonStatementEnd:end
+		{: :}
+	;
+
+jsonGenerateStatement ::= JsonGenerateStatement:stmt
+	{: :}
 	;
 
 jsonParseStatementConditional ::=
-		JsonParseStatement:stmt
-		{:  :}
-	|	JsonParseStatement:stmt JsonStatementEnd:end
-		{:  :}
-	|	JsonParseStatement:stmt exceptionConditions:conds
-		{:  :}
-	|	JsonParseStatement:stmt exceptionConditions:conds JsonStatementEnd:end
-		{:  :}
+		jsonParseStatement
+		{: :}
+	|	jsonParseStatement JsonStatementEnd:end
+		{: :}
+	|	jsonParseStatement exceptionConditions
+		{: :}
+	|	jsonParseStatement exceptionConditions JsonStatementEnd:end
+		{: :}
+	;
+
+jsonParseStatement ::= JsonParseStatement:stmt
+	{: :}
 	;
 
 multiplyStatementConditional ::=
-		MultiplyStatement:stmt
-		{:  :}
-	|	MultiplyStatement:stmt MultiplyStatementEnd:end
-		{:  :}
-	|	MultiplyStatement:stmt sizeErrorConditions:conds
-		{:  :}
-	|	MultiplyStatement:stmt sizeErrorConditions:conds MultiplyStatementEnd:end
-		{:  :}
+		multiplyStatement
+		{: :}
+	|	multiplyStatement MultiplyStatementEnd:end
+		{: :}
+	|	multiplyStatement sizeErrorConditions
+		{: :}
+	|	multiplyStatement sizeErrorConditions MultiplyStatementEnd:end
+		{: :}
+	;
+
+multiplyStatement ::= MultiplyStatement:stmt
+	{: :}
 	;
 
 performStatementWithBody ::=			
-		PerformStatement:stmt
-		{:  :}
-	|	PerformStatement:stmt PerformStatementEnd:end
-		{:  :}
-	|	PerformStatement:stmt statements:stmts
-		{:  :}
-	|	PerformStatement:stmt statements:stmts PerformStatementEnd:end
-		{:  :}
+		performStatement
+		{: :}
+	|	performStatement PerformStatementEnd:end
+		{: :}
+	|	performStatement statements
+		{: :}
+	|	performStatement statements PerformStatementEnd:end
+		{: :}
+	;
+
+performStatement ::= PerformStatement:stmt
+	{: :}
 	;
 
 readStatementConditional ::=
-		ReadStatement:stmt
-		{:  :}
-	|	ReadStatement:stmt ReadStatementEnd:end
-		{:  :}
-	|	ReadStatement:stmt rwStatementConditions:conds
-		{:  :}
-	|	ReadStatement:stmt rwStatementConditions:conds ReadStatementEnd:end
-		{:  :}
+		readStatement
+		{: :}
+	|	readStatement ReadStatementEnd:end
+		{: :}
+	|	readStatement rwStatementConditions
+		{: :}
+	|	readStatement rwStatementConditions ReadStatementEnd:end
+		{: :}
+	;
+
+readStatement ::= ReadStatement:stmt
+	{: :}
 	;
 
 rwStatementCondition ::=
-	  onAtEnd:at
-	{:  :}
-	| noAtEnd:not_at
-	{:  :}
-	| onInvalidKey:on
-	{:  :}
-	| noInvalidKey:not_on
-	{:  :}
+	  onAtEnd
+	{: :}
+	| noAtEnd
+	{: :}
+	| onInvalidKey
+	{: :}
+	| noInvalidKey
+	{: :}
 	;
 
 rwStatementConditions ::=
-		rwStatementCondition:rwsc
-		{:  :}
-	|	rwStatementConditions:rwscs rwStatementCondition:rwsc
-		{:  :}
+		rwStatementCondition
+		{: :}
+	|	rwStatementConditions rwStatementCondition
+		{: :}
 	;
 
 returnStatementConditional ::=
-		ReturnStatement:stmt
-		{:  :}
-	|	ReturnStatement:stmt ReturnStatementEnd:end
-		{:  :}
-	|	ReturnStatement:stmt endConditions:conds
-		{:  :}
-	|	ReturnStatement:stmt endConditions:conds ReturnStatementEnd:end
-		{:  :}
+		returnStatement
+		{: :}
+	|	returnStatement ReturnStatementEnd:end
+		{: :}
+	|	returnStatement endConditions
+		{: :}
+	|	returnStatement endConditions ReturnStatementEnd:end
+		{: :}
+	;
+
+returnStatement ::= ReturnStatement:stmt
+	{: :}
 	;
 
 rewriteStatementConditional ::=
-		RewriteStatement:stmt
-		{:  :}
-	|	RewriteStatement:stmt RewriteStatementEnd:end
-		{:  :}
-	|	RewriteStatement:stmt keyConditions:conds
-		{:  :}
-	|	RewriteStatement:stmt keyConditions:conds RewriteStatementEnd:end
-		{:  :}
+		rewriteStatement
+		{: :}
+	|	rewriteStatement RewriteStatementEnd:end
+		{: :}
+	|	rewriteStatement keyConditions
+		{: :}
+	|	rewriteStatement keyConditions RewriteStatementEnd:end
+		{: :}
+	;
+
+rewriteStatement ::= RewriteStatement:stmt
+	{: :}
 	;
 
 searchStatementWithBody ::=
-		searchStatement:stmt SearchStatementEnd:end
-		{:  :}
-	|	SearchStatement:stmt whenSearchConditionClauses:wsccs
-		{:  :}
-	|	SearchStatement:stmt whenSearchConditionClauses:wsccs SearchStatementEnd:send
-		{:  :}
-	|	SearchStatement:stmt onAtEnd:cend whenSearchConditionClauses:wsccs
-		{:  :}
-	|	SearchStatement:stmt onAtEnd:cend whenSearchConditionClauses:wsccs SearchStatementEnd:send
-		{:  :}
+		searchStatement SearchStatementEnd:end
+		{: :}
+	|	searchStatement whenSearchConditionClauses
+		{: :}
+	|	searchStatement whenSearchConditionClauses SearchStatementEnd:end
+		{: :}
+	|	searchStatement onAtEnd whenSearchConditionClauses:wsccs
+		{: :}
+	|	searchStatement onAtEnd whenSearchConditionClauses SearchStatementEnd:end
+		{: :}
 	;
 
-whenSearchConditionClause ::= 
+searchStatement ::= SearchStatement:stmt
+	{: :}
+	;
+
+whenSearchConditionClause ::=
 		whenSearchCondition 
-		{:  :}
+		{: :}
 	|	onAtEnd
-		{:  :}
-	|	WhenSearchCondition:wsc statements:stmts
-		{:  :}
-	|	WhenSearchCondition:wsc NextSentenceStatement:next
-		{:  :}
+		{: :}
+	|	whenSearchCondition  statements
+		{: :}
+	|	whenSearchCondition  nextSentenceStatement
+		{: :}
 	;
 
-whenSearchConditionClauses ::= whenSearchConditionClause:wscc
-		{:  :}
-	|	whenSearchConditionClauses:wsccs whenSearchConditionClause:wscc
-		{:  :}
+whenSearchCondition ::= WhenSearchCondition:wsc
+	{: :}
+	;
+
+whenSearchConditionClauses ::= whenSearchConditionClause
+		{: :}
+	|	whenSearchConditionClauses whenSearchConditionClause
+		{: :}
 	;
 
 startStatementConditional ::=
-		StartStatement:stmt
-		{:  :}
-	|	StartStatement:stmt StartStatementEnd:end
-		{:  :}
-	|	StartStatement:stmt keyConditions:conds
-		{:  :}
-	|	StartStatement:stmt keyConditions:conds StartStatementEnd:end
-		{:  :}
+		startStatement
+		{: :}
+	|	startStatement StartStatementEnd:end
+		{: :}
+	|	startStatement keyConditions
+		{: :}
+	|	startStatement keyConditions StartStatementEnd:end
+		{: :}
+	;
+
+startStatement ::= StartStatement:stmt
+	{: :}
 	;
 
 stringStatementConditional ::=
-		StringStatement:stmt
-		{:  :}
-	|	StringStatement:stmt StringStatementEnd:end
-		{:  :}
-	|	StringStatement:stmt overflowConditions:conds
-		{:  :}
-	|	StringStatement:stmt overflowConditions:conds StringStatementEnd:end
-		{:  :}
+		stringStatement
+		{: :}
+	|	stringStatement StringStatementEnd:end
+		{: :}
+	|	stringStatement overflowConditions
+		{: :}
+	|	stringStatement overflowConditions StringStatementEnd:end
+		{: :}
 	;
 
+stringStatement ::= StringStatement:stmt
+	 {: :}
+	 ;
+
 subtractStatementConditional ::=
-		SubtractStatement:stmt
-		{:  :}
-	|	SubtractStatement:stmt SubtractStatementEnd:end
-		{:  :}
-	|	SubtractStatement:stmt sizeErrorConditions:conds
-		{:  :}
-	|	SubtractStatement:stmt sizeErrorConditions:conds SubtractStatementEnd:end
-		{:  :}
+		subtractStatement
+		{: :}
+	|	subtractStatement SubtractStatementEnd:end
+		{: :}
+	|	subtractStatement sizeErrorConditions
+		{: :}
+	|	subtractStatement sizeErrorConditions SubtractStatementEnd:end
+		{: :}
+	;
+
+subtractStatement ::= SubtractStatement:stmt
+	{: :}
 	;
 
 unstringStatementConditional ::=
-		UnstringStatement:stmt
-		{:  :}
-	|	UnstringStatement:stmt UnstringStatementEnd:end
-		{:  :}
-	|	UnstringStatement:stmt overflowConditions:conds
-		{:  :}
-	|	UnstringStatement:stmt overflowConditions:conds UnstringStatementEnd:end
-		{:  :}
+		unstringStatement
+		{: :}
+	|	unstringStatement UnstringStatementEnd:end
+		{: :}
+	|	unstringStatement overflowConditions
+		{: :}
+	|	unstringStatement overflowConditions UnstringStatementEnd:end
+		{: :}
+	;
+
+unstringStatement ::= UnstringStatement:stmt
+	{: :}
 	;
 
 writeStatementConditional ::=
-		WriteStatement:stmt
-		{:  :}
-	|	WriteStatement:stmt WriteStatementEnd:end
-		{:  :}
-	|	WriteStatement:stmt rwStatementConditions:conds
-		{:  :}
-	|	WriteStatement:stmt rwStatementConditions:conds WriteStatementEnd:end
-		{:  :}
+		writeStatement
+		{: :}
+	|	writeStatement WriteStatementEnd:end
+		{: :}
+	|	writeStatement rwStatementConditions
+		{: :}
+	|	writeStatement rwStatementConditions WriteStatementEnd:end
+		{: :}
+	;
+
+writeStatement ::= WriteStatement:stmt
+	{: :}
 	;
 
 xmlGenerateStatementConditional ::=
-		XmlGenerateStatement:stmt
-		{:  :}
-	|	XmlGenerateStatement:stmt XmlStatementEnd:end
-		{:  :}
-	|	XmlGenerateStatement:stmt exceptionConditions:conds
-		{:  :}
-	|	XmlGenerateStatement:stmt exceptionConditions:conds XmlStatementEnd:end
-		{:  :}
+		xmlGenerateStatement
+		{: :}
+	|	xmlGenerateStatement XmlStatementEnd:end
+		{: :}
+	|	xmlGenerateStatement exceptionConditions
+		{: :}
+	|	xmlGenerateStatement exceptionConditions XmlStatementEnd:end
+		{: :}
+	;
+
+xmlGenerateStatement ::= XmlGenerateStatement:stmt
+	{: :}
 	;
 
 xmlParseStatementConditional ::=
-		XmlParseStatement:stmt
-		{:  :}
-	|	XmlParseStatement:stmt XmlStatementEnd:end
-		{:  :}
-	|	XmlParseStatement:stmt exceptionConditions:conds
-		{:  :}
-	|	XmlParseStatement:stmt exceptionConditions:conds XmlStatementEnd:end
-		{:  :}
+		xmlParseStatement
+		{: :}
+	|	xmlParseStatement XmlStatementEnd:end
+		{: :}
+	|	xmlParseStatement exceptionConditions
+		{: :}
+	|	xmlParseStatement exceptionConditions XmlStatementEnd:end
+		{: :}
+	;
+
+xmlParseStatement ::= XmlParseStatement:stmt
+	{: :}
 	;
 
 // Conditional execution of statements
 
-onAtEnd ::= AtEndCondition:cond statements:stmts
-	{:  :}
-	;
-noAtEnd ::= NotAtEndCondition:cond statements:stmts
-	{:  :}
-	;
-endConditions ::= onAtEnd:at
-	{:  :}
-	| noAtEnd:no_at
-	{:  :}
-	| endConditions:econds onAtEnd:at
-	{:  :}
-	| endConditions:econds noAtEnd:no_at
-	{:  :}
+onAtEnd ::= atEndCondition statements
+	{: :}
 	;
 
-onException ::= OnExceptionCondition:cond statements:stmts
-	{:  :}
+atEndCondition ::= AtEndCondition:cond 
+	{: :}
 	;
-noException ::= NotOnExceptionCondition:cond statements:stmts
-	{:  :}
+
+noAtEnd ::= notAtEndCondition statements
+	{: :}
 	;
-exceptionConditions ::= onException:on
-	{:  :}
-	| noException:not_on
-	{:  :}
-	| exceptionConditions:econds onException:on
-	{:  :}
-	| exceptionConditions:econds noException:not_on
-	{:  :}
+
+notAtEndCondition ::= NotAtEndCondition:cond 
+	{: :}
+	;
+
+endConditions ::= onAtEnd
+	{: :}
+	| noAtEnd
+	{: :}
+	| endConditions onAtEnd
+	{: :}
+	| endConditions noAtEnd
+	{: :}
+	;
+
+onException ::= onExceptionCondition statements
+	{: :}
+	;
+
+onExceptionCondition ::= OnExceptionCondition:cond 
+	{: :}
+	;
+
+noException ::= notOnExceptionCondition statements
+	{: :}
+	;
+
+notOnExceptionCondition ::= NotOnExceptionCondition:cond 
+	{: :}
+	;
+
+exceptionConditions ::= onException
+	{: :}
+	| noException
+	{: :}
+	| exceptionConditions onException
+	{: :}
+	| exceptionConditions noException
+	{: :}
 	;
 
 
-onInvalidKey ::= InvalidKeyCondition:cond statements:stmts
-	{:  :}
-	;
-noInvalidKey ::= NotInvalidKeyCondition:cond statements:stmts
-	{:  :}
-	;
-keyConditions ::= onInvalidKey:invalid
-	{:  :}
-	| noInvalidKey:not_invalid
-	{:  :}
-	| keyConditions:kconds onInvalidKey:valid
-	{:  :}
-	| keyConditions:kconds noInvalidKey:not_invalid
-	{:  :}
+onInvalidKey ::= invalidKeyCondition statements
+	{: :}
 	;
 
-onOverflow ::= OnOverflowCondition:cond statements:stmts
-	{:  :}
-	;
-noOverflow ::= NotOnOverflowCondition:cond statements:stmts
-	{:  :}
-	;
-overflowConditions ::= onOverflow:on
-	{:  :}
-	| noOverflow:not_on
-	{:  :}
-	| overflowConditions:oconds onOverflow:on
-	{:  :}
-	| overflowConditions:oconds noOverflow:not_on
-	{:  :}
+invalidKeyCondition ::= InvalidKeyCondition:cond 
+	{: :}
 	;
 
-onSizeError ::= OnSizeErrorCondition:cond statements:stmts
-	{:  :}
+noInvalidKey ::= notInvalidKeyCondition statements
+	{: :}
 	;
-noSizeError ::= NotOnSizeErrorCondition:cond statements:stmts
-	{:  :}
+
+notInvalidKeyCondition ::= NotInvalidKeyCondition:cond 
+	{: :}
 	;
+
+keyConditions ::= onInvalidKey
+	{: :}
+	| noInvalidKey
+	{: :}
+	| keyConditions onInvalidKey
+	{: :}
+	| keyConditions noInvalidKey
+	{: :}
+	;
+
+onOverflow ::= onOverflowCondition statements
+	{: :}
+	;
+onOverflowCondition ::= OnOverflowCondition:cond 
+	{: :}
+	;
+
+noOverflow ::= notOnOverflowCondition statements
+	{: :}
+	;
+
+notOnOverflowCondition ::= NotOnOverflowCondition:cond 
+	{: :}
+	;
+
+overflowConditions ::= onOverflow
+	{: :}
+	| noOverflow
+	{: :}
+	| overflowConditions onOverflow
+	{: :}
+	| overflowConditions noOverflow
+	{: :}
+	;
+
+onSizeError ::= onSizeErrorCondition statements
+	{: :}
+	;
+onSizeErrorCondition ::= OnSizeErrorCondition:cond 
+	{: :}
+	;
+
+noSizeError ::= notOnSizeErrorCondition statements
+	{: :}
+	;
+
+notOnSizeErrorCondition ::= NotOnSizeErrorCondition:cond 
+	{: :}
+	;
+
 sizeErrorConditions ::= 
-	  onSizeError:on
-	{:  :}
-	| noSizeError:not_on
-	{:  :}
-	| sizeErrorConditions:seconds onSizeError:on
-	{:  :}
-	| sizeErrorConditions:seconds noSizeError:not_on
-	{:  :}
+	  onSizeError
+		{: :}
+	| noSizeError
+		{: :}
+	| sizeErrorConditions onSizeError
+		{: :}
+	| sizeErrorConditions noSizeError
+		{: :}
 	;
