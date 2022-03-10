@@ -12,7 +12,6 @@ namespace TypeCobol.Compiler.Directives
     {
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
-        public bool AutoRemarksEnable { get; set; }
         /// <summary>
         /// Path to generate collected used copy names
         /// </summary>
@@ -27,10 +26,12 @@ namespace TypeCobol.Compiler.Directives
         /// Option used to defined the maximum processing step. (See FileCompiler for usage)
         /// </summary>
         public ExecutionStep? ExecToStep { get; set; }
+
         /// <summary>
         /// Shall we use Antlr for Parsing the Program.
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
+
         /// <summary>
         /// Shall we use EUROINFO_LEGACY_REPLACING_SYNTAX snippets for Parsing the Program.
         /// </summary>
@@ -59,14 +60,23 @@ namespace TypeCobol.Compiler.Directives
 #endif
 
         /// <summary>
+        /// True if we are strictly parsing Cobol source code and not TypeCobol.
+        /// </summary>
+        public bool IsCobolLanguage { get; set; }
+
+        /// <summary>
+        /// Internal optimization setting: it disables the creation of SpaceSeparator tokens
+        /// to gain speed/memory at scanning time. This option is by default set to True but
+        /// must be disabled when using Codegen.
+        /// </summary>
+        public bool OptimizeWhitespaceScanning { get; set; } = true;
+
+        /// <summary>
         /// Check if a End statement is aligned with the matching opening statement.
         /// </summary>
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
         /// <summary>
-        /// True if we are strictly parsing Cobol source code and not TypeCobol.
-        /// </summary>
-        public bool IsCobolLanguage { get; set; }
         /// Check if END PROGRAM have a program name associated and this name exists
         /// </summary>
         public TypeCobolCheckOption CheckEndProgram { get; set; }
@@ -94,13 +104,13 @@ namespace TypeCobol.Compiler.Directives
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
 
 #if EUROINFO_RULES
-            AutoRemarksEnable = config.AutoRemarks;
             CpyCopyNameMap = config.CpyCopyNameMap;
             ReportUsedCopyNamesPath = config.ReportUsedCopyNamesPath;
 #endif
 
+            IsCobolLanguage = config.IsCobolLanguage;
+
             CheckEndAlignment = config.CheckEndAlignment;
-            this.IsCobolLanguage = config.IsCobolLanguage;
             CheckEndProgram = config.CheckEndProgram;
             CheckPerformPrematureExits = config.CheckPerformPrematureExits;
             CheckPerformThruOrder = config.CheckPerformThruOrder;
@@ -111,16 +121,6 @@ namespace TypeCobol.Compiler.Directives
         {
             // default values for checks
             TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
-        }
-
-        /// <summary>
-        /// Clone the compiler options to enable specific parameters for each file
-        /// </summary>
-        public TypeCobolOptions Clone()
-        {
-            TypeCobolOptions newOptions = new TypeCobolOptions();
-            this.CopyIBMOptionsTo(newOptions);
-            return newOptions;
         }
     }
 }

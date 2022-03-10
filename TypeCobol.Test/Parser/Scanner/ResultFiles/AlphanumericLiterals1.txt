@@ -1,27 +1,19 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,6:"toto"]<AlphanumericLiteral>(",Y,Y){toto}
-[7,7: ]<SpaceSeparator>
 [8,13:'titi']<AlphanumericLiteral>(',Y,Y){titi}
-[14,14: ]<SpaceSeparator>
 [15,22:"'tata'"]<AlphanumericLiteral>(",Y,Y){'tata'}
-[23,23: ]<SpaceSeparator>
 [24,31:'"tutu"']<AlphanumericLiteral>(',Y,Y){"tutu"}
-[32,32: ]<SpaceSeparator>
 [33,34:""]<AlphanumericLiteral>(",Y,Y){}
-[35,35: ]<SpaceSeparator>
 [36,37:'']<AlphanumericLiteral>(',Y,Y){}
-[38,38: ]<SpaceSeparator>
 [39,39+:.]<PeriodSeparator>
 
 -- Line 2 --
 [1,4:"ok"]<AlphanumericLiteral>(",Y,Y){ok}
-[5,5: ]<SpaceSeparator>
 [6,14:"sans fin]<AlphanumericLiteral>(",Y,N){sans fin}
 Line 0[0,0] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
 
 -- Line 3 --
 [1,4:'ok']<AlphanumericLiteral>(',Y,Y){ok}
-[5,5: ]<SpaceSeparator>
 [6,14:'sans fin]<AlphanumericLiteral>(',Y,N){sans fin}
 Line 0[0,0] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
 
@@ -36,25 +28,18 @@ Line 0[0,0] <27, Error, Syntax> - Syntax error : Literal is not correctly delimi
 -- Line 6 --
 [1,6:"toto"]<AlphanumericLiteral>(",Y,Y){toto}
 [7,12:'titi']<AlphanumericLiteral>(',Y,Y){titi}
-[13,13: ]<SpaceSeparator>
 [14,21:"'tata'"]<AlphanumericLiteral>(",Y,Y){'tata'}
 [22,29:'"tutu"']<AlphanumericLiteral>(',Y,Y){"tutu"}
-[30,30: ]<SpaceSeparator>
 [31,32:""]<AlphanumericLiteral>(",Y,Y){}
 [33,34:'']<AlphanumericLiteral>(',Y,Y){}
 [35,35+:.]<PeriodSeparator>
 
 -- Line 7 --
 [1,8:"to""to"]<AlphanumericLiteral>(",Y,Y){to"to}
-[9,9: ]<SpaceSeparator>
 [10,17:'ti''ti']<AlphanumericLiteral>(',Y,Y){ti'ti}
-[18,18: ]<SpaceSeparator>
 [19,24:"""to"]<AlphanumericLiteral>(",Y,Y){"to}
-[25,25: ]<SpaceSeparator>
 [26,31:'''ti']<AlphanumericLiteral>(',Y,Y){'ti}
-[32,32: ]<SpaceSeparator>
 [33,38:"to"""]<AlphanumericLiteral>(",Y,Y){to"}
-[39,39: ]<SpaceSeparator>
 [40,45+:'ti''']<AlphanumericLiteral>(',Y,Y){ti'}
 
 -- Line 8 --

@@ -1,10 +1,8 @@
-﻿[1,1:(]<LeftParenthesisSeparator>
+[1,1:(]<LeftParenthesisSeparator>
 [2,5:.025]<DecimalLiteral>{25|3>0.025}
-[6,6: ]<SpaceSeparator>
 [7,8:* ]<MultiplyOperator>
 [9,11:.44]<DecimalLiteral>{44|2>0.44}
 [12,12:)]<RightParenthesisSeparator>
-[13,13: ]<SpaceSeparator>
 [14,15:+ ]<PlusOperator>
 [16,19:1.18]<DecimalLiteral>{118|2>1.18}
 [20,20+:.]<PeriodSeparator>

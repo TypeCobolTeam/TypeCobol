@@ -118,6 +118,8 @@
     <Compile Include="VsCodeProtocol\Initialize Method\CodeLensOptions.cs" />
     <Compile Include="VsCodeProtocol\Initialize Method\CompletionOptions.cs" />
     <Compile Include="VsCodeProtocol\Initialize Method\DocumentOnTypeFormattingOptions.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\InitializedNotification.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\InitializedParams.cs" />
     <Compile Include="VsCodeProtocol\Initialize Method\InitializeError.cs" />
     <Compile Include="VsCodeProtocol\Initialize Method\InitializeParams.cs" />
     <Compile Include="VsCodeProtocol\Initialize Method\InitializeRequest.cs" />

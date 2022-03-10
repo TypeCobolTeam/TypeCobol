@@ -1,4 +1,4 @@
-      *TypeCobol_Version:0.1(alpha)
+      *TypeCobol_Version:[[ParserVersion]]
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
       *REMARKS. COPY=(
@@ -91,11 +91,6 @@
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGMSTK1.
-      *REMARKS. COPY=(
-      *        YPRTD20
-      *        YCONVEA
-      *        ).
-                                                            
       
        DATA DIVISION.
        Working-STORAGE SECTION.

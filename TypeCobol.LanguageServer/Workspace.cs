@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Timers;
 using Analytics;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
@@ -18,6 +17,8 @@ using TypeCobol.CustomExceptions;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Logging;
+using TypeCobol.Tools;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.LanguageServer
@@ -270,22 +271,11 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Load Custom Analyzers
         /// </summary>
-        /// <param name="customAnalyzerFiles"></param>
-        internal void LoadCustomAnalyzers(List<string> customAnalyzerFiles)
+        /// <param name="extensionManager"></param>
+        internal void LoadCustomAnalyzers(ExtensionManager extensionManager)
         {
-            System.Diagnostics.Debug.Assert(customAnalyzerFiles != null);
-            List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
-            foreach(var f in customAnalyzerFiles) {
-                try
-                {
-                    list.Add(AnalyzerProviderLoader.UnsafeLoadProvider(f));
-                }
-                catch(Exception e)
-                {
-                    _Logger(e.Message, null);
-                }                    
-            }
-            this._customAnalyzerProviders = list.ToArray();
+            System.Diagnostics.Debug.Assert(extensionManager != null);
+            this._customAnalyzerProviders = extensionManager.Activate<IAnalyzerProvider>().ToArray();
         }
 
         /// <summary>
@@ -644,6 +634,7 @@ namespace TypeCobol.LanguageServer
         public void RefreshOpenedFiles()
         {
             RefreshCustomSymbols();
+            this.CompilationProject.ClearImportedCompilationDocumentsCache();
 
             lock (_lockForOpenedDocuments)
             {
@@ -720,23 +711,13 @@ namespace TypeCobol.LanguageServer
                         LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
                 }
             }
-            catch (TypeCobolException typeCobolException)
+            catch (Exception exception)
             {
                 if (LoadingIssueEvent != null)
                     LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
-
-                if (typeCobolException.NeedMail)
-                    AnalyticsWrapper.Telemetry.SendMail(typeCobolException, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
-            }
-            catch (Exception e)
-            {
-                if (LoadingIssueEvent != null)
-                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
-
-                AnalyticsWrapper.Telemetry.TrackException(e, null);
-                AnalyticsWrapper.Telemetry.SendMail(e, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
+                LoggingSystem.LogException(exception);
+                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles, Configuration.CopyFolders, Environment.CommandLine);
             }
 
         }

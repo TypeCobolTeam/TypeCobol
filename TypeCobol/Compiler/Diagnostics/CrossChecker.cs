@@ -254,6 +254,44 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Search search)
         {
+            int whenSearchCount = 0;
+            bool onAtEndFound = false;
+            int index = 0;
+            foreach (var child in search.Children)
+            {
+                if (child is OnAtEnd)
+                {
+                    if (onAtEndFound)
+                    {
+                        DiagnosticUtils.AddError(child, "ON AT END clause must be unique.");
+                    }
+                    else
+                    {
+                        onAtEndFound = true;
+                        if (index > 0)
+                        {
+                            DiagnosticUtils.AddError(child, "ON AT END clause must appear before WHEN.");
+                        }
+                    }
+                }
+                else if (child is WhenSearch whenSearch)
+                {
+                    whenSearchCount++;
+                    if (whenSearchCount > 1 && search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
+                    {
+                        DiagnosticUtils.AddError(whenSearch,
+                            "Invalid WHEN clause, binary SEARCH only allows a single WHEN clause");
+                    }
+                }
+
+                index++;
+            }
+
+            if (whenSearchCount == 0)
+            {
+                DiagnosticUtils.AddError(search, "Search statement must have at least one when element.");
+            }
+
             var tableToSearch = search.CodeElement.TableToSearch?.StorageArea;
             if (tableToSearch != null)
             {
@@ -306,10 +344,17 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        
         public override bool Visit(WhenSearch whenSearch)
         {
             System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
             var search = (Search) whenSearch.Parent;
+
+            if (whenSearch.ChildrenCount == 0)
+            {
+                var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
+                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause", messageCode);
+            }
 
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
             {
@@ -369,8 +414,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     switch (whenSearchCondition)
                     {
-                        case ConditionNameConditionOrSwitchStatusCondition _:
-                            //TODO add check for condition names
+                        case ConditionNameConditionOrSwitchStatusCondition conditionInstance:
+                            DataOrConditionStorageArea dataOrConditionStorageArea = conditionInstance.ConditionReference;
+                            if (dataOrConditionStorageArea.Subscripts.Length > 0)
+                            {
+                                return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
+                            }
                             return true;
 
                         case RelationCondition relationCondition:
@@ -400,35 +449,53 @@ namespace TypeCobol.Compiler.Diagnostics
                         && numericVariableOperand.NumericVariable?.StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea
                         && dataOrConditionStorageArea.Subscripts.Length > 0)
                     {
-                        //Check indexes for every dimension
-                        if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
-                        {
-                            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
-                            {
-                                var expectedIndex = expectedIndexes[i];
-                                var subscript = dataOrConditionStorageArea.Subscripts[i];
+                        return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
+                    }
 
-                                //Check use of first table index for the current dimension
-                                var usedIndexStorageArea = ((NumericVariableOperand) subscript.NumericExpression).IntegerVariable.StorageArea;
-                                var usedIndex = whenSearch.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
-                                if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
-                                {
-                                    //Not the first index (or no index defined for the table)
-                                    DiagnosticUtils.AddError(whenSearch, "When subscripting, only first index declared for the table is allowed.");
-                                    return false;
-                                }
+                    DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
+                    return false;
+                }
+
+                bool CheckDataOrConditionStorageArea(DataOrConditionStorageArea dataOrConditionStorageArea)
+                {
+                    //Check indexes for every dimension
+                    if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
+                    {
+                        for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
+                        {
+                            var expectedIndex = expectedIndexes[i];
+                            var subscript = dataOrConditionStorageArea.Subscripts[i];
+
+                            //Check use of first table index for the current dimension
+                            var usedIndexStorageArea = ((NumericVariableOperand)subscript.NumericExpression).IntegerVariable.StorageArea;
+                            var usedIndex = whenSearch.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
+                            if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                //Not the first index (or no index defined for the table)
+                                DiagnosticUtils.AddError(whenSearch, "When subscripting, only first index declared for the table is allowed.");
+                                return false;
                             }
                         }
-                        //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
+                    }
+                    //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
 
-                        //Collect used key
-                        var usedKey = whenSearch.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
-                        if (usedKey != null)
+                    //Collect used key
+                    var usedKey = whenSearch.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
+                    if (usedKey != null)
+                    {
+                        if (usedKeys.ContainsKey(usedKey.Name))
                         {
-                            if (usedKeys.ContainsKey(usedKey.Name))
+                            //Valid key, set key status to 'used'
+                            usedKeys[usedKey.Name] = true;
+                        }
+                        else 
+                        {
+                            //Special check for 88 level definitions that are children of a selected used key.
+                            if (usedKey.CodeElement?.LevelNumber?.Value == 88 &&
+                                usedKey.Parent is DataDefinition parentUsedKey &&
+                                usedKeys.ContainsKey(parentUsedKey.Name))
                             {
-                                //Valid key, set key status to 'used'
-                                usedKeys[usedKey.Name] = true;
+                                usedKeys[parentUsedKey.Name] = true;
                             }
                             else
                             {
@@ -437,13 +504,10 @@ namespace TypeCobol.Compiler.Diagnostics
                                 return false;
                             }
                         }
-                        //else undefined reference
-
-                        return true;
                     }
+                    //else undefined reference
 
-                    DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
-                    return false;
+                    return true;
                 }
             }
 
@@ -452,9 +516,37 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Evaluate evaluate)
         {
-            if (evaluate.GetChildren<WhenOther>().Count == 0)
-                DiagnosticUtils.AddError(evaluate,
-                    "\"when other\" is missing", MessageCode.Warning);
+            bool whenOtherSeen = false;
+            //Start to loop on children from the end because:
+            //- Grammar enforce that there is 0 to 1 "whenOther" and that it's the last element of an "evaluate"
+            //- Invalid empty "when" can only be the last "when"
+            for (int i = evaluate.ChildrenCount - 1; i >= 0; i--)
+            {
+                if (evaluate.Children[i] is WhenOther)
+                {
+                    whenOtherSeen = true;
+                }
+                else if (evaluate.Children[i] is Then then)
+                {
+                    if (then.ChildrenCount == 0)
+                    {
+                        // i is the Then node
+                        // i-1 is the When group
+                        var whenGroup = then.Parent.Children[i - 1];
+                        System.Diagnostics.Debug.Assert(whenGroup.ChildrenCount > 0);
+                        //Get the last When of the WhenGroup. This is the invalid empty When
+                        var whenNode = whenGroup.Children[whenGroup.ChildrenCount - 1];
+                        System.Diagnostics.Debug.Assert(whenNode.CodeElement?.Type == CodeElementType.WhenCondition);
+                        //Syntax error.
+                        DiagnosticUtils.AddError(whenNode, "Missing statement in \"when\" clause");
+                    }
+                    break; //Previous "when" are allowed to have no instructions (#1593)
+                }
+            }
+            if (!whenOtherSeen)
+            {
+                DiagnosticUtils.AddError(evaluate, "\"when other\" is missing", MessageCode.Warning);
+            }
             return true;
         }
 
@@ -502,10 +594,37 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             // Check that program has a closing end
             CheckEndProgram(program);
-            
+            if (program.IsNested)
+            {
+                NestedProgram nestedProgram = (NestedProgram)program;
+                if (nestedProgram.ContainingProgram.CodeElement.IsRecursive)
+                {
+                    DiagnosticUtils.AddError(program, "A Nested Program cannot be declared in a RECURSIVE program.");
+                }
+                if (program.CodeElement.IsRecursive)
+                {
+                    DiagnosticUtils.AddError(program, "A Nested Program cannot have a RECURSIVE attribute.");
+                }
+            }
+            else if (program.CodeElement.IsCommon)
+            {
+                DiagnosticUtils.AddError(program, "A Root Program cannot have a COMMON attribute.");
+            }
             FormalizedCommentsChecker.CheckProgramComments(program);
+          
             return true;
         }
+
+        public override bool Visit(ConfigurationSection configurationSection)
+        {
+            Program program = configurationSection.GetProgramNode();
+            if (program != null && program.IsNested)
+            {
+                DiagnosticUtils.AddError(configurationSection, "A Nested Program cannot have a CONFIGURATION SECTION.");
+            }
+            return true;
+        }
+
 
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {
@@ -634,7 +753,6 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (end.CodeElement.Type == CodeElementType.ProgramEnd && !(end.Parent is Program))
                 {
-                    System.Diagnostics.Debug.Assert(end.Parent is SourceFile);
                     DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\".", _compilerOptions.CheckEndProgram.GetMessageCode());
                 }
             }
@@ -1223,14 +1341,12 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            //Get all paragraphs with the same name and having the same section name
-            var paragraphs = paragraph.SymbolTable.GetParagraphs(p => p.Name.Equals(paragraph.Name, StringComparison.OrdinalIgnoreCase) && p.SemanticData.Owner == paragraph.SemanticData.Owner).ToList();
-
-            //Paragraphs can't have the same name within the same section
-            if (paragraphs.Count > 1)
+            //Get all paragraphs with the same name and having the same parent
+            var paragraphs = paragraph.SymbolTable.GetParagraphs(paragraph.Name, paragraph.Parent);
+            if (paragraphs?.Count() > 1)
             {
                 //Get the name of the scope to display in diagnostic message
-                var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name ;
+                var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name;
                 DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}", MessageCode.Warning);
             }
 

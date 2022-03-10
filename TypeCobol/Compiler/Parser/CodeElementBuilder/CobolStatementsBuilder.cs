@@ -404,9 +404,14 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateExecStatement(CodeElementsParser.ExecStatementContext context) {
 			var statement = new ExecStatement();
 			statement.ExecTranslatorName = CobolWordsBuilder.CreateExecTranslatorName(context.execTranslatorName());
-			statement.CodeLines = BuildObjectArrayFromParserRules(context.ExecStatementText(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
 			return statement;
 		}
+
+        internal CodeElement CreateExecStatementText(CodeElementsParser.ExecStatementTextContext context) {
+            var statement = new ExecStatementText();
+            statement.CodeLine = CobolWordsBuilder.CreateAlphanumericValue(context.ExecStatementText());
+            return statement;
+        }
 
         ////////////////////
         // FREE STATEMENT //
@@ -430,16 +435,10 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		internal CodeElement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
+		internal GotoConditionalStatement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
 			var statement = new GotoConditionalStatement();
 			statement.ProcedureNames = BuildObjectArrayFromParserRules(context.procedureName(), ctx => CobolWordsBuilder.CreateProcedureName(ctx));
 			statement.DependingOn = CobolExpressionsBuilder.CreateVariable(context.variable1());
-			if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
-				DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
-			if (statement.ProcedureNames.Length < 1 && statement.DependingOn != null)
-				DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
-			if (statement.ProcedureNames.Length > 255)
-				DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
 			return statement;
 		}
 
@@ -1433,33 +1432,57 @@ namespace TypeCobol.Compiler.Parser
         // WHEN EVALUATE CONDITION //
         /////////////////////////////
 
-        internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
+        internal WhenCondition CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
 			statement.SelectionObjects = BuildObjectArrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
 			return statement;
 		}
 
-		private EvaluateSelectionObject CreateEvaluateSelectionObject(CodeElementsParser.ComparisonRHSExpressionContext context) {
-			var selectionObject = new EvaluateSelectionObject();
-			if(context.ANY() != null) {
-				selectionObject.IsAny = CreateSyntaxProperty(true, context.ANY());
-			} else
-			if (context.booleanValueOrExpression() != null) {
-				selectionObject.BooleanComparisonVariable = CobolExpressionsBuilder.CreateBooleanValueOrExpression(context.booleanValueOrExpression());
-			} else {
-				selectionObject.InvertAlphanumericComparison = CreateSyntaxProperty(true, context.NOT());
-				if (context.variableOrExpression2() != null) {
-					selectionObject.AlphanumericComparisonVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
-				} else
-				if(context.alphanumericExpressionsRange() != null) {
-					selectionObject.AlphanumericComparisonVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.alphanumericExpressionsRange().startExpression);
-					selectionObject.AlphanumericComparisonVariable2 = CobolExpressionsBuilder.CreateVariableOrExpression(context.alphanumericExpressionsRange().endExpression);
+        private EvaluateSelectionObject CreateEvaluateSelectionObject(
+            CodeElementsParser.ComparisonRHSExpressionContext context)
+        {
+            var selectionObject = new EvaluateSelectionObject();
+            if (context.ANY() != null)
+            {
+                selectionObject.IsAny = CreateSyntaxProperty(true, context.ANY());
+            }
+            else if (context.booleanValueOrExpression() != null)
+            {
+                selectionObject.BooleanComparisonVariable =
+                    CobolExpressionsBuilder.CreateBooleanValueOrExpression(context.booleanValueOrExpression());
+            }
+            else
+            {
+                selectionObject.InvertAlphanumericComparison = CreateSyntaxProperty(true, context.NOT());
+                if (context.comparisonRHSValue() != null)
+                {
+                    var comparisonRHSValue = context.comparisonRHSValue();
+                    if (comparisonRHSValue.variableOrExpression2() != null)
+                    {
+                        selectionObject.AlphanumericComparisonVariable =
+                            CobolExpressionsBuilder.CreateVariableOrExpression(comparisonRHSValue.variableOrExpression2());
+                    }
+                    else if (comparisonRHSValue.allFigurativeConstant() != null)
+                    {
+                        var repeatedCharacterValue = CobolWordsBuilder.CreateRepeatedCharacterValue(comparisonRHSValue.allFigurativeConstant());
+                        selectionObject.AlphanumericComparisonVariable = new VariableOrExpression(repeatedCharacterValue);
+                    }
+                    else if (comparisonRHSValue.alphanumericExpressionsRange() != null)
+                    {
+                        selectionObject.AlphanumericComparisonVariable =
+                            CobolExpressionsBuilder.CreateVariableOrExpression(comparisonRHSValue.alphanumericExpressionsRange()
+                                .startExpression);
+                        selectionObject.AlphanumericComparisonVariable2 =
+                            CobolExpressionsBuilder.CreateVariableOrExpression(comparisonRHSValue.alphanumericExpressionsRange()
+                                .endExpression);
+                    }
 				}
-			}
-			return selectionObject;
-		}
+            }
 
-		  ///////////////////////////
+            return selectionObject;
+        }
+
+          ///////////////////////////
 		 // WHEN SEARCH CONDITION //
 		///////////////////////////
 

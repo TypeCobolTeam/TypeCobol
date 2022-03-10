@@ -17,9 +17,7 @@ namespace TypeCobol.Tools.Options_Config
     /// </summary>
     public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
-        public string CommandLine { get; set; }
         public DocumentFormat Format;
-        public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
@@ -31,8 +29,8 @@ namespace TypeCobol.Tools.Options_Config
         public List<string> OutputFiles = new List<string>();
         public List<string> LineMapFiles = new List<string>();
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
-        public string ErrorFile = null;
-        public string LogFile = null;
+        public string ErrorFile;
+        public string LogFile;
 
         //Log file name
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
@@ -56,7 +54,7 @@ namespace TypeCobol.Tools.Options_Config
         public int MaximumDiagnostics;
         public OutputFormat OutputFormat = OutputFormat.Cobol85;
         public CfgBuildingMode CfgBuildingMode = CfgBuildingMode.None;
-        public List<string> CustomAnalyzerFiles = new List<string>();
+        public List<string> Extensions = new List<string>();
 
         // Raw values (it has to be verified)
         public string RawFormat;
@@ -112,22 +110,22 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.InputFileMissing,        "Input file(s) are required." },
             { ReturnCode.OutputFileMissing,       "Output are required in execution to generate step." },
             // Wrong parameter
-            { ReturnCode.InputFileError,          "Input files given are unreachable." },
-            { ReturnCode.OutputPathError,         "Output paths given are unreachable." },
-            { ReturnCode.ErrorFileError,          "Error diagnostics path is unreachable." },
-            { ReturnCode.HaltOnMissingCopyError,  "Missing copy path given is unreachable." },
-            { ReturnCode.ExecToStepError,         "Unexpected parameter given for ExecToStep. Accepted parameters are \"Scanner\"/0, \"Preprocessor\"/1, \"SyntaxCheck\"/2, \"SemanticCheck\"/3, \"CrossCheck\"/4, \"Generate\"/5(default)." },
-            { ReturnCode.EncodingError,           "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
-            { ReturnCode.IntrinsicError,          "Intrinsic files given are unreachable." },
-            { ReturnCode.CopiesError,             "Copies files given are unreachable." },
-            { ReturnCode.DependenciesError,       "Dependencies files given are unreachable: " },
-            { ReturnCode.MaxDiagnosticsError,     "Maximum diagnostics have to be an integer." },
-            { ReturnCode.OutputFormatError,       "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
-            { ReturnCode.ExpandingCopyError,      "Expanding copy path given is unreachable." },
-            { ReturnCode.ExtractUsedCopyError,    "Extract used copy path given is unreachable." },
-            { ReturnCode.LogFileError,            "Log file path is unreachable." },
-            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." },
-            { ReturnCode.CfgOptionError,          "CFG building mode is not supported. Accepted values are None/0, Standard/1, Extended/2, WithDfa/3." }
+            { ReturnCode.InputFileError,           "Input files given are unreachable." },
+            { ReturnCode.OutputPathError,          "Output paths given are unreachable." },
+            { ReturnCode.ErrorFileError,           "Error diagnostics path is unreachable." },
+            { ReturnCode.HaltOnMissingCopyError,   "Missing copy path given is unreachable." },
+            { ReturnCode.ExecToStepError,          "Unexpected parameter given for ExecToStep. Accepted parameters are \"Scanner\"/0, \"Preprocessor\"/1, \"SyntaxCheck\"/2, \"SemanticCheck\"/3, \"CrossCheck\"/4, \"Generate\"/5(default)." },
+            { ReturnCode.EncodingError,            "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
+            { ReturnCode.IntrinsicError,           "Intrinsic files given are unreachable." },
+            { ReturnCode.CopiesError,              "Copies files given are unreachable." },
+            { ReturnCode.DependenciesError,        "Dependencies files given are unreachable: " },
+            { ReturnCode.MaxDiagnosticsError,      "Maximum diagnostics have to be an integer." },
+            { ReturnCode.OutputFormatError,        "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
+            { ReturnCode.ExpandingCopyError,       "Expanding copy path given is unreachable." },
+            { ReturnCode.ExtractUsedCopyError,     "Extract used copy path given is unreachable." },
+            { ReturnCode.LogFileError,             "Log file path is unreachable." },
+            { ReturnCode.ParserExtensionFileError, "Custom extension assembly files are unreachable." },
+            { ReturnCode.CfgOptionError,           "CFG building mode is not supported. Accepted values are None/0, Standard/1, Extended/2, WithDfa/3." }
         };
 
         public TypeCobolConfiguration()
@@ -168,22 +166,22 @@ namespace TypeCobol.Tools.Options_Config
         OutputFileMissing = 1011,       // Missing output files and ExecToStep set to "Generate"
 
         // Wrong parameter
-        InputFileError = 1020,          // Wrong input file(s) given
-        OutputPathError = 1021,         // Output paths given are unreachable.
-        ErrorFileError = 1022,          // Wrong error path given
-        HaltOnMissingCopyError = 1024,  // Missing copy path given is unreachable.
-        ExecToStepError = 1025,         // Unexpected user input for exectostep option
-        EncodingError = 1026,           // Unexpected user input for encoding option
-        IntrinsicError = 1027,          // Wrong intrinsic file(s) given
-        CopiesError = 1028,             // Wrong copies folder(s) given
-        DependenciesError = 1029,       // Wrong dependencies folder given
-        MaxDiagnosticsError = 1030,     // Unexpected user input for maximundiagnostics option (not an int)
-        OutputFormatError = 1031,       // Unexpected user input for outputFormat option
-        ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
-        ExtractUsedCopyError = 1033,    // Extract used copy path given is unreachable.
-        LogFileError = 1034,            // Wrong log path given
-        CustomAnalyzerFileError = 1035, // Invalid path to custom analyzer DLL file
-        CfgOptionError = 1036,          // Invalid CFG building mode
+        InputFileError = 1020,           // Wrong input file(s) given
+        OutputPathError = 1021,          // Output paths given are unreachable.
+        ErrorFileError = 1022,           // Wrong error path given
+        HaltOnMissingCopyError = 1024,   // Missing copy path given is unreachable.
+        ExecToStepError = 1025,          // Unexpected user input for exectostep option
+        EncodingError = 1026,            // Unexpected user input for encoding option
+        IntrinsicError = 1027,           // Wrong intrinsic file(s) given
+        CopiesError = 1028,              // Wrong copies folder(s) given
+        DependenciesError = 1029,        // Wrong dependencies folder given
+        MaxDiagnosticsError = 1030,      // Unexpected user input for maximundiagnostics option (not an int)
+        OutputFormatError = 1031,        // Unexpected user input for outputFormat option
+        ExpandingCopyError = 1032,       // Expanding copy path given is unreachable.
+        ExtractUsedCopyError = 1033,     // Extract used copy path given is unreachable.
+        LogFileError = 1034,             // Wrong log path given
+        ParserExtensionFileError = 1035, // Invalid path to a custom extension DLL file
+        CfgOptionError = 1036,           // Invalid CFG building mode
 
         MultipleErrors = 9999
     }
@@ -270,7 +268,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "o|output=","{PATH} to an output file where to generate code. This option can be specified more than once.", v => typeCobolConfig.OutputFiles.Add(v) },
                 { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => typeCobolConfig.ErrorFile = v },
                 { "s|skeletons=", "{PATH} to the skeletons file. DEPRECATED : generation using dynamic skeleton is no longer supported.", v => {}},
-                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol.", v => typeCobolConfig.AutoRemarks = true },
+                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol. DEPRECATED, this option is always activated.", v => {}},
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies.", v => typeCobolConfig.HaltOnMissingCopyFilePath = v },
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, QualityCheck/5, Generate/6).", v => typeCobolConfig.RawExecToStep = v},
                 { "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -298,7 +296,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
 #if EUROINFO_RULES
-                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v },
+                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
 #endif
             };
             return commonOptions;
@@ -425,7 +423,7 @@ namespace TypeCobol.Tools.Options_Config
                 errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
 
             //CustomAnalyzers
-            VerifFiles(config.CustomAnalyzerFiles, ReturnCode.CustomAnalyzerFileError, errorStack);
+            VerifFiles(config.Extensions, ReturnCode.ParserExtensionFileError, errorStack);
 
             //CFG Building mode
             if (!Enum.TryParse(config.RawCfgBuildingMode, true, out config.CfgBuildingMode))

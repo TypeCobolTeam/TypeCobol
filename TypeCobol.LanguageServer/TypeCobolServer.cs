@@ -16,6 +16,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
+using TypeCobol.Tools;
 
 namespace TypeCobol.LanguageServer
 {
@@ -75,9 +76,9 @@ namespace TypeCobol.LanguageServer
         public bool TimerDisabledOption { get; set; }
 
         /// <summary>
-        /// Custom Analyzers Dll Paths
+        /// Extension manager
         /// </summary>
-        public List<string> CustomAnalyzerFiles { get; set; }
+        internal ExtensionManager ExtensionManager { get; set; }
 
         /// <summary>
         /// No Copy and Dependency files watchers.
@@ -236,7 +237,7 @@ namespace TypeCobol.LanguageServer
             get
             {
                 //TypeCobol version
-                return new Tuple<string, object>[] { new Tuple<string, object>("version", AnalyticsWrapper.Telemetry.TypeCobolVersion) };
+                return new Tuple<string, object>[] { new Tuple<string, object>("version", Parser.Version) };
             }
         }
 
@@ -285,7 +286,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
             this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
-            this.Workspace.LoadCustomAnalyzers(CustomAnalyzerFiles);
+            this.Workspace.LoadCustomAnalyzers(ExtensionManager);
 
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
@@ -672,7 +673,6 @@ namespace TypeCobol.LanguageServer
 
                 if (lastSignificantToken != null)
                 {
-                    AnalyticsWrapper.Telemetry.TrackEvent(EventType.Completion, lastSignificantToken.TokenType.ToString(), LogType.Completion);
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
@@ -826,7 +826,6 @@ namespace TypeCobol.LanguageServer
 
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
             var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
@@ -951,8 +950,6 @@ namespace TypeCobol.LanguageServer
 
         protected override Definition OnDefinition(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Definition, "Definition event",
-                LogType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var docContext))

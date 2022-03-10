@@ -115,6 +115,7 @@ namespace TypeCobol.Test {
             TestReplaceDirective.CheckReplaceNested();
             TestReplaceDirective.CheckReplaceFunction();
             TestReplaceDirective.CheckEmptyPartialWordReplace();
+            TestReplaceDirective.CheckEmptyPartialWordReplace2();
         }
 
         [TestMethod]
@@ -233,7 +234,6 @@ namespace TypeCobol.Test {
 
 #if EUROINFO_RULES
         [TestMethod]
-        //[Ignore]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
         public void EILegacyCheck()
@@ -243,9 +243,32 @@ namespace TypeCobol.Test {
             int nbOfTests = 0;
             string[] extensions = {".tcbl", ".cbl"};
 
+            //Do not parse unsupported remarks, they are covered in a separate test
+            var folderTester = new FolderTester(tempRoot, tempRoot, tempRoot, extensions, deep: false);
+
+            folderTester.Test();
+
+            nbOfTests += folderTester.GetTestCount();
+            Console.Write("\n");
+
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
+
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void EILegacyUnsupportedRemarksCheck()
+        {
+            string tempRoot = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "EILegacy" + Path.DirectorySeparatorChar + "UnsupportedRemarks");
+
+            int nbOfTests = 0;
+            string[] extensions = { ".cbl" };
+
             var folderTester = new FolderTester(tempRoot, tempRoot, tempRoot, extensions);
 
-            folderTester.Test(false, false, true);
+            //In pure cobol mode, REMARKS directive is considered as regular comment so unsupported REMARKS formats won't break the parsing
+            folderTester.Test(isCobolLanguage: true);
 
             nbOfTests += folderTester.GetTestCount();
             Console.Write("\n");

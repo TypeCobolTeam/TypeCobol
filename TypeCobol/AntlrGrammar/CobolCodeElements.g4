@@ -117,6 +117,8 @@ codeElement:
 	continueStatement |
     entryStatement |
     execStatement |
+	execStatementText |
+	execStatementEnd |
     exitMethodStatement |
     exitProgramStatement |	
 	gobackStatement |
@@ -207,6 +209,9 @@ codeElement:
 	notOnOverflowCondition |
 	onSizeErrorCondition |
 	notOnSizeErrorCondition
+
+// FOR SQL	
+	| commitStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -1963,7 +1968,7 @@ recordClause:
 // record description entry associated with the file.
 
 labelRecordsClause:
-    LABEL ((RECORD IS?) | (RECORDS ARE?)) ((STANDARD | OMITTED) | dataNameReference*);
+    LABEL (RECORD | RECORDS) (IS | ARE)? ((STANDARD | OMITTED) | dataNameReference*);
 
 // p180: The VALUE OF clause describes an item in the label records associated with the
 // file.
@@ -1988,7 +1993,7 @@ valueOfClause:
 // with the same name.
 
 dataRecordsClause:
-    DATA ((RECORD IS?) | (RECORDS ARE?)) dataNameReference+;
+    DATA (RECORD | RECORDS) (IS | ARE)? dataNameReference+;
 
 // p180: The LINAGE clause specifies the depth of a logical page in number of lines.
 // Optionally, it also specifies the line number at which the footing area begins and
@@ -4360,11 +4365,16 @@ comparisonLHSExpression:
 	variableOrExpression2 | booleanValueOrExpression;
 
 whenCondition:
-	WHEN LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*;
+    WHEN (
+		(comparisonRHSExpression | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator))
+		(ALSO (comparisonRHSExpression | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator)))*
+	)?;
 
 comparisonRHSExpression: 
-	ANY | booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
+	ANY | booleanValueOrExpression | NOT? (comparisonRHSValue | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator));
+
+comparisonRHSValue:
+	variableOrExpression2 | allFigurativeConstant | alphanumericExpressionsRange;
 
 alphanumericExpressionsRange: 
 	startExpression=variableOrExpression2 (THROUGH | THRU) endExpression=variableOrExpression2;
@@ -8242,12 +8252,14 @@ notOnSizeErrorCondition:
 // Coprocessor: The DB2 coprocessor requires that all lines of an EXEC SQL statement,
 // including continuation lines, be coded in columns 12 through 72.
 
-execStatement:
-                 (EXEC | EXECUTE) execTranslatorName 
-                 ExecStatementText* 
-                 execStatementEnd;
+execStatement: (EXEC | EXECUTE) execTranslatorName; 
+
+execStatementText: ExecStatementText;                 
 
 execStatementEnd: END_EXEC;
+
+//FOR SQL
+commitStatement: SQL_COMMIT;
 
 // ------------------------------
 // End of DB2 coprocessor

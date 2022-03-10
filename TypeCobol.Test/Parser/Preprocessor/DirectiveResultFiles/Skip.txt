@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 *** DIRECTIVE SKIP1 ([8,12:SKIP1]<SKIP1>) ***
 
 -- Line 2 --
@@ -30,23 +30,19 @@
 -- Line 10 --
 [8,9:. ]<PeriodSeparator>
 *** DIRECTIVE SKIP1 ([10,14:SKIP1]<SKIP1>) ***
-[15,15: ]<SpaceSeparator>
 *** DIRECTIVE SKIP2 ([16,20:SKIP2]<SKIP2>) ***
-[21,21: ]<SpaceSeparator>
 *** DIRECTIVE SKIP3 ([22,26:SKIP3]<SKIP3>) ***
 
 -- Line 11 --
 *** DIRECTIVE SKIP1 ([8,12:SKIP1]<SKIP1>[13,14:. ]<PeriodSeparator>) ***
 *** DIRECTIVE SKIP2 ([15,19:SKIP2]<SKIP2>[20,21:. ]<PeriodSeparator>) ***
-*** DIRECTIVE SKIP3 ([22,26:SKIP3]<SKIP3>[27,27: ]<SpaceSeparator>[28,28+:.]<PeriodSeparator>) ***
+*** DIRECTIVE SKIP3 ([22,26:SKIP3]<SKIP3>[28,28+:.]<PeriodSeparator>) ***
 
 -- Line 12 --
 [8,10:P1.]<InvalidToken>
 
 -- Line 13 --
 [8,14:DISPLAY]<DISPLAY>
-[15,15: ]<SpaceSeparator>
 [16,22:"start"]<AlphanumericLiteral>(",Y,Y){start}
-[23,23: ]<SpaceSeparator>
 *** DIRECTIVE SKIP2 ([24,28:SKIP2]<SKIP2>) ***
 

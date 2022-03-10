@@ -1,0 +1,20 @@
+--- Program ---
+PROGRAM: MyPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  KeepMe0:Alphanumeric
+  KeepMe1:Alphanumeric
+  KeepMe2:Alphanumeric
+  KeepMe3:Alphanumeric
+  KeepMe4:Alphanumeric
+  KeepMe5:Alphanumeric
+  KeepMe6:Alphanumeric
+  KeepMe7:Alphanumeric
+  KeepMe8:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

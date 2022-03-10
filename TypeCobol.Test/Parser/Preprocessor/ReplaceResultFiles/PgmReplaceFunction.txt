@@ -15,6 +15,7 @@
 [22,33:CErr-Rc1-xxx]<UserDefinedWord>
 [36,45:Secondaire]<UserDefinedWord>
 [47,49:omitted]<OMITTED>
+[47,49: ]<SpaceSeparator>
 [47,49:end-call]<END_CALL>
 -- Line 26 --
 [8,9:if]<IF>
@@ -43,5 +44,9 @@
 [29,34:CCTFAL]<UserDefinedWord>
 -- Line 30 --
 [8,16:omitted]<OMITTED>
+[8,16:                                       ]<SpaceSeparator>
+[8,16:     ]<SpaceSeparator>
 [8,16:end-call]<END_CALL>
+[8,16:                                         ]<SpaceSeparator>
+[8,16:     ]<SpaceSeparator>
 [8,16:end-if]<END_IF>

@@ -86,6 +86,18 @@ namespace TypeCobol.Test.Misc
             CompareDebugTypes(expectedDebugMode, "DebugLinesNotDebugging");
         }
 
+        /// <summary>
+        /// Issue #2140 : check the debug mode of CodeElement
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckInvalidCodeElementDebugProperty()
+        {
+            var expectedDebugMode = Enumerable.Repeat(CodeElement.DebugType.None, 10).ToList();
+            CompareDebugTypes(expectedDebugMode, "DebugLinesInvalidCE");
+        }
+
         private static void CompareDebugTypes(IReadOnlyList<CodeElement.DebugType> expectedDebugMode, string fileName)
         {
             var folder = Path.Combine("Parser", "Programs", "Cobol85");

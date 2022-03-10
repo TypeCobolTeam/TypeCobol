@@ -1,29 +1,29 @@
 -- Line 1 --
-*** DIRECTIVE REPLACE <REPLACE[SingleToken] toto BY titi>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[SingleToken] toto BY titi>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[27,28:by]<BY>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40+:.]<PeriodSeparator>) ***
 
 -- Line 2 --
-*** DIRECTIVE REPLACE <REPLACE[MultipleTokens] toto1,toto2 BY titi1,titi2> <REPLACE[SingleToken] other BY something>  ([8,14:replace]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:toto1]<UserDefinedWord>) ***
+*** DIRECTIVE REPLACE <REPLACE[MultipleTokens] toto1,toto2 BY titi1,           ,titi2> <REPLACE[SingleToken] other BY something>  ([8,14:replace]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:toto1]<UserDefinedWord>) ***
 
 -- Line 3 --
-+++ CONTINUATION OF REPLACE_DIRECTIVE ([8,18:           ]<SpaceSeparator>[19,23:toto2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>) +++
++++ CONTINUATION OF REPLACE_DIRECTIVE ([8,18:           ]<SpaceSeparator>[19,23:toto2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>) +++
 
 -- Line 4 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,10:   ]<SpaceSeparator>[11,12:by]<BY>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([11,12:by]<BY>) +++
 
 -- Line 5 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,15:        ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:titi1]<UserDefinedWord>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:titi1]<UserDefinedWord>) +++
 
 -- Line 6 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,18:           ]<SpaceSeparator>[19,23:titi2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,35:other]<OTHER>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,18:           ]<SpaceSeparator>[19,23:titi2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,35:other]<OTHER>) +++
 
 -- Line 7 --
-+++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,16:         ]<SpaceSeparator>[17,18:==]<PseudoTextDelimiter>[19,19: ]<SpaceSeparator>[20,21:by]<BY>[22,22: ]<SpaceSeparator>[23,24:==]<PseudoTextDelimiter>[25,25: ]<SpaceSeparator>[26,34:something]<UserDefinedWord>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,16:         ]<SpaceSeparator>[17,18:==]<PseudoTextDelimiter>[20,21:by]<BY>[23,24:==]<PseudoTextDelimiter>[25,25: ]<SpaceSeparator>[26,34:something]<UserDefinedWord>) +++
 
 -- Line 8 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:==]<PseudoTextDelimiter>[10,10+:.]<PeriodSeparator>) +++
 
 -- Line 9 --
-*** DIRECTIVE REPLACE_OFF ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,18:OFF]<OFF>[19,19+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE_OFF ([8,14:REPLACE]<REPLACE>[16,18:OFF]<OFF>[19,19+:.]<PeriodSeparator>) ***
 
 -- Line 10 --
 
@@ -32,54 +32,48 @@
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>) ***
-[15,15: ]<SpaceSeparator>
 [16,19:toto]<UserDefinedWord>
-[20,20: ]<SpaceSeparator>
 [21,22:by]<BY>
-[23,23: ]<SpaceSeparator>
 [24,27:titi]<UserDefinedWord>
 [28,28+:.]<PeriodSeparator>
 Line 12[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'toto' expecting  expecting {'==', OFF}
 
 -- Line 13 --
-*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39+:==]<PseudoTextDelimiter>) ***
+*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[27,28:by]<BY>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39+:==]<PseudoTextDelimiter>) ***
 Line 14[8,14] <27, Error, Syntax> - Syntax error : mismatched input 'REPLACE' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY}
 
 -- Line 14 --
-*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:= ]<EqualOperator>[26,27:by]<BY>[28,28: ]<SpaceSeparator>[29,30:==]<PseudoTextDelimiter>) ***
-[31,31: ]<SpaceSeparator>
+*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:= ]<EqualOperator>[26,27:by]<BY>[28,28: ]<SpaceSeparator>[29,30:==]<PseudoTextDelimiter>) ***
 [32,35:titi]<UserDefinedWord>
-[36,36: ]<SpaceSeparator>
 [37,38:==]<PseudoTextDelimiter>
 [39,39+:.]<PeriodSeparator>
 Line 14[32,35] <27, Error, Syntax> - Syntax error : mismatched input 'titi' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY}
 
 -- Line 15 --
-*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,22:toto]<UserDefinedWord>[24,25:==]<PseudoTextDelimiter>[26,26+:.]<PeriodSeparator>) ***
 Line 15[26,26] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting BY
 
 -- Line 16 --
-*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>) ***
+*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,22:toto]<UserDefinedWord>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[33,36:titi]<UserDefinedWord>[38,39:==]<PseudoTextDelimiter>) ***
 [40,40: ]<SpaceSeparator>
 [41,45:tutu1]<UserDefinedWord>
 [46,46+:.]<PeriodSeparator>
 Line 16[41,45] <27, Error, Syntax> - Syntax error : mismatched input 'tutu1' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY}
 
 -- Line 17 --
-*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:==]<PseudoTextDelimiter>[43,43: ]<SpaceSeparator>[44,48:tutu2]<UserDefinedWord>[49,50:==]<PseudoTextDelimiter>[51,51+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,22:toto]<UserDefinedWord>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[33,36:titi]<UserDefinedWord>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:==]<PseudoTextDelimiter>[44,48:tutu2]<UserDefinedWord>[49,50:==]<PseudoTextDelimiter>[51,51+:.]<PeriodSeparator>) ***
 Line 17[51,51] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting BY
 
 -- Line 18 --
-*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:==]<PseudoTextDelimiter>[43,43: ]<SpaceSeparator>[44,48:tutu3]<UserDefinedWord>[49,50:==]<PseudoTextDelimiter>[51,51: ]<SpaceSeparator>[52,53:by]<BY>[54,54+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,22:toto]<UserDefinedWord>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[33,36:titi]<UserDefinedWord>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:==]<PseudoTextDelimiter>[44,48:tutu3]<UserDefinedWord>[49,50:==]<PseudoTextDelimiter>[51,51: ]<SpaceSeparator>[52,53:by]<BY>[54,54+:.]<PeriodSeparator>) ***
 Line 18[54,54] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting '=='
 
 -- Line 19 --
-*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>) ***
+*** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,22:toto]<UserDefinedWord>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[33,36:titi]<UserDefinedWord>[38,39:==]<PseudoTextDelimiter>) ***
 [40,40: ]<SpaceSeparator>
 [41,42:by]<BY>
 [43,43: ]<SpaceSeparator>
 [44,45:==]<PseudoTextDelimiter>
-[46,46: ]<SpaceSeparator>
 [47,51:tutu4]<UserDefinedWord>
 [52,53:==]<PseudoTextDelimiter>
 [54,54: ]<SpaceSeparator>
@@ -98,9 +92,7 @@ Line 22[8,14] <27, Error, Syntax> - Syntax error : mismatched input 'REPLACE' ex
 *** DIRECTIVE INVALID SYNTAX -> REPLACE_OFF ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,18:off]<OFF>) ***
 [19,19: ]<SpaceSeparator>
 [20,21:==]<PseudoTextDelimiter>
-[22,22: ]<SpaceSeparator>
 [23,26:toto]<UserDefinedWord>
-[27,27: ]<SpaceSeparator>
 [28,29:==]<PseudoTextDelimiter>
 [30,30: ]<SpaceSeparator>
 [31,32:by]<BY>
@@ -114,23 +106,23 @@ Line 22[20,21] <27, Error, Syntax> - Syntax error : mismatched input '==' expect
 -- Line 23 --
 
 -- Line 24 --
-*** DIRECTIVE REPLACE <REPLACE[SingleToken] word1 BY ?>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:word1]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:BY]<BY>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[33,33: ]<SpaceSeparator>[34,35:==]<PseudoTextDelimiter>[36,36+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[SingleToken] word1 BY ?>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,23:word1]<UserDefinedWord>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:BY]<BY>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[34,35:==]<PseudoTextDelimiter>[36,36+:.]<PeriodSeparator>) ***
 
 -- Line 25 --
-*** DIRECTIVE REPLACE <REPLACE[SingleToken] word1 BY word2>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:word1]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:BY]<BY>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[33,33: ]<SpaceSeparator>[34,38:word2]<UserDefinedWord>[39,39: ]<SpaceSeparator>[40,41:==]<PseudoTextDelimiter>[42,42+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[SingleToken] word1 BY word2>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,23:word1]<UserDefinedWord>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:BY]<BY>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[34,38:word2]<UserDefinedWord>[40,41:==]<PseudoTextDelimiter>[42,42+:.]<PeriodSeparator>) ***
 
 -- Line 26 --
-*** DIRECTIVE REPLACE <REPLACE[PartialWord] :partial1: BY ?>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,28::partial1:]<PartialCobolWord>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,34:BY]<BY>[35,35: ]<SpaceSeparator>[36,37:==]<PseudoTextDelimiter>[38,38: ]<SpaceSeparator>[39,40:==]<PseudoTextDelimiter>[41,41+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[PartialWord] :partial1: BY ?>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,28::partial1:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,34:BY]<BY>[35,35: ]<SpaceSeparator>[36,37:==]<PseudoTextDelimiter>[39,40:==]<PseudoTextDelimiter>[41,41+:.]<PeriodSeparator>) ***
 
 -- Line 27 --
-*** DIRECTIVE REPLACE <REPLACE[PartialWord] :partial1: BY partial2>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,28::partial1:]<PartialCobolWord>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,34:BY]<BY>[35,35: ]<SpaceSeparator>[36,37:==]<PseudoTextDelimiter>[38,38: ]<SpaceSeparator>[39,46:partial2]<UserDefinedWord>[47,47: ]<SpaceSeparator>[48,49:==]<PseudoTextDelimiter>[50,50+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[PartialWord] :partial1: BY partial2>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,28::partial1:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,34:BY]<BY>[35,35: ]<SpaceSeparator>[36,37:==]<PseudoTextDelimiter>[39,46:partial2]<UserDefinedWord>[48,49:==]<PseudoTextDelimiter>[50,50+:.]<PeriodSeparator>) ***
 
 -- Line 28 --
-*** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] word1 BY word2,word3>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:word1]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:BY]<BY>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[33,33: ]<SpaceSeparator>[34,38:word2]<UserDefinedWord>[39,39: ]<SpaceSeparator>[40,44:word3]<UserDefinedWord>[45,45: ]<SpaceSeparator>[46,47:==]<PseudoTextDelimiter>[48,48+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] word1 BY word2,word3>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,23:word1]<UserDefinedWord>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:BY]<BY>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[34,38:word2]<UserDefinedWord>[40,44:word3]<UserDefinedWord>[46,47:==]<PseudoTextDelimiter>[48,48+:.]<PeriodSeparator>) ***
 
 -- Line 29 --
-*** DIRECTIVE REPLACE <REPLACE[MultipleTokens] word1,word2 BY >  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:word1]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,29:word2]<UserDefinedWord>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[33,33: ]<SpaceSeparator>[34,35:BY]<BY>[36,36: ]<SpaceSeparator>[37,38:==]<PseudoTextDelimiter>[39,39: ]<SpaceSeparator>[40,41:==]<PseudoTextDelimiter>[42,42+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[MultipleTokens] word1,word2 BY >  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,23:word1]<UserDefinedWord>[25,29:word2]<UserDefinedWord>[31,32:==]<PseudoTextDelimiter>[33,33: ]<SpaceSeparator>[34,35:BY]<BY>[36,36: ]<SpaceSeparator>[37,38:==]<PseudoTextDelimiter>[40,41:==]<PseudoTextDelimiter>[42,42+:.]<PeriodSeparator>) ***
 
 -- Line 30 --
-*** DIRECTIVE REPLACE <REPLACE[MultipleTokens] word1,word2 BY word3,word4,word5>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:word1]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,29:word2]<UserDefinedWord>[30,30: ]<SpaceSeparator>[31,32:==]<PseudoTextDelimiter>[33,33: ]<SpaceSeparator>[34,35:BY]<BY>[36,36: ]<SpaceSeparator>[37,38:==]<PseudoTextDelimiter>[39,39: ]<SpaceSeparator>[40,44:word3]<UserDefinedWord>[45,45: ]<SpaceSeparator>[46,50:word4]<UserDefinedWord>[51,51: ]<SpaceSeparator>[52,56:word5]<UserDefinedWord>[57,57: ]<SpaceSeparator>[58,59:==]<PseudoTextDelimiter>[60,60+:.]<PeriodSeparator>) ***
+*** DIRECTIVE REPLACE <REPLACE[MultipleTokens] word1,word2 BY word3,word4,word5>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,23:word1]<UserDefinedWord>[25,29:word2]<UserDefinedWord>[31,32:==]<PseudoTextDelimiter>[33,33: ]<SpaceSeparator>[34,35:BY]<BY>[36,36: ]<SpaceSeparator>[37,38:==]<PseudoTextDelimiter>[40,44:word3]<UserDefinedWord>[46,50:word4]<UserDefinedWord>[52,56:word5]<UserDefinedWord>[58,59:==]<PseudoTextDelimiter>[60,60+:.]<PeriodSeparator>) ***
 

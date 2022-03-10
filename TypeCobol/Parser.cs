@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using JetBrains.Annotations;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
@@ -18,7 +19,15 @@ namespace TypeCobol
 {
 	public class Parser
 	{
-	    public IEnumerable<string> MissingCopys { get; private set; }
+        public static readonly string Version;
+
+        static Parser()
+        {
+            //Read current version from assembly attribute
+            Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        }
+
+        public IEnumerable<string> MissingCopys { get; private set; }
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
