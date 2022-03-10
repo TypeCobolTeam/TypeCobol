@@ -22,5 +22,10 @@
         //OrderByClause
         //OffsetClause
         //FetchClause
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this) && visitor.ContinueVisit(SubSelect, SubQuery);
+        }
     }
 }

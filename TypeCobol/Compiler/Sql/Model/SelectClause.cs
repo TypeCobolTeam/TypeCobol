@@ -64,5 +64,10 @@ namespace TypeCobol.Compiler.Sql.Model
         public IEnumerable<Selection> Selections => _selections;
 
         public bool IsStarSelection => _selections.Length == 1 && _selections[0].Type == SelectionType.Star;
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 }
