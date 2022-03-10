@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
@@ -7,7 +9,8 @@ namespace TypeCobol.Compiler.Sql.Model
     /// </summary>
     public abstract class SqlObject : IVisitable
     {
-        //TODO Add a method to get tokens corresponding to this SQL object
+        //TODO How to set and add tokens automatically for all SQL objects ?
+        public IList<Token> ConsumedTokens { get; internal set; }
 
         public bool AcceptVisitor(ISqlVisitor visitor)
         {
