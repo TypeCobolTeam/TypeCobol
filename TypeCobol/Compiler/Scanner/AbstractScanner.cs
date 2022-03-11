@@ -40,7 +40,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="startIndex">Index to start scanning from.</param>
         /// <returns>Token instance, null if no token could be scanned.</returns>
         public abstract Token GetTokenStartingFrom(int startIndex);
-        public Token ScanWhitespace(int startIndex)
+        protected Token ScanWhitespace(int startIndex)
         {
             // consume all whitespace chars available
             for (; currentIndex <= lastIndex && line[currentIndex] == ' '; currentIndex++) { }

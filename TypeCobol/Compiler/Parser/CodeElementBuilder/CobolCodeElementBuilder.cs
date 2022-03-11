@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Parser
 
         private bool IsDebuggingModeEnabled { get; set; }
         private ParserRuleContext Context;
-		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
+        /// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
 		private readonly CobolWordsBuilder _cobolWordsBuilder;
 		private readonly CobolExpressionsBuilder _cobolExpressionsBuilder;
@@ -2261,6 +2261,17 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateCommitStatement(context);
+        }
+
+        /// <summary>
+        /// Enter a parse tree produced by <see cref="CodeElementsParser.selectStatement"/>.
+        /// <para>The default implementation does nothing.</para>
+        /// </summary>
+        /// <param name="context">The parse tree.</param>
+        public override void EnterSelectStatement([NotNull] CodeElementsParser.SelectStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateSelectStatement(context);
         }
     }
 }

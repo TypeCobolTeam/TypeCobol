@@ -695,7 +695,7 @@ execStatementBody ::= /* empty */
 
 sqlStatement ::= CommitStatement:stmt
 {: :}
-|	CommitStatement:stmt
+|	SelectStatement:stmt
 {: :}
 ;
 
