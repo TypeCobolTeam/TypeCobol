@@ -46,13 +46,17 @@ namespace TypeCobol.Compiler.CodeElements
                 void ComputeDebugMode()
                 {
                     var consumedTokensCount = ConsumedTokens.Count;
-                    // CodeElement should be at least one token
-                    Debug.Assert(consumedTokensCount > 0);
+                    if (consumedTokensCount == 0)
+                    {
+                        // CodeElement is invalid, we assume DebugMode is None but it could be wrong
+                        _debugMode = DebugType.None;
+                        return;
+                    }
 
                     bool atLeastOneDebug = false, atLeastOneWithoutDebug = false;
-                    // CodeElement is on one line
                     if (ConsumedTokens.First().Line == ConsumedTokens.Last().Line)
                     {
+                        // CodeElement is on one line
                         atLeastOneDebug = ConsumedTokens[0].TokensLine.Type == CobolTextLineType.Debug;
                         atLeastOneWithoutDebug = !atLeastOneDebug;
                     }
@@ -70,6 +74,7 @@ namespace TypeCobol.Compiler.CodeElements
                             }
                         }
                     }
+
                     if (atLeastOneDebug && !atLeastOneWithoutDebug)
                     {
                         // Only debug lines

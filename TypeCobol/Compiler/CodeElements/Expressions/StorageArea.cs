@@ -329,7 +329,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override StorageArea GetStorageAreaThatNeedDeclaration
         {
-            get { return OtherStorageAreaReference.GetStorageAreaThatNeedDeclaration ?? this; }
+            get { return OtherStorageAreaReference?.GetStorageAreaThatNeedDeclaration ?? this; }
         }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {

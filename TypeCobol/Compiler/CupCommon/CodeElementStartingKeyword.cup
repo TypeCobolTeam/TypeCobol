@@ -103,4 +103,6 @@ codeElementStartingKeyword ::=
 |WORKING_STORAGE
 |WRITE
 |XML
+//FOR SQL
+|SQL_COMMIT
 ;
