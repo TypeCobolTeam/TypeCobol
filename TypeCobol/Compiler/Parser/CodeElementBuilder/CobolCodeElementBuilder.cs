@@ -2263,11 +2263,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = _sqlCodeElementBuilder.CreateCommitStatement(context);
         }
 
-        /// <summary>
-        /// Enter a parse tree produced by <see cref="CodeElementsParser.selectStatement"/>.
-        /// <para>The default implementation does nothing.</para>
-        /// </summary>
-        /// <param name="context">The parse tree.</param>
         public override void EnterSelectStatement([NotNull] CodeElementsParser.SelectStatementContext context)
         {
             Context = context;

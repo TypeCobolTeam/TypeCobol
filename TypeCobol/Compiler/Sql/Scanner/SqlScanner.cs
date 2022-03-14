@@ -18,7 +18,8 @@ namespace TypeCobol.Compiler.Sql.Scanner
             return c == '-' || char.IsLetter(c);
         }
 
-        public SqlScanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
+        public SqlScanner(string line, int startIndex, int lastIndex, TokensLine tokensLine,
+            TypeCobolOptions compilerOptions)
             : base(line, startIndex, lastIndex, tokensLine, compilerOptions)
         {
 
@@ -43,35 +44,31 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     currentIndex++;
                     return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
             }
+
             if (IsSqlKeywordPart(line[currentIndex]))
             {
                 //Consume all sql-keyword compatible chars
-                for (; currentIndex <= lastIndex && IsSqlKeywordPart(line[currentIndex]); currentIndex++) { }
+                for (; currentIndex <= lastIndex && IsSqlKeywordPart(line[currentIndex]); currentIndex++){}
                 string tokenText = line.Substring(startIndex, currentIndex - startIndex);
-
                 //Try to match keyword text
                 var tokenType = TokenUtils.GetSqlKeywordTokenTypeFromTokenString(tokenText);
-
-                //So far this scanner only recognize 'COMMIT' keyword
-
                 switch (tokenType)
                 {
                     case TokenType.SQL_COMMIT:
                     case TokenType.SQL_SELECT:
                     case TokenType.SQL_ALL:
                     case TokenType.SQL_DISTINCT:
+                        //Supported keywords
                         return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
+                    //Unrecognized keyword (for now) return as ExecStatementText
                     default:
                         return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
                 }
-
-                //Unrecognized keyword (for now) return as ExecStatementText
-
             }
             //Consume all sql-keyword incompatible chars
-            for (; currentIndex <= lastIndex && !IsSqlKeywordPart(line[currentIndex]); currentIndex++) { }
+            for (; currentIndex <= lastIndex && !IsSqlKeywordPart(line[currentIndex]); currentIndex++){}
             return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
         }
-
     }
 }
+

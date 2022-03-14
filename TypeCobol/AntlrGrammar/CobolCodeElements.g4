@@ -8265,7 +8265,7 @@ selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause;
 sql_selectClause: 
-  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? star;
+SQL_SELECT (SQL_ALL|SQL_DISTINCT)? star;
 
 // ------------------------------
 // End of DB2 coprocessor

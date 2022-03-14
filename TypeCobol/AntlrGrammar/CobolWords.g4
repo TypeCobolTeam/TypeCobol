@@ -3622,4 +3622,3 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 
 // SQL_INIT_FLAG : 'SQL-INIT-FLAG';
 star: MultiplyOperator;
-dot: PeriodSeparator;
