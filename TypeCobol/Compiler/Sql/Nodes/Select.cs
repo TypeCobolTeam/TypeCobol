@@ -3,8 +3,9 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.Nodes
-{ /// <summary>
-    /// Sql COMMIT Node
+{
+    /// <summary>
+    /// Sql SELECT Node
     /// </summary>
     public class Select : GenericNode<SelectStatement>, Statement
     { 

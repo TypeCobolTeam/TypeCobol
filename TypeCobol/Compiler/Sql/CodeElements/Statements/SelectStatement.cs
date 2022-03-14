@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Parser.Generated;
+﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Sql.Model;
 
 namespace TypeCobol.Compiler.Sql.CodeElements.Statements

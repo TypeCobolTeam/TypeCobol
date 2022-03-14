@@ -1,11 +1,8 @@
 ﻿using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
-using TypeCobol.Compiler.Sql.Nodes;
 
 namespace TypeCobol.Compiler.Sql.CodeElements
 {
