@@ -99,10 +99,15 @@ namespace TypeCobol.Compiler.Scanner
 #endif
 
         /// <summary>
+        /// True if we are inside a portion of SQL code introduced by EXEC SQL ... and ended by END-EXEC.
+        /// </summary>
+        public bool InsideSql { get; set; }
+
+        /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false, bool insideCopy = false) :
-            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false)
+            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false, false)
         { }
 
         /// <summary>
@@ -111,7 +116,7 @@ namespace TypeCobol.Compiler.Scanner
         private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText,
             SpecialNamesContext specialNamesContext, bool insideFormalizedComment, bool insideMultilineComments,
             bool insideParamsField, bool withDebuggingMode, bool insideCopy,
-            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective)
+            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective, bool insideSql)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -125,6 +130,7 @@ namespace TypeCobol.Compiler.Scanner
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
             _afterReplacementPseudoText = afterReplacementPseudoText;
             InsideReplaceDirective = insideReplaceDirective;
+            InsideSql = insideSql;
         }
 
         /// <summary>
@@ -134,7 +140,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, SpecialNames.Clone(),
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective);
+                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective, InsideSql);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
 
@@ -578,7 +584,8 @@ namespace TypeCobol.Compiler.Scanner
                    WithDebuggingMode == otherScanState.WithDebuggingMode &&
                    EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
                    _afterReplacementPseudoText == otherScanState._afterReplacementPseudoText &&
-                   InsideReplaceDirective == otherScanState.InsideReplaceDirective;
+                   InsideReplaceDirective == otherScanState.InsideReplaceDirective &&
+                   InsideSql == otherScanState.InsideSql;
         }
 
         /// <summary>
@@ -606,6 +613,7 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();
                 hash = hash * 23 + _afterReplacementPseudoText.GetHashCode();
                 hash = hash * 23 + InsideReplaceDirective.GetHashCode();
+                hash = hash * 23 + InsideCopy.GetHashCode();
                 return hash;
             }
         }

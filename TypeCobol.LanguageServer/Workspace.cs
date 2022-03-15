@@ -586,9 +586,16 @@ namespace TypeCobol.LanguageServer
             }
 
             if (!IsEmpty)
-                RefreshOpenedFiles();
+            {
+                lock (MessagesActionsQueue)
+                {
+                    MessagesActionsQueue.Enqueue(new MessageActionWrapper(RefreshOpenedFiles));
+                }
+            }
             else
+            {
                 RefreshCustomSymbols();
+            }
 
             //Dispose previous watchers before setting new ones            
             if (_CopyWatcher != null)
@@ -619,33 +626,40 @@ namespace TypeCobol.LanguageServer
         /// or an empty list if all COPY have been loaded.
         /// </summary>
         /// <param name="fileUri">Uri of the document from wich the response is emitted</param>
-        /// <param name="RemainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
-        public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
+        /// <param name="remainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
+        public void UpdateMissingCopies(Uri fileUri, List<string> remainingMissingCopies)
         {
             if (_CopyWatcher == null)
-            {// No Copy Watcher ==> Refresh ourself opened file.
-                RefreshOpenedFiles();
+            {
+                // No Copy Watcher ==> Schedule a refresh of opened file.
+                lock (MessagesActionsQueue)
+                {
+                    MessagesActionsQueue.Enqueue(new MessageActionWrapper(RefreshOpenedFiles));
+                }
             }
         }
 
         /// <summary>
         /// Refresh all opened files' parser.
+        /// <remarks>This method is designed to run on background worker thread as it uses compilation results to recreate source code.
+        /// Callers must enqueue a new message to schedule a refresh of opened files instead of calling this directly.</remarks>
         /// </summary>
-        public void RefreshOpenedFiles()
+        private void RefreshOpenedFiles()
         {
             RefreshCustomSymbols();
             this.CompilationProject.ClearImportedCompilationDocumentsCache();
 
             lock (_lockForOpenedDocuments)
             {
-                var tempOpeneContexts = new Dictionary<Uri, DocumentContext >(_openedDocuments);
-                foreach (var contextEntry in tempOpeneContexts)
+                var tempOpenedContexts = new Dictionary<Uri, DocumentContext >(_openedDocuments);
+                foreach (var docContext in tempOpenedContexts.Values)
                 {
-                    Uri uri = contextEntry.Key;
-                    DocumentContext docContext = contextEntry.Value;
+                    var compilationResults = docContext.FileCompiler?.CompilationResultsForProgram;
+                    if (compilationResults == null) continue;
+
                     var sourceText = new StringBuilder();
-                    foreach (var line in docContext.FileCompiler.TextDocument.Lines)
-                        sourceText.AppendLine(line.Text);
+                    foreach (var cobolTextLine in compilationResults.CobolTextLines)
+                        sourceText.AppendLine(cobolTextLine.Text);
 
                     //Disconnect previous LanguageServer connection
                     docContext.LanguageServerConnection(false);                    

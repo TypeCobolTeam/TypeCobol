@@ -1,0 +1,15 @@
+﻿--- Diagnostics ---
+Line 6[30,38] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[30,38:DEBUGGING]<DEBUGGING>
+Line 10[20,23] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... picX' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[20,23:picX]<UserDefinedWord>
+Line 10[24,24] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader} OffendingSymbol=[[SentenceEnd]] [24,24+:.]<PeriodSeparator> --> [24,24+:.]<PeriodSeparator>
+
+
+--- Program ---
+PROGRAM: MyPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

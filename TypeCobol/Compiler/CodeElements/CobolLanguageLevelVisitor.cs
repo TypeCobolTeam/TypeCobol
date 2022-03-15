@@ -1,10 +1,11 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Sql;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
+using TypeCobol.Compiler.Sql.Nodes;
 using Object = TypeCobol.Compiler.Nodes.Object;
 using String = TypeCobol.Compiler.Nodes.String;
 
@@ -82,6 +83,12 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         /// <summary>
+        /// Returns the instance of ISqlVisitor to continue visit inside
+        /// SQL object model.
+        /// </summary>
+        ISqlVisitor SqlVisitor { get; }
+
+        /// <summary>
         /// Can this visitor modify Node children?
         /// </summary>
         bool CanModifyChildrenNode { get; }
@@ -112,6 +119,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] EntryStatement entryStatement);
         bool Visit([NotNull] EvaluateStatement evaluateStatement);
         bool Visit([NotNull] ExecStatement execStatement);
+        bool Visit([NotNull] ExecStatementText execStatementText);
+        bool Visit([NotNull] ExecStatementEnd execStatementEnd);
         bool Visit([NotNull] ExitMethodStatement exitMethodStatement);
         bool Visit([NotNull] ExitProgramStatement exitProgramStatement);
         bool Visit([NotNull] ExitStatement exitStatement);
@@ -276,6 +285,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Display display);
         bool Visit([NotNull] Entry entry);
         bool Visit([NotNull] Exec exec);
+        bool Visit([NotNull] ExecText execText);
         bool Visit([NotNull] Exit exit);
         bool Visit([NotNull] ExitMethod exitMethod);
         bool Visit([NotNull] ExitProgram exitProgram);
@@ -369,6 +379,20 @@ namespace TypeCobol.Compiler.CodeElements
 
         bool Visit([NotNull] ParametersProfileNode profile);
         bool Visit ([NotNull] IndexDefinition indexDefinition);
+
+        /// <summary>
+        /// COMMIT Statement Code Element visitor method
+        /// </summary>
+        /// <param name="commitStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        bool Visit([NotNull] CommitStatement commitStatement);
+
+        /// <summary>
+        /// COMMIT Statement Node visitor method
+        /// </summary>
+        /// <param name="commit">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        bool Visit([NotNull] Commit commit);
     }
 
 
@@ -389,6 +413,11 @@ namespace TypeCobol.Compiler.CodeElements
                 return true;
             }
         }
+
+        /// <summary>
+        /// By default the visitor does not have the capability to visit SQL objects
+        /// </summary>
+        public virtual ISqlVisitor SqlVisitor => null;
 
         /// <summary>
         /// By default the visitor cannot modify Node's children
@@ -485,6 +514,14 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ExecStatement execStatement) {
+            return true;
+        }
+
+        public bool Visit(ExecStatementText execStatementText) {
+            return true;
+        }
+
+        public bool Visit([NotNull] ExecStatementEnd execStatementEnd) {
             return true;
         }
 
@@ -1083,6 +1120,10 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
+        public virtual bool Visit(ExecText execText) {
+            return true;
+        }
+
         public virtual bool Visit(Exit exit) {
             return true;
         }
@@ -1451,6 +1492,27 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public bool Visit([NotNull] Use useStatement)
+        {
+            return true;
+        }
+
+
+        /// <summary>
+        /// COMMIT Statement Code Element visitor method
+        /// </summary>
+        /// <param name="commitStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        public virtual bool Visit([NotNull] CommitStatement commitStatement)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// COMMIT Statement Node visitor method
+        /// </summary>
+        /// <param name="commit">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        public virtual bool Visit([NotNull] Commit commit)
         {
             return true;
         }
