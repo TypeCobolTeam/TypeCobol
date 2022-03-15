@@ -257,9 +257,8 @@ namespace TypeCobol.Compiler.CodeElements
                         return false;
                     case TokenType.IntegerLiteral: // See: GitHub #2054
                     default:
-                        System.Diagnostics.Debug.Assert(false, "Unexpected literal value: " + Token.TokenType);
-                        LoggingSystem.LogMessage(LogLevel.Error, "Unexpected literal value: " + Token.TokenType + Environment.NewLine + new System.Diagnostics.StackTrace().ToString());
-                        return false;
+                        LoggingSystem.LogMessage(LogLevel.Error, "Unexpected literal value: " + TokenUtils.DumpToken(Token));
+                        throw new InvalidOperationException("Unexpected literal value: " + Token.TokenType);
                 }
             }
         }
@@ -354,7 +353,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                if(ValueNeedsCompilationContext || ValueNeedsSymbolicCharactersMap || ValueNeedsCharactersCountContext)
+                if (ValueNeedsCompilationContext || ValueNeedsSymbolicCharactersMap || ValueNeedsCharactersCountContext)
                 {
                     throw new InvalidOperationException("Impossible to evaluate literal value without context information");
                 }
