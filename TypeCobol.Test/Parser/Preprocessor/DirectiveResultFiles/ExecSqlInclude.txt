@@ -28,7 +28,11 @@ Line 1[35,42] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be us
 -- Line 10 --
 [8,11:exec]<EXEC>
 [13,15:sql]<ExecTranslatorName>
-[17,35:Truncate table toto]<ExecStatementText>
+[17,24:Truncate]<ExecStatementText>
+[25,25: ]<ExecStatementText>
+[26,30:table]<ExecStatementText>
+[31,31: ]<ExecStatementText>
+[32,35:toto]<ExecStatementText>
 [37,44:end-exec]<END_EXEC>
 [45,45+:.]<PeriodSeparator>
 
@@ -61,7 +65,10 @@ Line 14[34,34] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
 [12,17:select]<ExecStatementText>
 
 -- Line 17 --
-[8,22:     * from any]<ExecStatementText>
+[8,14:     * ]<ExecStatementText>
+[15,18:from]<ExecStatementText>
+[19,19: ]<ExecStatementText>
+[20,22:any]<ExecStatementText>
 
 -- Line 18 --
 [8,15:end-exec]<END_EXEC>
@@ -81,7 +88,11 @@ Line 19[35,41] <27, Error, Syntax> - Syntax error : mismatched input 'endexec' e
 -- Line 21 --
 [8,11:exec]<EXEC>
 [13,15:sql]<ExecTranslatorName>
-[17,35:delete * from table]<ExecStatementText>
+[17,22:delete]<ExecStatementText>
+[23,25: * ]<ExecStatementText>
+[26,29:from]<ExecStatementText>
+[30,30: ]<ExecStatementText>
+[31,35:table]<ExecStatementText>
 [37,44:end-exec]<END_EXEC>
 [45,46:. ]<PeriodSeparator>
 
