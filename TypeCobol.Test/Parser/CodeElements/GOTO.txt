@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 42[37,38] <27, Error, Syntax> - Syntax error : extraneous input 'i2' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[37,38:i2]<UserDefinedWord>
+Line 42[37,38] <27, Error, Syntax> - Syntax error : extraneous input 'i2' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[37,38:i2]<UserDefinedWord>
 Line 45[1,2] <27, Error, Syntax> - Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>
 Line 46[1,2] <27, Error, Syntax> - Syntax error : extraneous input 'GO' expecting {user defined word, DEPENDING} RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>
 Line 46[1,2] <27, Error, Syntax> - Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>

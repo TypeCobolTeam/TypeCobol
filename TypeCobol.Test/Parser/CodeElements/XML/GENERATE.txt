@@ -3,12 +3,12 @@ Line 3[15,15] <27, Error, Syntax> - Syntax error : mismatched input '.' expectin
 Line 18[28,35] <27, Error, Syntax> - Syntax error : no viable alternative at input 'ENCODING' RuleStack=codeElement>xmlGenerateStatement>encoding,  OffendingSymbol=[28,35:ENCODING]<UserDefinedWord>
 Line 20[46,55] <27, Error, Syntax> - Syntax error : no viable alternative at input 'ATTRIBUTES' RuleStack=codeElement>xmlGenerateStatement,  OffendingSymbol=[46,55:ATTRIBUTES]<UserDefinedWord>
 Line 27[59,60] <27, Error, Syntax> - Syntax error : mismatched input '27' expecting {alphanumeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>xmlGenerateStatement>alphanumericVariable2,  OffendingSymbol=[59,60:27]<IntegerLiteral>{27}
-Line 28[56,57] <27, Error, Syntax> - Syntax error : extraneous input 'IS' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[56,57:IS]<IS>
+Line 28[56,57] <27, Error, Syntax> - Syntax error : extraneous input 'IS' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[56,57:IS]<IS>
 Line 28[36,37] <27, Error, Syntax> - Syntax error : extraneous input '42' expecting {alphanumeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>xmlGenerateStatement>alphanumericVariable2,  OffendingSymbol=[36,37:42]<IntegerLiteral>{42}
 Line 30[23,38] <27, Error, Syntax> - Syntax error : no viable alternative at input 'NAMESPACE-PREFIX' RuleStack=codeElement>xmlGenerateStatement,  OffendingSymbol=[23,38:NAMESPACE-PREFIX]<UserDefinedWord>
 Line 35[40,43] <27, Error, Syntax> - Syntax error : no viable alternative at input 'NAME' RuleStack=codeElement>xmlGenerateStatement,  OffendingSymbol=[40,43:NAME]<UserDefinedWord>
 Line 37[23,26] <27, Error, Syntax> - Syntax error : no viable alternative at input 'NAME' RuleStack=codeElement>xmlGenerateStatement>encoding,  OffendingSymbol=[23,26:NAME]<UserDefinedWord>
-Line 44[46,49] <27, Error, Syntax> - Syntax error : extraneous input 'TYPE' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[46,49:TYPE]<TYPE>
+Line 44[46,49] <27, Error, Syntax> - Syntax error : extraneous input 'TYPE' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[46,49:TYPE]<TYPE>
 --- Code Elements ---
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [21,21:y]<UserDefinedWord>
 

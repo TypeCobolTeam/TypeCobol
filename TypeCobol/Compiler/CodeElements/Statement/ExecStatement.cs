@@ -23,16 +23,37 @@ namespace TypeCobol.Compiler.CodeElements
         [CanBeNull]
         public ExternalName ExecTranslatorName { get; set; }
 
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ExecTranslatorName);
+        }
+    }
+
+    public class ExecStatementText : CodeElement
+    {
+        public ExecStatementText() : base(CodeElementType.ExecStatementText) { }
+
         /// <summary>
         /// Source code to be analyzed by the secondary compiler
         /// </summary>
-        public AlphanumericValue[] CodeLines { get; set; }
+        public AlphanumericValue CodeLine { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) CodeLines)
-                   && this.ContinueVisitToChildren(astVisitor, ExecTranslatorName);
+                && this.ContinueVisitToChildren(astVisitor, CodeLine);
         }
     }
+
+    public class ExecStatementEnd : CodeElementEnd
+    {
+        public ExecStatementEnd() : base(CodeElementType.ExecStatementEnd) { }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
+    }
+
 }

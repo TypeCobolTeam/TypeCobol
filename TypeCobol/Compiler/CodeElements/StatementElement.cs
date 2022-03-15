@@ -127,6 +127,10 @@ namespace TypeCobol.Compiler.CodeElements
         UseStatement,
         WriteStatement,
         XmlGenerateStatement,
-        XmlParseStatement
+        XmlParseStatement,
+
+        //Sql
+        CommitStatement
+
     }
 }
