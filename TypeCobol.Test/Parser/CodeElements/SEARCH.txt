@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 5[14,20] <27, Error, Syntax> - Syntax error : extraneous input 'VARYING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[14,20:VARYING]<VARYING>
+Line 5[14,20] <27, Error, Syntax> - Syntax error : extraneous input 'VARYING' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[14,20:VARYING]<VARYING>
 Line 7[8,18] <27, Error, Syntax> - Syntax error : SEARCH: Illegal subscripted identifier RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier,  OffendingSymbol=[8,18:identifier1]<UserDefinedWord>
 Line 8[8,18] <27, Error, Syntax> - Syntax error : SEARCH: Illegal reference-modified identifier RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier,  OffendingSymbol=[8,18:identifier1]<UserDefinedWord>
 Line 9[8,18] <27, Error, Syntax> - Syntax error : SEARCH: Illegal subscripted identifier RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier,  OffendingSymbol=[8,18:identifier1]<UserDefinedWord>
