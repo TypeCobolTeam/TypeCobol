@@ -1,51 +1,32 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+Line 2[10,14] <27, Error, Syntax> - Syntax error : extraneous input 'TIDCA' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[10,14:TIDCA]<UserDefinedWord>
+Line 3[7,7] <27, Error, Syntax> - Syntax error : extraneous input 'x' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[7,7:x]<UserDefinedWord>
+Line 3[12,12] <27, Error, Syntax> - Syntax error : extraneous input 'y' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[12,12:y]<UserDefinedWord>
+Line 4[11,11] <27, Error, Syntax> - Syntax error : extraneous input 'a' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[11,11:a]<UserDefinedWord>
+Line 4[16,16] <27, Error, Syntax> - Syntax error : extraneous input 'b' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[16,16:b]<UserDefinedWord>
+Line 5[16,16] <27, Error, Syntax> - Syntax error : extraneous input 'd' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[16,16:d]<UserDefinedWord>
+Line 6[16,16] <27, Error, Syntax> - Syntax error : extraneous input 'f' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[16,16:f]<UserDefinedWord>
+Line 7[16,16] <27, Error, Syntax> - Syntax error : extraneous input 'h' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[16,16:h]<UserDefinedWord>
+--- Code Elements ---
 [[ExecStatement]] [1,4:EXEC]<EXEC> --> [6,8:SQL]<ExecTranslatorName>
 
 [[ExecStatementText]] [3,8:UPDATE]<ExecStatementText> --> [3,8:UPDATE]<ExecStatementText>
-
-[[ExecStatementText]] [10,14:TIDCA]<ExecStatementText> --> [10,14:TIDCA]<ExecStatementText>
 
 [[ExecStatementText]] [15,16:01]<ExecStatementText> --> [15,16:01]<ExecStatementText>
 
 [[ExecStatementText]] [3,5:SET]<ExecStatementText> --> [3,5:SET]<ExecStatementText>
 
-[[ExecStatementText]] [7,7:x]<ExecStatementText> --> [7,7:x]<ExecStatementText>
-
 [[ExecStatementText]] [9,11:= :]<ExecStatementText> --> [9,11:= :]<ExecStatementText>
-
-[[ExecStatementText]] [12,12:y]<ExecStatementText> --> [12,12:y]<ExecStatementText>
 
 [[ExecStatementText]] [5,9:WHERE]<ExecStatementText> --> [5,9:WHERE]<ExecStatementText>
 
-[[ExecStatementText]] [11,11:a]<ExecStatementText> --> [11,11:a]<ExecStatementText>
+[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
 
 [[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
 
-[[ExecStatementText]] [16,16:b]<ExecStatementText> --> [16,16:b]<ExecStatementText>
-
-[[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [11,11:c]<ExecStatementText> --> [11,11:c]<ExecStatementText>
-
 [[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
 
-[[ExecStatementText]] [16,16:d]<ExecStatementText> --> [16,16:d]<ExecStatementText>
-
-[[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [11,11:e]<ExecStatementText> --> [11,11:e]<ExecStatementText>
-
 [[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
-
-[[ExecStatementText]] [16,16:f]<ExecStatementText> --> [16,16:f]<ExecStatementText>
-
-[[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [11,11:g]<ExecStatementText> --> [11,11:g]<ExecStatementText>
-
-[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
-
-[[ExecStatementText]] [16,16:h]<ExecStatementText> --> [16,16:h]<ExecStatementText>
 
 [[ExecStatementEnd]] [1,8:END-EXEC]<END_EXEC> --> [1,8:END-EXEC]<END_EXEC>
 

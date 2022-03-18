@@ -1,3 +1,4 @@
+Line 5[31,39] <27, Error, Syntax> - Syntax error : extraneous input 'CUSTOMERS' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
 Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 --- Tokens ---
 ---------------------------------
@@ -27,7 +28,7 @@ _  EXEC SQL DELETE FROM CUSTOMERS	   _
     _SQL_    [15,17:SQL]<ExecTranslatorName>
     _DELETE_    [19,24:DELETE]<ExecStatementText>
     _FROM_    [26,29:FROM]<ExecStatementText>
-    _CUSTOMERS_    [31,39:CUSTOMERS]<ExecStatementText>
+    _CUSTOMERS_    [31,39:CUSTOMERS]<UserDefinedWord>
     _	   _    [40,43:	   ]<ExecStatementText>
 ---------------------------------
 _  COMMIT_

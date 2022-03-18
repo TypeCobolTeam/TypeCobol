@@ -21,6 +21,7 @@ Line 114[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already decla
 Line 118[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already declared in procedure-division
 Line 124[8,28] <37, Warning, General> - Warning: Section 'SectionEmpty' is empty
 Line 126[8,29] <37, Warning, General> - Warning: Section 'SectionEmpty2' is empty
+Line 132[26,34] <27, Error, Syntax> - Syntax error : extraneous input 'something' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[26,34:something]<UserDefinedWord>
 Line 135[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
 Line 143[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
 Line 146[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty

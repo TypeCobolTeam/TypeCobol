@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Antlr4.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.Scanner;
+
 
 namespace TypeCobol.Compiler.Sql.Model
 {
@@ -41,15 +45,25 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class DotStarSelection : Selection
     {
+        public SymbolReference Name { get; }
         public override SelectionType Type => SelectionType.DotStar;
+
+        public  DotStarSelection(SymbolReference name)
+        {
+            this.Name = name;
+        }
     }
 
     public class SelectClause : SqlObject
     {
         private readonly Selection[] _selections;
-
         public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, StarSelection starSelection)
             : this(selectionModifier, new [] { starSelection })
+        {
+
+        }
+        public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, DotStarSelection dotStarSelection)
+            : this(selectionModifier, new[] { dotStarSelection })
         {
 
         }
@@ -59,7 +73,6 @@ namespace TypeCobol.Compiler.Sql.Model
             SelectionModifier = selectionModifier;
             _selections = selections?.ToArray() ?? Array.Empty<Selection>();
         }
-
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }
 
         public IEnumerable<Selection> Selections => _selections;

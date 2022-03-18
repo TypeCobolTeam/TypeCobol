@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Scanner
         // 525 -> 526 : Multilines Comments Tokens
         MultilinesCommentsFamily = 525,
 
-        // 527 -> 819 : SQL keywords
+        // 527 -> 820 : SQL keywords
         SqlFamily = 527
     }
 
@@ -914,5 +914,6 @@ namespace TypeCobol.Compiler.Scanner
         SQL_YEAR = 817,
         SQL_YEARS = 818,
         SQL_ZONE = 819,
+        SQL_COMMA = 820,
     }
 }

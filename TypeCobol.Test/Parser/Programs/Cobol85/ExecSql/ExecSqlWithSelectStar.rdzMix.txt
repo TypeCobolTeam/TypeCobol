@@ -7,9 +7,7 @@ Line 3[8,21] <27, Error, Syntax> - Syntax error : extraneous input 'DATADIVISION
               SELECT *
               SELECT ALL *
               SELECT DISTINCT *
-              SELECT
-Line 10[15,20] <27, Error, Syntax> - Syntax error : mismatched input 'SELECT' expecting {'*', ALL, DISTINCT}
-Line 10[26,33] <27, Error, Syntax> - Syntax error : mismatched input 'DISTINCT' expecting '*'
+Line 9[26,33] <27, Error, Syntax> - Syntax error : mismatched input 'DISTINCT' expecting {'*', user defined word}
               SELECT ALL DISTINCT 
              END-EXEC.
        PROCEDURE DIVISION.
