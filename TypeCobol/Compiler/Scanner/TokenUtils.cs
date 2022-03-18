@@ -42,8 +42,8 @@ namespace TypeCobol.Compiler.Scanner
             _TokenStringFromTokenType[(int)TokenType.EXEC_SQL] = "EXEC-SQL";
 
             // Same thing for SQL keywords
-            keywordBegin = (int)TokenFamily.SqlFamily;
-            keywordEnd = types.Length - 2; //EndOfFile is the last TokenType
+            keywordBegin = (int)TokenFamily.SqlKeywords;
+            keywordEnd = (int)TokenFamily.SqlSyntaxSeparators - 1;
             for (int c = keywordBegin; c <= keywordEnd; c++)
             {
                 var current = types[c];
@@ -62,7 +62,7 @@ namespace TypeCobol.Compiler.Scanner
                     continue;
                 }
 
-                if (_TokenFamilyFromTokenType[tokenType] == TokenFamily.SqlFamily)
+                if (_TokenFamilyFromTokenType[tokenType] == TokenFamily.SqlKeywords)
                 {
                     //SQL token
                     _SqlTokenTypeFromTokenString.Add(tokenString, (TokenType)tokenType);
@@ -173,6 +173,7 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenFamily.Comments:
                     return "comments";
                 case TokenFamily.SyntaxSeparator:
+                case TokenFamily.SqlSyntaxSeparators:
                     return "separator";
                 case TokenFamily.ArithmeticOperator:
                     return "arithmetic operator";
@@ -190,7 +191,7 @@ namespace TypeCobol.Compiler.Scanner
                     return "compiler directive starting keyword";
                 case TokenFamily.CodeElementStartingKeyword:
                     return "statement starting keyword";
-                case TokenFamily.SqlFamily:
+                case TokenFamily.SqlKeywords:
                     return "Sql statement starting keyword";
                 case TokenFamily.SpecialRegisterKeyword:
                     return "special register";
@@ -220,7 +221,7 @@ namespace TypeCobol.Compiler.Scanner
                 return tokenType.ToString().Replace('_', '-');
             }
             
-            if (_TokenFamilyFromTokenType[(int)tokenType] == TokenFamily.SqlFamily)
+            if (_TokenFamilyFromTokenType[(int)tokenType] == TokenFamily.SqlKeywords)
             {
                 string name = tokenType.ToString();
                 return name.Substring(4, name.Length - 4);
@@ -233,6 +234,7 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.SpaceSeparator:
                     return "space";
                 case TokenType.CommaSeparator:
+                case TokenType.SQL_CommaSeparator:
                     return "','";
                 case TokenType.SemicolonSeparator:
                     return "';'";

@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
                 case ',':
                     currentIndex++;
-                    return new Token(TokenType.SQL_COMMA, startIndex, currentIndex - 1, tokensLine);
+                    return new Token(TokenType.SQL_CommaSeparator, startIndex, currentIndex - 1, tokensLine);
                 case '.':
                     currentIndex++;
                     return new Token(TokenType.PeriodSeparator, startIndex, currentIndex - 1, tokensLine);

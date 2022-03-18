@@ -880,7 +880,7 @@ tokens
 	SQL_YEAR,
 	SQL_YEARS,
 	SQL_ZONE,
-    SQL_COMMA
+    SQL_CommaSeparator
 }
 
 

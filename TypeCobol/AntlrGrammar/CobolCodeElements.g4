@@ -8264,7 +8264,7 @@ commitStatement: SQL_COMMIT;
 selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause;
-selections: selection (SQL_COMMA selection)*;
+selections: selection (SQL_CommaSeparator selection)*;
 selection: dotStarSelection;
 dotStarSelection: tableOrViewOrCorrelationName  dot star; 
 tableOrViewOrCorrelationName : (DBMS=UserDefinedWord dot)?? (SchemaName=UserDefinedWord dot)? (Name=UserDefinedWord); 
