@@ -8,17 +8,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
     /// </summary>
     public class SelectStatement : SqlStatementElement
     {
-        private readonly FullSelect _fullSelect;
+        public FullSelect FullSelect { get; }
         public SelectStatement(FullSelect fullSelect) : base(CodeElementType.SelectStatement, StatementType.SelectStatement)
         {
-            this._fullSelect = fullSelect;
+            this.FullSelect = fullSelect;
         }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                                                      && astVisitor.SqlVisitor != null
-                                                     && astVisitor.SqlVisitor.ContinueVisit(_fullSelect);
+                                                     && astVisitor.SqlVisitor.ContinueVisit(FullSelect);
         }
     }
 } 
