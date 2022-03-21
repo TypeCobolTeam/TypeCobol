@@ -138,6 +138,8 @@ terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
 
 // FOR SQL
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SelectStatement SelectStatement;
+
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
@@ -692,6 +694,8 @@ execStatementBody ::= /* empty */
 ;
 
 sqlStatement ::= CommitStatement:stmt
+{: :}
+|	SelectStatement:stmt
 {: :}
 ;
 

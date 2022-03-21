@@ -17,21 +17,13 @@
 
           [[ExecStatementText]] [19,25:DECLARE]<ExecStatementText> --> [19,25:DECLARE]<ExecStatementText>
 
-          [[ExecStatementText]] [26,26: ]<ExecStatementText> --> [26,26: ]<ExecStatementText>
-
           [[ExecStatementText]] [27,35:tablename]<ExecStatementText> --> [27,35:tablename]<ExecStatementText>
-
-          [[ExecStatementText]] [36,36: ]<ExecStatementText> --> [36,36: ]<ExecStatementText>
 
           [[ExecStatementText]] [37,41:TABLE]<ExecStatementText> --> [37,41:TABLE]<ExecStatementText>
 
-          [[ExecStatementText]] [8,10:  (]<ExecStatementText> --> [8,10:  (]<ExecStatementText>
-
-          [[ExecStatementText]] [8,11:    ]<ExecStatementText> --> [8,11:    ]<ExecStatementText>
+          [[ExecStatementText]] [10,10:(]<ExecStatementText> --> [10,10:(]<ExecStatementText>
 
           [[ExecStatementText]] [12,14:num]<ExecStatementText> --> [12,14:num]<ExecStatementText>
-
-          [[ExecStatementText]] [15,16:  ]<ExecStatementText> --> [15,16:  ]<ExecStatementText>
 
           [[ExecStatementText]] [17,23:DECIMAL]<ExecStatementText> --> [17,23:DECIMAL]<ExecStatementText>
 
@@ -39,17 +31,11 @@
 
           [[ExecStatementText]] [29,31:NOT]<ExecStatementText> --> [29,31:NOT]<ExecStatementText>
 
-          [[ExecStatementText]] [32,32: ]<ExecStatementText> --> [32,32: ]<ExecStatementText>
-
           [[ExecStatementText]] [33,36:NULL]<ExecStatementText> --> [33,36:NULL]<ExecStatementText>
 
           [[ExecStatementText]] [37,37:,]<ExecStatementText> --> [37,37:,]<ExecStatementText>
 
-          [[ExecStatementText]] [8,11:    ]<ExecStatementText> --> [8,11:    ]<ExecStatementText>
-
           [[ExecStatementText]] [12,14:str]<ExecStatementText> --> [12,14:str]<ExecStatementText>
-
-          [[ExecStatementText]] [15,16:  ]<ExecStatementText> --> [15,16:  ]<ExecStatementText>
 
           [[ExecStatementText]] [17,23:VARCHAR]<ExecStatementText> --> [17,23:VARCHAR]<ExecStatementText>
 
@@ -57,11 +43,9 @@
 
           [[ExecStatementText]] [30,32:NOT]<ExecStatementText> --> [30,32:NOT]<ExecStatementText>
 
-          [[ExecStatementText]] [33,33: ]<ExecStatementText> --> [33,33: ]<ExecStatementText>
-
           [[ExecStatementText]] [34,37:NULL]<ExecStatementText> --> [34,37:NULL]<ExecStatementText>
 
-          [[ExecStatementText]] [8,11:  ) ]<ExecStatementText> --> [8,11:  ) ]<ExecStatementText>
+          [[ExecStatementText]] [10,11:) ]<ExecStatementText> --> [10,11:) ]<ExecStatementText>
 
           end
     end

@@ -814,8 +814,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <summary>
         /// Enter a Commit Statement Node
         /// </summary>
-        /// <param name="commit">The correponding Commit Statement Code Element</param>
+        /// <param name="commit">The corresponding Commit Statement Code Element</param>
         void OnCommitStatement([NotNull] CommitStatement commit);
+        /// <summary>
+        /// Enter a Select Statement Node
+        /// </summary>
+        /// <param name="select">The corresponding  Select Statement Code Element</param>
+        void OnSelectStatement([NotNull] SelectStatement select);
         #endregion
     }
 }
