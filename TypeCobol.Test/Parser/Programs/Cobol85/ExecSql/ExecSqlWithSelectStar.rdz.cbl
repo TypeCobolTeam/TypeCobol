@@ -6,8 +6,6 @@
               SELECT *
               SELECT ALL *
               SELECT DISTINCT *
-              SELECT
-              SELECT ALL DISTINCT 
              END-EXEC.
        PROCEDURE DIVISION.
          
