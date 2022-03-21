@@ -1390,14 +1390,18 @@ searchStatement ::= SearchStatement:stmt
 	{: :}
 	;
 
-whenSearchConditionClause ::= 
-		whenSearchCondition  statements
+whenSearchConditionClause ::=
+		whenSearchCondition 
+		{: :}
+	|	onAtEnd
+		{: :}
+	|	whenSearchCondition  statements
 		{: :}
 	|	whenSearchCondition  nextSentenceStatement
 		{: :}
 	;
 
-whenSearchCondition ::= WhenSearchCondition:wsc 
+whenSearchCondition ::= WhenSearchCondition:wsc
 	{: :}
 	;
 
