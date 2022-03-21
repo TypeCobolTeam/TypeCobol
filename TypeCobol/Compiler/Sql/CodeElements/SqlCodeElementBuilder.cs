@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
@@ -15,6 +16,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return new CommitStatement();
         }
+
         public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
         {
             FullSelect fullSelect = null;
@@ -22,6 +24,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 fullSelect = CreateFullSelect(context.fullselect());
             }
+
             return new SelectStatement(fullSelect);
         }
 
@@ -32,6 +35,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 subSelect = CreateSubSelect(context.subselect());
             }
+
             return new FullSelect(subSelect);
         }
 
@@ -43,6 +47,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 selectClause = CreateSelectClause(context.sql_selectClause());
             }
+
             return new SubSelect(selectClause, fromClause);
 
         }
@@ -60,6 +65,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 selectionModifier = new SyntaxProperty<SelectionModifier>(SelectionModifier.Distinct,
                     ParseTreeUtils.GetFirstToken(context.SQL_DISTINCT()));
             }
+
             if (context.star() != null)
             {
                 return new SelectClause(selectionModifier, new StarSelection());
@@ -69,11 +75,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 var dotStarSelections = new List<DotStarSelection>();
                 int l = context.selections().ChildCount;
-                int i = 0;
                 foreach (var selection in context.selections().selection())
                 {
                     dotStarSelections.Add(CreateDotStarSelection(selection));
                 }
+
                 return new SelectClause(selectionModifier, dotStarSelections);
             }
 
@@ -84,41 +90,62 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             if (context.dotStarSelection() != null)
             {
+                Token name = null;
+                Token schemaName = null;
+                Token dbms = null;
                 if ((context.dotStarSelection().tableOrViewOrCorrelationName().Name != null))
                 {
-                    Token name = context.dotStarSelection().tableOrViewOrCorrelationName().Name as Token;
-                    SymbolReference tail = new SymbolReference(new AlphanumericValue(name), SymbolType.AlphabetName);
+                    name = context.dotStarSelection().tableOrViewOrCorrelationName().Name as Token;
                     if (context.dotStarSelection().tableOrViewOrCorrelationName().SchemaName != null)
                     {
-                        Token schemaName =
+                        schemaName =
                             context.dotStarSelection().tableOrViewOrCorrelationName().SchemaName as Token;
-                        SymbolReference SchemaName =
-                            new SymbolReference(new AlphanumericValue(schemaName), SymbolType.AlphabetName);
                         if (context.dotStarSelection().tableOrViewOrCorrelationName().DBMS != null)
                         {
-                            Token dbms =
+                            dbms =
                                 context.dotStarSelection().tableOrViewOrCorrelationName().DBMS as Token;
-                            SymbolReference DBMS =
-                                new SymbolReference(new AlphanumericValue(dbms), SymbolType.AlphabetName);
-                            QualifiedSymbolReference head = new QualifiedSymbolReference(DBMS, SchemaName);
-                            QualifiedSymbolReference fullName = new QualifiedSymbolReference(head, tail);
-                            return new DotStarSelection(fullName);
                         }
-                        else
-                        {
-                            QualifiedSymbolReference fullName = new QualifiedSymbolReference(SchemaName, tail);
-                            return new DotStarSelection(fullName);
-                        }
-                    }
-                    else
-                    {
-                        return new DotStarSelection(tail);
                     }
                 }
+                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                return new DotStarSelection(fullName);
             }
 
             return null;
+
         }
 
+        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken, Token topLevelQualifierToken)
+        {
+            if (nameToken != null)
+            {
+                SymbolReference name = new SymbolReference(new AlphanumericValue(nameToken),
+                    SymbolType.SqlTableOrViewOrCorrelationName);
+                if (qualifierToken != null)
+                {
+                    SymbolReference qualifier =
+                        new SymbolReference(new AlphanumericValue(qualifierToken),
+                            SymbolType.SqlTableOrViewOrCorrelationName);
+                    if (topLevelQualifierToken != null)
+                    {
+                        SymbolReference topLevelQualifier =
+                            new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
+                                SymbolType.SqlTableOrViewOrCorrelationName);
+                        QualifiedSymbolReference head = new QualifiedSymbolReference(topLevelQualifier, qualifier);
+                        return (new QualifiedSymbolReference(head, name));
+                    }
+                    else
+                    {
+                        return (new QualifiedSymbolReference(qualifier, name));
+                    }
+                }
+                else
+                {
+                    return (name);
+                }
+            }
+
+            return (null);
+        }
     }
 }

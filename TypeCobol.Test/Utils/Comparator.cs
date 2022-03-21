@@ -194,13 +194,15 @@ namespace TypeCobol.Test.Utils
 		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
-
-                var fileName = Path.GetFileName(samplePath);
 #if SQL_PARSING
+                var fileName = Path.GetFileName(samplePath);
                 switch (fileName)
                 {
                     case "ExecSqlInDataDivision.rdz.cbl":
-                    case "Program.pgm":
+                    case "Program.pgm":        
+                    case "ParagraphSection.rdz.cbl":
+                    case "ExecSqlWithCommit.rdz.cbl":
+                    case "EXEC.cbl":
                     case "NodeBuilder-UnexpectedChild.rdz.tcbl":
                         continue;
                 }

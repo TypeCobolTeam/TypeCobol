@@ -160,8 +160,8 @@ namespace TypeCobol.Test {
             foreach (string directory in Directory.GetDirectories(root))
             {
                 var dirname = Path.GetFileName(directory);
-
-			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+                int number = Path.GetFileNameWithoutExtension(directory).Count();
+                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
 				var folderTester = new FolderTester(root, root, directory, extensions);
                 try
                 {

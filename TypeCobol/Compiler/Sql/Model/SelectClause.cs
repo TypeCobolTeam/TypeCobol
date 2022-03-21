@@ -1,10 +1,7 @@
-﻿using Antlr4.Runtime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Scanner;
 
 
 namespace TypeCobol.Compiler.Sql.Model
@@ -45,12 +42,12 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class DotStarSelection : Selection
     {
-        public SymbolReference Name { get; }
+        public SymbolReference TableOrViewOrCorrelationName { get; }
         public override SelectionType Type => SelectionType.DotStar;
 
-        public  DotStarSelection(SymbolReference name)
+        public  DotStarSelection(SymbolReference tableOrViewOrCorrelationName)
         {
-            this.Name = name;
+            this.TableOrViewOrCorrelationName = tableOrViewOrCorrelationName;
         }
     }
 
@@ -62,12 +59,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
 
         }
-        public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, DotStarSelection dotStarSelection)
-            : this(selectionModifier, new[] { dotStarSelection })
-        {
-
-        }
-
+       
         public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, IEnumerable<Selection> selections)
         {
             SelectionModifier = selectionModifier;
