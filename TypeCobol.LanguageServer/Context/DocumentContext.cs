@@ -39,6 +39,11 @@ namespace TypeCobol.LanguageServer.Context
         public Uri Uri { get; }
 
         /// <summary>
+        /// Workspace Project owner.
+        /// </summary>
+        internal WorkspaceProject Project;
+
+        /// <summary>
         /// True if the text document is a Copy, False if it's a Program.
         /// </summary>
         public bool IsCopy => TextDocument.languageId == LanguageIds.Copybook;

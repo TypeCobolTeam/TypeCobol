@@ -169,12 +169,10 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         private void ReceivedDidOpenProjectTextDocument(NotificationType notificationType, object parameters)
         {
             DidOpenProjectTextDocumentParams didOpenParams = (DidOpenProjectTextDocumentParams)parameters;            
-            // First update the target project with new Copy Folders, if the projet was not exist it will be created.
-            this.Workspace.UpdateWorkspaceProjectConfiguration(null, didOpenParams.ProjectKey, didOpenParams.CopyFolders);
             try
             {
                 // Open the document in the project whose key is given.
-                OpenTextDocument(didOpenParams, didOpenParams.ProjectKey);
+                OpenTextDocument(didOpenParams, didOpenParams.ProjectKey, didOpenParams.CopyFolders);
             }
             catch (Exception e)
             {
@@ -192,8 +190,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             DidChangeProjectConfigurationParams docChangeConfParams = (DidChangeProjectConfigurationParams)parameters;
             try
             {
-                Uri docUri = docChangeConfParams.textDocument != null ? new Uri(docChangeConfParams.textDocument.uri) : null;
-                this.Workspace.UpdateWorkspaceProjectConfiguration(docUri, docChangeConfParams.ProjectKey, docChangeConfParams.CopyFolders);
+                this.Workspace.UpdateWorkspaceProjectConfiguration(docChangeConfParams.ProjectKey, docChangeConfParams.CopyFolders);
             }
             catch (Exception e)
             {

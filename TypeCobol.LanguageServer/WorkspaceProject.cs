@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -23,38 +24,37 @@ namespace TypeCobol.LanguageServer
         /// The Key associated to the instance of WorkspaceProject.
         /// Keys are not case sensitive.
         /// </summary>
-        public string ProjectKey { get; }
+        internal string ProjectKey { get; }
         /// <summary>
         /// Associated CompilationProject instance.
         /// </summary>
-        public CompilationProject Project { get; private set; }
+        internal CompilationProject Project { get; private set; }
         /// <summary>
         /// A Dictionary to associate an Uri of a Document to its Context.
         /// it represents all documents belonging to the associated project.
         /// </summary>
         private readonly ConcurrentDictionary<Uri, DocumentContext> _openedDocuments;
         /// <summary>
+        /// Underlying workspace project
+        /// </summary>
+        private readonly Workspace _workspace;
+
+        /// <summary>
+        /// Enumeration on opened documents.
+        /// </summary>
+        internal IEnumerable<DocumentContext> OpenedDocuments => _openedDocuments.Values;
+
+        /// <summary>
         /// Constructor of a WorkspaceProject instance.
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
         /// <param name="project">The associated CompilationProject instance</param>
-        public WorkspaceProject(string projectKey, CompilationProject project)
+        internal WorkspaceProject(string projectKey, CompilationProject project, Workspace workspace)
         {
             this.ProjectKey = projectKey;
             this.Project = project;
             this._openedDocuments = new ConcurrentDictionary<Uri, DocumentContext>();
-        }
-
-        /// <summary>
-        /// Check if the given document is in this WorkspaceProject instance.
-        /// </summary>
-        /// <param name="documentCtx">The DocumentContext instance to be checked</param>
-        /// <returns>return true if yes, false if no</returns>
-        internal bool Contains(DocumentContext documentCtx)
-        {
-            return (documentCtx != null)
-                ? this._openedDocuments.TryGetValue(documentCtx.Uri, out var docCtx) && docCtx == documentCtx
-                : false;
+            this._workspace = workspace;
         }
 
         /// <summary>
@@ -66,16 +66,7 @@ namespace TypeCobol.LanguageServer
         {
             System.Diagnostics.Debug.Assert(documentCtx.Uri != null);
             Uri uri = documentCtx.Uri;
-            if (this._openedDocuments.TryAdd(uri, documentCtx))
-            {
-                if (documentCtx.FileCompiler != null)
-                {
-                    // Associate the document compilation project's to this one.
-                    documentCtx.FileCompiler.CompilationProject = this.Project;
-                }
-                return true;
-            }
-            return false;//This document already exists
+            return this._openedDocuments.TryAdd(uri, documentCtx);
         }
 
         /// <summary>
@@ -126,9 +117,9 @@ namespace TypeCobol.LanguageServer
         /// Update the source file provider associated to this project with the given list of Copy Folders.
         /// </summary>
         /// <param name="copyFolders">The new list of Copy Folders.</param>
-        /// <param name="configuration">The TypeCobolConfiguration instance in use</param>
+        /// <param name="documentFormat">The DocumentFormat to be used</param>
         /// <returns>true if the SourcefileProvider has changed, false otherwise.</returns>
-        internal bool UpdateSourceFileProvider(List<string> copyFolders, TypeCobolConfiguration configuration)
+        private bool UpdateSourceFileProvider(List<string> copyFolders, DocumentFormat documentFormat)
         {
             if (!SourceFileProviderNeedsToBeUpdated(copyFolders))
             {
@@ -139,21 +130,50 @@ namespace TypeCobol.LanguageServer
             foreach (var copyFolder in copyFolders)
             {
                 Project.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
-                    Helpers.DEFAULT_COPY_EXTENSIONS, configuration.Format.Encoding,
-                    configuration.Format.EndOfLineDelimiter, configuration.Format.FixedLineLength);
+                    Helpers.DEFAULT_COPY_EXTENSIONS, documentFormat.Encoding,
+                    documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength);
             }
             return true;
         }
 
         /// <summary>
-        /// Try to get DocumentContext in this Workspace Project, if the given Uri instance exists
+        /// Configure this project
         /// </summary>
-        /// <param name="fileUri">The Uri instance to get the DocumentContext instance</param>
-        /// <param name="openedDocumentContext">[out] the DocumentContext instance if the Uri exists</param>
-        /// <returns>true if a DocumentContext instance has been found, false otherwise</returns>
-        internal bool TryGetOpenedDocumentContext(Uri fileUri, out DocumentContext openedDocumentContext)
+        /// <param name="copyFolders">The list of copy folders associated to this project</param>
+        public void Configure(DocumentFormat format, TypeCobolOptions options, AnalyzerProviderWrapper analyzerProviderWrapper, List<string> copyFolders)
         {
-            return _openedDocuments.TryGetValue(fileUri, out openedDocumentContext);
+            bool bUpdated = false;
+            if (format != null && options != null && analyzerProviderWrapper != null)
+            {
+                if (copyFolders == null)
+                {   // Use current copy folder list from the current project.
+                    copyFolders = new List<string>();
+                    foreach (var cblLib in Project.SourceFileProvider.CobolLibraries)
+                    {
+                        if (cblLib is LocalDirectoryLibrary localDirLib)
+                        {
+                            copyFolders.Add(localDirLib.RootDirectory.FullName);
+                        }
+                    }
+                }
+
+                Project = new CompilationProject(Project.Name, Project.RootDirectory, Helpers.DEFAULT_EXTENSIONS,
+                    format, options, analyzerProviderWrapper);
+                // Change the target CompilationProject instance for each document.
+                foreach (var docCtx in _openedDocuments.Values)
+                {
+                    docCtx.FileCompiler.CompilationProject = Project;
+                }
+                bUpdated = true;
+            } 
+            if (copyFolders != null && UpdateSourceFileProvider(copyFolders, format)) 
+            { 
+                bUpdated = true;
+            }
+            if (bUpdated && !IsEmpty)
+            {
+                _workspace.ScheduleRefresh(this);
+            }
         }
         
         /// <summary>
@@ -170,52 +190,9 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all documents of this WorkspaceProject instance
         /// </summary>
-        internal void RefreshOpenedFiles(Workspace workspace)
+        internal void RefreshOpenedFiles()
         {
-            this.Project.ClearImportedCompilationDocumentsCache();
-            foreach (var contextEntry in _openedDocuments)
-            {
-                DocumentContext docContext = contextEntry.Value;
-                System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == Project);
-                workspace.RefreshOpenedDocument(docContext, false);
-            }
-        }
-
-        /// <summary>
-        /// Update for this WorkspaceProject instance its compilation options and analyzer provider instance.
-        /// </summary>
-        /// <param name="compilationOptions">The new Compilation Options</param>
-        /// <param name="analyzerProvider">The new Analyzer Provider instance</param>
-        internal void UpdateProjectOptionsAndAnalyzerProvider(TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
-        {
-            this.Project.CompilationOptions = compilationOptions;
-            this.Project.AnalyzerProvider = analyzerProvider;
-        }
-
-        /// <summary>
-        /// Replace the CompilationProject instance associated to this WorkspaceProject by creating a new one.
-        /// </summary>
-        /// <param name="configuration">Configuration to be applied</param>
-        /// <param name="compilationOptions">Compilation Options to be applied</param>
-        /// <param name="analyzerProvider">AnalyzerProvider instance to be set</param>
-        internal void ReplaceCompilationProject(TypeCobolConfiguration configuration, TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
-        {
-            Project = new CompilationProject(Project.Name, Project.RootDirectory, Helpers.DEFAULT_EXTENSIONS,
-                configuration.Format, compilationOptions, analyzerProvider);
-            // Change the target CompilationProject instance for each document.
-            foreach(var docCtx in _openedDocuments.Values)
-            {
-                docCtx.FileCompiler.CompilationProject = Project;
-            }
-            if (configuration.CopyFolders != null && configuration.CopyFolders.Count > 0)
-            {
-                foreach (var copyFolder in configuration.CopyFolders)
-                {
-                    Project.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
-                        Helpers.DEFAULT_COPY_EXTENSIONS, configuration.Format.Encoding,
-                        configuration.Format.EndOfLineDelimiter, configuration.Format.FixedLineLength);
-                }
-            }
+            _workspace.ScheduleRefresh(this);
         }
     }
 }

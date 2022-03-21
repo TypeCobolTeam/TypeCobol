@@ -231,7 +231,7 @@ namespace TypeCobol.LanguageServer
         protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
-            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedocument(objUri, out var context))
+            if (objUri.IsFile && this.Workspace.TryGetOpeneDocument(objUri, out var context))
             {
                 System.Diagnostics.Debug.Assert(context.FileCompiler != null);
                 //Refresh context
@@ -323,10 +323,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="parameters">LSP Open Document Parameters</param>
         /// <param name="projectKey">The target Project's key</param>
-        protected void OpenTextDocument(DidOpenTextDocumentParams parameters, string projectKey)
+        /// <param name="copyFolders">List of copy folders associated to the project</param>
+        protected void OpenTextDocument(DidOpenTextDocumentParams parameters, string projectKey, List<string> copyFolders)
         {
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
-            if (docContext.Uri.IsFile && this.Workspace.WorkspaceProjectStore.AddDocument(docContext, projectKey))
+            if (docContext.Uri.IsFile)
             {
                 //Create a ILanguageServer instance for the document.
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, docContext.TextDocument);
@@ -336,7 +337,7 @@ namespace TypeCobol.LanguageServer
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, text);
+                this.Workspace.OpenTextDocument(docContext, projectKey, text, copyFolders);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
@@ -345,7 +346,7 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
-            OpenTextDocument(parameters, null);
+            OpenTextDocument(parameters, null, null);
         }
 
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
@@ -385,7 +386,7 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        this.Workspace.OpenTextDocument(docContext, contentChange.text);
+                        this.Workspace.BindFileCompilerSourceTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
                         return;
                     }
                     catch (Exception e)
@@ -950,7 +951,7 @@ namespace TypeCobol.LanguageServer
         {
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
-            if (objUri.IsFile && this.Workspace.WorkspaceProjectStore.TryGetOpenedWorkspaceDocumentProject(objUri, out var docContext, out var _))
+            if (objUri.IsFile && this.Workspace.TryGetOpeneDocument(objUri, out var docContext))
             {
                 System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 
