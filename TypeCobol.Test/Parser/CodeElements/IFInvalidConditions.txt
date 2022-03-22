@@ -1,0 +1,22 @@
+﻿--- Diagnostics ---
+Line 2[10,12] <27, Error, Syntax> - Syntax error : no viable alternative at input 'Var1 ... NOT' RuleStack=codeElement>ifStatement>conditionalExpression>conditionalExpression>conditionNameConditionOrSwitchStatusCondition>conditionReference>qualifiedConditionName,  OffendingSymbol=[10,12:NOT]<NOT>
+Line 3[10,12] <27, Error, Syntax> - Syntax error : no viable alternative at input 'Var1 ... NOT' RuleStack=codeElement>ifStatement>conditionalExpression>conditionalExpression>conditionNameConditionOrSwitchStatusCondition>conditionReference>qualifiedConditionName,  OffendingSymbol=[10,12:NOT]<NOT>
+--- Code Elements ---
+[[IfStatement]] [1,2:IF]<IF> --> [11,10:<missing RightParenthesisSeparator>]<RightParenthesisSeparator>
+
+[[DisplayStatement]] [21,27:DISPLAY]<DISPLAY> --> [29,35:'hello']<AlphanumericLiteral>(',Y,Y){hello}
+- variables = 'hello'
+
+[[IfStatementEnd]] [37,42:END-IF]<END_IF> --> [37,42:END-IF]<END_IF>
+
+[[SentenceEnd]] [43,43+:.]<PeriodSeparator> --> [43,43+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:IF]<IF> --> [11,10:<missing RightParenthesisSeparator>]<RightParenthesisSeparator>
+
+[[DisplayStatement]] [34,40:DISPLAY]<DISPLAY> --> [42,48:'hello']<AlphanumericLiteral>(',Y,Y){hello}
+- variables = 'hello'
+
+[[IfStatementEnd]] [50,55:END-IF]<END_IF> --> [50,55:END-IF]<END_IF>
+
+[[SentenceEnd]] [56,56+:.]<PeriodSeparator> --> [56,56+:.]<PeriodSeparator>
+
