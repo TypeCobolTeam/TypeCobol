@@ -1,14 +1,11 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZMFT3.
-Line 3[8,21] <27, Error, Syntax> - Syntax error : extraneous input 'DATADIVISION.' expecting {ExecStatementText, ExecStatementEnd, CommitStatement, SelectStatement}
        DATA DIVISION.
        WORKING-STORAGE SECTION.
              EXEC SQL 
               SELECT *
               SELECT ALL *
               SELECT DISTINCT *
-Line 9[26,33] <27, Error, Syntax> - Syntax error : mismatched input 'DISTINCT' expecting {'*', user defined word}
-              SELECT ALL DISTINCT 
              END-EXEC.
        PROCEDURE DIVISION.
          

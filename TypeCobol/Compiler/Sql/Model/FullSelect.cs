@@ -1,5 +1,8 @@
 ﻿namespace TypeCobol.Compiler.Sql.Model
 {
+    /// <summary>
+    /// See documentation <see cref="https://www.ibm.com/docs/en/db2-for-zos/12?topic=queries-fullselect"/>  
+    /// </summary>
     public class FullSelect : SqlObject
     {
         public FullSelect(SubSelect subSelect)

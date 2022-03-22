@@ -30,7 +30,7 @@ Line 1[35,42] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be us
 [13,15:sql]<ExecTranslatorName>
 [17,24:Truncate]<ExecStatementText>
 [26,30:table]<ExecStatementText>
-[32,35:toto]<UserDefinedWord>
+[32,35:toto]<ExecStatementText>
 [37,44:end-exec]<END_EXEC>
 [45,45+:.]<PeriodSeparator>
 

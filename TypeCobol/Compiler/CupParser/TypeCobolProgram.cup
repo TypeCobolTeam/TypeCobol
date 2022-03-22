@@ -1484,8 +1484,12 @@ searchStatement ::= SearchStatement:stmt
 	{: my_parser.Builder.StartSearchStatementWithBody(stmt); :}
 	;
 
-whenSearchConditionClause ::= 
-		whenSearchCondition  statements
+whenSearchConditionClause ::=
+		whenSearchCondition 
+		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
+	|	onAtEnd
+		{:  :}
+	|	whenSearchCondition  statements
 		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
 	|	whenSearchCondition  nextSentenceStatement
 		{: my_parser.Builder.EndWhenSearchConditionClause(); :}

@@ -54,17 +54,19 @@ namespace TypeCobol.Compiler.Sql.Model
     public class SelectClause : SqlObject
     {
         private readonly Selection[] _selections;
+
         public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, StarSelection starSelection)
             : this(selectionModifier, new [] { starSelection })
         {
 
         }
-       
+
         public SelectClause(SyntaxProperty<SelectionModifier> selectionModifier, IEnumerable<Selection> selections)
         {
             SelectionModifier = selectionModifier;
             _selections = selections?.ToArray() ?? Array.Empty<Selection>();
         }
+
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }
 
         public IEnumerable<Selection> Selections => _selections;
