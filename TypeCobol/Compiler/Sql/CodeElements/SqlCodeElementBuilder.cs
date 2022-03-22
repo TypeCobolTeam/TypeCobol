@@ -90,25 +90,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             if (context.dotStarSelection() != null)
             {
-                Token name = null;
-                Token schemaName = null;
-                Token dbms = null;
-                if ((context.dotStarSelection().tableOrViewOrCorrelationName().Name != null))
+                var tableOrViewOrCorrelationName = context.dotStarSelection().tableOrViewOrCorrelationName();
+                if ((tableOrViewOrCorrelationName.Name != null))
                 {
-                    name = context.dotStarSelection().tableOrViewOrCorrelationName().Name as Token;
-                    if (context.dotStarSelection().tableOrViewOrCorrelationName().SchemaName != null)
-                    {
-                        schemaName =
-                            context.dotStarSelection().tableOrViewOrCorrelationName().SchemaName as Token;
-                        if (context.dotStarSelection().tableOrViewOrCorrelationName().DBMS != null)
-                        {
-                            dbms =
-                                context.dotStarSelection().tableOrViewOrCorrelationName().DBMS as Token;
-                        }
-                    }
+                    Token name = tableOrViewOrCorrelationName.Name as Token;
+                    Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                    Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                    SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                    return new DotStarSelection(fullName);
                 }
-                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
-                return new DotStarSelection(fullName);
+                
             }
 
             return null;
@@ -120,32 +111,32 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (nameToken != null)
             {
                 SymbolReference name = new SymbolReference(new AlphanumericValue(nameToken),
-                    SymbolType.SqlTableOrViewOrCorrelationName);
+                    SymbolType.SqlIdentifier);
                 if (qualifierToken != null)
                 {
                     SymbolReference qualifier =
                         new SymbolReference(new AlphanumericValue(qualifierToken),
-                            SymbolType.SqlTableOrViewOrCorrelationName);
+                            SymbolType.SqlIdentifier);
                     if (topLevelQualifierToken != null)
                     {
                         SymbolReference topLevelQualifier =
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
-                                SymbolType.SqlTableOrViewOrCorrelationName);
+                                SymbolType.SqlIdentifier);
                         QualifiedSymbolReference head = new QualifiedSymbolReference(topLevelQualifier, qualifier);
-                        return (new QualifiedSymbolReference(head, name));
+                        return new QualifiedSymbolReference(head, name);
                     }
                     else
                     {
-                        return (new QualifiedSymbolReference(qualifier, name));
+                        return new QualifiedSymbolReference(qualifier, name);
                     }
                 }
                 else
                 {
-                    return (name);
+                    return name;
                 }
             }
 
-            return (null);
+            return null;
         }
     }
 }

@@ -33,21 +33,17 @@
 [11,13:tas]<UserDefinedWord>
 [15,16:de]<UserDefinedWord>
 [18,23:blabla]<UserDefinedWord>
-[14,14: ]<ExecStatementText>
-[15,16:de]<ExecStatementText>
-[6,14:bliblibli]<UserDefinedWord>
 
 -- Line 7 --
-[4,4:c]<UserDefinedWord>
+[6,14:bliblibli]<UserDefinedWord>
 
+-- Line 8 --
+[4,4:c]<UserDefinedWord>
+[5,5:']<ExecStatementText>
 [6,8:est]<UserDefinedWord>
 [10,11:la]<UserDefinedWord>
 [13,15:fin]<UserDefinedWord>
 [16,16:.]<PeriodSeparator>
-[10,11:la]<ExecStatementText>
-[12,12: ]<ExecStatementText>
-[13,15:fin]<ExecStatementText>
-[16,16:.]<ExecStatementText>
 [17,24:END-EXEC]<END_EXEC>
 [26,28:ici]<UserDefinedWord>
 [29,29+:.]<PeriodSeparator>
