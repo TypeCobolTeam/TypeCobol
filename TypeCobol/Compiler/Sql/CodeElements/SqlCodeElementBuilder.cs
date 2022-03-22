@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -74,7 +72,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context.selections() != null)
             {
                 var dotStarSelections = new List<DotStarSelection>();
-                int l = context.selections().ChildCount;
                 foreach (var selection in context.selections().selection())
                 {
                     dotStarSelections.Add(CreateDotStarSelection(selection));
@@ -91,7 +88,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context.dotStarSelection() != null)
             {
                 var tableOrViewOrCorrelationName = context.dotStarSelection().tableOrViewOrCorrelationName();
-                if ((tableOrViewOrCorrelationName.Name != null))
+                if (tableOrViewOrCorrelationName.Name != null)
                 {
                     Token name = tableOrViewOrCorrelationName.Name as Token;
                     Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;

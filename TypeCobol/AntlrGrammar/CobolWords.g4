@@ -877,9 +877,9 @@ tokens
 	SQL_XMLEXISTS,
 	SQL_XMLNAMESPACES,
 	SQL_XMLCAST,
-	SQL_YEAR,
-	SQL_YEARS,
-	SQL_ZONE,
+    SQL_YEAR,
+    SQL_YEARS,
+    SQL_ZONE,
     SQL_CommaSeparator
 }
 

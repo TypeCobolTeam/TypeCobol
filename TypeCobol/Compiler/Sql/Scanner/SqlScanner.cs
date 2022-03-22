@@ -41,11 +41,11 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     //SpaceSeparator=1,
                     return ScanWhitespace(startIndex);
                 case '*':
-                    return (ScanOneChar(startIndex, TokenType.MultiplyOperator));
+                    return ScanOneChar(startIndex, TokenType.MultiplyOperator);
                 case ',':
-                    return (ScanOneChar(startIndex, TokenType.SQL_CommaSeparator));
+                    return ScanOneChar(startIndex, TokenType.SQL_CommaSeparator);
                 case '.':
-                    return (ScanOneChar(startIndex, TokenType.PeriodSeparator));
+                    return ScanOneChar(startIndex, TokenType.PeriodSeparator);
             }
 
             if (IsSqlKeywordPart(line[currentIndex]))
