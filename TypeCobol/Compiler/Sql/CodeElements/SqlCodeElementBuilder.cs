@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -71,19 +72,14 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.selections() != null)
             {
-                var dotStarSelections = new List<DotStarSelection>();
-                foreach (var selection in context.selections().selection())
-                {
-                    dotStarSelections.Add(CreateDotStarSelection(selection));
-                }
+                var dotStarSelections = context.selections().selection().Select(selection => CreateDotStarSelection(selection)).Where(selection => selection != null).ToList();
 
                 return new SelectClause(selectionModifier, dotStarSelections);
             }
-
             return null;
         }
 
-        public DotStarSelection CreateDotStarSelection(CodeElementsParser.SelectionContext context)
+        private DotStarSelection CreateDotStarSelection(CodeElementsParser.SelectionContext context)
         {
             if (context.dotStarSelection() != null)
             {
@@ -96,11 +92,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
                     return new DotStarSelection(fullName);
                 }
-                
             }
-
             return null;
-
         }
 
         private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken, Token topLevelQualifierToken)

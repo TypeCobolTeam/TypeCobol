@@ -8264,12 +8264,12 @@ commitStatement: SQL_COMMIT;
 selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause;
+sql_selectClause: 
+  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections) ;
 selections: selection (SQL_CommaSeparator selection)*;
 selection: dotStarSelection;
 dotStarSelection: tableOrViewOrCorrelationName  dot star; 
-tableOrViewOrCorrelationName : (DBMS=UserDefinedWord dot)?? (SchemaName=UserDefinedWord dot)? (Name=UserDefinedWord); 
-sql_selectClause: 
-  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections) ;
+tableOrViewOrCorrelationName : ((DBMS=UserDefinedWord dot)? (SchemaName=UserDefinedWord dot))? (Name=UserDefinedWord); 
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------
