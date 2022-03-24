@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
@@ -14,15 +17,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return new CommitStatement();
         }
-
         public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
         {
             FullSelect fullSelect = null;
             if (context.fullselect() != null)
             {
-                fullSelect = CreateFullSelect(context.fullselect());
+                 fullSelect = CreateFullSelect(context.fullselect());
             }
-
             return new SelectStatement(fullSelect);
         }
 
@@ -31,12 +32,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             SubSelect subSelect = null;
             if (context.subselect() != null)
             {
-                subSelect = CreateSubSelect(context.subselect());
+                 subSelect = CreateSubSelect(context.subselect());
             }
-
             return new FullSelect(subSelect);
         }
-
         private SubSelect CreateSubSelect(CodeElementsParser.SubselectContext context)
         {
             FromClause fromClause = null;
@@ -44,11 +43,88 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context.sql_selectClause() != null)
             {
                 selectClause = CreateSelectClause(context.sql_selectClause());
+                fromClause = CreateFromClause(context.sql_selectClause());
+            }
+            return new SubSelect(selectClause, fromClause);
+              
+        }
+
+        private FromClause CreateFromClause(CodeElementsParser.Sql_selectClauseContext context)
+        {
+            var tableReferences = new List<SymbolReference>();
+            if (context.from_clause() != null)
+            {
+                foreach (var tableContext in context.from_clause().table_references().table_reference())
+                {
+                    #region tableOrViewOrCorrelationName
+
+                    var tableOrViewOrCorrelationName =
+                        tableContext.single_table_or_view_reference().tableOrViewOrCorrelationName();
+                    Token name = tableOrViewOrCorrelationName.Name as Token;
+                    Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                    Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                    SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+
+
+                    #endregion
+
+                    #region Correlation_Clause
+
+                    if ((tableContext.single_table_or_view_reference().correlation_clause()!= null))
+                    {
+                        #region CorrelationName
+
+                        Token correlationNameToken = tableContext.single_table_or_view_reference().correlation_clause()
+                            .correlation_name as Token;
+                        SymbolReference correlationName = new SymbolReference(
+                            new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
+
+                        #endregion
+
+                        #region ColumnNames
+                        
+
+                        if (tableContext.single_table_or_view_reference().correlation_clause().new_column_names() != null)
+                        {
+                            SymbolReference main = null;
+                            foreach (var columnName in tableContext.single_table_or_view_reference()
+                                         .correlation_clause().new_column_names().new_column_name())
+                            {
+                                var qualifierToken = columnName.start as Token;
+                                SymbolReference qualifier = new SymbolReference(
+                                    new AlphanumericValue(qualifierToken),
+                                    SymbolType.SqlIdentifier);
+                                main = main != null ? new QualifiedSymbolReference(main, qualifier) : qualifier;
+                            }
+
+                            QualifiedSymbolReference correlationClause =
+                                new QualifiedSymbolReference(correlationName, main);
+                            QualifiedSymbolReference singleTableOrViewReference = new QualifiedSymbolReference(fullName, correlationClause);
+                            tableReferences.Add(singleTableOrViewReference);
+                        }
+                        else
+                        {
+                            QualifiedSymbolReference singleTableOrViewReference = new QualifiedSymbolReference(fullName, correlationName);
+                            tableReferences.Add(singleTableOrViewReference);
+                        }
+                    
+                    }
+                    else
+                    {
+                        tableReferences.Add(fullName);
+                    }
+
+                    #endregion
+
+                    #endregion
+                }
+
+                return (new FromClause(tableReferences));
             }
 
-            return new SubSelect(selectClause, fromClause);
-
+            return null;
         }
+
 
         private SelectClause CreateSelectClause(CodeElementsParser.Sql_selectClauseContext context)
         {

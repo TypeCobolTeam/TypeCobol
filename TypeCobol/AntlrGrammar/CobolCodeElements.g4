@@ -8265,11 +8265,19 @@ selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause;
 sql_selectClause: 
-  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections) ;
+  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections) from_clause;
+
 selections: selection (SQL_CommaSeparator selection)*;
 selection: dotStarSelection;
 dotStarSelection: tableOrViewOrCorrelationName  dot star; 
-tableOrViewOrCorrelationName : ((DBMS=UserDefinedWord dot)? (SchemaName=UserDefinedWord dot))? (Name=UserDefinedWord); 
+tableOrViewOrCorrelationName : (DBMS=UserDefinedWord dot)?? (SchemaName=UserDefinedWord dot)? (Name=UserDefinedWord); 
+from_clause: SQL_FROM table_references;
+table_references: table_reference (SQL_CommaSeparator table_reference)*;
+table_reference: single_table_or_view_reference;
+single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?;
+correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
+new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
+new_column_name: UserDefinedWord;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------
