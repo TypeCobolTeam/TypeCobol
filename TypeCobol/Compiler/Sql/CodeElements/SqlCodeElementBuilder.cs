@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -72,7 +71,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.selections() != null)
             {
-                var dotStarSelections = context.selections().selection().Select(selection => CreateDotStarSelection(selection)).Where(selection => selection != null).ToList();
+                var dotStarSelections = context.selections().selection().Select(CreateDotStarSelection).Where(selection => selection != null).ToList();
 
                 return new SelectClause(selectionModifier, dotStarSelections);
             }
@@ -84,15 +83,14 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context.dotStarSelection() != null)
             {
                 var tableOrViewOrCorrelationName = context.dotStarSelection().tableOrViewOrCorrelationName();
-                if (tableOrViewOrCorrelationName.Name != null)
-                {
-                    Token name = tableOrViewOrCorrelationName.Name as Token;
-                    Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
-                    Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-                    SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
-                    return new DotStarSelection(fullName);
-                }
+                Token name = tableOrViewOrCorrelationName.Name as Token;
+                Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                return new DotStarSelection(fullName);
+
             }
+
             return null;
         }
 
