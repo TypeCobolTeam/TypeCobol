@@ -3,7 +3,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
          EXEC SQL 
-        SELECT ensi.hend.laabidi.* , khaled.ayech.*
+        SELECT i.i.d.* , e.i.*
          END-EXEC.
        PROCEDURE DIVISION.
            GOBACK
