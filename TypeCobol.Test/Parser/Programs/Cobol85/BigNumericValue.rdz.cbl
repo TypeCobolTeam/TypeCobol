@@ -1,0 +1,15 @@
+﻿       CBL DATA(31) ARITH(EXTEND)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPGM.
+      
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  MNT-MAX                  PIC S9(17)V99
+                                    VALUE +99999999999999999,99.
+      
+       END PROGRAM MyPGM.

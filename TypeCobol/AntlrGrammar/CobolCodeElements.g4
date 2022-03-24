@@ -117,6 +117,8 @@ codeElement:
 	continueStatement |
     entryStatement |
     execStatement |
+	execStatementText |
+	execStatementEnd |
     exitMethodStatement |
     exitProgramStatement |	
 	gobackStatement |
@@ -207,6 +209,9 @@ codeElement:
 	notOnOverflowCondition |
 	onSizeErrorCondition |
 	notOnSizeErrorCondition
+
+// FOR SQL	
+	| commitStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -4360,11 +4365,16 @@ comparisonLHSExpression:
 	variableOrExpression2 | booleanValueOrExpression;
 
 whenCondition:
-	WHEN (LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*)?;
+    WHEN (
+		(comparisonRHSExpression | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator))
+		(ALSO (comparisonRHSExpression | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator)))*
+	)?;
 
 comparisonRHSExpression: 
-	ANY | booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
+	ANY | booleanValueOrExpression | NOT? (comparisonRHSValue | (LeftParenthesisSeparator comparisonRHSExpression RightParenthesisSeparator));
+
+comparisonRHSValue:
+	variableOrExpression2 | allFigurativeConstant | alphanumericExpressionsRange;
 
 alphanumericExpressionsRange: 
 	startExpression=variableOrExpression2 (THROUGH | THRU) endExpression=variableOrExpression2;
@@ -8242,12 +8252,14 @@ notOnSizeErrorCondition:
 // Coprocessor: The DB2 coprocessor requires that all lines of an EXEC SQL statement,
 // including continuation lines, be coded in columns 12 through 72.
 
-execStatement:
-                 (EXEC | EXECUTE) execTranslatorName 
-                 ExecStatementText* 
-                 execStatementEnd;
+execStatement: (EXEC | EXECUTE) execTranslatorName; 
+
+execStatementText: ExecStatementText;                 
 
 execStatementEnd: END_EXEC;
+
+//FOR SQL
+commitStatement: SQL_COMMIT;
 
 // ------------------------------
 // End of DB2 coprocessor

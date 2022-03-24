@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Numerics;
 using System.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -132,9 +133,9 @@ namespace TypeCobol.Compiler.Scanner
     {
         public DecimalLiteralTokenValue(string sign, string integerPart, string decimalPart) : base(LiteralTokenValueType.Decimal)
         {
-            IntegerValue = Int64.Parse(integerPart + decimalPart);
+            IntegerValue = BigInteger.Parse(integerPart + decimalPart);
             DecimalDigits = decimalPart.Length;
-            Number = IntegerValue / Math.Pow(10, DecimalDigits);
+            Number = (double)IntegerValue / Math.Pow(10, DecimalDigits);
             if (sign == "-")
             {
                 IntegerValue = -IntegerValue;
@@ -145,7 +146,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// For the number 5.43, the integer value is 543
         /// </summary>
-        public long  IntegerValue  { get; private set; }
+        public BigInteger  IntegerValue  { get; private set; }
         /// <summary>
         /// For the number 5.43, the number of decimal digits is 2
         /// </summary>
