@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -163,6 +162,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
                 SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
                 return new DotStarSelection(fullName);
+
             }
 
             return null;

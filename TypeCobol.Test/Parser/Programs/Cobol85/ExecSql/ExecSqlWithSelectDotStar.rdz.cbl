@@ -4,6 +4,8 @@
        WORKING-STORAGE SECTION.
          EXEC SQL 
         SELECT ensi.hend.laabidi.* , khaled.* FROM a
+        SELECT ensi.hend.laabidi.* , khaled.ayech.*
+
          END-EXEC.
        PROCEDURE DIVISION.
            GOBACK
