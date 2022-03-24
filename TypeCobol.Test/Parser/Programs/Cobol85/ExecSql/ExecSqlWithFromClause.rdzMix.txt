@@ -3,9 +3,11 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
              EXEC SQL 
-              SELECT * FROM a
-              SELECT ALL * FROM a
-              SELECT DISTINCT * FROM a
+              SELECT hend.uma.ensi.* 
+              from 
+              iid.rr as new (h,k)
+              , uma as ka(l,u)
+              
              END-EXEC.
        PROCEDURE DIVISION.
          

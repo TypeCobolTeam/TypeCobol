@@ -15,15 +15,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return new CommitStatement();
         }
-
         public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
         {
             FullSelect fullSelect = null;
             if (context.fullselect() != null)
             {
-                fullSelect = CreateFullSelect(context.fullselect());
+                 fullSelect = CreateFullSelect(context.fullselect());
             }
-
             return new SelectStatement(fullSelect);
         }
 
@@ -32,12 +30,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             SubSelect subSelect = null;
             if (context.subselect() != null)
             {
-                subSelect = CreateSubSelect(context.subselect());
+                 subSelect = CreateSubSelect(context.subselect());
             }
-
             return new FullSelect(subSelect);
         }
-
         private SubSelect CreateSubSelect(CodeElementsParser.SubselectContext context)
         {
             FromClause fromClause = null;
@@ -45,11 +41,89 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context.sql_selectClause() != null)
             {
                 selectClause = CreateSelectClause(context.sql_selectClause());
+                fromClause = CreateFromClause(context.sql_selectClause());
             }
-
             return new SubSelect(selectClause, fromClause);
-
+              
         }
+
+        private FromClause CreateFromClause(CodeElementsParser.Sql_selectClauseContext context)
+        {
+            var tableReferences = new List<SymbolReference>();
+            if (context.from_clause() != null)
+            {
+                foreach (var tableContext in context.from_clause().table_references().table_reference())
+                {
+                    #region tableOrViewOrCorrelationName
+
+                    var tableOrViewOrCorrelationName =
+                        tableContext.single_table_or_view_reference().tableOrViewOrCorrelationName();
+                    Token name = tableOrViewOrCorrelationName.Name as Token;
+                    Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                    Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                    SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+
+                    #endregion
+
+                    #region Correlation_Clause
+
+                    if ((tableContext.single_table_or_view_reference().correlation_clause() != null))
+                    {
+                        #region CorrelationName
+
+                        var correlation_Clause = tableContext.single_table_or_view_reference().correlation_clause();
+                        Token correlationNameToken = correlation_Clause.correlation_name as Token;
+                        SymbolReference correlationName =
+                            new SymbolReference(new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
+
+                        #endregion
+
+                        #region ColumnNames
+
+
+                        if (correlation_Clause.new_column_names() != null)
+                        {
+                            SymbolReference main = null;
+                            foreach (var columnName in correlation_Clause.new_column_names().new_column_name())
+                            {
+                                var qualifierToken = columnName.start as Token;
+                                SymbolReference qualifier = new SymbolReference(
+                                    new AlphanumericValue(qualifierToken),
+                                    SymbolType.SqlIdentifier);
+                                main = main != null ? new QualifiedSymbolReference(main, qualifier) : qualifier;
+                            }
+
+                            QualifiedSymbolReference correlationClause =
+                                new QualifiedSymbolReference(correlationName, main);
+                            QualifiedSymbolReference singleTableOrViewReference =
+                                new QualifiedSymbolReference(fullName, correlationClause);
+                            tableReferences.Add(singleTableOrViewReference);
+                        }
+                        else
+                        {
+                            QualifiedSymbolReference singleTableOrViewReference =
+                                new QualifiedSymbolReference(fullName, correlationName);
+                            tableReferences.Add(singleTableOrViewReference);
+                        }
+                    }
+                    else
+                    {
+                        tableReferences.Add(fullName);
+                        
+                    }
+
+                    #endregion
+
+                    #endregion
+                }
+                return (new FromClause(tableReferences));
+                
+
+
+            }
+            return null;
+        }
+
 
         private SelectClause CreateSelectClause(CodeElementsParser.Sql_selectClauseContext context)
         {
@@ -72,7 +146,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.selections() != null)
             {
-                var dotStarSelections = context.selections().selection().Select(selection => CreateDotStarSelection(selection)).Where(selection => selection != null).ToList();
+                var dotStarSelections = context.selections().selection().Select(CreateDotStarSelection).Where(selection => selection != null).ToList();
 
                 return new SelectClause(selectionModifier, dotStarSelections);
             }
@@ -84,15 +158,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context.dotStarSelection() != null)
             {
                 var tableOrViewOrCorrelationName = context.dotStarSelection().tableOrViewOrCorrelationName();
-                if (tableOrViewOrCorrelationName.Name != null)
-                {
-                    Token name = tableOrViewOrCorrelationName.Name as Token;
-                    Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
-                    Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-                    SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
-                    return new DotStarSelection(fullName);
-                }
+                Token name = tableOrViewOrCorrelationName.Name as Token;
+                Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                return new DotStarSelection(fullName);
             }
+
             return null;
         }
 
