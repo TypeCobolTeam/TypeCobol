@@ -10,6 +10,10 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Sql;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
+using TypeCobol.Compiler.Sql.Model;
+using TypeCobol.Compiler.Symbols;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -128,6 +132,7 @@ namespace TypeCobol.Test.Utils
                 new NYName(),
                 new PGMName(),
                 new SYMName(),
+                new SQLName(),
                 new MixDiagIntoSourceName(),
                 new MemoryName(),
                 new NodeName(),
@@ -146,6 +151,7 @@ namespace TypeCobol.Test.Utils
                 new EIMemoryName(),
                 new EINodeName(),
                 new EITokenName(),
+                
 #endif
         };
 
@@ -453,7 +459,59 @@ namespace TypeCobol.Test.Utils
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
         }
     }
+    internal class SqlComparator : FilesComparator
+    {
+        private class ASTVisitor : AbstractAstVisitor 
+        {
+            private readonly StringWriter _writer;
+            public ASTVisitor(StringBuilder builder)
+            {
+                _writer = new StringWriter(builder);
+            }
 
+            public override bool Visit(SelectStatement selectStatement)
+            {
+                if (selectStatement.FullSelect != null)
+                {
+                    selectStatement.FullSelect.Dump(_writer, 0);
+                }
+                return true;
+            }
+
+            public override bool Visit(CommitStatement commitStatement)
+            {
+                return true;
+            }
+        }
+
+        public SqlComparator(Paths path, bool debug = false, bool isEI = false)
+            : base(path, debug, isEI)
+        {
+
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        {
+            var diagnostics = compilationUnit.AllDiagnostics();
+            var programs = compilationUnit.ProgramClassDocumentSnapshot.Root.Programs.ToList();
+
+            var builder = new StringBuilder();
+
+            if (diagnostics.Count > 0)
+            {
+                builder.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
+            }
+            builder.AppendLine("--- Sql Statements ---");
+            
+            compilationUnit.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new ASTVisitor(builder) );
+            
+            
+            string result = builder.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
+        }
+    }
+ 
     internal class SymbolComparator : FilesComparator
     {
         public SymbolComparator(Paths path, bool debug = false, bool isEI = false)
@@ -1062,9 +1120,15 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
-#endregion
+    internal class SQLName : AbstractEINames
+    {
+        public override string CreateName(string name) { return name + "SQL" + Rextension; }
+        public override Type GetComparatorType() { return typeof(SqlComparator); }
+    }
+   
+    #endregion
 
-#region EINames
+    #region EINames
 #if EUROINFO_RULES
     internal class EIEmptyName : AbstractEINames
     {
@@ -1125,8 +1189,9 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "MEM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
+    
 #endif
-#endregion
+    #endregion
 
     internal class Paths
     {

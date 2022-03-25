@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
@@ -17,6 +18,11 @@ namespace TypeCobol.Compiler.Sql.Model
             bool continueVisit = visitor.BeginSqlObject(this) && VisitSqlObject(visitor);
             visitor.EndSqlObject(this);
             return continueVisit;
+        }
+        public virtual void Dump(TextWriter output, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
         }
 
         protected abstract bool VisitSqlObject([NotNull] ISqlVisitor visitor);

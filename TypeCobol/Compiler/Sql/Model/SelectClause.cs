@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 
@@ -58,6 +59,41 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             SelectionModifier = selectionModifier;
             _selections = selections?.ToArray() ?? Array.Empty<Selection>();
+        }
+
+        private static void DumpSelection(TextWriter output, Selection selection)
+        {   
+            ///TODO
+            switch (selection.Type)
+            {
+                case SelectionType.DotStar:
+                    var dotStarSelection = (DotStarSelection) selection;
+                    break;
+                case SelectionType.Expression:
+                    var expression = (ExpressionSelection) selection;
+                    break;
+                case SelectionType.Star:
+                    var starSelection = (StarSelection)selection;
+                    break;
+
+            }
+        }
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            if (this.Selections != null)
+            {
+                foreach (var selection in this.Selections)
+                {
+                    DumpSelection(output,selection);
+                }
+            }
+            if (this.SelectionModifier != null)
+            {
+                output.WriteLine(this.SelectionModifier);
+            }
+            
         }
 
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }
