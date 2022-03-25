@@ -231,7 +231,7 @@ namespace TypeCobol.LanguageServer
         protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
-            if (objUri.IsFile && this.Workspace.TryGetOpeneDocument(objUri, out var context))
+            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var context))
             {
                 System.Diagnostics.Debug.Assert(context.FileCompiler != null);
                 //Refresh context
@@ -318,35 +318,24 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        /// <summary>
-        /// Open a Text Document
-        /// </summary>
-        /// <param name="parameters">LSP Open Document Parameters</param>
-        /// <param name="projectKey">The target Project's key</param>
-        /// <param name="copyFolders">List of copy folders associated to the project</param>
-        protected void OpenTextDocument(DidOpenTextDocumentParams parameters, string projectKey, List<string> copyFolders)
+        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters) => OpenTextDocument(parameters.textDocument, parameters.text, null, null);
+
+        protected void OpenTextDocument(TextDocumentItem textDocument, string text, string projectKey, List<string> copyFolders)
         {
-            DocumentContext docContext = new DocumentContext(parameters.textDocument);
-            if (docContext.Uri.IsFile)
+            DocumentContext docContext = new DocumentContext(textDocument);
+            if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocumentContext(docContext.Uri, out _))
             {
                 //Create a ILanguageServer instance for the document.
-                docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, docContext.TextDocument);
+                docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, textDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
 
-                string text = parameters.text ?? parameters.textDocument.text;
-                //These are no longer needed.
-                parameters.text = null;
-                parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, projectKey, text, copyFolders);
+                string sourceText = text ?? textDocument.text;
+                textDocument.text = null;
+                this.Workspace.OpenTextDocument(docContext, sourceText, projectKey, copyFolders);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
             }
-        }
-
-        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
-        {
-            OpenTextDocument(parameters, null, null);
         }
 
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
@@ -385,8 +374,7 @@ namespace TypeCobol.LanguageServer
                     //To avoid crashes.
                     try
                     {
-                        docContext.LanguageServerConnection(false);
-                        this.Workspace.BindFileCompilerSourceTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
+                        this.Workspace.ReOpenTextDocument(docContext, contentChange.text);
                         return;
                     }
                     catch (Exception e)
@@ -518,11 +506,10 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
-                if (this.Workspace.TryCloseSourceFile(objUri))
-                {
-                    // DEBUG information
-                    RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
-                }
+                this.Workspace.CloseSourceFile(objUri);
+
+                // DEBUG information
+                RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
             }
         }
 
@@ -951,7 +938,7 @@ namespace TypeCobol.LanguageServer
         {
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
-            if (objUri.IsFile && this.Workspace.TryGetOpeneDocument(objUri, out var docContext))
+            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var docContext))
             {
                 System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 

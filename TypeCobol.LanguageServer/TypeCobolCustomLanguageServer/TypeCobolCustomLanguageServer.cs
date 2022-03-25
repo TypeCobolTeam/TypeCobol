@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -89,7 +88,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             try
             {
-                OnDidReceiveNodeRefresh((NodeRefreshParams)parameters);
+                OnDidReceiveNodeRefresh((NodeRefreshParams) parameters);
             }
             catch (Exception e)
             {
@@ -108,7 +107,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             catch (Exception e)
             {
                 NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message};
             }
             return resultOrError;
         }
@@ -168,11 +167,10 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="parameters"></param>
         private void ReceivedDidOpenProjectTextDocument(NotificationType notificationType, object parameters)
         {
-            DidOpenProjectTextDocumentParams didOpenParams = (DidOpenProjectTextDocumentParams)parameters;            
+            DidOpenProjectTextDocumentParams didOpenParams = (DidOpenProjectTextDocumentParams) parameters;
             try
             {
-                // Open the document in the project whose key is given.
-                OpenTextDocument(didOpenParams, didOpenParams.ProjectKey, didOpenParams.CopyFolders);
+                OpenTextDocument(didOpenParams.textDocument, didOpenParams.text, didOpenParams.ProjectKey, didOpenParams.CopyFolders);
             }
             catch (Exception e)
             {

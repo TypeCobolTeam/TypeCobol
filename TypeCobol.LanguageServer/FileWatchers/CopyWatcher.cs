@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 
 namespace TypeCobol.LanguageServer
 {
     public class CopyWatcher : IDisposable
     {
-        private Workspace _TypeCobolWorkSpace;
-        private List<FileSystemWatcher> fileWatchers = new List<FileSystemWatcher>();
-        private readonly Action refreshAction;
+        private readonly Workspace _workspace;
+        private readonly List<FileSystemWatcher> _fileWatchers;
 
-        public CopyWatcher(Workspace workspace, Action refreshAction)
+        public CopyWatcher(Workspace workspace)
         {
-            _TypeCobolWorkSpace = workspace;
-            this.refreshAction = refreshAction;
+            _workspace = workspace;
+            _fileWatchers = new List<FileSystemWatcher>();
         }
 
         public void SetDirectoryWatcher(string directoryPath)
@@ -40,7 +38,7 @@ namespace TypeCobol.LanguageServer
             //Start Watching files
             watcher.EnableRaisingEvents = true;
 
-            fileWatchers.Add(watcher);
+            _fileWatchers.Add(watcher);
         }
 
         private void OnChanged(object sender, FileSystemEventArgs e)
@@ -49,30 +47,18 @@ namespace TypeCobol.LanguageServer
             if (File.Exists(directory.FullName + Path.DirectorySeparatorChar + "~.lock"))
                 return;
 
-            // TODO - Right now, the CopyWatcher is only used for TypeCobol, so only the DefaultWorkspaceProject instance
-            // is impacted by directory content change events, so only DefaultWorkspaceProject instance has its cache cleared.
-            // We will have to study if the concept of CopyWatcher has to be extended to other WorkspaceProject instances.
-            _TypeCobolWorkSpace.WorkspaceProjectStore.DefaultWorkspaceProject.Project.ClearImportedCompilationDocumentsCache();
-
-            lock (_TypeCobolWorkSpace.MessagesActionsQueue)
-            {
-                // Check if there isn't another refresh action from another fileWatcher in the queue
-                if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))
-                {
-                    _TypeCobolWorkSpace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(refreshAction));
-                }
-            }
+            _workspace.ScheduleRefreshForAllOpenedFiles(true);
         }
 
         public void Dispose()
         {
-            foreach (var fileWatcher in fileWatchers)
+            foreach (var fileWatcher in _fileWatchers)
             {
                 fileWatcher.EnableRaisingEvents = false;
                 fileWatcher.Dispose();
             }
 
-            fileWatchers.Clear();
+            _fileWatchers.Clear();
         }
     }
 }

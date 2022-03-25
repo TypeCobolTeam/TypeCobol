@@ -4,7 +4,7 @@ using TypeCobol.LanguageServer.VsCodeProtocol;
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     /// <summary>
-    /// The parameters send in a open project text document notification
+    /// The parameters sent in an open project text document notification
     /// </summary>
     public class DidOpenProjectTextDocumentParams : DidOpenTextDocumentParams
     {
@@ -14,7 +14,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         public string ProjectKey;
 
         /// <summary>
-        /// List of copy folders, associated to the Project whose key is given by projectKey property.
+        /// List of copy folders, associated to the Project whose key is given by ProjectKey property.
         /// </summary>
         public List<string> CopyFolders;
 
@@ -23,9 +23,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         /// <param name="textDocument"></param>
         /// <param name="text"></param>
-        /// <param name="ProjectKey"></param>
-        /// <param name="CopyFolders"></param>
-        public DidOpenProjectTextDocumentParams(VsCodeProtocol.TextDocumentItem textDocument, string text, string projectKey, List<string> copyFolders)
+        /// <param name="projectKey"></param>
+        /// <param name="copyFolders"></param>
+        public DidOpenProjectTextDocumentParams(TextDocumentItem textDocument, string text, string projectKey, List<string> copyFolders)
             : base(textDocument, text)
         {
             this.ProjectKey = projectKey;

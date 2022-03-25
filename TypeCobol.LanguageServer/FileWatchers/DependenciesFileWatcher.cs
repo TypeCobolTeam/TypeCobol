@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 
 namespace TypeCobol.LanguageServer
 {
     public class DependenciesFileWatcher : IDisposable
     {
-        private Workspace _TypeCobolWorkSpace;
-        private List<FileSystemWatcher> fileWatchers = new List<FileSystemWatcher>();
-        private readonly Action refreshAction;
+        private readonly Workspace _workspace;
+        private readonly List<FileSystemWatcher> _fileWatchers;
 
-        public DependenciesFileWatcher(Workspace workspace, Action refreshAction)
+        public DependenciesFileWatcher(Workspace workspace)
         {
-            _TypeCobolWorkSpace = workspace;
-            this.refreshAction = refreshAction;
+            _workspace = workspace;
+            _fileWatchers = new List<FileSystemWatcher>();
         }
 
         public void SetDirectoryWatcher(string directoryPath)
@@ -44,7 +42,7 @@ namespace TypeCobol.LanguageServer
             //Start Watching files
             watcher.EnableRaisingEvents = true;
 
-            fileWatchers.Add(watcher);
+            _fileWatchers.Add(watcher);
         }
 
         private void OnChanged(object sender, FileSystemEventArgs e)
@@ -52,26 +50,20 @@ namespace TypeCobol.LanguageServer
             var directory= new FileInfo(e.FullPath).Directory;
             if (File.Exists(directory.FullName + Path.DirectorySeparatorChar + "~.lock"))
                 return;
-        
-            lock (_TypeCobolWorkSpace.MessagesActionsQueue)
-            {
-                // Check if there isn't another refresh action from another fileWatcher in the queue
-                if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))
-                {
-                    _TypeCobolWorkSpace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(refreshAction));
-                }
-            }
+
+            _workspace.RefreshCustomSymbols();
+            _workspace.ScheduleRefreshForAllOpenedFiles(false);
         }
 
         public void Dispose()
         {
-            foreach (var fileWatcher in fileWatchers)
+            foreach (var fileWatcher in _fileWatchers)
             {
                 fileWatcher.EnableRaisingEvents = false;
                 fileWatcher.Dispose();
             }
 
-            fileWatchers.Clear();
+            _fileWatchers.Clear();
         }
     }
 }

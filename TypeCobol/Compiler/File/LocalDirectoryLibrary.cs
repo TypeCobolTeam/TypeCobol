@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.File
 {
@@ -16,7 +15,6 @@ namespace TypeCobol.Compiler.File
         // Local directory properties
 
         public DirectoryInfo RootDirectory { get; }
-        private string _rootPath;
         private bool includeSubdirectories;
         private string[] fileExtensions;
 
@@ -41,7 +39,6 @@ namespace TypeCobol.Compiler.File
         {
             Name = libraryName;
 
-            this._rootPath = rootPath;
             RootDirectory = new DirectoryInfo(rootPath);
             if (!RootDirectory.Exists)
             {

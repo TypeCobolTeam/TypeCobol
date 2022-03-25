@@ -74,6 +74,6 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"diagnostics\":[]}}"
     }
   ],
-  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\"}}}",
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15903977687498063327.cee\"}}}",
   "IsValid": true
 }

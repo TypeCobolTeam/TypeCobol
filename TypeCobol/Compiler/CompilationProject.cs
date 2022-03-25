@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
@@ -26,14 +25,11 @@ namespace TypeCobol.Compiler
             RootDirectory = rootDirectory;
             SourceFileProvider = new SourceFileProvider();
 
-            Encoding = documentFormat.Encoding;
-            EndOfLineDelimiter = documentFormat.EndOfLineDelimiter;
-            FixedLineLength = documentFormat.FixedLineLength;
-            ColumnsLayout = documentFormat.ColumnsLayout;
+            Format = documentFormat;
             CompilationOptions = compilationOptions;
             AnalyzerProvider = analyzerProvider;
 
-            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, Encoding, EndOfLineDelimiter, FixedLineLength);
+            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength);
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
@@ -79,20 +75,9 @@ namespace TypeCobol.Compiler
         ICobolLibrary rootDirectoryLibrary;
 
         // Default properties for all files of the project
-        public Encoding Encoding { get; private set; }
-        public EndOfLineDelimiter EndOfLineDelimiter { get; private set; }
-        public int FixedLineLength { get; private set; }
-        public ColumnsLayout ColumnsLayout { get; private set; }
-        /// <summary>
-        /// Changing the value of this property work only if we discard current FileCompilers and recreate them. 
-        /// So it is a bit misleading.
-        /// </summary>
-        public TypeCobolOptions CompilationOptions { get; set; }
-        /// <summary>
-        /// Changing the value of this property work only if we discard current FileCompilers and recreate them. 
-        /// So it is a bit misleading.
-        /// </summary>
-        public IAnalyzerProvider AnalyzerProvider { get; set; }
+        public DocumentFormat Format { get; }
+        public TypeCobolOptions CompilationOptions { get; }
+        public IAnalyzerProvider AnalyzerProvider { get; }
 
         // -- Files manipulation --
 
@@ -212,7 +197,7 @@ namespace TypeCobol.Compiler
 #endif
                 bool wasAlreadyInsideCopy = scanState.InsideCopy;
                 scanState.InsideCopy = true;
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this, copyTextNameVariations);
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, Format.ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this, copyTextNameVariations);
                 fileCompiler.CompileOnce();
                 scanState.InsideCopy = wasAlreadyInsideCopy;
 
