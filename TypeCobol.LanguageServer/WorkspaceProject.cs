@@ -139,6 +139,9 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Configure this project
         /// </summary>
+        /// <param name="format"></param>
+        /// <param name="options"></param>
+        /// <param name="analyzerProviderWrapper"></param>
         /// <param name="copyFolders">The list of copy folders associated to this project</param>
         public void Configure(DocumentFormat format, TypeCobolOptions options, AnalyzerProviderWrapper analyzerProviderWrapper, List<string> copyFolders)
         {
@@ -179,13 +182,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Indicates whether this workspace project has opened documents or not.
         /// </summary>
-        internal bool IsEmpty
-        {
-            get 
-            {
-                return _openedDocuments.IsEmpty;
-            }            
-        }
+        internal bool IsEmpty => _openedDocuments.IsEmpty;
 
         /// <summary>
         /// Refresh all documents of this WorkspaceProject instance

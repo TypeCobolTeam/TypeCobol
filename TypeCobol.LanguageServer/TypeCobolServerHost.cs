@@ -20,7 +20,7 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     class TypeCobolServerHost
     {
-        public static Queue<MessageActionWrapper> MessagesActionQueue { get; set; }
+        public static System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> MessagesActionQueue { get; set; }
         public static bool LsrMode { get; set; }
         /// <summary>
         /// Program name from Assembly name
@@ -308,7 +308,7 @@ namespace TypeCobol.LanguageServer
             try
             {
                 //Queue storing messages coming from client, this queue is read by readingThread
-                MessagesActionQueue = new Queue<MessageActionWrapper>();
+                MessagesActionQueue = new System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper>();
 
                 // Configure the protocols stack
                 var httpServer = new StdioHttpServer(Encoding.UTF8, LogLevel, logWriter, MessagesActionQueue);
@@ -388,28 +388,24 @@ namespace TypeCobol.LanguageServer
             {
                 Thread.Sleep(1); //To preserve processor use
 
-                MessageActionWrapper messageActionWrapper = null;
-                lock (MessagesActionQueue)
+                if (MessagesActionQueue.Any())
                 {
-                    if (MessagesActionQueue.Any())
+                    if (MessagesActionQueue.TryDequeue(out MessageActionWrapper messageActionWrapper)) //Pop out message from queue
                     {
-                        messageActionWrapper = MessagesActionQueue.Dequeue(); //Pop out message from queue
-                    }
-                }
-                if (messageActionWrapper == null)
-                    continue;
+                        if (messageActionWrapper.MessageKind == MessageKind.JSonMessage)
+                            messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer); //Give this mesage to the real handler
+                        else if (messageActionWrapper.MessageKind == MessageKind.Action)
+                        {
+                            try
+                            {
+                                messageActionWrapper.Action(); //Execute queued action
+                            }
+                            catch (Exception e)
+                            {
+                                typeCobolServer.NotifyException(e);
+                            }
+                        }
 
-                if (messageActionWrapper.MessageKind == MessageKind.JSonMessage)
-                    messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer); //Give this mesage to the real handler
-                else if (messageActionWrapper.MessageKind == MessageKind.Action)
-                {
-                    try
-                    {
-                        messageActionWrapper.Action(); //Execute queued action
-                    }
-                    catch (Exception e)
-                    {
-                        typeCobolServer.NotifyException(e);
                     }
                 }
             }

@@ -5,8 +5,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
     class DidChangeProjectConfigurationParams
     {
         /// <summary>
-        /// The unique key of the associated project, can be null if no project is associated.
-        /// Keys are not case sensitive.
+        /// The unique key of the associated project.
         /// </summary>
         public string ProjectKey { get; set; }
         /// <summary>
@@ -21,6 +20,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="copyFolders"></param>
         public DidChangeProjectConfigurationParams(string projectKey, List<string> copyFolders)
         {
+            System.Diagnostics.Debug.Assert(projectKey != null);
             this.ProjectKey = projectKey;
             this.CopyFolders = copyFolders;
         }

@@ -97,14 +97,7 @@ namespace TypeCobol.LanguageServer
 
             // Create the Default Workspace Project instance.
             DefaultWorkspaceProject = new WorkspaceProject(projectKey, compilationProject, _workspace);
-            // Add it in the store
-            this.AddProject(DefaultWorkspaceProject);
         }
-
-        /// <summary>
-        /// Indicates whether this workspace project store has opened documents or not.
-        /// </summary>
-        internal bool IsEmpty => this._workspaceProjects.Values.All(wksPrj => wksPrj.IsEmpty);
 
         /// <summary>
         /// Find a WorkspaceProject instance by its key.
@@ -195,13 +188,9 @@ namespace TypeCobol.LanguageServer
         /// <returns>true if the project has been removed, false otherwise</returns>
         internal bool RemoveProject(WorkspaceProject workspaceProject)
         {
-            bool bRemoved = false;
-            if (workspaceProject.IsEmpty)
-            {
-                bRemoved = this._workspaceProjects.TryRemove(workspaceProject.ProjectKey, out var storedProject);
-                // Assertion: If the project has been removed it must correspond to the one that was stored.
-                System.Diagnostics.Debug.Assert(!bRemoved || (storedProject == workspaceProject));
-            }
+            bool bRemoved = this._workspaceProjects.TryRemove(workspaceProject.ProjectKey, out var storedProject);
+            // Assertion: If the project has been removed it must correspond to the one that was stored.
+            System.Diagnostics.Debug.Assert(!bRemoved || (storedProject == workspaceProject));
             return bRemoved;
         }
     }

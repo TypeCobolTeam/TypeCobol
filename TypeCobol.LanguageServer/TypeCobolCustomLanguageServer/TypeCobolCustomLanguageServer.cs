@@ -9,7 +9,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     class TypeCobolCustomLanguageServer : TypeCobolServer
     {
-        public TypeCobolCustomLanguageServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue)
+        public TypeCobolCustomLanguageServer(IRPCServer rpcServer, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue)
             : base(rpcServer, messagesActionsQueue)
         {
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);

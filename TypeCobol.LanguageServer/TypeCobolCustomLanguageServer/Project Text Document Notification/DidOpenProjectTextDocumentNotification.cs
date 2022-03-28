@@ -17,6 +17,6 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
     class DidOpenProjectTextDocumentNotification
     {
-        public static readonly NotificationType Type = new NotificationType("typecobol/projectTextDocument/didOpen", typeof(DidOpenProjectTextDocumentParams));
+        public static readonly NotificationType Type = new NotificationType("typecobol/workspace/projectTextDocument/didOpen", typeof(DidOpenProjectTextDocumentParams));
     }
 }
