@@ -2,9 +2,9 @@
        PROGRAM-ID. DVZZMFT3.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-         EXEC SQL 
-        SELECT i.i.d.* , e.i.*
-         END-EXEC.
+            EXEC SQL 
+             SELECT i.i.d.* , e.i.*
+            END-EXEC.
        PROCEDURE DIVISION.
            GOBACK
            .
