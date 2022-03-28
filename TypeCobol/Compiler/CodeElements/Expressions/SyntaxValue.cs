@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -254,8 +255,10 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.DATE:     // <= TYPECOBOL : TYPE DATE
                     case TokenType.CURRENCY: // <= TYPECOBOL : TYPE CURRENCY
                         return false;
+                    case TokenType.IntegerLiteral: // See: GitHub #2054
                     default:
-                        throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
+                        LoggingSystem.LogMessage(LogLevel.Error, "Unexpected literal value: " + TokenUtils.DumpToken(Token));
+                        throw new InvalidOperationException("Unexpected literal value: " + Token.TokenType);
                 }
             }
         }
@@ -350,7 +353,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                if(ValueNeedsCompilationContext || ValueNeedsSymbolicCharactersMap || ValueNeedsCharactersCountContext)
+                if (ValueNeedsCompilationContext || ValueNeedsSymbolicCharactersMap || ValueNeedsCharactersCountContext)
                 {
                     throw new InvalidOperationException("Impossible to evaluate literal value without context information");
                 }

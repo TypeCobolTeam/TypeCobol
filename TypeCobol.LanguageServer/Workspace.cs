@@ -718,8 +718,8 @@ namespace TypeCobol.LanguageServer
         /// or an empty list if all COPY have been loaded.
         /// </summary>
         /// <param name="fileUri">Uri of the document from wich the response is emitted</param>
-        /// <param name="RemainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
-        public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
+        /// <param name="remainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
+        public void UpdateMissingCopies(Uri fileUri, List<string> remainingMissingCopies)
         {
             if (_CopyWatcher == null)
             {// No Copy Watcher ==> Refresh ourself opened file.
