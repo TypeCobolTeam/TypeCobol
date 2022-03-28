@@ -8263,14 +8263,14 @@ execStatementEnd: END_EXEC;
 commitStatement: SQL_COMMIT;
 selectStatement: fullselect;
 fullselect: subselect;
-subselect: sql_selectClause;
+subselect: sql_selectClause from_clause;
 sql_selectClause: 
-  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections) from_clause;
+  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections);
 
 selections: selection (SQL_CommaSeparator selection)*;
 selection: dotStarSelection;
 dotStarSelection: tableOrViewOrCorrelationName  dot star; 
-tableOrViewOrCorrelationName : (DBMS=UserDefinedWord dot)?? (SchemaName=UserDefinedWord dot)? (Name=UserDefinedWord); 
+tableOrViewOrCorrelationName : ((DBMS=UserDefinedWord dot)? (SchemaName=UserDefinedWord dot))? (Name=UserDefinedWord); 
 from_clause: SQL_FROM table_references;
 table_references: table_reference (SQL_CommaSeparator table_reference)*;
 table_reference: single_table_or_view_reference;
