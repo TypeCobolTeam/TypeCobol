@@ -19,6 +19,7 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] SubSelect subSelect);
         bool Visit([NotNull] SelectClause selectClause);
         bool Visit([NotNull] FromClause fromClause);
+        bool Visit([NotNull] TableViewCorrelationName tableViewCorrelationName);
     }
 
     /// <summary>
@@ -34,6 +35,7 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(SubSelect subSelect) => true;
         public virtual bool Visit(SelectClause selectClause) => true;
         public virtual bool Visit(FromClause fromClause) => true;
+        public virtual bool Visit(TableViewCorrelationName tableViewCorrelationName) => true;
     }
 
     /// <summary>

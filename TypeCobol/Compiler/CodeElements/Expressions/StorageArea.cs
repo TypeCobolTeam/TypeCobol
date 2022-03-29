@@ -20,7 +20,9 @@ namespace TypeCobol.Compiler.CodeElements
             IsReadFrom = true;
             IsWrittenTo = false;
         }
-
+        protected StorageArea()
+        {
+        }
         public StorageAreaKind Kind { get; protected set;  }
 
         [CanBeNull]
@@ -68,6 +70,15 @@ namespace TypeCobol.Compiler.CodeElements
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SymbolReference,ReferenceModifier);
         }
+    }
+
+    public class SqlStorageArea : StorageArea
+    {
+        public SqlStorageArea(SymbolReference fullNameSymbolReference) : base()
+        {
+            this.SymbolReference = fullNameSymbolReference;
+        }
+        
     }
 
     /// <summary>
