@@ -1,9 +1,24 @@
 ﻿--- Sql Statements ---
-SubSelect 
-  SelectClause
-    SubSelect 
-  SelectClause
-    All
-SubSelect 
-  SelectClause
-    Distinct
+line1:SelectStatement
+  FullSelect
+    SubSelect
+      SelectClause
+        - Selections =[
+            StarSelection
+      ]
+line2:SelectStatement
+  FullSelect
+    SubSelect
+      SelectClause
+        - SelectionModifier=<All>
+        - Selections =[
+            StarSelection
+      ]
+line3:SelectStatement
+  FullSelect
+    SubSelect
+      SelectClause
+        - SelectionModifier=<Distinct>
+        - Selections =[
+            StarSelection
+      ]

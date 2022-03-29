@@ -67,13 +67,13 @@ namespace TypeCobol.Compiler.Sql.Model
             switch (selection.Type)
             {
                 case SelectionType.DotStar:
-                    var dotStarSelection = (DotStarSelection) selection;
+                    output.Write("DotStarSelection");
                     break;
                 case SelectionType.Expression:
-                    var expression = (ExpressionSelection) selection;
+                    output.Write("ExpressionSelection");
                     break;
                 case SelectionType.Star:
-                    var starSelection = (StarSelection)selection;
+                    output.Write("StarSelection");
                     break;
 
             }
@@ -82,18 +82,35 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
-            if (this.Selections != null)
-            {
-                foreach (var selection in this.Selections)
-                {
-                    DumpSelection(output,selection);
-                }
-            }
+            output.WriteLine("SelectClause");
+            indentLevel++;
             if (this.SelectionModifier != null)
             {
-                output.WriteLine(this.SelectionModifier);
+                output.Write(new string(' ',2* indentLevel));
+                output.WriteLine("- SelectionModifier=<" + this.SelectionModifier + ">");
             }
-            
+            if (this.Selections != null)
+            {
+                output.Write(new string(' ', 2 * indentLevel));
+                indentLevel++;
+                output.WriteLine("- Selections =[");
+                int i = 1;
+                foreach (var selection in this.Selections)
+                {
+                    output.Write(new string(' ', 2 * (indentLevel+1)));
+                    DumpSelection(output,selection);
+                    if (Selections.Last() == selection)
+                    {
+                        output.WriteLine();
+                    }
+                    else
+                    {
+                        output.WriteLine(",");
+                    }
+                }
+                output.Write(new string(' ', indentLevel));
+                output.WriteLine(" ]");
+            }
         }
 
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }

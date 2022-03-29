@@ -7,11 +7,12 @@ namespace TypeCobol.Compiler.Sql.Model
         //TODO
         //list of table references
 
-        //TODO
-        // To complete 
+       
         public override void Dump(TextWriter output, int indentLevel)
         {
-            output.Write(this);
+            output.Write("FromClause");
+            //TODO
+            // To finish writing the name of table reference 
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)

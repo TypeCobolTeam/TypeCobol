@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
-
+            output.WriteLine("FullSelect");
             if (this.SubQuery != null)
             { 
                 output.WriteLine("SubQuery");
@@ -34,7 +34,6 @@ namespace TypeCobol.Compiler.Sql.Model
             }
             if (this.SubSelect != null)
             {
-                output.WriteLine("SubSelect ");
                 this.SubSelect.Dump(output,indentLevel+1);
             }
         }

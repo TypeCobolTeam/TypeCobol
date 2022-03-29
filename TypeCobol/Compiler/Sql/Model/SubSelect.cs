@@ -25,9 +25,9 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
+            output.WriteLine("SubSelect");
             if (this.SelectClause != null)
             {
-                output.WriteLine("SelectClause");
                 this.SelectClause.Dump(output,indentLevel+1);
             }
             if ( this.FromClause!=null)

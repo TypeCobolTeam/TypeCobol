@@ -464,6 +464,7 @@ namespace TypeCobol.Test.Utils
         private class ASTVisitor : AbstractAstVisitor 
         {
             private readonly StringWriter _writer;
+            private int line = 1;
             public ASTVisitor(StringBuilder builder)
             {
                 _writer = new StringWriter(builder);
@@ -471,9 +472,11 @@ namespace TypeCobol.Test.Utils
 
             public override bool Visit(SelectStatement selectStatement)
             {
+                _writer.WriteLine("line" + line + ":SelectStatement");
+                line++;
                 if (selectStatement.FullSelect != null)
                 {
-                    selectStatement.FullSelect.Dump(_writer, 0);
+                    selectStatement.FullSelect.Dump(_writer, 1);
                 }
                 return true;
             }
@@ -502,6 +505,7 @@ namespace TypeCobol.Test.Utils
                 builder.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
             }
             builder.AppendLine("--- Sql Statements ---");
+            
             
             compilationUnit.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new ASTVisitor(builder) );
             
