@@ -78,7 +78,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
-        private DotStarSelection CreateDotStarSelection(CodeElementsParser.SelectionContext context)
+        private TableOrViewAllColumnsSelection CreateDotStarSelection(CodeElementsParser.SelectionContext context)
         {
             if (context.dotStarSelection() != null)
             {
@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
                 Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
                 SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
-                return new DotStarSelection(fullName);
+                return new TableOrViewAllColumnsSelection(fullName);
 
             }
 

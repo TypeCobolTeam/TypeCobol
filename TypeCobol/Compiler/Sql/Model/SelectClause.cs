@@ -40,12 +40,12 @@ namespace TypeCobol.Compiler.Sql.Model
         public override SelectionType Type => SelectionType.UnpackedRow;
     }
 
-    public class DotStarSelection : Selection
+    public class TableOrViewAllColumnsSelection : Selection
     {
         public SymbolReference TableOrViewOrCorrelationName { get; }
         public override SelectionType Type => SelectionType.DotStar;
 
-        public  DotStarSelection(SymbolReference tableOrViewOrCorrelationName)
+        public  TableOrViewAllColumnsSelection(SymbolReference tableOrViewOrCorrelationName)
         {
             this.TableOrViewOrCorrelationName = tableOrViewOrCorrelationName;
         }
