@@ -23,17 +23,5 @@ namespace TypeCobol.Compiler.Sql.Model
         protected abstract bool VisitSqlObject([NotNull] ISqlVisitor visitor);
     }
 
-    public class TableViewCorrelationName : SqlObject
-    {
-        private SqlStorageArea _tableViewOrCorrelation;
-
-        public TableViewCorrelationName(SqlStorageArea tableViewOrCorrelation)
-        {
-            _tableViewOrCorrelation = tableViewOrCorrelation;
-        }
-        protected override bool VisitSqlObject(ISqlVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
-    }
+ 
 }

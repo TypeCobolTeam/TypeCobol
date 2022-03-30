@@ -20,9 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
             IsReadFrom = true;
             IsWrittenTo = false;
         }
-        protected StorageArea()
-        {
-        }
+
         public StorageAreaKind Kind { get; protected set;  }
 
         [CanBeNull]
@@ -72,14 +70,6 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    public class SqlStorageArea : StorageArea
-    {
-        public SqlStorageArea(SymbolReference fullNameSymbolReference) : base()
-        {
-            this.SymbolReference = fullNameSymbolReference;
-        }
-        
-    }
 
     /// <summary>
     /// Reference modification defines a data item by specifying a leftmost character and

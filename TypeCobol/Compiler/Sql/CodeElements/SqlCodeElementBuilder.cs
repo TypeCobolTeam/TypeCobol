@@ -89,15 +89,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 Token name = tableOrViewOrCorrelationName.Name as Token;
                 Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
                 Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-                TableViewCorrelationName fullName = CreateSymbolReference(name, schemaName, dbms);
-                return new TableOrViewAllColumnsSelection(fullName);
+                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                return new TableOrViewAllColumnsSelection(new TableViewCorrelationName(fullName));
 
             }
 
             return null;
         }
 
-        private TableViewCorrelationName CreateSymbolReference(Token nameToken, Token qualifierToken,
+        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken,
             Token topLevelQualifierToken)
         {
             if (nameToken != null)
@@ -116,20 +116,20 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                                 SymbolType.SqlIdentifier);
                         QualifiedSymbolReference head = new QualifiedSymbolReference(topLevelQualifier, qualifier);
                         SymbolReference fullName= new QualifiedSymbolReference(head, name);
-                        return (new TableViewCorrelationName(new SqlStorageArea(fullName)));
+                        return fullName;
 
                     }
                     else
                     {
                         SymbolReference fullName = new QualifiedSymbolReference(qualifier, name);
-                        return (new TableViewCorrelationName(new SqlStorageArea(fullName)));
+                        return fullName;
 
 
                     }
                 }
                 else
                 {
-                    return (new TableViewCorrelationName(new SqlStorageArea(name)));
+                    return name;
                 }
             }
 
