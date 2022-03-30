@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Sql.Model
         Star,
         Expression,
         UnpackedRow,
-        DotStar
+        TableOrViewAllColumns
     }
 
     public abstract class Selection
@@ -40,12 +40,12 @@ namespace TypeCobol.Compiler.Sql.Model
         public override SelectionType Type => SelectionType.UnpackedRow;
     }
 
-    public class DotStarSelection : Selection
+    public class TableOrViewAllColumnsSelection : Selection
     {
-        public SymbolReference TableOrViewOrCorrelationName { get; }
-        public override SelectionType Type => SelectionType.DotStar;
+        public TableViewCorrelationName TableOrViewOrCorrelationName { get; }
+        public override SelectionType Type => SelectionType.TableOrViewAllColumns;
 
-        public  DotStarSelection(SymbolReference tableOrViewOrCorrelationName)
+        public  TableOrViewAllColumnsSelection(TableViewCorrelationName tableOrViewOrCorrelationName)
         {
             this.TableOrViewOrCorrelationName = tableOrViewOrCorrelationName;
         }

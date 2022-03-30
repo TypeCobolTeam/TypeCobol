@@ -136,25 +136,33 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.selections() != null)
             {
-                var dotStarSelections = context.selections().selection().Select(CreateDotStarSelection).Where(selection => selection != null).ToList();
+                var tableOrViewAllColumnsSelections = context.selections().selection().Select(CreateSelection)
+                    .Where(selection => selection != null).ToList();
 
-                return new SelectClause(selectionModifier, dotStarSelections);
+                return new SelectClause(selectionModifier, tableOrViewAllColumnsSelections);
             }
+
             return null;
         }
 
-        private DotStarSelection CreateDotStarSelection(CodeElementsParser.SelectionContext context)
+        private TableOrViewAllColumnsSelection CreateSelection(CodeElementsParser.SelectionContext context)
         {
-            if (context.dotStarSelection() != null)
+            if (context.tableOrViewAllColumnsSelection() != null)
             {
-                var tableOrViewOrCorrelationName = context.dotStarSelection().tableOrViewOrCorrelationName();
-                SymbolReference fullName = CreateTableOrViewOrCorrelationName(tableOrViewOrCorrelationName);
-                return new DotStarSelection(fullName);
+                var tableOrViewOrCorrelationName =
+                    context.tableOrViewAllColumnsSelection().tableOrViewOrCorrelationName();
+                Token name = tableOrViewOrCorrelationName.Name as Token;
+                Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                return new TableOrViewAllColumnsSelection(new TableViewCorrelationName(fullName));
+
             }
             return null;
         }
 
-        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken, Token topLevelQualifierToken)
+        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken,
+            Token topLevelQualifierToken)
         {
             if (nameToken != null)
             {
@@ -171,11 +179,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
                                 SymbolType.SqlIdentifier);
                         QualifiedSymbolReference head = new QualifiedSymbolReference(topLevelQualifier, qualifier);
-                        return new QualifiedSymbolReference(head, name);
+                        SymbolReference fullName= new QualifiedSymbolReference(head, name);
+                        return fullName;
+
                     }
                     else
                     {
-                        return new QualifiedSymbolReference(qualifier, name);
+                        SymbolReference fullName = new QualifiedSymbolReference(qualifier, name);
+                        return fullName;
+
+
                     }
                 }
                 else

@@ -8264,12 +8264,14 @@ commitStatement: SQL_COMMIT;
 selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause from_clause;
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=subselect-select-clause]
 sql_selectClause: 
   SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections);
 
 selections: selection (SQL_CommaSeparator selection)*;
-selection: dotStarSelection;
-dotStarSelection: tableOrViewOrCorrelationName  dot star; 
+selection: tableOrViewAllColumnsSelection;
+tableOrViewAllColumnsSelection: tableOrViewOrCorrelationName  dot star; 
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=clause-table-reference]
 tableOrViewOrCorrelationName : ((DBMS=UserDefinedWord dot)? (SchemaName=UserDefinedWord dot))? (Name=UserDefinedWord); 
 from_clause: SQL_FROM table_references;
 table_references: table_reference (SQL_CommaSeparator table_reference)*;
