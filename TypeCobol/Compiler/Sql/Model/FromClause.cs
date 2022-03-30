@@ -5,11 +5,11 @@ namespace TypeCobol.Compiler.Sql.Model
 {
     public class FromClause : SqlObject
     {
-        public List<SymbolReference> TableOrViewReferences { get;}
+        public List<SingleTableReference> TableReferences { get;}
        
-        public FromClause(List<SymbolReference> tableOrViewReferences)
+        public FromClause(List<SingleTableReference> tableReferences)
         {
-            this.TableOrViewReferences = tableOrViewReferences;
+            this.TableReferences = tableReferences;
         }
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {

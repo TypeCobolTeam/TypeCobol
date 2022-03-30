@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -51,13 +49,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private FromClause CreateFromClause(CodeElementsParser.From_clauseContext context)
         {
-            var tableReferences = new List<SymbolReference>();
+            var tableReferencesList = new List<SingleTableReference>();
             if (context.table_references() != null)
             {
+                CorrelationClause correlationClauseF=null;
                 foreach (var tableContext in context.table_references().table_reference())
                 {
-                    SymbolReference fullName = CreateTableOrViewOrCorrelationName(tableContext
+                    SymbolReference table = CreateTableOrViewOrCorrelationName(tableContext
                         .single_table_or_view_reference().tableOrViewOrCorrelationName());
+                    TableViewCorrelationName tableRef = new TableViewCorrelationName(table);
                     if ((tableContext.single_table_or_view_reference().correlation_clause()!= null))
                     {
                         Token correlationNameToken = tableContext.single_table_or_view_reference().correlation_clause()
@@ -67,45 +67,28 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
                         if (tableContext.single_table_or_view_reference().correlation_clause().new_column_names() != null)
                         {
-                            SymbolReference main = null;
+                            List<SymbolReference> newColumnNamesList=new List<SymbolReference>();
                             foreach (var columnName in tableContext.single_table_or_view_reference()
                                          .correlation_clause().new_column_names().new_column_name())
                             {
-                                main = CreateColumnName(columnName, main);
+                                SymbolReference newColumnName = new SymbolReference(
+                                    new AlphanumericValue(columnName.start as Token),
+                                    SymbolType.SqlIdentifier);
+                                newColumnNamesList.Add(newColumnName);
                             }
-
-                            QualifiedSymbolReference correlationClause =
-                                new QualifiedSymbolReference(correlationName, main);
-                            QualifiedSymbolReference singleTableOrViewReference = new QualifiedSymbolReference(fullName, correlationClause);
-                            tableReferences.Add(singleTableOrViewReference);
-                        }
-                        else
-                        {
-                            QualifiedSymbolReference singleTableOrViewReference = new QualifiedSymbolReference(fullName, correlationName);
-                            tableReferences.Add(singleTableOrViewReference);
+                            correlationClauseF = new CorrelationClause(correlationName, newColumnNamesList);
                         }
                     }
-                    else
-                    {
-                        tableReferences.Add(fullName);
-                    }
+                    SingleTableReference tableReference = new SingleTableReference(tableRef, correlationClauseF);
+                    tableReferencesList.Add(tableReference);
                 }
 
-                return (new FromClause(tableReferences));
+                return (new FromClause(tableReferencesList));
             }
 
             return null;
         }
-        private SymbolReference CreateColumnName(CodeElementsParser.New_column_nameContext columnName , SymbolReference main)
-        {
-            var qualifierToken = columnName.start as Token;
-            SymbolReference qualifier = new SymbolReference(
-                new AlphanumericValue(qualifierToken),
-                SymbolType.SqlIdentifier);
-            main = main != null ? new QualifiedSymbolReference(main, qualifier) : qualifier;
-            return (main);
-        }
-
+        
         private SymbolReference CreateTableOrViewOrCorrelationName(CodeElementsParser.TableOrViewOrCorrelationNameContext tableOrViewOrCorrelationName)
         {
             Token name = tableOrViewOrCorrelationName.Name as Token;
