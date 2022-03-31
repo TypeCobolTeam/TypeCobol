@@ -1,32 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
-    public abstract class TableReference
+    
+    public class SingleTableReference 
     {
-        protected TableViewCorrelationName TableRef {get; set;}
-    }
+        public TableViewCorrelationName TableOrViewName { get; }
+        public CorrelationClause CorrelationClause {get;}
 
-    public class SingleTableReference : TableReference
-    {
-        private CorrelationClause CorrelationClause {get;}
-
-        public SingleTableReference(TableViewCorrelationName tableRef, CorrelationClause correlation)
+        public SingleTableReference(TableViewCorrelationName tableOrViewName, CorrelationClause correlation)
         {
-            this.TableRef = tableRef;
             this.CorrelationClause = correlation;
+            TableOrViewName = tableOrViewName;
         }
     }
 
     public class CorrelationClause
     {
-        private SymbolReference CorrelationName {get;}
-        private List<SymbolReference> NewColumnNames {get;}
+        public SymbolReference CorrelationName {get;}
+        public List<SymbolReference> NewColumnNames {get;}
 
         public CorrelationClause(SymbolReference correlationName, List<SymbolReference> newColumnNames)
         {

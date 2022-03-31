@@ -8260,7 +8260,7 @@ execStatementText: ExecStatementText;
 execStatementEnd: END_EXEC;
 
 //FOR SQL
-//TODO 
+//TODO Add period-specification syntax
 commitStatement: SQL_COMMIT;
 selectStatement: fullselect;
 fullselect: subselect;

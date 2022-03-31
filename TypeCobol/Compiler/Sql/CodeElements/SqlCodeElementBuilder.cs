@@ -41,10 +41,12 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context.sql_selectClause() != null)
             {
                 selectClause = CreateSelectClause(context.sql_selectClause());
-                fromClause = CreateFromClause(context.from_clause());
+                if (context.from_clause() != null)
+                {
+                    fromClause = CreateFromClause(context.from_clause());
+                }
             }
             return new SubSelect(selectClause, fromClause);
-              
         }
 
         private FromClause CreateFromClause(CodeElementsParser.From_clauseContext context)
@@ -52,7 +54,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             var tableReferencesList = new List<SingleTableReference>();
             if (context.table_references() != null)
             {
-                CorrelationClause correlationClauseF=null;
+                CorrelationClause correlationClause=null;
                 foreach (var tableContext in context.table_references().table_reference())
                 {
                     SymbolReference table = CreateTableOrViewOrCorrelationName(tableContext
@@ -76,10 +78,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                                     SymbolType.SqlIdentifier);
                                 newColumnNamesList.Add(newColumnName);
                             }
-                            correlationClauseF = new CorrelationClause(correlationName, newColumnNamesList);
+                            correlationClause = new CorrelationClause(correlationName, newColumnNamesList);
                         }
                     }
-                    SingleTableReference tableReference = new SingleTableReference(tableRef, correlationClauseF);
+                    SingleTableReference tableReference = new SingleTableReference(tableRef, correlationClause);
                     tableReferencesList.Add(tableReference);
                 }
 
