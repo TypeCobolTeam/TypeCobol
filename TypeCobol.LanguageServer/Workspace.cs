@@ -33,6 +33,8 @@ namespace TypeCobol.LanguageServer
     public class Workspace
     {
         private SymbolTable _customSymbols;
+        public string RootDirectory { get; }
+        public string Name { get; }
         private DependenciesFileWatcher _DepWatcher;
         private CopyWatcher _CopyWatcher;
         private System.Timers.Timer _semanticUpdaterTimer;
@@ -156,9 +158,11 @@ namespace TypeCobol.LanguageServer
             MessagesActionsQueue = messagesActionsQueue;
             _fileCompilerWaitingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
+            RootDirectory = rootDirectoryFullName;
+            Name = workspaceName;
 
             this.Configuration = new TypeCobolConfiguration();
-            WorkspaceProjectStore = new WorkspaceProjectStore(this, rootDirectoryFullName, workspaceName, UseAntlrProgramParsing, UseEuroInformationLegacyReplacingSyntax);
+            WorkspaceProjectStore = new WorkspaceProjectStore(this);
         }
 
         internal void InitCopyDependencyWatchers()
@@ -259,7 +263,7 @@ namespace TypeCobol.LanguageServer
             List<string> copyFolders, LsrTestingOptions lsrOptions)
         {
             var workspaceProject = docContext.Project ?? WorkspaceProjectStore.GetOrCreateProject(projectKey);
-            workspaceProject.Configure(Configuration.Format, null, null, copyFolders);
+            workspaceProject.Configure(null, null, null, copyFolders);
             workspaceProject.AddDocument(docContext);
             this._allOpenedDocuments.TryAdd(docContext.Uri, docContext);
             docContext.Project = workspaceProject;
@@ -709,7 +713,7 @@ namespace TypeCobol.LanguageServer
         internal void UpdateWorkspaceProjectConfiguration(string projectKey, List<string> copyFolders)
         {
             var workspaceProject = this.WorkspaceProjectStore.GetOrCreateProject(projectKey);
-            workspaceProject.Configure(Configuration.Format, null, null, copyFolders);
+            workspaceProject.Configure(null, null, null, copyFolders);
         }
 
         /// <summary>
@@ -726,7 +730,7 @@ namespace TypeCobol.LanguageServer
                 if (this.TryGetOpenedDocument(fileUri, out var docContext))
                 {
                     System.Diagnostics.Debug.Assert(docContext.Project != null);
-                    ScheduleRefresh(docContext.Project);
+                    ScheduleRefresh(docContext.Project, true);
                 }
             }
         }
@@ -768,18 +772,24 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all documents of a WorkspaceProject instance
         /// </summary>
-        internal void ScheduleRefresh(WorkspaceProject project)
+        internal void ScheduleRefresh(WorkspaceProject project, bool clearCopyCache)
         {
-            Action action = () =>
+            if (clearCopyCache)
             {
                 project.Project.ClearImportedCompilationDocumentsCache();
-                foreach (var docContext in project.OpenedDocuments)
+            }
+            if (!project.IsEmpty)
+            {
+                Action action = () =>
                 {
-                    System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == project.Project);
-                    RefreshOpenedDocument(docContext, false);
-                }
-            };
-            MessagesActionsQueue.Enqueue(new MessageActionWrapper(action));
+                    foreach (var docContext in project.OpenedDocuments)
+                    {
+                        System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == project.Project);
+                        RefreshOpenedDocument(docContext, false);
+                    }
+                };
+                MessagesActionsQueue.Enqueue(new MessageActionWrapper(action));
+            }
         }
 
         private void RefreshCustomSymbols()

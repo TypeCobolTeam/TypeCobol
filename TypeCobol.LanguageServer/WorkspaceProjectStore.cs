@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
-using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.APIHelpers;
-using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServer
 {
@@ -45,7 +40,6 @@ namespace TypeCobol.LanguageServer
         /// The dictionary of WorkspaceProject Keys to WorkspaceProject instance.
         /// </summary>
         private readonly ConcurrentDictionary<string, WorkspaceProject> _workspaceProjects;
-        private readonly string _rootDirectoryFullName;
         /// <summary>
         /// Underlying workspace project
         /// </summary>
@@ -59,16 +53,11 @@ namespace TypeCobol.LanguageServer
         /// Constructor
         /// </summary>
         /// <param name="workspace">The workspace</param>
-        /// <param name="rootDirectoryFullName">The root directory of the workspace session</param>
-        /// <param name="defaultProjectKey">The key of the default workspace project</param>
-        /// <param name="useAntlrProgramParsing">Using ANTLR parsing or not</param>
-        /// <param name="useEuroInformationLegacyReplacingSyntax">Use E-I options or not</param>
-        internal WorkspaceProjectStore(Workspace workspace, string rootDirectoryFullName, string defaultProjectKey, bool useAntlrProgramParsing, bool useEuroInformationLegacyReplacingSyntax)
+        internal WorkspaceProjectStore(Workspace workspace)
         {
             this._workspace = workspace;
-            this._rootDirectoryFullName = rootDirectoryFullName;
             this._workspaceProjects = new ConcurrentDictionary<string, WorkspaceProject>(StringComparer.OrdinalIgnoreCase);
-            CreateDefaultWorkspaceProject(defaultProjectKey, useAntlrProgramParsing, useEuroInformationLegacyReplacingSyntax);
+            CreateDefaultWorkspaceProject();
         }
 
         /// <summary>
@@ -79,24 +68,20 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Create the default workspace project
         /// </summary>
-        /// <param name="projectKey"></param>
-        /// <param name="useAntlrProgramParsing"></param>
-        /// <param name="useEuroInformationLegacyReplacingSyntax"></param>
-        private void CreateDefaultWorkspaceProject(string projectKey, bool useAntlrProgramParsing, bool useEuroInformationLegacyReplacingSyntax)
+        private void CreateDefaultWorkspaceProject()
         {
             var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
+            var defaultOptions = new TypeCobolOptions()
+            {
+                UseAntlrProgramParsing = _workspace.UseAntlrProgramParsing,
+                UseEuroInformationLegacyReplacingSyntax = _workspace.UseEuroInformationLegacyReplacingSyntax
+            };
             CompilationProject compilationProject = new CompilationProject(
-                projectKey, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
-                new TypeCobolOptions(), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
-            compilationProject.CompilationOptions.UseAntlrProgramParsing =
-                compilationProject.CompilationOptions.UseAntlrProgramParsing || useAntlrProgramParsing;
-
-            compilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
-                compilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
-                useEuroInformationLegacyReplacingSyntax;
+                this._workspace.Name, this._workspace.RootDirectory, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
+                defaultOptions, null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
 
             // Create the Default Workspace Project instance.
-            DefaultWorkspaceProject = new WorkspaceProject(projectKey, compilationProject, _workspace);
+            DefaultWorkspaceProject = new WorkspaceProject(this._workspace.Name, compilationProject, _workspace);
         }
 
         /// <summary>
@@ -132,10 +117,9 @@ namespace TypeCobol.LanguageServer
         /// Create a WorkspaceProject instance, and add it to the store.
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
-        /// <param name="configuration">The configuration to be applied</param>
         /// <returns>The WorkspaceProject instance created</returns>
         /// <exception cref="DuplicatedProjectException">Sent if the given Project's key is already associated to a project.</exception>
-        private WorkspaceProject CreateWorkspaceProject(string projectKey, TypeCobolConfiguration configuration)
+        private WorkspaceProject CreateWorkspaceProject(string projectKey)
         {
             System.Diagnostics.Debug.Assert(projectKey != null);
             if (_workspaceProjects.ContainsKey(projectKey))
@@ -143,8 +127,8 @@ namespace TypeCobol.LanguageServer
                 throw new DuplicatedProjectException(projectKey);
             }
 
-            CompilationProject compilationProject = new CompilationProject(projectKey, this._rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS,
-                configuration.Format, this.DefaultWorkspaceProject.Project.CompilationOptions, 
+            CompilationProject compilationProject = new CompilationProject(projectKey, this._workspace.RootDirectory, Helpers.DEFAULT_EXTENSIONS,
+                _workspace.Configuration.Format, this.DefaultWorkspaceProject.Project.CompilationOptions,
                 this.DefaultWorkspaceProject.Project.AnalyzerProvider);
             WorkspaceProject workspaceProject = new WorkspaceProject(projectKey, compilationProject, _workspace);
             AddProject(workspaceProject);
@@ -154,7 +138,6 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all documents in all WorkspaceProject instances
         /// </summary>
-        /// <param name="workspace">The main Workspace instance</param>
         internal void RefreshOpenedFiles()
         {
             foreach (var wksProject in _workspaceProjects.Values)
@@ -176,7 +159,7 @@ namespace TypeCobol.LanguageServer
             WorkspaceProject targetWorkspaceProject = FindProject(projectKey);
             if (targetWorkspaceProject == null)
             {   // The target project does not exists ==> We must create this new workspace project.
-                targetWorkspaceProject = CreateWorkspaceProject(projectKey, _workspace.Configuration);
+                targetWorkspaceProject = CreateWorkspaceProject(projectKey);
             }
             return targetWorkspaceProject;
         }

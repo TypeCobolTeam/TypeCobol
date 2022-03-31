@@ -26,10 +26,7 @@ namespace TypeCobol.Compiler
             RootDirectory = rootDirectory;
             SourceFileProvider = new SourceFileProvider();
 
-            Encoding = documentFormat.Encoding;
-            EndOfLineDelimiter = documentFormat.EndOfLineDelimiter;
-            FixedLineLength = documentFormat.FixedLineLength;
-            ColumnsLayout = documentFormat.ColumnsLayout;
+            Format = documentFormat;
             CompilationOptions = compilationOptions;
             AnalyzerProvider = analyzerProvider;
 
@@ -79,10 +76,11 @@ namespace TypeCobol.Compiler
         ICobolLibrary rootDirectoryLibrary;
 
         // Default properties for all files of the project
-        public Encoding Encoding { get; private set; }
-        public EndOfLineDelimiter EndOfLineDelimiter { get; private set; }
-        public int FixedLineLength { get; private set; }
-        public ColumnsLayout ColumnsLayout { get; private set; }
+        public Encoding Encoding => Format.Encoding;
+        public EndOfLineDelimiter EndOfLineDelimiter => Format.EndOfLineDelimiter;
+        public int FixedLineLength => Format.FixedLineLength;
+        public ColumnsLayout ColumnsLayout => Format.ColumnsLayout;
+        public DocumentFormat Format { get; }
         /// <summary>
         /// Changing the value of this property work only if we discard current FileCompilers and recreate them. 
         /// So it is a bit misleading.

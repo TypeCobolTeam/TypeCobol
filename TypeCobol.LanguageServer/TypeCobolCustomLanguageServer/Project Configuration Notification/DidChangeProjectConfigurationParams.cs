@@ -5,7 +5,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
     class DidChangeProjectConfigurationParams
     {
         /// <summary>
-        /// The unique key of the associated project.
+        /// The unique key of the target project.
+        /// Keys are not case sensitive.
         /// </summary>
         public string ProjectKey { get; set; }
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +9,6 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.APIHelpers;
-using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServer
 {
@@ -49,6 +47,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
         /// <param name="project">The associated CompilationProject instance</param>
+        /// <param name="workspace">The owner workspace</param>
         internal WorkspaceProject(string projectKey, CompilationProject project, Workspace workspace)
         {
             this.ProjectKey = projectKey;
@@ -88,97 +87,105 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Determines if the given list of copy folders is different from those of the current SourceFileProvider instance.
+        /// Get the set of copy folders
         /// </summary>
-        /// <param name="copyFolders">The list of copy folders</param>
-        /// <returns>True if copyFolders represents a new set of copy folders, false otherwise.</returns>
-        private bool SourceFileProviderNeedsToBeUpdated(List<string> copyFolders)
+        /// <returns>The set of copy folders</returns>
+        private HashSet<string> GetCopyFolders()
         {
-            if (copyFolders.Count != Project.SourceFileProvider.CobolLibraries.Count)
-                return true;// The size of the list are different
-            HashSet<string> srcFileProviderFolders = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var cblLib in Project.SourceFileProvider.CobolLibraries)
+            var result = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+            foreach (var cobolLibrary in Project.SourceFileProvider.CobolLibraries)
             {
-                if (cblLib is LocalDirectoryLibrary localDirLib)
+                if (cobolLibrary is LocalDirectoryLibrary localDirectoryLibrary)
                 {
-                    srcFileProviderFolders.Add(localDirLib.RootDirectory.FullName);
+                    result.Add(localDirectoryLibrary.RootDirectory.FullName);
                 }
             }
-            foreach (var cpyFolder in copyFolders)
-            {
-                string fullPath = Path.GetFullPath(cpyFolder);
-                if (!srcFileProviderFolders.Contains(fullPath))
-                    return true;
-            }
-            return false;
+
+            return result;
         }
 
         /// <summary>
-        /// Update the source file provider associated to this project with the given list of Copy Folders.
+        /// Compare two Copy folders set
         /// </summary>
-        /// <param name="copyFolders">The new list of Copy Folders.</param>
-        /// <param name="documentFormat">The DocumentFormat to be used</param>
-        /// <returns>true if the SourcefileProvider has changed, false otherwise.</returns>
-        private bool UpdateSourceFileProvider(List<string> copyFolders, DocumentFormat documentFormat)
+        /// <param name="oldCopyFolders">The Old set</param>
+        /// <param name="newCopyFolders">The nes set</param>
+        /// <returns></returns>
+        private static bool AreCopyFoldersSame(HashSet<string> oldCopyFolders, List<string> newCopyFolders)
         {
-            if (!SourceFileProviderNeedsToBeUpdated(copyFolders))
+            if (oldCopyFolders.Count != newCopyFolders.Count)
+                return true;// The size of the list are different
+
+            foreach (var newCopyFolder in newCopyFolders)
             {
-                return false;
+                string fullPath = Path.GetFullPath(newCopyFolder);
+                if (!oldCopyFolders.Contains(fullPath))
+                    return true;
             }
-            // Now set new copy Directories
-            Project.SourceFileProvider.RemoveAllLibraries();
-            foreach (var copyFolder in copyFolders)
-            {
-                Project.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
-                    Helpers.DEFAULT_COPY_EXTENSIONS, documentFormat.Encoding,
-                    documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength);
-            }
-            return true;
+
+            return false;
         }
 
         /// <summary>
         /// Configure this project
         /// </summary>
-        /// <param name="format"></param>
-        /// <param name="options"></param>
-        /// <param name="analyzerProviderWrapper"></param>
-        /// <param name="copyFolders">The list of copy folders associated to this project</param>
+        /// <param name="format">The new Document format if any, null otherwise</param>
+        /// <param name="options">The new options if any, null otherwise</param>
+        /// <param name="analyzerProviderWrapper">The new Analyzer provider if any, null otherwise</param>
+        /// <param name="copyFolders">The new list of copy folders associated to this project if any, null otherwise</param>
         public void Configure(DocumentFormat format, TypeCobolOptions options, AnalyzerProviderWrapper analyzerProviderWrapper, List<string> copyFolders)
         {
-            bool bUpdated = false;
-            if (format != null && options != null && analyzerProviderWrapper != null)
+            bool updateFormat = false;
+            var newFormat = Project.Format;
+            if (format != null)
             {
-                if (copyFolders == null)
-                {   // Use current copy folder list from the current project.
-                    copyFolders = new List<string>();
-                    foreach (var cblLib in Project.SourceFileProvider.CobolLibraries)
-                    {
-                        if (cblLib is LocalDirectoryLibrary localDirLib)
-                        {
-                            copyFolders.Add(localDirLib.RootDirectory.FullName);
-                        }
-                    }
+                updateFormat = true;
+                newFormat = format;
+            }
+
+            bool updateOptions = false;
+            var newOptions = Project.CompilationOptions;
+            if (options != null)
+            {
+                updateOptions = true;
+                newOptions = options;
+            }
+
+            bool updateAnalyzerProvider = false;
+            var newAnalyzerProvider = Project.AnalyzerProvider;
+            if (analyzerProviderWrapper != null)
+            {
+                updateAnalyzerProvider = true;
+                newAnalyzerProvider = analyzerProviderWrapper;
+            }
+
+            var oldCopyFolders = GetCopyFolders();
+            bool updateCopyFolders = false;
+            var newCopyFolders = oldCopyFolders.ToList();
+            if (copyFolders != null && AreCopyFoldersSame(oldCopyFolders, copyFolders))
+            {
+                updateCopyFolders = true;
+                newCopyFolders = copyFolders;
+            }
+
+            if (updateFormat || updateOptions || updateAnalyzerProvider || updateCopyFolders)
+            {
+                var oldCompilationProject = Project;
+                var newCompilationProject = new CompilationProject(oldCompilationProject.Name, oldCompilationProject.RootDirectory, Helpers.DEFAULT_EXTENSIONS, newFormat, newOptions, newAnalyzerProvider);
+                foreach (var newCopyFolder in newCopyFolders)
+                {
+                    newCompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(newCopyFolder, false, Helpers.DEFAULT_COPY_EXTENSIONS, newFormat);
                 }
 
-                Project = new CompilationProject(Project.Name, Project.RootDirectory, Helpers.DEFAULT_EXTENSIONS,
-                    format, options, analyzerProviderWrapper);
+                Project = newCompilationProject;
                 // Change the target CompilationProject instance for each document.
                 foreach (var docCtx in _openedDocuments.Values)
                 {
                     docCtx.FileCompiler.CompilationProject = Project;
                 }
-                bUpdated = true;
-            } 
-            if (copyFolders != null && UpdateSourceFileProvider(copyFolders, format)) 
-            { 
-                bUpdated = true;
-            }
-            if (bUpdated && !IsEmpty)
-            {
-                _workspace.ScheduleRefresh(this);
+                _workspace.ScheduleRefresh(this, updateCopyFolders);
             }
         }
-        
+
         /// <summary>
         /// Indicates whether this workspace project has opened documents or not.
         /// </summary>
@@ -189,7 +196,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         internal void RefreshOpenedFiles()
         {
-            _workspace.ScheduleRefresh(this);
+            _workspace.ScheduleRefresh(this, true);
         }
     }
 }
