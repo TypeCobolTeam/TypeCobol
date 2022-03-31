@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Model
@@ -22,6 +21,4 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected abstract bool VisitSqlObject([NotNull] ISqlVisitor visitor);
     }
-
- 
 }
