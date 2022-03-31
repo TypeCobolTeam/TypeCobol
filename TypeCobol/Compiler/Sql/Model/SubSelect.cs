@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.Sql.Model
 {
-    public class SubSelect : SqlObject 
+    public class SubSelect : SqlObject
     {
         public SubSelect(SelectClause selectClause, FromClause fromClause)
         {
@@ -23,21 +23,11 @@ namespace TypeCobol.Compiler.Sql.Model
         //FetchClause
         public override void Dump(TextWriter output, int indentLevel)
         {
-            string indent = new string(' ', 2 * indentLevel);
-            output.Write(indent);
-            output.WriteLine("SubSelect");
-            if (this.SelectClause != null)
-            {
-                this.SelectClause.Dump(output,indentLevel+1);
-            }
-            if ( this.FromClause!=null)
-            {
-                output.WriteLine("FromClause");
-                this.FromClause.Dump(output,indentLevel+1);
-            }
+            DumpProperty(output, nameof(SelectClause), SelectClause, indentLevel);
+            DumpProperty(output, nameof(FromClause), FromClause, indentLevel);
             
         }
-        
+
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return visitor.Visit(this) && visitor.ContinueVisit(SelectClause, FromClause);

@@ -459,6 +459,9 @@ namespace TypeCobol.Test.Utils
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
         }
     }
+    /// <summary>
+    /// Selects the SQL code elements
+    /// </summary>
     internal class SqlComparator : FilesComparator
     {
         private class ASTVisitor : AbstractAstVisitor 
@@ -474,15 +477,13 @@ namespace TypeCobol.Test.Utils
             {
                 _writer.WriteLine("line" + line + ":SelectStatement");
                 line++;
-                if (selectStatement.FullSelect != null)
-                {
-                    selectStatement.FullSelect.Dump(_writer, 1);
-                }
+                SqlObject.DumpProperty(_writer, nameof(selectStatement.FullSelect), selectStatement.FullSelect, 1);
                 return true;
             }
 
             public override bool Visit(CommitStatement commitStatement)
             {
+                _writer.WriteLine("line" + line + ":CommitStatement");
                 return true;
             }
         }

@@ -25,6 +25,37 @@ namespace TypeCobol.Compiler.Sql.Model
             output.Write(indent);
         }
 
+        public static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write($"{indent}- {name} = ");
+            if (value == null)
+            {
+                output.WriteLine("<NULL>");
+            }
+            else if (value is SqlObject sqlObject)
+            {
+                output.WriteLine(sqlObject.GetType().Name);
+                sqlObject.Dump(output, indentLevel + 1);
+            }
+            else if (value is System.Collections.IEnumerable enumerable)
+            {
+                output.WriteLine("[");
+                int index = 0;
+                foreach (var item in enumerable)
+                {
+                    DumpProperty(output, name + index, item, indentLevel + 1);
+                    index++;
+                }
+                output.WriteLine(indent + "]");
+            }
+            else
+            {
+                output.WriteLine(value);
+            }
+        }
+
+
         protected abstract bool VisitSqlObject([NotNull] ISqlVisitor visitor);
     }
 }

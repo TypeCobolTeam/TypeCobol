@@ -24,18 +24,8 @@ namespace TypeCobol.Compiler.Sql.Model
 
         public override void Dump(TextWriter output, int indentLevel)
         {
-            string indent = new string(' ', 2 * indentLevel);
-            output.Write(indent);
-            output.WriteLine("FullSelect");
-            if (this.SubQuery != null)
-            { 
-                output.WriteLine("SubQuery");
-                this.SubQuery.Dump(output,indentLevel+1);
-            }
-            if (this.SubSelect != null)
-            {
-                this.SubSelect.Dump(output,indentLevel+1);
-            }
+            DumpProperty(output, nameof(SubSelect), SubSelect, indentLevel);
+            DumpProperty(output, nameof(SubQuery), SubQuery, indentLevel);
         }
 
         //TODO

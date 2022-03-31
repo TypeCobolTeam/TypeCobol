@@ -60,57 +60,10 @@ namespace TypeCobol.Compiler.Sql.Model
             SelectionModifier = selectionModifier;
             _selections = selections?.ToArray() ?? Array.Empty<Selection>();
         }
-
-        private static void DumpSelection(TextWriter output, Selection selection)
-        {   
-            ///TODO
-            switch (selection.Type)
-            {
-                case SelectionType.DotStar:
-                    output.Write("DotStarSelection");
-                    break;
-                case SelectionType.Expression:
-                    output.Write("ExpressionSelection");
-                    break;
-                case SelectionType.Star:
-                    output.Write("StarSelection");
-                    break;
-
-            }
-        }
-        public override void Dump(TextWriter output, int indentLevel)
+        public override void Dump(TextWriter output, int indentLevel) 
         {
-            string indent = new string(' ', 2 * indentLevel);
-            output.Write(indent);
-            output.WriteLine("SelectClause");
-            indentLevel++;
-            if (this.SelectionModifier != null)
-            {
-                output.Write(new string(' ',2* indentLevel));
-                output.WriteLine("- SelectionModifier=<" + this.SelectionModifier + ">");
-            }
-            if (this.Selections != null)
-            {
-                output.Write(new string(' ', 2 * indentLevel));
-                indentLevel++;
-                output.WriteLine("- Selections =[");
-                int i = 1;
-                foreach (var selection in this.Selections)
-                {
-                    output.Write(new string(' ', 2 * (indentLevel+1)));
-                    DumpSelection(output,selection);
-                    if (Selections.Last() == selection)
-                    {
-                        output.WriteLine();
-                    }
-                    else
-                    {
-                        output.WriteLine(",");
-                    }
-                }
-                output.Write(new string(' ', indentLevel));
-                output.WriteLine(" ]");
-            }
+            DumpProperty(output, "SelectionModifier", this.SelectionModifier, indentLevel);
+            DumpProperty(output, "Selections", this.Selections, indentLevel);
         }
 
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }
