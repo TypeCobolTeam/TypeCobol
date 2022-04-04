@@ -4,7 +4,7 @@ using TypeCobol.Compiler.CodeElements;
 namespace TypeCobol.Compiler.Sql.Model
 {
     
-    public class SingleTableReference 
+    public class SingleTableReference : SqlObject
     {
         public TableViewCorrelationName TableOrViewName { get; }
         public CorrelationClause CorrelationClause {get;}
@@ -14,9 +14,14 @@ namespace TypeCobol.Compiler.Sql.Model
             this.CorrelationClause = correlation;
             TableOrViewName = tableOrViewName;
         }
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 
-    public class CorrelationClause
+    public class CorrelationClause : SqlObject
     {
         public SymbolReference CorrelationName {get;}
         public List<SymbolReference> NewColumnNames {get;}
@@ -27,5 +32,9 @@ namespace TypeCobol.Compiler.Sql.Model
             NewColumnNames = newColumnNames;
         }
 
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 }

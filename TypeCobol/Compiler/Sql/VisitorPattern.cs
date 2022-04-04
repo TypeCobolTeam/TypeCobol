@@ -20,6 +20,8 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] SelectClause selectClause);
         bool Visit([NotNull] FromClause fromClause);
         bool Visit([NotNull] TableViewCorrelationName tableViewCorrelationName);
+        bool Visit([NotNull] SingleTableReference singleTableReference);
+        bool Visit([NotNull] CorrelationClause correlationClause);
     }
 
     /// <summary>
@@ -36,6 +38,8 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(SelectClause selectClause) => true;
         public virtual bool Visit(FromClause fromClause) => true;
         public virtual bool Visit(TableViewCorrelationName tableViewCorrelationName) => true;
+        public virtual bool Visit(SingleTableReference singleTableReference) => true;
+        public virtual bool Visit(CorrelationClause correlationClause) => true;
     }
 
     /// <summary>
