@@ -46,11 +46,6 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     return ScanOneChar(startIndex, TokenType.SQL_CommaSeparator);
                 case '.':
                     return ScanOneChar(startIndex, TokenType.PeriodSeparator);
-                case '(':
-                    return ScanOneChar(startIndex, TokenType.LeftParenthesisSeparator);
-                case ')':
-                    return ScanOneChar(startIndex, TokenType.RightParenthesisSeparator);
-
             }
 
             if (IsSqlKeywordPart(line[currentIndex]))
@@ -67,8 +62,6 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     case TokenType.SQL_ALL:
                     case TokenType.SQL_DISTINCT:
                     case TokenType.UserDefinedWord:
-                    case TokenType.SQL_FROM:
-                    case TokenType.SQL_AS:
                         return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
                     //Unrecognized keyword (for now) return as ExecStatementText
                     default:
