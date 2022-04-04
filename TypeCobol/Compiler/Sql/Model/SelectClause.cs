@@ -20,34 +20,62 @@ namespace TypeCobol.Compiler.Sql.Model
         TableOrViewAllColumns
     }
 
-    public abstract class Selection
+    public abstract class Selection : SqlObject
     {
         public abstract SelectionType Type { get; }
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 
     public class StarSelection : Selection
     {
         public override SelectionType Type => SelectionType.Star;
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return base.VisitSqlObject(visitor) && visitor.Visit(this);
+        }
     }
 
     public class ExpressionSelection : Selection
     {
         public override SelectionType Type => SelectionType.Expression;
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return base.VisitSqlObject(visitor) && visitor.Visit(this);
+        }
     }
 
     public class UnpackedRowSelection : Selection
     {
         public override SelectionType Type => SelectionType.UnpackedRow;
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return base.VisitSqlObject(visitor) && visitor.Visit(this);
+        }
     }
 
     public class TableOrViewAllColumnsSelection : Selection
     {
         public TableViewCorrelationName TableOrViewOrCorrelationName { get; }
+
         public override SelectionType Type => SelectionType.TableOrViewAllColumns;
 
-        public  TableOrViewAllColumnsSelection(TableViewCorrelationName tableOrViewOrCorrelationName)
+        public TableOrViewAllColumnsSelection(TableViewCorrelationName tableOrViewOrCorrelationName)
         {
             this.TableOrViewOrCorrelationName = tableOrViewOrCorrelationName;
+        }
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return base.VisitSqlObject(visitor) &&
+                   visitor.Visit(this) &&
+                   visitor.ContinueVisit(TableOrViewOrCorrelationName);
         }
     }
 
@@ -75,7 +103,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this);
+            return visitor.Visit(this) && visitor.ContinueVisit(Selections);
         }
     }
 }

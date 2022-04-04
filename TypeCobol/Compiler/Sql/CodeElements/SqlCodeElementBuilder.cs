@@ -179,14 +179,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         QualifiedSymbolReference head = new QualifiedSymbolReference(topLevelQualifier, qualifier);
                         SymbolReference fullName= new QualifiedSymbolReference(head, name);
                         return fullName;
-
                     }
                     else
                     {
                         SymbolReference fullName = new QualifiedSymbolReference(qualifier, name);
                         return fullName;
-
-
                     }
                 }
                 else
