@@ -4,12 +4,13 @@ namespace TypeCobol.Compiler.Sql.Model
 {
     public class TableViewCorrelationName : SqlObject
     {
-        private readonly SymbolReference _tableViewOrCorrelation;
+        public SymbolReference Name { get; }
 
-        public TableViewCorrelationName(SymbolReference tableViewOrCorrelation)
+        public TableViewCorrelationName(SymbolReference name)
         {
-            _tableViewOrCorrelation = tableViewOrCorrelation;
+            Name = name;
         }
+
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return visitor.Visit(this);

@@ -11,8 +11,7 @@ using TypeCobol.Test.Parser.Scanner;
 using TypeCobol.Test.Parser.Text;
 using TypeCobol.Test.Utils;
 
-namespace TypeCobol.Test
-{
+namespace TypeCobol.Test {
 
     [TestClass]
     public class TestCollection
@@ -131,8 +130,7 @@ namespace TypeCobol.Test
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-        public void CheckCodeElements()
-        {
+        public void CheckCodeElements() {
             // Test the recognition of potentially ambiguous CodeElements which begin with the same first Token
             TestCodeElements.Check_DISPLAYCodeElements();
 
@@ -143,8 +141,7 @@ namespace TypeCobol.Test
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-        public void CheckToken()
-        {
+        public void CheckToken() {
             TestTokenSource.Check_CobolCharStream();
             TestTokenSource.Check_CobolTokenSource();
             TestTokenSource.Check_CobolTokenSource_WithStartToken();
@@ -164,8 +161,8 @@ namespace TypeCobol.Test
             {
                 var dirname = Path.GetFileName(directory);
 
-                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(root, root, directory, extensions);
+			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+				var folderTester = new FolderTester(root, root, directory, extensions);
                 try
                 {
                     folderTester.Test(isCobolLanguage: cobol);
@@ -244,7 +241,7 @@ namespace TypeCobol.Test
             string tempRoot = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "EILegacy");
 
             int nbOfTests = 0;
-            string[] extensions = { ".tcbl", ".cbl" };
+            string[] extensions = {".tcbl", ".cbl"};
 
             //Do not parse unsupported remarks, they are covered in a separate test
             var folderTester = new FolderTester(tempRoot, tempRoot, tempRoot, extensions, deep: false);
@@ -296,28 +293,28 @@ namespace TypeCobol.Test
 
             var compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.Scanner);
             //Verify that the option hasn't change during processing and that compilation process didn't go further than defined step
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Scanner
-                && compileResult.TokensLines.Count == 0
-                && compileResult.ProcessedTokensDocumentSnapshot != null
-                && compileResult.CodeElementsDocumentSnapshot != null
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Scanner 
+                && compileResult.TokensLines.Count == 0 
+                && compileResult.ProcessedTokensDocumentSnapshot != null 
+                && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Scanner Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.Preprocessor);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor
-                && compileResult.ProcessedTokensDocumentSnapshot == null
-                && compileResult.CodeElementsDocumentSnapshot != null
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor 
+                && compileResult.ProcessedTokensDocumentSnapshot == null 
+                && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Preprocessor Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SyntaxCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck
-                && compileResult.CodeElementsDocumentSnapshot == null
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
+                && compileResult.CodeElementsDocumentSnapshot == null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SyntaxCheck Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SemanticCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
                 && !compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SemanticCheck Step failed");
         }
