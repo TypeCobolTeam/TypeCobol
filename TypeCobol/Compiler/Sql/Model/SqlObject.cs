@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Sql.Model
             output.Write(indent);
         }
 
-        public static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
+        protected static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write($"{indent}- {name} = ");

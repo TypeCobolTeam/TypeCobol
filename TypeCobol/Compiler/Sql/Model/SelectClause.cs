@@ -62,8 +62,8 @@ namespace TypeCobol.Compiler.Sql.Model
         }
         public override void Dump(TextWriter output, int indentLevel) 
         {
-            DumpProperty(output, "SelectionModifier", this.SelectionModifier, indentLevel);
-            DumpProperty(output, "Selections", this.Selections, indentLevel);
+            DumpProperty(output, nameof(this.SelectionModifier), this.SelectionModifier, indentLevel);
+            DumpProperty(output, nameof(this.Selections), this.Selections, indentLevel);
         }
 
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }
