@@ -3,7 +3,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
             EXEC SQL 
-             SELECT i.i.d.* , e.i.*
+             SELECT i.i.d.* , e.i.* FROM a
             END-EXEC.
        PROCEDURE DIVISION.
            GOBACK

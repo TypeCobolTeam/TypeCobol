@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -45,9 +46,76 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 selectClause = CreateSelectClause(context.sql_selectClause());
             }
-
+            if (context.from_clause() != null)
+            {
+                fromClause = CreateFromClause(context.from_clause());
+            }
             return new SubSelect(selectClause, fromClause);
+        }
 
+        private FromClause CreateFromClause(CodeElementsParser.From_clauseContext context)
+        {
+            var tableReferences = new List<SingleTableReference>();
+            if (context.table_references() != null)
+            {
+                foreach (var tableContext in context.table_references().table_reference())
+                {
+                    SingleTableReference tableReference = CreateSingleTableOrViewReferences(tableContext);
+                    tableReferences.Add(tableReference);
+                }
+
+                return new FromClause(tableReferences);
+            }
+
+            return null;
+        }
+
+        public SingleTableReference CreateSingleTableOrViewReferences(CodeElementsParser.Table_referenceContext context)
+        {
+            SymbolReference table = CreateTableOrViewOrCorrelationName(context
+                .single_table_or_view_reference().tableOrViewOrCorrelationName());
+            TableViewCorrelationName tableRef = new TableViewCorrelationName(table);
+            CorrelationClause correlationClause = null;
+            if ((context.single_table_or_view_reference().correlation_clause() != null))
+            {
+                 correlationClause =
+                    CreateCorrelationClause(context.single_table_or_view_reference().correlation_clause());
+            }
+            SingleTableReference tableReference = new SingleTableReference(tableRef, correlationClause);
+            return tableReference;
+        }
+
+        public CorrelationClause CreateCorrelationClause(CodeElementsParser.Correlation_clauseContext context)
+        {
+            Token correlationNameToken = context.correlation_name as Token;
+            SymbolReference correlationName = new SymbolReference(
+                new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
+
+            if (context.new_column_names() != null)
+            {
+                List<SymbolReference> newColumnNamesList = new List<SymbolReference>();
+                foreach (var columnName in context.new_column_names().new_column_name())
+                {
+                    SymbolReference newColumnName = new SymbolReference(
+                        new AlphanumericValue(columnName.start as Token),
+                        SymbolType.SqlIdentifier);
+                    newColumnNamesList.Add(newColumnName);
+                }
+                CorrelationClause correlationClause = new CorrelationClause(correlationName, newColumnNamesList);
+                return correlationClause;
+            }
+            return null;
+        }
+
+           
+
+        private SymbolReference CreateTableOrViewOrCorrelationName(CodeElementsParser.TableOrViewOrCorrelationNameContext tableOrViewOrCorrelationName)
+        {
+            Token name = tableOrViewOrCorrelationName.Name as Token;
+            Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+            Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+            SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+            return fullName;
         }
 
         private SelectClause CreateSelectClause(CodeElementsParser.Sql_selectClauseContext context)
