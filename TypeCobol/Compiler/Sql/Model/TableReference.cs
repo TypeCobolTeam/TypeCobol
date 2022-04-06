@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.Sql.Model
     
     public class SingleTableReference : SqlObject
     {
-        public TableViewCorrelationName TableOrViewName { get; }
+        public TableViewCorrelationName TableOrViewName { get;}
         public CorrelationClause CorrelationClause {get;}
 
         public SingleTableReference(TableViewCorrelationName tableOrViewName, CorrelationClause correlation)
@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this);
+            return visitor.Visit(this) && visitor.ContinueVisit(TableOrViewName, CorrelationClause); 
         }
     }
 

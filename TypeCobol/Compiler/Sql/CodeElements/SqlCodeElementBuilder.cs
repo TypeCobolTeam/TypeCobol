@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 foreach (var tableContext in context.table_references().table_reference())
                 {
-                    SingleTableReference tableReference = CreateSingleTableOrViewReferences(tableContext);
+                    SingleTableReference tableReference = CreateSingleTableOrViewReference(tableContext);
                     tableReferences.Add(tableReference);
                 }
 
@@ -70,11 +70,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
-        public SingleTableReference CreateSingleTableOrViewReferences(CodeElementsParser.Table_referenceContext context)
+        private SingleTableReference CreateSingleTableOrViewReference(CodeElementsParser.Table_referenceContext context)
         {
-            SymbolReference table = CreateTableOrViewOrCorrelationName(context
+            TableViewCorrelationName tableRef = CreateTableOrViewOrCorrelationName(context
                 .single_table_or_view_reference().tableOrViewOrCorrelationName());
-            TableViewCorrelationName tableRef = new TableViewCorrelationName(table);
             CorrelationClause correlationClause = null;
             if ((context.single_table_or_view_reference().correlation_clause() != null))
             {
@@ -85,7 +84,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return tableReference;
         }
 
-        public CorrelationClause CreateCorrelationClause(CodeElementsParser.Correlation_clauseContext context)
+        private CorrelationClause CreateCorrelationClause(CodeElementsParser.Correlation_clauseContext context)
         {
             Token correlationNameToken = context.correlation_name as Token;
             SymbolReference correlationName = new SymbolReference(
@@ -109,13 +108,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
            
 
-        private SymbolReference CreateTableOrViewOrCorrelationName(CodeElementsParser.TableOrViewOrCorrelationNameContext tableOrViewOrCorrelationName)
+        private TableViewCorrelationName CreateTableOrViewOrCorrelationName(CodeElementsParser.TableOrViewOrCorrelationNameContext tableOrViewOrCorrelationName)
         {
             Token name = tableOrViewOrCorrelationName.Name as Token;
             Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
             Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
             SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
-            return fullName;
+            return new TableViewCorrelationName(fullName);
         }
 
         private SelectClause CreateSelectClause(CodeElementsParser.Sql_selectClauseContext context)

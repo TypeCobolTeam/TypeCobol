@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.Sql.Model
         }
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this);
+            return visitor.Visit(this) && visitor.ContinueVisit(TableReferences);
         }
     }
 }

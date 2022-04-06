@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] SubSelect subSelect);
         bool Visit([NotNull] SelectClause selectClause);
         bool Visit([NotNull] FromClause fromClause);
-        bool Visit([NotNull] TableViewCorrelationName tableViewCorrelationName);      
+        bool Visit([NotNull] TableViewCorrelationName tableViewCorrelationName);
         bool Visit([NotNull] Selection selection);
         bool Visit([NotNull] StarSelection starSelection);
         bool Visit([NotNull] SingleTableReference singleTableReference);
