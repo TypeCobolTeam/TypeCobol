@@ -19,10 +19,21 @@ namespace TypeCobol.Analysis.Graph
             get;
             protected internal set;
         }
+
+        /// <summary>
+        /// Any tag associated to this block.
+        /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// The associated multi branch context if any, null otherwise
         /// </summary>
         public IMultiBranchContext<N,D> Context { get; internal set; }
+
         /// <summary>
         /// Instructions making up this block.
         /// </summary>
@@ -70,8 +81,7 @@ namespace TypeCobol.Analysis.Graph
             Declaratives = 0x01 << 2,   //Flag if this basic block is inside a declaratives section.
             Start = 0x01 << 3,          //Flag for a start node.
             End = 0x01 << 4,            //Flag for a end node.
-            GroupGrafted = 0x01 << 5,   //Flag a Grafted Group.
-            Recursive = 0x01 << 6       //Flag a recursive block
+            GroupGrafted = 0x01 << 5   //Flag a Grafted Group.
         }
 
         /// <summary>
@@ -118,6 +128,7 @@ namespace TypeCobol.Analysis.Graph
         {
             return instruction == null ? "<null>" : instruction.ToString();
         }
+
         /// <summary>
         /// String representation of a block.
         /// </summary>

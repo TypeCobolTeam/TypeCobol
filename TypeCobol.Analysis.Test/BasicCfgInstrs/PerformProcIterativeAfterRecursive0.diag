@@ -1,2 +1,0 @@
---- Diagnostics ---
-Line 16[15,64] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec  varying n from 1 by 1 until n > 5'.

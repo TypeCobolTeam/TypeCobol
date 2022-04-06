@@ -33,11 +33,6 @@
     <Compile Include="Cfg\ControlFlowGraphBuilder.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.DeclarativesContext.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.MultiBranchContext.cs" />
-    <Compile Include="Cfg\ControlFlowGraphBuilder.Paragraph.cs" />
-    <Compile Include="Cfg\ControlFlowGraphBuilder.Procedure.cs" />
-    <Compile Include="Cfg\ControlFlowGraphBuilder.ProcedureDivisionRegion.cs" />
-    <Compile Include="Cfg\ControlFlowGraphBuilder.Section.cs" />
-    <Compile Include="Cfg\ControlFlowGraphBuilder.Sentence.cs" />
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
     <Compile Include="Dfa\DataFlowGraphBuilder.cs" />
     <Compile Include="Dfa\DfaBasicBlockInfo.cs" />
@@ -49,6 +44,12 @@
     <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
     <Compile Include="Graph\ControlFlowGraph.cs" />
     <Compile Include="Graph\ControlFlowGraph.Dominator.cs" />
+    <Compile Include="Graph\ControlFlowGraph.JumpTarget.cs" />
+    <Compile Include="Graph\ControlFlowGraph.Paragraph.cs" />
+    <Compile Include="Graph\ControlFlowGraph.Procedure.cs" />
+    <Compile Include="Graph\ControlFlowGraph.ProcedureDivisionRegion.cs" />
+    <Compile Include="Graph\ControlFlowGraph.Section.cs" />
+    <Compile Include="Graph\ControlFlowGraph.Sentence.cs" />
     <Compile Include="Graph\ICfgFileGenerator.cs" />
     <Compile Include="Graph\ICfgTransform.cs" />
     <Compile Include="Graph\IMultiBranchContext.cs" />

@@ -91,11 +91,6 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public TypeCobolCheckOption CheckPerformThruOrder { get; set; }
 
-        /// <summary>
-        /// Check that perform statement are not recursive, requires CFG.
-        /// </summary>
-        public TypeCobolCheckOption CheckRecursivePerforms { get; set; }
-
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
@@ -114,7 +109,6 @@ namespace TypeCobol.Compiler.Directives
             CheckEndProgram = config.CheckEndProgram;
             CheckPerformPrematureExits = config.CheckPerformPrematureExits;
             CheckPerformThruOrder = config.CheckPerformThruOrder;
-            CheckRecursivePerforms = config.CheckRecursivePerforms;
         }
 
         public TypeCobolOptions()

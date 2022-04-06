@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace TypeCobol.Analysis.Cfg
+namespace TypeCobol.Analysis.Graph
 {
-    public partial class ControlFlowGraphBuilder<D>
+    public partial class ControlFlowGraph<N, D>
     {
         /// <summary>
         /// A Paragraph used by a CFG, it contains sentences.
         /// Also in CFG, paragraphs always have a parent section.
         /// </summary>
-        private class Paragraph : Procedure
+        public class Paragraph : Procedure
         {
             private List<Sentence> _sentences;
 
@@ -26,7 +26,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="name">Name of the paragraph.</param>
             /// <param name="parentSection">Section in which this paragraph is declared.</param>
             /// <remarks>The paragraph is added into the supplied parent section.</remarks>
-            public Paragraph(int number, string name, Section parentSection)
+            internal Paragraph(int number, string name, Section parentSection)
                 : base(number, name)
             {
                 _sentences = null;
@@ -38,7 +38,7 @@ namespace TypeCobol.Analysis.Cfg
             /// Add a sentence to this paragraph.
             /// </summary>
             /// <param name="sentence">The sentence to be added.</param>
-            public override void AddSentence(Sentence sentence)
+            internal override void AddSentence(Sentence sentence)
             {
                 if (_sentences == null)
                 {
@@ -58,7 +58,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
             }
 
-            public override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
+            internal override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
             {
                 if (_sentences != null)
                     sentences.AddRange(_sentences);

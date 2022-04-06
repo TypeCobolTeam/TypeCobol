@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Analysis.Graph;
@@ -10,7 +9,9 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+
 using SectionNode = TypeCobol.Compiler.Nodes.Section;
+using ParagraphNode = TypeCobol.Compiler.Nodes.Paragraph;
 
 namespace TypeCobol.Analysis.Cfg
 {
@@ -87,7 +88,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The current section.
         /// </summary>
-        private Section CurrentSection
+        private ControlFlowGraph<Node, D>.Section CurrentSection
         {
             get;
             set;
@@ -96,7 +97,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The current paragraph.
         /// </summary>
-        private Paragraph CurrentParagraph
+        private ControlFlowGraph<Node, D>.Paragraph CurrentParagraph
         {
             get;
             set;
@@ -105,7 +106,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The current Sentence in the current Paragraph.
         /// </summary>
-        private Sentence CurrentSentence
+        private ControlFlowGraph<Node, D>.Sentence CurrentSentence
         {
             get;
             set;
@@ -114,7 +115,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// List of all Sections and Paragraphs encountered in order.
         /// </summary>
-        private List<Procedure> AllProcedures { get; }
+        private List<ControlFlowGraph<Node, D>.Procedure> AllProcedures { get; }
 
         /// <summary>
         /// All pending Goto instructions that will be handled at the end of the Procedure Division.
@@ -139,12 +140,12 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// All pending Next Sentence instructions that will be handled at the end of the Procedure Division.
         /// </summary>
-        private LinkedList<Tuple<BasicBlockForNode, Sentence>> PendingNextSentences;
+        private LinkedList<Tuple<BasicBlockForNode, ControlFlowGraph<Node, D>.Sentence>> PendingNextSentences;
 
         /// <summary>
         /// All encountered sentences
         /// </summary>
-        private List<Sentence> AllSentences;
+        private List<ControlFlowGraph<Node, D>.Sentence> AllSentences;
 
         /// <summary>
         /// Stores all node statements encountered during building. The associated bool indicates
@@ -180,7 +181,7 @@ namespace TypeCobol.Analysis.Cfg
             this._compilerOptions = compilerOptions;
             this.Graphs = new List<ControlFlowGraph<Node, D>>();
             this.AddDiagnostic = DiagnosticList.Add;
-            this.AllProcedures = new List<Procedure>();
+            this.AllProcedures = new List<ControlFlowGraph<Node, D>.Procedure>();
             this.AllStatements = new Dictionary<Node, bool>();
             this.ParentProgramCfgBuilder = null;
             this.ExtendPerformTargets = extendPerformTargets;
@@ -199,7 +200,7 @@ namespace TypeCobol.Analysis.Cfg
             this._compilerOptions = builder._compilerOptions;
             this.Graphs = builder.Graphs;
             this.AddDiagnostic = builder.AddDiagnostic;
-            this.AllProcedures = new List<Procedure>();
+            this.AllProcedures = new List<ControlFlowGraph<Node, D>.Procedure>();
             this.AllStatements = new Dictionary<Node, bool>();
             this.ParentProgramCfgBuilder = asParent ? builder : null;
             this.ExtendPerformTargets = builder.ExtendPerformTargets;
@@ -333,7 +334,7 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.EnterSection((SectionNode)node);
                         break;
                     case CodeElementType.ParagraphHeader:
-                        this.CurrentProgramCfgBuilder.EnterParagraph((Compiler.Nodes.Paragraph)node);
+                        this.CurrentProgramCfgBuilder.EnterParagraph((ParagraphNode)node);
                         break;
                     //Decision
                     case CodeElementType.IfStatement:
@@ -482,7 +483,7 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.LeaveSection((SectionNode)node);
                         break;
                     case CodeElementType.ParagraphHeader:
-                        this.CurrentProgramCfgBuilder.LeaveParagraph((Compiler.Nodes.Paragraph)node);
+                        this.CurrentProgramCfgBuilder.LeaveParagraph((ParagraphNode)node);
                         break;
                     //Decision
                     case CodeElementType.IfStatement:
@@ -632,30 +633,12 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Link this sentence to the current section or paragraph if any.
-        /// </summary>
-        /// <param name="sentence">The sentence to link.</param>
-        private void LinkBlockSentenceToCurrentSectionParagraph(Sentence sentence)
-        {
-            var currentProcedure = (Procedure) this.CurrentProgramCfgBuilder.CurrentParagraph ??
-                                   this.CurrentProgramCfgBuilder.CurrentSection;
-
-            if (currentProcedure != null)
-            {
-                currentProcedure.AddSentence(sentence);
-                
-                //Give to this block the name of its paragraph/section as tag.
-                sentence.FirstBlock.Tag = currentProcedure.Name;
-            }
-        }
-
-        /// <summary>
         /// Starts a new Block Sentence
         /// </summary>
         private void StartBlockSentence()
         {
             if (this.CurrentProgramCfgBuilder.AllSentences == null)
-                this.CurrentProgramCfgBuilder.AllSentences = new List<Sentence>();
+                this.CurrentProgramCfgBuilder.AllSentences = new List<ControlFlowGraph<Node, D>.Sentence>();
 
             int number = this.CurrentProgramCfgBuilder.AllSentences.Count;
             var firstBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, false);
@@ -666,14 +649,13 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(firstBlockIndex.Value);
                 this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(firstBlock);
             }
-            Sentence sentence = new Sentence(number, firstBlock, firstBlockIndex);
+
+            var currentProcedure = (ControlFlowGraph<Node, D>.Procedure) this.CurrentProgramCfgBuilder.CurrentParagraph ?? this.CurrentProgramCfgBuilder.CurrentSection;
+            var sentence = new ControlFlowGraph<Node, D>.Sentence(number, firstBlock, firstBlockIndex, currentProcedure);
             this.CurrentProgramCfgBuilder.AllSentences.Add(sentence);
 
             this.CurrentProgramCfgBuilder.CurrentSentence = sentence;
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = firstBlock;
-
-            //Link this Sentence to its section or paragraph if any.
-            this.CurrentProgramCfgBuilder.LinkBlockSentenceToCurrentSectionParagraph(sentence);
         }
 
         /// <summary>
@@ -792,7 +774,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             int number = this.CurrentProgramCfgBuilder.AllProcedures.Count;
             string name = section.Name;
-            Section cfgSection = new Section(number, name);
+            var cfgSection = new ControlFlowGraph<Node, D>.Section(number, name);
 
             this.CurrentProgramCfgBuilder.AllProcedures.Add(cfgSection);
             _nodeToProcedure.Add(section, cfgSection);
@@ -828,13 +810,13 @@ namespace TypeCobol.Analysis.Cfg
         /// Enter a paragraph
         /// </summary>
         /// <param name="paragraph">The paragraph to be entered</param>
-        protected virtual void EnterParagraph(Compiler.Nodes.Paragraph paragraph)
+        protected virtual void EnterParagraph(ParagraphNode paragraph)
         {
             int number = this.CurrentProgramCfgBuilder.AllProcedures.Count;
             string name = paragraph.Name;
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentSection != null);
-            Section parentSection = this.CurrentProgramCfgBuilder.CurrentSection;
-            Paragraph cfgParagraph = new Paragraph(number, name, parentSection);
+            var parentSection = this.CurrentProgramCfgBuilder.CurrentSection;
+            var cfgParagraph = new ControlFlowGraph<Node, D>.Paragraph(number, name, parentSection);
             //Note that Paragraph constructor adds the newly created paragraph into its parent section.
 
             this.CurrentProgramCfgBuilder.AllProcedures.Add(cfgParagraph);
@@ -850,7 +832,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Leave a paragraph
         /// </summary>
         /// <param name="p">The paragraph to be left</param>
-        protected virtual void LeaveParagraph(Compiler.Nodes.Paragraph p)
+        protected virtual void LeaveParagraph(ParagraphNode p)
         {
             this.CurrentProgramCfgBuilder.CurrentParagraph = null;
             //Current sentence is also null now
@@ -877,10 +859,10 @@ namespace TypeCobol.Analysis.Cfg
                 foreach (var next in this.CurrentProgramCfgBuilder.PendingNextSentences)
                 {
                     BasicBlockForNode block = next.Item1;
-                    Sentence sentence = next.Item2;
+                    var sentence = next.Item2;
                     if (sentence.Number < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
                     {
-                        Sentence nextSentence = this.CurrentProgramCfgBuilder.AllSentences[sentence.Number + 1];
+                        var nextSentence = this.CurrentProgramCfgBuilder.AllSentences[sentence.Number + 1];
                         System.Diagnostics.Debug.Assert(nextSentence.FirstBlockIndex.HasValue);
                         int blockIndex = nextSentence.FirstBlockIndex.Value;
                         System.Diagnostics.Debug.Assert(!block.SuccessorEdges.Contains(blockIndex));
@@ -910,9 +892,8 @@ namespace TypeCobol.Analysis.Cfg
                         case StatementType.GotoSimpleStatement:
                             {
                                 GotoSimpleStatement simpleGoto = (GotoSimpleStatement)@goto.CodeElement;
-                                HashSet<SymbolReference> alteredSymbolRefs = null;
                                 //Check if we have altered GOTOs to take in account.
-                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out alteredSymbolRefs))
+                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out var alteredSymbolRefs))
                                 {
                                     int i = 0;
                                     target = new SymbolReference[alteredSymbolRefs.Count + 1];
@@ -944,7 +925,7 @@ namespace TypeCobol.Analysis.Cfg
 
         #region Section/Paragraph resolution
 
-        private readonly Dictionary<Node, Procedure> _nodeToProcedure = new Dictionary<Node, Procedure>();
+        private readonly Dictionary<Node, ControlFlowGraph<Node, D>.Procedure> _nodeToProcedure = new Dictionary<Node, ControlFlowGraph<Node, D>.Procedure>();
 
         /// <summary>
         /// Resolve a Procedure identified by a SymbolReference.
@@ -986,6 +967,73 @@ namespace TypeCobol.Analysis.Cfg
 
         #endregion
 
+        private readonly Dictionary<Node, ControlFlowGraph<Node, D>.JumpTarget> _jumpTargets = new Dictionary<Node, ControlFlowGraph<Node, D>.JumpTarget>();
+
+        private ControlFlowGraph<Node, D>.JumpTarget ResolvePerformTarget(PerformProcedure performProcedure, SectionNode sectionNode)
+        {
+            if (_jumpTargets.TryGetValue(performProcedure, out var target))
+            {
+                //Already computed, maybe null if unresolved
+                return target;
+            }
+            
+            SymbolReference procedureReference = performProcedure.CodeElement.Procedure;
+            SymbolReference throughProcedureReference = performProcedure.CodeElement.ThroughProcedure;
+
+            Node procedureNode = ResolveProcedure(performProcedure, sectionNode, procedureReference);
+            if (procedureNode == null)
+            {
+                //Cannot resolve starting procedure
+                return Unresolved();
+            }
+
+            var procedure = _nodeToProcedure[procedureNode];
+            var sentences = new List<ControlFlowGraph<Node, D>.Sentence>();
+            var procedures = new List<ControlFlowGraph<Node, D>.Procedure>();
+            if (throughProcedureReference != null)
+            {
+                Node throughProcedureNode = ResolveProcedure(performProcedure, sectionNode, throughProcedureReference);
+                if (throughProcedureNode == null)
+                {
+                    //Cannot resolve ending procedure
+                    return Unresolved();
+                }
+
+                var throughProcedure = _nodeToProcedure[throughProcedureNode];
+                if (procedure.Number > throughProcedure.Number)
+                {
+                    //The second procedure name is declared before the first one.
+                    this.Cfg.AddWrongOrderPerformThru(performProcedure, procedureNode, throughProcedureNode);
+                    return Unresolved();
+                }
+
+                //Accumulate sentences located between the two procedures
+                int currentProcedureNumber = procedure.Number;
+                while (currentProcedureNumber <= throughProcedure.Number)
+                {
+                    var currentProcedure = this.CurrentProgramCfgBuilder.AllProcedures[currentProcedureNumber];
+                    currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
+                    currentProcedureNumber = lastProcedure.Number + 1;
+                    procedures.Add(currentProcedure);
+                }
+            }
+            else
+            {
+                procedures.Add(procedure);
+                sentences.AddRange(procedure);
+            }
+
+            target = new ControlFlowGraph<Node, D>.JumpTarget(sentences, procedures);
+            _jumpTargets.Add(performProcedure, target);
+            return target;
+
+            ControlFlowGraph<Node, D>.JumpTarget Unresolved()
+            {
+                _jumpTargets.Add(performProcedure, null);
+                return null;
+            }
+        }
+
         /// <summary>
         /// Resolve a pending PERFORM procedure
         /// </summary>
@@ -998,54 +1046,18 @@ namespace TypeCobol.Analysis.Cfg
             SectionNode sectionNode = perform.Item2;
             BasicBlockForNodeGroup group = perform.Item3;
 
-            SymbolReference procedureReference = p.CodeElement.Procedure;
-            SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
+            var performTarget = ResolvePerformTarget(p, sectionNode);
+            if (performTarget == null) return;
 
-            Node procedureNode = ResolveProcedure(p, sectionNode, procedureReference);
-            if (procedureNode == null)
-                return;
-
-            Procedure procedure = _nodeToProcedure[procedureNode];
             var clonedBlocksIndexMap = new Dictionary<int, int>();
-            if (throughProcedureReference != null)
-            {
-                Node throughProcedureNode = ResolveProcedure(p, sectionNode, throughProcedureReference);
-                if (throughProcedureNode == null)
-                    return;
-
-                Procedure throughProcedure = _nodeToProcedure[throughProcedureNode];
-                if (procedure.Number > throughProcedure.Number)
-                {
-                    // the second procedure name is declared before the first one.
-                    this.Cfg.AddWrongOrderPerformThru(p, procedureNode, throughProcedureNode);
-                    return;
-                }
-
-                //Accumulate sentences located between the two procedures
-                List<Sentence> sentences = new List<Sentence>();
-                int currentProcedureNumber = procedure.Number;
-                while (currentProcedureNumber <= throughProcedure.Number)
-                {
-                    var currentProcedure = this.CurrentProgramCfgBuilder.AllProcedures[currentProcedureNumber];
-                    currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
-                    currentProcedureNumber = lastProcedure.Number + 1;
-                }
-
-                //Store sentences into the group
-                StoreSentences(sentences);
-            }
-            else
-            {
-                //Store all sentences from the procedure into the group
-                StoreSentences(procedure);
-            }
+            StoreSentences();
 
             //And finally relocate the Graph.
             RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlocksIndexMap);
 
-            void StoreSentences(IEnumerable<Sentence> sentences)
+            void StoreSentences()
             {
-                foreach (var sentence in sentences)
+                foreach (var sentence in performTarget.Sentences)
                 {
                     foreach (var block in sentence.Blocks)
                     {
@@ -1056,16 +1068,6 @@ namespace TypeCobol.Analysis.Cfg
                         if (block is BasicBlockForNodeGroup group0)
                         {
                             isPerform = true; //To avoid a second dynamic cast
-
-                            //Is there a recursion in the graph ?
-                            if (group.RecursivityGroupSet.Get(group0.GroupIndex) && !group0.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
-                            {
-                                //Flag group and store recursive perform
-                                group0.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
-                                Node offendingInstruction = group0.Instructions.Last.Value;
-                                System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                                this.Cfg.AddRecursivePerform(p, offendingInstruction);
-                            }
 
                             var clonedGroup0 = clonedPerforms
                                 .Select(t => t.Item3)
@@ -1101,9 +1103,6 @@ namespace TypeCobol.Analysis.Cfg
                             var clonedGroup = (BasicBlockForNodeGroup) clonedBlock;
                             clonedGroup.Group = new LinkedList<BasicBlock<Node, D>>();
                             clonedGroup.TerminalBlocks = null;
-
-                            group.RecursivityGroupSet.Set(clonedGroup.GroupIndex, true);
-                            clonedGroup.RecursivityGroupSet = new BitArray(group.RecursivityGroupSet);
 
                             var originalPerform = this.CurrentProgramCfgBuilder.PendingPERFORMProcedures
                                 .Single(t => t.Item3 == block);
@@ -1179,8 +1178,6 @@ namespace TypeCobol.Analysis.Cfg
                 //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
-                    item.Item3.RecursivityGroupSet = new BitArray(GroupCounter + 1);
-                    item.Item3.RecursivityGroupSet.Set(item.Item3.GroupIndex, true);
                     ResolvePendingPERFORMProcedure(item, clonedPerforms);
                 }
 
@@ -1198,13 +1195,11 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
                 foreach (var item in clonedPerforms)
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
 
                 //Extend groups according to the current building mode
@@ -1426,28 +1421,6 @@ namespace TypeCobol.Analysis.Cfg
                     AddDiagnostic(d);
                 }
             }
-
-            //RecursiveBlockOnPerformProcedure
-            if (_compilerOptions.CheckRecursivePerforms.IsActive && this.CurrentProgramCfgBuilder.Cfg.RecursivePerforms != null)
-            {
-                foreach (var recursivePerform in this.CurrentProgramCfgBuilder.Cfg.RecursivePerforms)
-                {
-                    var perform = recursivePerform.Key;
-                    SymbolReference procedureReference = perform.CodeElement.Procedure;
-                    SymbolReference throughProcedureReference = perform.CodeElement.ThroughProcedure;
-                    foreach (var offendingInstruction in recursivePerform.Value)
-                    {
-                        string performTarget = throughProcedureReference != null
-                            ? $"{procedureReference} THRU {throughProcedureReference}"
-                            : procedureReference.ToString();
-                        System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
-                        string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                        Diagnostic d = new Diagnostic(_compilerOptions.CheckRecursivePerforms.GetMessageCode(), perform.CodeElement.Position(),
-                            string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
-                        AddDiagnostic(d);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -1469,6 +1442,8 @@ namespace TypeCobol.Analysis.Cfg
             ResolvePendingGOTOs();
             //Resolve Pending PERFORMs Procedure
             ResolvePendingPERFORMProcedures();
+            //Copy perform/goto targets into result graph
+            this.CurrentProgramCfgBuilder.Cfg.JumpTargets = this.CurrentProgramCfgBuilder._jumpTargets;
             //Handle Iterative Perform Procedure Having an AFTER clause
             HandlePerformsWithTestAfter();
             //DFS to detect unreachable code
@@ -1488,17 +1463,15 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="target">The target sections or paragraphs</param>
         private void ResolveGoto(Goto @goto, SectionNode sectionNode, BasicBlockForNode block, SymbolReference[] target)
         {
-            HashSet<Procedure> targetProcedures = new HashSet<Procedure>();
+            var targetProcedures = new HashSet<ControlFlowGraph<Node, D>.Procedure>();
             foreach (var sref in target)
             {
                 Node targetProcedureNode = ResolveProcedure(@goto, sectionNode, sref);
                 if (targetProcedureNode == null) continue;
 
-                Procedure targetProcedure = _nodeToProcedure[targetProcedureNode];
-                if (!targetProcedures.Contains(targetProcedure))
+                var targetProcedure = _nodeToProcedure[targetProcedureNode];
+                if (targetProcedures.Add(targetProcedure))
                 {
-                    targetProcedures.Add(targetProcedure);
-
                     //Link block to target
                     int? targetBlockIndex = targetProcedure.FirstOrDefault()?.FirstBlockIndex;
                     if (targetBlockIndex.HasValue)
@@ -1510,6 +1483,16 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
             }
+
+            //Create the JumpTarget instance and store it
+            ControlFlowGraph<Node, D>.JumpTarget gotoTarget = null;
+            if (targetProcedures.Count > 0)
+            {
+                var sentences = targetProcedures.SelectMany(p => p).ToList();
+                gotoTarget = new ControlFlowGraph<Node, D>.JumpTarget(sentences, targetProcedures.ToList());
+            }
+            //Else: no target could be resolved, store a null value
+            _jumpTargets.Add(@goto, gotoTarget);
         }
 
         /// <summary>
@@ -2248,12 +2231,10 @@ namespace TypeCobol.Analysis.Cfg
 
                 if (this.CurrentProgramCfgBuilder.PendingNextSentences == null)
                 {
-                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<BasicBlockForNode, Sentence>>();
+                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<BasicBlockForNode, ControlFlowGraph<Node, D>.Sentence>>();
                 }
                 //Track pending Next Sentences.
-                Tuple<BasicBlockForNode, Sentence> item = new Tuple<BasicBlockForNode, Sentence>(
-                    this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence
-                    );
+                var item = new Tuple<BasicBlockForNode, ControlFlowGraph<Node, D>.Sentence>(this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence);
                 this.CurrentProgramCfgBuilder.PendingNextSentences.AddLast(item);
 
                 //Create a new current block unreachable.
@@ -2317,7 +2298,7 @@ namespace TypeCobol.Analysis.Cfg
 
                         //So Look for the first Goto Instruction
                         //The first instruction of the altered procedure must be a GOTO instruction (without DEPENDING ON)
-                        Procedure alterProc = _nodeToProcedure[alterProcNode];
+                        var alterProc = _nodeToProcedure[alterProcNode];
                         bool targetGotoResolved = false;
                         var instructions = alterProc.FirstOrDefault()?.FirstBlock?.Instructions;
                         if (instructions != null && instructions.Count > 0)
@@ -2700,7 +2681,7 @@ namespace TypeCobol.Analysis.Cfg
 
             //Create a Root Section
             System.Diagnostics.Debug.Assert(AllProcedures.Count == 0);
-            Section rootSection = new Section(0, ROOT_SECTION_NAME);
+            var rootSection = new ControlFlowGraph<Node, D>.Section(0, ROOT_SECTION_NAME);
             AllProcedures.Add(rootSection);
 
             //The new current section.
