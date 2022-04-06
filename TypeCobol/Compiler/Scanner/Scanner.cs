@@ -1507,13 +1507,6 @@ namespace TypeCobol.Compiler.Scanner
         
         // ---
 
-        private Token ScanOneChar(int startIndex, TokenType tokenType)
-        {
-            // consume one char
-            currentIndex++;
-            return new Token(tokenType, startIndex, startIndex, tokensLine);
-        }
-
         private Token ScanOneCharWithPossibleSpaceAfter(int startIndex, TokenType tokenType) {
             //Use MessageCode.ImplementationError because ScanOneCharFollowedBySpace must not create an error
             return ScanOneCharFollowedBySpace(startIndex, tokenType, MessageCode.ImplementationError, false);

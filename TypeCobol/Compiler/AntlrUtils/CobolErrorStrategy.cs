@@ -297,7 +297,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
                    nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.SqlFamily ||
+                   nextToken.TokenFamily == TokenFamily.SqlKeywords ||
                    nextToken.TokenType == TokenType.LevelNumber || 
                    nextToken.TokenType == TokenType.SectionParagraphName ||
                    (lastConsumedToken != null && (
@@ -339,7 +339,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
                    nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.SqlFamily ||
+                   nextToken.TokenFamily == TokenFamily.SqlKeywords ||
                    nextToken.TokenType == TokenType.LevelNumber ||
                    nextToken.TokenType == TokenType.SectionParagraphName;
         }

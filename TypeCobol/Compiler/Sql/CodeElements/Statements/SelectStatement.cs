@@ -9,6 +9,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
     public class SelectStatement : SqlStatementElement
     {
         public FullSelect FullSelect { get; }
+
         public SelectStatement(FullSelect fullSelect) : base(CodeElementType.SelectStatement, StatementType.SelectStatement)
         {
             this.FullSelect = fullSelect;

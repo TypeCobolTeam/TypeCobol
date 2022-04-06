@@ -55,5 +55,12 @@ namespace TypeCobol.Compiler.Scanner
             // jump to next token
             return GetNextToken();
         }
+
+        protected Token ScanOneChar(int startIndex, TokenType tokenType)
+        {
+            // consume one char
+            currentIndex++;
+            return new Token(tokenType, startIndex, startIndex, tokensLine);
+        }
     }
 }
