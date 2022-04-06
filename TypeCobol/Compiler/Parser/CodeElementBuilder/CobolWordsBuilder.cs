@@ -925,6 +925,7 @@ namespace TypeCobol.Compiler.Parser
             var c = context.cobolQualifiedConditionName();
             if (c != null) return CreateQualifiedConditionName(c.conditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
             var tc = context.tcQualifiedConditionName();
+            if (tc == null) return null;
             var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
             Array.Reverse(tail);
             return CreateQualifiedConditionName(tc.conditionNameReferenceOrConditionForUPSISwitchNameReference(), tail, false);
