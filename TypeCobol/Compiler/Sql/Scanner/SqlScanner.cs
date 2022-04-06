@@ -41,8 +41,11 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     //SpaceSeparator=1,
                     return ScanWhitespace(startIndex);
                 case '*':
-                    currentIndex++;
-                    return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
+                    return ScanOneChar(startIndex, TokenType.MultiplyOperator);
+                case ',':
+                    return ScanOneChar(startIndex, TokenType.SQL_CommaSeparator);
+                case '.':
+                    return ScanOneChar(startIndex, TokenType.PeriodSeparator);
             }
 
             if (IsSqlKeywordPart(line[currentIndex]))
@@ -58,7 +61,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     case TokenType.SQL_SELECT:
                     case TokenType.SQL_ALL:
                     case TokenType.SQL_DISTINCT:
-                        //Supported keywords
+                    case TokenType.UserDefinedWord:
                         return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
                     //Unrecognized keyword (for now) return as ExecStatementText
                     default:

@@ -200,7 +200,20 @@ namespace TypeCobol.Test.Utils
 		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
-				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
+#if SQL_PARSING
+                var fileName = Path.GetFileName(samplePath);
+                switch (fileName)
+                {
+                    case "ExecSqlInDataDivision.rdz.cbl":
+                    case "Program.pgm":        
+                    case "ParagraphSection.rdz.cbl":
+                    case "ExecSqlWithCommit.rdz.cbl":
+                    case "EXEC.cbl":
+                    case "NodeBuilder-UnexpectedChild.rdz.tcbl":
+                        continue;
+                }
+#endif
+                IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
 				if (comparators.Count < 1) {
 					Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
 					errors.AppendLine("Missing result file \"" + samplePath + "\"");
