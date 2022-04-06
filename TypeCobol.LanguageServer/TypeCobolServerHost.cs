@@ -388,25 +388,22 @@ namespace TypeCobol.LanguageServer
             {
                 Thread.Sleep(1); //To preserve processor use
 
-                if (MessagesActionQueue.Any())
+                if (MessagesActionQueue.TryDequeue(out MessageActionWrapper messageActionWrapper)) //Pop out message from queue
                 {
-                    if (MessagesActionQueue.TryDequeue(out MessageActionWrapper messageActionWrapper)) //Pop out message from queue
+                    if (messageActionWrapper.MessageKind == MessageKind.JSonMessage)
+                        messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer); //Give this mesage to the real handler
+                    else if (messageActionWrapper.MessageKind == MessageKind.Action)
                     {
-                        if (messageActionWrapper.MessageKind == MessageKind.JSonMessage)
-                            messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer); //Give this mesage to the real handler
-                        else if (messageActionWrapper.MessageKind == MessageKind.Action)
+                        try
                         {
-                            try
-                            {
-                                messageActionWrapper.Action(); //Execute queued action
-                            }
-                            catch (Exception e)
-                            {
-                                typeCobolServer.NotifyException(e);
-                            }
+                            messageActionWrapper.Action(); //Execute queued action
                         }
-
+                        catch (Exception e)
+                        {
+                            typeCobolServer.NotifyException(e);
+                        }
                     }
+
                 }
             }
         }

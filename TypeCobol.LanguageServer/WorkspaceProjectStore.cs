@@ -165,7 +165,7 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Remove a project from this workspace if it is empty
+        /// Remove a project from this workspace.
         /// </summary>
         /// <param name="workspaceProject"></param>
         /// <returns>true if the project has been removed, false otherwise</returns>

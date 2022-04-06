@@ -33,7 +33,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         private readonly ConcurrentDictionary<Uri, DocumentContext> _openedDocuments;
         /// <summary>
-        /// Underlying workspace project
+        /// Underlying parent workspace.
         /// </summary>
         private readonly Workspace _workspace;
 
@@ -110,7 +110,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="oldCopyFolders">The Old set</param>
         /// <param name="newCopyFolders">The nes set</param>
         /// <returns></returns>
-        private static bool AreCopyFoldersSame(HashSet<string> oldCopyFolders, List<string> newCopyFolders)
+        private static bool AreCopyFoldersDifferent(HashSet<string> oldCopyFolders, List<string> newCopyFolders)
         {
             if (oldCopyFolders.Count != newCopyFolders.Count)
                 return true;// The size of the list are different
@@ -161,7 +161,7 @@ namespace TypeCobol.LanguageServer
             var oldCopyFolders = GetCopyFolders();
             bool updateCopyFolders = false;
             var newCopyFolders = oldCopyFolders.ToList();
-            if (copyFolders != null && AreCopyFoldersSame(oldCopyFolders, copyFolders))
+            if (copyFolders != null && AreCopyFoldersDifferent(oldCopyFolders, copyFolders))
             {
                 updateCopyFolders = true;
                 newCopyFolders = copyFolders;
@@ -177,12 +177,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 Project = newCompilationProject;
-                // Change the target CompilationProject instance for each document.
-                foreach (var docCtx in _openedDocuments.Values)
-                {
-                    docCtx.FileCompiler.CompilationProject = Project;
-                }
-                _workspace.ScheduleRefresh(this, updateCopyFolders);
+                _workspace.RefreshProjectDocuments(this, false);
             }
         }
 
@@ -196,7 +191,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         internal void RefreshOpenedFiles()
         {
-            _workspace.ScheduleRefresh(this, true);
+            _workspace.RefreshProjectDocuments(this, true);
         }
     }
 }

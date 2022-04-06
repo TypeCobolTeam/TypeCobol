@@ -336,7 +336,7 @@ namespace TypeCobol.LanguageServer
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, projectKey, text, copyFolders);
+                this.Workspace.OpenTextDocument(docContext, text, projectKey, copyFolders);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);

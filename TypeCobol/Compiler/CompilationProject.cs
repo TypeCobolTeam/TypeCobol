@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler
             CompilationOptions = compilationOptions;
             AnalyzerProvider = analyzerProvider;
 
-            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, Encoding, EndOfLineDelimiter, FixedLineLength);
+            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, Format.Encoding, Format.EndOfLineDelimiter, Format.FixedLineLength);
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
@@ -76,26 +76,22 @@ namespace TypeCobol.Compiler
         ICobolLibrary rootDirectoryLibrary;
 
         // Default properties for all files of the project
-        public Encoding Encoding => Format.Encoding;
-        public EndOfLineDelimiter EndOfLineDelimiter => Format.EndOfLineDelimiter;
-        public int FixedLineLength => Format.FixedLineLength;
-        public ColumnsLayout ColumnsLayout => Format.ColumnsLayout;
         public DocumentFormat Format { get; }
         /// <summary>
         /// Changing the value of this property work only if we discard current FileCompilers and recreate them. 
         /// So it is a bit misleading.
         /// </summary>
-        public TypeCobolOptions CompilationOptions { get; set; }
+        public TypeCobolOptions CompilationOptions { get;}
         /// <summary>
         /// Changing the value of this property work only if we discard current FileCompilers and recreate them. 
         /// So it is a bit misleading.
         /// </summary>
-        public IAnalyzerProvider AnalyzerProvider { get; set; }
+        public IAnalyzerProvider AnalyzerProvider { get;}
 
         // -- Files manipulation --
 
         /// <summary>
-        /// Files added explicitely to the projet by the developper (read-only)
+        /// Files added explicitly to the project by the developer (read-only)
         /// </summary>
         public IDictionary<string, CobolFile> CobolFiles { get; private set; }
 
@@ -210,7 +206,7 @@ namespace TypeCobol.Compiler
 #endif
                 bool wasAlreadyInsideCopy = scanState.InsideCopy;
                 scanState.InsideCopy = true;
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this, copyTextNameVariations);
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, Format.ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this, copyTextNameVariations);
                 fileCompiler.CompileOnce();
                 scanState.InsideCopy = wasAlreadyInsideCopy;
 

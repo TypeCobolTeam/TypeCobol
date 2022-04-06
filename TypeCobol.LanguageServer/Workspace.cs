@@ -177,11 +177,11 @@ namespace TypeCobol.LanguageServer
         /// Start continuous background compilation on a newly opened file
         /// </summary>
         /// <param name="docContext">The Document context</param>
-        /// <param name="projectKey">Project's Key</param>
         /// <param name="sourceText">The source text</param>
+        /// <param name="projectKey">Project's Key</param>
         /// <param name="copyFolders">List of copy folders associated to the project</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string projectKey, string sourceText, List<string> copyFolders) => OpenTextDocument(docContext, projectKey, sourceText, copyFolders, LsrTestOptions);
+        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, string projectKey, List<string> copyFolders) => OpenTextDocument(docContext, projectKey, sourceText, copyFolders, LsrTestOptions);
 
         /// <summary>
         /// Bind a document to a FileCompiler instance and update its content for a parsing..
@@ -565,7 +565,7 @@ namespace TypeCobol.LanguageServer
         {
             var workspaceProject = documentContext.Project;
             // Remove the document from the global set.
-            _allOpenedDocuments.TryRemove(documentContext.Uri, out var storedDocument );
+            bool bRemoved = _allOpenedDocuments.TryRemove(documentContext.Uri, out var storedDocument );
             System.Diagnostics.Debug.Assert(storedDocument == documentContext);
             if (workspaceProject != null)
             {
@@ -585,7 +585,10 @@ namespace TypeCobol.LanguageServer
             }
             else 
             {
-                System.Diagnostics.Debug.Fail("Document was not associated to a Workspace project : " + documentContext.Uri.ToString());
+                if (!bRemoved)
+                    System.Diagnostics.Debug.Fail("Document was not opened or is already closed : " + documentContext.Uri.ToString());
+                else
+                    System.Diagnostics.Debug.Fail("Document is not associated to a Workspace project : " + documentContext.Uri.ToString());
             }
             return false;
         }
@@ -730,7 +733,7 @@ namespace TypeCobol.LanguageServer
                 if (this.TryGetOpenedDocument(fileUri, out var docContext))
                 {
                     System.Diagnostics.Debug.Assert(docContext.Project != null);
-                    ScheduleRefresh(docContext.Project, true);
+                    RefreshProjectDocuments(docContext.Project, true);
                 }
             }
         }
@@ -772,7 +775,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all documents of a WorkspaceProject instance
         /// </summary>
-        internal void ScheduleRefresh(WorkspaceProject project, bool clearCopyCache)
+        internal void RefreshProjectDocuments(WorkspaceProject project, bool clearCopyCache)
         {
             if (clearCopyCache)
             {
@@ -780,15 +783,11 @@ namespace TypeCobol.LanguageServer
             }
             if (!project.IsEmpty)
             {
-                Action action = () =>
+                foreach (var docContext in project.OpenedDocuments)
                 {
-                    foreach (var docContext in project.OpenedDocuments)
-                    {
-                        System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == project.Project);
-                        RefreshOpenedDocument(docContext, false);
-                    }
-                };
-                MessagesActionsQueue.Enqueue(new MessageActionWrapper(action));
+                    System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == project.Project);
+                    RefreshOpenedDocument(docContext, false);
+                }
             }
         }
 

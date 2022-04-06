@@ -41,7 +41,7 @@ namespace TypeCobol.LanguageServer.Context
         /// <summary>
         /// Workspace Project owner.
         /// </summary>
-        internal WorkspaceProject Project;
+        internal WorkspaceProject Project { get; set; }
 
         /// <summary>
         /// True if the text document is a Copy, False if it's a Program.
