@@ -21,17 +21,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         internal class DuplicatedProjectException : Exception
         {
-            internal DuplicatedProjectException(string key) : base(key)
-            {
-            }
-        }
-
-        /// <summary>
-        /// Exception thrown when project key does not correspond to an existing WorkspaceProject.
-        /// </summary>
-        internal class UnknownProjectException : Exception
-        {
-            internal UnknownProjectException(string key) : base(key)
+            internal DuplicatedProjectException(string key) : base("Duplicate Project:" + key)
             {
             }
         }
@@ -140,6 +130,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         internal void RefreshOpenedFiles()
         {
+            this.DefaultWorkspaceProject.RefreshOpenedFiles();
             foreach (var wksProject in _workspaceProjects.Values)
             {
                 wksProject.RefreshOpenedFiles();
@@ -171,10 +162,17 @@ namespace TypeCobol.LanguageServer
         /// <returns>true if the project has been removed, false otherwise</returns>
         internal bool RemoveProject(WorkspaceProject workspaceProject)
         {
-            bool bRemoved = this._workspaceProjects.TryRemove(workspaceProject.ProjectKey, out var storedProject);
-            // Assertion: If the project has been removed it must correspond to the one that was stored.
-            System.Diagnostics.Debug.Assert(!bRemoved || (storedProject == workspaceProject));
-            return bRemoved;
+            if (workspaceProject != this.DefaultWorkspaceProject)
+            {
+                bool bRemoved = this._workspaceProjects.TryRemove(workspaceProject.ProjectKey, out var storedProject);
+                // Assertion: If the project has been removed it must correspond to the one that was stored.
+                System.Diagnostics.Debug.Assert(!bRemoved || (storedProject == workspaceProject));
+                return bRemoved;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

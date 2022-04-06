@@ -181,7 +181,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">Project's Key</param>
         /// <param name="copyFolders">List of copy folders associated to the project</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, string projectKey, List<string> copyFolders) => OpenTextDocument(docContext, projectKey, sourceText, copyFolders, LsrTestOptions);
+        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, string projectKey, List<string> copyFolders) => OpenTextDocument(docContext, sourceText, projectKey, copyFolders, LsrTestOptions);
 
         /// <summary>
         /// Bind a document to a FileCompiler instance and update its content for a parsing..
@@ -254,15 +254,16 @@ namespace TypeCobol.LanguageServer
         /// Open a Text Document.
         /// </summary>
         /// <param name="docContext">The Document Context</param>
-        /// <param name="projectKey">Project's Key</param>
         /// <param name="sourceText">The source text</param>
+        /// <param name="projectKey">Project's Key</param>        
         /// <param name="lsrOptions">LSR testing options</param>
         /// <returns></returns>
-        private FileCompiler OpenTextDocument(DocumentContext docContext, string projectKey, 
-            string sourceText,
+        private FileCompiler OpenTextDocument(DocumentContext docContext, 
+            string sourceText, string projectKey,
             List<string> copyFolders, LsrTestingOptions lsrOptions)
         {
-            var workspaceProject = docContext.Project ?? WorkspaceProjectStore.GetOrCreateProject(projectKey);
+            System.Diagnostics.Debug.Assert(docContext.Project == null);
+            var workspaceProject = WorkspaceProjectStore.GetOrCreateProject(projectKey);
             workspaceProject.Configure(null, null, null, copyFolders);
             workspaceProject.AddDocument(docContext);
             this._allOpenedDocuments.TryAdd(docContext.Uri, docContext);
@@ -297,7 +298,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="name">The document's name</param>
         /// <param name="openedDocumentContext"></param>
         /// <returns>true if the DocumentContext has been found, false otherwise</returns>
-        internal bool TryGetOpenedDocumentByName(string name, out DocumentContext openedDocumentContext)
+        private bool TryGetOpenedDocumentByName(string name, out DocumentContext openedDocumentContext)
         {
             openedDocumentContext = null;
             foreach (var entry in this._allOpenedDocuments)
