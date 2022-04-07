@@ -1,28 +1,31 @@
 ﻿--- Sql Statements ---
-line6:SelectStatement
+line 6: SelectStatement
   - SubSelect = SubSelect
     - SelectClause = SelectClause
       - SelectionModifier = <NULL>
       - Selections = [
-        - Selections0 = TypeCobol.Compiler.Sql.Model.StarSelection
+        - Selections0 = StarSelection
+          TypeCobol.Compiler.Sql.Model.StarSelection
       ]
     - FromClause = <NULL>
   - SubQuery = <NULL>
-line7:SelectStatement
+line 7: SelectStatement
   - SubSelect = SubSelect
     - SelectClause = SelectClause
       - SelectionModifier = All
       - Selections = [
-        - Selections0 = TypeCobol.Compiler.Sql.Model.StarSelection
+        - Selections0 = StarSelection
+          TypeCobol.Compiler.Sql.Model.StarSelection
       ]
     - FromClause = <NULL>
   - SubQuery = <NULL>
-line8:SelectStatement
+line 8: SelectStatement
   - SubSelect = SubSelect
     - SelectClause = SelectClause
       - SelectionModifier = Distinct
       - Selections = [
-        - Selections0 = TypeCobol.Compiler.Sql.Model.StarSelection
+        - Selections0 = StarSelection
+          TypeCobol.Compiler.Sql.Model.StarSelection
       ]
     - FromClause = <NULL>
   - SubQuery = <NULL>

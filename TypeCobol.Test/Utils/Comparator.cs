@@ -472,11 +472,12 @@ namespace TypeCobol.Test.Utils
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
         }
     }
-    /// <summary>
-    /// Selects the SQL code elements
-    /// </summary>
+ 
     internal class SqlComparator : FilesComparator
     {
+        /// <summary>
+        /// Selects the SQL code elements
+        /// </summary>
         private class ASTVisitor : AbstractAstVisitor 
         {
             private readonly StringWriter _writer;
@@ -487,7 +488,7 @@ namespace TypeCobol.Test.Utils
 
             public override bool Visit(SelectStatement selectStatement)
             {
-                _writer.WriteLine("line" + selectStatement.Line + ":SelectStatement");
+                _writer.WriteLine("line " + selectStatement.Line + ": SelectStatement");
                 selectStatement.FullSelect.Dump(_writer ,1);
                 return true;
             }

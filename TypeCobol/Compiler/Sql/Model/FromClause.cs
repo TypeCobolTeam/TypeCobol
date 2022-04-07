@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace TypeCobol.Compiler.Sql.Model
+﻿namespace TypeCobol.Compiler.Sql.Model
 {
     public class FromClause : SqlObject
     {

@@ -23,6 +23,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
+            output.WriteLine(GetType().FullName);
         }
 
         protected static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
