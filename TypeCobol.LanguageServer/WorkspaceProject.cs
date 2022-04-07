@@ -92,12 +92,27 @@ namespace TypeCobol.LanguageServer
         /// <returns>The set of copy folders</returns>
         private HashSet<string> GetCopyFolders()
         {
+            // The Default Root directory of the workspace is always added to the set of copy folders.
+            // So we must track the first reference to the RootDirectory that is to ignore.
+            // Doing that will avoid to always have a new set of copy folders, from the client.
+            bool bDefaultRootDirectoryRemoved = false;
             var result = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var cobolLibrary in Project.SourceFileProvider.CobolLibraries)
             {
                 if (cobolLibrary is LocalDirectoryLibrary localDirectoryLibrary)
                 {
-                    result.Add(localDirectoryLibrary.RootDirectory.FullName);
+                    if (bDefaultRootDirectoryRemoved)
+                    {
+                        result.Add(localDirectoryLibrary.RootDirectory.FullName);
+                    }
+                    else if (localDirectoryLibrary.RootDirectory.FullName.Equals(Project.RootDirectory, StringComparison.InvariantCultureIgnoreCase))
+                    {   // Default RootDirectory seen and not added.                     
+                        bDefaultRootDirectoryRemoved = true;
+                    }
+                    else
+                    {
+                        result.Add(localDirectoryLibrary.RootDirectory.FullName);
+                    }
                 }
             }
 
