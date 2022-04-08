@@ -4,8 +4,7 @@ line 6: SelectStatement
     - SelectClause = SelectClause
       - SelectionModifier = <NULL>
       - Selections = [
-        - Selections0 = StarSelection
-          TypeCobol.Compiler.Sql.Model.StarSelection
+        - Selections[0] = StarSelection
       ]
     - FromClause = <NULL>
   - SubQuery = <NULL>
@@ -14,8 +13,7 @@ line 7: SelectStatement
     - SelectClause = SelectClause
       - SelectionModifier = All
       - Selections = [
-        - Selections0 = StarSelection
-          TypeCobol.Compiler.Sql.Model.StarSelection
+        - Selections[0] = StarSelection
       ]
     - FromClause = <NULL>
   - SubQuery = <NULL>
@@ -24,8 +22,7 @@ line 8: SelectStatement
     - SelectClause = SelectClause
       - SelectionModifier = Distinct
       - Selections = [
-        - Selections0 = StarSelection
-          TypeCobol.Compiler.Sql.Model.StarSelection
+        - Selections[0] = StarSelection
       ]
     - FromClause = <NULL>
   - SubQuery = <NULL>

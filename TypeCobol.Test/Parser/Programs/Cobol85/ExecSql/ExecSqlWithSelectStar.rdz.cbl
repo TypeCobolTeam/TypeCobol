@@ -5,7 +5,7 @@
              EXEC SQL 
               SELECT *
               SELECT ALL *
-              SELECT DISTINCT *
+              SELECT DISTINCT * 
              END-EXEC.
        PROCEDURE DIVISION.
          

@@ -10,10 +10,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Sql;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
-using TypeCobol.Compiler.Sql.Model;
-using TypeCobol.Compiler.Symbols;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -495,7 +492,7 @@ namespace TypeCobol.Test.Utils
 
             public override bool Visit(CommitStatement commitStatement)
             {
-                _writer.WriteLine("line" + commitStatement.Line + ":CommitStatement");
+                _writer.WriteLine("line " + commitStatement.Line + ": CommitStatement");
                 return true;
             }
         }

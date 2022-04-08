@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.Sql.Model
                 int index = 0;
                 foreach (var item in enumerable)
                 {
-                    DumpProperty(output, name + index, item, indentLevel + 1);
+                    DumpProperty(output, $"{name}[{index}]", item, indentLevel + 1);
                     index++;
                 }
                 output.WriteLine(indent + "]");

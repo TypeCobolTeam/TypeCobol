@@ -34,7 +34,8 @@ namespace TypeCobol.Compiler.Sql.Model
     public class StarSelection : Selection
     {
         public override SelectionType Type => SelectionType.Star;
-
+        public override void Dump(TextWriter output, int indentLevel)
+        { }
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return base.VisitSqlObject(visitor) && visitor.Visit(this);
@@ -71,7 +72,10 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             this.TableOrViewOrCorrelationName = tableOrViewOrCorrelationName;
         }
-
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            DumpProperty(output, nameof(TableOrViewOrCorrelationName), TableOrViewOrCorrelationName, indentLevel);
+        }
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return base.VisitSqlObject(visitor) &&
