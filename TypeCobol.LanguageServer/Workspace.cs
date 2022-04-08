@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -147,11 +146,6 @@ namespace TypeCobol.LanguageServer
         public string CpyCopyNamesMapFilePath { get; set; }
 #endif
 
-        /// <summary>
-        /// Indicates whether this workspace has opened documents or not.
-        /// </summary>
-        public bool IsEmpty => this._allOpenedDocuments.IsEmpty;
-
         public Workspace(string rootDirectoryFullName, string workspaceName, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             this._allOpenedDocuments = new ConcurrentDictionary<Uri, DocumentContext>();
@@ -167,10 +161,18 @@ namespace TypeCobol.LanguageServer
 
         internal void InitCopyDependencyWatchers()
         {
-            // Create the refresh action that will be used by file watchers
-            Action refreshAction = RefreshOpenedFiles;
-            _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
-            _CopyWatcher = new CopyWatcher(this, refreshAction);
+            _DepWatcher = new DependenciesFileWatcher(this, RefreshAllOpenedFiles);
+            _CopyWatcher = new CopyWatcher(this, RefreshAllOpenedFiles);
+
+            // Refresh all opened files in all WorkspaceProject instances
+            void RefreshAllOpenedFiles()
+            {
+                RefreshCustomSymbols();
+                foreach (var workspaceProject in WorkspaceProjectStore.AllProjects)
+                {
+                    workspaceProject.RefreshOpenedDocuments();
+                }
+            }
         }
 
         /// <summary>
@@ -631,7 +633,7 @@ namespace TypeCobol.LanguageServer
             TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
-            var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
             Configuration.CopyFolders.Add(folder + @"\DefaultCopies\");
 
             if (Configuration.Telemetry)
@@ -725,16 +727,26 @@ namespace TypeCobol.LanguageServer
         /// The RemainingMissingCopies list can contain a list of COPY that the client fails to load,
         /// or an empty list if all COPY have been loaded.
         /// </summary>
-        /// <param name="fileUri">Uri of the document from wich the response is emitted</param>
+        /// <param name="fileUri">Uri of the document from which the response is emitted</param>
         /// <param name="remainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
         public void UpdateMissingCopies(Uri fileUri, List<string> remainingMissingCopies)
         {
+            /*
+             * TODO Keeping the current behavior here (clear cache + refresh project documents)
+             * But this should be converted into didChangeWatchedFiles notification instead
+             * so the client can signal that it finished loading some copies.
+             *
+             * Then the MissingCopiesNotification from client to server could be fully removed.
+             */
+
             if (_CopyWatcher == null)
-            {// No Copy Watcher ==> Refresh ourself opened file.
+            {
+                // No Copy Watcher ==> Refresh ourself opened file.
                 if (this.TryGetOpenedDocument(fileUri, out var docContext))
                 {
                     System.Diagnostics.Debug.Assert(docContext.Project != null);
-                    RefreshProjectDocuments(docContext.Project, true);
+                    docContext.Project.Project.CopyCache.Clear();
+                    docContext.Project.RefreshOpenedDocuments();
                 }
             }
         }
@@ -780,31 +792,17 @@ namespace TypeCobol.LanguageServer
             //Refresh all dependent programs
             foreach (var dependentProgram in dependentPrograms)
             {
-                RefreshOpenedDocument(dependentProgram, false);
+                RefreshOpenedDocument(dependentProgram);
             }
-        }
-
-        /// <summary>
-        /// Refresh all opened files in all WorspaceProject instances
-        /// <remarks>This method is designed to run on background worker thread as it uses compilation results to recreate source code.
-        /// Callers must enqueue a new message to schedule a refresh of opened files instead of calling this directly.</remarks>
-        /// </summary>
-        private void RefreshOpenedFiles()
-        {
-            RefreshCustomSymbols();
-            this.WorkspaceProjectStore.RefreshOpenedFiles();
         }
 
         /// <summary>
         /// Refresh One opened document
         /// </summary>
         /// <param name="docContext">The Document context to be refreshed</param>
-        /// <param name="clearCopyCache">true if the imported document cache must be cleared, false otherwise</param>
-        private void RefreshOpenedDocument(DocumentContext docContext, bool clearCopyCache)
+        internal void RefreshOpenedDocument(DocumentContext docContext)
         {
-            if (clearCopyCache)
-                docContext.FileCompiler.CompilationProject.CopyCache.Clear();
-
+            //Read latest version of source text from CompilationResults
             var sourceText = new StringBuilder();
             var compilationResults = docContext.FileCompiler?.CompilationResultsForProgram;
             if (compilationResults == null)
@@ -815,26 +813,8 @@ namespace TypeCobol.LanguageServer
             //Disconnect previous LanguageServer connection
             docContext.LanguageServerConnection(false);
 
+            //Bind to new FileCompiler
             BindFileCompilerSourceTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
-        }
-
-        /// <summary>
-        /// Refresh all documents of a WorkspaceProject instance
-        /// </summary>
-        internal void RefreshProjectDocuments(WorkspaceProject project, bool clearCopyCache)
-        {
-            if (clearCopyCache)
-            {
-                project.Project.CopyCache.Clear();
-            }
-            if (!project.IsEmpty)
-            {
-                foreach (var docContext in project.OpenedDocuments)
-                {
-                    System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == project.Project);
-                    RefreshOpenedDocument(docContext, false);
-                }
-            }
         }
 
         private void RefreshCustomSymbols()

@@ -21,7 +21,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         internal class DuplicatedProjectException : Exception
         {
-            internal DuplicatedProjectException(string key) : base("Duplicate Project:" + key)
+            internal DuplicatedProjectException(string key) : base($"Duplicate Project: '{key}'")
             {
             }
         }
@@ -91,21 +91,6 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Find a WorkspaceProject instance by its key.
-        /// If the key is null the Default Workspace Project is returned.
-        /// </summary>
-        /// <param name="projectKey">The Project's key</param>
-        /// <returns>The WorkspaceProject instance if one exists, null otherwise</returns>
-        private WorkspaceProject FindProject(string projectKey)
-        {
-            if (projectKey == null)
-                return DefaultWorkspaceProject;
-            if (_workspaceProjects.TryGetValue(projectKey, out WorkspaceProject project))
-                return project;
-            return null;
-        }
-
-        /// <summary>
         /// Add a WorkspaceProject instance
         /// </summary>
         /// <param name="project">The project instance to be added</param>
@@ -144,18 +129,6 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Refresh all documents in all WorkspaceProject instances
-        /// </summary>
-        internal void RefreshOpenedFiles()
-        {
-            this.DefaultWorkspaceProject.RefreshOpenedFiles();
-            foreach (var wksProject in _workspaceProjects.Values)
-            {
-                wksProject.RefreshOpenedFiles();
-            }
-        }
-
-        /// <summary>
         /// Get or create a project.
         /// </summary>
         /// <param name="projectKey">The key of the project to get or to create, if null then the default project is returned</param>
@@ -164,13 +137,14 @@ namespace TypeCobol.LanguageServer
         {
             if (projectKey == null)
                 return DefaultWorkspaceProject;
-            // Determine the target project.
-            WorkspaceProject targetWorkspaceProject = FindProject(projectKey);
-            if (targetWorkspaceProject == null)
-            {   // The target project does not exists ==> We must create this new workspace project.
-                targetWorkspaceProject = CreateWorkspaceProject(projectKey);
+
+            if (!_workspaceProjects.TryGetValue(projectKey, out var result))
+            {
+                // The target project does not exists ==> We must create this new workspace project.
+                result = CreateWorkspaceProject(projectKey);
             }
-            return targetWorkspaceProject;
+
+            return result;
         }
 
         /// <summary>
