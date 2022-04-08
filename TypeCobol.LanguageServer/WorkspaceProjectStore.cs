@@ -39,6 +39,19 @@ namespace TypeCobol.LanguageServer
         /// Enumeration on WorkspaceProject instances
         /// </summary>
         public IEnumerable<WorkspaceProject> NamedProjects => _workspaceProjects.Values;
+
+        public IEnumerable<WorkspaceProject> AllProjects
+        {
+            get
+            {
+                yield return DefaultWorkspaceProject;
+                foreach (var namedProject in _workspaceProjects.Values)
+                {
+                    yield return namedProject;
+                }
+            }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>

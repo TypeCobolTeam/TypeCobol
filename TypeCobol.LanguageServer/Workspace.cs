@@ -739,6 +739,51 @@ namespace TypeCobol.LanguageServer
             }
         }
 
+        private void RefreshCopies(List<Tuple<string, WorkspaceProject>> copies)
+        {
+            //Remove obsolete data in copy caches
+            var copiesToRefresh = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var copy in copies)
+            {
+                copiesToRefresh.Add(copy.Item1);
+                if (copy.Item2 == null)
+                {
+                    //Evict from all caches
+                    foreach (var workspaceProject in WorkspaceProjectStore.AllProjects)
+                    {
+                        workspaceProject.Project.CopyCache.Evict(null, copy.Item1);
+                    }
+                }
+                else
+                {
+                    //Evict from target project cache only
+                    copy.Item2.Project.CopyCache.Evict(null, copy.Item1);
+                }
+            }
+
+            //Find programs depending on the obsolete copies
+            var dependentPrograms = new HashSet<DocumentContext>();
+            foreach (var openedDocument in _allOpenedDocuments.Values)
+            {
+                var usedCopies = openedDocument.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations;
+                if (usedCopies == null || usedCopies.Count == 0) continue;
+
+                foreach (var usedCopy in usedCopies)
+                {
+                    if (copiesToRefresh.Contains(usedCopy.TextName))
+                    {
+                        dependentPrograms.Add(openedDocument);
+                    }
+                }
+            }
+
+            //Refresh all dependent programs
+            foreach (var dependentProgram in dependentPrograms)
+            {
+                RefreshOpenedDocument(dependentProgram, false);
+            }
+        }
+
         /// <summary>
         /// Refresh all opened files in all WorspaceProject instances
         /// <remarks>This method is designed to run on background worker thread as it uses compilation results to recreate source code.
@@ -758,7 +803,7 @@ namespace TypeCobol.LanguageServer
         private void RefreshOpenedDocument(DocumentContext docContext, bool clearCopyCache)
         {
             if (clearCopyCache)
-                docContext.FileCompiler.CompilationProject.ClearImportedCompilationDocumentsCache();
+                docContext.FileCompiler.CompilationProject.CopyCache.Clear();
 
             var sourceText = new StringBuilder();
             var compilationResults = docContext.FileCompiler?.CompilationResultsForProgram;
@@ -780,7 +825,7 @@ namespace TypeCobol.LanguageServer
         {
             if (clearCopyCache)
             {
-                project.Project.ClearImportedCompilationDocumentsCache();
+                project.Project.CopyCache.Clear();
             }
             if (!project.IsEmpty)
             {

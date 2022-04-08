@@ -52,7 +52,7 @@ namespace TypeCobol.LanguageServer
             // TODO - Right now, the CopyWatcher is only used for TypeCobol, so only the DefaultWorkspaceProject instance
             // is impacted by directory content change events, so only DefaultWorkspaceProject instance has its cache cleared.
             // We will have to study if the concept of CopyWatcher has to be extended to other WorkspaceProject instances.
-            _TypeCobolWorkSpace.WorkspaceProjectStore.DefaultWorkspaceProject.Project.ClearImportedCompilationDocumentsCache();
+            _TypeCobolWorkSpace.WorkspaceProjectStore.DefaultWorkspaceProject.Project.CopyCache.Clear();
 
             // Check if there isn't another refresh action from another fileWatcher in the queue
             if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))

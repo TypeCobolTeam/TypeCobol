@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler
 {
@@ -35,7 +33,7 @@ namespace TypeCobol.Compiler
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
 
-            _copyCache = new CompilationDocumentCache();
+            CopyCache = new CompilationDocumentCache();
         }
 
         /// <summary>
@@ -170,16 +168,10 @@ namespace TypeCobol.Compiler
 
         // -- Implementation of IProcessedTokensDocumentProvider interface --
 
-        // Cache for all the compilation documents imported by COPY directives in this project
-        private readonly CompilationDocumentCache _copyCache;
-
         /// <summary>
-        /// Clear the cache of loaded COPY
+        /// Cache for all the compilation documents imported by COPY directives in this project
         /// </summary>
-        public void ClearImportedCompilationDocumentsCache()
-        {
-            _copyCache.Clear();
-        }
+        public CompilationDocumentCache CopyCache { get; }
 
         /// <summary>
         /// Returns a CompilationDocument already in cache or loads, scans and processes a new CompilationDocument
@@ -188,7 +180,7 @@ namespace TypeCobol.Compiler
             MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
         {
             var stats = new PerfStatsForImportedDocument { WasRetrievedFromCache = true };
-            var result = _copyCache.GetOrAddDocument(libraryName, textName, scanState, CompileCopy);
+            var result = CopyCache.GetOrAddDocument(libraryName, textName, scanState, CompileCopy);
             perfStats = stats; //Local function CompileCopy can't capture out var perfStats so we have to use local var instead
             return result;
 
