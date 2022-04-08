@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -486,6 +487,7 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(SelectStatement selectStatement)
             {
                 _writer.WriteLine("line " + selectStatement.Line + ": SelectStatement");
+                _writer.WriteLine("- FullSelect = FullSelect ");
                 selectStatement.FullSelect.Dump(_writer ,1);
                 return true;
             }
