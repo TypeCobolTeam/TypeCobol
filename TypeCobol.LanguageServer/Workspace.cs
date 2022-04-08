@@ -751,25 +751,30 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        private void RefreshCopies(List<Tuple<string, WorkspaceProject>> copies)
+        internal void AcknowledgeCopyChanges(List<ChangedCopy> changedCopies)
         {
             //Remove obsolete data in copy caches
-            var copiesToRefresh = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var copy in copies)
+            var copies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var changedCopy in changedCopies)
             {
-                copiesToRefresh.Add(copy.Item1);
-                if (copy.Item2 == null)
+                copies.Add(changedCopy.CopyName);
+                if (changedCopy.ClearAllCaches)
                 {
                     //Evict from all caches
                     foreach (var workspaceProject in WorkspaceProjectStore.AllProjects)
                     {
-                        workspaceProject.Project.CopyCache.Evict(null, copy.Item1);
+                        workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
                     }
+                }
+                else if (WorkspaceProjectStore.TryGetProject(changedCopy.OwnerProject, out var workspaceProject))
+                {
+                    //Evict from target project cache only
+                    workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
                 }
                 else
                 {
-                    //Evict from target project cache only
-                    copy.Item2.Project.CopyCache.Evict(null, copy.Item1);
+                    //Inconsistent notification from client, the targte project could not be found
+                    LoggingSystem.LogMessage(LogLevel.Warning, $"Copy to WorkspaceProject mismatch: could not find project '{changedCopy.OwnerProject}'.");
                 }
             }
 
@@ -782,7 +787,7 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var usedCopy in usedCopies)
                 {
-                    if (copiesToRefresh.Contains(usedCopy.TextName))
+                    if (copies.Contains(usedCopy.TextName))
                     {
                         dependentPrograms.Add(openedDocument);
                     }
@@ -955,5 +960,57 @@ namespace TypeCobol.LanguageServer
     public class LoadingIssueEvent : EventArgs
     {
         public string Message { get; set; }
+    }
+
+    public class ChangedCopy
+    {
+        private const string ALL_PROJECTS = "$all";
+
+        public static bool TryParse(string fileEventUri, out ChangedCopy changedCopy)
+        {
+            System.Diagnostics.Debug.Assert(fileEventUri != null);
+            string[] parts = fileEventUri.Split('/');
+
+            if (parts.Length == 0)
+            {
+                //Invalid
+                changedCopy = null;
+                return false;
+            }
+
+            //projectKey/copyName, if a second '/' is present, everything after it is ignored
+            string projectKey = parts[0].Trim();
+            string copyName = parts[1].Trim();
+            switch (projectKey)
+            {
+                case "":
+                    //default project
+                    changedCopy = new ChangedCopy(copyName, false, null);
+                    break;
+                case ALL_PROJECTS:
+                    //special syntax, all projects
+                    changedCopy = new ChangedCopy(copyName, true, null);
+                    break;
+                default:
+                    //special syntax, all projects
+                    changedCopy = new ChangedCopy(copyName, false, projectKey);
+                    break;
+            }
+
+            return true;
+        }
+
+        public string CopyName { get; }
+
+        public bool ClearAllCaches { get; }
+
+        public string OwnerProject { get; }
+
+        private ChangedCopy(string copyName, bool clearAllCaches, string ownerProject)
+        {
+            CopyName = copyName;
+            ClearAllCaches = clearAllCaches;
+            OwnerProject = ownerProject;
+        }
     }
 }

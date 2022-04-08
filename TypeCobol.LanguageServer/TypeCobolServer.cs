@@ -323,6 +323,24 @@ namespace TypeCobol.LanguageServer
             }
         }
 
+        protected override void OnDidChangeWatchedFiles(DidChangeWatchedFilesParams parameters)
+        {
+            if (parameters.changes == null || parameters.changes.Length == 0) return;
+
+            this.Workspace.AcknowledgeCopyChanges(GetChangedCopies().ToList());
+
+            IEnumerable<ChangedCopy> GetChangedCopies()
+            {
+                foreach (var fileEvent in parameters.changes)
+                {
+                    if (ChangedCopy.TryParse(fileEvent.uri, out var changedCopy))
+                    {
+                        yield return changedCopy;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Open a Text Document
         /// </summary>
