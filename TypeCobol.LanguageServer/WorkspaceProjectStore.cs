@@ -66,6 +66,9 @@ namespace TypeCobol.LanguageServer
                 UseAntlrProgramParsing = _workspace.UseAntlrProgramParsing,
                 UseEuroInformationLegacyReplacingSyntax = _workspace.UseEuroInformationLegacyReplacingSyntax
             };
+            //We don't have the information about the real RootDirectory.
+            //We use the RootDirectory from the Workspace because it has no consequences as long as
+            //this folder contains no copy
             CompilationProject compilationProject = new CompilationProject(
                 this._workspace.Name, this._workspace.RootDirectory, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
                 defaultOptions, null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
@@ -116,7 +119,9 @@ namespace TypeCobol.LanguageServer
             {
                 throw new DuplicatedProjectException(projectKey);
             }
-
+            //We don't have the information about the real RootDirectory.
+            //We use the RootDirectory from the Workspace because it has no consequences as long as
+            //this folder contains no copy
             CompilationProject compilationProject = new CompilationProject(projectKey, this._workspace.RootDirectory, Helpers.DEFAULT_EXTENSIONS,
                 _workspace.Configuration.Format, this.DefaultWorkspaceProject.Project.CompilationOptions,
                 this.DefaultWorkspaceProject.Project.AnalyzerProvider);

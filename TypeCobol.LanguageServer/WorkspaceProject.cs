@@ -192,6 +192,11 @@ namespace TypeCobol.LanguageServer
                 }
 
                 Project = newCompilationProject;
+                // Change the target CompilationProject instance for each document.
+                foreach (var docCtx in _openedDocuments.Values)
+                {
+                    docCtx.FileCompiler.CompilationProject = newCompilationProject;
+                }
                 _workspace.RefreshProjectDocuments(this, false);
             }
         }
