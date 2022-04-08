@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 
-
 namespace TypeCobol.Compiler.Sql.Model
 {
     public enum SelectionModifier
@@ -34,8 +33,7 @@ namespace TypeCobol.Compiler.Sql.Model
     public class StarSelection : Selection
     {
         public override SelectionType Type => SelectionType.Star;
-        public override void Dump(TextWriter output, int indentLevel)
-        { }
+
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return base.VisitSqlObject(visitor) && visitor.Visit(this);
@@ -72,10 +70,12 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             this.TableOrViewOrCorrelationName = tableOrViewOrCorrelationName;
         }
-        public override void Dump(TextWriter output, int indentLevel)
+
+        protected override void DumpContent(TextWriter output, int indentLevel)
         {
             DumpProperty(output, nameof(TableOrViewOrCorrelationName), TableOrViewOrCorrelationName, indentLevel);
         }
+
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return base.VisitSqlObject(visitor) &&
@@ -99,10 +99,11 @@ namespace TypeCobol.Compiler.Sql.Model
             SelectionModifier = selectionModifier;
             _selections = selections?.ToArray() ?? Array.Empty<Selection>();
         }
-        public override void Dump(TextWriter output, int indentLevel) 
+
+        protected override void DumpContent(TextWriter output, int indentLevel) 
         {
-            DumpProperty(output, nameof(this.SelectionModifier), this.SelectionModifier, indentLevel);
-            DumpProperty(output, nameof(this.Selections), this.Selections, indentLevel);
+            DumpProperty(output, nameof(SelectionModifier), SelectionModifier, indentLevel);
+            DumpProperty(output, nameof(Selections), Selections, indentLevel);
         }
 
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }

@@ -6,7 +6,8 @@
         //list of table references
 
         //TODO
-        //Dump method 
+        //DumpContent method
+
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return visitor.Visit(this);

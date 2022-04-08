@@ -21,11 +21,11 @@ namespace TypeCobol.Compiler.Sql.Model
         //OrderByClause
         //OffsetClause
         //FetchClause
-        public override void Dump(TextWriter output, int indentLevel)
+
+        protected override void DumpContent(TextWriter output, int indentLevel)
         {
             DumpProperty(output, nameof(SelectClause), SelectClause, indentLevel);
             DumpProperty(output, nameof(FromClause), FromClause, indentLevel);
-            
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)

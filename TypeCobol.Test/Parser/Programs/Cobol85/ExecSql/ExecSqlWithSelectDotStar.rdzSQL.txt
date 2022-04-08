@@ -1,6 +1,6 @@
 ﻿--- Sql Statements ---
 line 6: SelectStatement
-- FullSelect = FullSelect 
+- FullSelect = FullSelect
   - SubSelect = SubSelect
     - SelectClause = SelectClause
       - SelectionModifier = <NULL>

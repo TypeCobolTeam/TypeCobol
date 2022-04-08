@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
         public FullSelect SubQuery { get; }
 
-        public override void Dump(TextWriter output, int indentLevel)
+        protected override void DumpContent(TextWriter output, int indentLevel)
         {
             DumpProperty(output, nameof(SubSelect), SubSelect, indentLevel);
             DumpProperty(output, nameof(SubQuery), SubQuery, indentLevel);

@@ -11,12 +11,14 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             Name = name;
         }
-        public override void Dump(TextWriter output, int indentLevel)
+
+        protected override void DumpContent(TextWriter output, int indentLevel)
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write($"{indent}- {nameof(Name)} = ");
-            output.WriteLine(Name != null ? Name.ToString() : "<NULL>");
+            output.WriteLine(Name != null ? Name.ToString() : "<NULL>");//TODO improve this, SymbolReference.ToString() is currently not suitable for SQL names
         }
+
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return visitor.Visit(this);

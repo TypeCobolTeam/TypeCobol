@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +11,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
+using TypeCobol.Compiler.Sql.Model;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -479,22 +479,36 @@ namespace TypeCobol.Test.Utils
         private class ASTVisitor : AbstractAstVisitor 
         {
             private readonly StringWriter _writer;
+
             public ASTVisitor(StringBuilder builder)
             {
                 _writer = new StringWriter(builder);
             }
 
+            private void DumpSqlObject(string name, SqlObject sqlObject)
+            {
+                _writer.Write($"- {name} = ");
+                if (sqlObject != null)
+                {
+                    sqlObject.Dump(_writer, 1);
+                }
+                else
+                {
+                    _writer.WriteLine("<NULL>");
+                }
+            }
+
             public override bool Visit(SelectStatement selectStatement)
             {
                 _writer.WriteLine("line " + selectStatement.Line + ": SelectStatement");
-                _writer.WriteLine("- FullSelect = FullSelect ");
-                selectStatement.FullSelect.Dump(_writer ,1);
+                DumpSqlObject(nameof(selectStatement.FullSelect), selectStatement.FullSelect);
                 return true;
             }
 
             public override bool Visit(CommitStatement commitStatement)
             {
                 _writer.WriteLine("line " + commitStatement.Line + ": CommitStatement");
+                //No SqlObject in CommitStatement
                 return true;
             }
         }

@@ -10,22 +10,7 @@ namespace TypeCobol.Compiler.Sql.Model
     /// </summary>
     public abstract class SqlObject : IVisitable
     {
-        //TODO How to set and add tokens automatically for all SQL objects ?
-        public IList<Token> ConsumedTokens { get; internal set; }
-
-        public bool AcceptVisitor(ISqlVisitor visitor)
-        {
-            bool continueVisit = visitor.BeginSqlObject(this) && VisitSqlObject(visitor);
-            visitor.EndSqlObject(this);
-            return continueVisit;
-        }
-        public virtual void Dump(TextWriter output, int indentLevel)
-        {
-            string indent = new string(' ', 2 * indentLevel);
-            output.Write(indent);
-            output.WriteLine(GetType().FullName);
-        }
-
+        //To help implement DumpContent methods in various SqlObjects
         protected static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
         {
             string indent = new string(' ', 2 * indentLevel);
@@ -36,7 +21,6 @@ namespace TypeCobol.Compiler.Sql.Model
             }
             else if (value is SqlObject sqlObject)
             {
-                output.WriteLine(sqlObject.GetType().Name);
                 sqlObject.Dump(output, indentLevel + 1);
             }
             else if (value is System.Collections.IEnumerable enumerable)
@@ -56,6 +40,23 @@ namespace TypeCobol.Compiler.Sql.Model
             }
         }
 
+        //TODO How to set and add tokens automatically for all SQL objects ?
+        public IList<Token> ConsumedTokens { get; internal set; }
+
+        public bool AcceptVisitor(ISqlVisitor visitor)
+        {
+            bool continueVisit = visitor.BeginSqlObject(this) && VisitSqlObject(visitor);
+            visitor.EndSqlObject(this);
+            return continueVisit;
+        }
+
+        public void Dump(TextWriter output, int indentLevel)
+        {
+            output.WriteLine(GetType().Name); //Start directly at current position with type name, indent is used for content only
+            DumpContent(output, indentLevel);
+        }
+
+        protected virtual void DumpContent(TextWriter output, int indentLevel) { }
 
         protected abstract bool VisitSqlObject([NotNull] ISqlVisitor visitor);
     }
