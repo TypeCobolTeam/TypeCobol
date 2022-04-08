@@ -34,6 +34,8 @@ namespace TypeCobol.Compiler
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
+
+            _copyCache = new CompilationDocumentCache();
         }
 
         /// <summary>
@@ -169,14 +171,14 @@ namespace TypeCobol.Compiler
         // -- Implementation of IProcessedTokensDocumentProvider interface --
 
         // Cache for all the compilation documents imported by COPY directives in this project
-        IDictionary<string, CompilationDocument> importedCompilationDocumentsCache = new Dictionary<string, CompilationDocument>();
+        private readonly CompilationDocumentCache _copyCache;
 
         /// <summary>
         /// Clear the cache of loaded COPY
         /// </summary>
         public void ClearImportedCompilationDocumentsCache()
         {
-            importedCompilationDocumentsCache.Clear();
+            _copyCache.Clear();
         }
 
         /// <summary>
@@ -185,20 +187,12 @@ namespace TypeCobol.Compiler
         public virtual CompilationDocument Import(string libraryName, string textName,
             MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
         {
-            string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
-            cacheKey += (scanState.SpecialNames.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
-                        (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
-            // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
-            // because a COPY is always cleanly delimited at CodeElement boundaries.
+            var stats = new PerfStatsForImportedDocument { WasRetrievedFromCache = true };
+            var result = _copyCache.GetOrAddDocument(libraryName, textName, scanState, CompileCopy);
+            perfStats = stats; //Local function CompileCopy can't capture out var perfStats so we have to use local var instead
+            return result;
 
-            perfStats = new PerfStatsForImportedDocument();
-            CompilationDocument resultDocument;
-            if (importedCompilationDocumentsCache.ContainsKey(cacheKey))
-            {
-                resultDocument = importedCompilationDocumentsCache[cacheKey];
-                perfStats.WasRetrievedFromCache = true;
-            }
-            else
+            CompilationDocument CompileCopy()
             {
 #if !EUROINFO_RULES
                 if (copyTextNameVariations != null)
@@ -210,15 +204,12 @@ namespace TypeCobol.Compiler
                 fileCompiler.CompileOnce();
                 scanState.InsideCopy = wasAlreadyInsideCopy;
 
-                resultDocument = fileCompiler.CompilationResultsForCopy;
-                perfStats.WasRetrievedFromCache = false;
-                perfStats.SourceFileSearchTime = fileCompiler.SourceFileSearchTime;
-                perfStats.SourceFileLoadTime = fileCompiler.SourceFileLoadTime;
+                stats.WasRetrievedFromCache = false;
+                stats.SourceFileSearchTime = fileCompiler.SourceFileSearchTime;
+                stats.SourceFileLoadTime = fileCompiler.SourceFileLoadTime;
 
-                importedCompilationDocumentsCache[cacheKey] = resultDocument;
+                return fileCompiler.CompilationResultsForCopy;
             }
-
-            return resultDocument;
         }
     }
 }
