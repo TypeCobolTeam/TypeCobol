@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Sql.Model
+﻿using System.IO;
+
+namespace TypeCobol.Compiler.Sql.Model
 {
     public class SubSelect : SqlObject
     {
@@ -19,6 +21,12 @@
         //OrderByClause
         //OffsetClause
         //FetchClause
+
+        protected override void DumpContent(TextWriter output, int indentLevel)
+        {
+            DumpProperty(output, nameof(SelectClause), SelectClause, indentLevel);
+            DumpProperty(output, nameof(FromClause), FromClause, indentLevel);
+        }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {

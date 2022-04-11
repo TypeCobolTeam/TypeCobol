@@ -114,13 +114,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         SymbolReference topLevelQualifier =
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
                                 SymbolType.SqlIdentifier);
-                        QualifiedSymbolReference head = new QualifiedSymbolReference(topLevelQualifier, qualifier);
-                        SymbolReference fullName= new QualifiedSymbolReference(head, name);
+                        QualifiedSymbolReference tail = new QualifiedSymbolReference( qualifier, topLevelQualifier);
+                        SymbolReference fullName= new QualifiedSymbolReference( name, tail);
                         return fullName;
                     }
                     else
                     {
-                        SymbolReference fullName = new QualifiedSymbolReference(qualifier, name);
+                        SymbolReference fullName = new QualifiedSymbolReference(name,qualifier);
                         return fullName;
                     }
                 }

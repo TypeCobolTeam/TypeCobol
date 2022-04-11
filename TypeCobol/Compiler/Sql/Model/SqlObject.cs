@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
@@ -9,6 +10,36 @@ namespace TypeCobol.Compiler.Sql.Model
     /// </summary>
     public abstract class SqlObject : IVisitable
     {
+        //To help implement DumpContent methods in various SqlObjects
+        protected static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write($"{indent}- {name} = ");
+            if (value == null)
+            {
+                output.WriteLine("<NULL>");
+            }
+            else if (value is SqlObject sqlObject)
+            {
+                sqlObject.Dump(output, indentLevel + 1);
+            }
+            else if (value is System.Collections.IEnumerable enumerable)
+            {
+                output.WriteLine("[");
+                int index = 0;
+                foreach (var item in enumerable)
+                {
+                    DumpProperty(output, $"{name}[{index}]", item, indentLevel + 1);
+                    index++;
+                }
+                output.WriteLine(indent + "]");
+            }
+            else
+            {
+                output.WriteLine(value);
+            }
+        }
+
         //TODO How to set and add tokens automatically for all SQL objects ?
         public IList<Token> ConsumedTokens { get; internal set; }
 
@@ -18,6 +49,14 @@ namespace TypeCobol.Compiler.Sql.Model
             visitor.EndSqlObject(this);
             return continueVisit;
         }
+
+        public void Dump(TextWriter output, int indentLevel)
+        {
+            output.WriteLine(GetType().Name); //Start directly at current position with type name, indent is used for content only
+            DumpContent(output, indentLevel);
+        }
+
+        protected virtual void DumpContent(TextWriter output, int indentLevel) { }
 
         protected abstract bool VisitSqlObject([NotNull] ISqlVisitor visitor);
     }

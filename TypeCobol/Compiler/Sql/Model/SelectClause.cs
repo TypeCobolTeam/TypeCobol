@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
-
 
 namespace TypeCobol.Compiler.Sql.Model
 {
@@ -71,6 +71,11 @@ namespace TypeCobol.Compiler.Sql.Model
             this.TableOrViewOrCorrelationName = tableOrViewOrCorrelationName;
         }
 
+        protected override void DumpContent(TextWriter output, int indentLevel)
+        {
+            DumpProperty(output, nameof(TableOrViewOrCorrelationName), TableOrViewOrCorrelationName, indentLevel);
+        }
+
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return base.VisitSqlObject(visitor) &&
@@ -93,6 +98,12 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             SelectionModifier = selectionModifier;
             _selections = selections?.ToArray() ?? Array.Empty<Selection>();
+        }
+
+        protected override void DumpContent(TextWriter output, int indentLevel) 
+        {
+            DumpProperty(output, nameof(SelectionModifier), SelectionModifier, indentLevel);
+            DumpProperty(output, nameof(Selections), Selections, indentLevel);
         }
 
         public SyntaxProperty<SelectionModifier> SelectionModifier { get; }

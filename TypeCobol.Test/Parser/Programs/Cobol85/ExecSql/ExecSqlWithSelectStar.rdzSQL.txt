@@ -1,0 +1,31 @@
+﻿--- Sql Statements ---
+line 6: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = StarSelection
+      ]
+    - FromClause = <NULL>
+  - SubQuery = <NULL>
+line 7: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = All
+      - Selections = [
+        - Selections[0] = StarSelection
+      ]
+    - FromClause = <NULL>
+  - SubQuery = <NULL>
+line 8: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = Distinct
+      - Selections = [
+        - Selections[0] = StarSelection
+      ]
+    - FromClause = <NULL>
+  - SubQuery = <NULL>
