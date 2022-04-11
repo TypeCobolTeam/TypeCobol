@@ -329,6 +329,7 @@ namespace TypeCobol.LanguageServer
 
             this.Workspace.AcknowledgeCopyChanges(GetChangedCopies().ToList());
 
+            //Convert every file event change into a ChangedCopy object
             IEnumerable<ChangedCopy> GetChangedCopies()
             {
                 foreach (var fileEvent in parameters.changes)

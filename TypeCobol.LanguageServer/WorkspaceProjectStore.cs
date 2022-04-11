@@ -133,12 +133,12 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Find and return a WorkspaceProject by its project key.
+        /// Find a WorkspaceProject by its project key.
         /// Return default WorkspaceProject when given key is null.
         /// </summary>
         /// <param name="projectKey">Project key, can be null.</param>
         /// <param name="project">[out] Found WorkspaceProject instance, null if no project matches the given key.</param>
-        /// <returns>True if the named project has been found, False otherwise.</returns>
+        /// <returns>True if a project has been found, False otherwise.</returns>
         internal bool TryGetProject(string projectKey, out WorkspaceProject project)
         {
             if (projectKey == null)

@@ -741,7 +741,7 @@ namespace TypeCobol.LanguageServer
 
             if (_CopyWatcher == null)
             {
-                // No Copy Watcher ==> Refresh ourself opened file.
+                // No Copy Watcher ==> Refresh opened files ourselves.
                 if (this.TryGetOpenedDocument(fileUri, out var docContext))
                 {
                     System.Diagnostics.Debug.Assert(docContext.Project != null);
@@ -751,9 +751,14 @@ namespace TypeCobol.LanguageServer
             }
         }
 
+        /// <summary>
+        /// Consider external changes that happened on copy files.
+        /// The opened documents are refreshed depending on whether they use the modified copies or not.
+        /// </summary>
+        /// <param name="changedCopies">List of modified copies.</param>
         internal void AcknowledgeCopyChanges(List<ChangedCopy> changedCopies)
         {
-            //Remove obsolete data in copy caches
+            //Remove obsolete data from copy caches
             var copies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var changedCopy in changedCopies)
             {
@@ -773,7 +778,7 @@ namespace TypeCobol.LanguageServer
                 }
                 else
                 {
-                    //Inconsistent notification from client, the targte project could not be found
+                    //Inconsistent notification from client, the target project could not be found
                     LoggingSystem.LogMessage(LogLevel.Warning, $"Copy to WorkspaceProject mismatch: could not find project '{changedCopy.OwnerProject}'.");
                 }
             }
@@ -966,14 +971,23 @@ namespace TypeCobol.LanguageServer
     {
         private const string ALL_PROJECTS = "$all";
 
+        /// <summary>
+        /// Try parse a file event uri into a ChangedCopy.
+        /// A changed copy respects the format 'projectKey/copyName' where projectKey can be:
+        /// - empty
+        /// - equals to '$all'
+        /// - a valid workspace project identifier
+        /// </summary>
+        /// <param name="fileEventUri">String representing a modified copy</param>
+        /// <param name="changedCopy">[out] new ChangedCopy instance if parsing was successful, null otherwise</param>
+        /// <returns>True if parsing succeeded, False otherwise</returns>
         public static bool TryParse(string fileEventUri, out ChangedCopy changedCopy)
         {
-            System.Diagnostics.Debug.Assert(fileEventUri != null);
-            string[] parts = fileEventUri.Split('/');
+            string[] parts = fileEventUri?.Split('/');
 
-            if (parts.Length == 0)
+            if (parts == null || parts.Length != 2)
             {
-                //Invalid
+                //Null, no slash or more than one slash -> invalid
                 changedCopy = null;
                 return false;
             }
@@ -992,7 +1006,7 @@ namespace TypeCobol.LanguageServer
                     changedCopy = new ChangedCopy(copyName, true, null);
                     break;
                 default:
-                    //special syntax, all projects
+                    //named project
                     changedCopy = new ChangedCopy(copyName, false, projectKey);
                     break;
             }

@@ -199,6 +199,9 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         internal bool IsEmpty => _openedDocuments.IsEmpty;
 
+        /// <summary>
+        /// Refresh all documents of this WorkspaceProject instance
+        /// </summary>
         public void RefreshOpenedDocuments()
         {
             if (!IsEmpty)
