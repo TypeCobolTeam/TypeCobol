@@ -31,7 +31,7 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     public class Workspace
     {
-        private SymbolTable _customSymbols;
+        public SymbolTable CustomSymbols { get; private set; }
         public string RootDirectory { get; }
         public string Name { get; }
         private DependenciesFileWatcher _DepWatcher;
@@ -218,22 +218,20 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            var matchingPgm =
-                _customSymbols?.Programs.Keys.FirstOrDefault(
-                    k => k.Equals(inputFileName, StringComparison.OrdinalIgnoreCase));
+            var matchingPgm = CustomSymbols?.Programs.Keys.FirstOrDefault(k => k.Equals(inputFileName, StringComparison.OrdinalIgnoreCase));
             if (matchingPgm != null)
             {
-                arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.Namespace);
-                var prog = _customSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
+                arrangedCustomSymbol = new SymbolTable(CustomSymbols, SymbolTable.Scope.Namespace);
+                var prog = CustomSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() { prog.ToList() });
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
 
             fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider,
-                compilationProject, compilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
+                compilationProject, compilationProject.CompilationOptions, arrangedCustomSymbol ?? CustomSymbols,
                 compilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, _customSymbols, compilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, CustomSymbols, compilationProject);
 #endif
 
             // Set Any Language Server Connection Options.
@@ -845,12 +843,11 @@ namespace TypeCobol.LanguageServer
                 }
                     
             };
-            _customSymbols = null;
+            CustomSymbols = null;
             try
             {
-                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies,
-                    Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, _customSymbols, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, CustomSymbols, DiagnosticsErrorEvent, out _, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
 
                 if (MissingCopiesEvent != null && missingCopies.Count > 0)
                 {
