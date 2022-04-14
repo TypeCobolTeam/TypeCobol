@@ -53,8 +53,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		[CanBeNull]
 		public IntegerValue LevelNumber { get; set; }
-        
-		/// <summary>
+        /// <summary>
 		/// data-name-1 cannot be used as a qualifier; it can be qualified only by the
 		/// names of level indicator entries or level-01 entries.
 		///
