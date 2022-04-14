@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
-        public CompilerDirective CompilerDirective { get; private set; }
+        public CompilerDirective CompilerDirective { get; internal set; }
 
         private string GetName(TypeCobol.Compiler.Scanner.Token name)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -82,6 +83,11 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool InsideReplaceDirective { get; private set; }
 
+        /// <summary>
+        /// True if we are scanning inside a PERFORM Statement.
+        /// </summary>
+        public bool InsidePerformStatement { get; private set; }
+
 #if EUROINFO_RULES
         /// <summary>
         /// True when we are existing a remarks directive. 
@@ -107,7 +113,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false, bool insideCopy = false) :
-            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false, false)
+            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false, false, false)
         { }
 
         /// <summary>
@@ -116,7 +122,8 @@ namespace TypeCobol.Compiler.Scanner
         private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText,
             SpecialNamesContext specialNamesContext, bool insideFormalizedComment, bool insideMultilineComments,
             bool insideParamsField, bool withDebuggingMode, bool insideCopy,
-            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective, bool insideSql)
+            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective, bool insideSql,
+            bool insidePerformDirective)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -129,8 +136,9 @@ namespace TypeCobol.Compiler.Scanner
             InsideCopy = insideCopy;
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
             _afterReplacementPseudoText = afterReplacementPseudoText;
-            InsideReplaceDirective = insideReplaceDirective;
+            InsideReplaceDirective = insideReplaceDirective;            
             InsideSql = insideSql;
+            InsidePerformStatement = insidePerformDirective;
         }
 
         /// <summary>
@@ -140,9 +148,10 @@ namespace TypeCobol.Compiler.Scanner
         {
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, SpecialNames.Clone(),
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective, InsideSql);
+                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective, InsideSql, InsidePerformStatement);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
+            clone.PerformStatementAutomataState = PerformStatementAutomataState;
 
 #if EUROINFO_RULES
             clone.InsideRemarksDirective = InsideRemarksDirective;
@@ -285,6 +294,13 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.REPLACE:
                     InsideReplaceDirective = true;
                     break;
+                case TokenType.PERFORM:
+                    if (newToken.TokensLine is TokensLine tl && tl.ColumnsLayout == ColumnsLayout.CobolReferenceFormat)
+                    {   // This mode is only possible in a COBOL format, not in Free Format
+                        InsidePerformStatement = true;
+                        this.PerformStatementAutomataState = PerformStatementAutomataStates.Start;
+                    }
+                    break;
                 case TokenType.PeriodSeparator:
                     if (_afterReplacementPseudoText)
                     {
@@ -292,6 +308,11 @@ namespace TypeCobol.Compiler.Scanner
                         InsideReplaceDirective = false;
                     }
                     break;
+            }
+
+            if (InsidePerformStatement)
+            {
+                HandlePerformStatementState(newToken.TokenType);
             }
 
             // Avoid setting last significative token for multiline Comments
@@ -554,6 +575,150 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        /* The Automa State to Leave a PERFORM Statement State.
+         * number between [] are Possible Transition State on previous pevious token
+         * 
+         * [0]PERFORM --> [1] procedure_name1-->[2,4,5,6]THRU-->[3]procedure_name2-->[4,6]
+         * [0]PERFORM --> [4] (integer1=UserDefinedWord) --> [5] TIMES-->[6]
+         * [0]PERFORM --> [7] UNTIL|TEST|WITH|VARYING|END -->[8]
+         */
+        internal enum PerformStatementAutomataStates
+        {
+            Start,
+            Perform,
+            ProcedureName1,
+            QualifiedNameSeparator1,
+            AfterQualifiedProcedureName1,
+            Thru,
+            ProcedureName2,
+            QualifiedNameSeparator2            
+        }
+        internal PerformStatementAutomataStates PerformStatementAutomataState { get; private set; }
+
+        /// <summary>
+        /// Determines if the current PERFORM scanning automata state can have a procedure name has next token.
+        /// </summary>
+        public bool IsPerformStatementProcedureNameState
+        {
+            get
+            {
+                return this.InsidePerformStatement &&
+                    (this.PerformStatementAutomataState == PerformStatementAutomataStates.Perform ||
+                        this.PerformStatementAutomataState == PerformStatementAutomataStates.QualifiedNameSeparator1 ||
+                        this.PerformStatementAutomataState == PerformStatementAutomataStates.Thru ||
+                        this.PerformStatementAutomataState == PerformStatementAutomataStates.QualifiedNameSeparator2
+                        );
+
+            }
+        }
+
+        private void HandlePerformStatementState(TokenType newTokenType)
+        {
+            switch(PerformStatementAutomataState)
+            {
+                case PerformStatementAutomataStates.Start: // At the begining we expect the PERFORM keyword
+                    switch (newTokenType)
+                    {
+                        case TokenType.PERFORM:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.Perform;
+                            break;
+                        default:
+                            this.InsidePerformStatement = false;
+                            break;
+                    }
+                    break;
+                case PerformStatementAutomataStates.Perform: // PERFORM is consumed
+                    // After PERFORM we expect a UserDefineWord as procedure-name1
+                    switch (newTokenType)
+                    {
+                        case TokenType.UserDefinedWord:
+                        case TokenType.PartialCobolWord:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.ProcedureName1;
+                            break;
+                        default:
+                            this.InsidePerformStatement = false;
+                            break;
+                    }
+                    break;
+                case PerformStatementAutomataStates.ProcedureName1: // Unqualifed procedure-name1 is consumed
+                    // After we may expect THROUGH, THRU or a qualified name separator
+                    switch (newTokenType)
+                    {
+                        case TokenType.THROUGH:
+                        case TokenType.THRU:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.Thru;
+                            break;
+                        case TokenType.IN:
+                        case TokenType.OF:
+                        case TokenType.QualifiedNameSeparator:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.QualifiedNameSeparator1;
+                            break;
+                        default:
+                            this.InsidePerformStatement = false;
+                            break;
+                    }
+                    break;
+                case PerformStatementAutomataStates.QualifiedNameSeparator1: // IN, OF or :: is consumed for procedure-name1
+                    // After the qualified name separator of procedure-name1 we expect a UserDefinedWord
+                    switch (newTokenType)
+                    {
+                        case TokenType.UserDefinedWord:
+                        case TokenType.PartialCobolWord:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.AfterQualifiedProcedureName1;
+                            break;
+                        default:
+                            this.InsidePerformStatement = false;
+                            break;
+                    }
+                    break;
+                case PerformStatementAutomataStates.AfterQualifiedProcedureName1: // Qualified procedure-name1 is consumed
+                    // After we may expect THROUGH, THRU
+                    switch (newTokenType)
+                    {
+                        case TokenType.THROUGH:
+                        case TokenType.THRU:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.Thru;
+                            break;
+                        default:
+                            this.InsidePerformStatement = false;
+                            break;
+                    }
+                    break;
+                case PerformStatementAutomataStates.Thru: // THROUGH or THRU is comsumed
+                    // After we expect a UserDefineWord as procedure-name2
+                    switch (newTokenType)
+                    {
+                        case TokenType.UserDefinedWord:
+                        case TokenType.PartialCobolWord:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.ProcedureName2;
+                            break;
+                        default:
+                            this.InsidePerformStatement = false;
+                            break;
+                    }
+                    break;
+                case PerformStatementAutomataStates.ProcedureName2:// Unqualifed procedure-name2 is consumed
+                    // After we expect a qualified name separator
+                    switch (newTokenType)
+                    {
+                        case TokenType.IN:
+                        case TokenType.OF:
+                        case TokenType.QualifiedNameSeparator:
+                            PerformStatementAutomataState = PerformStatementAutomataStates.QualifiedNameSeparator2;
+                            break;
+                        default:
+                            this.InsidePerformStatement = false;
+                            break;
+                    }
+                    break;
+                case PerformStatementAutomataStates.QualifiedNameSeparator2: // IN, OF or :: is consumed for procedure-name2
+                    // Here no need to check for a UserDefineWord for the SECTION or the Paragraphe qualified
+                    // because after any token we leave the PERFORM mode.
+                    this.InsidePerformStatement = false;
+                    break;
+            }
+        }
+
         /// <summary>
         /// Used to check if an update to a TokensLine modified the scanner context for the following lines
         /// </summary>
@@ -585,7 +750,8 @@ namespace TypeCobol.Compiler.Scanner
                    EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
                    _afterReplacementPseudoText == otherScanState._afterReplacementPseudoText &&
                    InsideReplaceDirective == otherScanState.InsideReplaceDirective &&
-                   InsideSql == otherScanState.InsideSql;
+                   InsideSql == otherScanState.InsideSql &&
+                   InsidePerformStatement == otherScanState.InsidePerformStatement;
         }
 
         /// <summary>
@@ -613,7 +779,8 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();
                 hash = hash * 23 + _afterReplacementPseudoText.GetHashCode();
                 hash = hash * 23 + InsideReplaceDirective.GetHashCode();
-                hash = hash * 23 + InsideCopy.GetHashCode();
+                hash = hash * 23 + InsideSql.GetHashCode();
+                hash = hash * 23 + InsidePerformStatement.GetHashCode();
                 return hash;
             }
         }

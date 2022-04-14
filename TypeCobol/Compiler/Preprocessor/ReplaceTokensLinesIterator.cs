@@ -490,7 +490,12 @@ namespace TypeCobol.Compiler.Preprocessor
             MultilineScanState scanState = originalToken.ScanStateSnapshot;
             System.Diagnostics.Debug.Assert(scanState != null);
 
-            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, out _);
+            // If the Excepted token was a ProcedureName, force to rescan a UserDefinedWord.
+            Scanner.Scanner.IsolatedTokenKind tokenKind = 
+            (originalToken.PreviousTokenType.HasValue && originalToken.PreviousTokenType.Value == TokenType.SectionParagraphName)
+                ? Scanner.Scanner.IsolatedTokenKind.UserDefinedWord : Scanner.Scanner.IsolatedTokenKind.All;
+
+            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, tokenKind, out _);
             // TODO : find a way to report the error above ...
 
             if (originalToken.PreviousTokenType != null)

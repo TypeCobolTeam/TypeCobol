@@ -62,7 +62,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// </summary>
         public bool CheckLiteralOrUserDefinedWordOReservedWordExceptCopy { get; set; }
 
-        private AnyTokenCategory AnyTokenCategoryMode { get; set; }
+        private AnyTokenCategory AnyTokenCategoryMode { get; set; }        
 
         /// <summary>
         /// The EOF symbol
@@ -431,7 +431,15 @@ namespace TypeCobol.Compiler.CupCommon
                     this.FirstToken = token;
                 }
                 TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol(((int)token.TokenType) + CsCupStartToken - 1, token);
-                if (!HandleAnyTokenMode(token, symbol))
+                if (_inPerformModeState > 0)
+                {
+                    if (!HandlePerformMode(token))
+                    {
+                        _inPerformModeState = 0;
+                        break;
+                    }
+                }
+                else if (!HandleAnyTokenMode(token, symbol))
                 {
                     LastStopSymbol = symbol;
                     break;
@@ -450,6 +458,37 @@ namespace TypeCobol.Compiler.CupCommon
         public void Dispose()
         {
             _symbolYielder = null;
+        }
+
+        private int _inPerformModeState = 0;
+        public void EnterPerformMode()
+        {
+            _inPerformModeState = 1;
+        }
+        public void LeavePerformMode()
+        {
+            _inPerformModeState = 0;
+        }
+        private bool HandlePerformMode(Token token)
+        {
+            switch(_inPerformModeState)
+            {
+                case 0:
+                    return true;
+                case 1:
+                    if (token.TokenType != TokenType.UserDefinedWord)
+                        return false;
+                    _inPerformModeState = 2;
+                    return true;
+                case 2:
+                    if (token.TokenType != TokenType.TIMES)
+                        return false;
+                    _inPerformModeState = 3;
+                    return true;
+                case 3:
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>

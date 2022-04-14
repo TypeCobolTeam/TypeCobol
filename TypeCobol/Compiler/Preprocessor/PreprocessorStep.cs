@@ -108,7 +108,7 @@ namespace TypeCobol.Compiler.Preprocessor
             foreach (Token compilerDirectiveStartingToken in documentLines
                 .Where(line => line.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                 .SelectMany(line => line.SourceTokens)
-                .Where(token => token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword))
+                .Where(token => token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || token.TokenType == TokenType.PERFORM))
             {
                 // 2. Reset the compiler directive parser state
 
@@ -138,6 +138,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     new TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator);
                 directivesParser.ErrorReporter = cupCobolErrorStrategy;
                 directivesParser.Builder = directiveBuilder;
+                directiveBuilder.CompilerDirective = null;
                 TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
                 perfStatsForParserInvocation.OnStopParsing(0, 0);
 

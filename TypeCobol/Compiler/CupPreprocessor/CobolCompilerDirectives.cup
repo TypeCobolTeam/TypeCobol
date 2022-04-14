@@ -237,6 +237,8 @@ non terminal codeElementStartingKeyword;
 non terminal end_exec;
 non terminal replacing_by;
 
+non terminal performPrefix;
+non terminal partialPerformStatement;
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
 // statements are processed to generate a source text suitable for subsequent parsing. 
@@ -293,6 +295,7 @@ compilerDirectingStatement ::= basisCompilerStatement
 		| serviceReloadCompilerStatement 
 		| skipCompilerStatement 
 		| titleCompilerStatement
+		| partialPerformStatement
 		;
 
 // p527: BASIS statement 
@@ -1142,3 +1145,20 @@ titleCompilerStatement ::=
 // p546: USE statement
 // -> see the DECLARATIVES section in CobolCodeElements.g4
 
+// Hack for PERFORM integer TIMES statement to change a UserDefinedWord to an IntegerLiteral
+// Because the Scanner always scans PERFORM integer-1 TIMES like PERFORM UserDefinedWord TIMES
+
+performPrefix ::= {: ((CobolWordsTokenizer)my_parser.getScanner()).EnterPerformMode(); :} PERFORM:p
+;
+
+partialPerformStatement ::= performPrefix:p {: ((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode(); :} 
+| performPrefix:p UserDefinedWord:udw {: ((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode(); :} 
+| performPrefix:p UserDefinedWord:udw TIMES:t 
+{: 
+	((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode(); 
+	if (System.Int64.TryParse(udw.Text, out var _))
+	{
+		udw.CorrectType(TokenType.IntegerLiteral);
+	}
+:} 
+;

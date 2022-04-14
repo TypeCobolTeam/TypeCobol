@@ -1,0 +1,17 @@
+--- Program ---
+PROGRAM: MyPgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+-- SECTIONS ----
+  300-000-SEC1
+-- PARAGRAPHS --
+  300-000-PAR2
+  EACGAPEL-C0001-TRACE
+  EACGAPEL-C0001
+  EACGAPEL-C0002
+  300-000-PAR3
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

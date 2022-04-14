@@ -55,4 +55,22 @@ public static class ScannerUtils
 
         return false;
     }
+
+    /// <summary>
+    /// Get the CobolFormatArea in which the given index is into.
+    /// </summary>
+    /// <param name="index">The index to found the corresponding CobolFormatAreas is</param>
+    /// <returns> the CobolFormatArea instance</returns>
+    public static CobolFormatAreas GetAreaFromIndex(int index)
+    {
+        if ( index < (int)CobolFormatAreas.EndNumber)
+            return CobolFormatAreas.BeginNumber;
+        if (index < (int)CobolFormatAreas.Indicator)
+            return CobolFormatAreas.Indicator;
+        if (index < (int)CobolFormatAreas.End_A)
+            return CobolFormatAreas.Begin_A;
+        if (index < (int)CobolFormatAreas.End_B)
+            return CobolFormatAreas.Begin_B;
+            return CobolFormatAreas.Comment;
+    }
 }

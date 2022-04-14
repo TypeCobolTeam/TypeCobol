@@ -26,7 +26,7 @@ public class CobolCompilerDirectivesParser : TUVienna.CS_CUP.Runtime.lr_parser {
 
   /** Production table. */
   protected static readonly short[][] _production_table = 
-new short[235][] {
+new short[241][] {
 	new short[2]{0,2},
 	new short[2]{28,1},
 	new short[2]{4,1},
@@ -163,8 +163,9 @@ new short[235][] {
 	new short[2]{133,1},
 	new short[2]{133,1},
 	new short[2]{133,1},
-	new short[2]{175,0},
-	new short[2]{176,0},
+	new short[2]{133,1},
+	new short[2]{177,0},
+	new short[2]{178,0},
 	new short[2]{134,4},
 	new short[2]{135,2},
 	new short[2]{135,2},
@@ -179,25 +180,25 @@ new short[235][] {
 	new short[2]{139,1},
 	new short[2]{139,2},
 	new short[2]{137,1},
-	new short[2]{177,0},
+	new short[2]{179,0},
 	new short[2]{137,5},
 	new short[2]{141,1},
 	new short[2]{141,2},
-	new short[2]{178,0},
+	new short[2]{180,0},
 	new short[2]{142,2},
-	new short[2]{179,0},
+	new short[2]{181,0},
 	new short[2]{142,2},
 	new short[2]{143,0},
 	new short[2]{143,1},
-	new short[2]{180,0},
-	new short[2]{144,4},
-	new short[2]{181,0},
 	new short[2]{182,0},
+	new short[2]{144,4},
+	new short[2]{183,0},
+	new short[2]{184,0},
 	new short[2]{145,5},
 	new short[2]{146,2},
 	new short[2]{146,3},
 	new short[2]{147,0},
-	new short[2]{183,0},
+	new short[2]{185,0},
 	new short[2]{147,3},
 	new short[2]{174,1},
 	new short[2]{174,1},
@@ -205,18 +206,18 @@ new short[235][] {
 	new short[2]{148,4},
 	new short[2]{149,1},
 	new short[2]{149,1},
-	new short[2]{184,0},
-	new short[2]{150,4},
-	new short[2]{185,0},
-	new short[2]{152,3},
 	new short[2]{186,0},
-	new short[2]{153,2},
+	new short[2]{150,4},
 	new short[2]{187,0},
-	new short[2]{153,3},
+	new short[2]{152,3},
 	new short[2]{188,0},
-	new short[2]{154,2},
+	new short[2]{153,2},
 	new short[2]{189,0},
+	new short[2]{153,3},
 	new short[2]{190,0},
+	new short[2]{154,2},
+	new short[2]{191,0},
+	new short[2]{192,0},
 	new short[2]{155,6},
 	new short[2]{156,1},
 	new short[2]{157,0},
@@ -225,43 +226,48 @@ new short[235][] {
 	new short[2]{158,1},
 	new short[2]{173,1},
 	new short[2]{173,1},
-	new short[2]{191,0},
-	new short[2]{192,0},
-	new short[2]{159,8},
 	new short[2]{193,0},
 	new short[2]{194,0},
+	new short[2]{159,8},
+	new short[2]{195,0},
+	new short[2]{196,0},
 	new short[2]{160,4},
 	new short[2]{161,1},
-	new short[2]{195,0},
-	new short[2]{162,2},
-	new short[2]{196,0},
-	new short[2]{162,2},
 	new short[2]{197,0},
-	new short[2]{163,4},
+	new short[2]{162,2},
 	new short[2]{198,0},
-	new short[2]{164,2},
+	new short[2]{162,2},
 	new short[2]{199,0},
-	new short[2]{165,4},
+	new short[2]{163,4},
 	new short[2]{200,0},
+	new short[2]{164,2},
 	new short[2]{201,0},
+	new short[2]{165,4},
+	new short[2]{202,0},
+	new short[2]{203,0},
 	new short[2]{165,5},
 	new short[2]{166,3},
 	new short[2]{166,4},
-	new short[2]{202,0},
-	new short[2]{167,3},
-	new short[2]{203,0},
 	new short[2]{204,0},
-	new short[2]{168,5},
+	new short[2]{167,3},
 	new short[2]{205,0},
-	new short[2]{169,2},
 	new short[2]{206,0},
-	new short[2]{169,2},
+	new short[2]{168,5},
 	new short[2]{207,0},
 	new short[2]{169,2},
-	new short[2]{170,1},
 	new short[2]{208,0},
+	new short[2]{169,2},
 	new short[2]{209,0},
-	new short[2]{171,4}
+	new short[2]{169,2},
+	new short[2]{170,1},
+	new short[2]{210,0},
+	new short[2]{211,0},
+	new short[2]{171,4},
+	new short[2]{212,0},
+	new short[2]{175,2},
+	new short[2]{176,1},
+	new short[2]{176,2},
+	new short[2]{176,3}
 };
 
   /** Access to production table. */
@@ -269,180 +275,186 @@ new short[235][] {
 
   /** Parse-action table. */
   protected static readonly short[][] _action_table = 
-new short[173][] {
-	new short[42]{45,-159,46,-157,47,-137,48,26,49,36,50,-181,51,-187,52,-189,54,-202,55,28,56,-206,57,-208,58,-212,59,4,60,-226,61,-228,62,-230,63,-233,107,10,108,6,-1,0},
-	new short[4]{62,173,-1,0},
-	new short[4]{63,165,-1,0},
-	new short[6]{323,-221,385,-223,-1,0},
+new short[179][] {
+	new short[44]{45,-160,46,-158,47,-138,48,29,49,15,50,-182,51,-188,52,-190,54,-203,55,31,56,-207,57,-209,58,-213,59,4,60,-227,61,-229,62,-231,63,-234,107,10,108,6,132,-237,-1,0},
+	new short[4]{62,179,-1,0},
+	new short[4]{63,171,-1,0},
+	new short[6]{323,-222,385,-224,-1,0},
 	new short[4]{0,-126,-1,0},
-	new short[4]{42,-196,-1,0},
+	new short[4]{42,-197,-1,0},
 	new short[4]{0,-133,-1,0},
-	new short[4]{42,-199,-1,0},
-	new short[4]{47,147,-1,0},
-	new short[4]{42,-195,-1,0},
-	new short[6]{16,-179,349,-216,-1,0},
-	new short[4]{57,133,-1,0},
-	new short[4]{58,132,-1,0},
-	new short[4]{60,131,-1,0},
+	new short[4]{42,-200,-1,0},
+	new short[4]{47,153,-1,0},
+	new short[4]{42,-196,-1,0},
+	new short[6]{0,-239,44,151,-1,0},
+	new short[6]{16,-180,349,-217,-1,0},
+	new short[4]{57,137,-1,0},
+	new short[4]{58,136,-1,0},
+	new short[10]{27,-166,28,-166,29,-166,44,-166,-1,0},
 	new short[4]{0,-124,-1,0},
 	new short[4]{0,-125,-1,0},
-	new short[4]{45,130,-1,0},
-	new short[4]{50,124,-1,0},
-	new short[4]{51,123,-1,0},
-	new short[4]{52,116,-1,0},
-	new short[4]{46,115,-1,0},
-	new short[4]{54,111,-1,0},
+	new short[4]{132,95,-1,0},
+	new short[4]{45,94,-1,0},
+	new short[4]{50,88,-1,0},
+	new short[4]{51,87,-1,0},
+	new short[4]{52,80,-1,0},
+	new short[4]{46,79,-1,0},
+	new short[4]{54,75,-1,0},
+	new short[4]{0,-129,-1,0},
 	new short[4]{0,-136,-1,0},
 	new short[4]{0,-130,-1,0},
-	new short[4]{56,110,-1,0},
-	new short[6]{0,-142,44,100,-1,0},
+	new short[4]{56,74,-1,0},
+	new short[6]{0,-143,44,64,-1,0},
 	new short[4]{0,-131,-1,0},
-	new short[6]{0,-142,44,100,-1,0},
+	new short[6]{0,-143,44,64,-1,0},
 	new short[4]{0,-123,-1,0},
-	new short[4]{0,-232,-1,0},
+	new short[4]{0,-233,-1,0},
 	new short[4]{0,-122,-1,0},
 	new short[4]{0,-128,-1,0},
-	new short[4]{0,96,-1,0},
+	new short[4]{0,60,-1,0},
 	new short[4]{0,-132,-1,0},
+	new short[4]{60,59,-1,0},
 	new short[4]{0,-127,-1,0},
-	new short[10]{27,-165,28,-165,29,-165,44,-165,-1,0},
-	new short[4]{429,53,-1,0},
-	new short[4]{44,-163,-1,0},
+	new short[4]{429,56,-1,0},
+	new short[4]{44,-164,-1,0},
 	new short[4]{0,-134,-1,0},
 	new short[4]{0,-135,-1,0},
-	new short[4]{0,-129,-1,0},
+	new short[4]{0,-137,-1,0},
 	new short[4]{0,-121,-1,0},
-	new short[4]{61,44,-1,0},
-	new short[4]{0,-229,-1,0},
-	new short[4]{44,49,-1,0},
-	new short[8]{0,-155,11,-155,44,-155,-1,0},
-	new short[8]{0,-20,11,-20,44,-20,-1,0},
-	new short[8]{0,-161,11,52,44,49,-1,0},
-	new short[8]{0,-2,11,-2,44,-2,-1,0},
-	new short[4]{0,-164,-1,0},
+	new short[4]{61,47,-1,0},
+	new short[4]{0,-230,-1,0},
+	new short[4]{44,52,-1,0},
 	new short[8]{0,-156,11,-156,44,-156,-1,0},
-	new short[4]{0,-162,-1,0},
-	new short[4]{11,-210,-1,0},
-	new short[4]{11,55,-1,0},
-	new short[4]{0,-211,-1,0},
-	new short[10]{27,66,28,63,29,64,44,60,-1,0},
-	new short[4]{11,-166,-1,0},
+	new short[8]{0,-20,11,-20,44,-20,-1,0},
+	new short[8]{0,-162,11,55,44,52,-1,0},
+	new short[8]{0,-2,11,-2,44,-2,-1,0},
+	new short[4]{0,-165,-1,0},
+	new short[8]{0,-157,11,-157,44,-157,-1,0},
+	new short[4]{0,-163,-1,0},
+	new short[4]{11,-211,-1,0},
+	new short[4]{11,58,-1,0},
+	new short[4]{0,-212,-1,0},
+	new short[4]{0,-228,-1,0},
+	new short[4]{0,-1,-1,0},
+	new short[4]{0,-142,-1,0},
+	new short[6]{0,-145,7,-145,-1,0},
+	new short[6]{0,-144,7,71,-1,0},
+	new short[8]{0,-153,7,-153,14,-154,-1,0},
+	new short[4]{14,66,-1,0},
+	new short[6]{2,68,15,-147,-1,0},
+	new short[6]{2,70,15,69,-1,0},
+	new short[6]{2,-148,15,-148,-1,0},
+	new short[6]{0,-155,7,-155,-1,0},
+	new short[6]{2,-149,15,-149,-1,0},
+	new short[4]{44,64,-1,0},
+	new short[6]{0,-146,7,-146,-1,0},
+	new short[4]{0,-141,-1,0},
+	new short[4]{429,-208,-1,0},
+	new short[4]{34,-204,-1,0},
+	new short[4]{34,78,-1,0},
+	new short[4]{0,-205,-1,0},
+	new short[4]{0,-206,-1,0},
+	new short[4]{44,-159,-1,0},
+	new short[4]{44,82,-1,0},
+	new short[6]{11,-194,44,83,-1,0},
+	new short[6]{11,-193,44,-193,-1,0},
+	new short[4]{11,-195,-1,0},
+	new short[4]{11,-191,-1,0},
+	new short[4]{11,86,-1,0},
+	new short[4]{0,-192,-1,0},
+	new short[4]{0,-189,-1,0},
+	new short[4]{34,-184,-1,0},
+	new short[4]{34,93,-1,0},
+	new short[6]{0,-183,34,-186,-1,0},
+	new short[4]{34,92,-1,0},
+	new short[6]{0,-187,34,-187,-1,0},
+	new short[6]{0,-185,34,-185,-1,0},
+	new short[4]{44,-161,-1,0},
+	new short[6]{0,-238,44,-238,-1,0},
+	new short[10]{27,106,28,102,29,103,44,105,-1,0},
+	new short[4]{11,-167,-1,0},
 	new short[18]{0,-12,3,-12,11,-12,89,-12,309,-12,348,-12,389,-12,413,-12,-1,0},
 	new short[18]{0,-13,3,-13,11,-13,89,-13,309,-13,348,-13,389,-13,413,-13,-1,0},
-	new short[18]{0,-11,3,-11,11,-11,89,-11,309,-11,348,-11,389,-11,413,-11,-1,0},
 	new short[18]{0,-14,3,-14,11,-14,89,-14,309,-14,348,-14,389,-14,413,-14,-1,0},
-	new short[16]{3,-18,11,-18,89,-18,309,90,348,89,389,-18,413,-18,-1,0},
+	new short[16]{3,-18,11,-18,89,-18,309,130,348,129,389,-18,413,-18,-1,0},
 	new short[18]{0,-4,3,-4,11,-4,89,-4,309,-4,348,-4,389,-4,413,-4,-1,0},
 	new short[18]{0,-5,3,-5,11,-5,89,-5,309,-5,348,-5,389,-5,413,-5,-1,0},
-	new short[12]{3,-170,11,-170,89,-170,389,-171,413,69,-1,0},
+	new short[12]{3,-171,11,-171,89,-171,389,-172,413,109,-1,0},
+	new short[18]{0,-11,3,-11,11,-11,89,-11,309,-11,348,-11,389,-11,413,-11,-1,0},
 	new short[18]{0,-3,3,-3,11,-3,89,-3,309,-3,348,-3,389,-3,413,-3,-1,0},
-	new short[4]{389,71,-1,0},
-	new short[8]{3,-168,11,-168,89,-168,-1,0},
-	new short[10]{3,-170,11,-170,89,-170,389,-171,-1,0},
+	new short[4]{389,111,-1,0},
 	new short[8]{3,-169,11,-169,89,-169,-1,0},
-	new short[6]{4,72,16,-179,-1,0},
+	new short[10]{3,-171,11,-171,89,-171,389,-172,-1,0},
+	new short[8]{3,-170,11,-170,89,-170,-1,0},
+	new short[6]{4,112,16,-180,-1,0},
+	new short[16]{3,-179,4,-179,5,-179,11,-179,16,-179,89,-179,236,-179,-1,0},
 	new short[16]{3,-178,4,-178,5,-178,11,-178,16,-178,89,-178,236,-178,-1,0},
-	new short[16]{3,-177,4,-177,5,-177,11,-177,16,-177,89,-177,236,-177,-1,0},
-	new short[12]{3,-172,4,72,11,-172,16,-179,89,-172,-1,0},
-	new short[4]{16,81,-1,0},
-	new short[6]{5,78,236,79,-1,0},
-	new short[6]{4,72,16,-179,-1,0},
+	new short[12]{3,-173,4,112,11,-173,16,-180,89,-173,-1,0},
+	new short[4]{16,121,-1,0},
+	new short[6]{5,118,236,119,-1,0},
+	new short[6]{4,112,16,-180,-1,0},
+	new short[6]{4,-175,16,-175,-1,0},
 	new short[6]{4,-174,16,-174,-1,0},
-	new short[6]{4,-173,16,-173,-1,0},
-	new short[12]{3,-175,4,-175,11,-175,16,-175,89,-175,-1,0},
-	new short[6]{2,83,16,-149,-1,0},
-	new short[6]{2,85,16,84,-1,0},
-	new short[6]{2,-150,16,-150,-1,0},
-	new short[16]{3,-180,4,-180,5,-180,11,-180,16,-180,89,-180,236,-180,-1,0},
-	new short[6]{2,-151,16,-151,-1,0},
-	new short[6]{5,78,236,79,-1,0},
-	new short[6]{4,72,16,-179,-1,0},
 	new short[12]{3,-176,4,-176,11,-176,16,-176,89,-176,-1,0},
+	new short[6]{2,123,16,-150,-1,0},
+	new short[6]{2,125,16,124,-1,0},
+	new short[6]{2,-151,16,-151,-1,0},
+	new short[16]{3,-181,4,-181,5,-181,11,-181,16,-181,89,-181,236,-181,-1,0},
+	new short[6]{2,-152,16,-152,-1,0},
+	new short[6]{5,118,236,119,-1,0},
+	new short[6]{4,112,16,-180,-1,0},
+	new short[12]{3,-177,4,-177,11,-177,16,-177,89,-177,-1,0},
 	new short[10]{27,-17,28,-17,29,-17,44,-17,-1,0},
 	new short[10]{27,-16,28,-16,29,-16,44,-16,-1,0},
-	new short[10]{27,66,28,63,29,64,44,60,-1,0},
+	new short[10]{27,106,28,102,29,103,44,105,-1,0},
 	new short[12]{3,-15,11,-15,89,-15,389,-15,413,-15,-1,0},
 	new short[12]{3,-19,11,-19,89,-19,389,-19,413,-19,-1,0},
-	new short[4]{11,95,-1,0},
-	new short[4]{0,-167,-1,0},
-	new short[4]{0,-1,-1,0},
-	new short[4]{0,-141,-1,0},
-	new short[6]{0,-144,7,-144,-1,0},
-	new short[6]{0,-143,7,107,-1,0},
-	new short[8]{0,-152,7,-152,14,-153,-1,0},
-	new short[4]{14,102,-1,0},
-	new short[6]{2,104,15,-146,-1,0},
-	new short[6]{2,106,15,105,-1,0},
-	new short[6]{2,-147,15,-147,-1,0},
-	new short[6]{0,-154,7,-154,-1,0},
-	new short[6]{2,-148,15,-148,-1,0},
-	new short[4]{44,100,-1,0},
-	new short[6]{0,-145,7,-145,-1,0},
-	new short[4]{0,-140,-1,0},
-	new short[4]{429,-207,-1,0},
-	new short[4]{34,-203,-1,0},
-	new short[4]{34,114,-1,0},
-	new short[4]{0,-204,-1,0},
-	new short[4]{0,-205,-1,0},
-	new short[4]{44,-158,-1,0},
-	new short[4]{44,118,-1,0},
-	new short[6]{11,-193,44,120,-1,0},
-	new short[6]{11,-192,44,-192,-1,0},
-	new short[4]{11,-190,-1,0},
-	new short[4]{11,-194,-1,0},
-	new short[4]{11,122,-1,0},
-	new short[4]{0,-191,-1,0},
-	new short[4]{0,-188,-1,0},
-	new short[4]{34,-183,-1,0},
-	new short[4]{34,129,-1,0},
-	new short[6]{0,-182,34,-185,-1,0},
-	new short[4]{34,128,-1,0},
-	new short[6]{0,-186,34,-186,-1,0},
-	new short[6]{0,-184,34,-184,-1,0},
-	new short[4]{44,-160,-1,0},
-	new short[4]{0,-227,-1,0},
-	new short[6]{16,-213,349,-213,-1,0},
-	new short[4]{429,-209,-1,0},
-	new short[4]{236,145,-1,0},
-	new short[4]{349,142,-1,0},
-	new short[6]{11,-214,16,-179,-1,0},
-	new short[4]{236,140,-1,0},
-	new short[4]{11,139,-1,0},
-	new short[4]{0,-215,-1,0},
-	new short[4]{16,-179,-1,0},
+	new short[4]{11,135,-1,0},
+	new short[4]{0,-168,-1,0},
+	new short[6]{16,-214,349,-214,-1,0},
+	new short[4]{429,-210,-1,0},
+	new short[4]{236,149,-1,0},
+	new short[4]{349,146,-1,0},
+	new short[6]{11,-215,16,-180,-1,0},
+	new short[4]{236,144,-1,0},
+	new short[4]{11,143,-1,0},
+	new short[4]{0,-216,-1,0},
+	new short[4]{16,-180,-1,0},
+	new short[6]{11,-221,16,-221,-1,0},
+	new short[4]{11,-218,-1,0},
+	new short[4]{11,148,-1,0},
+	new short[4]{0,-219,-1,0},
+	new short[4]{16,-180,-1,0},
 	new short[6]{11,-220,16,-220,-1,0},
-	new short[4]{11,-217,-1,0},
-	new short[4]{11,144,-1,0},
-	new short[4]{0,-218,-1,0},
-	new short[4]{16,-179,-1,0},
-	new short[6]{11,-219,16,-219,-1,0},
-	new short[10]{27,-138,28,-138,29,-138,44,-138,-1,0},
-	new short[10]{27,66,28,63,29,64,44,60,-1,0},
-	new short[4]{0,-139,-1,0},
-	new short[4]{42,151,-1,0},
-	new short[4]{53,152,-1,0},
-	new short[10]{27,66,28,63,29,64,44,60,-1,0},
-	new short[6]{3,154,89,155,-1,0},
+	new short[6]{0,-240,426,152,-1,0},
+	new short[4]{0,-241,-1,0},
+	new short[10]{27,-139,28,-139,29,-139,44,-139,-1,0},
+	new short[10]{27,106,28,102,29,103,44,105,-1,0},
+	new short[4]{0,-140,-1,0},
+	new short[4]{42,157,-1,0},
+	new short[4]{53,158,-1,0},
+	new short[10]{27,106,28,102,29,103,44,105,-1,0},
+	new short[6]{3,160,89,161,-1,0},
+	new short[4]{11,-199,-1,0},
 	new short[4]{11,-198,-1,0},
-	new short[4]{11,-197,-1,0},
-	new short[4]{11,-200,-1,0},
-	new short[4]{11,158,-1,0},
-	new short[4]{0,-201,-1,0},
-	new short[4]{323,164,-1,0},
-	new short[4]{385,161,-1,0},
-	new short[4]{44,-224,-1,0},
-	new short[4]{44,163,-1,0},
-	new short[4]{0,-225,-1,0},
-	new short[4]{0,-222,-1,0},
-	new short[14]{27,-234,28,-234,29,-234,30,-234,31,-234,32,-234,-1,0},
-	new short[14]{27,66,28,63,29,64,30,168,31,169,32,171,-1,0},
-	new short[4]{0,-235,-1,0},
+	new short[4]{11,-201,-1,0},
+	new short[4]{11,164,-1,0},
+	new short[4]{0,-202,-1,0},
+	new short[4]{323,170,-1,0},
+	new short[4]{385,167,-1,0},
+	new short[4]{44,-225,-1,0},
+	new short[4]{44,169,-1,0},
+	new short[4]{0,-226,-1,0},
+	new short[4]{0,-223,-1,0},
+	new short[14]{27,-235,28,-235,29,-235,30,-235,31,-235,32,-235,-1,0},
+	new short[14]{27,106,28,102,29,103,30,174,31,175,32,177,-1,0},
+	new short[4]{0,-236,-1,0},
 	new short[4]{0,-8,-1,0},
 	new short[4]{0,-9,-1,0},
 	new short[4]{0,-6,-1,0},
 	new short[4]{0,-7,-1,0},
 	new short[4]{0,-10,-1,0},
-	new short[4]{0,-231,-1,0}
+	new short[4]{0,-232,-1,0}
 };
 
   /** Access to parse-action table. */
@@ -450,21 +462,22 @@ new short[173][] {
 
   /** <code>reduce_goto</code> table. */
   protected static readonly short[][] _reduce_table = 
-new short[173][] {
-	new short[74]{132,32,133,41,134,30,135,28,142,37,144,14,145,15,152,4,154,34,155,31,158,7,159,40,160,23,162,36,163,26,164,10,165,33,167,6,168,38,169,29,170,39,171,22,175,8,178,20,179,16,185,17,188,18,189,19,193,21,195,24,196,11,198,12,205,13,206,42,207,1,208,2,-1,-1},
+new short[179][] {
+	new short[80]{132,35,133,44,134,33,135,31,142,40,144,15,145,16,152,4,154,38,155,34,158,7,159,24,160,26,162,39,163,29,164,11,165,36,167,6,168,41,169,32,170,42,171,25,175,10,176,43,177,8,180,22,181,18,187,19,190,20,191,21,195,23,197,27,198,12,200,13,207,37,208,45,209,1,210,2,212,17,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{202,158,203,159,-1,-1},
+	new short[6]{204,164,205,165,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{191,149,-1,-1},
+	new short[4]{193,155,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[10]{150,133,166,135,184,74,200,134,-1,-1},
 	new short[2]{-1,-1},
+	new short[10]{150,137,166,139,186,114,202,138,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{183,95,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
@@ -476,147 +489,152 @@ new short[173][] {
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{136,108,137,97,138,98,-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{136,96,137,97,138,98,-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{136,72,137,61,138,62,-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{136,60,137,61,138,62,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{181,55,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{180,44,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{182,47,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{28,46,129,45,141,47,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{28,46,129,50,143,49,-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{28,49,129,48,141,50,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{28,49,129,53,143,52,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{197,53,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[14]{4,57,24,58,49,60,123,61,125,64,146,56,-1,-1},
-	new short[4]{182,93,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{199,56,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{105,90,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{147,67,183,66,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{179,64,-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{147,69,183,66,-1,-1},
+	new short[4]{140,66,-1,-1},
 	new short[2]{-1,-1},
-	new short[10]{148,73,149,75,150,72,184,74,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{149,85,150,72,184,74,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{174,76,-1,-1},
-	new short[8]{149,79,150,72,184,74,-1,-1},
+	new short[4]{137,71,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{139,81,-1,-1},
+	new short[4]{196,75,-1,-1},
+	new short[4]{161,76,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{156,80,-1,-1},
+	new short[4]{157,83,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{174,86,-1,-1},
-	new short[8]{149,87,150,72,184,74,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{192,84,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[10]{4,57,24,58,49,91,124,92,-1,-1},
 	new short[2]{-1,-1},
+	new short[6]{153,89,188,88,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{189,90,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[14]{4,97,24,98,49,99,123,100,125,103,146,96,-1,-1},
+	new short[4]{184,133,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{177,100,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{140,102,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{105,130,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[6]{147,107,185,106,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{137,107,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{194,111,-1,-1},
-	new short[4]{161,112,-1,-1},
+	new short[6]{147,109,185,106,-1,-1},
 	new short[2]{-1,-1},
+	new short[10]{148,113,149,115,150,112,186,114,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{156,116,-1,-1},
-	new short[4]{157,118,-1,-1},
+	new short[8]{149,125,150,112,186,114,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{190,120,-1,-1},
+	new short[4]{174,116,-1,-1},
+	new short[8]{149,119,150,112,186,114,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{139,121,-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{153,125,186,124,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{187,126,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{174,126,-1,-1},
+	new short[8]{149,127,150,112,186,114,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[10]{4,97,24,98,49,131,124,132,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{150,136,184,74,199,137,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{150,140,184,74,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{201,142,-1,-1},
+	new short[8]{150,140,186,114,201,141,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{150,145,184,74,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{176,147,-1,-1},
-	new short[10]{4,57,24,58,49,60,123,148,-1,-1},
+	new short[6]{150,144,186,114,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{203,146,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[14]{4,57,24,58,49,60,123,61,125,64,146,152,-1,-1},
-	new short[4]{173,155,-1,-1},
+	new short[6]{150,149,186,114,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{192,156,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{178,153,-1,-1},
+	new short[10]{4,97,24,98,49,99,123,154,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{204,161,-1,-1},
+	new short[14]{4,97,24,98,49,99,123,100,125,103,146,158,-1,-1},
+	new short[4]{173,161,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{194,162,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{209,165,-1,-1},
-	new short[8]{4,169,5,171,22,166,-1,-1},
+	new short[2]{-1,-1},
+	new short[2]{-1,-1},
+	new short[2]{-1,-1},
+	new short[4]{206,167,-1,-1},
+	new short[2]{-1,-1},
+	new short[2]{-1,-1},
+	new short[2]{-1,-1},
+	new short[4]{211,171,-1,-1},
+	new short[8]{4,175,5,177,22,172,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
@@ -855,7 +873,68 @@ public class CUP_CobolCompilerDirectivesParser_actions {
       switch (CUP_CobolCompilerDirectivesParser_act_num)
         {
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 234: // titleCompilerStatement ::= NT$33 TITLE NT$34 alphanumericValue2 
+          case 240: // partialPerformStatement ::= performPrefix UserDefinedWord TIMES 
+            {
+              object RESULT = null;
+		object p = (object)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token udw = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
+		 
+	((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode(); 
+	if (System.Int64.TryParse(udw.Text, out var _))
+	{
+		udw.CorrectType(TokenType.IntegerLiteral);
+	}
+
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(176/*partialPerformStatement*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 239: // partialPerformStatement ::= performPrefix UserDefinedWord 
+            {
+              object RESULT = null;
+		object p = (object)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token udw = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
+		 ((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode(); 
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(176/*partialPerformStatement*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 238: // partialPerformStatement ::= performPrefix 
+            {
+              object RESULT = null;
+		object p = (object)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
+		 ((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode(); 
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(176/*partialPerformStatement*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 237: // performPrefix ::= NT$35 PERFORM 
+            {
+              object RESULT = null;
+              // propagate RESULT from NT$35
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token p = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
+
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(175/*performPrefix*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 236: // NT$35 ::= 
+            {
+              object RESULT = null;
+ ((CobolWordsTokenizer)my_parser.getScanner()).EnterPerformMode(); 
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(212/*NT$35*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 235: // titleCompilerStatement ::= NT$33 TITLE NT$34 alphanumericValue2 
             {
               object RESULT = null;
               // propagate RESULT from NT$33
@@ -874,26 +953,26 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 233: // NT$34 ::= 
+          case 234: // NT$34 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator);  
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(209/*NT$34*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(211/*NT$34*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 232: // NT$33 ::= 
+          case 233: // NT$33 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartTitleCompilerStatement(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(208/*NT$33*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(210/*NT$33*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 231: // skipCompilerStatement ::= skipTokens 
+          case 232: // skipCompilerStatement ::= skipTokens 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -905,7 +984,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 230: // skipTokens ::= NT$32 SKIP3 
+          case 231: // skipTokens ::= NT$32 SKIP3 
             {
               Token RESULT = null;
               // propagate RESULT from NT$32
@@ -918,17 +997,17 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 229: // NT$32 ::= 
+          case 230: // NT$32 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP3); 
 	((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator);  
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(207/*NT$32*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(209/*NT$32*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 228: // skipTokens ::= NT$31 SKIP2 
+          case 229: // skipTokens ::= NT$31 SKIP2 
             {
               Token RESULT = null;
               // propagate RESULT from NT$31
@@ -941,17 +1020,17 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 227: // NT$31 ::= 
+          case 228: // NT$31 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP2); 
 	((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator);  
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(206/*NT$31*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(208/*NT$31*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 226: // skipTokens ::= NT$30 SKIP1 
+          case 227: // skipTokens ::= NT$30 SKIP1 
             {
               Token RESULT = null;
               // propagate RESULT from NT$30
@@ -964,17 +1043,17 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 225: // NT$30 ::= 
+          case 226: // NT$30 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP1); 
 	((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(205/*NT$30*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(207/*NT$30*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 224: // serviceReloadCompilerStatement ::= SERVICE_CD NT$28 RELOAD NT$29 UserDefinedWord 
+          case 225: // serviceReloadCompilerStatement ::= SERVICE_CD NT$28 RELOAD NT$29 UserDefinedWord 
             {
               object RESULT = null;
               // propagate RESULT from NT$28
@@ -992,28 +1071,28 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 223: // NT$29 ::= 
+          case 224: // NT$29 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		TypeCobol.Compiler.Scanner.Token l = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(204/*NT$29*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(206/*NT$29*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 222: // NT$28 ::= 
+          case 223: // NT$28 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.StartServiceReloadCompilerStatement(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(203/*NT$28*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(205/*NT$28*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 221: // serviceLabelCompilerStatement ::= SERVICE_CD NT$27 LABEL 
+          case 222: // serviceLabelCompilerStatement ::= SERVICE_CD NT$27 LABEL 
             {
               object RESULT = null;
               // propagate RESULT from NT$27
@@ -1027,7 +1106,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 220: // NT$27 ::= 
+          case 221: // NT$27 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1035,12 +1114,12 @@ public class CUP_CobolCompilerDirectivesParser_actions {
 		my_parser.Builder.StartServiceLabelCompilerStatement();
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
 	
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(202/*NT$27*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(204/*NT$27*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 219: // pseudoTextReplaces ::= pseudoTextReplaces pseudoText BY pseudoText 
+          case 220: // pseudoTextReplaces ::= pseudoTextReplaces pseudoText BY pseudoText 
             {
               PairTokenListList RESULT = null;
 		PairTokenListList replaces = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
@@ -1052,7 +1131,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 218: // pseudoTextReplaces ::= pseudoText BY pseudoText 
+          case 219: // pseudoTextReplaces ::= pseudoText BY pseudoText 
             {
               PairTokenListList RESULT = null;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1063,7 +1142,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 217: // replaceCompilerStatement ::= replaceToken NT$25 OFF NT$26 PeriodSeparator 
+          case 218: // replaceCompilerStatement ::= replaceToken NT$25 OFF NT$26 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$25
@@ -1080,28 +1159,28 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 216: // NT$26 ::= 
+          case 217: // NT$26 ::= 
             {
               object RESULT = null;
 		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(201/*NT$26*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(203/*NT$26*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 215: // NT$25 ::= 
+          case 216: // NT$25 ::= 
             {
               object RESULT = null;
 		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.StartReplaceCompilerStatement(CompilerDirectiveType.REPLACE_OFF); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(200/*NT$25*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(202/*NT$25*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 214: // replaceCompilerStatement ::= replaceToken pseudoTextReplaces NT$24 PeriodSeparator 
+          case 215: // replaceCompilerStatement ::= replaceToken pseudoTextReplaces NT$24 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$24
@@ -1115,7 +1194,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 213: // NT$24 ::= 
+          case 214: // NT$24 ::= 
             {
               object RESULT = null;
 		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
@@ -1123,12 +1202,12 @@ public class CUP_CobolCompilerDirectivesParser_actions {
  		
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode();
 	
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(199/*NT$24*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(201/*NT$24*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 212: // replaceToken ::= NT$23 REPLACE 
+          case 213: // replaceToken ::= NT$23 REPLACE 
             {
               Token RESULT = null;
               // propagate RESULT from NT$23
@@ -1143,16 +1222,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 211: // NT$23 ::= 
+          case 212: // NT$23 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartReplaceCompilerStatement(CompilerDirectiveType.REPLACE); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(198/*NT$23*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(200/*NT$23*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 210: // readyOrResetTraceCompilerStatement ::= readyOrReset TRACE NT$22 PeriodSeparator 
+          case 211: // readyOrResetTraceCompilerStatement ::= readyOrReset TRACE NT$22 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$22
@@ -1165,17 +1244,17 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 209: // NT$22 ::= 
+          case 210: // NT$22 ::= 
             {
               object RESULT = null;
 		Token rt = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(197/*NT$22*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(199/*NT$22*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 208: // readyOrReset ::= NT$21 RESET 
+          case 209: // readyOrReset ::= NT$21 RESET 
             {
               Token RESULT = null;
               // propagate RESULT from NT$21
@@ -1188,16 +1267,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 207: // NT$21 ::= 
+          case 208: // NT$21 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType.RESET_TRACE);  
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(196/*NT$21*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(198/*NT$21*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 206: // readyOrReset ::= NT$20 READY 
+          case 207: // readyOrReset ::= NT$20 READY 
             {
               Token RESULT = null;
               // propagate RESULT from NT$20
@@ -1210,16 +1289,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 205: // NT$20 ::= 
+          case 206: // NT$20 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType.READY_TRACE);  
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(195/*NT$20*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(197/*NT$20*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 204: // sequenceNumber ::= IntegerLiteral 
+          case 205: // sequenceNumber ::= IntegerLiteral 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1229,7 +1308,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 203: // insertCompilerStatement ::= NT$18 INSERT NT$19 sequenceNumber 
+          case 204: // insertCompilerStatement ::= NT$18 INSERT NT$19 sequenceNumber 
             {
               object RESULT = null;
               // propagate RESULT from NT$18
@@ -1246,28 +1325,28 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 202: // NT$19 ::= 
+          case 203: // NT$19 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token tins = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(194/*NT$19*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(196/*NT$19*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 201: // NT$18 ::= 
+          case 202: // NT$18 ::= 
             {
               object RESULT = null;
  
 		my_parser.Builder.StartInsertCompilerStatement(); 		
 	
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(193/*NT$18*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(195/*NT$18*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 200: // execSqlIncludeStatement ::= execToken NT$16 ExecTranslatorName EXEC_SQL copyCompilerStatementBody end_exec NT$17 PeriodSeparator 
+          case 201: // execSqlIncludeStatement ::= execToken NT$16 ExecTranslatorName EXEC_SQL copyCompilerStatementBody end_exec NT$17 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$16
@@ -1283,27 +1362,27 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 199: // NT$17 ::= 
+          case 200: // NT$17 ::= 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-5)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(192/*NT$17*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(194/*NT$17*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 198: // NT$16 ::= 
+          case 199: // NT$16 ::= 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.EnterExecSqlIncludeStatement(t); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(191/*NT$16*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(193/*NT$16*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 197: // end_exec ::= CUP_END_EXEC_PERIOD_SEPARATOR 
+          case 198: // end_exec ::= CUP_END_EXEC_PERIOD_SEPARATOR 
             {
               object RESULT = null;
 
@@ -1312,7 +1391,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 196: // end_exec ::= END_EXEC 
+          case 197: // end_exec ::= END_EXEC 
             {
               object RESULT = null;
 
@@ -1321,7 +1400,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 195: // execToken ::= EXECUTE 
+          case 196: // execToken ::= EXECUTE 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1331,7 +1410,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 194: // execToken ::= EXEC 
+          case 195: // execToken ::= EXEC 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1341,7 +1420,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 193: // routineName ::= UserDefinedWord 
+          case 194: // routineName ::= UserDefinedWord 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1351,7 +1430,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 192: // routineName ::= 
+          case 193: // routineName ::= 
             {
               Token RESULT = null;
 		 RESULT = null; 
@@ -1360,7 +1439,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 191: // languageName ::= UserDefinedWord 
+          case 192: // languageName ::= UserDefinedWord 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1370,7 +1449,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 190: // enterCompilerStatement ::= NT$14 ENTER languageName routineName NT$15 PeriodSeparator 
+          case 191: // enterCompilerStatement ::= NT$14 ENTER languageName routineName NT$15 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$14
@@ -1388,28 +1467,28 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 189: // NT$15 ::= 
+          case 190: // NT$15 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		Token ln = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
 		Token rn = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(190/*NT$15*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(192/*NT$15*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 188: // NT$14 ::= 
+          case 189: // NT$14 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartEnterCompilerStatement(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(189/*NT$14*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(191/*NT$14*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 187: // ejectCompilerStatement ::= NT$13 EJECT 
+          case 188: // ejectCompilerStatement ::= NT$13 EJECT 
             {
               object RESULT = null;
               // propagate RESULT from NT$13
@@ -1424,19 +1503,19 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 186: // NT$13 ::= 
+          case 187: // NT$13 ::= 
             {
               object RESULT = null;
  
 		my_parser.Builder.StartEjectCompilerStatement();  
 		((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator); 
 	
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(188/*NT$13*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(190/*NT$13*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 185: // deleteSequenceNumberField ::= deleteSequenceNumberField NT$12 IntegerLiteral 
+          case 186: // deleteSequenceNumberField ::= deleteSequenceNumberField NT$12 IntegerLiteral 
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$12
@@ -1450,17 +1529,17 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 184: // NT$12 ::= 
+          case 185: // NT$12 ::= 
             {
               object RESULT = null;
 		TokenList snf = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(187/*NT$12*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(189/*NT$12*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 183: // deleteSequenceNumberField ::= NT$11 IntegerLiteral 
+          case 184: // deleteSequenceNumberField ::= NT$11 IntegerLiteral 
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$11
@@ -1473,16 +1552,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 182: // NT$11 ::= 
+          case 183: // NT$11 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(186/*NT$11*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(188/*NT$11*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 181: // deleteCompilerStatement ::= NT$10 DELETE_CD deleteSequenceNumberField 
+          case 182: // deleteCompilerStatement ::= NT$10 DELETE_CD deleteSequenceNumberField 
             {
               object RESULT = null;
               // propagate RESULT from NT$10
@@ -1496,16 +1575,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 180: // NT$10 ::= 
+          case 181: // NT$10 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartDeleteCompilerStatement();  
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(185/*NT$10*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(187/*NT$10*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 179: // pseudoText ::= NT$9 PseudoTextDelimiter anyTokens PseudoTextDelimiter 
+          case 180: // pseudoText ::= NT$9 PseudoTextDelimiter anyTokens PseudoTextDelimiter 
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$9
@@ -1518,16 +1597,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 178: // NT$9 ::= 
+          case 179: // NT$9 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(184/*NT$9*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(186/*NT$9*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 177: // copyReplacingOperand ::= CUP_LiteralOrUserDefinedWordOReservedWordExceptCopy 
+          case 178: // copyReplacingOperand ::= CUP_LiteralOrUserDefinedWordOReservedWordExceptCopy 
             {
               TokenList RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1537,7 +1616,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 176: // copyReplacingOperand ::= pseudoText 
+          case 177: // copyReplacingOperand ::= pseudoText 
             {
               TokenList RESULT = null;
 		TokenList tokens = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1547,7 +1626,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 175: // copyReplacingOperands ::= copyReplacingOperands copyReplacingOperand replacing_by copyReplacingOperand 
+          case 176: // copyReplacingOperands ::= copyReplacingOperands copyReplacingOperand replacing_by copyReplacingOperand 
             {
               PairTokenListList RESULT = null;
 		PairTokenListList operands = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
@@ -1559,7 +1638,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 174: // copyReplacingOperands ::= copyReplacingOperand replacing_by copyReplacingOperand 
+          case 175: // copyReplacingOperands ::= copyReplacingOperand replacing_by copyReplacingOperand 
             {
               PairTokenListList RESULT = null;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1570,7 +1649,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 173: // replacing_by ::= CUP_PSEUDO_TEXT_DELIMITER_BY 
+          case 174: // replacing_by ::= CUP_PSEUDO_TEXT_DELIMITER_BY 
             {
               object RESULT = null;
 
@@ -1579,7 +1658,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 172: // replacing_by ::= BY 
+          case 173: // replacing_by ::= BY 
             {
               object RESULT = null;
 
@@ -1588,7 +1667,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 171: // replacingCopyReplacingOperandOpts ::= NT$8 REPLACING copyReplacingOperands 
+          case 172: // replacingCopyReplacingOperandOpts ::= NT$8 REPLACING copyReplacingOperands 
             {
               PairTokenListList RESULT = null;
               // propagate RESULT from NT$8
@@ -1601,16 +1680,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 170: // NT$8 ::= 
+          case 171: // NT$8 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).CheckLiteralOrUserDefinedWordOReservedWordExceptCopy = true; 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(183/*NT$8*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(185/*NT$8*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 169: // replacingCopyReplacingOperandOpts ::= 
+          case 170: // replacingCopyReplacingOperandOpts ::= 
             {
               PairTokenListList RESULT = null;
 		 RESULT = null; 
@@ -1619,7 +1698,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 168: // copyCompilerStatementBody ::= qualifiedTextName SUPPRESS replacingCopyReplacingOperandOpts 
+          case 169: // copyCompilerStatementBody ::= qualifiedTextName SUPPRESS replacingCopyReplacingOperandOpts 
             {
               object RESULT = null;
 		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1631,7 +1710,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 167: // copyCompilerStatementBody ::= qualifiedTextName replacingCopyReplacingOperandOpts 
+          case 168: // copyCompilerStatementBody ::= qualifiedTextName replacingCopyReplacingOperandOpts 
             {
               object RESULT = null;
 		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
@@ -1642,7 +1721,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 166: // copyCompilerStatement ::= COPY NT$6 copyCompilerStatementBody NT$7 PeriodSeparator 
+          case 167: // copyCompilerStatement ::= COPY NT$6 copyCompilerStatementBody NT$7 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$6
@@ -1658,27 +1737,27 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 165: // NT$7 ::= 
+          case 166: // NT$7 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(182/*NT$7*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(184/*NT$7*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 164: // NT$6 ::= 
+          case 165: // NT$6 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.EnterCopyCompilerStatement(c); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(181/*NT$6*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(183/*NT$6*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 163: // controlCblCompilerStatement ::= asteriskControlCbl NT$5 controlCblOptions periodSeparatorOpt 
+          case 164: // controlCblCompilerStatement ::= asteriskControlCbl NT$5 controlCblOptions periodSeparatorOpt 
             {
               object RESULT = null;
               // propagate RESULT from NT$5
@@ -1691,17 +1770,17 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 162: // NT$5 ::= 
+          case 163: // NT$5 ::= 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterControlCblCompilerStatementMode();  
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(180/*NT$5*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(182/*NT$5*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 161: // periodSeparatorOpt ::= PeriodSeparator 
+          case 162: // periodSeparatorOpt ::= PeriodSeparator 
             {
               object RESULT = null;
 
@@ -1710,7 +1789,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 160: // periodSeparatorOpt ::= 
+          case 161: // periodSeparatorOpt ::= 
             {
               object RESULT = null;
 
@@ -1719,7 +1798,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 159: // asteriskControlCbl ::= NT$4 ASTERISK_CBL 
+          case 160: // asteriskControlCbl ::= NT$4 ASTERISK_CBL 
             {
               Token RESULT = null;
               // propagate RESULT from NT$4
@@ -1734,18 +1813,18 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 158: // NT$4 ::= 
+          case 159: // NT$4 ::= 
             {
               object RESULT = null;
  
 	my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CBL); 	
 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(179/*NT$4*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(181/*NT$4*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 157: // asteriskControlCbl ::= NT$3 ASTERISK_CONTROL 
+          case 158: // asteriskControlCbl ::= NT$3 ASTERISK_CONTROL 
             {
               Token RESULT = null;
               // propagate RESULT from NT$3
@@ -1760,18 +1839,18 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 156: // NT$3 ::= 
+          case 157: // NT$3 ::= 
             {
               object RESULT = null;
  
 	my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CONTROL); 	
 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(178/*NT$3*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(180/*NT$3*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 155: // controlCblOptions ::= controlCblOptions controlCblOption 
+          case 156: // controlCblOptions ::= controlCblOptions controlCblOption 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1781,7 +1860,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 154: // controlCblOptions ::= controlCblOption 
+          case 155: // controlCblOptions ::= controlCblOption 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1791,7 +1870,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 153: // compilerOption ::= UserDefinedWord NT$2 LeftParenthesisSeparator skipAnyTokens RightParenthesisSeparator 
+          case 154: // compilerOption ::= UserDefinedWord NT$2 LeftParenthesisSeparator skipAnyTokens RightParenthesisSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$2
@@ -1803,16 +1882,16 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 152: // NT$2 ::= 
+          case 153: // NT$2 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterAnyTokenMode(TokenType.RightParenthesisSeparator); 
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(177/*NT$2*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(179/*NT$2*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 151: // compilerOption ::= UserDefinedWord 
+          case 152: // compilerOption ::= UserDefinedWord 
             {
               object RESULT = null;
 
@@ -1821,7 +1900,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 150: // anyTokens ::= anyTokens CUP_ANY_TOKEN 
+          case 151: // anyTokens ::= anyTokens CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 		TokenList tokens = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
@@ -1832,7 +1911,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 149: // anyTokens ::= CUP_ANY_TOKEN 
+          case 150: // anyTokens ::= CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1842,7 +1921,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 148: // anyTokens ::= 
+          case 149: // anyTokens ::= 
             {
               TokenList RESULT = null;
 		 RESULT = new TokenList(); 
@@ -1851,7 +1930,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 147: // skipAnyTokens ::= skipAnyTokens CUP_ANY_TOKEN 
+          case 148: // skipAnyTokens ::= skipAnyTokens CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 
@@ -1860,7 +1939,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 146: // skipAnyTokens ::= CUP_ANY_TOKEN 
+          case 147: // skipAnyTokens ::= CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 
@@ -1869,7 +1948,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 145: // skipAnyTokens ::= 
+          case 146: // skipAnyTokens ::= 
             {
               TokenList RESULT = null;
 
@@ -1878,7 +1957,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 144: // compilerOptions ::= compilerOptions CommaSeparator compilerOption 
+          case 145: // compilerOptions ::= compilerOptions CommaSeparator compilerOption 
             {
               object RESULT = null;
 
@@ -1887,7 +1966,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 143: // compilerOptions ::= compilerOption 
+          case 144: // compilerOptions ::= compilerOption 
             {
               object RESULT = null;
 
@@ -1896,7 +1975,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 142: // optionsList ::= compilerOptions 
+          case 143: // optionsList ::= compilerOptions 
             {
               object RESULT = null;
 
@@ -1905,7 +1984,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 141: // optionsList ::= 
+          case 142: // optionsList ::= 
             {
               object RESULT = null;
 
@@ -1914,7 +1993,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 140: // cblProcessCompilerStatement ::= PROCESS optionsList 
+          case 141: // cblProcessCompilerStatement ::= PROCESS optionsList 
             {
               object RESULT = null;
 
@@ -1923,7 +2002,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 139: // cblProcessCompilerStatement ::= CBL optionsList 
+          case 140: // cblProcessCompilerStatement ::= CBL optionsList 
             {
               object RESULT = null;
 
@@ -1932,7 +2011,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 138: // basisCompilerStatement ::= NT$0 BASIS NT$1 textName 
+          case 139: // basisCompilerStatement ::= NT$0 BASIS NT$1 textName 
             {
               object RESULT = null;
               // propagate RESULT from NT$0
@@ -1949,25 +2028,34 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 137: // NT$1 ::= 
+          case 138: // NT$1 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  		
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
     
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(176/*NT$1*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(178/*NT$1*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 136: // NT$0 ::= 
+          case 137: // NT$0 ::= 
             {
               object RESULT = null;
  		
 		my_parser.Builder.StartBasisCompilerStatement();
 	
-              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(175/*NT$0*/, RESULT);
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(177/*NT$0*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 136: // compilerDirectingStatement ::= partialPerformStatement 
+            {
+              object RESULT = null;
+
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(133/*compilerDirectingStatement*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;
 

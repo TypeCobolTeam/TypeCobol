@@ -1,10 +1,10 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -25,6 +25,17 @@ namespace TypeCobol.Compiler.Scanner
         /// A solution would be to rescan all the line.
         /// </summary>
         public bool BeSmartWithLevelNumber { get; }
+
+        /// <summary>
+        /// Different mode of trialing the scanning of the UserDefinedWord
+        /// </summary>
+        [Flags]
+        private enum UserDefinedWordTrialScan : byte
+        {
+            All = 0,                // All kind of UserDefineWord
+            ProcedureName = 1,      // Take in account Procedure names and PartialCoblWords
+            UserDefinedWord = 2     // Take in account Any User defined Word
+        }
 
         /// <summary>
         /// Scan a line of a document
@@ -669,10 +680,21 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        public enum IsolatedTokenKind
+        {
+            All,
+            UserDefinedWord,
+        }
         /// <summary>
         /// Scan an isolated token in the given context.
         /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, TypeCobolOptions scanOptions, out Diagnostic error)
+        /// <param name="tokenText"></param>
+        /// <param name="scanContext"></param>
+        /// <param name="scanOptions"></param>
+        /// <param name="UserDefinedWord"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, TypeCobolOptions scanOptions, IsolatedTokenKind tokenKind, out Diagnostic error)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext);
@@ -681,7 +703,15 @@ namespace TypeCobol.Compiler.Scanner
             if (tokenText.Length > 0)
             {
                 Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, scanOptions, false);
-                candidateToken = tempScanner.GetNextToken();
+                switch(tokenKind)
+                {
+                    case IsolatedTokenKind.UserDefinedWord:
+                        candidateToken = tempScanner.ScanKeywordOrUserDefinedWord(tempScanner.currentIndex, false); ;
+                        break;
+                    default:
+                        candidateToken = tempScanner.GetNextToken();
+                        break;
+                }                
             }
             else
             {
@@ -958,6 +988,38 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // --- Main switch ---
+            // IN Cobol Format:
+            // IF we are in the PROCEDURE DIVISION and the current character is not a space and  THEN:
+            //      IF (we are inside AREA A or we are inside a PERFORM Statement state taht allow a procedure name)
+            //          and the next character can be the start of a UserDefineWord THEN
+            //              TRY to scan a UserDefinedWord
+            if (this.tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && 
+                currentState.InsideProcedureDivision &&
+                line[startIndex] != ' ' &&
+                ((ScannerUtils.GetAreaFromIndex(startIndex) == CobolFormatAreas.Begin_A && tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat) 
+                    || currentState.IsPerformStatementProcedureNameState) 
+                    && CobolChar.IsCobolWordChar(line[startIndex]))
+
+            {
+                // We try a strict ProcedureName if we are not in PERFORM statement procedure name state.
+                bool tryProcedureName = !currentState.IsPerformStatementProcedureNameState;
+                Token procedureNameToken = this.ScanKeywordOrUserDefinedWord(startIndex, tryProcedureName);
+                if (procedureNameToken != null)
+                {
+                    System.Diagnostics.Debug.Assert(procedureNameToken.TokenType == TokenType.SectionParagraphName || 
+                        procedureNameToken.TokenType == TokenType.PartialCobolWord ||
+                        procedureNameToken.TokenType == TokenType.UserDefinedWord || procedureNameToken.TokenFamily == TokenFamily.Cobol2002Keyword || 
+                        procedureNameToken.TokenFamily == TokenFamily.CobolV6Keyword ||
+                        procedureNameToken.TokenFamily == TokenFamily.TypeCobolKeyword ||
+                        procedureNameToken.TokenFamily == TokenFamily.SyntaxKeyword ||
+                        procedureNameToken.TokenFamily == TokenFamily.CodeElementStartingKeyword);
+                    if (tryProcedureName && procedureNameToken.TokenType == TokenType.PartialCobolWord)
+                    { // In this case say that say that the partial cobol word must be replaced by a procedure-name.
+                        procedureNameToken.PreviousTokenType = TokenType.SectionParagraphName;
+                    }
+                    return procedureNameToken;
+                }
+            }
 
             switch (line[startIndex])
             {
@@ -2016,7 +2078,7 @@ namespace TypeCobol.Compiler.Scanner
             // - ScanPictureCharacterString(startIndex);
 
             // The only possibility remaining is a keyword or a user defined word
-            return ScanKeywordOrUserDefinedWord(startIndex);
+            return ScanKeywordOrUserDefinedWord(startIndex, false);
         }
 
         private Token ScanPictureCharacterStringOrISOrSYMBOL(int startIndex)
@@ -2183,7 +2245,7 @@ namespace TypeCobol.Compiler.Scanner
             else if (endExecIndex == startIndex)
             {
                 // Directly scan END-EXEC keyword
-                Token endExecToken = ScanKeywordOrUserDefinedWord(startIndex);
+                Token endExecToken = ScanKeywordOrUserDefinedWord(startIndex, false);
                 System.Diagnostics.Debug.Assert(endExecToken.TokenType == TokenType.END_EXEC);
                 tokensLine.ScanState.InsideSql = false;
                 return endExecToken;
@@ -2213,7 +2275,7 @@ namespace TypeCobol.Compiler.Scanner
             return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
         }
 
-        private Token ScanKeywordOrUserDefinedWord(int startIndex)
+        private Token ScanKeywordOrUserDefinedWord(int startIndex, bool tryProcedureName)
         {
             // p9: A COBOL word is a character-string that forms a user-defined word, a
             // system-name, or a reserved word.
@@ -2230,6 +2292,7 @@ namespace TypeCobol.Compiler.Scanner
                 int patternEndIndex;
                 if(ScannerUtils.CheckForPartialCobolWordPattern(line, endIndex + 1, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex))
                 {
+                    // We support procedure_name like partial cobol word.
                     return ScanPartialCobolWord(startIndex, patternEndIndex);
                 }
             }
@@ -2315,15 +2378,15 @@ namespace TypeCobol.Compiler.Scanner
             // for the preprocessing phase => scan a CompilerDirectiveToken 
             if(tokenType == TokenType.CBL || tokenType == TokenType.PROCESS)
             {
-                return ScanCblProcessCompilerDirective(startIndex, tokenType);
+                return !tryProcedureName ? ScanCblProcessCompilerDirective(startIndex, tokenType) : null;
             }
-            
+
             // p11: The maximum length of a user-defined word is 30 bytes, except for level-numbers
             // and priority-numbers. Level-numbers and priority numbers must each be a
             // one-digit or two-digit integer.
 
-            // Return a keyword or user defined word
-            return new Token(tokenType, startIndex, endIndex, tokensLine);
+            // Return a keyword or user defined word or SectionParagraphName
+            return (!tryProcedureName || tokenType == TokenType.SectionParagraphName) ? new Token(tokenType, startIndex, endIndex, tokensLine) : null;
         }
 
         /// <summary>
