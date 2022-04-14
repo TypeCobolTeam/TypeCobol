@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeElements {
@@ -52,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		[CanBeNull]
 		public IntegerValue LevelNumber { get; set; }
-
+        
 		/// <summary>
 		/// data-name-1 cannot be used as a qualifier; it can be qualified only by the
 		/// names of level indicator entries or level-01 entries.
@@ -76,7 +77,22 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public SymbolDefinition DataName { get; set; }
 
-	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
+        public override TextAreaType StartingArea
+        {
+            get
+            {
+                if (LevelNumber != null && (LevelNumber.Value == 01 || LevelNumber.Value == 77))
+                {
+                    return TextAreaType.AreaA;
+                }
+                else
+                {
+                    return TextAreaType.Source;
+                }
+            }
+        }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
 	        return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, LevelNumber, DataName);
 	    }

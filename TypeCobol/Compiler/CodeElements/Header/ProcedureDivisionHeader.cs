@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -19,6 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
 	    {
 	        this.FormalizedCommentDocumentation = formalizedCommentDocumentation;
         }
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
 
 		/// <summary>
 		/// The USING phrase specifies the parameters that a program or method receives

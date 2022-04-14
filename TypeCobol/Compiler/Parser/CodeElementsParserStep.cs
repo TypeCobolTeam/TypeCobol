@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -337,6 +338,11 @@ namespace TypeCobol.Compiler.Parser
                                     MessageCode.TypeCobolParserLimitation);
                             }
 
+                            if (processedTokensDocument.TextSourceInfo.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && codeElement.StartingArea != TextAreaType.Source)
+                            {
+                                CodeElementWithTokensChecker.CheckAreaOfDeclaration(codeElement);
+                            }
+                          
                             // Add code element to the list                    
                             codeElementsLine.AddCodeElement(codeElement);
                         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -17,6 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Level indicators represent the highest level of any data hierarchy with which they are associated. 
         /// FD is the file description level indicator and SD is the sort-merge file description level indicator.
         /// </summary>
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
         public SyntaxProperty<FileDescriptionType> LevelIndicator { get; set; }
 
         /// <summary>

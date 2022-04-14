@@ -1,23 +1,28 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using TypeCobol.Compiler.Text;
+
+namespace TypeCobol.Compiler.CodeElements {
 
 /// <summary>
 /// The DATA DIVISION of a COBOL source program describes, in a structured manner, all the data to be processed by the program. 
 /// </summary>
 public class DataDivisionHeader: CodeElement {
-	public DataDivisionHeader() : base(CodeElementType.DataDivisionHeader) { }
-}
+    public DataDivisionHeader() : base(CodeElementType.DataDivisionHeader){}
+    public override TextAreaType StartingArea => TextAreaType.AreaA;
+	}
 
 
 public abstract class DataSectionHeader: CodeElement {
-    protected DataSectionHeader(CodeElementType type): base(type) { }
-}
+    protected DataSectionHeader(CodeElementType type) : base(type) { }
+    public override TextAreaType StartingArea => TextAreaType.AreaA;
+	}
 
 /// <summary>
 /// The FILE SECTION defines the structure of data files.
 /// </summary>
 public class FileSectionHeader: DataSectionHeader {
 	public FileSectionHeader() : base(CodeElementType.FileSectionHeader) { }
-}
+    public override TextAreaType StartingArea => TextAreaType.AreaA;
+	}
 
 /// <summary>
 /// The GLOBAL-STORAGE SECTION describes data records that are shared between procedure, data shared between a program and its nested programs

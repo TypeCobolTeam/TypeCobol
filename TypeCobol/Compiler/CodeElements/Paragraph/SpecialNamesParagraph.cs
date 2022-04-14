@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -20,7 +21,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
 		public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph)
         { }
-
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
         /// <summary>
         /// Relates IBM-specified environment-names to user-defined mnemonic-names
         /// </summary>

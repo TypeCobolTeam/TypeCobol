@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -12,7 +13,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ProgramEnd() : base(CodeElementType.ProgramEnd)
         { }
-
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
         /// <summary>
         /// program-name
         /// A user-defined word or alphanumeric literal, but not a figurative constant,
