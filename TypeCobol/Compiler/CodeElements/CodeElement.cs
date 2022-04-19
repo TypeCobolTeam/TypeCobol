@@ -35,7 +35,6 @@ namespace TypeCobol.Compiler.CodeElements
         public virtual TextAreaType StartingArea
         {
             get => TextAreaType.AreaB;
-            set => throw new NotImplementedException();
         }
 
         /// <summary>

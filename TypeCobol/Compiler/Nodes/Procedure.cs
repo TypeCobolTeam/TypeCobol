@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Xml.Serialization;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 
@@ -9,7 +7,6 @@ namespace TypeCobol.Compiler.Nodes {
     using System.Collections.Generic;
     using System.Text;
     using TypeCobol.Compiler.CodeElements;
-    using CodeElements.Expressions;
 
     public class ProcedureDivision: GenericNode<ProcedureDivisionHeader> {
 	    public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }

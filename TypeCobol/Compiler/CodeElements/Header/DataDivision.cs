@@ -31,7 +31,8 @@ public class FileSectionHeader: DataSectionHeader {
 /// </summary>
 public class GlobalStorageSectionHeader : DataSectionHeader {
     public GlobalStorageSectionHeader() : base(CodeElementType.GlobalStorageSectionHeader) { }
-}
+    public override TextAreaType StartingArea => TextAreaType.AreaA;
+	}
 
 /// <summary>
 /// The WORKING-STORAGE SECTION describes data records that are not part of data files but are developed and processed by a program or method. 
@@ -39,7 +40,8 @@ public class GlobalStorageSectionHeader : DataSectionHeader {
 /// </summary>
 public class WorkingStorageSectionHeader: DataSectionHeader {
 	public WorkingStorageSectionHeader() : base(CodeElementType.WorkingStorageSectionHeader) { }
-}
+    public override TextAreaType StartingArea => TextAreaType.AreaA;
+	}
 
 
 /// <summary>
@@ -47,15 +49,16 @@ public class WorkingStorageSectionHeader: DataSectionHeader {
 /// </summary>
 public class LocalStorageSectionHeader: DataSectionHeader {
 	public LocalStorageSectionHeader() : base(CodeElementType.LocalStorageSectionHeader) { }
-}
+    public override TextAreaType StartingArea => TextAreaType.AreaA;
+	}
 
 /// <summary>
 /// The LINKAGE SECTION describes data made available from another program or method.
 /// </summary>
 public class LinkageSectionHeader: DataSectionHeader {
 	public LinkageSectionHeader() : base(CodeElementType.LinkageSectionHeader) { }
-}
+    public override TextAreaType StartingArea => TextAreaType.AreaA;
+	}
 
-
-
+	
 } // end of namespace TypeCobol.Compiler.CodeElements

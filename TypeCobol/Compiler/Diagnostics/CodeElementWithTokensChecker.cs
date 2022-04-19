@@ -25,23 +25,44 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 return;
             }
-            int currentLine = codeElement.Line;
-            foreach (var token in codeElement.ConsumedTokens)
-            {
-                if (token.Line == currentLine)
-                {
-                    var actualStartingArea = DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(token);
-                    if (actualStartingArea != codeElement.StartingArea)
-                    {
-                        DiagnosticUtils.AddError(codeElement, token.SourceText +
-                                                              $" should begin in '{codeElement.StartingArea}'. It was found in '{actualStartingArea}'");
 
+            int currentLine = codeElement.Line;
+            var actualStartingArea =
+                DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(codeElement.ConsumedTokens.FirstOrDefault());
+
+            bool IsFormalizedOrMultilineCommentToken(Token token)
+            {
+                return token.TokenFamily == TokenFamily.FormalizedCommentsFamily ||
+                       token.TokenFamily == TokenFamily.MultilinesCommentsFamily;
+            }
+
+            if (codeElement.StartingArea == TextAreaType.AreaA && actualStartingArea != TextAreaType.AreaA)
+            {
+                DiagnosticUtils.AddError(codeElement, codeElement.ConsumedTokens.First().SourceText +
+                                                      $" should begin in Area A. It was found in '{actualStartingArea}'");
+            }
+
+            if (codeElement.StartingArea == TextAreaType.AreaB)
+            {
+                foreach (var token in codeElement.ConsumedTokens.SkipWhile(IsFormalizedOrMultilineCommentToken))
+                {
+                    if (token.Line == currentLine)
+                    {
+                        actualStartingArea = DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(token);
+                        if (actualStartingArea != codeElement.StartingArea)
+                        {
+                            DiagnosticUtils.AddError(codeElement, token.SourceText +
+                                                                  $" should begin in Area B. It was found in '{actualStartingArea}'");
+
+                        }
+
+                        currentLine++;
                     }
-                    currentLine++;
                 }
             }
 
         }
+
 
     }
 }

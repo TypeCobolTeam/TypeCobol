@@ -11,5 +11,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public SentenceEnd() : base(CodeElementType.SentenceEnd)
         { }
+        public override TextAreaType StartingArea => TextAreaType.Source;
     }
 }
