@@ -843,6 +843,11 @@ new short[179][] {
 		return result;
 	}
 
+	internal TypeCobolOptions _compilerOptions;
+	public CobolCompilerDirectivesParser(TUVienna.CS_CUP.Runtime.Scanner s, TypeCobolOptions compilerOptions) : this(s)
+	{
+		this._compilerOptions = compilerOptions;
+	}
 
 }
 
@@ -880,10 +885,20 @@ public class CUP_CobolCompilerDirectivesParser_actions {
 		TypeCobol.Compiler.Scanner.Token udw = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 
-	((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode(); 
-	if (System.Int64.TryParse(udw.Text, out var _))
+	((CobolWordsTokenizer)my_parser.getScanner()).LeavePerformMode();
+
+	// Reparse the token to check if it is an Integer
+	MultilineScanState scanState = new MultilineScanState(udw.ScanStateSnapshot.EncodingForAlphanumericLiterals);
+    Token generatedToken = TypeCobol.Compiler.Scanner.Scanner.ScanIsolatedToken(udw.Text, scanState, my_parser._compilerOptions, 
+	TypeCobol.Compiler.Scanner.Scanner.IsolatedTokenKind.All, out TypeCobol.Compiler.Diagnostics.Diagnostic error);
+	if (generatedToken?.TokenType == TokenType.IntegerLiteral)
 	{
 		udw.CorrectType(TokenType.IntegerLiteral);
+		udw.LiteralValue = generatedToken.LiteralValue;
+		if (error != null)
+		{
+			((TokensLine)udw.TokensLine).AddDiagnostic(TypeCobol.Compiler.Diagnostics.MessageCode.SyntaxErrorInParser, udw, "Number is too big : " + udw.Text);
+		}
 	}
 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(176/*partialPerformStatement*/, RESULT);

@@ -986,22 +986,22 @@ namespace TypeCobol.Compiler.Scanner
                         return ScanUntilDelimiter(startIndex, TokenType.FORMALIZED_COMMENTS_VALUE, "%>>>");
                 }
             }
-
-            // --- Main switch ---
+            
+            // Special treatment in case of Section or Paragraph name.
             // IN Cobol Format:
-            // IF we are in the PROCEDURE DIVISION and the current character is not a space and  THEN:
-            //      IF (we are inside AREA A or we are inside a PERFORM Statement state taht allow a procedure name)
-            //          and the next character can be the start of a UserDefineWord THEN
+            // IF we are in the PROCEDURE DIVISION and the current character is not a space THEN:
+            //      IF ((we are inside AREA A or we are inside a PERFORM Statement state that allows a procedure name)
+            //          and the next character can be the start of a UserDefineWord) THEN
             //              TRY to scan a UserDefinedWord
             if (this.tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && 
                 currentState.InsideProcedureDivision &&
                 line[startIndex] != ' ' &&
-                ((ScannerUtils.GetAreaFromIndex(startIndex) == CobolFormatAreas.Begin_A && tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat) 
+                ((ScannerUtils.GetAreaFromIndex(startIndex) == CobolFormatAreas.Begin_A) 
                     || currentState.IsPerformStatementProcedureNameState) 
                     && CobolChar.IsCobolWordChar(line[startIndex]))
 
             {
-                // We try a strict ProcedureName if we are not in PERFORM statement procedure name state.
+                // We try a strict ProcedureName if we aren't in PERFORM statement procedure name state.
                 bool tryProcedureName = !currentState.IsPerformStatementProcedureNameState;
                 Token procedureNameToken = this.ScanKeywordOrUserDefinedWord(startIndex, tryProcedureName);
                 if (procedureNameToken != null)
@@ -1014,13 +1014,14 @@ namespace TypeCobol.Compiler.Scanner
                         procedureNameToken.TokenFamily == TokenFamily.SyntaxKeyword ||
                         procedureNameToken.TokenFamily == TokenFamily.CodeElementStartingKeyword);
                     if (tryProcedureName && procedureNameToken.TokenType == TokenType.PartialCobolWord)
-                    { // In this case say that say that the partial cobol word must be replaced by a procedure-name.
+                    { // In this case, say that the partial cobol word must be replaced by a procedure-name.
                         procedureNameToken.PreviousTokenType = TokenType.SectionParagraphName;
                     }
                     return procedureNameToken;
                 }
             }
 
+            // --- Main switch ---
             switch (line[startIndex])
             {
                 case ' ':

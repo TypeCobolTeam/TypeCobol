@@ -1,3 +1,6 @@
+--- Diagnostics ---
+Line 24[20,58] <27, Error, Syntax> - Syntax error : Number is too big : 300303030303030303030303030303030303030
+
 --- Program ---
 PROGRAM: MyPgm common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?

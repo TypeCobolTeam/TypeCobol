@@ -62,7 +62,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// </summary>
         public bool CheckLiteralOrUserDefinedWordOReservedWordExceptCopy { get; set; }
 
-        private AnyTokenCategory AnyTokenCategoryMode { get; set; }        
+        private AnyTokenCategory AnyTokenCategoryMode { get; set; }
 
         /// <summary>
         /// The EOF symbol

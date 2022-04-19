@@ -20,6 +20,8 @@
            perform 300-000-PAR3 OF 300-000-SEC1 300 TIMES
            perform 300-000-PAR3 OF 300-000-SEC1 THRU 
                    300-000-PAR3 OF 300-000-SEC1 300 TIMES
+      *Ok Number too big
+           perform 300303030303030303030303030303030303030 TIMES
            goback.
            REPLACE ==:PAR1:== BY ==PAR2==.
       *Ok

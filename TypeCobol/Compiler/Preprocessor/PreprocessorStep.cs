@@ -104,7 +104,9 @@ namespace TypeCobol.Compiler.Preprocessor
             // Prepare to analyze the parse tree            
             TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder(document);
 
-            // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
+            // 1. Iterate over all compiler directive starting tokens found in the lines which were updated.
+            // The PERFORM instruction which is not a compiler directive is also considered here because
+            // We must preprocess something like 'PERFORM UserDefinedWord TIME' to be 'PERFORM Integer-1 TIME' if possible.
             foreach (Token compilerDirectiveStartingToken in documentLines
                 .Where(line => line.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                 .SelectMany(line => line.SourceTokens)
@@ -135,7 +137,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 // 3. Try to parse a compiler directive starting with the current token
                 perfStatsForParserInvocation.OnStartParsing();
                 TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser directivesParser =
-                    new TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator);
+                    new TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator, document.CompilerOptions);
                 directivesParser.ErrorReporter = cupCobolErrorStrategy;
                 directivesParser.Builder = directiveBuilder;
                 directiveBuilder.CompilerDirective = null;

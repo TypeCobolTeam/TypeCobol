@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.Scanner
             InsideCopy = insideCopy;
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
             _afterReplacementPseudoText = afterReplacementPseudoText;
-            InsideReplaceDirective = insideReplaceDirective;            
+            InsideReplaceDirective = insideReplaceDirective;
             InsideSql = insideSql;
             InsidePerformStatement = insidePerformDirective;
         }
@@ -575,28 +575,27 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        /* The Automa State to Leave a PERFORM Statement State.
-         * number between [] are Possible Transition State on previous pevious token
+        /* The Automata State to leave a PERFORM Statement State.
+         * Numbers between [] are Possible Transition State on previous token
          * 
-         * [0]PERFORM --> [1] procedure_name1-->[2,4,5,6]THRU-->[3]procedure_name2-->[4,6]
-         * [0]PERFORM --> [4] (integer1=UserDefinedWord) --> [5] TIMES-->[6]
-         * [0]PERFORM --> [7] UNTIL|TEST|WITH|VARYING|END -->[8]
+         * [0]PERFORM --> [1] procedure_name1-?->[2]THRU-->[5]procedure_name2-?->[6]OF-->[7]
+         * [0]PERFORM --> [1] procedure_name1-?->[2]OF-->[3]section_name1-?->[4]THRU-->[5]procedure_name2-?->[6]OF-->[7]
          */
         internal enum PerformStatementAutomataStates
         {
-            Start,
-            Perform,
-            ProcedureName1,
-            QualifiedNameSeparator1,
-            AfterQualifiedProcedureName1,
-            Thru,
-            ProcedureName2,
-            QualifiedNameSeparator2            
+            Start = 0,
+            Perform = 1,
+            ProcedureName1 = 2,
+            QualifiedNameSeparator1 = 3,
+            AfterQualifiedProcedureName1 = 4,
+            Thru = 5,
+            ProcedureName2 = 6,
+            QualifiedNameSeparator2 = 7
         }
         internal PerformStatementAutomataStates PerformStatementAutomataState { get; private set; }
 
         /// <summary>
-        /// Determines if the current PERFORM scanning automata state can have a procedure name has next token.
+        /// Determines if the current PERFORM scanning automata state can have a procedure name as next token.
         /// </summary>
         public bool IsPerformStatementProcedureNameState
         {
