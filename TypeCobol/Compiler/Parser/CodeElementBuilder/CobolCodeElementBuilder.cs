@@ -2268,5 +2268,10 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateSelectStatement(context);
         }
-    }
+        public override void EnterRollBackStatement([NotNull] CodeElementsParser.RollBackStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateRollbackStatement(context);
+        }
+	}
 }

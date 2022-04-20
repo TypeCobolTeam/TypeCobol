@@ -400,6 +400,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="selectStatement">The Code Element to be visited</param>
         /// <returns>true to continue visiting Code elements, false otherwise </returns>
         bool Visit([NotNull] SelectStatement selectStatement);
+        /// <summary>
+        /// Rollback Statement Code Element visitor method
+        /// </summary>
+        /// <param name="rollbackStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        bool Visit([NotNull] RollbackStatement rollbackStatement);
 
         /// <summary>
         /// SELECT Statement Node visitor method
@@ -407,6 +413,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="select">The Node to be visited</param>
         /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         bool Visit([NotNull] Select select);
+
+        /// <summary>
+        /// ROLLBACK Statement Node visitor method
+        /// </summary>
+        /// <param name="rollback">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        bool Visit([NotNull] Rollback rollback);
     }
 
 
@@ -1540,13 +1553,31 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return true;
         }
-
+        /// <summary>
+        /// ROLLBACK Statement Code Element visitor method
+        /// </summary>
+        /// <param name="rollbackStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        public virtual bool Visit([NotNull] RollbackStatement rollbackStatement)
+        {
+            return true;
+        }
         /// <summary>
         /// SELECT Statement Node visitor method
         /// </summary>
         /// <param name="select">The Node to be visited</param>
         /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         public virtual bool Visit([NotNull] Select select)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// ROLLBACK Statement Node visitor method
+        /// </summary>
+        /// <param name="rollback">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        public virtual bool Visit([NotNull] Rollback rollback)
         {
             return true;
         }
