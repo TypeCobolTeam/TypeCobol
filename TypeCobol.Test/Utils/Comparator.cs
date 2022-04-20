@@ -505,6 +505,13 @@ namespace TypeCobol.Test.Utils
                 return true;
             }
 
+            public override bool Visit(RollbackStatement rollbackStatement)
+            {
+                _writer.WriteLine("line " + rollbackStatement.Line + ": RollbackStatement");
+                DumpSqlObject(nameof(rollbackStatement.SavePointClause), rollbackStatement.SavePointClause);
+                return true;
+            }
+
             public override bool Visit(CommitStatement commitStatement)
             {
                 _writer.WriteLine("line " + commitStatement.Line + ": CommitStatement");

@@ -14,7 +14,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return new CommitStatement();
         }
-        public CodeElement CreateRollbackStatement(CodeElementsParser.RollBackStatementContext context)
+
+        public CodeElement CreateRollbackStatement(CodeElementsParser.RollbackStatementContext context)
         {
             SavePointClause savePointClause = null;
             if (context.savePointClause() != null)
@@ -24,12 +25,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return new RollbackStatement(savePointClause);
         }
 
-        public SavePointClause CreateSavePointClause(CodeElementsParser.SavePointClauseContext context)
+        private SavePointClause CreateSavePointClause(CodeElementsParser.SavePointClauseContext context)
         {
-            string savePointName = null;
+            SymbolReference savePointName = null;
             if (context.savePoint_name != null)
             {
-                savePointName = context.savePoint_name.ToString();
+                Token savePointToken = context.savePoint_name as Token;
+                savePointName= new SymbolReference(new AlphanumericValue(savePointToken), SymbolType.SqlIdentifier);
             }
 
             SavePointClause savePointClause = new SavePointClause(savePointName);
