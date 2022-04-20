@@ -14,6 +14,27 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return new CommitStatement();
         }
+        public CodeElement CreateRollbackStatement(CodeElementsParser.RollBackStatementContext context)
+        {
+            SavePointClause savePointClause = null;
+            if (context.savePointClause() != null)
+            {
+                savePointClause = CreateSavePointClause(context.savePointClause());
+            }
+            return new RollbackStatement(savePointClause);
+        }
+
+        public SavePointClause CreateSavePointClause(CodeElementsParser.SavePointClauseContext context)
+        {
+            string savePointName = null;
+            if (context.savePoint_name != null)
+            {
+                savePointName = context.savePoint_name.ToString();
+            }
+
+            SavePointClause savePointClause = new SavePointClause(savePointName);
+            return savePointClause;
+        }
 
         public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
         {

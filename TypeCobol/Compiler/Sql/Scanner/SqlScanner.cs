@@ -62,6 +62,9 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     case TokenType.SQL_ALL:
                     case TokenType.SQL_DISTINCT:
                     case TokenType.UserDefinedWord:
+                    case TokenType.SQL_ROLLBACK:
+                    case TokenType.SQL_TO:
+                    case TokenType.SQL_SAVEPOINT:
                         return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
                     //Unrecognized keyword (for now) return as ExecStatementText
                     default:
