@@ -8260,7 +8260,8 @@ execStatementText: ExecStatementText;
 execStatementEnd: END_EXEC;
 
 //FOR SQL
-commitStatement: SQL_COMMIT;
+// Defining 'WORK' as contextual keyword here since it is not part of reserved words
+commitStatement: SQL_COMMIT ({ string.Equals(CurrentToken.Text, "WORK", System.StringComparison.OrdinalIgnoreCase) }? KeywordWORK=UserDefinedWord)?;
 selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause;

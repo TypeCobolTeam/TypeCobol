@@ -1,4 +1,4 @@
-Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 5[31,39] <27, Error, Syntax> - Syntax error : extraneous input 'CUSTOMERS' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
 --- Tokens ---
 ---------------------------------
 _IDENTIFICATION DIVISION._
@@ -27,7 +27,7 @@ _  EXEC SQL DELETE FROM CUSTOMERS	   _
     _SQL_    [15,17:SQL]<ExecTranslatorName>
     _DELETE_    [19,24:DELETE]<ExecStatementText>
     _FROM_    [26,29:FROM]<ExecStatementText>
-    _CUSTOMERS_    [31,39:CUSTOMERS]<ExecStatementText>
+    _CUSTOMERS_    [31,39:CUSTOMERS]<UserDefinedWord>
     _	   _    [40,43:	   ]<ExecStatementText>
 ---------------------------------
 _  COMMIT_
@@ -42,16 +42,31 @@ _PROCEDURE DIVISION._
     _DIVISION_    [18,25:DIVISION]<DIVISION>
     _._    [26,26+:.]<PeriodSeparator>
 ---------------------------------
-_    EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT_
+_    EXEC SQL COMMIT _
     _EXEC_    [12,15:EXEC]<EXEC>
     _SQL_    [17,19:SQL]<ExecTranslatorName>
     _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
-    _END-EXEC_    [28,35:END-EXEC]<END_EXEC>
-    _display_    [37,43:display]<DISPLAY>
-    _"hello"_    [45,51:"hello"]<AlphanumericLiteral>(",Y,Y){hello}
-    _EXEC_    [53,56:EXEC]<EXEC>
-    _SQL_    [58,60:SQL]<ExecTranslatorName>
-    _COMMIT_    [62,67:COMMIT]<SQL_COMMIT>
+---------------------------------
+_    END-EXEC _
+    _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
+---------------------------------
+_    display "hello" _
+    _display_    [12,18:display]<DISPLAY>
+    _"hello"_    [20,26:"hello"]<AlphanumericLiteral>(",Y,Y){hello}
+---------------------------------
+_    EXEC SQL COMMIT      _
+    _EXEC_    [12,15:EXEC]<EXEC>
+    _SQL_    [17,19:SQL]<ExecTranslatorName>
+    _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
+---------------------------------
+_    END-EXEC_
+    _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
+---------------------------------
+_    EXEC SQL COMMIT WORK _
+    _EXEC_    [12,15:EXEC]<EXEC>
+    _SQL_    [17,19:SQL]<ExecTranslatorName>
+    _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
+    _WORK_    [28,31:WORK]<UserDefinedWord>
 ---------------------------------
 _    END-EXEC_
     _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
