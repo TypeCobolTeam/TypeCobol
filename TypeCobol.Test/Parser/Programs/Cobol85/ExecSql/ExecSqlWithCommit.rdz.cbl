@@ -6,9 +6,8 @@
          COMMIT
          END-EXEC.
        PROCEDURE DIVISION.
-           EXEC SQL COMMIT 
-           END-EXEC 
-           display "hello" 
+           EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT
+           END-EXEC
            EXEC SQL COMMIT      
            END-EXEC
            EXEC SQL COMMIT WORK 

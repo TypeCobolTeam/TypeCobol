@@ -1,4 +1,5 @@
 Line 5[31,39] <27, Error, Syntax> - Syntax error : extraneous input 'CUSTOMERS' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 --- Tokens ---
 ---------------------------------
 _IDENTIFICATION DIVISION._
@@ -42,17 +43,19 @@ _PROCEDURE DIVISION._
     _DIVISION_    [18,25:DIVISION]<DIVISION>
     _._    [26,26+:.]<PeriodSeparator>
 ---------------------------------
-_    EXEC SQL COMMIT _
+_    EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT_
     _EXEC_    [12,15:EXEC]<EXEC>
     _SQL_    [17,19:SQL]<ExecTranslatorName>
     _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
+    _END-EXEC_    [28,35:END-EXEC]<END_EXEC>
+    _display_    [37,43:display]<DISPLAY>
+    _"hello"_    [45,51:"hello"]<AlphanumericLiteral>(",Y,Y){hello}
+    _EXEC_    [53,56:EXEC]<EXEC>
+    _SQL_    [58,60:SQL]<ExecTranslatorName>
+    _COMMIT_    [62,67:COMMIT]<SQL_COMMIT>
 ---------------------------------
-_    END-EXEC _
+_    END-EXEC_
     _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
----------------------------------
-_    display "hello" _
-    _display_    [12,18:display]<DISPLAY>
-    _"hello"_    [20,26:"hello"]<AlphanumericLiteral>(",Y,Y){hello}
 ---------------------------------
 _    EXEC SQL COMMIT      _
     _EXEC_    [12,15:EXEC]<EXEC>
