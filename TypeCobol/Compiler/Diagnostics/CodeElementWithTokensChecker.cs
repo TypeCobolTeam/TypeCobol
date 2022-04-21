@@ -1,24 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
-    class CodeElementWithTokensChecker
+    internal static class CodeElementWithTokensChecker
     {
-
-        public CodeElementWithTokensChecker()
-        {
-
-        }
-
         public static void CheckAreaOfDeclaration(CodeElement codeElement)
         {
             if (codeElement.ConsumedTokens == null)
@@ -26,9 +15,35 @@ namespace TypeCobol.Compiler.Diagnostics
                 return;
             }
 
-            int currentLine = codeElement.Line;
-            var actualStartingArea =
-                DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(codeElement.ConsumedTokens.FirstOrDefault());
+            var expectedStartingArea = codeElement.StartingArea;
+            switch (expectedStartingArea)
+            {
+                case TextAreaType.AreaA:
+                    //First token must be in AreaA, others can be in A or B. Check first meaningful token only.
+                    var firstMeaningfulToken =
+                        codeElement.ConsumedTokens.FirstOrDefault(t => !IsFormalizedOrMultilineCommentToken(t));
+                    if (firstMeaningfulToken != null)
+                    {
+                        CheckToken(firstMeaningfulToken);
+                    }
+
+                    break;
+                case TextAreaType.AreaB:
+                    //All tokens must be in AreaB, check every beginning token of each line
+                    int currentLine = codeElement.Line;
+                    foreach (var token in codeElement.ConsumedTokens.SkipWhile(IsFormalizedOrMultilineCommentToken))
+                    {
+                        if (token.Line == currentLine)
+                        {
+                            CheckToken(token);
+                        }
+                    }
+
+                    break;
+                default:
+                    //No check required
+                    return;
+            }
 
             bool IsFormalizedOrMultilineCommentToken(Token token)
             {
@@ -36,33 +51,16 @@ namespace TypeCobol.Compiler.Diagnostics
                        token.TokenFamily == TokenFamily.MultilinesCommentsFamily;
             }
 
-            if (codeElement.StartingArea == TextAreaType.AreaA && actualStartingArea != TextAreaType.AreaA)
+            void CheckToken(Token token)
             {
-                DiagnosticUtils.AddError(codeElement, codeElement.ConsumedTokens.First().SourceText +
-                                                      $" should begin in Area A. It was found in '{actualStartingArea}'");
-            }
-
-            if (codeElement.StartingArea == TextAreaType.AreaB)
-            {
-                foreach (var token in codeElement.ConsumedTokens.SkipWhile(IsFormalizedOrMultilineCommentToken))
+                var actualStartingArea = DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(token);
+                if (actualStartingArea != expectedStartingArea)
                 {
-                    if (token.Line == currentLine)
-                    {
-                        actualStartingArea = DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(token);
-                        if (actualStartingArea != codeElement.StartingArea)
-                        {
-                            DiagnosticUtils.AddError(codeElement, token.SourceText +
-                                                                  $" should begin in Area B. It was found in '{actualStartingArea}'");
-
-                        }
-
-                        currentLine++;
-                    }
+                    DiagnosticUtils.AddError(codeElement,
+                        token.SourceText +
+                        $" should begin in {expectedStartingArea}. It was found in '{actualStartingArea}'.");
                 }
             }
-
         }
-
-
     }
 }

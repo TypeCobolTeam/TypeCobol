@@ -338,7 +338,7 @@ namespace TypeCobol.Compiler.Parser
                                     MessageCode.TypeCobolParserLimitation);
                             }
 
-                            if (processedTokensDocument.TextSourceInfo.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && codeElement.StartingArea != TextAreaType.Source)
+                            if (processedTokensDocument.TextSourceInfo.ColumnsLayout == ColumnsLayout.CobolReferenceFormat)
                             {
                                 CodeElementWithTokensChecker.CheckAreaOfDeclaration(codeElement);
                             }

@@ -52,7 +52,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// (For details, see “VALUE clause” on page 237.)
 		/// </summary>
 		[CanBeNull]
-		public IntegerValue LevelNumber { get; set; }
+        public IntegerValue LevelNumber { get; set; }
+
         /// <summary>
 		/// data-name-1 cannot be used as a qualifier; it can be qualified only by the
 		/// names of level indicator entries or level-01 entries.
