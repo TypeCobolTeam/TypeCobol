@@ -79,3 +79,9 @@
 [25,29:BLANK]<BLANK>
 [31,34:ZERO]<ZERO>
 [35,35+:.]<PeriodSeparator>
+-- Line 27 --
+[8,9:01]<IntegerLiteral>{1}
+[11,13:var]<UserDefinedWord>
+[15,17:PIC]<PIC>
+[19,30:X(50)]<PictureCharacterString>
+[31,31+:.]<PeriodSeparator>

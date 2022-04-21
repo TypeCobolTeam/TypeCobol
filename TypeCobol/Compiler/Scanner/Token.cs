@@ -76,10 +76,10 @@ namespace TypeCobol.Compiler.Scanner
             UsesVirtualSpaceAtEndOfLine = usesVirtualSpaceAtEndOfLine;
 
             //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
-            if (tokensLine.ScanState != null && (tokenType == TokenType.PartialCobolWord ||
-                    tokensLine.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
+            if (tokensLine.ScanState != null && (tokenType == TokenType.PartialCobolWord
+                                                 || tokenType == TokenType.PictureCharacterString
+                                                 || tokensLine.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
                 scanStateSnapshot = tokensLine.ScanState.Clone();
-
         }
 
         /// <summary>
@@ -429,47 +429,32 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool CompareForReplace(Token comparisonToken)
         {
-            // 1. First compare the token type                 
-            if (comparisonToken == null || this.TokenType != comparisonToken.TokenType &&
-                !(this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable()))
+            //Nothing to compare
+            if (comparisonToken == null)
             {
                 return false;
             }
-            // 2. For partial Cobol words, chech if the comparison token text (":TAG:") 
-            //    is contained in the current token text (":TAG:-AMOUNT")
-            else if (TokenType == TokenType.PartialCobolWord)
+
+            //PartialCobolWord and PictureCharacterString are text based (and must be rescanned later as a whole)
+            if (TokenType == TokenType.PartialCobolWord || TokenType == TokenType.PictureCharacterString)
             {
                 return NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase) >= 0;
             }
-            // 3. Check for Picture replacement
-            //else if (TokenType == TokenType.PictureCharacterString)
-            //{
-            //    if (comparisonToken.Text.Length > 1)
-            //        return Regex.IsMatch(Text, comparisonToken.Text, RegexOptions.IgnoreCase);
-            //}
-            // 4. For token families
-            //    - AlphanumericLiteral
-            //    - NumericLiteral
-            //    - SyntaxLiteral
-            //    - Symbol
-            //    => compare Token text
-            else if (IsFamilyComparable())
+
+            //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
+            if (this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable())
             {
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }
-            // 5. In all other cases, token type comparison was enough
-            {
-                return true;
-            }
 
-            /// <summary>
-            /// Determine if this token belong to a family that is textually comparable.
-            /// </summary>
-            /// <returns>true if yes, false otherwise</returns>
+            //Otherwise allow replace for same type tokens
+            return this.TokenType == comparisonToken.TokenType;
+
+            //Determine if this token belong to a family that is textually comparable.
             bool IsFamilyComparable()
             {
                 return TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
-                                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
+                       TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
             }
         }
     }
