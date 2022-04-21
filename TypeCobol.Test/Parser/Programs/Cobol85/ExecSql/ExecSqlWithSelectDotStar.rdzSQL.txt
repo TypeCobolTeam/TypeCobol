@@ -7,10 +7,17 @@ line 6: SelectStatement
       - Selections = [
         - Selections[0] = TableOrViewAllColumnsSelection
           - TableOrViewOrCorrelationName = TableViewCorrelationName
-            - Name = d IN i IN i
+            - Name = [
+              - Name[0] = d
+              - Name[1] = i
+              - Name[2] = i
+            ]
         - Selections[1] = TableOrViewAllColumnsSelection
           - TableOrViewOrCorrelationName = TableViewCorrelationName
-            - Name = i IN e
+            - Name = [
+              - Name[0] = i
+              - Name[1] = e
+            ]
       ]
     - FromClause = <NULL>
   - SubQuery = <NULL>

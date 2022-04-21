@@ -1,5 +1,4 @@
-﻿using System.IO;
-using TypeCobol.Compiler.CodeElements;
+﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Sql.Model;
 
 namespace TypeCobol.Compiler.Sql.CodeElements.Statements
