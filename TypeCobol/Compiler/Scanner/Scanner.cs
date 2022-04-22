@@ -1377,7 +1377,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         return ScanCharacterString(startIndex);
                     }
-                    //TODO read again these coments and update them
+                    //TODO read again these comments and update them
                 // p9: COBOL words with single-byte characters
                 // A COBOL word is a character-string that forms a user-defined word, a system-name, or a reserved word. 
                 // Each character of a COBOL word is selected from the following set: 
@@ -1463,6 +1463,10 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // Reset scanner state
                         currentIndex = saveCurrentIndex;
+                        if (numericLiteralToken.TokenType == TokenType.InvalidToken)
+                        {
+                            tokensLine.ClearDiagnosticsForToken(numericLiteralToken);
+                        }
                         //UserDefinedWord or PartialCobolWord
                         return ScanCharacterString(startIndex);
                     }
@@ -1480,6 +1484,10 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // Reset scanner state
                         currentIndex = saveCurrentIndex;
+                        if (numericLiteralToken.TokenType == TokenType.InvalidToken)
+                        {
+                            tokensLine.ClearDiagnosticsForToken(numericLiteralToken);
+                        }
                         //UserDefinedWord or PartialCobolWord
                         return ScanCharacterString(startIndex);
                     }
