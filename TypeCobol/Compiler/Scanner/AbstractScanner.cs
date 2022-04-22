@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -192,6 +194,141 @@ namespace TypeCobol.Compiler.Scanner
                 tokensLine.AddDiagnostic(MessageCode.InvalidNumericLiteralFormat, invalidToken);
                 return invalidToken;
             }
+        }
+
+        protected Token ScanAlphanumericLiteral(int startIndex, TokenType tokenType, BitArray multiStringConcatBitPosition)
+        {
+            // p46: Alphanumeric Literals 
+            //   Quotation marks {"} ... {"}
+            //   Apostrophes {’} ... {’}
+            // Delimiters must appear as balanced pairs.
+            // An opening quotation mark must be immediately preceded by a space or a
+            // left parenthesis. A closing quotation mark must be immediately followed
+            // by a separator space, comma, semicolon, period, right parenthesis, or
+            // pseudo-text delimiter.
+
+            // p34: Basic alphanumeric literals
+            // Basic alphanumeric literals can contain any character in a single-byte EBCDIC
+            // character set.
+            // The following format is for a basic alphanumeric literal:
+            // Format 1: Basic alphanumeric literals
+            // "single-byte-characters"
+            //’ single-byte-characters’
+            // The enclosing quotation marks or apostrophes are excluded from the literal when
+            // the program is compiled.
+            // An embedded quotation mark or apostrophe must be represented by a pair of
+            // quotation marks ("") or a pair of apostrophes (’’), respectively, when it is the
+            // character used as the opening delimiter. For example:
+            // "THIS ISN""T WRONG"
+            //’ THIS ISN’’T WRONG’
+            // The delimiter character used as the opening delimiter for a literal must be used as
+            // the closing delimiter for that literal. For example:
+            // ’THIS IS RIGHT’
+            // "THIS IS RIGHT"
+            // ’THIS IS WRONG"
+            // You can use apostrophes or quotation marks as the literal delimiters independent
+            // of the APOST/QUOTE compiler option.
+            // Any punctuation characters included within an alphanumeric literal are part of the
+            // value of the literal.
+            // The maximum length of an alphanumeric literal is 160 bytes. The minimum length
+            // is 1 byte.
+
+            // consume opening delimiter
+            char delimiter = line[currentIndex];
+            currentIndex++;
+
+            // consume all chars until we encounter one occurrence (and only one) of the delimiter 
+            bool closingDelimiterFound = false;
+            bool usingVirtualSpaceAtEndOfLine = false;
+            StringBuilder sbValue = new StringBuilder();
+            do
+            {
+                for (; currentIndex <= lastIndex && line[currentIndex] != delimiter; currentIndex++)
+                {
+                    char currentChar = line[currentIndex];
+                    sbValue.Append(currentChar);
+                }
+                // delimiter found before the last character of the line
+                if (currentIndex < lastIndex)
+                {
+                    // continue in case of a double delimiter
+                    if (line[currentIndex + 1] == delimiter && !(multiStringConcatBitPosition?.Get(currentIndex + 1) ?? false))
+                    {
+                        // consume the two delimiters
+                        currentIndex += 2;
+                        // append one delimiter to the literal value
+                        sbValue.Append(delimiter);
+                    }
+                    // stop in case of a simple delimiter
+                    else
+                    {
+                        // consume closing delimiter
+                        currentIndex++;
+                        closingDelimiterFound = true;
+                    }
+                }
+                // delimiter found on the last character of the line
+                else if (currentIndex == lastIndex)
+                {
+                    // consume closing delimiter
+                    currentIndex++;
+                    closingDelimiterFound = true;
+                    usingVirtualSpaceAtEndOfLine = true;
+                }
+            } while (currentIndex <= lastIndex && !closingDelimiterFound);
+
+            // create an alphanumeric literal token
+            int endIndex = (currentIndex > lastIndex) ? lastIndex : currentIndex - 1;
+            Token token = new Token(tokenType, startIndex, endIndex, usingVirtualSpaceAtEndOfLine, tokensLine, true, closingDelimiterFound, delimiter);
+
+            // compute the value of the literal, depending on the exact literal type            
+            AlphanumericLiteralTokenValue value;
+            switch (tokenType)
+            {
+                case TokenType.HexadecimalAlphanumericLiteral:
+                {
+                    // p36: Hexadecimal notation for alphanumeric literals
+                    // Hexadecimal digits are characters in the range '0' to '9', 'a' to 'f', and 'A' to 'F',
+                    // inclusive. 
+                    // An even number of hexadecimal digits must be specified.
+                    // Two hexadecimal digits represent one character in a single-byte character
+                    // set (EBCDIC or ASCII). Four hexadecimal digits represent one character in a DBCS
+                    // character set. A string of EBCDIC DBCS characters represented in hexadecimal
+                    // notation must be preceded by the hexadecimal representation of a shift-out control
+                    // character (X'0E') and followed by the hexadecimal representation of a shift-in
+                    // control character (X'0F'). 
+                    // The maximum length of a hexadecimal literal is 320 hexadecimal digits.
+
+                    string hexadecimalChars = sbValue.ToString();
+                    if (hexadecimalChars.Length % 2 != 0)
+                    {
+                        tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                    }
+                    value = new AlphanumericLiteralTokenValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
+                    break;
+                }
+                case TokenType.HexadecimalNationalLiteral:
+                {
+                    // p41: Hexadecimal notation for national literals
+                    // The number of hexadecimal digits must be a multiple of four.
+                    // Each group of four hexadecimal digits represents a single national
+                    // character and must represent a valid code point in UTF-16. 
+
+                    string hexadecimalChars = sbValue.ToString();
+                    if (hexadecimalChars.Length % 4 != 0)
+                    {
+                        tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaNationalLiteral, token);
+                    }
+                    value = new AlphanumericLiteralTokenValue(hexadecimalChars, Encoding.Unicode);
+                    break;
+                }
+                default:
+                    value = new AlphanumericLiteralTokenValue(sbValue.ToString());
+                    break;
+            }
+
+            token.LiteralValue = value;
+            return token;
         }
     }
 }
