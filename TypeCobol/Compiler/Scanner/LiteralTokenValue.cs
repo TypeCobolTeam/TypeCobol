@@ -15,14 +15,12 @@ namespace TypeCobol.Compiler.Scanner
             Type = type;
         }
 
-        public LiteralTokenValueType Type { get; private set; }
+        public LiteralTokenValueType Type { get; }
     }
 
     public enum LiteralTokenValueType
     {
         Alphanumeric,
-        FigurativeConstant,
-        SymbolicCharacter,
         Integer,
         Decimal,
         FloatingPoint
@@ -57,15 +55,11 @@ namespace TypeCobol.Compiler.Scanner
 
         private static int GetHexVal(char hex)
         {
-            int val = (int)hex;
             // For uppercase A-F letters and for lowercase a-f letters
-            return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
+            return hex - (hex < 58 ? 48 : (hex < 97 ? 55 : 87));
         }
 
-        // Property set later at the parsing stage
-        public bool All { get; set; }
-
-        public string Text { get; private set; }
+        public string Text { get; }
 
         /// <summary>
         /// For test and debugging purposes
@@ -83,10 +77,8 @@ namespace TypeCobol.Compiler.Scanner
     {
         public IntegerLiteralTokenValue(string sign, string number) : base(LiteralTokenValueType.Integer)
         {
-            HasSign = !String.IsNullOrEmpty(sign);
-            Number = Int64.Parse(number);
-
-
+            HasSign = !string.IsNullOrEmpty(sign);
+            Number = BigInteger.Parse(number);
 
             if (sign == "-")
             {
@@ -95,27 +87,11 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Long number instead of string
+        /// True if a sign was explicitly written as the first character of the integer literal
         /// </summary>
-        public IntegerLiteralTokenValue(string sign, long number) : base(LiteralTokenValueType.Integer)
-        {
-            HasSign = !String.IsNullOrEmpty(sign);
-            Number = number;
+        public bool HasSign { get; }
 
-
-
-            if (sign == "-")
-            {
-                Number = -Number;
-            }
-        }
-
-        /// <summary>
-        /// True if a sign was explicitely written as the first character of the integer literal
-        /// </summary>
-        public bool HasSign { get; private set; }
-
-        public long Number { get; private set; }
+        public BigInteger Number { get; }
 
         /// <summary>
         /// For test and debugging purposes
@@ -146,13 +122,14 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// For the number 5.43, the integer value is 543
         /// </summary>
-        public BigInteger  IntegerValue  { get; private set; }
+        public BigInteger IntegerValue { get; }
+
         /// <summary>
         /// For the number 5.43, the number of decimal digits is 2
         /// </summary>
-        public int  DecimalDigits { get; private set; }
+        public int  DecimalDigits { get; }
 
-        public double Number { get; private set; }
+        public double Number { get; }
 
         /// <summary>
         /// For test and debugging purposes
@@ -173,13 +150,14 @@ namespace TypeCobol.Compiler.Scanner
             Mantissa = new DecimalLiteralTokenValue(mantissaSign, mantissaIntegerPart, mantissaDecimalPart);
             Exponent = new IntegerLiteralTokenValue(exponentSign, exponentNumber);
 
-            Number = Mantissa.Number * Math.Pow(10, Exponent.Number);
+            Number = Mantissa.Number * Math.Pow(10, (double)Exponent.Number);
         }
 
-        public DecimalLiteralTokenValue Mantissa { get; private set; }
-        public IntegerLiteralTokenValue Exponent { get; private set; }
+        public DecimalLiteralTokenValue Mantissa { get; }
 
-        public double Number { get; private set; }
+        public IntegerLiteralTokenValue Exponent { get; }
+
+        public double Number { get; }
 
         /// <summary>
         /// For test and debugging purposes
