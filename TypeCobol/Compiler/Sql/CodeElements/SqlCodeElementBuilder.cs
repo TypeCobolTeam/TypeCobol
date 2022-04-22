@@ -30,12 +30,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             SymbolReference savePointName = null;
             if (context.savePoint_name != null)
             {
-                Token savePointToken = context.savePoint_name as Token;
-                savePointName= new SymbolReference(new AlphanumericValue(savePointToken), SymbolType.SqlIdentifier);
+                savePointName = new SymbolReference(new AlphanumericValue((Token)context.savePoint_name), SymbolType.SqlIdentifier);
             }
-
-            SavePointClause savePointClause = new SavePointClause(savePointName);
-            return savePointClause;
+            return new SavePointClause(savePointName);
         }
 
         public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
