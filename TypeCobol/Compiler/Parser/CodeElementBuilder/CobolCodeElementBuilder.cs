@@ -2268,5 +2268,11 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateSelectStatement(context);
         }
-    }
+
+        public override void EnterTruncateStatement([NotNull] CodeElementsParser.TruncateStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateTruncateStatement(context);
+        }
+	}
 }

@@ -1,0 +1,4 @@
+﻿--- Sql Statements ---
+line 6: truncateStatement
+- TruncateClause = TruncateClause
+  - TableName = INVENTORY

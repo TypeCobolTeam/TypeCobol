@@ -511,6 +511,13 @@ namespace TypeCobol.Test.Utils
                 //No SqlObject in CommitStatement
                 return true;
             }
+
+            public override bool Visit(TruncateStatement truncateStatement)
+            {
+                _writer.WriteLine($"line {truncateStatement.Line}: {nameof(truncateStatement)}");
+                DumpSqlObject(nameof(truncateStatement.TruncateClause), truncateStatement.TruncateClause);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

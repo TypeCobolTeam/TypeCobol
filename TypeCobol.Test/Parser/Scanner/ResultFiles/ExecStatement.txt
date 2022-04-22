@@ -1,8 +1,8 @@
 -- Line 1 --
 [1,4:EXEC]<EXEC>
 [6,8:SQL]<ExecTranslatorName>
-[10,15:DELETE]<ExecStatementText>
-[17,21:Table]<ExecStatementText>
+[10,15:DELETE]<SQL_DELETE>
+[17,21:Table]<SQL_TABLE>
 [23,30:END-EXEC]<END_EXEC>
 [31,31+:.]<PeriodSeparator>
 

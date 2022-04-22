@@ -14,7 +14,38 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return new CommitStatement();
         }
+        public CodeElement CreateTruncateStatement(CodeElementsParser.TruncateStatementContext context)
+        {
+            TruncateClause truncateClause = null;
+            if (context.truncateClause() != null)
+            {
+                truncateClause = CreateTruncateClause(context.truncateClause());
+            }
+            return new TruncateStatement(truncateClause);
+        }
 
+        public TruncateClause CreateTruncateClause(CodeElementsParser.TruncateClauseContext context)
+        {
+            if (context.tableName != null)
+            {
+                var tableOrViewOrCorrelationName =
+                    context.tableOrViewOrCorrelationName();
+                Token name = tableOrViewOrCorrelationName.Name as Token;
+                Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                SymbolReference tableName = CreateSymbolReference(name, schemaName, dbms);
+                var truncateClause= new TruncateClause(tableName)
+                {
+                    IsDropStorage = context.dropStorage() != null,
+                    IsIgnoreDeleteTriggers = context.ignoreDeleteTriggers()!=null,
+                    IsRestrictWhenDeleteTriggers = context.restrictWhenDeleteTriggers()!=null,
+                    IsReuseStorage = context.reuseStorage()!=null
+                };
+                return truncateClause;
+            }
+
+            return null;
+        }
         public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
         {
             FullSelect fullSelect = null;

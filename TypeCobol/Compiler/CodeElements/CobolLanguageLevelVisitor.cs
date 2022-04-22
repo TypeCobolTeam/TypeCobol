@@ -407,6 +407,20 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="select">The Node to be visited</param>
         /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         bool Visit([NotNull] Select select);
+
+        /// <summary>
+        /// TRUNCATE Statement Code Element visitor method
+        /// </summary>
+        /// <param name="truncateStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        bool Visit([NotNull] TruncateStatement truncateStatement);
+
+        /// <summary>
+        /// TRUNCATE Statement Node visitor method
+        /// </summary>
+        /// <param name="truncate">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        bool Visit([NotNull] Truncate truncate);
     }
 
 
@@ -1547,6 +1561,25 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="select">The Node to be visited</param>
         /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         public virtual bool Visit([NotNull] Select select)
+        {
+            return true;
+        }
+        /// <summary>
+        /// TRUNCATE Statement Code Element visitor method
+        /// </summary>
+        /// <param name="truncateStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        public virtual bool Visit([NotNull] TruncateStatement truncateStatement)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// TRUNCATE Statement Node visitor method
+        /// </summary>
+        /// <param name="truncate">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        public virtual bool Visit([NotNull] Truncate truncate)
         {
             return true;
         }
