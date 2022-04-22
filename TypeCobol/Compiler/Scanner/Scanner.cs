@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
@@ -1443,7 +1443,7 @@ namespace TypeCobol.Compiler.Scanner
                     //DecimalLiteral = 28,
                     //FloatingPointLiteral = 29,
                     int saveCurrentIndex = currentIndex;
-                    Token numericLiteralToken = ScanNumericLiteral(startIndex);
+                    Token numericLiteralToken = ScanCobolNumericLiteral(startIndex);
 
                     // 2. Then check to see if the next char would be valid inside a CobolWord
                     bool nextCharIsACobolWordChar = (currentIndex <= lastIndex) && CobolChar.IsCobolWordChar(line[currentIndex]);
@@ -1556,12 +1556,12 @@ namespace TypeCobol.Compiler.Scanner
             }
             else if (Char.IsDigit(line[currentIndex + 1]))
             {
-                return ScanNumericLiteral(startIndex);
+                return ScanCobolNumericLiteral(startIndex);
             }
             else if((tokenType == TokenType.PlusOperator || tokenType == TokenType.MinusOperator) && 
                     line[currentIndex + 1] == (tokensLine.ScanState.SpecialNames.DecimalPointIsComma ? ',' : '.'))
             {
-                return ScanNumericLiteral(startIndex);
+                return ScanCobolNumericLiteral(startIndex);
             }
             else
             {
@@ -1601,7 +1601,7 @@ namespace TypeCobol.Compiler.Scanner
             return new Token(TokenType.FloatingComment, startIndex, lastIndex, tokensLine, true, true, ' ');
         }
 
-        private Token ScanNumericLiteral(int startIndex)
+        private Token ScanCobolNumericLiteral(int startIndex)
         {
             // p37: Numeric literals
             // A numeric literal is a character-string whose characters are selected from the digits 0
@@ -1639,201 +1639,108 @@ namespace TypeCobol.Compiler.Scanner
                 decimalPoint = ',';
             }
 
-            //IntegerLiteral = 27,
-            // Fast path for the most common type of numeric literal : simple integer literals like the level numbers (no sign, no decimal point)
-            char firstChar = line[startIndex];
-            if(Char.IsDigit(firstChar))
+            Token token = ScanNumericLiteral(startIndex, decimalPoint);
+            switch (token.TokenType)
             {
-                // consume all the following digits
-                int fstCurrentIndex = startIndex + 1;
-                for (; fstCurrentIndex <= lastIndex && Char.IsDigit(line[fstCurrentIndex]); fstCurrentIndex++) { }
-                // check to see if the following char could be part of a numeric literal
-                if( fstCurrentIndex > lastIndex || 
-                    (line[fstCurrentIndex] != decimalPoint && line[fstCurrentIndex] != 'e' && line[fstCurrentIndex] != 'E') ||
-                    (line[fstCurrentIndex] == decimalPoint && (fstCurrentIndex == lastIndex || line[fstCurrentIndex+1] == ' ')))
+                case TokenType.IntegerLiteral:
+                    CheckIntegerLiteral();
+                    break;
+                case TokenType.FloatingPointLiteral:
+                    CheckFloatingPointLiteral();
+                    break;
+            }
+
+            return token;
+
+            void CheckIntegerLiteral()
+            {
+                Debug.Assert(token.LiteralValue is IntegerLiteralTokenValue);
+                var literalValue = (IntegerLiteralTokenValue)token.LiteralValue;
+
+                //Check IntegerLiteral range
+                if (literalValue.Number < long.MinValue || literalValue.Number > long.MaxValue)
                 {
-                    // if it is not the case, assume this is the end of a simple integer literal
-                    currentIndex = fstCurrentIndex;
-                    int endIndex = fstCurrentIndex - 1;
-                    Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
-                    string number = line.Substring(startIndex, fstCurrentIndex - startIndex);
-                    var literalValue = new IntegerLiteralTokenValue(null, number);
-                    token.LiteralValue = literalValue;
-                    if (literalValue.Number < long.MinValue || literalValue.Number > long.MaxValue)
+                    //Out of range
+                    this.tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Number is too big : " + literalValue.Number);
+                }
+
+                //Disambiguate IntegerLiteral from LevelNumber
+                if (!literalValue.HasSign && BeSmartWithLevelNumber && tokensLine.ScanState.InsideDataDivision)
+                {
+                    if (tokensLine.ScanState.AtBeginningOfSentence || GuessIfCurrentTokenIsLevelNumber())
                     {
-                        //Out of range
-                        this.tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Number is too big : " + number);
+                        token.CorrectType(TokenType.LevelNumber);
                     }
 
-                    if (BeSmartWithLevelNumber) { 
-                        // Distinguish the special case of a LevelNumber
-                        if (tokensLine.ScanState.InsideDataDivision)
+                    //This method is here to help recognize LevelNumbers when PeriodSeparator has been forgotten at the end of previous data definition.
+                    bool GuessIfCurrentTokenIsLevelNumber()
+                    {
+                        var lastSignificantToken = tokensLine.ScanState.LastSignificantToken;
+                        var beforeLastSignificantToken = tokensLine.ScanState.BeforeLastSignificantToken;
+
+                        bool currentTokenIsAtBeginningOfNewLine = token.Line > lastSignificantToken.Line;
+                        bool currentTokenIsBeforeAreaB = token.Column < 12;
+
+                        //Either a continuation line or we are still on the same line --> not a LevelNumber
+                        if (!currentTokenIsAtBeginningOfNewLine || tokensLine.HasTokenContinuationFromPreviousLine)
+                            return false;
+
+                        //Literals can't be written outside of AreaB so it must be a LevelNumber
+                        if (currentTokenIsBeforeAreaB)
+                            return true;
+
+                        //Try to guess if it is a LevelNumber or Literal depending on previous tokens
+                        bool currentTokenIsExpectedToBeALiteral = false;
+                        switch (lastSignificantToken.TokenType)
                         {
-                            if (tokensLine.ScanState.AtBeginningOfSentence || GuessIfCurrentTokenIsLevelNumber())
-                            {
-                                token.CorrectType(TokenType.LevelNumber);
-                            }
-
-                            //This method is here to help recognize LevelNumbers when PeriodSeparator has been forgotten at the end of previous data definition.
-                            bool GuessIfCurrentTokenIsLevelNumber()
-                            {
-                                var lastSignificantToken = tokensLine.ScanState.LastSignificantToken;
-                                var beforeLastSignificantToken = tokensLine.ScanState.BeforeLastSignificantToken;
-
-                                bool currentTokenIsAtBeginningOfNewLine = token.Line > lastSignificantToken.Line;
-                                bool currentTokenIsBeforeAreaB = token.Column < 12;
-
-                                //Either a continuation line or we are still on the same line --> not a LevelNumber
-                                if (!currentTokenIsAtBeginningOfNewLine || tokensLine.HasTokenContinuationFromPreviousLine)
-                                    return false;
-
-                                //Literals can't be written outside of AreaB so it must be a LevelNumber
-                                if (currentTokenIsBeforeAreaB)
-                                    return true;
-
-                                //Try to guess if it is a LevelNumber or Literal depending on previous tokens
-                                bool currentTokenIsExpectedToBeALiteral = false;
-                                switch (lastSignificantToken.TokenType)
-                                {
-                                    case TokenType.OCCURS:
-                                    case TokenType.VALUE:
-                                    case TokenType.VALUES:
-                                    case TokenType.THROUGH:
-                                    case TokenType.THRU:
-                                        currentTokenIsExpectedToBeALiteral = true;
-                                        break;
-                                    case TokenType.IS:
-                                    case TokenType.ARE:
-                                        currentTokenIsExpectedToBeALiteral =
-                                            beforeLastSignificantToken.TokenType == TokenType.VALUE ||
-                                            beforeLastSignificantToken.TokenType == TokenType.VALUES;
-                                        break;
-                                }
-                                if (!currentTokenIsExpectedToBeALiteral)
-                                {
-                                    /*
-                                     * Here we still have an ambiguity between multiple consecutive IntegerLiteral and LevelNumber like in this kind of declarations :
-                                     *    01 integers PIC 99.
-                                     *       88 odd  VALUES 01 03 05
-                                     *                      07 09.
-                                     *       88 even VALUES 02 04 06
-                                     *                      08.
-                                     * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
-                                     * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
-                                     */
-                                    return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral && lastSignificantToken.TokenFamily != TokenFamily.AlphanumericLiteral;
-                                }
-
-                                return false;
-                            }
+                            case TokenType.OCCURS:
+                            case TokenType.VALUE:
+                            case TokenType.VALUES:
+                            case TokenType.THROUGH:
+                            case TokenType.THRU:
+                                currentTokenIsExpectedToBeALiteral = true;
+                                break;
+                            case TokenType.IS:
+                            case TokenType.ARE:
+                                currentTokenIsExpectedToBeALiteral =
+                                    beforeLastSignificantToken.TokenType == TokenType.VALUE ||
+                                    beforeLastSignificantToken.TokenType == TokenType.VALUES;
+                                break;
                         }
-                    }
+                        if (!currentTokenIsExpectedToBeALiteral)
+                        {
+                            /*
+                             * Here we still have an ambiguity between multiple consecutive IntegerLiteral and LevelNumber like in this kind of declarations :
+                             *    01 integers PIC 99.
+                             *       88 odd  VALUES 01 03 05
+                             *                      07 09.
+                             *       88 even VALUES 02 04 06
+                             *                      08.
+                             * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
+                             * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
+                             */
+                            return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral && lastSignificantToken.TokenFamily != TokenFamily.AlphanumericLiteral;
+                        }
 
-                    return token;
+                        return false;
+                    }
                 }
             }
-            
-            // If the fast path attempt was not successful, try to match each one
-            // of the two other numeric literal formats, with regular expressions 
 
-            int lookupEndIndex = startIndex;
+            void CheckFloatingPointLiteral()
+            {
+                Debug.Assert(token.LiteralValue is FloatingPointLiteralTokenValue);
+                var literalValue = (FloatingPointLiteralTokenValue)token.LiteralValue;
 
-            // consume the first char if it was +/- (to simplify the count of chars below)
-            if(line[startIndex] == '+' || line[startIndex] == '-')
-            {
-                lookupEndIndex++;
-            }
-            // then consume the following chars : digits many times, + -  e E . only once             
-            bool currentCharStillInLiteral = false;
-            bool plusMinusFound = false;
-            bool periodFound = false;
-            bool eEFound = false;
-            do
-            {
-                char c = line[lookupEndIndex];
-                currentCharStillInLiteral = Char.IsDigit(c) || (!periodFound && c == decimalPoint) || (!plusMinusFound && (c == '+' || c == '-')) || (!eEFound && (c == 'e' || c == 'E'));
-                if (currentCharStillInLiteral)
+                //Check exponent length
+                var exponent = literalValue.Exponent.Number;
+                int exponentLength = exponent.ToString().Length - (exponent.Sign == -1 ? 1 : 0); //Check digits only, so remove '-' at beginning of negative numbers
+                if (exponentLength > 2)
                 {
-                    if (!plusMinusFound && (c == '+' || c == '-')) plusMinusFound = true;
-                    if (!periodFound && c == decimalPoint) periodFound = true;
-                    if (!eEFound && (c == 'e' || c == 'E')) eEFound = true;
-                    lookupEndIndex++;
+                    tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
                 }
             }
-            while (currentCharStillInLiteral && lookupEndIndex <= lastIndex);
-            lookupEndIndex = (lookupEndIndex > lastIndex) ? lastIndex : lookupEndIndex - 1;
-            // we may have consumed one additonal character after the end of the literal
-            if ((line[lookupEndIndex] == decimalPoint || line[lookupEndIndex] == '+' || line[lookupEndIndex] == '-') && lookupEndIndex > startIndex)
-            {
-                lookupEndIndex--;
-            }
-            // then try to predict the intended the number format
-            string numberString = line.Substring(startIndex, lookupEndIndex - startIndex + 1);
-            if (numberString.Contains('E') || numberString.Contains('e'))
-            {
-                //FloatingPointLiteral = 29,
-                Match fpMatch = _FloatingPointLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
-                if (fpMatch.Success && fpMatch.Index == startIndex)
-                {
-                    currentIndex += fpMatch.Length;
-                    int endIndex = startIndex + fpMatch.Length - 1;
-                    Token token = new Token(TokenType.FloatingPointLiteral, startIndex, endIndex, tokensLine);
-                    string mantissaDecimalPart = fpMatch.Groups[3].Value;
-                    if (string.IsNullOrEmpty(mantissaDecimalPart))
-                    {
-                        tokensLine.AddDiagnostic(MessageCode.InvalidMantissaInFloatingPointLiteral, token);
-                    }
-                    string exponent = fpMatch.Groups[5].Value;
-                    if (exponent.Length > 2)
-                    {
-                        tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
-                    }
-                    token.LiteralValue = new FloatingPointLiteralTokenValue(fpMatch.Groups[1].Value, fpMatch.Groups[2].Value, mantissaDecimalPart, fpMatch.Groups[4].Value, exponent);
-                    return token;
-                }
-                else
-                {
-                    // consume all lookup chars
-                    currentIndex = lookupEndIndex + 1;
-                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, tokensLine);
-                    tokensLine.AddDiagnostic(MessageCode.InvalidNumericLiteralFormat, invalidToken);
-                    return invalidToken;
-                }
-            }
-            else
-            {
-                //DecimalLiteral = 28,
-                Match decMatch = _DecimalLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
-                if (decMatch.Success && decMatch.Index == startIndex)
-                {
-                    currentIndex += decMatch.Length;
-                    int endIndex = startIndex + decMatch.Length - 1;
-                    TokenType type;
-                    LiteralTokenValue value;
-                    if(decMatch.Groups[3].Value.Length > 0) {
-                        type = TokenType.DecimalLiteral;
-                        value = new DecimalLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
-                    } else {
-                        type = TokenType.IntegerLiteral;
-                        value = new IntegerLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value);
-                    }
-                    Token token = new Token(type, startIndex, endIndex, tokensLine);
-                    token.LiteralValue = value;
-                    return token;
-                }
-                else
-                {
-                    // consume all lookup chars
-                    currentIndex = lookupEndIndex + 1;
-                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, tokensLine);
-                    tokensLine.AddDiagnostic(MessageCode.InvalidNumericLiteralFormat, invalidToken);
-                    return invalidToken;
-                }
-            }   
         }
-
-        private static readonly Regex _DecimalLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?", RegexOptions.Compiled);
-        private static readonly Regex _FloatingPointLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?[eE]([-+]?)([0-9]+)", RegexOptions.Compiled);
 
         private Token ScanAlphanumericLiteral(int startIndex, TokenType tokenType)
         {
