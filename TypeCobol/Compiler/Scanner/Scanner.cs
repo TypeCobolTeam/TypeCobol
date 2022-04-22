@@ -1377,7 +1377,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         return ScanCharacterString(startIndex);
                     }
-
+                    //TODO read again these coments and update them
                 // p9: COBOL words with single-byte characters
                 // A COBOL word is a character-string that forms a user-defined word, a system-name, or a reserved word. 
                 // Each character of a COBOL word is selected from the following set: 
@@ -1423,9 +1423,10 @@ namespace TypeCobol.Compiler.Scanner
 
                 // LIMITATIONS :
                 // User defined words of the form 123E-4 or 123-4X are valid according to the spec but will not be supported 
-                // by this compiler. 
+                // by this compiler unless for paragraph and section and in perform statement.
                 // These cases are considered highly improbable, but we will have to check on a large body of existing programs.
                 // Purely numeric aragraph and section names are not supported.
+                // They
 
                 case '0':
                 case '1':
@@ -1445,9 +1446,45 @@ namespace TypeCobol.Compiler.Scanner
                     int saveCurrentIndex = currentIndex;
                     Token numericLiteralToken = ScanNumericLiteral(startIndex);
 
+                    //TODO It's a guess, it need to be tested
+                    if (numericLiteralToken.TokenType == TokenType.FloatingPointLiteral)
+                    {
+                        //a FloatingPointLiteral contains a character `.` which is invalid in a UserDefinedWord or a keyword, so we can return this token directly.
+                        return numericLiteralToken;
+                    }
+
+                    //TODO it's a basic code to handle #2167, but it seems easy to handle all UserDefinedWord with the form 123-456
+                    //Paragraph and section with name like "123" could also be handled this way
                     // 2. Then check to see if the next char would be valid inside a CobolWord
+                    bool nextCharIsDashFollowedByCobolChar = currentIndex < lastIndex && line[currentIndex] == '-' && CobolChar.IsCobolWordChar(line[currentIndex + 1]);
                     bool nextCharIsACobolWordChar = (currentIndex <= lastIndex) && CobolChar.IsCobolWordChar(line[currentIndex]);
-                    if(nextCharIsACobolWordChar && line[currentIndex] == '-')
+                    if (currentState.LastSignificantToken != null && (currentState.LastSignificantToken.TokenType == TokenType.PERFORM || currentState.LastSignificantToken.TokenType == TokenType.THRU || currentState.LastSignificantToken.TokenType == TokenType.THROUGH || currentState.LastSignificantToken.TokenType == TokenType.OF || currentState.LastSignificantToken.TokenType == TokenType.IN)
+                        && nextCharIsDashFollowedByCobolChar)
+                    {
+                        // Reset scanner state
+                        currentIndex = saveCurrentIndex;
+                        //UserDefinedWord or PartialCobolWord
+                        return ScanCharacterString(startIndex);
+                    }
+
+                    //I use tokensLine.ScanState.AtBeginningOfSentence to match what is done by method ScanKeywordOrUserDefinedWord called by ScanCharacterString
+                    //
+                    //TODO check if the token is in area A
+                    //But beware, method ScanIsolatedToken in the Scanner use a Token with ColumnsLayout.FreeTextFormat. See TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
+                    //TODO create an issue for that
+                    //
+                    //Also ScanIsolatedToken receive a string which contains the text without the original spaces before the text. It means the new token generated is align to the left. The original column is lost.
+                    //E.g. if original line is move a to :b:, with a replace like ==:b:== by ==b== method ScanIsolatedToken receive string "b".
+                    //I will create an issue to discuss about it, I think it would be better that the Scanner receive a String with correct preceding whitespaces before the text to prase so column is correct.
+                    else if (tokensLine.ScanState.InsideProcedureDivision && tokensLine.ScanState.AtBeginningOfSentence && nextCharIsDashFollowedByCobolChar)
+                    {
+                        // Reset scanner state
+                        currentIndex = saveCurrentIndex;
+                        //UserDefinedWord or PartialCobolWord
+                        return ScanCharacterString(startIndex);
+                    }
+                    //TODO this case should dissappear. This case only handles numericLiteralToken followed by a dash and (a letter or an underscore). E.g. "100-X"
+                    else if (nextCharIsACobolWordChar && line[currentIndex] == '-')
                     {
                         nextCharIsACobolWordChar = nextCharIsACobolWordChar && currentIndex < lastIndex
                             && CobolChar.IsCobolWordChar(line[currentIndex + 1])
