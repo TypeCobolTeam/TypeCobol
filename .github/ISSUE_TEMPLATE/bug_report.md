@@ -1,6 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
+title: ''
+labels: Bug, Cobol, User Visible
+assignees: ''
 
 ---
 
@@ -26,3 +29,12 @@ Expected (Type)Cobol code :
 ```cobol
 
 ```
+
+
+**Technical**
+Will be edited by a team member.
+Implementation details with the chosen solution.
+
+**How to test automatically**
+Will be edited by a team member.
+Only if our current automated tests doesn't handle this.
