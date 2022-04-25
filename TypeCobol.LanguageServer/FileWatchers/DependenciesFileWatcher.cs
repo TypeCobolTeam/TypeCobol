@@ -53,13 +53,10 @@ namespace TypeCobol.LanguageServer
             if (File.Exists(directory.FullName + Path.DirectorySeparatorChar + "~.lock"))
                 return;
         
-            lock (_TypeCobolWorkSpace.MessagesActionsQueue)
+            // Check if there isn't another refresh action from another fileWatcher in the queue
+            if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))
             {
-                // Check if there isn't another refresh action from another fileWatcher in the queue
-                if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))
-                {
-                    _TypeCobolWorkSpace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(refreshAction));
-                }
+                _TypeCobolWorkSpace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(refreshAction));
             }
         }
 

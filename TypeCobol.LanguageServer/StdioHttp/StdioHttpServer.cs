@@ -18,7 +18,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
         private Encoding messageEncoding;
         private ServerLogLevel logLevel;
         private TextWriter logWriter;
-        private Queue<MessageActionWrapper> messagesQueue;
+        private System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesQueue;
         public const string CONTENT_LENGTH_HEADER = "Content-Length";
         public const string CONTENT_TYPE_HEADER = "Content-Type";
 
@@ -53,7 +53,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
         /// <param name="messageEncoding">Encoding used for the body of the Http messages</param>
         /// <param name="logLevel">Verbosity of the logs written by the Http server</param>
         /// <param name="logWriter">Text Writer used to write all the logs of the Http server</param>
-        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, TextWriter logWriter, Queue<MessageActionWrapper> messagesQueue)
+        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, TextWriter logWriter, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesQueue)
         {
             this.messageEncoding = messageEncoding;
             this.logLevel = logLevel;
@@ -177,11 +177,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
 
                 // Handle incoming message and optionnaly send reply
                 //Add message to queue 
-                lock (messagesQueue)
-                {
-                    messagesQueue.Enqueue(new MessageActionWrapper(message, this));
-                }
-
+                messagesQueue.Enqueue(new MessageActionWrapper(message, this));
 
             }
             return true;
