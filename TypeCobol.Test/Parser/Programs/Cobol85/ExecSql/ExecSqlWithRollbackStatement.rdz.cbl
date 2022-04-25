@@ -4,8 +4,9 @@
        WORKING-STORAGE SECTION.
              EXEC SQL 
               ROLLBACK
-              ROLLBACK  TO SAVEPOINT A
+              ROLLBACK TO SAVEPOINT A
               ROLLBACK WORK TO SAVEPOINT A
+              ROLLBACK WORK
              END-EXEC.
        PROCEDURE DIVISION.
          

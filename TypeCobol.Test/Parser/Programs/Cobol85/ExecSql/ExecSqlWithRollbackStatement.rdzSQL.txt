@@ -7,3 +7,5 @@ line 7: RollbackStatement
 line 8: RollbackStatement
 - SavePointClause = SavePointClause
   - SavePointName = A
+line 9: RollbackStatement
+- SavePointClause = <NULL>
