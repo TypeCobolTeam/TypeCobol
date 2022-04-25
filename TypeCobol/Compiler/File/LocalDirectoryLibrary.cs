@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.File
 
         // Local directory properties
 
-        private DirectoryInfo rootDirectory;
+        public DirectoryInfo RootDirectory { get; }
         private string _rootPath;
         private bool includeSubdirectories;
         private string[] fileExtensions;
@@ -42,8 +42,8 @@ namespace TypeCobol.Compiler.File
             Name = libraryName;
 
             this._rootPath = rootPath;
-            rootDirectory = new DirectoryInfo(rootPath);
-            if (!rootDirectory.Exists)
+            RootDirectory = new DirectoryInfo(rootPath);
+            if (!RootDirectory.Exists)
             {
                 throw new ArgumentException($"Local copy library {rootPath} does not exist on disk.");
             }
@@ -169,7 +169,7 @@ namespace TypeCobol.Compiler.File
         /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
         public FileInfo SearchForFileWithoutExtensions(string textName)
         {
-            return rootDirectory.EnumerateFiles(textName,
+            return RootDirectory.EnumerateFiles(textName,
                     includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
                 .FirstOrDefault();
         }
@@ -180,7 +180,7 @@ namespace TypeCobol.Compiler.File
         /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
         public FileInfo SearchForFileWithExtensions(string textName)
         {
-            return rootDirectory.EnumerateFiles($"{textName}.*", includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+            return RootDirectory.EnumerateFiles($"{textName}.*", includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
                 .FirstOrDefault(f =>
                     fileExtensions.Any(suffix =>
                         f.Extension.Equals(suffix, StringComparison.OrdinalIgnoreCase)));
@@ -236,7 +236,7 @@ namespace TypeCobol.Compiler.File
             // Lazy initialization of FileSystemWatcher
             if (fileSystemWatcher == null)
             {
-                fileSystemWatcher = new FileSystemWatcher(rootDirectory.FullName);
+                fileSystemWatcher = new FileSystemWatcher(RootDirectory.FullName);
                 fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
                 fileSystemWatcher.Changed += fileSystemWatcher_Changed;
                 fileSystemWatcher.Renamed += fileSystemWatcher_Renamed;
