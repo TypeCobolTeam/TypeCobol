@@ -125,7 +125,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">The key of the project to get or to create, if null then the default project is returned</param>
         /// <returns>Existing or newly created WorkspaceProject instance</returns>
         internal WorkspaceProject GetOrCreateProject(string projectKey)
-            {
+        {
             if (projectKey == null)
                 return DefaultWorkspaceProject;
 
