@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Model
@@ -15,28 +16,33 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write($"{indent}- {name} = ");
-            if (value == null)
+            switch (value)
             {
-                output.WriteLine("<NULL>");
-            }
-            else if (value is SqlObject sqlObject)
-            {
-                sqlObject.Dump(output, indentLevel + 1);
-            }
-            else if (value is System.Collections.IEnumerable enumerable)
-            {
-                output.WriteLine("[");
-                int index = 0;
-                foreach (var item in enumerable)
+                case null:
+                    output.WriteLine("<NULL>");
+                    break;
+                case SqlObject sqlObject:
+                    sqlObject.Dump(output, indentLevel + 1);
+                    break;
+                case SymbolReference symbolReference:
+                    //Special case for QualifiedSymbolReference which is also IEnumerable, we want to use SymbolReference.ToString() here
+                    output.WriteLine(symbolReference.ToString());
+                    break;
+                case System.Collections.IEnumerable enumerable:
                 {
-                    DumpProperty(output, $"{name}[{index}]", item, indentLevel + 1);
-                    index++;
+                    output.WriteLine("[");
+                    int index = 0;
+                    foreach (var item in enumerable)
+                    {
+                        DumpProperty(output, $"{name}[{index}]", item, indentLevel + 1);
+                        index++;
+                    }
+                    output.WriteLine(indent + "]");
+                    break;
                 }
-                output.WriteLine(indent + "]");
-            }
-            else
-            {
-                output.WriteLine(value);
+                default:
+                    output.WriteLine(value);
+                    break;
             }
         }
 
