@@ -65,7 +65,7 @@ namespace TypeCobol.Test.Parser.Performance
         ///
         /// Performance should be similar to Cobol85_NoRedefines
         /// </summary>
-        private static readonly string GlobalStorage = CNAF_TC_FOLDER + "CGMV01-GlobalStoragey.tcbl";
+        private static readonly string GlobalStorage = CNAF_TC_FOLDER + "CGMV01-GlobalStorage.tcbl";
 
         /// <summary>
         /// With TypeCobol, the goal is to have a lot of small procedures that communicates with variable declared in type.
@@ -169,7 +169,7 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part1_Incremental_TC_GlobalStorage()
         {
-            IncrementalPerformance2(BigTypes_1Procedure, 65807, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            IncrementalPerformance2(GlobalStorage, 65805, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
         }
 
         [TestMethod]
