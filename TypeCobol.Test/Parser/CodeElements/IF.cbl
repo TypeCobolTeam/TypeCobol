@@ -202,3 +202,13 @@ IF ( a OF b ( x OF y ) = 'OK'  ) THEN CONTINUE END-IF.
 SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
 IF x > 100,00 CONTINUE END-IF.
 IF mytable(1, x) > 42 CONTINUE END-IF.
+
+* With optional parentheses around identifiers
+* class condition
+if (Var1) is numeric display "numeric" end-if.
+* condition-name or switch status condition
+if (test1) display "test1" end-if.
+* relation condition
+if (var1) is greater than 1 display "> 1" end-if.
+* sign condition
+if (Var1) is positive display "positive" end-if.

@@ -675,7 +675,7 @@ namespace TypeCobol.Compiler.Parser
 					ParseTreeUtils.GetFirstToken(context.NOT()));
 			}
 
-			var dataItemStorageArea = CreateIdentifier(context.identifier());
+			var dataItemStorageArea = CreateIdentifier(context.parenthesedIdentifier().identifier());
 
 			ClassCondition classCondition = null;
 			if(context.characterClassNameReference() != null)
