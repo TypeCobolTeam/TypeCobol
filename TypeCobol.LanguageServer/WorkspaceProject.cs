@@ -41,6 +41,11 @@ namespace TypeCobol.LanguageServer
         private readonly Workspace _workspace;
 
         /// <summary>
+        /// Enumeration on opened documents.
+        /// </summary>
+        internal IEnumerable<DocumentContext> OpenedDocuments => _openedDocuments.Values;
+
+        /// <summary>
         /// Constructor of a WorkspaceProject instance.
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
@@ -207,7 +212,7 @@ namespace TypeCobol.LanguageServer
             if (!IsEmpty)
             {
                 foreach (var openedDocument in _openedDocuments.Values)
-                {
+        {
                     _workspace.RefreshOpenedDocument(openedDocument);
                 }
             }

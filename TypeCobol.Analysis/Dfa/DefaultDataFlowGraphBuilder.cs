@@ -3,7 +3,6 @@ using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
-using TypeCobol.Compiler.Types;
 using System.Linq;
 
 namespace TypeCobol.Analysis.Dfa
@@ -20,7 +19,7 @@ namespace TypeCobol.Analysis.Dfa
             {
                 foreach (var p in symbolDictionary)
                 {
-                    result.Add(p.Value);
+                    if (p.Value != null) result.Add(p.Value);
                 }
             }
 

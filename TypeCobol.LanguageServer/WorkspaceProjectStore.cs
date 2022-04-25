@@ -95,6 +95,35 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
+        /// Find a WorkspaceProject instance by its key.
+        /// If the key is null the Default Workspace Project is returned.
+        /// </summary>
+        /// <param name="projectKey">The Project's key</param>
+        /// <returns>The WorkspaceProject instance if one exists, null otherwise</returns>
+        private WorkspaceProject FindProject(string projectKey)
+        {
+            if (projectKey == null)
+                return DefaultWorkspaceProject;
+            if (_workspaceProjects.TryGetValue(projectKey, out WorkspaceProject project))
+                return project;
+            return null;
+        }
+
+        /// <summary>
+        /// Add a WorkspaceProject instance
+        /// </summary>
+        /// <param name="project">The project instance to be added</param>
+        /// <exception cref="DuplicatedProjectException">If a project with the same key already exists in the store</exception>
+        private void AddProject(WorkspaceProject project)
+        {
+            System.Diagnostics.Debug.Assert(project != null && project.ProjectKey != null);
+            if (!_workspaceProjects.TryAdd(project.ProjectKey, project))
+            {
+                throw new DuplicatedProjectException(project.ProjectKey);
+            }
+        }
+
+        /// <summary>
         /// Create a WorkspaceProject instance, and add it to the store.
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
@@ -125,7 +154,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">The key of the project to get or to create, if null then the default project is returned</param>
         /// <returns>Existing or newly created WorkspaceProject instance</returns>
         internal WorkspaceProject GetOrCreateProject(string projectKey)
-        {
+            {
             if (projectKey == null)
                 return DefaultWorkspaceProject;
 
@@ -166,7 +195,8 @@ namespace TypeCobol.LanguageServer
                 return bRemoved;
             }
 
-            return true;
+                return true;
+            }
         }
     }
 }
