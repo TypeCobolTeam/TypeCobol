@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Sql.Model
+﻿using System.IO;
+
+namespace TypeCobol.Compiler.Sql.Model
 {
     /// <summary>
     /// See documentation <see cref="https://www.ibm.com/docs/en/db2-for-zos/12?topic=queries-fullselect"/>  
@@ -18,6 +20,12 @@
         public SubSelect SubSelect { get; }
 
         public FullSelect SubQuery { get; }
+
+        protected override void DumpContent(TextWriter output, int indentLevel)
+        {
+            DumpProperty(output, nameof(SubSelect), SubSelect, indentLevel);
+            DumpProperty(output, nameof(SubQuery), SubQuery, indentLevel);
+        }
 
         //TODO
         //ValuesClause

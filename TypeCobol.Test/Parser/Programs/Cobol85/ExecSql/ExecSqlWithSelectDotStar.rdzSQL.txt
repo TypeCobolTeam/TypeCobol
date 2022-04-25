@@ -1,0 +1,16 @@
+﻿--- Sql Statements ---
+line 6: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = d IN i IN i
+        - Selections[1] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = i IN e
+      ]
+    - FromClause = FromClause
+  - SubQuery = <NULL>

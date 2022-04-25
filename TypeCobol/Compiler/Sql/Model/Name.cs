@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.CodeElements;
+﻿using System.IO;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
@@ -9,6 +10,13 @@ namespace TypeCobol.Compiler.Sql.Model
         public TableViewCorrelationName(SymbolReference name)
         {
             Name = name;
+        }
+
+        protected override void DumpContent(TextWriter output, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write($"{indent}- {nameof(Name)} = ");
+            output.WriteLine(Name != null ? Name.ToString() : "<NULL>");//TODO improve this, SymbolReference.ToString() is currently not suitable for SQL names
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
