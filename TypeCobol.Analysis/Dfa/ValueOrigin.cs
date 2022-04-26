@@ -95,7 +95,7 @@ namespace TypeCobol.Analysis.Dfa
                             {
                                 //(2.1.1.1.2) MOVE anotherVar TO var
                                 //Find the corresponding UsePoint and recurse
-                                var sendingVariable = defPoint.Instruction.StorageAreaReadsSymbol[simpleMove.SendingVariable.StorageArea];
+                                var sendingVariable = defPoint.Instruction.StorageAreaReadsSymbol[simpleMove.SendingVariable.StorageArea];//May be null
                                 var defBlockData = dfaBuilder.Cfg.AllBlocks[defPoint.BlockIndex].Data;
                                 for (int i = defBlockData.UseListFirstIndex; i < defBlockData.UseListFirstIndex + defBlockData.UseCount; i++)
                                 {

@@ -613,7 +613,7 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();
                 hash = hash * 23 + _afterReplacementPseudoText.GetHashCode();
                 hash = hash * 23 + InsideReplaceDirective.GetHashCode();
-                hash = hash * 23 + InsideCopy.GetHashCode();
+                hash = hash * 23 + InsideSql.GetHashCode();
                 return hash;
             }
         }
