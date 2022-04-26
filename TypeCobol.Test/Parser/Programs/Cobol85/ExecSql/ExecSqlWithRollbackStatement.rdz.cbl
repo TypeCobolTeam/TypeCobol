@@ -7,6 +7,8 @@
               ROLLBACK TO SAVEPOINT A
               ROLLBACK WORK TO SAVEPOINT A
               ROLLBACK WORK
+              ROLLBACK TO SAVEPOINT
+              ROLLBACK WORK TO SAVEPOINT
              END-EXEC.
        PROCEDURE DIVISION.
          
