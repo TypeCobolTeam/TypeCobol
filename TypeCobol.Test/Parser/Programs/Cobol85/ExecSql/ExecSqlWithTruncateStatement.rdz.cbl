@@ -5,7 +5,7 @@
              EXEC SQL 
               TRUNCATE TABLE INVENTORY
               REUSE STORAGE
-              IGNORE DELETE TRIGGER;
+              IGNORE DELETE TRIGGERS;
              END-EXEC.
        PROCEDURE DIVISION.
          

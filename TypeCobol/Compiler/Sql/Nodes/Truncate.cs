@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using TypeCobol.Compiler.CodeElements;
+﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 

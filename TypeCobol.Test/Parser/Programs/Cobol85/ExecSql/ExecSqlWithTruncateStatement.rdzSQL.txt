@@ -1,4 +1,7 @@
 ﻿--- Sql Statements ---
-line 6: truncateStatement
-- TruncateClause = TruncateClause
-  - TableName = INVENTORY
+line 6: TruncateStatement
+- TableName = INVENTORY
+- StorageManagementClause = StorageManagementClause
+  - StorageManagement = ReuseStorage
+- DeleteTriggersHandlingClause = DeleteTriggersHandlingClause
+  - DeleteTriggersHandling = IgnoreDeleteTriggers

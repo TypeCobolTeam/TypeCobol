@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.CodeElements;
+﻿using System.IO;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Sql.Model;
 
 namespace TypeCobol.Compiler.Sql.CodeElements.Statements
@@ -8,17 +9,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
     /// </summary>
     public class TruncateStatement : SqlStatementElement
     {
-        public TruncateClause TruncateClause { get; }
+        public StorageArea TableName { get; }
+        public StorageManagementClause StorageManagementClause { get; }
+        public DeleteTriggersHandlingClause DeleteTriggersHandlingClause { get; }
+        public SyntaxProperty<bool> IsImmediate { get; }
 
-        public TruncateStatement(TruncateClause truncateClause) : base(CodeElementType.TruncateStatement, StatementType.TruncateStatement)
+        public TruncateStatement(StorageArea tableName, StorageManagementClause storageManagementClause, DeleteTriggersHandlingClause deleteTriggersHandlingClause, SyntaxProperty<bool> isImmediate) : base(CodeElementType.TruncateStatement, StatementType.TruncateStatement)
         {
-            TruncateClause = truncateClause;
+            this.TableName = tableName;
+            this.StorageManagementClause = storageManagementClause;
+            this.DeleteTriggersHandlingClause = deleteTriggersHandlingClause;
+            IsImmediate = isImmediate;
         }
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                                                      && astVisitor.SqlVisitor != null
-                                                     && astVisitor.SqlVisitor.ContinueVisit(TruncateClause);
+                                                     && astVisitor.SqlVisitor.ContinueVisit(StorageManagementClause)
+                                                     && astVisitor.SqlVisitor.ContinueVisit(
+                                                         DeleteTriggersHandlingClause);
         }
     }
 }

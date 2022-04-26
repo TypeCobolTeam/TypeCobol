@@ -16,16 +16,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
         public CodeElement CreateTruncateStatement(CodeElementsParser.TruncateStatementContext context)
         {
-            TruncateClause truncateClause = null;
-            if (context.truncateClause() != null)
-            {
-                truncateClause = CreateTruncateClause(context.truncateClause());
-            }
-            return new TruncateStatement(truncateClause);
-        }
-
-        public TruncateClause CreateTruncateClause(CodeElementsParser.TruncateClauseContext context)
-        {
+            SymbolReference tableName = null;
             if (context.tableName != null)
             {
                 var tableOrViewOrCorrelationName =
@@ -33,18 +24,50 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 Token name = tableOrViewOrCorrelationName.Name as Token;
                 Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
                 Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-                SymbolReference tableName = CreateSymbolReference(name, schemaName, dbms);
-                var truncateClause= new TruncateClause(tableName)
-                {
-                    IsDropStorage = context.dropStorage() != null,
-                    IsIgnoreDeleteTriggers = context.ignoreDeleteTriggers()!=null,
-                    IsRestrictWhenDeleteTriggers = context.restrictWhenDeleteTriggers()!=null,
-                    IsReuseStorage = context.reuseStorage()!=null
-                };
-                return truncateClause;
+                tableName = CreateSymbolReference(name, schemaName, dbms);
             }
 
-            return null;
+            StorageManagementClause storageManagementClause =
+                CreateStorageManagementClause(context.storageManagementClause());
+            DeleteTriggersHandlingClause deleteTriggersHandlingClause = CreateDeleteTriggersHandlingClause(context.deleteTriggersHandlingClause());
+            var isImmediate = new SyntaxProperty<bool>(context.SQL_IMMEDIATE()!=null,null);
+            return new TruncateStatement(new IntrinsicStorageArea (tableName), storageManagementClause, deleteTriggersHandlingClause,isImmediate);
+        }
+
+        public StorageManagementClause CreateStorageManagementClause(CodeElementsParser.StorageManagementClauseContext context)
+        {
+            StorageManagementClause storageManagementClause = null;
+            if (context.reuse() != null)
+            {
+                storageManagementClause = new StorageManagementClause(new SyntaxProperty<StorageManagementOption>(StorageManagementOption.ReuseStorage,context.reuse().KeywordREUSE as Token));
+            }
+           
+            else if (context.SQL_DROP()!=null)
+
+            {
+                storageManagementClause = new StorageManagementClause(new SyntaxProperty<StorageManagementOption>(StorageManagementOption.DropStorage, context.SQL_DROP().Symbol as Token));
+            }
+            return storageManagementClause;
+        }
+
+        public DeleteTriggersHandlingClause CreateDeleteTriggersHandlingClause(CodeElementsParser.DeleteTriggersHandlingClauseContext context)
+        {
+            DeleteTriggersHandlingClause deleteTriggersHandlingClause = null;
+            if (context.SQL_RESTRICT() != null)
+            {
+                deleteTriggersHandlingClause = new DeleteTriggersHandlingClause(
+                    new SyntaxProperty<DeleteTriggersHandlingOption>(
+                        DeleteTriggersHandlingOption.RestrictWhenDeleteTriggers,
+                        context.SQL_RESTRICT().Symbol as Token));
+            }
+            else if (context.ignore() != null)
+            {
+                deleteTriggersHandlingClause = new DeleteTriggersHandlingClause(
+                    new SyntaxProperty<DeleteTriggersHandlingOption>(
+                        DeleteTriggersHandlingOption.IgnoreDeleteTriggers,
+                        context.ignore().KeywordIGNORE as Token));
+            }
+            return deleteTriggersHandlingClause;
         }
         public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
         {

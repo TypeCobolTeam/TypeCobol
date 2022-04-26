@@ -25,7 +25,8 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] ExpressionSelection expressionSelection);
         bool Visit([NotNull] UnpackedRowSelection unpackedRowSelection);
         bool Visit([NotNull] TableOrViewAllColumnsSelection tableOrViewAllColumnsSelection);
-        bool Visit([NotNull] TruncateClause truncateClause);
+        bool Visit([NotNull] StorageManagementClause storageManagementClause);
+        bool Visit([NotNull] DeleteTriggersHandlingClause deleteTriggersHandlingClause);
     }
 
     /// <summary>
@@ -47,7 +48,8 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(ExpressionSelection expressionSelection) => true;
         public virtual bool Visit(UnpackedRowSelection unpackedRowSelection) => true;
         public virtual bool Visit(TableOrViewAllColumnsSelection tableOrViewAllColumnsSelection) => true;
-        public virtual bool Visit(TruncateClause truncateClause) => true;
+        public virtual bool Visit(StorageManagementClause storageManagementClause) => true;
+        public virtual bool Visit(DeleteTriggersHandlingClause deleteTriggersHandlingClause) => true;
     }
 
     /// <summary>

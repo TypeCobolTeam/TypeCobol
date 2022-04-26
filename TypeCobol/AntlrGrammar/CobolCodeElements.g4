@@ -8262,13 +8262,13 @@ execStatementEnd: END_EXEC;
 
 //FOR SQL
 commitStatement: SQL_COMMIT;
-truncateStatement: SQL_TRUNCATE SQL_TABLE? truncateClause;
-truncateClause: (tableName=tableOrViewOrCorrelationName) (dropStorage|reuseStorage) (ignoreDeleteTriggers|restrictWhenDeleteTriggers) SQL_IMMEDIATE? ;
-dropStorage: SQL_DROP storage;
-reuseStorage: ({ string.Equals(CurrentToken.Text, "REUSE", System.StringComparison.OrdinalIgnoreCase) }? KeywordREUSE=UserDefinedWord) storage;
+reuse: ({ string.Equals(CurrentToken.Text, "REUSE", System.StringComparison.OrdinalIgnoreCase) }? KeywordREUSE=UserDefinedWord);
+triggers: ({ string.Equals(CurrentToken.Text, "TRIGGERS", System.StringComparison.OrdinalIgnoreCase) }? KeywordTRIGGERS=UserDefinedWord);
+ignore: ({ string.Equals(CurrentToken.Text, "IGNORE", System.StringComparison.OrdinalIgnoreCase) }? KeywordIGNORE=UserDefinedWord);
 storage: ({ string.Equals(CurrentToken.Text, "STORAGE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTORAGE=UserDefinedWord);
-restrictWhenDeleteTriggers: SQL_RESTRICT SQL_WHEN SQL_DELETE SQL_TRIGGER;
-ignoreDeleteTriggers: ({ string.Equals(CurrentToken.Text, "IGNORE", System.StringComparison.OrdinalIgnoreCase) }? KeywordIGNORE=UserDefinedWord) SQL_DELETE SQL_TRIGGER;
+truncateStatement: SQL_TRUNCATE SQL_TABLE? (tableName=tableOrViewOrCorrelationName) storageManagementClause? deleteTriggersHandlingClause? SQL_IMMEDIATE?;
+storageManagementClause: (SQL_DROP | reuse) storage;
+deleteTriggersHandlingClause: (ignore | SQL_RESTRICT SQL_WHEN) SQL_DELETE triggers;
 selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause;

@@ -3,27 +3,51 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
-    public class TruncateClause : SqlObject
+    public enum StorageManagementOption
     {
-        public TruncateClause(SymbolReference Name)
+        DropStorage,
+        ReuseStorage
+    }
+
+    public enum DeleteTriggersHandlingOption
+    {
+        IgnoreDeleteTriggers,
+        RestrictWhenDeleteTriggers
+    }
+
+    public class StorageManagementClause : SqlObject
+    {
+        public StorageManagementClause(SyntaxProperty<StorageManagementOption> storageManagement)
         {
-            TableName = new IntrinsicStorageArea(Name);
+            StorageManagement = storageManagement;
         }
 
-        private StorageArea TableName { get; }
-        public bool IsDropStorage { get; set; }
-        public bool IsReuseStorage { get; set; }
-        public bool IsIgnoreDeleteTriggers { get; set; }
-        public bool IsRestrictWhenDeleteTriggers { get; set; }
-
+        public SyntaxProperty<StorageManagementOption> StorageManagement { get; }
+        protected override void DumpContent(TextWriter output, int indentLevel)
+        {
+            DumpProperty(output, nameof(StorageManagement), StorageManagement, indentLevel);
+        }
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return visitor.Visit(this);
         }
+    }
 
+    public class DeleteTriggersHandlingClause : SqlObject
+    {
+        public DeleteTriggersHandlingClause(SyntaxProperty<DeleteTriggersHandlingOption> deleteTriggersHandling)
+        {
+            DeleteTriggersHandling = deleteTriggersHandling;
+        }
+
+        public SyntaxProperty<DeleteTriggersHandlingOption> DeleteTriggersHandling { get; }
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            DumpProperty(output, nameof(TableName), TableName.SymbolReference, indentLevel);
+            DumpProperty(output, nameof(DeleteTriggersHandling), DeleteTriggersHandling, indentLevel);
+        }
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this);
         }
     }
 }
