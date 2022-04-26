@@ -23,6 +23,8 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] SavePointClause savePointClause);
         bool Visit([NotNull] Selection selection);
         bool Visit([NotNull] StarSelection starSelection);
+        bool Visit([NotNull] SingleTableReference singleTableReference);
+        bool Visit([NotNull] CorrelationClause correlationClause);     
         bool Visit([NotNull] ExpressionSelection expressionSelection);
         bool Visit([NotNull] UnpackedRowSelection unpackedRowSelection);
         bool Visit([NotNull] TableOrViewAllColumnsSelection tableOrViewAllColumnsSelection);
@@ -48,6 +50,8 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(ExpressionSelection expressionSelection) => true;
         public virtual bool Visit(UnpackedRowSelection unpackedRowSelection) => true;
         public virtual bool Visit(TableOrViewAllColumnsSelection tableOrViewAllColumnsSelection) => true;
+        public virtual bool Visit(SingleTableReference singleTableReference) => true;
+        public virtual bool Visit(CorrelationClause correlationClause) => true;
     }
 
     /// <summary>
