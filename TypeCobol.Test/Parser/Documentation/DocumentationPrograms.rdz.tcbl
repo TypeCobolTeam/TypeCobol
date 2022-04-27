@@ -1,9 +1,9 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DocForPrograms.
-
+      
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
-
+      
       %<<< Main Program
         @ rEsTrIcTiOn : restriction value
         @ need:
@@ -13,31 +13,31 @@
         @ see : Thank you for your attention
       %>>>
        PROCEDURE DIVISION.
-       GOBACK.
-
+           GOBACK.
+      
          IDENTIFICATION DIVISION.
            PROGRAM-ID. NestedPgm IS COMMON.
            DATA DIVISION.
            LINKAGE SECTION.
-             01 param1 PIC X(8).
-             01 param2 PIC S9(5) comp-5.
-             01 param3 Pointer.
-             01 param4 Type BOOL.
+          01 param1 PIC X(8).
+          01 param2 PIC S9(5) comp-5.
+          01 param3 Pointer.
+          01 param4 Type BOOL.
       %<<<
             Nested Program
-            @ params : 
+            @ params :
               - param1:
                 This
                   is
-                    my 
-                      first 
+                    my
+                      first
                         param
               - param2: Output this is an output param
               - param3: inout - this is an inout param
             @ need: This is my only need
             @ todo : slap car roof
       %>>>
-           PROCEDURE DIVISION
+         PROCEDURE DIVISION
                 USING BY REFERENCE param1
                       BY REFERENCE param2
                                    param3
@@ -45,18 +45,18 @@
                 .
              GOBACK.
          END PROGRAM NestedPgm.
-
+      
        END PROGRAM DocForPrograms.
-
-
+      
+      
        IDENTIFICATION DIVISION.
          PROGRAM-ID. StackedPgm.
          DATA DIVISION.
          LINKAGE SECTION.
-           01 param1 PIC X(8).
-           01 param2 PIC S9(5) comp-5.
-           01 param3 Pointer.
-           01 param4 Type BOOL.
+         01 param1 PIC X(8).
+         01 param2 PIC S9(5) comp-5.
+         01 param3 Pointer.
+         01 param4 Type BOOL.
       %<<< Stacked Program
       %>>>
          PROCEDURE DIVISION

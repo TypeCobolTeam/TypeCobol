@@ -15,7 +15,7 @@
        SOURCE-COMPUTER.IBM-370.
       *Warning: A blank was missing before character "I" in column 24.
       *         A blank was assumed.
-       OBJECT-COMPUTER.IBMCOBOLII.
+                OBJECT-COMPUTER.IBMCOBOLII.
       *Error: "."was invalid. Scanning was resumed at the next area
       *       "A" item, level-number or the start of the next clause.
       *Warning: A blank was missing before character "." in column 22.

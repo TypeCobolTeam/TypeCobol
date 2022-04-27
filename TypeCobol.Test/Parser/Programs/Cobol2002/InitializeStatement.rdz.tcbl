@@ -7,23 +7,23 @@
 
        PROCEDURE DIVISION.
 
-       INITIALIZE var1
-       INITIALIZE var1 WITH FILLER
-       INITIALIZE var1 ALL VALUE
-       INITIALIZE var1 ALPHANUMERIC TO VALUE
-       INITIALIZE var1 DEFAULT
-       INITIALIZE var1 WITH FILLER THEN TO DEFAULT
+              INITIALIZE var1
+              INITIALIZE var1 WITH FILLER
+              INITIALIZE var1 ALL VALUE
+              INITIALIZE var1 ALPHANUMERIC TO VALUE           
+              INITIALIZE var1 DEFAULT
+              INITIALIZE var1 WITH FILLER THEN TO DEFAULT
 
       *KO duplicate keyword FILLER
-       INITIALIZE var1 FILLER FILLER
+              INITIALIZE var1 FILLER FILLER
       *KO duplicate keyword WITH
-       INITIALIZE var1 WITH WITH FILLER
+              INITIALIZE var1 WITH WITH FILLER
       *KO invalid data category
-       INITIALIZE var1 BINARY TO VALUE
+              INITIALIZE var1 BINARY TO VALUE
       *KO unexpected keyword DEFAULT
-       INITIALIZE var1 WITH DEFAULT
+              INITIALIZE var1 WITH DEFAULT
       *KO missing keyword VALUE
-       INITIALIZE var1 ALL
+              INITIALIZE var1 ALL
        .
 
        END PROGRAM InitTests.

@@ -1,51 +1,51 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DocCombined.
-
+      
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
-       
-      %<<< 
+      
+      %<<<
           @ description : inline typedef
           @ params:
-            - none: Type doesn't have any params
+          - none: Type doesn't have any params
           @deprec
-          @Restriction : Do not Use BOOL var 
+          @Restriction : Do not Use BOOL var
       %>>>
        01 myType TYPEDEF STRICT PUBLIC pic X(01).
-
+      
       %<<< Vect2D
       %>>>
        01 Vect2D TYPEDEF STRICT.
          02 Coord2d.
            03 X PIC 9(4).
            03 Y PIC 9(4).
-
-
-      %<<< My program 
+      
+      
+      %<<< My program
           @ Description  description
           @deprecated
           @    replacedBy  MyFonction2
           @ rEsTrIcTiOn Do not Use BOOL var
           @ need  some needs
-              - description
+          - description
           @ see  Thank you for your attention
-          @ todo 
-              - Add BOOL support 
-              - implement a call counter
+          @ todo
+          - Add BOOL support
+          - implement a call counter
       %>>>
        PROCEDURE DIVISION.
-
+      
       %<<< MyProc info
           @ deprec : It is
        deprecated
                @           need : long need
           @ todo:
-              - todo1
-              - todo 2
+          - todo1
+          - todo 2
         @ params:
           - myDate: just a date
           - bla: bla < 2
-          - toto: toto 
+          - toto: toto
           -blu: will be ignored
       %>>>
        DECLARE PROCEDURE MyProc PUBLIC
@@ -54,10 +54,10 @@
            IN-OUT   myBool      TYPE BOOL
            OUTPUT   toto        TYPE BOOL
                     bli         Pic PPP999PPP.
-           PROCEDURE DIVISION.
+         PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       %<<< MyPrivateProc is a Proc but Private
         @deprecated
           @ todo: Add a body
@@ -68,7 +68,7 @@
            PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       %<<< MyLocalProc is a Proc but Local (no access modifier)
         @deprecated
           @ todo: Add a body
@@ -76,8 +76,8 @@
        DECLARE PROCEDURE MyLocalProc
            INPUT    myDate      TYPE Date
            OUTPUT   toto        TYPE BOOL.
-           PROCEDURE DIVISION.
+        PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
        END PROGRAM DocCombined.

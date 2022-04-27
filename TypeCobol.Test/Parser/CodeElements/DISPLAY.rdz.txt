@@ -1,85 +1,85 @@
 --- Diagnostics ---
-Line 6[16,17] <27, Error, Syntax> - Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>displayStatement,  OffendingSymbol=[16,17:no]<NO>
-Line 16[48,51] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[48,51:toto]<UserDefinedWord>
+Line 6[23,24] <27, Error, Syntax> - Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>displayStatement,  OffendingSymbol=[23,24:no]<NO>
+Line 16[55,58] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[55,58:toto]<UserDefinedWord>
 --- Code Elements ---
-[[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
+[[DisplayStatement]] [15,21:Display]<DISPLAY> --> [23,26:toto]<UserDefinedWord>
 - variables = toto
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,21+:"toto"]<AlphanumericLiteral>(",Y,Y){toto}
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,28+:"toto"]<AlphanumericLiteral>(",Y,Y){toto}
 - variables = "toto"
 
-[[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,21+:'toto']<AlphanumericLiteral>(',Y,Y){toto}
+[[DisplayStatement]] [15,21:Display]<DISPLAY> --> [23,28+:'toto']<AlphanumericLiteral>(',Y,Y){toto}
 - variables = 'toto'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [26,34:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [33,41:advancing]<ADVANCING>
 - variables = "toto"
 - WithNoAdvancing
 
-[[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [53,55+:'.']<AlphanumericLiteral>(',Y,Y){.}
+[[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [56,58+:'.']<AlphanumericLiteral>(',Y,Y){.}
 - variables = '*** WHATEVER *** : ' DEBUG-ITEM '.'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [37,45:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [44,52:advancing]<ADVANCING>
 - variables =
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,47:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [46,54:advancing]<ADVANCING>
 - variables = "no advancing"
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,47:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [46,54:advancing]<ADVANCING>
 - variables = 'no advancing'
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [41,49:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [48,56:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [52,60:advancing]<ADVANCING>
-- variables = var1 'lit1' var2
-- OutputDeviceName = SYSIN
-- WithNoAdvancing
-
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [47,55:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [59,67:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - OutputDeviceName = SYSIN
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [54,62:advancing]<ADVANCING>
+- variables = var1 'lit1' var2
+- OutputDeviceName = SYSIN
+- WithNoAdvancing
+
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [58,66:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - OutputDeviceName = toto
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [46,54:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [53,61:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - OutputDeviceName = toto
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,29+:"C'est à dire"]<AlphanumericLiteral>(",Y,Y){C'est à dire}
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,36+:"C'est à dire"]<AlphanumericLiteral>(",Y,Y){C'est à dire}
 - variables = "C'est à dire"
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,29+:'C"est à dire']<AlphanumericLiteral>(',Y,Y){C"est à dire}
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,36+:'C"est à dire']<AlphanumericLiteral>(',Y,Y){C"est à dire}
 - variables = 'C"est à dire'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [42,46:SYSIN]<UserDefinedWord>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [49,53:SYSIN]<UserDefinedWord>
 - variables = var1 'litError' var2
 - OutputDeviceName = SYSIN
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [58,66:advancing]<ADVANCING>
 - variables = var1 'lit2' var2
 - OutputDeviceName = var2
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,28:when-compiled]<WHEN_COMPILED>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,35:when-compiled]<WHEN_COMPILED>
 - variables = when-compiled
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [32,32:)]<RightParenthesisSeparator>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [39,39:)]<RightParenthesisSeparator>
 - variables = max
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,44:mycopy]<UserDefinedWord>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [46,51:mycopy]<UserDefinedWord>
 - variables = toto toto mycopy.toto
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,25:high-value]<HIGH_VALUE>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,32:high-value]<HIGH_VALUE>
 - variables = high-value
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,21:spaces]<SPACES>
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,28:spaces]<SPACES>
 - variables = spaces
 

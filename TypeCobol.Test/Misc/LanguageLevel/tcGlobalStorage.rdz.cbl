@@ -1,10 +1,10 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. tcGlobalStorage.
-       SERVICE ID IS someCopy IN someLib.
+            SERVICE ID IS someCopy IN someLib.
        DATA DIVISION.
        GLOBAL-STORAGE SECTION.
        01 myVar PIC X.       
        PROCEDURE DIVISION.
-           GOBACK
-           .
+            GOBACK
+            .
        END PROGRAM tcGlobalStorage.

@@ -1,12 +1,12 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. tcGlobalStorage.
-Line 3[8,14] <48, Error, Syntax> - TypeCobol-only feature: service include feature is not supported.
-       SERVICE ID IS someCopy IN someLib.
+Line 3[13,19] <48, Error, Syntax> - TypeCobol-only feature: service include feature is not supported.
+            SERVICE ID IS someCopy IN someLib.
        DATA DIVISION.
 Line 5[8,21] <48, Error, Syntax> - TypeCobol-only feature: GLOBAL-STORAGE SECTION is not supported.
        GLOBAL-STORAGE SECTION.
        01 myVar PIC X.       
        PROCEDURE DIVISION.
-           GOBACK
-           .
+            GOBACK
+            .
        END PROGRAM tcGlobalStorage.

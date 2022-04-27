@@ -15,7 +15,7 @@
        SOURCE-COMPUTER.IBM-370.
       *Warning: A blank was missing before character "I" in column 24.
       *         A blank was assumed.
-       OBJECT-COMPUTER.IBMCOBOLII.
+                OBJECT-COMPUTER.IBMCOBOLII.
       *Warning: A blank was missing before character "D" in column 22.
       *         A blank was assumed.
        SPECIAL-NAMES.DECIMAL-POINT IS COMMA.

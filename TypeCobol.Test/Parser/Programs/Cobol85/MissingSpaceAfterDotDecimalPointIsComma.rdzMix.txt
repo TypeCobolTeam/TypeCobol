@@ -17,8 +17,8 @@ Line 15[23,23] <12, Warning, Tokens> - A blank was missing before character "I" 
        SOURCE-COMPUTER.IBM-370.
       *Warning: A blank was missing before character "I" in column 24.
       *         A blank was assumed.
-Line 18[23,23] <12, Warning, Tokens> - A blank was missing before character "I" in column 24. A blank was assumed.
-       OBJECT-COMPUTER.IBMCOBOLII.
+Line 18[32,32] <12, Warning, Tokens> - A blank was missing before character "I" in column 33. A blank was assumed.
+                OBJECT-COMPUTER.IBMCOBOLII.
       *Warning: A blank was missing before character "D" in column 22.
       *         A blank was assumed.
 Line 21[21,21] <12, Warning, Tokens> - A blank was missing before character "D" in column 22. A blank was assumed.
