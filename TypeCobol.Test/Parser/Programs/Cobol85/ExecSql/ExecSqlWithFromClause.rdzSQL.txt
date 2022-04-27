@@ -1,0 +1,33 @@
+﻿--- Sql Statements ---
+line 6: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = d IN i IN i
+      ]
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = rr IN iid
+          - CorrelationClause = CorrelationClause
+            - CorrelationName = new
+            - NewColumnNames = [
+              - NewColumnNames[0] = h
+              - NewColumnNames[1] = k
+            ]
+        - TableReferences[1] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = uma
+          - CorrelationClause = CorrelationClause
+            - CorrelationName = ka
+            - NewColumnNames = [
+              - NewColumnNames[0] = l
+              - NewColumnNames[1] = u
+            ]
+      ]
+  - SubQuery = <NULL>

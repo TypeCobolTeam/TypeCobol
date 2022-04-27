@@ -3,69 +3,47 @@
 
 [[ExecStatementText]] [3,8:UPDATE]<ExecStatementText> --> [3,8:UPDATE]<ExecStatementText>
 
-[[ExecStatementText]] [9,9: ]<ExecStatementText> --> [9,9: ]<ExecStatementText>
-
 [[ExecStatementText]] [10,14:TIDCA]<ExecStatementText> --> [10,14:TIDCA]<ExecStatementText>
 
 [[ExecStatementText]] [15,16:01]<ExecStatementText> --> [15,16:01]<ExecStatementText>
 
-[[ExecStatementText]] [1,2:  ]<ExecStatementText> --> [1,2:  ]<ExecStatementText>
-
 [[ExecStatementText]] [3,5:SET]<ExecStatementText> --> [3,5:SET]<ExecStatementText>
-
-[[ExecStatementText]] [6,6: ]<ExecStatementText> --> [6,6: ]<ExecStatementText>
 
 [[ExecStatementText]] [7,7:x]<ExecStatementText> --> [7,7:x]<ExecStatementText>
 
-[[ExecStatementText]] [8,11: = :]<ExecStatementText> --> [8,11: = :]<ExecStatementText>
+[[ExecStatementText]] [9,11:= :]<ExecStatementText> --> [9,11:= :]<ExecStatementText>
 
 [[ExecStatementText]] [12,12:y]<ExecStatementText> --> [12,12:y]<ExecStatementText>
 
-[[ExecStatementText]] [1,4:    ]<ExecStatementText> --> [1,4:    ]<ExecStatementText>
-
 [[ExecStatementText]] [5,9:WHERE]<ExecStatementText> --> [5,9:WHERE]<ExecStatementText>
-
-[[ExecStatementText]] [10,10: ]<ExecStatementText> --> [10,10: ]<ExecStatementText>
 
 [[ExecStatementText]] [11,11:a]<ExecStatementText> --> [11,11:a]<ExecStatementText>
 
-[[ExecStatementText]] [12,15: = :]<ExecStatementText> --> [12,15: = :]<ExecStatementText>
+[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
 
 [[ExecStatementText]] [16,16:b]<ExecStatementText> --> [16,16:b]<ExecStatementText>
 
-[[ExecStatementText]] [1,6:      ]<ExecStatementText> --> [1,6:      ]<ExecStatementText>
-
 [[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [10,10: ]<ExecStatementText> --> [10,10: ]<ExecStatementText>
 
 [[ExecStatementText]] [11,11:c]<ExecStatementText> --> [11,11:c]<ExecStatementText>
 
-[[ExecStatementText]] [12,15: = :]<ExecStatementText> --> [12,15: = :]<ExecStatementText>
+[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
 
 [[ExecStatementText]] [16,16:d]<ExecStatementText> --> [16,16:d]<ExecStatementText>
 
-[[ExecStatementText]] [1,6:      ]<ExecStatementText> --> [1,6:      ]<ExecStatementText>
-
 [[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [10,10: ]<ExecStatementText> --> [10,10: ]<ExecStatementText>
 
 [[ExecStatementText]] [11,11:e]<ExecStatementText> --> [11,11:e]<ExecStatementText>
 
-[[ExecStatementText]] [12,15: = :]<ExecStatementText> --> [12,15: = :]<ExecStatementText>
+[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
 
 [[ExecStatementText]] [16,16:f]<ExecStatementText> --> [16,16:f]<ExecStatementText>
 
-[[ExecStatementText]] [1,6:      ]<ExecStatementText> --> [1,6:      ]<ExecStatementText>
-
 [[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [10,10: ]<ExecStatementText> --> [10,10: ]<ExecStatementText>
 
 [[ExecStatementText]] [11,11:g]<ExecStatementText> --> [11,11:g]<ExecStatementText>
 
-[[ExecStatementText]] [12,15: = :]<ExecStatementText> --> [12,15: = :]<ExecStatementText>
+[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
 
 [[ExecStatementText]] [16,16:h]<ExecStatementText> --> [16,16:h]<ExecStatementText>
 

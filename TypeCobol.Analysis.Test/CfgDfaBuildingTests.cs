@@ -49,6 +49,9 @@ namespace TypeCobol.Analysis.Test
         /// </summary>
         [TestMethod]
         [TestCategory("CfgDfaBuildTest")]
+#if SQL_PARSING
+        [Ignore]
+#endif
         public void ExecSqlOutsideProc()
         {
             ExecNodeListener listener = null;

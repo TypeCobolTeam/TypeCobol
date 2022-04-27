@@ -853,5 +853,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnCommitStatement(commit);
         }
+        public void OnSelectStatement([NotNull] SelectStatement select)
+        {
+            foreach (var listener in _listeners) listener.OnSelectStatement(select);
+        }
     }
 }

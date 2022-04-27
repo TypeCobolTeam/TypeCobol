@@ -26,7 +26,12 @@ namespace TypeCobol.Test.Parser.Scanner
             foreach (string fileName in PlatformUtils.ListFilesInSubdirectory(ParserScannerSamples))
             {
                 string textName = Path.GetFileNameWithoutExtension(fileName);
-
+#if SQL_PARSING
+                if (textName == "RealPGM2")
+                {
+                    continue;
+                }
+#endif
                 // Initialize a CompilationDocument
                 FileCompiler compiler = new FileCompiler(null, textName, ColumnsLayout.CobolReferenceFormat, false, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
 

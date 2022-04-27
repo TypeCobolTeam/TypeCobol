@@ -393,6 +393,20 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="commit">The Node to be visited</param>
         /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         bool Visit([NotNull] Commit commit);
+
+        /// <summary>
+        /// SELECT Statement Code Element visitor method
+        /// </summary>
+        /// <param name="selectStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        bool Visit([NotNull] SelectStatement selectStatement);
+
+        /// <summary>
+        /// SELECT Statement Node visitor method
+        /// </summary>
+        /// <param name="select">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        bool Visit([NotNull] Select select);
     }
 
 
@@ -1513,6 +1527,26 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="commit">The Node to be visited</param>
         /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         public virtual bool Visit([NotNull] Commit commit)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// SELECT Statement Code Element visitor method
+        /// </summary>
+        /// <param name="selectStatement">The Code Element to be visited</param>
+        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        public virtual bool Visit([NotNull] SelectStatement selectStatement)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// SELECT Statement Node visitor method
+        /// </summary>
+        /// <param name="select">The Node to be visited</param>
+        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+        public virtual bool Visit([NotNull] Select select)
         {
             return true;
         }
