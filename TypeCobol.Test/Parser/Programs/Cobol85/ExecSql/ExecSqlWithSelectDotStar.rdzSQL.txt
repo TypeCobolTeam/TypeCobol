@@ -12,5 +12,11 @@ line 6: SelectStatement
           - TableOrViewOrCorrelationName = TableViewCorrelationName
             - Name = i IN e
       ]
-    - FromClause = <NULL>
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = a
+          - CorrelationClause = <NULL>
+      ]
   - SubQuery = <NULL>
