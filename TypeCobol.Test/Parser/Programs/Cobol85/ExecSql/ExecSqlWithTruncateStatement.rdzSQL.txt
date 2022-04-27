@@ -1,7 +1,7 @@
 ﻿--- Sql Statements ---
 line 6: TruncateStatement
-- TableName = INVENTORY
-- StorageManagementClause = StorageManagementClause
-  - StorageManagement = ReuseStorage
-- DeleteTriggersHandlingClause = DeleteTriggersHandlingClause
-  - DeleteTriggersHandling = IgnoreDeleteTriggers
+- TableName = TableViewCorrelationName
+  - Name = INVENTORY
+- StorageManagement = ReuseStorage
+- DeleteTriggersHandling = IgnoreDeleteTriggers
+- IsImmediate = False

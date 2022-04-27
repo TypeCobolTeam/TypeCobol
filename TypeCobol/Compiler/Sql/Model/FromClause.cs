@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Sql.Model
 {

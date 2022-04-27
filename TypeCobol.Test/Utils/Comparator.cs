@@ -515,10 +515,13 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(TruncateStatement truncateStatement)
             {
                 _writer.WriteLine($"line {truncateStatement.Line}: {nameof(TruncateStatement)}");
-                _writer.Write($"- {nameof(truncateStatement.TableName)} = ");
-                _writer.WriteLine(truncateStatement.TableName != null ? truncateStatement.TableName.ToString() : "<NULL>");
-                DumpSqlObject(nameof(truncateStatement.StorageManagementClause), truncateStatement.StorageManagementClause);
-                DumpSqlObject(nameof(truncateStatement.DeleteTriggersHandlingClause), truncateStatement.DeleteTriggersHandlingClause);
+                DumpSqlObject(nameof(truncateStatement.TableName), truncateStatement.TableName);
+                _writer.Write($"- {nameof(truncateStatement.StorageManagement)} = ");
+                _writer.WriteLine(truncateStatement.StorageManagement != null ? truncateStatement.StorageManagement.ToString() : "<NULL>");
+                _writer.Write($"- {nameof(truncateStatement.DeleteTriggersHandling)} = ");
+                _writer.WriteLine(truncateStatement.DeleteTriggersHandling != null ? truncateStatement.DeleteTriggersHandling.ToString() : "<NULL>");
+                _writer.Write($"- {nameof(truncateStatement.IsImmediate)} = ");
+                _writer.WriteLine(truncateStatement.IsImmediate != null ? truncateStatement.IsImmediate.ToString() : "<NULL>");
                 return true;
             }
         }
