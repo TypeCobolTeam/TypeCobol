@@ -73,8 +73,8 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     case TokenType.SQL_FROM:
                     case TokenType.SQL_AS:
                         return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    //Unrecognized keyword (for now) return as ExecStatementText
                     default:
+                        //Unrecognized keyword (for now) return as ExecStatementText
                         return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
                 }
             }
