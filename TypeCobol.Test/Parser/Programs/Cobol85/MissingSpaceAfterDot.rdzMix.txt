@@ -18,6 +18,7 @@ Line 15[23,23] <12, Warning, Tokens> - A blank was missing before character "I" 
       *Warning: A blank was missing before character "I" in column 24.
       *         A blank was assumed.
 Line 18[32,32] <12, Warning, Tokens> - A blank was missing before character "I" in column 33. A blank was assumed.
+Line 18[17,43] <27, Error, Syntax> - Syntax error : OBJECT-COMPUTER should begin in AreaA. It was found in 'AreaB'.
                 OBJECT-COMPUTER.IBMCOBOLII.
       *Error: "."was invalid. Scanning was resumed at the next area
       *       "A" item, level-number or the start of the next clause.

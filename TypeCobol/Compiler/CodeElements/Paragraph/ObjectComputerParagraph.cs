@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ObjectComputerParagraph() : base(CodeElementType.ObjectComputerParagraph)
         { }
-
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
         /// <summary>
         /// computer-name
         /// A system-name. For example: IBM-system

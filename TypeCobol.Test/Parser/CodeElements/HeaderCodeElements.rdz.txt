@@ -15,7 +15,7 @@
 
 [[InputOutputSectionHeader]] [8,19:INPUT-OUTPUT]<INPUT_OUTPUT> --> [28,28+:.]<PeriodSeparator>
 
-[[IOControlParagraphHeader]] [13,23:I-O-CONTROL]<I_O_CONTROL> --> [24,24+:.]<PeriodSeparator>
+[[IOControlParagraphHeader]] [8,18:I-O-CONTROL]<I_O_CONTROL> --> [19,19+:.]<PeriodSeparator>
 
 [[LinkageSectionHeader]] [8,14:LINKAGE]<LINKAGE> --> [23,23+:.]<PeriodSeparator>
 

@@ -1,14 +1,14 @@
 ﻿      * 1 errors
-      * Line 42[9,21] <37, Warning, General> - Warning: "when other" is missing
+      * Line 42[15,27] <37, Warning, General> - Warning: "when other" is missing
        IDENTIFICATION DIVISION.
        PROGRAM-ID. BooleanTester.
-
+      
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-
+      
        01 MyGroupLevl.
          88 My88Level VALUE 99.
-
+      
        01 MyGroup.
         05 MyArray pic X(50) occurs 50.
         05 MySecondLevel.
@@ -19,7 +19,7 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
                                    
-
+      
        01 Var1 pic X.
       *01 Var2 TYPE BOOL.
        01  Var2-value PIC X VALUE LOW-VALUE.
@@ -36,7 +36,7 @@
                            'U' thru X'FF'.
                          
        01 Var4 pic 9.
-
+      
       *01 myBool TYPE BOOL.
        01  myBool-value PIC X VALUE LOW-VALUE.
            88  myBool       VALUE 'T'.
@@ -47,44 +47,44 @@
        PROCEDURE DIVISION.
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    NumericInput PIC S9(9) COMP-5.
-
-
-      *CALL MyProc INPUT ADDRESS OF MyBool.
-       CALL 'a278a8a5' USING
+      
+      
+      *     CALL MyProc INPUT ADDRESS OF MyBool.
+            CALL 'a278a8a5' USING
                                  address of MyBool-value
            end-call
-                                          .
-      *CALL MyProc INPUT LENGTH OF MyBool.
-       CALL 'a278a8a5' USING
+                                               .
+      *     CALL MyProc INPUT LENGTH OF MyBool.
+            CALL 'a278a8a5' USING
                                  length of MyBool-value
            end-call
-                                         .
-
-       MOVE My88Level TO My88Level.
-      *MOVE myBool TO myBool.
-       MOVE myBool-value TO myBool-value. 
-      *MOVE MyGroup::levelBool TO myBool.
-       MOVE levelBool-value OF MyGroup TO myBool-value. 
-       IF myBool = myBool
-         continue
-       END-IF.
-      *IF ADDRESS OF myBool = "AnyAlpha"
-       IF ADDRESS OF myBool-value = "AnyAlpha"
-         continue
-       END-IF.
-       SET myBool TO TRUE.
-      *SET myBool TO FALSE.
-       SET myBool-false TO TRUE
-                          .
-
-        EVALUATE TRUE
-         WHEN myBool CONTINUE
-        END-EVALUATE
-
-      *   display var2 "rtzerz" var3 "zerzerze"
-      *      'zrzr' var2
-          display var2-value "rtzerz" var3-value "zerzerze"
-             'zrzr' var2-value
+                                              .
+      
+             MOVE My88Level TO My88Level.
+      *      MOVE myBool TO myBool.
+             MOVE myBool-value TO myBool-value.
+      *      MOVE MyGroup::levelBool TO myBool.
+             MOVE levelBool-value OF MyGroup TO myBool-value.
+             IF myBool = myBool
+               continue
+             END-IF.
+      *      IF ADDRESS OF myBool = "AnyAlpha"
+             IF ADDRESS OF myBool-value = "AnyAlpha"
+               continue
+             END-IF.
+             SET myBool TO TRUE.
+      *      SET myBool TO FALSE.
+             SET myBool-false TO TRUE
+                                .
+      
+              EVALUATE TRUE
+               WHEN myBool CONTINUE
+              END-EVALUATE
+      
+      *         display var2 "rtzerz" var3 "zerzerze"
+      *            'zrzr' var2
+                display var2-value "rtzerz" var3-value "zerzerze"
+                   'zrzr' var2-value
       
       *    string var2 var3 Var4
       *         delimited by size
@@ -105,21 +105,21 @@
               when other
                  continue
            end-evaluate
-
+      
            perform until MyBool
             display "Hello"
            end-perform
-
+      
            Search MyArray
               when MyBool
                  display "Hello"
            end-search.
        TRAITEMENT.
        .
-        PERFORM TRAITEMENT UNTIL MyBool.
+            PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.
-      *
+      *call
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    NumericInput PIC S9(9) COMP-5.
       *_________________________________________________________________
