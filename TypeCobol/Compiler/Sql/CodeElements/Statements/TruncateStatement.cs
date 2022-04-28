@@ -25,9 +25,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 
         public TruncateStatement(TableViewCorrelationName tableName, SyntaxProperty<StorageManagementOption> storageManagement, SyntaxProperty<DeleteTriggersHandlingOption> deleteTriggersHandling, SyntaxProperty<bool> isImmediate) : base(CodeElementType.TruncateStatement, StatementType.TruncateStatement)
         {
-            this.TableName = tableName;
-            this.StorageManagement = storageManagement;
-            this.DeleteTriggersHandling = deleteTriggersHandling;
+            TableName = tableName;
+            StorageManagement = storageManagement;
+            DeleteTriggersHandling = deleteTriggersHandling;
             IsImmediate = isImmediate;
         }
         public override bool VisitCodeElement(IASTVisitor astVisitor)

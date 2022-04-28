@@ -10,8 +10,10 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Sql.CodeElements;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
+using Object = TypeCobol.Compiler.Nodes.Object;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -497,6 +499,11 @@ namespace TypeCobol.Test.Utils
                     _writer.WriteLine("<NULL>");
                 }
             }
+            private void DumpObject(string name,object @object)
+            {
+                _writer.Write($"- {name} = ");
+                _writer.WriteLine(@object!= null ? @object.ToString() : "<NULL>");
+            }
 
             public override bool Visit(SelectStatement selectStatement)
             {
@@ -516,12 +523,10 @@ namespace TypeCobol.Test.Utils
             {
                 _writer.WriteLine($"line {truncateStatement.Line}: {nameof(TruncateStatement)}");
                 DumpSqlObject(nameof(truncateStatement.TableName), truncateStatement.TableName);
-                _writer.Write($"- {nameof(truncateStatement.StorageManagement)} = ");
-                _writer.WriteLine(truncateStatement.StorageManagement != null ? truncateStatement.StorageManagement.ToString() : "<NULL>");
-                _writer.Write($"- {nameof(truncateStatement.DeleteTriggersHandling)} = ");
-                _writer.WriteLine(truncateStatement.DeleteTriggersHandling != null ? truncateStatement.DeleteTriggersHandling.ToString() : "<NULL>");
-                _writer.Write($"- {nameof(truncateStatement.IsImmediate)} = ");
-                _writer.WriteLine(truncateStatement.IsImmediate != null ? truncateStatement.IsImmediate.ToString() : "<NULL>");
+                DumpObject(nameof(truncateStatement.StorageManagement), truncateStatement.StorageManagement);
+                DumpObject(nameof(truncateStatement.DeleteTriggersHandling), truncateStatement.DeleteTriggersHandling);
+                DumpObject(nameof(truncateStatement.IsImmediate), truncateStatement.IsImmediate);
+
                 return true;
             }
         }
