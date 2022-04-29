@@ -1,4 +1,4 @@
-      *TypeCobol_Version:[[ParserVersion]]
+      *TypeCobol_Version:v0.0.0-local
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MYCPYTST. 
       *REMARKS. COPY=(
@@ -14,7 +14,7 @@
           COPY XMYCOPY REPLACING ==:MYCOPY:== BY ==MYCOPY== .
        01 MYCOPY1-Y. COPY YMYCOPY1.
        PROCEDURE DIVISION.
-	         MOVE 4 TO MYCOPY-CODE.
-	         MOVE 'B' TO MYCOPY1-DATA.
+	           MOVE 4 TO MYCOPY-CODE.
+	           MOVE 'B' TO MYCOPY1-DATA.
        END PROGRAM MYCPYTST.
       

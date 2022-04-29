@@ -11,7 +11,8 @@
        01 AlphaNum PIC X(01).
 
        PROCEDURE DIVISION.
-       MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
-       MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
-       CALL IRLLBIRL::ToSpan INPUT AlphaNum OUTPUT SpanArrayVar::span.
+            MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
+            MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
+            CALL IRLLBIRL::ToSpan INPUT AlphaNum 
+            OUTPUT SpanArrayVar::span.
        END PROGRAM PGM.

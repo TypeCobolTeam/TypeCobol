@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:[[ParserVersion]]
+﻿      *TypeCobol_Version:v0.0.0-local
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DUPLICAT.
 
@@ -9,6 +9,6 @@
 
        PROCEDURE DIVISION.
 
-        MOVE "0123456789" to myVar.
+            MOVE "0123456789" to myVar.
 
        END PROGRAM DUPLICAT.

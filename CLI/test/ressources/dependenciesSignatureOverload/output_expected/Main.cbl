@@ -1,4 +1,4 @@
-      *TypeCobol_Version:[[ParserVersion]]
+      *TypeCobol_Version:v0.0.0-local
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGMTEST.
        DATA DIVISION.
@@ -48,8 +48,8 @@
                     
            Continue.
       *Must resolve dependency function acepting alphanumeric
-      *call DPDCY01::FunTest input alpha.
-       
+      *     call DPDCY01::FunTest input alpha.
+            
            IF ADDRESS OF TC-DPDCY01-b20bd03f-Item = NULL
              OR TC-DPDCY01-b20bd03f-Idt not = 'b20bd03f'
                PERFORM TC-LOAD-POINTERS-DPDCY01
@@ -58,10 +58,10 @@
            CALL TC-DPDCY01-b20bd03f USING
                                  alpha
            end-call
-                                        .
+                                             .
       *Must resolve dependency function acepting Type01
-      *call DPDCY01::FunTest input myVar::subType.
-       
+      *     call DPDCY01::FunTest input myVar::subType.
+            
            IF ADDRESS OF TC-DPDCY01-fa50eaf6-Item = NULL
              OR TC-DPDCY01-fa50eaf6-Idt not = 'fa50eaf6'
                PERFORM TC-LOAD-POINTERS-DPDCY01
@@ -70,7 +70,7 @@
            CALL TC-DPDCY01-fa50eaf6 USING
                                  subType IN myVar
            end-call
-                                                 .
+                                                      .
       *=================================================================
        TC-INITIALIZATIONS.
       *=================================================================

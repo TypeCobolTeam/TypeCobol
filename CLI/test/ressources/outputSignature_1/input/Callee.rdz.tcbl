@@ -4,50 +4,50 @@
         should be commented
       %>>
        PROGRAM-ID. Callee.
-
+      
        DATA DIVISION.
        working-storage section.
-
+      
        01  MyType1 TYPEDEF STRICT PUBLIC.
           05 Var1 pic X.
-
+      
        01 TOto pic X.
-
+      
       %<<<
         My public Type 2
       %>>>
        01  MyType2 TYPEDEF STRICT PUBLIC.
           05 Var2 pic X.
-
+      
       %<<<
         My private Type 3
       %>>>
        01  MyType3 TYPEDEF STRICT.
           05 Var3 pic X.
-
+      
        01  MyType4 TYPEDEF STRICT.
           05 Var4 pic X.
-
+      
        01  MyType5 TYPEDEF STRICT PUBLIC.
           05 Var5 pic X.
-
+      
        linkage section.
        01 MyType2 type MyType2.
        01 MyType3 type MyType3.
        01 Mydate  type Date.
-
+      
       %<<< My program
           @ Description  description
           @deprecated
           @    replacedBy  MyFonction2
           @ need  some needs
           @ todo
-              - make my second type my first type
-              - get another type
+        - make my second type my first type
+        - get another type
           @Params:
-            - MyType2: my second type
-            - MyType3: my third type
-            - Mydate: today date
+        - MyType2: my second type
+        - MyType3: my third type
+        - Mydate: today date
       %>>>
        PROCEDURE DIVISION.
        
@@ -57,11 +57,11 @@
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       %<<<
         check if the given date is before today
         @params:
-          - mydate: tyhe date to test
+        - mydate: tyhe date to test
       %>>>
        declare procedure check2 public
           input mydate        TYPE Date
@@ -69,7 +69,7 @@
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       %<<<
         Same as check2 but with two dates
         @see: check2
@@ -81,7 +81,7 @@
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       %<<<
         Private procedure should not have
         its signature generated 
@@ -93,7 +93,7 @@
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       %<<
         Multiline Comment here should be ignored
       %>>

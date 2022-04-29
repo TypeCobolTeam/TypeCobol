@@ -1,4 +1,4 @@
-      *TypeCobol_Version:[[ParserVersion]]
+      *TypeCobol_Version:v0.0.0-local
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
 
@@ -89,9 +89,9 @@
        TRAITEMENT.
       * __________________________________________________
       * OK public procedures declared in "dependencies" file
-      *    CALL Callee::MyPublicProcedure
+      *       CALL Callee::MyPublicProcedure
       *             INPUT      somedate
-           
+              
            IF ADDRESS OF TC-Callee-c6db8d4a-Item = NULL
              OR TC-Callee-c6db8d4a-Idt not = 'c6db8d4a'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -102,9 +102,9 @@
            end-call
                                        
 
-      *    CALL Callee::MySecondPublicProcedure
+      *       CALL Callee::MySecondPublicProcedure
       *             INPUT      vect2
-           
+              
            IF ADDRESS OF TC-Callee-d3faf219-Item = NULL
              OR TC-Callee-d3faf219-Idt not = 'd3faf219'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -116,23 +116,23 @@
                                        
       * __________________________________________________
       *procedure declared in this program
-      *    CALL PGM2::check INPUT      somedate
-           CALL 'c2c7ee3a' USING
+      *      CALL PGM2::check INPUT      somedate
+             CALL 'c2c7ee3a' USING
                                  somedate
            end-call
-                                               
+                                                 
 
       *procedure declared in this program
-      *   CALL check         INPUT      somedate
-          CALL 'c2c7ee3a' USING
+      *      CALL check         INPUT      somedate
+             CALL 'c2c7ee3a' USING
                                  somedate
            end-call
-                                                
+                                                   
 
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
-      *   call dump input mymessage
-          
+      *      call dump input mymessage
+             
            IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
              OR TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
                PERFORM TC-LOAD-POINTERS-MyIntrin
@@ -141,11 +141,11 @@
            CALL TC-MyIntrin-f9abcd81 USING
                                  mymessage
            end-call
-                                   
+                                      
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
-      *   call MyIntrinsicFunctions::dump input mymessage
-          
+      *      call MyIntrinsicFunctions::dump input mymessage
+             
            IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
              OR TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
                PERFORM TC-LOAD-POINTERS-MyIntrin
@@ -154,7 +154,7 @@
            CALL TC-MyIntrin-f9abcd81 USING
                                  mymessage
            end-call
-                                                         
+                                                            
         .
       *=================================================================
        TC-INITIALIZATIONS.

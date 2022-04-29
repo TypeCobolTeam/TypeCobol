@@ -1,4 +1,4 @@
-      *TypeCobol_Version:[[ParserVersion]]
+      *TypeCobol_Version:v0.0.0-local
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 
@@ -65,8 +65,8 @@
                           
 
 
-      *MOVE W-TechCtx::Site::SiteName TO someformat.
-       MOVE SiteName OF Site OF W-TechCtx TO someformat.
+      *     MOVE W-TechCtx::Site::SiteName TO someformat.
+            MOVE SiteName OF Site OF W-TechCtx TO someformat.
 
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -82,10 +82,10 @@
        TRAITEMENT.
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
-      *    CALL Callee::MyPublicProcedure
+      *       CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           
+              
            IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -99,10 +99,10 @@
            end-call
                                                    
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
-      *    CALL CALLEE::MyPublicProcedure
+      *       CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           
+              
            IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -118,10 +118,10 @@
          
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PRIVATE_ONLY_SAME_PGM)
-      *    CALL Pgm1PrivateValidateDateFormat
+      *       CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+              CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -130,10 +130,10 @@
                                                   
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PRIVATE_ONLY_SAME_PGM)
-      *    CALL PGM1::Pgm1PrivateValidateDateFormat
+      *      CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+             CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -143,20 +143,20 @@
 
 
       *OK  call check of PGM1
-      *   call check input somedate
-          CALL 'a0508f35' USING
+      *      call check input somedate
+             CALL 'a0508f35' USING
                                  somedate
            end-call
-                                   
+                                      
       *OK 
-      *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+      *      call PGM1::check input somedate
+             CALL 'a0508f35' USING
                                  somedate
            end-call
-                                         
+                                            
       *OK 
-      *   call Callee::check input somedate
-          
+      *      call Callee::check input somedate
+             
            IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -165,7 +165,7 @@
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
-                                           
+                                              
         .
       *=================================================================
        TC-INITIALIZATIONS.
