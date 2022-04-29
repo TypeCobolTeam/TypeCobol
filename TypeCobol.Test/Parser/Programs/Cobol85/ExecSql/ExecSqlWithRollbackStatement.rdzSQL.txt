@@ -1,0 +1,17 @@
+﻿--- Sql Statements ---
+line 6: RollbackStatement
+- SavePointClause = <NULL>
+line 7: RollbackStatement
+- SavePointClause = SavePointClause
+  - SavePointName = A
+line 8: RollbackStatement
+- SavePointClause = SavePointClause
+  - SavePointName = A
+line 9: RollbackStatement
+- SavePointClause = <NULL>
+line 10: RollbackStatement
+- SavePointClause = SavePointClause
+  - SavePointName = <NULL>
+line 11: RollbackStatement
+- SavePointClause = SavePointClause
+  - SavePointName = <NULL>

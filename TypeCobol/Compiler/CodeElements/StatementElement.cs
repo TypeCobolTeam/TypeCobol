@@ -131,7 +131,8 @@ namespace TypeCobol.Compiler.CodeElements
 
         //Sql
         CommitStatement,
-        SelectStatement
+        SelectStatement,
+        RollbackStatement,
 
     }
 }
