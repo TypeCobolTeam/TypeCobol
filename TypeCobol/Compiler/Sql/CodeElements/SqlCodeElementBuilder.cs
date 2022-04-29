@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             var storageManagementClause =
                 CreateStorageManagementClause(context.storageManagementClause());
             var deleteTriggersHandlingClause = CreateDeleteTriggersHandlingClause(context.deleteTriggersHandlingClause());
-            var isImmediate = new SyntaxProperty<bool>(context.SQL_IMMEDIATE()!=null,null);
+            var isImmediate = new SyntaxProperty<bool>(context.SQL_IMMEDIATE()!=null, ParseTreeUtils.GetFirstToken(context.SQL_IMMEDIATE()));
             return new TruncateStatement(tableName, storageManagementClause, deleteTriggersHandlingClause,isImmediate);
         }
 
