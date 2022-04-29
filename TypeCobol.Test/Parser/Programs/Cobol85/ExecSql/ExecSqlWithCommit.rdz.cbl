@@ -12,6 +12,9 @@
            END-EXEC
            EXEC SQL COMMIT WORK 
            END-EXEC
+           EXEC SQL 
+           COMMIT a 
+           END-EXEC
            GOBACK
            .
        END PROGRAM DVZZMFT3.
