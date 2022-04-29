@@ -10,10 +10,8 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Sql.CodeElements;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
-using Object = TypeCobol.Compiler.Nodes.Object;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -499,10 +497,10 @@ namespace TypeCobol.Test.Utils
                     _writer.WriteLine("<NULL>");
                 }
             }
-            private void DumpObject(string name,object @object)
+            private void DumpObject(string name, object @object)
             {
                 _writer.Write($"- {name} = ");
-                _writer.WriteLine(@object!= null ? @object.ToString() : "<NULL>");
+                _writer.WriteLine(@object != null ? @object.ToString():"<NULL>");
             }
 
             public override bool Visit(SelectStatement selectStatement)

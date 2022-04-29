@@ -25,23 +25,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return new TruncateStatement(tableName, storageManagementClause, deleteTriggersHandlingClause,isImmediate);
         }
 
-        public SyntaxProperty<TruncateStatement.StorageManagementOption> CreateStorageManagementClause(CodeElementsParser.StorageManagementClauseContext context)
+        private SyntaxProperty<TruncateStatement.StorageManagementOption> CreateStorageManagementClause(CodeElementsParser.StorageManagementClauseContext context)
         {
             SyntaxProperty<TruncateStatement.StorageManagementOption> storageManagement = null;
             if (context.reuse() != null)
             {
-                storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.ReuseStorage,context.reuse().KeywordREUSE as Token);
+                storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.ReuseStorage, ParseTreeUtils.GetFirstToken(context.reuse()));
             }
            
             else if (context.SQL_DROP()!=null)
-
             {
-                storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.DropStorage, context.SQL_DROP().Symbol as Token);
+                storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.DropStorage, ParseTreeUtils.GetFirstToken(context.SQL_DROP()));
             }
             return storageManagement;
         }
 
-        public SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption> CreateDeleteTriggersHandlingClause(CodeElementsParser.DeleteTriggersHandlingClauseContext context)
+        private SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption> CreateDeleteTriggersHandlingClause(CodeElementsParser.DeleteTriggersHandlingClauseContext context)
         {
             SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption> deleteTriggersHandling = null;
             if (context.SQL_RESTRICT() != null)
@@ -49,14 +48,14 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 deleteTriggersHandling = 
                     new SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption>(
                         TruncateStatement.DeleteTriggersHandlingOption.RestrictWhenDeleteTriggers,
-                        context.SQL_RESTRICT().Symbol as Token);
+                        ParseTreeUtils.GetFirstToken(context.SQL_RESTRICT()));
             }
             else if (context.ignore() != null)
             {
                 deleteTriggersHandling =
                     new SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption>(
                         TruncateStatement.DeleteTriggersHandlingOption.IgnoreDeleteTriggers,
-                        context.ignore().KeywordIGNORE as Token);
+                        ParseTreeUtils.GetFirstToken(context.ignore()));
             }
 
             return deleteTriggersHandling;

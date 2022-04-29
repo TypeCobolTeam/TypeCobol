@@ -6,13 +6,15 @@
               TRUNCATE TABLE INVENTORY
               REUSE STORAGE
               IGNORE DELETE TRIGGERS
+
               TRUNCATE TABLE INVENTORY
-              REUSE STORAGE
-              IGNORE DELETE TRIGGERS
-              TRUNCATE TABLE INVENTORY
-              REUSE STORAGE
-              IGNORE DELETE TRIGGERS
+              DROP STORAGE 
+              RESTRICT WHEN DELETE TRIGGERS
               IMMEDIATE
+
+              TRUNCATE TABLE INVENTORY
+              REUSE STORAGE
+              RESTRICT WHEN DELETE TRIGGERS            
               
              END-EXEC.
        PROCEDURE DIVISION.
