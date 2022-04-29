@@ -14,9 +14,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            string indent = new string(' ', 2 * indentLevel);
-            output.Write($"{indent}- {nameof(Name)} = ");
-            output.WriteLine(Name != null ? Name.ToString() : "<NULL>");//TODO improve this, SymbolReference.ToString() is currently not suitable for SQL names
+            DumpProperty(output, nameof(Name), Name, indentLevel);
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)

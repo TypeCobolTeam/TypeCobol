@@ -213,6 +213,7 @@ codeElement:
 // FOR SQL	
 	| commitStatement
 	| selectStatement
+	| rollbackStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8261,6 +8262,9 @@ execStatementEnd: END_EXEC;
 
 //FOR SQL
 commitStatement: SQL_COMMIT;
+rollbackStatement: SQL_ROLLBACK work? savePointClause?;
+work: {string.Equals(CurrentToken.Text, "WORK", System.StringComparison.OrdinalIgnoreCase)}? KeywordWORK=UserDefinedWord;
+savePointClause: SQL_TO SQL_SAVEPOINT (savePoint_name=UserDefinedWord)?;
 selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause from_clause;

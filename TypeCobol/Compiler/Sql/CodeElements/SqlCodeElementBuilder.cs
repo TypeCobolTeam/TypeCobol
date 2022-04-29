@@ -11,12 +11,32 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 {
     public class SqlCodeElementBuilder
     {
-        public CodeElement CreateCommitStatement(CodeElementsParser.CommitStatementContext context)
+        public CommitStatement CreateCommitStatement(CodeElementsParser.CommitStatementContext context)
         {
             return new CommitStatement();
         }
 
-        public CodeElement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
+        public RollbackStatement CreateRollbackStatement(CodeElementsParser.RollbackStatementContext context)
+        {
+            SavePointClause savePointClause = null;
+            if (context.savePointClause() != null)
+            {
+                savePointClause = CreateSavePointClause(context.savePointClause());
+            }
+            return new RollbackStatement(savePointClause);
+        }
+
+        private SavePointClause CreateSavePointClause(CodeElementsParser.SavePointClauseContext context)
+        {
+            SymbolReference savePointName = null;
+            if (context.savePoint_name != null)
+            {
+                savePointName = new SymbolReference(new AlphanumericValue((Token)context.savePoint_name), SymbolType.SqlIdentifier);
+            }
+            return new SavePointClause(savePointName);
+        }
+
+        public SelectStatement CreateSelectStatement(CodeElementsParser.SelectStatementContext context)
         {
             FullSelect fullSelect = null;
             if (context.fullselect() != null)
@@ -105,8 +125,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
             return null;
         }
-
-           
 
         private TableViewCorrelationName CreateTableOrViewOrCorrelationName(CodeElementsParser.TableOrViewOrCorrelationNameContext tableOrViewOrCorrelationName)
         {
