@@ -4,7 +4,7 @@ line 6: TruncateStatement
   - Name = INVENTORY
 - StorageManagement = ReuseStorage
 - DeleteTriggersHandling = IgnoreDeleteTriggers
-- IsImmediate = False
+- IsImmediate = <NULL>
 line 10: TruncateStatement
 - TableName = TableViewCorrelationName
   - Name = INVENTORY
@@ -16,4 +16,4 @@ line 15: TruncateStatement
   - Name = INVENTORY
 - StorageManagement = ReuseStorage
 - DeleteTriggersHandling = RestrictWhenDeleteTriggers
-- IsImmediate = False
+- IsImmediate = <NULL>
