@@ -293,10 +293,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         protected override bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token nextToken)
         {
-            if (nextToken.TokenType == TokenType.SQL_FROM) return false;
-
-            return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
+            return nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
                    SqlStatementElement.IsSqlStatementStartingKeyword(nextToken.TokenType) ||
                    nextToken.TokenType == TokenType.LevelNumber ||
                    nextToken.TokenType == TokenType.SectionParagraphName;
