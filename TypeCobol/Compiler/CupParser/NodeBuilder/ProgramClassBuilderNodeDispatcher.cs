@@ -857,6 +857,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnSelectStatement(select);
         }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+            foreach (var listener in _listeners) listener.OnRollbackStatement(rollback);
+        }
         public void OnTruncateStatement([NotNull] TruncateStatement truncate)
         {
             foreach (var listener in _listeners) listener.OnTruncateStatement(truncate);

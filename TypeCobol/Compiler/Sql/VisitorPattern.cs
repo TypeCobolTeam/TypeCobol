@@ -20,6 +20,7 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] SelectClause selectClause);
         bool Visit([NotNull] FromClause fromClause);
         bool Visit([NotNull] TableViewCorrelationName tableViewCorrelationName);
+        bool Visit([NotNull] SavePointClause savePointClause);
         bool Visit([NotNull] Selection selection);
         bool Visit([NotNull] StarSelection starSelection);
         bool Visit([NotNull] SingleTableReference singleTableReference);
@@ -42,6 +43,7 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(SubSelect subSelect) => true;
         public virtual bool Visit(SelectClause selectClause) => true;
         public virtual bool Visit(FromClause fromClause) => true;
+        public virtual bool Visit(SavePointClause savePointClause) => true;
         public virtual bool Visit(TableViewCorrelationName tableViewCorrelationName) => true;
         public virtual bool Visit(Selection selection) => true;
         public virtual bool Visit(StarSelection starSelection) => true;

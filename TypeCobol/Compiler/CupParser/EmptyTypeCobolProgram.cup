@@ -139,6 +139,7 @@ terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
 // FOR SQL
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SelectStatement SelectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.RollbackStatement RollbackStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.TruncateStatement TruncateStatement;
 
 
@@ -697,6 +698,8 @@ execStatementBody ::= /* empty */
 sqlStatement ::= CommitStatement:stmt
 {: :}
 |	SelectStatement:stmt
+{: :}
+|	RollbackStatement:stmt
 {: :}
 |	TruncateStatement:stmt 
 {: :}
