@@ -205,7 +205,6 @@ namespace TypeCobol.Test.Utils
                     case "ExecSqlInDataDivision.rdz.cbl":
                     case "Program.pgm":        
                     case "ParagraphSection.rdz.cbl":
-                    case "ExecSqlWithCommit.rdz.cbl":
                     case "EXEC.cbl":
                     case "NodeBuilder-UnexpectedChild.rdz.tcbl":
                         continue;
@@ -497,18 +496,41 @@ namespace TypeCobol.Test.Utils
                     _writer.WriteLine("<NULL>");
                 }
             }
+            private void DumpObject(string name, object @object)
+            {
+                _writer.Write($"- {name} = ");
+                _writer.WriteLine(@object != null ? @object.ToString():"<NULL>");
+            }
 
             public override bool Visit(SelectStatement selectStatement)
             {
-                _writer.WriteLine("line " + selectStatement.Line + ": SelectStatement");
+                _writer.WriteLine($"line {selectStatement.Line}: {nameof(SelectStatement)}");
                 DumpSqlObject(nameof(selectStatement.FullSelect), selectStatement.FullSelect);
+                return true;
+            }
+
+            public override bool Visit(RollbackStatement rollbackStatement)
+            {
+                _writer.WriteLine($"line {rollbackStatement.Line}: {nameof(RollbackStatement)}");
+                DumpSqlObject(nameof(rollbackStatement.SavePointClause), rollbackStatement.SavePointClause);
                 return true;
             }
 
             public override bool Visit(CommitStatement commitStatement)
             {
-                _writer.WriteLine("line " + commitStatement.Line + ": CommitStatement");
+                _writer.WriteLine($"line {commitStatement.Line}: {nameof(CommitStatement)}");
                 //No SqlObject in CommitStatement
+                return true;
+            }
+
+            public override bool Visit(TruncateStatement truncateStatement)
+            {
+                _writer.WriteLine($"line {truncateStatement.Line}: {nameof(TruncateStatement)}");
+                DumpSqlObject(nameof(truncateStatement.TableName), truncateStatement.TableName);
+                DumpObject(nameof(truncateStatement.StorageManagement), truncateStatement.StorageManagement);
+                DumpObject(nameof(truncateStatement.DeleteTriggersHandling), truncateStatement.DeleteTriggersHandling);
+                DumpObject(nameof(truncateStatement.IsImmediate), truncateStatement.IsImmediate);
+
                 return true;
             }
         }

@@ -233,6 +233,9 @@ terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
 // FOR SQL
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SelectStatement SelectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.RollbackStatement RollbackStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.TruncateStatement TruncateStatement;
+
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
@@ -790,6 +793,10 @@ sqlStatement ::= CommitStatement:stmt
 {: my_parser.Builder.OnCommitStatement(stmt); :}
 |	SelectStatement:stmt
 {: my_parser.Builder.OnSelectStatement(stmt); :}
+|	RollbackStatement:stmt
+{: my_parser.Builder.OnRollbackStatement(stmt); :}
+|	TruncateStatement:stmt
+{: my_parser.Builder.OnTruncateStatement(stmt); :}
 ;
 
 execStatementEnd ::= ExecStatementEnd:stmt

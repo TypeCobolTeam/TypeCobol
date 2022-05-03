@@ -846,5 +846,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+
+        }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+
+        }
     }
 }

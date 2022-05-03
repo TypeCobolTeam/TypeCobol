@@ -1623,5 +1623,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnSelectStatement(select);
         }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+            Enter(new Rollback(rollback), rollback);
+            Exit();
+            Dispatcher.OnRollbackStatement(rollback);
+        }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+            Enter(new Truncate(truncate), truncate);
+            Exit();
+            Dispatcher.OnTruncateStatement(truncate);
+        }
     }
 }

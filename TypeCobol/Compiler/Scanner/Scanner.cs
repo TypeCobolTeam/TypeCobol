@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
@@ -1707,6 +1706,7 @@ namespace TypeCobol.Compiler.Scanner
                                     beforeLastSignificantToken.TokenType == TokenType.VALUES;
                                 break;
                         }
+
                         if (!currentTokenIsExpectedToBeALiteral)
                         {
                             /*
@@ -1718,8 +1718,13 @@ namespace TypeCobol.Compiler.Scanner
                              *                      08.
                              * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
                              * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
+                             *
+                             * 'ZERO', 'ZEROS' and 'ZEROES' figurative constants can also be used among values so they are considered too.
                              */
-                            return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral && lastSignificantToken.TokenFamily != TokenFamily.AlphanumericLiteral;
+                            return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral &&
+                                   lastSignificantToken.TokenType != TokenType.ZERO &&
+                                   lastSignificantToken.TokenType != TokenType.ZEROS &&
+                                   lastSignificantToken.TokenType != TokenType.ZEROES;
                         }
 
                         return false;

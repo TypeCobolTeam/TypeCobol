@@ -46,6 +46,11 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     return ScanOneChar(startIndex, TokenType.SQL_CommaSeparator);
                 case '.':
                     return ScanOneChar(startIndex, TokenType.PeriodSeparator);
+                case '(':
+                    return ScanOneChar(startIndex, TokenType.LeftParenthesisSeparator);
+                case ')':
+                    return ScanOneChar(startIndex, TokenType.RightParenthesisSeparator);
+
             }
 
             if (IsSqlKeywordPart(line[currentIndex]))
@@ -62,9 +67,22 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     case TokenType.SQL_ALL:
                     case TokenType.SQL_DISTINCT:
                     case TokenType.UserDefinedWord:
+                    case TokenType.SQL_ROLLBACK:
+                    case TokenType.SQL_TO:
+                    case TokenType.SQL_SAVEPOINT:
+                    case TokenType.SQL_FROM:
+                    case TokenType.SQL_AS:
+                    case TokenType.SQL_TABLE:
+                    case TokenType.SQL_DELETE:
+                    case TokenType.SQL_IMMEDIATE:
+                    case TokenType.SQL_DROP:
+                    case TokenType.SQL_RESTRICT:
+                    case TokenType.SQL_WHEN:
+                    case TokenType.SQL_TRUNCATE:
+
                         return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    //Unrecognized keyword (for now) return as ExecStatementText
                     default:
+                        //Unrecognized keyword (for now) return as ExecStatementText
                         return new Token(TokenType.ExecStatementText, startIndex, currentIndex - 1, tokensLine);
                 }
             }

@@ -213,6 +213,8 @@ codeElement:
 // FOR SQL	
 	| commitStatement
 	| selectStatement
+	| rollbackStatement
+	| truncateStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8260,18 +8262,43 @@ execStatementText: ExecStatementText;
 execStatementEnd: END_EXEC;
 
 //FOR SQL
-commitStatement: SQL_COMMIT;
+commitStatement: SQL_COMMIT work?;
+
+rollbackStatement: SQL_ROLLBACK work? savePointClause?;
+savePointClause: SQL_TO SQL_SAVEPOINT (savePoint_name=UserDefinedWord)?;
+
+// Defining 'WORK' as contextual keyword here since it is not part of reserved words
+work: { string.Equals(CurrentToken.Text, "WORK", System.StringComparison.OrdinalIgnoreCase) }? KeywordWORK=UserDefinedWord;
+
+// Contextual keywords used in TRUNCATE statement
+reuse: ({ string.Equals(CurrentToken.Text, "REUSE", System.StringComparison.OrdinalIgnoreCase) }? KeywordREUSE=UserDefinedWord);
+triggers: ({ string.Equals(CurrentToken.Text, "TRIGGERS", System.StringComparison.OrdinalIgnoreCase) }? KeywordTRIGGERS=UserDefinedWord);
+ignore: ({ string.Equals(CurrentToken.Text, "IGNORE", System.StringComparison.OrdinalIgnoreCase) }? KeywordIGNORE=UserDefinedWord);
+storage: ({ string.Equals(CurrentToken.Text, "STORAGE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTORAGE=UserDefinedWord);
+truncateStatement: SQL_TRUNCATE SQL_TABLE? (tableName=tableOrViewOrCorrelationName) storageManagementClause? deleteTriggersHandlingClause? SQL_IMMEDIATE?;
+storageManagementClause: (SQL_DROP | reuse) storage;
+deleteTriggersHandlingClause: (ignore | SQL_RESTRICT SQL_WHEN) SQL_DELETE triggers;
+
 selectStatement: fullselect;
 fullselect: subselect;
-subselect: sql_selectClause;
+subselect: sql_selectClause from_clause;
 // See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=subselect-select-clause]
 sql_selectClause: 
-  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections) ;
+  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections);
+
 selections: selection (SQL_CommaSeparator selection)*;
 selection: tableOrViewAllColumnsSelection;
 tableOrViewAllColumnsSelection: tableOrViewOrCorrelationName  dot star; 
 // See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=clause-table-reference]
 tableOrViewOrCorrelationName : ((DBMS=UserDefinedWord dot)? (SchemaName=UserDefinedWord dot))? (Name=UserDefinedWord); 
+from_clause: SQL_FROM table_references;
+table_references: table_reference (SQL_CommaSeparator table_reference)*;
+table_reference: single_table_or_view_reference;
+//TODO Add period-specification syntax
+single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?;
+correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
+new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
+new_column_name: UserDefinedWord;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------

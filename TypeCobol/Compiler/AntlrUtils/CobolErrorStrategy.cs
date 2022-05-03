@@ -4,6 +4,7 @@ using Antlr4.Runtime.Misc;
 using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Sql.CodeElements;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
@@ -280,51 +281,6 @@ namespace TypeCobol.Compiler.AntlrUtils
     }
 
     /// <summary>
-    /// Customized strategy in case of syntax error for the CompilerDirective parser :
-    /// the idea is that we only want to avoid Antlr "eating away" the next token 
-    /// when trying to resynchronize after an error 
-    /// - if it is starting the next CompilerDirective or the next CodeElement 
-    /// - if it is not on the same line (many compiler directives are written on a single line)
-    /// - if it follows a PeriodSeparator token (a period always ends a compiler directive)
-    /// </summary>
-    public class CompilerDirectiveErrorStrategy : CobolErrorStrategy
-    {
-        /// <summary>
-        /// Should return true for all the tokens we don't want to be consumed
-        /// by the error recovery strategy when resynchronizing
-        /// </summary>
-        protected override bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token nextToken)
-        {
-            return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.SqlKeywords ||
-                   nextToken.TokenType == TokenType.LevelNumber || 
-                   nextToken.TokenType == TokenType.SectionParagraphName ||
-                   (lastConsumedToken != null && (
-                        nextToken.TokensLine != lastConsumedToken.TokensLine ||
-                        lastConsumedToken.TokenType == TokenType.PeriodSeparator
-                   ));
-        }
-
-        /// <summary>
-        /// A compiler directive can be embedded anywhere in the Cobol syntax
-        /// so we can consider that EOF is always present in the following set
-        /// </summary>
-        public override void Sync(Antlr4.Runtime.Parser recognizer)
-        {
-            if (GetExpectedTokens(recognizer).Contains(TokenConstants.Eof))
-            {
-                return;
-            }
-            else
-            {
-                base.Sync(recognizer);
-            }
-        }
-    }
-
-
-    /// <summary>
     /// Customized strategy in case of syntax error for the CodeElements parser :
     /// the idea is that we only want to avoid Antlr "eating away" the token 
     /// starting the next CodeElement when trying to resynchronize after an error
@@ -337,9 +293,8 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         protected override bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token nextToken)
         {
-            return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.SqlKeywords ||
+            return nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
+                   SqlStatementElement.IsSqlStatementStartingKeyword(nextToken.TokenType) ||
                    nextToken.TokenType == TokenType.LevelNumber ||
                    nextToken.TokenType == TokenType.SectionParagraphName;
         }

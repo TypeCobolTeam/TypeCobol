@@ -821,6 +821,16 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="select">The corresponding  Select Statement Code Element</param>
         void OnSelectStatement([NotNull] SelectStatement select);
+        /// <summary>
+        /// Enter a Rollback Statement Node
+        /// </summary>
+        /// <param name="rollback">The corresponding  Rollback Statement Code Element</param>
+        void OnRollbackStatement([NotNull] RollbackStatement rollback);
+        /// <summary>
+        /// Enter a Truncate Statement Node
+        /// </summary>
+        /// <param name="truncate">The corresponding  Truncate Statement Code Element</param>
+        void OnTruncateStatement([NotNull] TruncateStatement truncate);
         #endregion
     }
 }
