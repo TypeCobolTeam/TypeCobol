@@ -214,6 +214,7 @@ codeElement:
 	| commitStatement
 	| selectStatement
 	| rollbackStatement
+	| truncateStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8268,6 +8269,15 @@ savePointClause: SQL_TO SQL_SAVEPOINT (savePoint_name=UserDefinedWord)?;
 
 // Defining 'WORK' as contextual keyword here since it is not part of reserved words
 work: { string.Equals(CurrentToken.Text, "WORK", System.StringComparison.OrdinalIgnoreCase) }? KeywordWORK=UserDefinedWord;
+
+// Contextual keywords used in TRUNCATE statement
+reuse: ({ string.Equals(CurrentToken.Text, "REUSE", System.StringComparison.OrdinalIgnoreCase) }? KeywordREUSE=UserDefinedWord);
+triggers: ({ string.Equals(CurrentToken.Text, "TRIGGERS", System.StringComparison.OrdinalIgnoreCase) }? KeywordTRIGGERS=UserDefinedWord);
+ignore: ({ string.Equals(CurrentToken.Text, "IGNORE", System.StringComparison.OrdinalIgnoreCase) }? KeywordIGNORE=UserDefinedWord);
+storage: ({ string.Equals(CurrentToken.Text, "STORAGE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTORAGE=UserDefinedWord);
+truncateStatement: SQL_TRUNCATE SQL_TABLE? (tableName=tableOrViewOrCorrelationName) storageManagementClause? deleteTriggersHandlingClause? SQL_IMMEDIATE?;
+storageManagementClause: (SQL_DROP | reuse) storage;
+deleteTriggersHandlingClause: (ignore | SQL_RESTRICT SQL_WHEN) SQL_DELETE triggers;
 
 selectStatement: fullselect;
 fullselect: subselect;

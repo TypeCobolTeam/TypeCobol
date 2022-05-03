@@ -850,5 +850,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+
+        }
     }
 }

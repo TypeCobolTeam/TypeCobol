@@ -496,6 +496,11 @@ namespace TypeCobol.Test.Utils
                     _writer.WriteLine("<NULL>");
                 }
             }
+            private void DumpObject(string name, object @object)
+            {
+                _writer.Write($"- {name} = ");
+                _writer.WriteLine(@object != null ? @object.ToString():"<NULL>");
+            }
 
             public override bool Visit(SelectStatement selectStatement)
             {
@@ -515,6 +520,17 @@ namespace TypeCobol.Test.Utils
             {
                 _writer.WriteLine($"line {commitStatement.Line}: {nameof(CommitStatement)}");
                 //No SqlObject in CommitStatement
+                return true;
+            }
+
+            public override bool Visit(TruncateStatement truncateStatement)
+            {
+                _writer.WriteLine($"line {truncateStatement.Line}: {nameof(TruncateStatement)}");
+                DumpSqlObject(nameof(truncateStatement.TableName), truncateStatement.TableName);
+                DumpObject(nameof(truncateStatement.StorageManagement), truncateStatement.StorageManagement);
+                DumpObject(nameof(truncateStatement.DeleteTriggersHandling), truncateStatement.DeleteTriggersHandling);
+                DumpObject(nameof(truncateStatement.IsImmediate), truncateStatement.IsImmediate);
+
                 return true;
             }
         }

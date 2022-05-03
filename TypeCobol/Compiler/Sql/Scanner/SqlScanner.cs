@@ -72,6 +72,14 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     case TokenType.SQL_SAVEPOINT:
                     case TokenType.SQL_FROM:
                     case TokenType.SQL_AS:
+                    case TokenType.SQL_TABLE:
+                    case TokenType.SQL_DELETE:
+                    case TokenType.SQL_IMMEDIATE:
+                    case TokenType.SQL_DROP:
+                    case TokenType.SQL_RESTRICT:
+                    case TokenType.SQL_WHEN:
+                    case TokenType.SQL_TRUNCATE:
+
                         return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
                     default:
                         //Unrecognized keyword (for now) return as ExecStatementText

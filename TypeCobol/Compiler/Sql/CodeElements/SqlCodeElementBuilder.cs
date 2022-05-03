@@ -15,6 +15,51 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return new CommitStatement();
         }
+        public CodeElement CreateTruncateStatement(CodeElementsParser.TruncateStatementContext context)
+        {
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableName);
+            var storageManagementClause =
+                CreateStorageManagementClause(context.storageManagementClause());
+            var deleteTriggersHandlingClause = CreateDeleteTriggersHandlingClause(context.deleteTriggersHandlingClause());
+            var isImmediate = context.SQL_IMMEDIATE() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_IMMEDIATE())) : null;
+            return new TruncateStatement(tableName, storageManagementClause, deleteTriggersHandlingClause,isImmediate);
+        }
+
+        private SyntaxProperty<TruncateStatement.StorageManagementOption> CreateStorageManagementClause(CodeElementsParser.StorageManagementClauseContext context)
+        {
+            SyntaxProperty<TruncateStatement.StorageManagementOption> storageManagement = null;
+            if (context.reuse() != null)
+            {
+                storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.ReuseStorage, ParseTreeUtils.GetFirstToken(context.reuse()));
+            }
+           
+            else if (context.SQL_DROP()!=null)
+            {
+                storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.DropStorage, ParseTreeUtils.GetFirstToken(context.SQL_DROP()));
+            }
+            return storageManagement;
+        }
+
+        private SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption> CreateDeleteTriggersHandlingClause(CodeElementsParser.DeleteTriggersHandlingClauseContext context)
+        {
+            SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption> deleteTriggersHandling = null;
+            if (context.SQL_RESTRICT() != null)
+            {
+                deleteTriggersHandling =
+                    new SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption>(
+                        TruncateStatement.DeleteTriggersHandlingOption.RestrictWhenDeleteTriggers,
+                        ParseTreeUtils.GetFirstToken(context.SQL_RESTRICT()));
+            }
+            else if (context.ignore() != null)
+            {
+                deleteTriggersHandling =
+                    new SyntaxProperty<TruncateStatement.DeleteTriggersHandlingOption>(
+                        TruncateStatement.DeleteTriggersHandlingOption.IgnoreDeleteTriggers,
+                        ParseTreeUtils.GetFirstToken(context.ignore()));
+            }
+
+            return deleteTriggersHandling;
+        }
 
         public RollbackStatement CreateRollbackStatement(CodeElementsParser.RollbackStatementContext context)
         {

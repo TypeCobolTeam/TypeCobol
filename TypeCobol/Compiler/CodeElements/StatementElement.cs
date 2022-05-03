@@ -133,6 +133,7 @@ namespace TypeCobol.Compiler.CodeElements
         CommitStatement,
         SelectStatement,
         RollbackStatement,
+        TruncateStatement
 
     }
 }

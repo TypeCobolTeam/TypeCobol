@@ -1,4 +1,4 @@
-Line 5[26,29] <27, Error, Syntax> - Syntax error : extraneous input 'FROM' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 5[19,24] <27, Error, Syntax> - Syntax error : extraneous input 'DELETE' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
 Line 16[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input 'a'
 Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 --- Tokens ---
@@ -27,7 +27,7 @@ _WORKING-STORAGE SECTION._
 _  EXEC SQL DELETE FROM CUSTOMERS_
     _EXEC_    [10,13:EXEC]<EXEC>
     _SQL_    [15,17:SQL]<ExecTranslatorName>
-    _DELETE_    [19,24:DELETE]<ExecStatementText>
+    _DELETE_    [19,24:DELETE]<SQL_DELETE>
     _FROM_    [26,29:FROM]<SQL_FROM>
     _CUSTOMERS_    [31,39:CUSTOMERS]<UserDefinedWord>
 ---------------------------------

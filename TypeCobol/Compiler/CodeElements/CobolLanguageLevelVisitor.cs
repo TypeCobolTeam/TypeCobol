@@ -380,45 +380,15 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ParametersProfileNode profile);
         bool Visit ([NotNull] IndexDefinition indexDefinition);
 
-        /// <summary>
-        /// COMMIT Statement Code Element visitor method
-        /// </summary>
-        /// <param name="commitStatement">The Code Element to be visited</param>
-        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        //SQL
         bool Visit([NotNull] CommitStatement commitStatement);
-
-        /// <summary>
-        /// COMMIT Statement Node visitor method
-        /// </summary>
-        /// <param name="commit">The Node to be visited</param>
-        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         bool Visit([NotNull] Commit commit);
-
-        /// <summary>
-        /// SELECT Statement Code Element visitor method
-        /// </summary>
-        /// <param name="selectStatement">The Code Element to be visited</param>
-        /// <returns>true to continue visiting Code elements, false otherwise </returns>
         bool Visit([NotNull] SelectStatement selectStatement);
-
-        /// <summary>
-        /// SELECT Statement Node visitor method
-        /// </summary>
-        /// <param name="select">The Node to be visited</param>
-        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         bool Visit([NotNull] Select select);
-        /// <summary>
-        /// Rollback Statement Code Element visitor method
-        /// </summary>
-        /// <param name="rollbackStatement">The Code Element to be visited</param>
-        /// <returns>true to continue visiting Code elements, false otherwise </returns>
         bool Visit([NotNull] RollbackStatement rollbackStatement);
-        /// <summary>
-        /// ROLLBACK Statement Node visitor method
-        /// </summary>
-        /// <param name="rollback">The Node to be visited</param>
-        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         bool Visit([NotNull] Rollback rollback);
+        bool Visit([NotNull] TruncateStatement truncateStatement);
+        bool Visit([NotNull] Truncate truncate);
     }
 
 
@@ -1522,60 +1492,43 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-
-        /// <summary>
-        /// COMMIT Statement Code Element visitor method
-        /// </summary>
-        /// <param name="commitStatement">The Code Element to be visited</param>
-        /// <returns>true to continue visiting Code elements, false otherwise </returns>
+        //SQL
         public virtual bool Visit([NotNull] CommitStatement commitStatement)
         {
             return true;
         }
 
-        /// <summary>
-        /// COMMIT Statement Node visitor method
-        /// </summary>
-        /// <param name="commit">The Node to be visited</param>
-        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
         public virtual bool Visit([NotNull] Commit commit)
         {
             return true;
         }
 
-        /// <summary>
-        /// SELECT Statement Code Element visitor method
-        /// </summary>
-        /// <param name="selectStatement">The Code Element to be visited</param>
-        /// <returns>true to continue visiting Code elements, false otherwise </returns>
         public virtual bool Visit([NotNull] SelectStatement selectStatement)
         {
             return true;
         }
-        /// <summary>
-        /// ROLLBACK Statement Code Element visitor method
-        /// </summary>
-        /// <param name="rollbackStatement">The Code Element to be visited</param>
-        /// <returns>true to continue visiting Code elements, false otherwise </returns>
-        public virtual bool Visit([NotNull] RollbackStatement rollbackStatement)
-        {
-            return true;
-        }
-        /// <summary>
-        /// SELECT Statement Node visitor method
-        /// </summary>
-        /// <param name="select">The Node to be visited</param>
-        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+
         public virtual bool Visit([NotNull] Select select)
         {
             return true;
         }
-        /// <summary>
-        /// ROLLBACK Statement Node visitor method
-        /// </summary>
-        /// <param name="rollback">The Node to be visited</param>
-        /// <returns>true to continue visiting sub nodes, false otherwise </returns>
+
+        public virtual bool Visit([NotNull] RollbackStatement rollbackStatement)
+        {
+            return true;
+        }
+
         public virtual bool Visit([NotNull] Rollback rollback)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] TruncateStatement truncateStatement)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] Truncate truncate)
         {
             return true;
         }
