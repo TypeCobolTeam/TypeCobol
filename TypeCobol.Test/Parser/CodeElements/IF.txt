@@ -645,3 +645,39 @@
 
 [[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
 
+[[IfStatement]] [1,2:if]<IF> --> [14,20:numeric]<NUMERIC>
+
+[[DisplayStatement]] [22,28:display]<DISPLAY> --> [30,38:"numeric"]<AlphanumericLiteral>(",Y,Y){numeric}
+- variables = "numeric"
+
+[[IfStatementEnd]] [40,45:end-if]<END_IF> --> [40,45:end-if]<END_IF>
+
+[[SentenceEnd]] [46,46+:.]<PeriodSeparator> --> [46,46+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:if]<IF> --> [10,10:)]<RightParenthesisSeparator>
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,26:"test1"]<AlphanumericLiteral>(",Y,Y){test1}
+- variables = "test1"
+
+[[IfStatementEnd]] [28,33:end-if]<END_IF> --> [28,33:end-if]<END_IF>
+
+[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:if]<IF> --> [27,27:1]<IntegerLiteral>{1}
+
+[[DisplayStatement]] [29,35:display]<DISPLAY> --> [37,41:"> 1"]<AlphanumericLiteral>(",Y,Y){> 1}
+- variables = "> 1"
+
+[[IfStatementEnd]] [43,48:end-if]<END_IF> --> [43,48:end-if]<END_IF>
+
+[[SentenceEnd]] [49,49+:.]<PeriodSeparator> --> [49,49+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:if]<IF> --> [14,21:positive]<POSITIVE>
+
+[[DisplayStatement]] [23,29:display]<DISPLAY> --> [31,40:"positive"]<AlphanumericLiteral>(",Y,Y){positive}
+- variables = "positive"
+
+[[IfStatementEnd]] [42,47:end-if]<END_IF> --> [42,47:end-if]<END_IF>
+
+[[SentenceEnd]] [48,48+:.]<PeriodSeparator> --> [48,48+:.]<PeriodSeparator>
+
