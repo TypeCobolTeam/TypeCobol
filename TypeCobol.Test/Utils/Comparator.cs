@@ -205,7 +205,6 @@ namespace TypeCobol.Test.Utils
                     case "ExecSqlInDataDivision.rdz.cbl":
                     case "Program.pgm":        
                     case "ParagraphSection.rdz.cbl":
-                    case "ExecSqlWithCommit.rdz.cbl":
                     case "EXEC.cbl":
                     case "NodeBuilder-UnexpectedChild.rdz.tcbl":
                         continue;

@@ -8261,10 +8261,14 @@ execStatementText: ExecStatementText;
 execStatementEnd: END_EXEC;
 
 //FOR SQL
-commitStatement: SQL_COMMIT;
+commitStatement: SQL_COMMIT work?;
+
 rollbackStatement: SQL_ROLLBACK work? savePointClause?;
-work: {string.Equals(CurrentToken.Text, "WORK", System.StringComparison.OrdinalIgnoreCase)}? KeywordWORK=UserDefinedWord;
 savePointClause: SQL_TO SQL_SAVEPOINT (savePoint_name=UserDefinedWord)?;
+
+// Defining 'WORK' as contextual keyword here since it is not part of reserved words
+work: { string.Equals(CurrentToken.Text, "WORK", System.StringComparison.OrdinalIgnoreCase) }? KeywordWORK=UserDefinedWord;
+
 selectStatement: fullselect;
 fullselect: subselect;
 subselect: sql_selectClause from_clause;
