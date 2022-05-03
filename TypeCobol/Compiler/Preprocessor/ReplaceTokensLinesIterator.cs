@@ -282,6 +282,20 @@ namespace TypeCobol.Compiler.Preprocessor
                                         break;
                                     }
                                 }
+                                else if (status.replacedToken != null)
+                                {
+                                    if (replaceOperation.Type == ReplaceOperationType.PartialWord)
+                                    {
+                                        var partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
+                                        var replacement = partialWordReplaceOperation.PartialReplacementToken;
+                                        if (status.replacedToken.Text != replacement?.Text)
+                                        {
+                                            continue;
+                                        }
+                                    }
+
+                                    break;
+                                }
                             }
                             if (matchingMode)
                             {
