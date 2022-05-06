@@ -1,5 +1,7 @@
 #if EUROINFO_RULES
 using System;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -35,6 +37,18 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             return Array.BinarySearch(_cpyCopyNames, name.ToUpper()) >= 0;
         }
+    }
+
+    /// <summary>
+    /// Helper methods
+    /// </summary>
+    public static class CopyNameMapFileExtensions
+    {
+        private static bool Contains(this CopyNameMapFile copyNameMapFile, string copyName) => copyNameMapFile?.Contains(copyName) ?? false;
+
+        public static bool IsCpyCopy(this TypeCobolOptions options, string copyName) => Contains(options.CpyCopyNameMap, copyName);
+
+        public static bool IsCpyCopy(this TypeCobolConfiguration configuration, string copyName) => Contains(configuration.CpyCopyNameMap, copyName);
     }
 }
 #endif
