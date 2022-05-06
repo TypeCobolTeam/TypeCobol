@@ -4,5 +4,5 @@ Line 10[8,22] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 1 : Syntax e
 Line 10[8,22] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 2 : Syntax error : Line exceed 80 chars
 Line 10[8,22] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 3 : Syntax error : Literal is not correctly delimited.
 Line 10[8,22] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 5 : Syntax error : Line exceed 80 chars
-Line 10[8,22] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 3 : Syntax error : Invalid VALUE clause
 Line 10[8,22] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 4 : Syntax error : extraneous input '00900005' expecting {separator, statement starting keyword, keyword}
+Line 10[8,22] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 5 : Syntax error : extraneous input '. ' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}

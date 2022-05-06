@@ -1,0 +1,18 @@
+﻿--- Program ---
+PROGRAM: MyPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  item1:Numeric
+  range1:Level88
+  range2:Level88
+  item2:Numeric
+  test1:Level88
+  test2:Level88
+  test3:Level88
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
