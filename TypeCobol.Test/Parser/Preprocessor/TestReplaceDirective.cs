@@ -25,7 +25,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             string testName = "PgmReplacePartial";
             _ReplaceProject.CompilationOptions.IsCobolLanguage = cobol;
-            _ReplaceProject.ClearImportedCompilationDocumentsCache();
+            _ReplaceProject.CopyCache.Clear();
             string result = PreprocessorUtils.ProcessReplaceDirectives(_ReplaceProject, testName);
             _ReplaceProject.CompilationOptions.IsCobolLanguage = false;
             PreprocessorUtils.CheckWithReplaceResultFile(result, testName + (cobol ? string.Empty : "TC"));
