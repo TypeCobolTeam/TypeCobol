@@ -82,6 +82,17 @@ namespace TypeCobol.Test.Misc
             Assert.IsNotNull(conditionOperand1);
             Assert.IsNotNull(conditionOperand2);
             Assert.IsTrue(conditionOperand1.IsEquivalent(conditionOperand2));
+            var (op1, op2) = expressionList[firstRelational + 7].GetOperands();
+            var conditionOperandPtr1 = op1 as ConditionOperand;
+            var conditionOperandNULL = op2 as ConditionOperand;
+            Assert.IsNotNull(conditionOperandPtr1);
+            Assert.IsNotNull(conditionOperandNULL);
+            var (op3, op4) = expressionList[firstRelational + 8].GetOperands();
+            var conditionOperandPtr2 = op3 as ConditionOperand;
+            var conditionOperandNULLS = op4 as ConditionOperand;
+            Assert.IsNotNull(conditionOperandPtr2);
+            Assert.IsNotNull(conditionOperandNULLS);
+            Assert.IsTrue(conditionOperandNULL.IsEquivalent(conditionOperandNULLS));
 
             // NumericVariable
             operand1 = conditionOperand1.ArithmeticExpression;
