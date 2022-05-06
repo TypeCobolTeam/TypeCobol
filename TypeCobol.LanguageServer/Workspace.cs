@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,7 +31,7 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     public class Workspace
     {
-        private SymbolTable _customSymbols;
+        public SymbolTable CustomSymbols { get; private set; }
         public string RootDirectory { get; }
         public string Name { get; }
         private DependenciesFileWatcher _DepWatcher;
@@ -147,11 +146,6 @@ namespace TypeCobol.LanguageServer
         public string CpyCopyNamesMapFilePath { get; set; }
 #endif
 
-        /// <summary>
-        /// Indicates whether this workspace has opened documents or not.
-        /// </summary>
-        public bool IsEmpty => this._allOpenedDocuments.IsEmpty;
-
         public Workspace(string rootDirectoryFullName, string workspaceName, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             this._allOpenedDocuments = new ConcurrentDictionary<Uri, DocumentContext>();
@@ -167,10 +161,18 @@ namespace TypeCobol.LanguageServer
 
         internal void InitCopyDependencyWatchers()
         {
-            // Create the refresh action that will be used by file watchers
-            Action refreshAction = RefreshOpenedFiles;
-            _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
-            _CopyWatcher = new CopyWatcher(this, refreshAction);
+            _DepWatcher = new DependenciesFileWatcher(this, RefreshAllOpenedFiles);
+            _CopyWatcher = new CopyWatcher(this, RefreshAllOpenedFiles);
+
+            // Refresh all opened files in all WorkspaceProject instances
+            void RefreshAllOpenedFiles()
+            {
+                RefreshCustomSymbols();
+                foreach (var workspaceProject in WorkspaceProjectStore.AllProjects)
+                {
+                    workspaceProject.RefreshOpenedDocuments();
+                }
+            }
         }
 
         /// <summary>
@@ -216,22 +218,20 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            var matchingPgm =
-                _customSymbols?.Programs.Keys.FirstOrDefault(
-                    k => k.Equals(inputFileName, StringComparison.OrdinalIgnoreCase));
+            var matchingPgm = CustomSymbols?.Programs.Keys.FirstOrDefault(k => k.Equals(inputFileName, StringComparison.OrdinalIgnoreCase));
             if (matchingPgm != null)
             {
-                arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.Namespace);
-                var prog = _customSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
+                arrangedCustomSymbol = new SymbolTable(CustomSymbols, SymbolTable.Scope.Namespace);
+                var prog = CustomSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() { prog.ToList() });
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
 
             fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider,
-                compilationProject, compilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
+                compilationProject, compilationProject.CompilationOptions, arrangedCustomSymbol ?? CustomSymbols,
                 compilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, _customSymbols, compilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, CustomSymbols, compilationProject);
 #endif
 
             // Set Any Language Server Connection Options.
@@ -631,7 +631,7 @@ namespace TypeCobol.LanguageServer
             TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
-            var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
             Configuration.CopyFolders.Add(folder + @"\DefaultCopies\");
 
             if (Configuration.Telemetry)
@@ -725,41 +725,92 @@ namespace TypeCobol.LanguageServer
         /// The RemainingMissingCopies list can contain a list of COPY that the client fails to load,
         /// or an empty list if all COPY have been loaded.
         /// </summary>
-        /// <param name="fileUri">Uri of the document from wich the response is emitted</param>
+        /// <param name="fileUri">Uri of the document from which the response is emitted</param>
         /// <param name="remainingMissingCopies">The list of unloaded COPY if any, an empty list otherwise</param>
         public void UpdateMissingCopies(Uri fileUri, List<string> remainingMissingCopies)
         {
+            /*
+             * TODO Keeping the current behavior here (clear cache + refresh project documents)
+             * But this should be converted into didChangeWatchedFiles notification instead
+             * so the client can signal that it finished loading some copies.
+             *
+             * Then the MissingCopiesNotification from client to server could be fully removed.
+             */
+
             if (_CopyWatcher == null)
-            {// No Copy Watcher ==> Refresh ourself opened file.
+            {
+                // No Copy Watcher ==> Refresh opened files ourselves.
                 if (this.TryGetOpenedDocument(fileUri, out var docContext))
                 {
                     System.Diagnostics.Debug.Assert(docContext.Project != null);
-                    RefreshProjectDocuments(docContext.Project, true);
+                    docContext.Project.Project.CopyCache.Clear();
+                    docContext.Project.RefreshOpenedDocuments();
                 }
             }
         }
 
         /// <summary>
-        /// Refresh all opened files in all WorspaceProject instances
-        /// <remarks>This method is designed to run on background worker thread as it uses compilation results to recreate source code.
-        /// Callers must enqueue a new message to schedule a refresh of opened files instead of calling this directly.</remarks>
+        /// Consider external changes that happened on copy files.
+        /// The opened documents are refreshed depending on whether they use the modified copies or not.
         /// </summary>
-        private void RefreshOpenedFiles()
+        /// <param name="changedCopies">List of modified copies.</param>
+        internal void AcknowledgeCopyChanges(List<ChangedCopy> changedCopies)
         {
-            RefreshCustomSymbols();
-            this.WorkspaceProjectStore.RefreshOpenedFiles();
+            //Remove obsolete data from copy caches
+            var copies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var changedCopy in changedCopies)
+            {
+                copies.Add(changedCopy.CopyName);
+                if (changedCopy.ClearAllCaches)
+                {
+                    //Evict from all caches
+                    foreach (var workspaceProject in WorkspaceProjectStore.AllProjects)
+                    {
+                        workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
+                    }
+                }
+                else if (WorkspaceProjectStore.TryGetProject(changedCopy.OwnerProject, out var workspaceProject))
+                {
+                    //Evict from target project cache only
+                    workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
+                }
+                else
+                {
+                    //Inconsistent notification from client, the target project could not be found
+                    LoggingSystem.LogMessage(LogLevel.Warning, $"Copy to WorkspaceProject mismatch: could not find project '{changedCopy.OwnerProject}'.");
+                }
+            }
+
+            //Find programs depending on the obsolete copies
+            var dependentPrograms = new HashSet<DocumentContext>();
+            foreach (var openedDocument in _allOpenedDocuments.Values)
+            {
+                var usedCopies = openedDocument.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations;
+                if (usedCopies == null || usedCopies.Count == 0) continue;
+
+                foreach (var usedCopy in usedCopies)
+                {
+                    if (copies.Contains(usedCopy.TextName))
+                    {
+                        dependentPrograms.Add(openedDocument);
+                    }
+                }
+            }
+
+            //Refresh all dependent programs
+            foreach (var dependentProgram in dependentPrograms)
+            {
+                RefreshOpenedDocument(dependentProgram);
+            }
         }
 
         /// <summary>
         /// Refresh One opened document
         /// </summary>
         /// <param name="docContext">The Document context to be refreshed</param>
-        /// <param name="clearCopyCache">true if the imported document cache must be cleared, false otherwise</param>
-        private void RefreshOpenedDocument(DocumentContext docContext, bool clearCopyCache)
+        internal void RefreshOpenedDocument(DocumentContext docContext)
         {
-            if (clearCopyCache)
-                docContext.FileCompiler.CompilationProject.ClearImportedCompilationDocumentsCache();
-
+            //Read latest version of source text from CompilationResults
             var sourceText = new StringBuilder();
             var compilationResults = docContext.FileCompiler?.CompilationResultsForProgram;
             if (compilationResults == null)
@@ -770,26 +821,8 @@ namespace TypeCobol.LanguageServer
             //Disconnect previous LanguageServer connection
             docContext.LanguageServerConnection(false);
 
+            //Bind to new FileCompiler
             BindFileCompilerSourceTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
-        }
-
-        /// <summary>
-        /// Refresh all documents of a WorkspaceProject instance
-        /// </summary>
-        internal void RefreshProjectDocuments(WorkspaceProject project, bool clearCopyCache)
-        {
-            if (clearCopyCache)
-            {
-                project.Project.ClearImportedCompilationDocumentsCache();
-            }
-            if (!project.IsEmpty)
-            {
-                foreach (var docContext in project.OpenedDocuments)
-                {
-                    System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationProject == project.Project);
-                    RefreshOpenedDocument(docContext, false);
-                }
-            }
         }
 
         private void RefreshCustomSymbols()
@@ -810,12 +843,11 @@ namespace TypeCobol.LanguageServer
                 }
                     
             };
-            _customSymbols = null;
+            CustomSymbols = null;
             try
             {
-                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies,
-                    Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, _customSymbols, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, CustomSymbols, DiagnosticsErrorEvent, out _, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
 
                 if (MissingCopiesEvent != null && missingCopies.Count > 0)
                 {
@@ -930,5 +962,66 @@ namespace TypeCobol.LanguageServer
     public class LoadingIssueEvent : EventArgs
     {
         public string Message { get; set; }
+    }
+
+    public class ChangedCopy
+    {
+        private const string ALL_PROJECTS = "$all";
+
+        /// <summary>
+        /// Try parse a file event uri into a ChangedCopy.
+        /// A changed copy respects the format 'projectKey/copyName' where projectKey can be:
+        /// - empty
+        /// - equals to '$all'
+        /// - a valid workspace project identifier
+        /// </summary>
+        /// <param name="fileEventUri">String representing a modified copy</param>
+        /// <param name="changedCopy">[out] new ChangedCopy instance if parsing was successful, null otherwise</param>
+        /// <returns>True if parsing succeeded, False otherwise</returns>
+        public static bool TryParse(string fileEventUri, out ChangedCopy changedCopy)
+        {
+            string[] parts = fileEventUri?.Split('/');
+
+            if (parts == null || parts.Length != 2)
+            {
+                //Null, no slash or more than one slash -> invalid
+                changedCopy = null;
+                return false;
+            }
+
+            //projectKey/copyName, if a second '/' is present, everything after it is ignored
+            string projectKey = parts[0].Trim();
+            string copyName = parts[1].Trim();
+            switch (projectKey)
+            {
+                case "":
+                    //default project
+                    changedCopy = new ChangedCopy(copyName, false, null);
+                    break;
+                case ALL_PROJECTS:
+                    //special syntax, all projects
+                    changedCopy = new ChangedCopy(copyName, true, null);
+                    break;
+                default:
+                    //named project
+                    changedCopy = new ChangedCopy(copyName, false, projectKey);
+                    break;
+            }
+
+            return true;
+        }
+
+        public string CopyName { get; }
+
+        public bool ClearAllCaches { get; }
+
+        public string OwnerProject { get; }
+
+        private ChangedCopy(string copyName, bool clearAllCaches, string ownerProject)
+        {
+            CopyName = copyName;
+            ClearAllCaches = clearAllCaches;
+            OwnerProject = ownerProject;
+        }
     }
 }

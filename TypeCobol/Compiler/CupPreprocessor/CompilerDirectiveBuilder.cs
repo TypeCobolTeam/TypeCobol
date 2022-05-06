@@ -5,6 +5,7 @@ using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupPreprocessor
@@ -98,7 +99,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         CopyTextNameVariations.Add(variation);
                     }
 
-                    if (this.TypeCobolOptions.HasCpyCopy(variation.TextName))
+                    if (this.TypeCobolOptions.IsCpyCopy(variation.TextName))
                     {
                         // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
                         copy.RemoveFirst01Level = true;
