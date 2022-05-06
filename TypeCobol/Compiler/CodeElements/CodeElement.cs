@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
@@ -301,16 +302,24 @@ namespace TypeCobol.Compiler.CodeElements
 
                     foreach (var consumedToken in ConsumedTokens)
                     {
-                        var it = consumedToken as ImportedToken;
-                        CopyDirective copyDirective = it != null ? it.CopyDirective : null;
-                        if (copyDirective != firstSource && consumedToken is ReplacedToken == false)
+                        CopyDirective copyDirective = null;
+                        switch (consumedToken)
+                        {
+                            case MissingToken _:
+                            case ReplacedToken _:
+                                continue;
+                            case ImportedToken importedToken:
+                                copyDirective = importedToken.CopyDirective;
+                                break;
+                        }
+
+                        if (copyDirective != firstSource)
                         {
                             _isAcrossSourceFile = true;
                             _isInsideCopy = true;
                             FirstCopyDirective = copyDirective ?? firstSource;
                             return;
                         }
-                        
                     }
                     _isAcrossSourceFile = false;
                     _isInsideCopy = firstSource != null;
