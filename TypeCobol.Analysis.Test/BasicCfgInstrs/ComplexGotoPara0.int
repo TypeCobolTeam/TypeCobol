@@ -1,0 +1,61 @@
+﻿Entering block : 0
+Leaving block : 0
+Entering block : 1
+DISPLAY 'IN PARA-A'
+GO TO PARA-C
+Leaving block : 1
+Entering block : 4
+DISPLAY 'IN PARA-C '
+Leaving block : 4
+Entering block : 5
+GO TO PARA-E PARA-F PARA-G DEPENDING ON m
+Leaving block : 5
+Entering block : 10
+DISPLAY 'IN PARA-G '
+Leaving block : 10
+Entering block : 11
+GOBACK
+Leaving block : 11
+Entering block : 9
+DISPLAY 'IN PARA-F '
+Leaving block : 9
+Entering block : 10
+DISPLAY 'IN PARA-G '
+Leaving block : 10
+Entering block : 11
+GOBACK
+Leaving block : 11
+Entering block : 8
+DISPLAY 'IN PARA-E '
+Leaving block : 8
+Entering block : 9
+DISPLAY 'IN PARA-F '
+Leaving block : 9
+Entering block : 10
+DISPLAY 'IN PARA-G '
+Leaving block : 10
+Entering block : 11
+GOBACK
+Leaving block : 11
+Entering block : 6
+Leaving block : 6
+Entering block : 7
+DISPLAY 'IN PARA-D '
+Leaving block : 7
+Entering block : 8
+DISPLAY 'IN PARA-E '
+Leaving block : 8
+Entering block : 9
+DISPLAY 'IN PARA-F '
+Leaving block : 9
+Entering block : 10
+DISPLAY 'IN PARA-G '
+Leaving block : 10
+Entering block : 11
+GOBACK
+Leaving block : 11
+
+=======
+METRICS
+=======
+{EdgeCount=12; NodeCount=10; ControlSubgraphCount=0; HighCyclomaticComplexity=4; HighEssentialComplexityPath=4}

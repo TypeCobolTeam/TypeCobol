@@ -1,0 +1,35 @@
+﻿Entering block : 0
+    MOVE 100 TO WS-A
+Leaving block : 0
+Entering block : 1
+    MOVE 200 TO WS-B
+Leaving block : 1
+Entering block : 2
+    MOVE 300 TO WS-C
+Leaving block : 2
+Entering block : 3
+    IF WS-A > ZERO AND WS-B > ZERO THEN
+Entering block : 4
+      DISPLAY 'One of the input amount are positive '
+      DISPLAY 'WS-A value ', WS-A
+      DISPLAY 'WS-B value ', WS-B
+Leaving block : 4
+Entering block : 5
+    ELSE
+      NEXT SENTENCE
+Leaving block : 5
+Entering block : 8
+    DISPLAY 'WS-C value ', WS-C
+Leaving block : 8
+Leaving block : 3
+Entering block : 7
+    ADD WS-A TO WS-C
+Leaving block : 7
+Entering block : 8
+    DISPLAY 'WS-C value ', WS-C
+Leaving block : 8
+
+=======
+METRICS
+=======
+{EdgeCount=8; NodeCount=8; ControlSubgraphCount=1; HighCyclomaticComplexity=2; HighEssentialComplexityPath=1}

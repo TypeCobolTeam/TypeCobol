@@ -1,0 +1,21 @@
+﻿Entering block : 0
+    IF A = 10 THEN
+Entering block : 1
+      DISPLAY "A = 10"
+      DISPLAY "RIGHT ?"
+      IF B = 20 THEN
+Entering block : 2
+         DISPLAY "B = 20"
+         DISPLAY "INSIDE A"
+Leaving block : 2
+Leaving block : 1
+Entering block : 3
+Leaving block : 3
+Leaving block : 0
+Entering block : 4
+Leaving block : 4
+
+=======
+METRICS
+=======
+{EdgeCount=6; NodeCount=5; ControlSubgraphCount=2; HighCyclomaticComplexity=3; HighEssentialComplexityPath=1}

@@ -335,6 +335,9 @@ namespace TypeCobol.Analysis.Test
         public void ComplexGotoPara0() => TestTemplate();
 
         [TestMethod]
+        public void ComplexCyclicGotoPara0() => TestTemplate();
+
+        [TestMethod]
         public void Evaluate0() => TestTemplate();
 
         [TestMethod]

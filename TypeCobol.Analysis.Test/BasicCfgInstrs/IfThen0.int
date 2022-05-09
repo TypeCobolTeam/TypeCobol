@@ -1,0 +1,14 @@
+﻿Entering block : 0
+    IF A = 10 THEN
+Entering block : 1
+      DISPLAY "A = 10"
+      DISPLAY "RIGHT ?"
+Leaving block : 1
+Leaving block : 0
+Entering block : 2
+Leaving block : 2
+
+=======
+METRICS
+=======
+{EdgeCount=3; NodeCount=3; ControlSubgraphCount=1; HighCyclomaticComplexity=2; HighEssentialComplexityPath=1}

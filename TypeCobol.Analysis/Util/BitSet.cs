@@ -176,7 +176,10 @@ namespace TypeCobol.Analysis.Util
             }
             set
             {
-                Set(index);
+                if (value)
+                    Set(index);
+                else
+                    Clear(index);
             }
         }
 

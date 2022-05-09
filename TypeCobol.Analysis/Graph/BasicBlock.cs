@@ -22,7 +22,7 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// The associated multi branch context if any, null otherwise
         /// </summary>
-        public IMultiBranchContext<N,D> Context { get; internal set; }
+        public MultiBranchContext<N,D> Context { get; internal set; }
         /// <summary>
         /// Instructions making up this block.
         /// </summary>
