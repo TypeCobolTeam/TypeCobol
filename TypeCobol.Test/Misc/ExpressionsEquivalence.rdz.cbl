@@ -20,6 +20,7 @@
          88  BLUE          VALUE 'BLUE'.
          88  GREEN         VALUE 'GREEN'.
          88  TURQUOISE     VALUE 'BLUE' 'GREEN'.
+       01 Ptr                  POINTER.
        PROCEDURE DIVISION.
       * RelationalOperator
       * 0 and ConditionOperands and NumericVariableOperands
@@ -48,6 +49,14 @@
            END-IF
       * 6
            IF X not less than Y
+             CONTINUE
+           END-IF
+      * 7
+           IF Ptr = NULL
+             CONTINUE
+           END-IF
+      * 8
+           IF Ptr = NULLS
              CONTINUE
            END-IF
       

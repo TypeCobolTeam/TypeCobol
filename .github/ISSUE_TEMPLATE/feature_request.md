@@ -1,23 +1,33 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
+title: ''
+labels: Enhancement
+assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**What is the current problem**
 
-TypeCobol code that you'd like to write.
+
+Cobol code to illustrate.
 ```cobol
 
 ```
-
 
 
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
 
-Expected generated code:
+Cobol code to illustrate.
 ```cobol
 
 ```
+
+**Technical**
+Will be edited by a team member.
+Implementation details with the chosen solution.
+
+**How to test automatically**
+Will be edited by a team member.
+Only if our current automated tests doesn't handle this.
