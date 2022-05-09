@@ -9,19 +9,19 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
-    /// Represents a storage area in memory where the program can read or write data.
-    /// Most often represented by the "identifier" rule in the Cobol grammar.
+    /// Base class for a storage area in memory where the program can read or write data.
+    /// Used for both SQL and Cobol.
     /// </summary>
-    public abstract class StorageArea : IVisitable
+    public abstract class BaseStorageArea
     {
-        protected StorageArea(StorageAreaKind kind)
+        protected BaseStorageArea(StorageAreaKind kind)
         {
             Kind = kind;
             IsReadFrom = true;
             IsWrittenTo = false;
         }
 
-        public StorageAreaKind Kind { get; protected set;  }
+        public StorageAreaKind Kind { get; protected set; }
 
         [CanBeNull]
         public SymbolReference SymbolReference { get; set; }
@@ -35,6 +35,25 @@ namespace TypeCobol.Compiler.CodeElements
         /// True if this storage area is written to by the program
         /// </summary>
         public bool IsWrittenTo { get; set; }
+
+        public override string ToString()
+        {
+            if (SymbolReference != null) return SymbolReference.ToString();
+            return base.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Represents a storage area in a Cobol program.
+    /// Most often represented by the "identifier" rule in the Cobol grammar.
+    /// </summary>
+    public abstract class StorageArea : BaseStorageArea, IVisitable
+    {
+        protected StorageArea(StorageAreaKind kind)
+            : base(kind)
+        {
+
+        }
 
         /// <summary>
         /// Optional reference modification : enables to delimit only a subset of the original storage area 
@@ -50,23 +69,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public ReferenceModifier ReferenceModifier { get; private set; }
 
-        public virtual bool NeedDeclaration {
-            get { return true; }
-        }
+        public virtual bool NeedDeclaration => true;
 
-        public virtual StorageArea GetStorageAreaThatNeedDeclaration
+        public virtual StorageArea GetStorageAreaThatNeedDeclaration => this;
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
-            get { return this; }
-        }
-
-        public override string ToString()
-        {
-            if (SymbolReference != null) return SymbolReference.ToString();
-            return base.ToString();
-        }
-
-        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SymbolReference,ReferenceModifier);
+            return astVisitor.Visit(this) &&
+                   this.ContinueVisitToChildren(astVisitor, SymbolReference, ReferenceModifier);
         }
     }
 

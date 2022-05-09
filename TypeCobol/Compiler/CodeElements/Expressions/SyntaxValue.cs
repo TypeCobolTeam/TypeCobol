@@ -692,7 +692,9 @@ namespace TypeCobol.Compiler.CodeElements
 		public override bool Value {
 			get {
 				switch (Token.TokenType) {
-					case TokenType.NULL: return true;
+					case TokenType.NULL:
+					case TokenType.NULLS:
+						return true;
 					default: throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
 				}
 			}

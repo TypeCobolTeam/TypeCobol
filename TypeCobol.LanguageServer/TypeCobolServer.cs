@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
 using TypeCobol.Tools;
@@ -172,7 +173,7 @@ namespace TypeCobol.LanguageServer
                 missingCopiesParam.textDocument = textDocument;
 
 #if EUROINFO_RULES
-                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.WorkspaceProjectStore.DefaultWorkspaceProject.Project.CompilationOptions.HasCpyCopy(s));
+                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.Configuration.IsCpyCopy(s));
                 missingCopiesParam.Copies = lookup[false].ToList();
                 missingCopiesParam.CpyCopies = lookup[true].ToList();
 #else
@@ -319,6 +320,25 @@ namespace TypeCobol.LanguageServer
             else
             {
                 OnDidChangeConfiguration(parameters.settings.ToString().Split(' '));
+            }
+        }
+
+        protected override void OnDidChangeWatchedFiles(DidChangeWatchedFilesParams parameters)
+        {
+            if (parameters.changes == null || parameters.changes.Length == 0) return;
+
+            this.Workspace.AcknowledgeCopyChanges(GetChangedCopies().ToList());
+
+            //Convert every file event change into a ChangedCopy object
+            IEnumerable<ChangedCopy> GetChangedCopies()
+            {
+                foreach (var fileEvent in parameters.changes)
+                {
+                    if (ChangedCopy.TryParse(fileEvent.uri, out var changedCopy))
+                    {
+                        yield return changedCopy;
+                    }
+                }
             }
         }
 
