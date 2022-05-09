@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler
         /// Load a Cobol source file in memory
         /// </summary>
         public FileCompiler([NotNull] CompilationProject compilationProject, string fileName, bool isCopyFile)
-            : this(null, fileName, compilationProject.ColumnsLayout, isCopyFile,
+            : this(null, fileName, compilationProject.Format.ColumnsLayout, isCopyFile,
                 compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, null,
                 compilationProject)
         { }

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Analytics;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
@@ -14,6 +13,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
 using TypeCobol.Tools;
@@ -25,10 +25,10 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     class TypeCobolServer : VsCodeProtocol.LanguageServer
     {
-        private readonly Queue<MessageActionWrapper> _messagesActionsQueue;
+        private readonly System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> _messagesActionsQueue;
         protected Dictionary<SignatureInformation, FunctionDeclaration> FunctionDeclarations { get; }
 
-        public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue)
+        public TypeCobolServer(IRPCServer rpcServer, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue)
             : base(rpcServer)
         {
             this._messagesActionsQueue = messagesActionsQueue;
@@ -173,17 +173,9 @@ namespace TypeCobol.LanguageServer
                 missingCopiesParam.textDocument = textDocument;
 
 #if EUROINFO_RULES
-                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
-                //----------------------------------------------------------
-                // We need to review this mechanism with RTC.
-                // Because actually it produces bad results and it will
-                // be clarified with RTC specifications. (see TFS 117645)
-                //----------------------------------------------------------
-                //missingCopiesParam.Copies = lookup[false].ToList();
-                //missingCopiesParam.CpyCopies = lookup[true].ToList();
-                //----------------------------------------------------------
-                missingCopiesParam.Copies = copiesName;
-                missingCopiesParam.CpyCopies = new List<string>();
+                ILookup<bool, string> lookup = copiesName.ToLookup(s => Workspace.Configuration.IsCpyCopy(s));
+                missingCopiesParam.Copies = lookup[false].ToList();
+                missingCopiesParam.CpyCopies = lookup[true].ToList();
 #else
                 missingCopiesParam.Copies = copiesName;
                 missingCopiesParam.CpyCopies = new List<string>();
@@ -244,7 +236,7 @@ namespace TypeCobol.LanguageServer
         protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
-            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var context))
+            if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var context))
             {
                 System.Diagnostics.Debug.Assert(context.FileCompiler != null);
                 //Refresh context
@@ -331,24 +323,54 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
+        protected override void OnDidChangeWatchedFiles(DidChangeWatchedFilesParams parameters)
+        {
+            if (parameters.changes == null || parameters.changes.Length == 0) return;
+
+            this.Workspace.AcknowledgeCopyChanges(GetChangedCopies().ToList());
+
+            //Convert every file event change into a ChangedCopy object
+            IEnumerable<ChangedCopy> GetChangedCopies()
+            {
+                foreach (var fileEvent in parameters.changes)
+                {
+                    if (ChangedCopy.TryParse(fileEvent.uri, out var changedCopy))
+                    {
+                        yield return changedCopy;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Open a Text Document
+        /// </summary>
+        /// <param name="parameters">LSP Open Document Parameters</param>
+        /// <param name="projectKey">The target Project's key</param>
+        /// <param name="copyFolders">List of copy folders associated to the project</param>
+        protected void OpenTextDocument(DidOpenTextDocumentParams parameters, string projectKey, List<string> copyFolders)
         {
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
-            if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocumentContext(docContext.Uri, out _))
+            if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocument(docContext.Uri, out _))
             {
                 //Create a ILanguageServer instance for the document.
-                docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, parameters.textDocument);
+                docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, docContext.TextDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
 
                 string text = parameters.text ?? parameters.textDocument.text;
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, text);
+                this.Workspace.OpenTextDocument(docContext, text, projectKey, copyFolders);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
             }
+        }
+
+        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
+        {
+            OpenTextDocument(parameters, null, null);
         }
 
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
@@ -388,12 +410,12 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        this.Workspace.OpenTextDocument(docContext, contentChange.text);
+                        this.Workspace.BindFileCompilerSourceTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
                         return;
                     }
                     catch (Exception e)
                     {
-                        //Don't rethow an exception on save.
+                        //Don't rethrow an exception on save.
                         RemoteConsole.Error(string.Format("Error while handling notification {0} : {1}",
                             "textDocument/didChange", e.Message));
                         return;
@@ -518,10 +540,8 @@ namespace TypeCobol.LanguageServer
         protected override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
         {
             Uri objUri = new Uri(parameters.textDocument.uri);
-            if (objUri.IsFile)
+            if (objUri.IsFile && this.Workspace.TryCloseSourceFile(objUri))
             {
-                this.Workspace.CloseSourceFile(objUri);
-
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
             }
@@ -952,7 +972,7 @@ namespace TypeCobol.LanguageServer
         {
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
-            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var docContext))
+            if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
                 System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 

@@ -8,7 +8,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     class TypeCobolCustomLanguageServer : TypeCobolServer
     {
-        public TypeCobolCustomLanguageServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue)
+        public TypeCobolCustomLanguageServer(IRPCServer rpcServer, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue)
             : base(rpcServer, messagesActionsQueue)
         {
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
@@ -16,6 +16,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             rpcServer.RegisterRequestMethod(NodeRefreshRequest.Type, ReceivedRefreshNodeRequest);
             rpcServer.RegisterNotificationMethod(SignatureHelpContextNotification.Type, ReceivedSignatureHelpContext);
             rpcServer.RegisterNotificationMethod(ExtractUseCopiesNotification.Type, ReceivedExtractUseCopiesNotification);
+            rpcServer.RegisterNotificationMethod(DidOpenProjectTextDocumentNotification.Type, ReceivedDidOpenProjectTextDocument);
+            rpcServer.RegisterNotificationMethod(DidChangeProjectConfigurationNotification.Type, ReceivedDidChangeProjectConfiguration);
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             try
             {
-                OnDidReceiveNodeRefresh((NodeRefreshParams) parameters);
+                OnDidReceiveNodeRefresh((NodeRefreshParams)parameters);
             }
             catch (Exception e)
             {
@@ -105,7 +107,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             catch (Exception e)
             {
                 NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message};
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
         }
@@ -158,13 +160,50 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
         }
 
+        /// <summary>
+        /// Receive a DidOpenProjectTextDocument notification from the client.
+        /// </summary>
+        /// <param name="notificationType"></param>
+        /// <param name="parameters"></param>
+        private void ReceivedDidOpenProjectTextDocument(NotificationType notificationType, object parameters)
+        {
+            DidOpenProjectTextDocumentParams didOpenParams = (DidOpenProjectTextDocumentParams)parameters;            
+            try
+            {
+                // Open the document in the project whose key is given.
+                OpenTextDocument(didOpenParams, didOpenParams.ProjectKey, didOpenParams.CopyFolders);
+            }
+            catch (Exception e)
+            {
+                RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+            }
+        }
+
+        /// <summary>
+        /// Handle Project Configuration Changed notification from the client
+        /// </summary>
+        /// <param name="notificationType">Notification's type</param>
+        /// <param name="parameters">Notification's parameters</param>
+        private void ReceivedDidChangeProjectConfiguration(NotificationType notificationType, object parameters)
+        {
+            DidChangeProjectConfigurationParams docChangeConfParams = (DidChangeProjectConfigurationParams)parameters;
+            try
+            {
+                this.Workspace.UpdateWorkspaceProjectConfiguration(docChangeConfParams.ProjectKey, docChangeConfParams.CopyFolders);
+            }
+            catch (Exception e)
+            {
+                RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+            }
+        }
+
         protected virtual void OnDidReceiveExtractUseCopies(ExtractUseCopiesParams parameter)
         {
             var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
-                var _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(this.Workspace.Configuration.Copies, this.Workspace.Configuration.Format, null); //Refresh Intrinsics
-                IEnumerable<string> dependenciesMissingCopies = Tools.APIHelpers.Helpers.GetDependenciesMissingCopies(this.Workspace.Configuration, _customSymbols);
+                var intrinsicTable = this.Workspace.CustomSymbols?.EnclosingScope;
+                IEnumerable<string> dependenciesMissingCopies = Tools.APIHelpers.Helpers.GetDependenciesMissingCopies(this.Workspace.Configuration, intrinsicTable);
 
                 List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
                 copiesName.AddRange(dependenciesMissingCopies);

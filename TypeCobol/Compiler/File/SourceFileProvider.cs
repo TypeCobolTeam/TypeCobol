@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.File
@@ -15,12 +12,12 @@ namespace TypeCobol.Compiler.File
         /// <summary>
         /// If text-name is not qualified, a library-name of SYSLIB is assumed.
         /// </summary>
-        public string DEFAULT_LIBRARY_NAME = "SYSLIB";
+        public static readonly string DefaultLibraryName = "SYSLIB";
 
         /// <summary>
         /// Set of Cobol libraries where text files will be searched by name during the compilation process
         /// </summary>
-        public IList<ICobolLibrary> CobolLibraries { get; private set; }
+        public IList<ICobolLibrary> CobolLibraries { get; }
 
         /// <summary>
         /// Use the Add methods to extend the set of Cobol source libraries
@@ -39,7 +36,7 @@ namespace TypeCobol.Compiler.File
         /// <param name="documentFormat">For of the document (RDZ, FreeFormat)</param>
         public LocalDirectoryLibrary AddLocalDirectoryLibrary(string rootPath, bool includeSubdirectories, string[] fileExtensions, [NotNull] DocumentFormat documentFormat)
         {
-            return AddLocalDirectoryLibrary(DEFAULT_LIBRARY_NAME, rootPath, includeSubdirectories, fileExtensions, documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength);
+            return AddLocalDirectoryLibrary(DefaultLibraryName, rootPath, includeSubdirectories, fileExtensions, documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength);
         }
         
         /// <summary>
@@ -53,7 +50,7 @@ namespace TypeCobol.Compiler.File
         /// <param name="fixedLineLength">If the files of this library all have a fixed line length : number of chars found on each line (for example : 80)</param>        
         public LocalDirectoryLibrary AddLocalDirectoryLibrary(string rootPath, bool includeSubdirectories, string[] fileExtensions, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength)
         {
-            return AddLocalDirectoryLibrary(DEFAULT_LIBRARY_NAME, rootPath, includeSubdirectories, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength);
+            return AddLocalDirectoryLibrary(DefaultLibraryName, rootPath, includeSubdirectories, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength);
         }
 
         /// <summary>
@@ -80,7 +77,7 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         public bool ContainsFile(string textName)
         {
-            return ContainsFile(DEFAULT_LIBRARY_NAME, textName);
+            return ContainsFile(DefaultLibraryName, textName);
         }
 
         /// <summary>
@@ -105,7 +102,7 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         public bool TryGetFile(string textName, out CobolFile cobolFile)
         {
-            return TryGetFile(DEFAULT_LIBRARY_NAME, textName, out cobolFile);
+            return TryGetFile(DefaultLibraryName, textName, out cobolFile);
         }
 
         /// <summary>
@@ -115,7 +112,7 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         public bool TryGetFile(string libraryName, string textName, out CobolFile cobolFile)
         {
-            if (libraryName == null) libraryName = DEFAULT_LIBRARY_NAME;
+            if (libraryName == null) libraryName = DefaultLibraryName;
             foreach (ICobolLibrary cobolLibrary in CobolLibraries)
             {
                 if (cobolLibrary.Name == libraryName && cobolLibrary.TryGetFile(textName, out cobolFile))
