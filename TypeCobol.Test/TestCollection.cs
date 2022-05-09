@@ -83,6 +83,13 @@ namespace TypeCobol.Test {
 
         [TestMethod]
         [TestProperty("Time", "fast")]
+        public void CheckSqlScanner()
+        {
+            TestSqlScanner.Demo_CheckSql();
+        }
+
+        [TestMethod]
+        [TestProperty("Time", "fast")]
         public void CheckPreprocessor()
         {
             TestCompilerDirectiveBuilder.CheckBASIS();
