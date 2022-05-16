@@ -92,9 +92,9 @@ namespace TypeCobol.Compiler.Scanner
                     currentIndex = fstCurrentIndex;
                     int endIndex = fstCurrentIndex - 1;
                     Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine)
-                                  {
-                                      LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex))
-                                  };
+                    {
+                        LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex))
+                    };
                     return token;
                 }
             }
@@ -182,9 +182,9 @@ namespace TypeCobol.Compiler.Scanner
                         value = new IntegerLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value);
                     }
                     Token token = new Token(type, startIndex, endIndex, tokensLine)
-                                  {
-                                      LiteralValue = value
-                                  };
+                    {
+                        LiteralValue = value
+                    };
                     return token;
                 }
 
@@ -286,47 +286,72 @@ namespace TypeCobol.Compiler.Scanner
             switch (tokenType)
             {
                 case TokenType.HexadecimalAlphanumericLiteral:
-                {
-                    // p36: Hexadecimal notation for alphanumeric literals
-                    // Hexadecimal digits are characters in the range '0' to '9', 'a' to 'f', and 'A' to 'F',
-                    // inclusive. 
-                    // An even number of hexadecimal digits must be specified.
-                    // Two hexadecimal digits represent one character in a single-byte character
-                    // set (EBCDIC or ASCII). Four hexadecimal digits represent one character in a DBCS
-                    // character set. A string of EBCDIC DBCS characters represented in hexadecimal
-                    // notation must be preceded by the hexadecimal representation of a shift-out control
-                    // character (X'0E') and followed by the hexadecimal representation of a shift-in
-                    // control character (X'0F'). 
-                    // The maximum length of a hexadecimal literal is 320 hexadecimal digits.
-
-                    string hexadecimalChars = sbValue.ToString();
-                    if (hexadecimalChars.Length % 2 != 0)
                     {
-                        tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                        // p36: Hexadecimal notation for alphanumeric literals
+                        // Hexadecimal digits are characters in the range '0' to '9', 'a' to 'f', and 'A' to 'F',
+                        // inclusive. 
+                        // An even number of hexadecimal digits must be specified.
+                        // Two hexadecimal digits represent one character in a single-byte character
+                        // set (EBCDIC or ASCII). Four hexadecimal digits represent one character in a DBCS
+                        // character set. A string of EBCDIC DBCS characters represented in hexadecimal
+                        // notation must be preceded by the hexadecimal representation of a shift-out control
+                        // character (X'0E') and followed by the hexadecimal representation of a shift-in
+                        // control character (X'0F'). 
+                        // The maximum length of a hexadecimal literal is 320 hexadecimal digits.
+
+                        string hexadecimalChars = sbValue.ToString();
+                        if (hexadecimalChars.Length % 2 != 0)
+                        {
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                        }
+                        value = new AlphanumericLiteralTokenValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
+                        break;
                     }
-                    value = new AlphanumericLiteralTokenValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
-                    break;
-                }
                 case TokenType.HexadecimalNationalLiteral:
-                {
-                    // p41: Hexadecimal notation for national literals
-                    // The number of hexadecimal digits must be a multiple of four.
-                    // Each group of four hexadecimal digits represents a single national
-                    // character and must represent a valid code point in UTF-16. 
-
-                    string hexadecimalChars = sbValue.ToString();
-                    if (hexadecimalChars.Length % 4 != 0)
                     {
-                        tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaNationalLiteral, token);
+                        // p41: Hexadecimal notation for national literals
+                        // The number of hexadecimal digits must be a multiple of four.
+                        // Each group of four hexadecimal digits represents a single national
+                        // character and must represent a valid code point in UTF-16. 
+
+                        string hexadecimalChars = sbValue.ToString();
+                        if (hexadecimalChars.Length % 4 != 0)
+                        {
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaNationalLiteral, token);
+                        }
+                        value = new AlphanumericLiteralTokenValue(hexadecimalChars, Encoding.Unicode);
+                        break;
                     }
-                    value = new AlphanumericLiteralTokenValue(hexadecimalChars, Encoding.Unicode);
-                    break;
-                }
+                case TokenType.SQL_BinaryStringLiteral:
+                    {
+                        string binaryDigits = sbValue.ToString();
+                        if (binaryDigits.Length % 2 != 0)
+                        {
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                        }
+
+                        value = new AlphanumericLiteralTokenValue(binaryDigits,
+                            tokensLine.ScanState.EncodingForAlphanumericLiterals);
+
+                        break;
+                    }
+                case TokenType.SQL_GraphicStringLiteral:
+                    {
+                        string graphicString = sbValue.ToString();
+                        //To add conditions of GX and UX
+                        if (graphicString.Length % 4 != 0 || graphicString.Length > 32704)
+                        {
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                        }
+                        value = new AlphanumericLiteralTokenValue(graphicString,
+                            tokensLine.ScanState.EncodingForAlphanumericLiterals);
+
+                        break;
+                    }
                 default:
                     value = new AlphanumericLiteralTokenValue(sbValue.ToString());
                     break;
             }
-
             token.LiteralValue = value;
             return token;
         }

@@ -65,7 +65,7 @@ Line 14[34,34] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
 -- Line 17 --
 [13,13:*]<MultiplyOperator>
 [15,18:from]<SQL_FROM>
-[20,22:any]<ExecStatementText>
+[20,22:any]<SQL_ANY>
 
 -- Line 18 --
 [8,15:end-exec]<END_EXEC>

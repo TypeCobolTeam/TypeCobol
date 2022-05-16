@@ -23,7 +23,8 @@ namespace TypeCobol.Compiler.Scanner
         Alphanumeric,
         Integer,
         Decimal,
-        FloatingPoint
+        FloatingPoint,
+        DecimalFloatingPoint
     }
 
     /// <summary>
@@ -165,6 +166,34 @@ namespace TypeCobol.Compiler.Scanner
         public override string ToString()
         {
             return Mantissa.IntegerValue + "|" +  Mantissa.DecimalDigits + ">" + Mantissa.Number.ToString(NumberFormatInfo.InvariantInfo) + "E" + Exponent.Number + ">" + Number.ToString(NumberFormatInfo.InvariantInfo);
+        }
+    }
+
+    /// <summary>
+    /// Value for token type DecimalFloatingPoint
+    /// </summary>
+    public class DecimalFloatingPointLiteralTokenValue : LiteralTokenValue
+    {
+        public DecimalFloatingPointLiteralTokenValue(string mantissaSign, string mantissaIntegerPart, string mantissaDecimalPart, string exponentSign, string exponentNumber) : base(LiteralTokenValueType.DecimalFloatingPoint)
+        {
+            Mantissa = new DecimalLiteralTokenValue(mantissaSign, mantissaIntegerPart, mantissaDecimalPart);
+            Exponent = new IntegerLiteralTokenValue(exponentSign, exponentNumber);
+
+            Number = Mantissa.Number * Math.Pow(10, (double)Exponent.Number);
+        }
+
+        public DecimalLiteralTokenValue Mantissa { get; }
+
+        public IntegerLiteralTokenValue Exponent { get; }
+
+        public double Number { get; }
+
+        /// <summary>
+        /// For test and debugging purposes
+        /// </summary>
+        public override string ToString()
+        {
+            return Mantissa.IntegerValue + "|" + Mantissa.DecimalDigits + ">" + Mantissa.Number.ToString(NumberFormatInfo.InvariantInfo) + "E" + Exponent.Number + ">" + Number.ToString(NumberFormatInfo.InvariantInfo);
         }
     }
 }

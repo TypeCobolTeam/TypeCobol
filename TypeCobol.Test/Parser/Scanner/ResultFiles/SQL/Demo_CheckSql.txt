@@ -1,2 +1,15 @@
 -- Line 1 --
-[1,6:COMMIT]<SQL_COMMIT>
+[1,6:SELECT]<SQL_SELECT>
+[8,11:-NaN]<SQL_DecimalFloatingPointLiteral>
+-- Line 2 --
+[1,6:SELECT]<SQL_SELECT>
+[8,15:infinity]<SQL_DecimalFloatingPointLiteral>
+-- Line 3 --
+[1,6:SELECT]<SQL_SELECT>
+[8,10:-10]<IntegerLiteral>{-10}
+-- Line 4 --
+[1,6:SELECT]<SQL_SELECT>
+[8,11:Test]<UserDefinedWord>
+-- Line 5 --
+[1,6:SELECT]<SQL_SELECT>
+[8,15+:BX'0000']<AlphanumericLiteral>(',Y,Y){0000}
