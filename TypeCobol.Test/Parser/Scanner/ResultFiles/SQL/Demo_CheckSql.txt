@@ -1,15 +1,21 @@
 -- Line 1 --
 [1,6:SELECT]<SQL_SELECT>
-[8,11:-NaN]<SQL_DecimalFloatingPointLiteral>
+[8,15+:GX'0041']<SQL_GraphicStringLiteral>(',Y,Y)
 -- Line 2 --
 [1,6:SELECT]<SQL_SELECT>
-[8,15:infinity]<SQL_DecimalFloatingPointLiteral>
+[8,23+:UX'004100420043']<SQL_GraphicStringLiteral>(',Y,Y)
 -- Line 3 --
 [1,6:SELECT]<SQL_SELECT>
-[8,10:-10]<IntegerLiteral>{-10}
+[8,11:-NaN]<SQL_DecimalFloatingPointLiteral>
 -- Line 4 --
 [1,6:SELECT]<SQL_SELECT>
-[8,11:Test]<UserDefinedWord>
+[8,15:infinity]<SQL_DecimalFloatingPointLiteral>
 -- Line 5 --
 [1,6:SELECT]<SQL_SELECT>
-[8,15+:BX'0000']<AlphanumericLiteral>(',Y,Y){0000}
+[8,10:-10]<IntegerLiteral>{-10}
+-- Line 6 --
+[1,6:SELECT]<SQL_SELECT>
+[8,11:Test]<UserDefinedWord>
+-- Line 7 --
+[1,6:SELECT]<SQL_SELECT>
+[8,15+:BX'0000']<SQL_BinaryStringLiteral>(',Y,Y)

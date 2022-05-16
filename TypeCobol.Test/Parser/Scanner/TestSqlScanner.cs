@@ -10,8 +10,7 @@ namespace TypeCobol.Test.Parser.Scanner
         public static void Demo_CheckSql()
         {
             string testName = "Demo_CheckSql";
-            ///test for special value in decimalFloatingPointLiteral
-            string[] lines = {"SELECT -NaN", "SELECT infinity", "SELECT -10","SELECT Test","SELECT BX'0000'"};
+            string[] lines = { "SELECT GX'0041'", "SELECT UX'004100420043'", "SELECT -NaN", "SELECT infinity", "SELECT -10", "SELECT Test", "SELECT BX'0000'" };
             var actual = ScannerUtils.ScanSqlLines(lines);
             CheckWithResultFile(actual, testName);
         }

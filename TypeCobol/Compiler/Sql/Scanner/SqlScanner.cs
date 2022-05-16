@@ -58,18 +58,17 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 for (; currentIndex <= lastIndex && IsSqlKeywordPart(line[currentIndex]); currentIndex++)
                 {
                 }
+
                 string tokenText = line.Substring(startIndex, currentIndex - startIndex);
                 //Try to match keyword text
-                var tryToGetTokenType = TokenUtils.TryToGetSqlKeywordTokenTypeFromTokenString(tokenText, out TokenType tokenType);
-                if(tryToGetTokenType)
+                var tryToGetTokenType =
+                    TokenUtils.TryToGetSqlKeywordTokenTypeFromTokenString(tokenText, out TokenType tokenType);
+                if (tryToGetTokenType)
                 {
                     return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
                 }
-                //else if (!Char.IsDigit(line[lastIndex]))
-                //{
-                //    currentIndex = currentIndex - 2;
-                //}
             }
+
             switch (line[startIndex])
             {
                 case ' ':
@@ -95,7 +94,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 case '7':
                 case '8':
                 case '9':
-                    return ScanSqlNumericLiteral(startIndex,false);
+                    return ScanSqlNumericLiteral(startIndex, false);
                 case '+':
                     return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PlusOperator,
                         MessageCode.ImplementationError, false);
@@ -105,21 +104,22 @@ namespace TypeCobol.Compiler.Sql.Scanner
 
                 case 'I':
                 case 'N':
-                case 'S': 
+                case 'S':
                 case 'i':
                 case 'n':
                 case 's':
-                    if (TryScanDecimalFloatingPointSpecialValue(startIndex,false,
+                    if (TryScanDecimalFloatingPointSpecialValue(startIndex, false,
                             out var tokenValue))
                     {
-                        Token decimalFloatingPointSpecialValueToken = new Token(TokenType.SQL_DecimalFloatingPointLiteral,
+                        Token decimalFloatingPointSpecialValueToken = new Token(
+                            TokenType.SQL_DecimalFloatingPointLiteral,
                             startIndex, currentIndex - 1, tokensLine)
                         {
                             LiteralValue = tokenValue
                         };
                         return decimalFloatingPointSpecialValueToken;
                     }
-                    
+
                     return ScanKeywordOrUserDefinedWord(startIndex);
                 case '\'':
                 case '"':
@@ -136,6 +136,15 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     }
                 case 'B':
                 case 'b':
+                    if ((startIndex < lastIndex - 2) && (line[startIndex + 1] == 'x' || line[startIndex + 1] == 'X') &&
+                        (line[startIndex + 2] == '\'' || line[startIndex + 2] == '"'))
+                    {
+                        return ScanAlphanumericLiteral(startIndex, TokenType.SQL_BinaryStringLiteral, null);
+                    }
+                    else
+                    {
+                        return ScanKeywordOrUserDefinedWord(startIndex);
+                    }
                 case 'U':
                 case 'u':
                 case 'G':
@@ -143,7 +152,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     if ((startIndex < lastIndex - 2) && (line[startIndex + 1] == 'x' || line[startIndex + 1] == 'X') &&
                         (line[startIndex + 2] == '\'' || line[startIndex + 2] == '"'))
                     {
-                        return ScanAlphanumericLiteral(startIndex, TokenType.AlphanumericLiteral, null);
+                        return ScanAlphanumericLiteral(startIndex, TokenType.SQL_GraphicStringLiteral, null);
                     }
                     else
                     {
@@ -155,10 +164,11 @@ namespace TypeCobol.Compiler.Sql.Scanner
             }
         }
 
-        private Token ScanSqlNumericLiteral(int startIndex,bool isNegative)
+        private Token ScanSqlNumericLiteral(int startIndex, bool isNegative)
         {
             var tryScanDecimalFloatingPointSpecialValue =
-                TryScanDecimalFloatingPointSpecialValue(startIndex, isNegative, out var decimalFloatingPointLiteralTokenValue);
+                TryScanDecimalFloatingPointSpecialValue(startIndex, isNegative,
+                    out var decimalFloatingPointLiteralTokenValue);
             if (tryScanDecimalFloatingPointSpecialValue == true)
             {
                 Token decimalFloatingPointSpecialValueToken = new Token(TokenType.SQL_DecimalFloatingPointLiteral,
@@ -246,7 +256,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
 
         }
 
-        public bool TryScanDecimalFloatingPointSpecialValue(int startIndex,bool isNegative,
+        public bool TryScanDecimalFloatingPointSpecialValue(int startIndex, bool isNegative,
             out DecimalFloatingPointLiteralTokenValue decimalFloatingPointLiteralTokenValue)
 
         {
@@ -261,12 +271,14 @@ namespace TypeCobol.Compiler.Sql.Scanner
             var tryToGetValue = SpecialValues.TryGetValue(text, out var outPut);
             if (tryToGetValue != true) return false;
             //negative
-            decimalFloatingPointLiteralTokenValue.SpecialValue = new DecimalFloatingPointSpecialValue(isNegative, outPut);
+            decimalFloatingPointLiteralTokenValue.SpecialValue =
+                new DecimalFloatingPointSpecialValue(isNegative, outPut);
             return true;
 
         }
 
-        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterIsMandatory = true)
+        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType,
+            MessageCode messageCode, bool spaceAfterIsMandatory = true)
         {
             if (currentIndex == lastIndex)
             {
@@ -274,7 +286,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 currentIndex++;
                 return new Token(tokenType, startIndex, currentIndex - 1, true, tokensLine);
             }
-            else if ((currentIndex + 1)<lastIndex && line[currentIndex + 1] == ' ')
+            else if ((currentIndex + 1) < lastIndex && line[currentIndex + 1] == ' ')
             {
                 // consume one char and consume the space char
                 currentIndex += 2;
@@ -282,11 +294,11 @@ namespace TypeCobol.Compiler.Sql.Scanner
             }
             else if ((currentIndex + 1) < lastIndex && Char.IsDigit(line[currentIndex + 1]))
             {
-                return ScanSqlNumericLiteral(startIndex,false);
+                return ScanSqlNumericLiteral(startIndex, false);
             }
             else if ((tokenType == TokenType.PlusOperator || tokenType == TokenType.MinusOperator))
             {
-                return ScanSqlNumericLiteral(startIndex,tokenType==TokenType.MinusOperator);
+                return ScanSqlNumericLiteral(startIndex, tokenType == TokenType.MinusOperator);
             }
             else
             {
@@ -299,6 +311,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     tokensLine.AddDiagnostic(messageCode, invalidToken, line[currentIndex], currentIndex + 1);
                     return invalidToken;
                 }
+
                 return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
             }
         }
