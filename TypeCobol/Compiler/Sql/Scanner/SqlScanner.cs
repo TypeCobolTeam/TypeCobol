@@ -16,13 +16,9 @@ namespace TypeCobol.Compiler.Sql.Scanner
             new Dictionary<string, DecimalFloatingPointSpecialValueType>(StringComparer.OrdinalIgnoreCase)
             {
                 {"NaN", DecimalFloatingPointSpecialValueType.NaN},
-                {"-NaN", DecimalFloatingPointSpecialValueType.NaN},
                 {"SNaN", DecimalFloatingPointSpecialValueType.SNaN},
-                {"-SNaN", DecimalFloatingPointSpecialValueType.SNaN},
                 {"Infinity", DecimalFloatingPointSpecialValueType.Infinity},
-                {"-Infinity", DecimalFloatingPointSpecialValueType.Infinity},
-                {"Inf", DecimalFloatingPointSpecialValueType.Infinity},
-                {"-Inf", DecimalFloatingPointSpecialValueType.Infinity}
+                {"Inf", DecimalFloatingPointSpecialValueType.Infinity}
             };
 
         /// <summary>
@@ -195,7 +191,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
             void CheckIntegerLiteral()
             {
                 Debug.Assert(token.LiteralValue is IntegerLiteralTokenValue);
-                var literalValue = (IntegerLiteralTokenValue) token.LiteralValue;
+                var literalValue = (IntegerLiteralTokenValue)token.LiteralValue;
                 int literalValueLength = literalValue.Number.ToString().Length -
                                          (literalValue.HasSign == true ? 1 : 0);
                 ;
@@ -211,7 +207,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
             void CheckFloatingPointLiteral()
             {
                 Debug.Assert(token.LiteralValue is FloatingPointLiteralTokenValue);
-                var literalValue = (FloatingPointLiteralTokenValue) token.LiteralValue;
+                var literalValue = (FloatingPointLiteralTokenValue)token.LiteralValue;
 
                 //Check exponent length
                 var exponent = literalValue.Exponent.Number;
@@ -238,7 +234,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
             void CheckDecimalFloatingPointLiteral()
             {
                 Debug.Assert(token.LiteralValue is DecimalFloatingPointLiteralTokenValue);
-                var literalValue = (DecimalFloatingPointLiteralTokenValue) token.LiteralValue;
+                var literalValue = (DecimalFloatingPointLiteralTokenValue)token.LiteralValue;
 
                 //Check exponent length
                 var exponent = literalValue.NumericConstant.Exponent.Number;
@@ -267,7 +263,8 @@ namespace TypeCobol.Compiler.Sql.Scanner
             {
             }
 
-            string text = line.Substring(startIndex, currentIndex - startIndex);
+            string text = null;
+            text = isNegative ? line.Substring(startIndex + 1, currentIndex - startIndex - 1) : line.Substring(startIndex, currentIndex - startIndex);
             var tryToGetValue = SpecialValues.TryGetValue(text, out var outPut);
             if (tryToGetValue != true) return false;
             //negative
