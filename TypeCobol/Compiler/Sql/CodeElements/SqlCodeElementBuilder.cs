@@ -262,5 +262,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+
+        private DatetimeConstant CreateDatetimeConstant(CodeElementsParser.Datetime_constantContext context)
+        {
+            if (context.SQL_DATE()!=null)
+            {
+                return new DatetimeConstant(context.SQL_DATE() as Token, DatetimeConstantKind.Date, context.SQL_DATE() as Token);
+            }
+            else if (context.SQL_TIME() != null)
+            {
+                return new DatetimeConstant(context.SQL_TIME() as Token,DatetimeConstantKind.Time, context.SQL_TIME() as Token);
+            }
+            else if (context.SQL_TIMESTAMP()!= null)
+            {
+                return new DatetimeConstant(context.SQL_TIMESTAMP() as Token,DatetimeConstantKind.Timestamp, context.SQL_TIMESTAMP() as Token);
+            }
+            return null;
+        }
     }
 }

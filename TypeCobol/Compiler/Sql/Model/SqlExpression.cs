@@ -22,6 +22,11 @@ public enum SqlConstantType
 
 public class SqlConstant : SqlExpression
 {
+    public SqlConstant(Token literal)
+    {
+        Literal = literal;
+    }
+
     public virtual SqlConstantType Type { get; } //based on Literal.TokenType, can be any SqlConstantType except Datetime
 
     /*
@@ -50,6 +55,12 @@ public enum DatetimeConstantKind
 
 public class DatetimeConstant : SqlConstant
 {
+    public DatetimeConstant(Token literal,DatetimeConstantKind kind, Token tokenKind) : base(literal)
+    {
+        Kind = kind;
+        TokenKind = tokenKind;
+    }
+
     public override SqlConstantType Type => SqlConstantType.Datetime;
 
     public DatetimeConstantKind Kind { get; } //based on TokenKind.TokenType
