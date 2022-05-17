@@ -338,11 +338,8 @@ namespace TypeCobol.Compiler.Parser
                                     MessageCode.TypeCobolParserLimitation);
                             }
 
-                            if (processedTokensDocument.TextSourceInfo.ColumnsLayout == ColumnsLayout.CobolReferenceFormat)
-                            {
-                                CodeElementWithTokensChecker.CheckAreaOfDeclaration(codeElement);
-                            }
-                          
+                            CodeElementWithTokensChecker.CheckAreaOfDeclaration(codeElement);
+
                             // Add code element to the list                    
                             codeElementsLine.AddCodeElement(codeElement);
                         }

@@ -5,6 +5,6 @@
        GLOBAL-STORAGE SECTION.
        01 myVar PIC X.       
        PROCEDURE DIVISION.
-            GOBACK
+           GOBACK
             .
        END PROGRAM tcGlobalStorage.

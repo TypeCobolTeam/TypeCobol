@@ -1,4 +1,4 @@
-      *TypeCobol_Version:v0.0.0-local
+      *TypeCobol_Version:[[ParserVersion]]
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
 
