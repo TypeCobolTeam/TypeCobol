@@ -85,7 +85,7 @@ namespace TypeCobol.Test {
         [TestProperty("Time", "fast")]
         public void CheckSqlScanner()
         {
-            TestSqlScanner.Demo_CheckSql();
+            TestSqlScanner.CheckSqlConstants();
         }
 
         [TestMethod]

@@ -8303,7 +8303,7 @@ new_column_name: UserDefinedWord;
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
-datetime_constant: (date SQL_DATE) | (time SQL_TIME) | (timestamp SQL_TIMESTAMP);
+datetime_constant: (date | time | timestamp) AlphanumericLiteral;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------

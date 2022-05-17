@@ -265,17 +265,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private DatetimeConstant CreateDatetimeConstant(CodeElementsParser.Datetime_constantContext context)
         {
-            if (context.SQL_DATE()!=null)
+            if (context.date() != null)
             {
-                return new DatetimeConstant(context.SQL_DATE() as Token, DatetimeConstantKind.Date, context.SQL_DATE() as Token);
+                return new DatetimeConstant(context.AlphanumericLiteral() as Token ,SqlConstantType.Datetime,context.date().KeywordDATE as Token) ;
             }
-            else if (context.SQL_TIME() != null)
+            else if (context.time()!=null)
             {
-                return new DatetimeConstant(context.SQL_TIME() as Token,DatetimeConstantKind.Time, context.SQL_TIME() as Token);
+                return new DatetimeConstant(context.AlphanumericLiteral() as Token, SqlConstantType.Datetime, context.time().KeywordTIME as Token);
             }
-            else if (context.SQL_TIMESTAMP()!= null)
+            else if (context.timestamp()!=null)
             {
-                return new DatetimeConstant(context.SQL_TIMESTAMP() as Token,DatetimeConstantKind.Timestamp, context.SQL_TIMESTAMP() as Token);
+                return new DatetimeConstant(context.AlphanumericLiteral() as Token, SqlConstantType.Datetime, context.timestamp().KeywordTIMESTAMP as Token);
             }
             return null;
         }

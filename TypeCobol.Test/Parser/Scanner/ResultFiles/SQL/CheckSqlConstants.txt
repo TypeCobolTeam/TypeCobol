@@ -1,0 +1,37 @@
+-- Line 1 --
+[1,4:NULL]<SQL_NULL>
+-- Line 2 --
+[1,6:025.50]<DecimalLiteral>{2550|2>25.5}
+-- Line 3 --
+[1,21:1228512541.34578E0222]<SQL_DecimalFloatingPointLiteral>
+-- Line 4 --
+[1,5:5.5E2]<FloatingPointLiteral>{55|1>5.5E2>550}
+-- Line 5 --
+[1,6:SELECT]<SQL_SELECT>
+[8,10:200]<IntegerLiteral>{200}
+-- Line 6 --
+[1,6:SELECT]<SQL_SELECT>
+[8,10:-10]<IntegerLiteral>{-10}
+-- Line 7 --
+[1,6:SELECT]<SQL_SELECT>
+[8,11:Test]<UserDefinedWord>
+-- Line 8 --
+[1,6:SELECT]<SQL_SELECT>
+[8,11:-NaN]<SQL_DecimalFloatingPointLiteral>
+-- Line 9 --
+[1,6:SELECT]<SQL_SELECT>
+[8,15:infinity]<SQL_DecimalFloatingPointLiteral>
+-- Line 10 --
+[1,6:SELECT]<SQL_SELECT>
+[8,14+:GX'041']<SQL_GraphicStringLiteral>(',Y,Y)
+Line 0[8,14] <50, Error, Syntax> - The number of hexadecimal digits in graphic-string constant must not exceed 32704. Each group of 4 digits represents a single UTF-16 graphic character
+-- Line 11 --
+[1,6:SELECT]<SQL_SELECT>
+[8,23+:UX'004100420043']<SQL_GraphicStringLiteral>(',Y,Y)
+-- Line 12 --
+[1,6:SELECT]<SQL_SELECT>
+[8,12+:BX'1']<SQL_BinaryStringLiteral>(',Y,Y)
+Line 0[8,12] <49, Error, Syntax> - The number of hexadecimal digits in binary-string constant must not exceed 32704
+-- Line 13 --
+[1,4:DATE]<UserDefinedWord>
+[6,17:'10/08/1998']<AlphanumericLiteral>(',Y,Y){10/08/1998}

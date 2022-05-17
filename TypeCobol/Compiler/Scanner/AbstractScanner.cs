@@ -282,7 +282,7 @@ namespace TypeCobol.Compiler.Scanner
             Token token = new Token(tokenType, startIndex, endIndex, usingVirtualSpaceAtEndOfLine, tokensLine, true, closingDelimiterFound, delimiter);
 
             // compute the value of the literal, depending on the exact literal type            
-            AlphanumericLiteralTokenValue value=null;
+            AlphanumericLiteralTokenValue value;
             switch (tokenType)
             {
                 case TokenType.HexadecimalAlphanumericLiteral:
@@ -325,9 +325,9 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.SQL_BinaryStringLiteral:
                     {
                         string binaryDigits = sbValue.ToString();
-                        if (binaryDigits.Length % 2 != 0)
+                        if (binaryDigits.Length % 2 != 0 || binaryDigits.Length > 32704)
                         {
-                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInBinaryStringLiteral, token);
                         }
 
                         value = new AlphanumericLiteralTokenValue(binaryDigits,
@@ -342,20 +342,18 @@ namespace TypeCobol.Compiler.Scanner
                         {
                             if (graphicString.Length % 4 != 0 || graphicString.Length > 32704)
                             {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                                tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
                             }
-                            value = new AlphanumericLiteralTokenValue(graphicString,
-                                tokensLine.ScanState.EncodingForAlphanumericLiterals);
                         }
                         else if (line[startIndex] == 'G' || line[startIndex] == 'g')
                         {
                             if (graphicString.Length % 4 != 0 )
                             {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
+                                tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
                             }
-                            value = new AlphanumericLiteralTokenValue(graphicString,
-                                tokensLine.ScanState.EncodingForAlphanumericLiterals);
                         }
+                        value = new AlphanumericLiteralTokenValue(graphicString,
+                            tokensLine.ScanState.EncodingForAlphanumericLiterals);
                         break;
                     }
                 default:

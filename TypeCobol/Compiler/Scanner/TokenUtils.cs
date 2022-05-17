@@ -120,18 +120,6 @@ namespace TypeCobol.Compiler.Scanner
             return TokenType.UserDefinedWord;
         }
 
-        
-        public static bool TryToGetSqlKeywordTokenTypeFromTokenString(string tokenString, out TokenType type)
-        {
-            if (_SqlTokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
-            {
-                type = tokenType;
-                return true;
-            }
-
-            type = TokenType.InvalidToken;
-            return false;
-        }
         // Formalized Comments only to avoid Formalized Comments tokens detection in Cobol and Cobol tokens in Formalized Comments
         internal static TokenType GetFormalComTokenTypeFromTokenString(string tokenString)
         {

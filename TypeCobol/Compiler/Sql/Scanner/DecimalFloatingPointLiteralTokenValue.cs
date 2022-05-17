@@ -34,10 +34,15 @@ namespace TypeCobol.Compiler.Sql.Scanner
         public FloatingPointLiteralTokenValue NumericConstant { get; }
 
 
-        public DecimalFloatingPointLiteralTokenValue(LiteralTokenValueType type, FloatingPointLiteralTokenValue numericConstant) : base(type)
+        public DecimalFloatingPointLiteralTokenValue(FloatingPointLiteralTokenValue numericConstant) : base(LiteralTokenValueType.DecimalFloatingPoint)
         {
             NumericConstant = numericConstant;
         }
+        public DecimalFloatingPointLiteralTokenValue(bool isNegative, DecimalFloatingPointSpecialValueType decimalFloatingPointSpecialValue) : base(LiteralTokenValueType.DecimalFloatingPoint)
+        {
+            SpecialValue = new DecimalFloatingPointSpecialValue(isNegative, decimalFloatingPointSpecialValue);
+        }
+
     }
 
 }

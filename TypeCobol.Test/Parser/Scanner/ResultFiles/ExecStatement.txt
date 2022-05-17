@@ -39,17 +39,22 @@
 
 -- Line 8 --
 [4,4:c]<UserDefinedWord>
-[5,29:'est la fin.END-EXEC ici.]<AlphanumericLiteral>(',Y,N){est la fin.END-EXEC ici.}
-Line 0[0,0] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+[6,8:est]<UserDefinedWord>
+[10,11:la]<UserDefinedWord>
+[13,15:fin]<UserDefinedWord>
+[16,16:.]<PeriodSeparator>
+[17,24:END-EXEC]<END_EXEC>
+[26,28:ici]<UserDefinedWord>
+[29,29+:.]<PeriodSeparator>
 
 -- Line 9 --
-[2,5:EXEC]<UserDefinedWord>
+[2,5:EXEC]<EXEC>
 
 -- Line 10 --
-[2,4:SQL]<UserDefinedWord>
+[2,4:SQL]<ExecTranslatorName>
 
 -- Line 11 --
-[1,7:INCLUDE]<UserDefinedWord>
+[1,7:INCLUDE]<EXEC_SQL>
 [9,15:YPPRCGF]<UserDefinedWord>
 
 -- Line 12 --

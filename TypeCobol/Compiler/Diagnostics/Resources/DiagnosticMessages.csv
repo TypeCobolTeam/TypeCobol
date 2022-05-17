@@ -46,3 +46,5 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 7;45;2;Info: {0};0;0;
 8;46;1;CodeAnalysis: analyzer '{0}' failed. Exception message is '{1}';0;0;
 4;48;1;{0}-only feature: {1};0;0;
+4;49;1;The number of hexadecimal digits in binary-string constant must not exceed 32704;0;0;Page
+4;50;1;The number of hexadecimal digits in graphic-string constant must not exceed 32704. Each group of 4 digits represents a single UTF-16 graphic character;0;0;Page
