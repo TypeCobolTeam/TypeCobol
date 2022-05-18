@@ -264,13 +264,8 @@ namespace TypeCobol.Compiler.Sql.Scanner
             var tryToGetValue = _SpecialValues.TryGetValue(text, out var outPut);
             if (tryToGetValue != true) return false;
             //negative
-            decimalFloatingPointLiteralTokenValue =
-                new DecimalFloatingPointLiteralTokenValue(hasExplicitSign,outPut)
-                    {
-                        SpecialValue = new DecimalFloatingPointSpecialValue(hasExplicitSign, outPut)
-                    };
+            decimalFloatingPointLiteralTokenValue = new DecimalFloatingPointLiteralTokenValue(new DecimalFloatingPointSpecialValue(hasExplicitSign, outPut));
             return true;
-
         }
 
         private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType,

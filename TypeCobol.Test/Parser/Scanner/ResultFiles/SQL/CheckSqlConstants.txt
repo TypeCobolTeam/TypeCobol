@@ -24,14 +24,14 @@
 -- Line 10 --
 [1,6:SELECT]<SQL_SELECT>
 [8,14+:GX'041']<SQL_GraphicStringLiteral>(',Y,Y)
-Line 0[8,14] <50, Error, Syntax> - The number of hexadecimal digits in graphic-string constant must not exceed 32704. Each group of 4 digits represents a single UTF-16 graphic character
+Line 0[8,14] <50, Error, Syntax> - The number of hexadecimal digits in graphic-string constant must be a multiple of 4 and must not exceed 32704.
 -- Line 11 --
 [1,6:SELECT]<SQL_SELECT>
 [8,23+:UX'004100420043']<SQL_GraphicStringLiteral>(',Y,Y)
 -- Line 12 --
 [1,6:SELECT]<SQL_SELECT>
 [8,12+:BX'1']<SQL_BinaryStringLiteral>(',Y,Y)
-Line 0[8,12] <49, Error, Syntax> - The number of hexadecimal digits in binary-string constant must not exceed 32704
+Line 0[8,12] <49, Error, Syntax> - The number of hexadecimal digits in binary-string constant must be even and must not exceed 32704.
 -- Line 13 --
 [1,4:DATE]<UserDefinedWord>
 [6,17:'10/08/1998']<AlphanumericLiteral>(',Y,Y){10/08/1998}

@@ -338,22 +338,15 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.SQL_GraphicStringLiteral:
                     {
                         string graphicString = sbValue.ToString();
-                        if (line[startIndex] == 'U' || line[startIndex] == 'u')
+                        if (graphicString.Length % 4 != 0)
                         {
-                            if (graphicString.Length % 4 != 0 || graphicString.Length > 32704)
-                            {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
-                            }
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
                         }
-                        else if (line[startIndex] == 'G' || line[startIndex] == 'g')
+                        if ((line[startIndex] == 'U' || line[startIndex] == 'u')&& graphicString.Length > 32704)
                         {
-                            if (graphicString.Length % 4 != 0 )
-                            {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
-                            }
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
                         }
-                        value = new AlphanumericLiteralTokenValue(graphicString,
-                            tokensLine.ScanState.EncodingForAlphanumericLiterals);
+                        value = new AlphanumericLiteralTokenValue(graphicString, tokensLine.ScanState.EncodingForAlphanumericLiterals);
                         break;
                     }
                 default:

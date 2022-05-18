@@ -23,12 +23,32 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class SqlConstant : SqlExpression
     {
-        public SqlConstant(Token literal, SqlConstantType type)
+        public SqlConstant(Token literal)
         {
             Literal = literal;
-            if (type != SqlConstantType.Datetime)
+            switch (literal.TokenType)
             {
-                Type = type;
+                case (TokenType.SQL_NULL):
+                    Type = SqlConstantType.Null;
+                    break;
+                case (TokenType.IntegerLiteral):
+                    Type = SqlConstantType.Integer;
+                    break;
+                case (TokenType.DecimalLiteral):
+                    Type = SqlConstantType.Decimal;
+                    break;
+                case (TokenType.FloatingPointLiteral):
+                    Type = SqlConstantType.FloatingPoint;
+                    break;
+                case (TokenType.SQL_DecimalFloatingPointLiteral):
+                    Type = SqlConstantType.DecimalFloatingPoint;
+                    break;
+                case (TokenType.SQL_BinaryStringLiteral):
+                    Type = SqlConstantType.BinaryString;
+                    break;
+                case (TokenType.SQL_GraphicStringLiteral):
+                    Type = SqlConstantType.GraphicString;
+                    break;
             }
         }
 
@@ -61,27 +81,17 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class DatetimeConstant : SqlConstant
     {
-        public DatetimeConstant(Token literal, SqlConstantType type, Token tokenKind) : base(literal,type)
+        public DatetimeConstant(Token literal, DatetimeConstantKind kind, Token tokenKind) : base(literal)
         {
-            switch (tokenKind.TokenType)
-            {
-                case (TokenType.SQL_CURRENT_DATE):
-                    Kind = DatetimeConstantKind.Date;
-                    break;
-                case (TokenType.SQL_CURRENT_TIME):
-                    Kind = DatetimeConstantKind.Time;
-                    break;
-                case (TokenType.SQL_CURRENT_TIMESTAMP):
-                    Kind = DatetimeConstantKind.Timestamp;
-                    break;
-            }
             TokenKind = tokenKind;
+            Kind = kind;
+
         }
 
         public override SqlConstantType Type => SqlConstantType.Datetime;
 
-        public DatetimeConstantKind Kind { get; } //based on TokenKind.TokenType
+        public DatetimeConstantKind Kind { get; } 
 
-        public Token TokenKind { get; } //TokenKind.TokenType = SQL_DATE | SQL_TIME | SQL_TIMESTAMP
+        public Token TokenKind { get; } 
     }
 }

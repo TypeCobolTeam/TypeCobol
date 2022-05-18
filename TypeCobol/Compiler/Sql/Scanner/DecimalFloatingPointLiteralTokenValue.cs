@@ -38,9 +38,9 @@ namespace TypeCobol.Compiler.Sql.Scanner
         {
             NumericConstant = numericConstant;
         }
-        public DecimalFloatingPointLiteralTokenValue(bool isNegative, DecimalFloatingPointSpecialValueType decimalFloatingPointSpecialValue) : base(LiteralTokenValueType.DecimalFloatingPoint)
+        public DecimalFloatingPointLiteralTokenValue(DecimalFloatingPointSpecialValue decimalFloatingPointSpecialValue) : base(LiteralTokenValueType.DecimalFloatingPoint)
         {
-            SpecialValue = new DecimalFloatingPointSpecialValue(isNegative, decimalFloatingPointSpecialValue);
+            SpecialValue = decimalFloatingPointSpecialValue;
         }
 
     }
