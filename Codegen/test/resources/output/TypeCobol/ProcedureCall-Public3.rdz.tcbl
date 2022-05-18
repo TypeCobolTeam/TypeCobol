@@ -1,6 +1,6 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+      
        DATA DIVISION.
        Working-STORAGE SECTION.
        01 TC-Callee pic X(08) value 'CALLEE'.
@@ -11,7 +11,7 @@
                             'U' thru X'FF'.
 
                                
-
+      
       *01  somedate     TYPE Date.
        01 somedate.
            02 YYYY PIC 9(4).
@@ -56,24 +56,24 @@
           05 TC-Callee-d0a59141-Idt PIC X(08).
           05 TC-Callee-d0a59141 PROCEDURE-POINTER.
 
-
+      
        PROCEDURE DIVISION.
       *
            PERFORM TC-INITIALIZATIONS
 
                           
-
+      
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
-
+      
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
-      *   OUTPUT okay          TYPE Bool
+      *    OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
-
+      
            move someformat to realformat
            .
        TRAITEMENT.
@@ -138,23 +138,23 @@
                                  realformat
            end-call
                                                   
-
-
+      
+      
       *OK  call check of PGM1
-      *   call check input somedate
-          CALL 'a0508f35' USING
+      *    call check input somedate
+           CALL 'a0508f35' USING
                                  somedate
            end-call
-                                   
+                                    
       *OK 
-      *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+      *    call PGM1::check input somedate
+           CALL 'a0508f35' USING
                                  somedate
            end-call
-                                         
-      *OK 
-      *   call Callee::check input somedate
-          
+                                          
+      *OK  
+      *    call Callee::check input somedate
+           
            IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -163,10 +163,10 @@
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
-                                           
+                                            
       *OK 
-      *   call Callee::check2 input somedate
-          
+      *    call Callee::check2 input somedate
+           
            IF ADDRESS OF TC-Callee-d0a59141-Item = NULL
              OR TC-Callee-d0a59141-Idt not = 'd0a59141'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -175,7 +175,7 @@
            CALL TC-Callee-d0a59141 USING
                                  somedate
            end-call
-                                            
+                                             
         .
       *=================================================================
        TC-INITIALIZATIONS.
@@ -216,16 +216,16 @@
             END-PERFORM
             .
 
-
+      
        END PROGRAM PGM1.
-
+      
       *Callee contains public procedure
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
-
+      
        DATA DIVISION.
        working-storage section.
-
+      
       *01  somedate     TYPE Date.
        01 somedate.
            02 YYYY PIC 9(4).
@@ -269,7 +269,7 @@
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 
-
+      
        PROCEDURE DIVISION USING PntTab-Pnt.
                           
       *
@@ -299,27 +299,27 @@
                           
        
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
-
+      
       *declare procedure check2 public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *declare procedure check2 public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *         myDate2       type date
       *  .
-
+      
       *DECLARE PROCEDURE MyPublicProcedure PUBLIC
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
-      *   OUTPUT okay          TYPE Bool
+      *    OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
        END PROGRAM Callee.
       *
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -343,7 +343,7 @@
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
-      *   OUTPUT okay          TYPE Bool
+      *    OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
       *_________________________________________________________________
@@ -378,7 +378,7 @@
        END PROGRAM fde394fb.
       *
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -400,7 +400,7 @@
        END PROGRAM ca0ab46c.
       *
       *declare procedure check2 public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -422,7 +422,7 @@
        END PROGRAM d0a59141.
       *
       *declare procedure check2 public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *         myDate2       type date
       *  .
       *_________________________________________________________________
@@ -452,7 +452,7 @@
       *DECLARE PROCEDURE MyPublicProcedure PUBLIC
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
-      *   OUTPUT okay          TYPE Bool
+      *    OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
       *_________________________________________________________________

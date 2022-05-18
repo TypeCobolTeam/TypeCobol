@@ -1,9 +1,9 @@
 ﻿      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. SetUnsafe.
-
+      
        DATA DIVISION.
-
+      
        WORKING-STORAGE SECTION.
       *01 W-myDate TYPE DATE.
        01 W-myDate.
@@ -18,9 +18,9 @@
            02 DD PIC 9(2).
                               
        01 W-PicVar PIC X(10).
-
+      
        01 myPointer POINTER.
-
+      
        LINKAGE SECTION.
        01 L-PICVar PIC X(10).
       *01 L-Date TYPE DATE.
@@ -29,17 +29,17 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                            
-
-
+      
+      
        PROCEDURE DIVISION.
-
-
-       SET  ADDRESS OF L-PICVar TO myPointer.
-       SET  MyPointer TO ADDRESS OF W-PicVar.
-      *SET  UNSAFE ADDRESS OF L-Date TO MyPointer.
-       SET         ADDRESS OF L-Date TO MyPointer.
-       SET  W-myDate TO ADDRESS OF L-Date.
-
+      
+      
+           SET  ADDRESS OF L-PICVar TO myPointer.
+           SET  MyPointer TO ADDRESS OF W-PicVar.
+      *    SET  UNSAFE ADDRESS OF L-Date TO MyPointer.
+           SET         ADDRESS OF L-Date TO MyPointer.
+           SET  W-myDate TO ADDRESS OF L-Date.
+      
            .
-
+      
        END PROGRAM SetUnsafe.

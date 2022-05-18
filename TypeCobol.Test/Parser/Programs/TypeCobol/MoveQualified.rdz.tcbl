@@ -7,20 +7,20 @@
 	       05 var2 PIC x.
        PROCEDURE DIVISION.
       * KO
-       move 'val' to type::var1.
+           move 'val' to type::var1.
       * KO
-       move 'val' to var1::type.                                            
+           move 'val' to var1::type.                                            
       * KO 
-       move 'val' to var1::var2::type. 
+           move 'val' to var1::var2::type. 
       * KO
-       move 'val' to var1::type::undefinedVar. 
+           move 'val' to var1::type::undefinedVar. 
       * KO
-       move 'val' to var1::9.
+           move 'val' to var1::9.
       * KO
-       move var2::9 to var1.
+           move var2::9 to var1.
       * OK 
-       move 'val' to var1::var2. 
+           move 'val' to var1::var2. 
       * illegal intrinsic function after TO
-       MOVE var2 TO FUNCTION RANDOM.
-       MOVE var2 TO FUNCTION LENGTH (var1).
+           MOVE var2 TO FUNCTION RANDOM.
+           MOVE var2 TO FUNCTION LENGTH (var1).
        END PROGRAM MOVEQUA.

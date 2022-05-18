@@ -8,11 +8,11 @@
        PROCEDURE DIVISION.
       *DECLARE PROCEDURE InitFrom PRIVATE
       *    INPUT arg PIC 9.
-      *CALL InitFrom INPUT RECCTR-DPO-DAT-FIN-CTR-CAT.
-       CALL 'd1dd0726' USING
+      *    CALL InitFrom INPUT RECCTR-DPO-DAT-FIN-CTR-CAT.
+           CALL 'd1dd0726' USING
                                  RECCTR-DPO-DAT-FIN-CTR-CAT
            end-call
-                                                     .
+                                                         .
        END PROGRAM Functions.
       *
       *DECLARE PROCEDURE InitFrom PRIVATE

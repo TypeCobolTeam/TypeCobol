@@ -1,6 +1,7 @@
 --- Diagnostics ---
-Line 11[29,35] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateJulian' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>
+Line 11[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateJulian' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[25,31:TYPEDEF]<TYPEDEF>
 Line 14[26,32] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateDB2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[26,32:TYPEDEF]<TYPEDEF>
+Line 14[15,40] <27, Error, Syntax> - Syntax error : 01 should begin in AreaA. It was found in 'AreaB'.
 Range (31, 8) -> (33, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
 Range (39, 8) -> (41, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
 Range (47, 8) -> (50, 35) <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)

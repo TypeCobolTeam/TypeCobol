@@ -18,7 +18,7 @@
                             'U' thru X'FF'.
 
                                
-
+      
       *01  somedate     TYPE Date.
        01 somedate.
            02 YYYY PIC 9(4).
@@ -43,7 +43,7 @@
           05 TC-Callee-ca0ab46c-Idt PIC X(08).
           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
 
-
+      
        PROCEDURE DIVISION.
       DDECLARATIVES.
       DREADY-TRACE SECTION.
@@ -53,15 +53,15 @@
       *
            PERFORM TC-INITIALIZATIONS
 
-
+      
            PERFORM INIT-LIBRARY
            PERFORM TRAITEMENT
            .
-
+      
        INIT-LIBRARY.
       *-------------
       D    DISPLAY '*** AYIBTST1 *** : INIT-LIBRARY'.
-
+      
        TRAITEMENT.
       *    call Callee::check input somedate
            
@@ -103,9 +103,9 @@
             .
 
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
-
+      
       *Callee contains public procedure
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
@@ -153,18 +153,19 @@
                           
        
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
        INIT-LIBRARY.
-          exit
+           exit
           .
        END PROGRAM Callee.
-
+      
        END PROGRAM PGM1.
-
+      
+      
       *
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -172,7 +173,7 @@
        END PROGRAM ca0ab46c.
       *
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.

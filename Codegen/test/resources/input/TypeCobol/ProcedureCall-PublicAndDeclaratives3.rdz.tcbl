@@ -17,7 +17,7 @@
       DEND DECLARATIVES.
 
        declare procedure check private
-          input mydate        TYPE Date
+           input mydate        TYPE Date
          .
        END-DECLARE.
 
@@ -32,11 +32,11 @@
        PROCEDURE DIVISION.
        
        declare procedure check public
-          input mydate        TYPE Date
+           input mydate        TYPE Date
          .
        END-DECLARE.
        INIT-LIBRARY.
-          exit
+           exit
           .
        END PROGRAM Callee.
 

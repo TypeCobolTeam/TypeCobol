@@ -1,9 +1,9 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. ProcedureCall.
-
+      
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
-
+      
        01  somedate     TYPE Date.
        01  someformat   PIC X(08).
        01  flag         TYPE Bool.
@@ -15,23 +15,23 @@
        01  varD         PIC X(00ABC100).
        01 funcPointer function-pointer.
        01 procPointer procedure-pointer.
-
+      
        01 Toto typedef strict public.
            05 varTo pic X.
        01 MyToto Type Toto.
-
+      
        PROCEDURE DIVISION.
-
+      
       *KO Input parameter Type is wrong
        DECLARE PROCEDURE MyProc PRIVATE
            INPUT    myDate     TYPE PIC X.
        END-DECLARE.
-
+      
        DECLARE PROCEDURE GetPtrFn
            INPUT  ptrFn function-pointer
                   ptrPr procedure-pointer.
        END-DECLARE.
-
+      
        DECLARE PROCEDURE DuplicatedParams PRIVATE
            INPUT    format            TYPE Date
                     format            PIC x(8)
@@ -50,19 +50,19 @@
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
        DECLARE PROCEDURE EmptyProc PRIVATE
        .
        PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
        DECLARE FUNCTION DoesNothingFunc PRIVATE.
        PROCEDURE DIVISION.
            DISPLAY 'I DO NOTHING'
        .
        END-DECLARE.
-
+      
        DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
            INPUT     x      PIC 9(04)
            RETURNING result PIC 9(04)
@@ -74,40 +74,40 @@
               MOVE x TO result
            END-IF.
        END-DECLARE.
-
+      
        DECLARE PROCEDURE varB PRIVATE.
        END-DECLARE.
-
+      
        DECLARE PROCEDURE varC PRIVATE.
        END-DECLARE.
-
+      
        DECLARE PROCEDURE varD PRIVATE
            INPUT  format        PIC X(08)
            OUTPUT okay          TYPE Bool
                   actual-format PIC X(08).
        END-DECLARE.
-
+      
        DECLARE PROCEDURE varD PRIVATE
            INPUT  mydate        TYPE Date
            OUTPUT okay          TYPE Bool
                   actual-format PIC X(08).
        END-DECLARE.
-
+      
        DECLARE PROCEDURE varD PRIVATE
            INPUT  mydate        TYPE Date
            OUTPUT okay          TYPE Bool.
        END-DECLARE.
-
+      
        declare proc1 private input  param1 type ProcedureCall::Toto
                              output paramOut type ProcedureCall::Toto.
        end-declare.
-
+      
        declare proc1 private input  param1 type ProcedureCall::Toto
                                     param2 pic X
                              output paramOut type ProcedureCall::Toto.
        end-declare.
-
-
+      
+      
        declare proc2 private input  param1  type Toto
                              output paramOut type Toto.
        end-declare.
@@ -119,34 +119,34 @@
        declare proc2 private input  param1  type ProcedureCall::Toto
                              output paramOut type ProcedureCall::Toto.
        end-declare.
-
+      
        TRAITEMENT.
-
+      
       * __________________________________________________
       * KO Empty Call 
-       CALL 
+             CALL 
        .
-
+      
       * __________________________________________________
       * OK : function-pointer procedure-pointer
-       CALL GetPtrFn 
+             CALL GetPtrFn 
              INPUT funcPointer procPointer.
-
+      
       * __________________________________________________
       * KO : Bad parameter entry
-       CALL GetPtrFn 
+           CALL GetPtrFn 
              OUTPUT funcPointer procPointer.
-
+      
       * __________________________________________________
       * KO : Bad parameter entry
-       CALL GetPtrFn 
+             CALL GetPtrFn 
              IN-OUT funcPointer procPointer.
-
+      
       * __________________________________________________
       * KO : wrong params awaited func/proc-pointer
-       CALL GetPtrFn 
+           CALL GetPtrFn 
              INPUT someformat someformat.
-
+      
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
            CALL ValidateDateFormat
@@ -202,7 +202,7 @@
                     INPUT      somedate someformat 
                     INOUT      somedate
                     OUTPUT     flag someformat
-
+      
            .
       * __________________________________________________
       * OK : Contains IN-OUT keyword
@@ -220,47 +220,47 @@
                     INPUT      somedate someformat 
                     IN-OUT     somedate
                     OUTPUT     flag someformat
-
+      
       * __________________________________________________
       * OK : procedure invocation without 
       *      INPUT, IN-OUT, OUTPUT (TCRFUN_EMPTY_CALL) 
       * Recognize an empty call of an empty procedure
            CALL EmptyProc
-
+      
       * KO : procedure invocation with 
       *      INPUT, IN-OUT, OUTPUT (TCRFUN_EMPTY_CALL) 
       * Recognize an empty call to an non empty procedure
            CALL ValidateDateFormat
-  
+      
       * OK : function ivocation witout 
       *      INPUT or RETURNING (TCRFUN_EMPTY_CALL) 
       *      Recognize an empty call of an empty function
            CALL DoesNothingFunc
-
+      
       * KO : function ivocation with 
       *      INPUT and RETURNING (TCRFUN_EMPTY_CALL) 
       * Recognize an empty call to non empty function
            CALL StrangelyReturnsItsInput
-
+      
       * OK : varA is a variale (TCRFUN_EMPTY_CALL) 
            CALL varA
-
+      
       * OK : varB is a procedure not a variable
            CALL varB
-
+      
       * KO : varC is ambiguous (var C is a variable or procedure)
            CALL varC
-
+      
       * KO : varD is definied multiple times but always 
       *      with a signature different to call
            CALL varD
                     INPUT      somedate
            .
-
+      
       *OK
-       call proc1 input  MyToto
+           call proc1 input  MyToto
                   output MyToto.
-
+      
       * KO contains an unknown Type
        DECLARE PROCEDURE MyProc3 PRIVATE
           INPUT  mydate        TYPE Date2.
@@ -268,11 +268,11 @@
            CONTINUE.
        END-DECLARE.
        .
-
+      
       * OK All the parameters of the Nested Program are recognize
        IDENTIFICATION DIVISION.
        PROGRAM-ID. NestedProc.
-
+      
        PROCEDURE DIVISION.
        declare procedure check private
             input    rate1  pic X
@@ -288,3 +288,4 @@
        end-declare.
        END PROGRAM NestedProc.
        END PROGRAM ProcedureCall.
+      

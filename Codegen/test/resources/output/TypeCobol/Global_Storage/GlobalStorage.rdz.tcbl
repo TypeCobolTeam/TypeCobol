@@ -72,10 +72,10 @@
       *DECLARE PROCEDURE MyProc PRIVATE
       *    IN-OUT    myDate      TYPE DATE.
       
-       MOVE G-Date TO  G-Date.
+           MOVE G-Date TO  G-Date.
       
-      *MOVE DuplicatedVar TO G-TechCtx.
-       MOVE DuplicatedVar-value TO G-TechCtx-value.
+      *    MOVE DuplicatedVar TO G-TechCtx.
+           MOVE DuplicatedVar-value TO G-TechCtx-value.
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.

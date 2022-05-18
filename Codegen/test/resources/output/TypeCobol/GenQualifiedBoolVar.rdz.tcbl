@@ -28,16 +28,16 @@
       *  .
 
 
-      *CALL check Output local::overflw.
-       CALL 'ea379882' USING
+      *    CALL check Output local::overflw.
+           CALL 'ea379882' USING
                     by reference overflw-value IN local
            end-call
-                                       .
-      *CALL check Output local::grp::overflw2.
-       CALL 'ea379882' USING
+                                           .
+      *    CALL check Output local::grp::overflw2.
+           CALL 'ea379882' USING
                     by reference overflw2-value IN grp IN local
            end-call
-                                             .
+                                                 .
       *MOVE false TO local::overflw
            .
        END PROGRAM MyPgm.

@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 22[38,39] <27, Error, Syntax> - Syntax error : mismatched input 'TO' expecting FROM RuleStack=codeElement>subtractStatement>subtractCorresponding,  OffendingSymbol=[38,39:TO]<TO>
+Line 22[39,40] <27, Error, Syntax> - Syntax error : mismatched input 'TO' expecting FROM RuleStack=codeElement>subtractStatement>subtractCorresponding,  OffendingSymbol=[39,40:TO]<TO>
 --- Code Elements ---
 [[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [28,28+:.]<PeriodSeparator>
 - ProgramName = MOVECORR
@@ -33,10 +33,7 @@ Line 22[38,39] <27, Error, Syntax> - Syntax error : mismatched input 'TO' expect
 
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,27:. ]<PeriodSeparator>
 
-[[SubtractStatement]] [11,18:SUBTRACT]<SUBTRACT> --> [67,70:YYYY]<UserDefinedWord>
-
-[[SentenceEnd]] [71,71+:.]<PeriodSeparator> --> [71,71+:.]<PeriodSeparator>
+[[SubtractStatement]] [12,19:SUBTRACT]<SUBTRACT> --> [68,71:YYYY]<UserDefinedWord>
 
 [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
 - ProgramName = MOVECORR
-

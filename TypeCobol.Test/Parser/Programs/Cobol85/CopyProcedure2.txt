@@ -1,17 +1,17 @@
 ﻿--- Code Elements ---
-[[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [22,22+:.]<PeriodSeparator>
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [29,29+:.]<PeriodSeparator>
 - ProgramName = TypeCobol
 - IsInitial = False
 - IsRecursive = False
 - IsCommon = False
 
-[[DataDivisionHeader]] [1,4:DATA]<DATA> --> [14,14+:.]<PeriodSeparator>
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
 
-[[WorkingStorageSectionHeader]] [1,15:WORKING-storage]<WORKING_STORAGE> --> [24,24+:.]<PeriodSeparator>
+[[WorkingStorageSectionHeader]] [8,22:WORKING-storage]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
 
-[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [15,15+:.]<PeriodSeparator>
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [22,22+:.]<PeriodSeparator>
 
-[[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
 
-[[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
 

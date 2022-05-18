@@ -7,6 +7,6 @@ Line 5[8,21] <48, Error, Syntax> - TypeCobol-only feature: GLOBAL-STORAGE SECTIO
        GLOBAL-STORAGE SECTION.
        01 myVar PIC X.       
        PROCEDURE DIVISION.
-            GOBACK
+           GOBACK
             .
        END PROGRAM tcGlobalStorage.

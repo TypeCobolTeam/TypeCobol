@@ -1,49 +1,49 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. CallLinkage.
-
+      
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 W-Date        TYPE Date.
-
+      
        LINKAGE SECTION.
        01 L-Date        TYPE Date.
-
+      
        PROCEDURE DIVISION.
-
+      
        DECLARE PROCEDURE MyProc PRIVATE
            INPUT    adrsPointer      Pointer
            IN-OUT   adrsPointer1     Pointer
            OUTPUT   adrsPointer2     Pointer
                         .
-       END-DECLARE.
-
-        CALL MyProc
+           END-DECLARE.
+      
+           CALL MyProc
            INPUT ADDRESS OF W-Date
            IN-OUT ADDRESS OF W-Date
            OUTPUT ADDRESS OF W-Date.
-
-        CALL MyProc
+      
+           CALL MyProc
            INPUT BY CONTENT ADDRESS OF W-Date
            IN-OUT  ADDRESS OF W-Date
            OUTPUT  ADDRESS OF W-Date.
-
-
-        CALL MyProc
+      
+      
+           CALL MyProc
            INPUT BY VALUE ADDRESS OF W-Date
            IN-OUT ADDRESS OF W-Date
            OUTPUT ADDRESS OF W-Date.
-
-        CALL MyProc
+      
+           CALL MyProc
            INPUT  ADDRESS OF L-Date
            IN-OUT ADDRESS OF L-Date
            OUTPUT ADDRESS OF L-Date.
-
-
-        CALL 'SomePGM' using BY CONTENT ADDRESS OF W-Date.
-        CALL 'SomePGM' using BY VALUE ADDRESS OF W-Date.
-        CALL 'SomePGM' using BY REFERENCE ADDRESS OF W-Date.
-        CALL 'SomePGM' using ADDRESS OF W-Date.
-        CALL 'SomePGM' using ADDRESS OF L-Date.
-
-
+      
+      
+           CALL 'SomePGM' using BY CONTENT ADDRESS OF W-Date.
+           CALL 'SomePGM' using BY VALUE ADDRESS OF W-Date.
+           CALL 'SomePGM' using BY REFERENCE ADDRESS OF W-Date.
+           CALL 'SomePGM' using ADDRESS OF W-Date.
+           CALL 'SomePGM' using ADDRESS OF L-Date.
+      
+      
        END PROGRAM CallLinkage.

@@ -1,14 +1,14 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TypeDefLevel88.
-
+      
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
                       .
        DATA DIVISION.
-
+      
        WORKING-STORAGE SECTION.
-
+      
       *01 ProcessingMode2 typedef strict pic X(02).
       *       88 RealTime value "TP".
       *       88 IMSBatch value "TI".
@@ -18,14 +18,14 @@
       *                          "b1" thru "b9"
       *                          "c1" thru "c9"
       *                          "d1" thru "d9".
-
+      
       *01 ProcessingMode typedef strict.
       *    05 temp pic X(02).
       *       88 RealTime value "TP".
       *       88 IMSBatch value "TI".
       *       88 DB2Batch value "TD".
       *       88 Batch    value "  ".
-
+      
       *01  MyPM type ProcessingMode.
        01 MyPM.
            02 temp pic X(02).
@@ -45,13 +45,14 @@
                                  "c1" thru "c9"
                                  "d1" thru "d9".
                                       
-
+      
        PROCEDURE DIVISION.
-      *   IF (MyPM::temp::IMSBatch = "TI" AND MyPM2::DB2Batch = "TD")
-          IF (IMSBatch OF temp OF MyPM = "TI" AND DB2Batch OF MyPM2
-               = "TD")
+      *    IF (MyPM::temp::IMSBatch = "TI" AND MyPM2::DB2Batch = "TD")
+           IF (IMSBatch OF temp OF MyPM = "TI" AND DB2Batch OF MyPM2
+                = "TD")
              DISPLAY "TI and TD"
-          ELSE
+           ELSE
              CONTINUE
-          END-IF.
+           END-IF.
        END PROGRAM TypeDefLevel88.
+      

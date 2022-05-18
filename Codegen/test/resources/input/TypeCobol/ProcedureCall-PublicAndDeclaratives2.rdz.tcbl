@@ -2,42 +2,43 @@
       *Debug is NOT active
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+      
        DATA DIVISION.
        Working-STORAGE SECTION.
-
+      
        01  somedate     TYPE Date.
-
+      
        PROCEDURE DIVISION.
       DDECLARATIVES.
       DDECLARATION SECTION.
       D    USE FOR DEBUGGING ON ALL PROCEDURES.
       DEND DECLARATIVES.
-
+      
        declare procedure check private
-          input mydate        TYPE Date
+           input mydate        TYPE Date
          .
        END-DECLARE.
-
-
+      
+      
            call Callee::check input somedate
            .
-
-
+      
+      
       *Callee contains public procedure
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
        PROCEDURE DIVISION.
        
        declare procedure check public
-          input mydate        TYPE Date
+           input mydate        TYPE Date
          .
        END-DECLARE.
        INIT-LIBRARY.
-          exit
+           exit
           .
        END PROGRAM Callee.
-
-
+      
+      
        END PROGRAM PGM1.
-
+      
+      

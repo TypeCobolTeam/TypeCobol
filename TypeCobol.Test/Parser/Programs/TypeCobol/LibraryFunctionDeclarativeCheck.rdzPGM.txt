@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-Line 38[9,12] <27, Error, Syntax> - Syntax error : A program which contains public procedure must have INIT-LIBRARY as first paragraph.
+Line 38[12,15] <27, Error, Syntax> - Syntax error : A program which contains public procedure must have INIT-LIBRARY as first paragraph.
 
 --- Program ---
 PROGRAM: PGM1 common:False initial:False recursive:False

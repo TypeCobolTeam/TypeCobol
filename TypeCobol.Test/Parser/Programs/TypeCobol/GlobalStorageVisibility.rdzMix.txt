@@ -44,21 +44,21 @@ Symbols found: GlobalStorageTest::MyPoint::POINT::XX | GlobalStorageTest::MyPoin
        PROCEDURE DIVISION.
       
       *KO var1 ambiguous with var1 in GS
-Line 43[16,19] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var1 
+Line 43[17,20] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var1 
 Symbols found: GlobalStorageTest::NestedProc::var1 | GlobalStorageTest::var1
-          MOVE var1 TO result
+           MOVE var1 TO result
       *KO var2 ambiguous with parent's GS
-Line 45[16,19] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var2 
+Line 45[17,20] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var2 
 Symbols found: GlobalStorageTest::NestedProc::var2 | GlobalStorageTest::var2
-          MOVE var2 TO result
+           MOVE var2 TO result
       *KO var3 ambiguous with parent's GS
-Line 47[16,19] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var3 
+Line 47[17,20] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var3 
 Symbols found: GlobalStorageTest::NestedProc::var3 | GlobalStorageTest::var3
-          MOVE var3 TO result
+           MOVE var3 TO result
       
       *OK
-          MOVE var4 to result
-          .
+           MOVE var4 to result
+           .
       
        END PROGRAM NestedProc.
       

@@ -10,7 +10,7 @@
               INITIALIZE var1
               INITIALIZE var1 WITH FILLER
               INITIALIZE var1 ALL VALUE
-              INITIALIZE var1 ALPHANUMERIC TO VALUE           
+              INITIALIZE var1 ALPHANUMERIC TO VALUE
               INITIALIZE var1 DEFAULT
               INITIALIZE var1 WITH FILLER THEN TO DEFAULT
 

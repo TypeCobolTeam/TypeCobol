@@ -72,6 +72,6 @@
            end-search.
        TRAITEMENT.
        .
-            PERFORM TRAITEMENT UNTIL MyBool.
+           PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.

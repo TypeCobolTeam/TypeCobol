@@ -7,17 +7,17 @@
        PROCEDURE DIVISION.
        INIT-LIBRARY.
            exit.
-           declare procedure IsPersonValid public
+          declare procedure IsPersonValid public
                input  Name PIC X(20).
                output IsOk Type Bool.
-           data division.
-           working-storage section.
-           procedure division.
+          data division.
+          working-storage section.
+          procedure division.
                display "proc" Name
                SET IsOk TO True
                .
-           end-declare. 
-        p1.          
+          end-declare.
+        p1.
            call IsPersonValid
                 input myName
                 output result
@@ -32,7 +32,7 @@
        WORKING-STORAGE SECTION.
        01 myName PIC X(20) value "domi".
        01 result TYPE Bool.
-       PROCEDURE DIVISION. 
+       PROCEDURE DIVISION.
        DECLARATIVES.
            READY-TRACE SECTION.
            USE FOR DEBUGGING ON ALL PROCEDURES.
@@ -41,17 +41,17 @@
        END DECLARATIVES.
        INIT-LIBRARY.
            exit.
-           declare procedure IsPersonValid public
+          declare procedure IsPersonValid public
                input  Name PIC X(20).
                output IsOk Type Bool.
-           data division.
-           working-storage section.
-           procedure division.
+          data division.
+          working-storage section.
+          procedure division.
                display "proc" Name
                SET IsOk TO True
                .
            end-declare.
-       p1.       
+       p1.
            call IsPersonValid
                 input myName
                 output result
@@ -69,16 +69,16 @@
        PROCEDURE DIVISION.
        INIT-LIBRARY.
            exit.
-           declare procedure IsPersonValid public
+          declare procedure IsPersonValid public
                input  Name PIC X(20).
                output IsOk Type Bool.
-           data division.
-           working-storage section.
-           procedure division.
+          data division.
+          working-storage section.
+          procedure division.
                display "proc" Name
                SET IsOk TO True
                .
-           end-declare.
+          end-declare.
        s1 SECTION.
            .
        p1.
@@ -89,7 +89,7 @@
            display "result=" result
            GOBACK.
        END PROGRAM Pgm2.
-             
+      
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm3.
        DATA DIVISION.
@@ -99,16 +99,16 @@
        PROCEDURE DIVISION.
        INIT-LIBRARY.
            exit.
-           declare procedure IsPersonValid public
+          declare procedure IsPersonValid public
                input  Name PIC X(20).
                output IsOk Type Bool.
-           data division.
-           working-storage section.
-           procedure division.
+          data division.
+          working-storage section.
+          procedure division.
                display "proc" Name
                SET IsOk TO True
                .
-           end-declare.
+          end-declare.
            call IsPersonValid
                 input myName
                 output result
@@ -116,7 +116,7 @@
            display "result=" result
            GOBACK.
        END PROGRAM Pgm3.
-       
+      
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm4.
        DATA DIVISION.
@@ -124,16 +124,16 @@
        01 myName PIC X(20) value "domi".
        01 result TYPE Bool.
        PROCEDURE DIVISION.
-           declare procedure IsPersonValid public
+          declare procedure IsPersonValid public
                input  Name PIC X(20).
                output IsOk Type Bool.
-           data division.
-           working-storage section.
-           procedure division.
+          data division.
+          working-storage section.
+          procedure division.
                display "proc" Name
                SET IsOk TO True
                .
-           end-declare.
+          end-declare.
            call IsPersonValid
                 input myName
                 output result
@@ -141,7 +141,7 @@
            display "result=" result
            GOBACK.
        END PROGRAM Pgm4.
-       
+      
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm5.
        DATA DIVISION.
@@ -167,4 +167,4 @@
            display "result=" result
            GOBACK.
        END PROGRAM Pgm5.
- 
+      

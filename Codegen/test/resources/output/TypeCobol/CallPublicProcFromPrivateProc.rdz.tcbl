@@ -1,32 +1,32 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+      
        DATA DIVISION.
        Working-STORAGE SECTION.
-
+      
       *01  mydate1     TYPE Date.
        01 mydate1.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                  
-
+      
        PROCEDURE DIVISION.
-
+      
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
-
+      
        TRAITEMENT.
       *OK  call check of PGM1
-      *   call check input mydate1
-          CALL 'a0508f35' USING
+      *    call check input mydate1
+           CALL 'a0508f35' USING
                                  mydate1
            end-call
-                                  
+                                   
       
         .
-
+      
       *PersonService contains public procedure
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PersonService.
@@ -72,15 +72,16 @@
            .
                                  
       *declare procedure GetPersonById public
-      *   input  personId  type date.
+      *    input  personId  type date.
        END PROGRAM PersonService.
-
-
+      
+      
        END PROGRAM PGM1.
-
+      
+      
       *
       *declare procedure GetPersonById public
-      *   input  personId  type date.
+      *    input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. cd991005.

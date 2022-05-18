@@ -1,19 +1,19 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. MainProgram.
-
+      
        DATA DIVISION.
-
+      
        WORKING-STORAGE SECTION.
 Line 7[11,35] <27, Error, Syntax> - Syntax error : Pointer name 'myPointerThatIsWayTooLong' is over 22 characters.
        01 myPointerThatIsWayTooLong POINTER.
        COPY SetUpDownPointerCpyData.
-
-
-       PROCEDURE DIVISION.
-       SET myPointerThatIsWayTooLong UP BY 1.
-
-Line 14[8,28] <27, Error, Syntax> - Syntax error : Pointer 'myPointer' belongs to a copy.
-       SET myPointer UP BY 1.
       
-
+      
+       PROCEDURE DIVISION.
+           SET myPointerThatIsWayTooLong UP BY 1.
+      
+Line 14[12,32] <27, Error, Syntax> - Syntax error : Pointer 'myPointer' belongs to a copy.
+           SET myPointer UP BY 1.
+      
+      
        END PROGRAM MainProgram.

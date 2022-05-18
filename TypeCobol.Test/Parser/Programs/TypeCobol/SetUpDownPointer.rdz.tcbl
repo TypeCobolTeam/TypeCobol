@@ -1,17 +1,17 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. MainProgram.
-
+      
        DATA DIVISION.
-
+      
        WORKING-STORAGE SECTION.
        01 myPointerThatIsWayTooLong POINTER.
        COPY SetUpDownPointerCpyData.
-
-
-       PROCEDURE DIVISION.
-       SET myPointerThatIsWayTooLong UP BY 1.
-
-       SET myPointer UP BY 1.
       
-
+      
+       PROCEDURE DIVISION.
+           SET myPointerThatIsWayTooLong UP BY 1.
+      
+           SET myPointer UP BY 1.
+      
+      
        END PROGRAM MainProgram.

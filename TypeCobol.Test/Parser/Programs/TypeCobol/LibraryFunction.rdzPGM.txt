@@ -1,7 +1,15 @@
 --- Diagnostics ---
+Line 37[12,31] <27, Error, Syntax> - Syntax error : READY-TRACE should begin in AreaA. It was found in 'AreaB'.
+Line 53[12,23] <27, Error, Syntax> - Syntax error : end-declare should begin in AreaA. It was found in 'AreaB'.
+Line 53[12,23] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 82[8,18] <27, Error, Syntax> - Syntax error : A program which contains public procedure cannot contain section or statement not under a paragraph.
 Range (112, 12) -> (114, 29) <27, Error, Syntax> - Syntax error : A program which contains public procedure cannot contain section or statement not under a paragraph.
 Range (137, 12) -> (139, 29) <27, Error, Syntax> - Syntax error : A program which contains public procedure must have INIT-LIBRARY as first paragraph.
+Range (152, 12) -> (154, 37) <27, Error, Syntax> - Syntax error : declare should begin in AreaA. It was found in 'AreaB'.
+Line 155[12,25] <27, Error, Syntax> - Syntax error : data should begin in AreaA. It was found in 'AreaB'.
+Line 156[12,35] <27, Error, Syntax> - Syntax error : working-storage should begin in AreaA. It was found in 'AreaB'.
+Line 157[12,30] <27, Error, Syntax> - Syntax error : procedure should begin in AreaA. It was found in 'AreaB'.
+Line 161[12,23] <27, Error, Syntax> - Syntax error : end-declare should begin in AreaA. It was found in 'AreaB'.
 Line 162[9,11] <27, Error, Syntax> - Syntax error : First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph p1 is not allowed at this location.
 
 --- Program ---

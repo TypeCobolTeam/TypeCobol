@@ -53,7 +53,7 @@
 
 
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
 
 
@@ -145,10 +145,10 @@
                           
        
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
        INIT-LIBRARY.
-          exit
+           exit
           .
        END PROGRAM Callee.
 
@@ -157,7 +157,7 @@
 
       *
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -165,7 +165,7 @@
        END PROGRAM ca0ab46c.
       *
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.

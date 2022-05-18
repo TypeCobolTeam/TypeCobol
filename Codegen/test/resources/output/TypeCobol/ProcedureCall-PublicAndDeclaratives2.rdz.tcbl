@@ -2,7 +2,7 @@
       *Debug is NOT active
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+      
        DATA DIVISION.
        Working-STORAGE SECTION.
        01 TC-Callee pic X(08) value 'CALLEE'.
@@ -13,7 +13,7 @@
                             'U' thru X'FF'.
 
                                
-
+      
       *01  somedate     TYPE Date.
        01 somedate.
            02 YYYY PIC 9(4).
@@ -38,7 +38,7 @@
           05 TC-Callee-ca0ab46c-Idt PIC X(08).
           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
 
-
+      
        PROCEDURE DIVISION.
       *
            PERFORM TC-INITIALIZATIONS
@@ -48,12 +48,12 @@
       DDECLARATION SECTION.
       D    USE FOR DEBUGGING ON ALL PROCEDURES.
       DEND DECLARATIVES.
-
+      
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
-
-
+      
+      
       *    call Callee::check input somedate
            
            IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
@@ -93,8 +93,8 @@
             END-PERFORM
             .
 
-
-
+      
+      
       *Callee contains public procedure
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
@@ -142,19 +142,20 @@
                           
        
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
        INIT-LIBRARY.
-          exit
+           exit
           .
        END PROGRAM Callee.
-
-
+      
+      
        END PROGRAM PGM1.
-
+      
+      
       *
       *declare procedure check public
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -162,7 +163,7 @@
        END PROGRAM ca0ab46c.
       *
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.

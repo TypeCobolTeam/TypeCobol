@@ -116,10 +116,10 @@
            end-search.
        TRAITEMENT.
        .
-            PERFORM TRAITEMENT UNTIL MyBool.
+           PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.
-      *call
+      *
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    NumericInput PIC S9(9) COMP-5.
       *_________________________________________________________________
