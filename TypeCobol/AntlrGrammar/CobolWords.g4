@@ -879,8 +879,7 @@ tokens
 	SQL_XMLCAST,
 	SQL_YEAR,
 	SQL_YEARS,
-	SQL_ZONE,
-	SQL_CommaSeparator
+	SQL_ZONE
 }
 
 
@@ -3622,5 +3621,3 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // SQL-INIT-FLAG.
 
 // SQL_INIT_FLAG : 'SQL-INIT-FLAG';
-star: MultiplyOperator;
-dot: PeriodSeparator;

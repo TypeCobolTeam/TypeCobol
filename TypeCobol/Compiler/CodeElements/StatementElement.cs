@@ -130,8 +130,7 @@ namespace TypeCobol.Compiler.CodeElements
         XmlParseStatement,
 
         //Sql
-        CommitStatement,
-        SelectStatement
+        CommitStatement
 
     }
 }

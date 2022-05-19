@@ -842,9 +842,5 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
-        public void OnSelectStatement([NotNull] SelectStatement select)
-        {
-
-        }
     }
 }

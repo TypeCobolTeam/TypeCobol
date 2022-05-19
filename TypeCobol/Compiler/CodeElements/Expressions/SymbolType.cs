@@ -39,9 +39,7 @@ namespace TypeCobol.Compiler.CodeElements
         UPSISwitchName,
 
         // Used when the type of the symbol has not yet been resolved
-        TO_BE_RESOLVED,
-        // For SQL
-        SqlIdentifier
+        TO_BE_RESOLVED
     }
 
     public static class SymbolTypeUtils {

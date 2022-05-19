@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Scanner
+﻿using System.Linq;
+
+namespace TypeCobol.Compiler.Scanner
 {
     // WARNING : both enumerations below (families / types) must stay in sync
     // WARNING : make sure to update the tables in TokenUtils if you add one more token family or one more token type
@@ -80,10 +82,7 @@
         MultilinesCommentsFamily = 525,
 
         // 527 -> 819 : SQL keywords
-        SqlKeywords = 527,
-
-        // 820 -> 820 : SQL Syntax separators
-        SqlSyntaxSeparators = 820
+        SqlFamily = 527
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -915,6 +914,5 @@
         SQL_YEAR = 817,
         SQL_YEARS = 818,
         SQL_ZONE = 819,
-        SQL_CommaSeparator = 820,
     }
 }

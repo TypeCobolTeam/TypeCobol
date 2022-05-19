@@ -1062,9 +1062,6 @@ namespace TypeCobol.Compiler.CupCommon
                 case TokenType.QUESTION_MARK:
                 // FOR SQL
                 case TokenType.SQL_COMMIT:
-                case TokenType.SQL_SELECT:
-                case TokenType.SQL_ALL:
-                case TokenType.SQL_DISTINCT:
                     return true;
                 default:
                     return false;

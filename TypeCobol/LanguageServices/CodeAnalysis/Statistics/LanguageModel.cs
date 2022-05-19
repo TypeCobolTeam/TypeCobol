@@ -149,7 +149,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
         internal static bool IsElementStartingWord(TokenType tokenType, TokenFamily tokenFamily, TokenType lastWord)
         {
             return tokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || tokenFamily == TokenFamily.CodeElementStartingKeyword ||
-                   tokenFamily == TokenFamily.SqlKeywords ||
+                   tokenFamily == TokenFamily.SqlFamily ||
                    tokenType == TokenType.LevelNumber || tokenType == TokenType.SectionParagraphName;
         }
 

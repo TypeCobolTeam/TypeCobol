@@ -26,11 +26,14 @@ _  EXEC SQL DELETE FROM CUSTOMERS	   _
     _EXEC_    [10,13:EXEC]<EXEC>
     _SQL_    [15,17:SQL]<ExecTranslatorName>
     _DELETE_    [19,24:DELETE]<ExecStatementText>
+    _ _    [25,25: ]<ExecStatementText>
     _FROM_    [26,29:FROM]<ExecStatementText>
+    _ _    [30,30: ]<ExecStatementText>
     _CUSTOMERS_    [31,39:CUSTOMERS]<ExecStatementText>
     _	   _    [40,43:	   ]<ExecStatementText>
 ---------------------------------
 _  COMMIT_
+    _  _    [8,9:  ]<ExecStatementText>
     _COMMIT_    [10,15:COMMIT]<SQL_COMMIT>
 ---------------------------------
 _  END-EXEC._

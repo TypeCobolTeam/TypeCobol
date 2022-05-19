@@ -111,14 +111,10 @@ namespace TypeCobol.Codegen {
 		[TestProperty("Time","fast")]
 		public void ParseFunctionsDeclaration() {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclare") + ".rdz.cbl");
-#if !SQL_PARSING
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclareWithExec") + ".rdz.cbl");
-#endif
         }
 
-#if SQL_PARSING
-        [Ignore]
-#endif
+
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]

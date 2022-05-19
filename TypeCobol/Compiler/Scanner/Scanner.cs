@@ -1507,6 +1507,29 @@ namespace TypeCobol.Compiler.Scanner
         
         // ---
 
+        private Token ScanWhitespace(int startIndex)
+        {
+            // consume all whitespace chars available
+            for (; currentIndex <= lastIndex && line[currentIndex] == ' '; currentIndex++) { }
+            int endIndex = currentIndex - 1;
+
+            if (tokensLine.ScanState.InsidePseudoText || !compilerOptions.OptimizeWhitespaceScanning)
+            {
+                // SpaceSeparator has to be created
+                return new Token(TokenType.SpaceSeparator, startIndex, endIndex, tokensLine);
+            }
+
+            // jump to next token
+            return GetNextToken();
+        }
+
+        private Token ScanOneChar(int startIndex, TokenType tokenType)
+        {
+            // consume one char
+            currentIndex++;
+            return new Token(tokenType, startIndex, startIndex, tokensLine);
+        }
+
         private Token ScanOneCharWithPossibleSpaceAfter(int startIndex, TokenType tokenType) {
             //Use MessageCode.ImplementationError because ScanOneCharFollowedBySpace must not create an error
             return ScanOneCharFollowedBySpace(startIndex, tokenType, MessageCode.ImplementationError, false);

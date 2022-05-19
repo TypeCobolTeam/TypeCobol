@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Directives
         public bool UseAntlrProgramParsing { get; set; }
 
         /// <summary>
-        /// Shall we use EI legacy replacing mechanism when including copys ?
+        /// Shall we use EUROINFO_LEGACY_REPLACING_SYNTAX snippets for Parsing the Program.
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax
         {

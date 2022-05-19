@@ -10,8 +10,6 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Sql.CodeElements.Statements;
-using TypeCobol.Compiler.Sql.Model;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -130,7 +128,6 @@ namespace TypeCobol.Test.Utils
                 new NYName(),
                 new PGMName(),
                 new SYMName(),
-                new SQLName(),
                 new MixDiagIntoSourceName(),
                 new MemoryName(),
                 new NodeName(),
@@ -149,7 +146,6 @@ namespace TypeCobol.Test.Utils
                 new EIMemoryName(),
                 new EINodeName(),
                 new EITokenName(),
-                
 #endif
         };
 
@@ -198,20 +194,7 @@ namespace TypeCobol.Test.Utils
 		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
-#if SQL_PARSING
-                var fileName = Path.GetFileName(samplePath);
-                switch (fileName)
-                {
-                    case "ExecSqlInDataDivision.rdz.cbl":
-                    case "Program.pgm":        
-                    case "ParagraphSection.rdz.cbl":
-                    case "ExecSqlWithCommit.rdz.cbl":
-                    case "EXEC.cbl":
-                    case "NodeBuilder-UnexpectedChild.rdz.tcbl":
-                        continue;
-                }
-#endif
-                IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
+				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
 				if (comparators.Count < 1) {
 					Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
 					errors.AppendLine("Missing result file \"" + samplePath + "\"");
@@ -470,78 +453,7 @@ namespace TypeCobol.Test.Utils
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
         }
     }
- 
-    internal class SqlComparator : FilesComparator
-    {
-        /// <summary>
-        /// Selects the SQL code elements
-        /// </summary>
-        private class ASTVisitor : AbstractAstVisitor 
-        {
-            private readonly StringWriter _writer;
 
-            public ASTVisitor(StringBuilder builder)
-            {
-                _writer = new StringWriter(builder);
-            }
-
-            private void DumpSqlObject(string name, SqlObject sqlObject)
-            {
-                _writer.Write($"- {name} = ");
-                if (sqlObject != null)
-                {
-                    sqlObject.Dump(_writer, 1);
-                }
-                else
-                {
-                    _writer.WriteLine("<NULL>");
-                }
-            }
-
-            public override bool Visit(SelectStatement selectStatement)
-            {
-                _writer.WriteLine("line " + selectStatement.Line + ": SelectStatement");
-                DumpSqlObject(nameof(selectStatement.FullSelect), selectStatement.FullSelect);
-                return true;
-            }
-
-            public override bool Visit(CommitStatement commitStatement)
-            {
-                _writer.WriteLine("line " + commitStatement.Line + ": CommitStatement");
-                //No SqlObject in CommitStatement
-                return true;
-            }
-        }
-
-        public SqlComparator(Paths path, bool debug = false, bool isEI = false)
-            : base(path, debug, isEI)
-        {
-
-        }
-
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
-        {
-            var diagnostics = compilationUnit.AllDiagnostics();
-            var programs = compilationUnit.ProgramClassDocumentSnapshot.Root.Programs.ToList();
-
-            var builder = new StringBuilder();
-
-            if (diagnostics.Count > 0)
-            {
-                builder.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
-            }
-            builder.AppendLine("--- Sql Statements ---");
-            
-            
-            compilationUnit.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new ASTVisitor(builder) );
-            
-            
-            string result = builder.ToString();
-            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
-        }
-    }
- 
     internal class SymbolComparator : FilesComparator
     {
         public SymbolComparator(Paths path, bool debug = false, bool isEI = false)
@@ -1150,15 +1062,9 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
-    internal class SQLName : AbstractEINames
-    {
-        public override string CreateName(string name) { return name + "SQL" + Rextension; }
-        public override Type GetComparatorType() { return typeof(SqlComparator); }
-    }
-   
-    #endregion
+#endregion
 
-    #region EINames
+#region EINames
 #if EUROINFO_RULES
     internal class EIEmptyName : AbstractEINames
     {
@@ -1219,9 +1125,8 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "MEM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
-    
 #endif
-    #endregion
+#endregion
 
     internal class Paths
     {

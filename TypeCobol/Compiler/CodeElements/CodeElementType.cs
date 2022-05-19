@@ -167,7 +167,6 @@ namespace TypeCobol.Compiler.CodeElements
         // FOR SQL
         //Sql Statements,
         CommitStatement,
-        SelectStatement,
 
         // [TYPECOBOL]
         LibraryCopy,
