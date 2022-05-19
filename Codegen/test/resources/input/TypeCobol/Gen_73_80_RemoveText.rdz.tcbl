@@ -46,7 +46,7 @@
           01  I                            PIC 9(4) COMP-5.             12360000
           01  enr-lu                         TYPE CTGCPL-Enreg.         12370000
       * 01  enr-a-chercher                 TYPE CTGCPL-Enreg.           12370001
-               01  L-I                            PIC 9(4) COMP-5.      12370002
+          01  L-I                            PIC 9(4) COMP-5.           12370002
        REPLACE ==:MAX-TBL-RCH:== BY ==10==.                             12370003
        REPLACE ==:MAX-TBL-MCTGCPL:== BY ==500==.                        12370004
                                                                         12370005

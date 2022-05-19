@@ -1,7 +1,7 @@
       *TypeCobol_Version:[[ParserVersion]]
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+      
        DATA DIVISION.
        Working-STORAGE SECTION.
        01 TC-Callee pic X(08) value 'CALLEE'.
@@ -12,7 +12,7 @@
                             'U' thru X'FF'.
 
                                
-
+      
       *01  somedate     TYPE Date.
        01 somedate.
            02 YYYY PIC 9(4).
@@ -57,28 +57,28 @@
           05 TC-Callee-ca0ab46c-Idt PIC X(08).
           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
 
-
+      
        PROCEDURE DIVISION.
       *
            PERFORM TC-INITIALIZATIONS
 
                           
-
-
+      
+      
       *     MOVE W-TechCtx::Site::SiteName TO someformat.
             MOVE SiteName OF Site OF W-TechCtx TO someformat.
-
+      
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
-
+      
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
-      *   OUTPUT okay          TYPE Bool
+      *    OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
-
+      
        TRAITEMENT.
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
@@ -140,8 +140,8 @@
                                  realformat
            end-call
                                                   
-
-
+      
+      
       *OK  call check of PGM1
       *      call check input somedate
              CALL 'a0508f35' USING
@@ -201,10 +201,11 @@
             .
 
        END PROGRAM PGM1.
-
+      
+      
       *
       *declare procedure check private
-      *   input mydate        TYPE Date
+      *    input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -228,7 +229,7 @@
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
-      *   OUTPUT okay          TYPE Bool
+      *    OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
       *_________________________________________________________________

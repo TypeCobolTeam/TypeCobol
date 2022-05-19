@@ -1,18 +1,18 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. AYIMCPFD.
-
+      
        DATA DIVISION.
-
+      
        WORKING-STORAGE SECTION.
-
+      
        01 MyBool TYPE BOOL.
        01 Idx-perform1          PIC S9(4) COMP-5.
        01   TaxElm  TYPEDEF STRICT PRIVATE.
-        10 TaxTyp           PIC X(03).
+           10 TaxTyp           PIC X(03).
              88 TaxTyp-Vat       VALUE 'VAT'.
-        10 TaxErID          PIC 9(7).
-
-        01 Table-OthElm.
+           10 TaxErID          PIC 9(7).
+      
+       01 Table-OthElm.
            05   MaxOthElm   PIC 999 VALUE 200.
            05   OthElmNbr   PIC 999.
            05   OthElm      OCCURS 200 TIMES INDEXED BY Idx-OthElm.
@@ -23,33 +23,33 @@
                     15 MaxElmTax    PIC 99 VALUE 10.
                     15 ElmTax TYPE TaxElm OCCURS 10
                                     INDEXED BY Idx-OthElmTax.
-
+      
        PROCEDURE DIVISION.
-        SET Idx-OthElm  TO 1
-        SEARCH Table-OthElm::OthElm
+           SET Idx-OthElm  TO 1
+           SEARCH Table-OthElm::OthElm
                     AT END
                         SET MyBool  TO TRUE
                     WHEN Table-OthElm::OthElm::ElmErID (Idx-OthElm)
                         = Table-OthElm::OthElm::LnkErId
                                 (Idx-perform1)
                         PERFORM DoSomething
-        END-SEARCH
-         SET Table-OthElm::OthElm::ElmTaxes::Idx-OthElmTax
+           END-SEARCH
+            SET Table-OthElm::OthElm::ElmTaxes::Idx-OthElmTax
                             TO Table-OthElm::OthElm::ElmTaxes::
                             ElmTaxNbr(Idx-OthElm)
-
-           SEARCH Table-OthElm::OthElm::ElmTaxes::ElmTax
+      
+              SEARCH Table-OthElm::OthElm::ElmTaxes::ElmTax
                 AT END
                     PERFORM DoSomething
                 WHEN Table-OthElm::OthElm::ElmTaxes::ElmTax::
                 TaxErID (Idx-OthElm Idx-OthElmTax) = 1
                     PERFORM DoSomething
-           END-SEARCH.
-
-        SET Table-OthElm::OthElm::Idx-OthElm
+              END-SEARCH.
+      
+           SET Table-OthElm::OthElm::Idx-OthElm
              TO Table-OthElm::OthElmNbr.
-
-           DoSomething.
+      
+       DoSomething.
            .
-
+      
        END PROGRAM AYIMCPFD.

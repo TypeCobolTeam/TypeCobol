@@ -47,11 +47,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
             bool IsFormalizedOrMultilineCommentToken(Token token)
             {
-                return token.TokenFamily == TokenFamily.FormalizedCommentsFamily ||
-                       token.TokenFamily == TokenFamily.MultilinesCommentsFamily;
+                var scanState = token.ScanStateSnapshot;
+                if (scanState == null) return false;
+                return scanState.InsideFormalizedComment || scanState.InsideMultilineComments ||
+                       token.TokenType == TokenType.MULTILINES_COMMENTS_STOP ||
+                       token.TokenType == TokenType.FORMALIZED_COMMENTS_STOP;
             }
 
-            void CheckToken(Token token)
+        void CheckToken(Token token)
             {
                 var actualStartingArea = DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(token);
                 if (actualStartingArea != expectedStartingArea)

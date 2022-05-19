@@ -21,24 +21,24 @@
        PROCEDURE DIVISION.
 
       * Normal case
-       SET pointer1 UP BY 3.
+           SET pointer1 UP BY 3.
 
       * Increment with variable
-       SET pointer1 DOWN BY pointer0::increment.
+           SET pointer1 DOWN BY pointer0::increment.
 
       * Usage of qualified Name
-       SET pointer0::pntr UP BY noPointer.
+           SET pointer0::pntr UP BY noPointer.
       * Usage of qualified Name
-       SET pointer0::pointerStat::backupPointer UP BY noPointer.
+           SET pointer0::pointerStat::backupPointer UP BY noPointer.
 
       * Multiple Increment 
-       SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY 12.
+           SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY 12.
 
       * Arithmetic expression 
-       SET pointer0::pntr, pointer0::backupPointer UP BY ((4 + 8)/2**2).
+           SET pointer0::pntr, pointer0::backupPointer UP BY ((4 + 8)/2**2).
 
       * Arithmetic expression using variables
-       SET pointer0::pntr Down BY (pointer0::counter + increment).
+           SET pointer0::pntr Down BY (pointer0::counter + increment).
 
       * Procedure
        declare procedure PointerProcedure PRIVATE

@@ -18,12 +18,12 @@
           @    replacedBy  MyFonction2
           @ need  some needs
           @ todo
-              - make my second type my first type
-              - get another type
+        - make my second type my first type
+        - get another type
           @Params:
-            - MyType2: my second type
-            - MyType3: my third type
-            - Mydate: today date
+        - MyType2: my second type
+        - MyType3: my third type
+        - Mydate: today date
       %>>>
        PROCEDURE DIVISION.
        declare procedure check public
@@ -33,7 +33,7 @@
       %<<<
         check if the given date is before today
         @params:
-          - mydate: tyhe date to test
+        - mydate: tyhe date to test
       %>>>
        declare procedure check2 public
           input mydate        TYPE Date
