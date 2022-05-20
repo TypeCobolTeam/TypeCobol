@@ -35,5 +35,8 @@ Line 22[39,40] <27, Error, Syntax> - Syntax error : mismatched input 'TO' expect
 
 [[SubtractStatement]] [12,19:SUBTRACT]<SUBTRACT> --> [68,71:YYYY]<UserDefinedWord>
 
+[[SentenceEnd]] [72,72+:.]<PeriodSeparator> --> [72,72+:.]<PeriodSeparator>
+
 [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
 - ProgramName = MOVECORR
+

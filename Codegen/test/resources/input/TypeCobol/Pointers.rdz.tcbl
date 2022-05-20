@@ -1,8 +1,8 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. Pointers.
-
+      
        DATA DIVISION.
-
+      
        LOCAL-STORAGE SECTION.
        01 PointerContainer typedef Strict.
            02 pntr pointer.
@@ -10,40 +10,41 @@
               05 counter pic 9(5).
               05 increment pic 9(2).
               05 backupPointer pointer.
-
+      
        01 pointer0 type PointerContainer.
        01 pointer1 pointer.
        01 notUsedPointer pointer.
        01 notUsedPointerOccurs pointer OCCURS 10.
-
+      
        01 noPointer pic 9(8) value 12.
-
+      
        PROCEDURE DIVISION.
-
+      
       * Normal case
            SET pointer1 UP BY 3.
-
+      
       * Increment with variable
            SET pointer1 DOWN BY pointer0::increment.
-
+      
       * Usage of qualified Name
            SET pointer0::pntr UP BY noPointer.
       * Usage of qualified Name
            SET pointer0::pointerStat::backupPointer UP BY noPointer.
-
+      
       * Multiple Increment 
-           SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY 12.
-
+           SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY
+      
       * Arithmetic expression 
-           SET pointer0::pntr, pointer0::backupPointer UP BY ((4 + 8)/2**2).
-
+           SET pointer0::pntr, pointer0::backupPointer 
+           UP BY ((4 + 8)/2*2**2).
+      
       * Arithmetic expression using variables
            SET pointer0::pntr Down BY (pointer0::counter + increment).
-
+      
       * Procedure
        declare procedure PointerProcedure PRIVATE
-         in-out ptr pointer.
-  
+            in-out ptr pointer.
+      
          data division.
          working-storage section.
          procedure division.

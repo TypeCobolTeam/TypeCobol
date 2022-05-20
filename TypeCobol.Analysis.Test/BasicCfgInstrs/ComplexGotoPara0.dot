@@ -10,31 +10,31 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{PARA-A. Block1|      DISPLAY 'IN PARA-A'\l      GO TO PARA-C\l}"
+label = "{PARA-A. Block1|    DISPLAY 'IN PARA-A'\l    GO TO PARA-C\l}"
 ]
 Block4 [
-label = "{PARA-C. Block4|      DISPLAY 'IN PARA-C '\l}"
+label = "{PARA-C. Block4|    DISPLAY 'IN PARA-C '\l}"
 ]
 Block5 [
-label = "{PARA-C. Block5|      GO TO PARA-E PARA-F PARA-G DEPENDING ON m\l}"
+label = "{PARA-C. Block5|    GO TO PARA-E PARA-F PARA-G DEPENDING ON m\l}"
 ]
 Block6 [
 label = "{Block6|}"
 ]
 Block7 [
-label = "{PARA-D. Block7|      DISPLAY 'IN PARA-D '\l}"
+label = "{PARA-D. Block7|    DISPLAY 'IN PARA-D '\l}"
 ]
 Block8 [
-label = "{PARA-E. Block8|      DISPLAY 'IN PARA-E '\l}"
+label = "{PARA-E. Block8|    DISPLAY 'IN PARA-E '\l}"
 ]
 Block9 [
-label = "{PARA-F. Block9|      DISPLAY 'IN PARA-F '\l}"
+label = "{PARA-F. Block9|    DISPLAY 'IN PARA-F '\l}"
 ]
 Block10 [
-label = "{PARA-G. Block10|      DISPLAY 'IN PARA-G '\l}"
+label = "{PARA-G. Block10|    DISPLAY 'IN PARA-G '\l}"
 ]
 Block11 [
-label = "{PARA-G. Block11|      GOBACK\l}"
+label = "{PARA-G. Block11|    GOBACK\l}"
 ]
 Block0 -> Block1
 Block1 -> Block4

@@ -17,8 +17,8 @@
       
          IDENTIFICATION DIVISION.
            PROGRAM-ID. NestedPgm IS COMMON.
-           DATA DIVISION.
-           LINKAGE SECTION.
+          DATA DIVISION.
+          LINKAGE SECTION.
           01 param1 PIC X(8).
           01 param2 PIC S9(5) comp-5.
           01 param3 Pointer.

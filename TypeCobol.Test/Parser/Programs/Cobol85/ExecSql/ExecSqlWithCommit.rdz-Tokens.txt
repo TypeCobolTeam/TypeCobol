@@ -1,3 +1,4 @@
+Line 7[10,17] <27, Error, Syntax> - Syntax error : END-EXEC should begin in AreaB. It was found in 'AreaA'.
 Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 --- Tokens ---
 ---------------------------------
@@ -32,9 +33,9 @@ _  EXEC SQL DELETE FROM CUSTOMERS	   _
     _CUSTOMERS_    [31,39:CUSTOMERS]<ExecStatementText>
     _	   _    [40,43:	   ]<ExecStatementText>
 ---------------------------------
-_  COMMIT_
-    _  _    [8,9:  ]<ExecStatementText>
-    _COMMIT_    [10,15:COMMIT]<SQL_COMMIT>
+_   COMMIT_
+    _   _    [8,10:   ]<ExecStatementText>
+    _COMMIT_    [11,16:COMMIT]<SQL_COMMIT>
 ---------------------------------
 _  END-EXEC._
     _END-EXEC_    [10,17:END-EXEC]<END_EXEC>

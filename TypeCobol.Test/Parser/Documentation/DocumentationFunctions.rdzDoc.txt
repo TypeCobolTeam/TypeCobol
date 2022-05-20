@@ -1,11 +1,9 @@
+Line 43[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
+Line 44[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'CONTINUE' expecting {DataDivisionHeader, ProcedureDivisionHeader, FunctionDeclarationEnd}
 Line 12[13,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
 Line 14[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
-Line 28[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-Line 29[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
-Line 40[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: name
-Line 41[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
-Line 51[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: name
-Line 52[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+Line 29[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 30[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
 ======================== Nodes properties ========================
 Name : DocForFunctions
 Description : 
@@ -91,76 +89,6 @@ Parameters :
 
 ---------------------
 
-Name : MyProc2
-Description : MyProc2 description 
-Visibility : Local
-Namespace : DocForFunctions
-NodeType : Function
-IsDeprecated : False
-Deprecated : 
-ReplacedBy : 
-Restriction : 
-See : 
-Needs : 
-ToDo : 
-Parameters : 
-    Name : name
-    Info : 
-    PassingType : Input
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : 
-        Picture : X(50)
-    --------
-    Name : price
-    Info : 
-    PassingType : Output
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : 
-        Picture : S9(5)V9(2)
-
----------------------
-
-Name : MyProc3
-Description : MyProc3 description 
-Visibility : Public
-Namespace : DocForFunctions
-NodeType : Function
-IsDeprecated : False
-Deprecated : 
-ReplacedBy : 
-Restriction : 
-See : 
-Needs : 
-ToDo : 
-Parameters : 
-    Name : name
-    Info : 
-    PassingType : Input
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : 
-        Picture : X(50)
-    --------
-    Name : price
-    Info : 
-    PassingType : Output
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : 
-        Picture : S9(5)V9(2)
-
----------------------
-
 ======================== Code Element properties ========================
 == DocForFunctions ==
 No formalized comment found
@@ -184,30 +112,6 @@ Parameters :
     ID : will be ignored
     desc : this is not a description
     IDS : this will be truncated
-
----------------------
-
-== MyProc2 ==
-Description : MyProc2 description 
-Deprecated : 
-ReplacedBy : 
-Restriction : 
-See : 
-Needs : 
-ToDo : 
-Parameters : 
-
----------------------
-
-== MyProc3 ==
-Description : MyProc3 description 
-Deprecated : 
-ReplacedBy : 
-Restriction : 
-See : 
-Needs : 
-ToDo : 
-Parameters : 
 
 ---------------------
 

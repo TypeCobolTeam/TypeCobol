@@ -3,7 +3,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
          EXEC SQL DELETE FROM CUSTOMERS	   
-         COMMIT
+          COMMIT
          END-EXEC.
        PROCEDURE DIVISION.
            EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT

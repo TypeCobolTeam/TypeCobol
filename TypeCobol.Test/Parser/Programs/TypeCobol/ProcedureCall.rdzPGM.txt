@@ -10,11 +10,11 @@ Line 41[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format'
 Line 111[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
 Line 115[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
 Line 119[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
-Line 127[8,11] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized OffendingSymbol=[8,11:CALL]<CALL>
-Range (137, 8) -> (138, 43) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  output(Alphanumeric, Alphanumeric)
-Range (142, 8) -> (143, 43) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  in-out(Alphanumeric, Alphanumeric)
-Range (147, 8) -> (148, 40) <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 
-Range (147, 8) -> (148, 40) <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrPr' of usage ProcedurePointer and received 'someformat' of usage 
+Line 127[14,17] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized OffendingSymbol=[14,17:CALL]<CALL>
+Range (137, 12) -> (138, 43) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  output(Alphanumeric, Alphanumeric)
+Range (142, 14) -> (143, 43) <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  in-out(Alphanumeric, Alphanumeric)
+Range (147, 12) -> (148, 40) <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 
+Range (147, 12) -> (148, 40) <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrPr' of usage ProcedurePointer and received 'someformat' of usage 
 Range (162, 12) -> (164, 50) <30, Error, Semantics> - Semantic error: Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Numeric)
 Line 170[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
 Line 170[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 8

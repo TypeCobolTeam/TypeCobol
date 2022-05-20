@@ -1,8 +1,8 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DocForFunctions.
-
+      
        PROCEDURE DIVISION.
-
+      
       * Full formalised Comment
       %<<<
         @ description: MyProc1 description
@@ -22,16 +22,17 @@
         @ todo: implement a call to MyProc8 in case of 
                 discount code
       %>>>
-       DECLARE PROCEDURE MyProc1 PRIVATE
+       DECLARE 
+       PROCEDURE MyProc1 PRIVATE
            INPUT    myDate      TYPE Date
                     name        Pic X(50)
            IN-OUT   myBool      TYPE BOOL
            OUTPUT   price       Pic S9(5)V9(2)
                     desc        Pic X(200).
-           PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       * Simple formalized comment on local procedure
       %<<<
         @ description: MyProc2 description
@@ -39,19 +40,21 @@
        DECLARE PROCEDURE MyProc2
            INPUT    name        Pic X(50)
            OUTPUT   price       Pic S9(5)V9(2).
-           PROCEDURE DIVISION.
+      PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
       * Simple formalized comment on public procedure
       %<<<
         @ description: MyProc3 description
       %>>>
-       DECLARE PROCEDURE MyProc3 PUBLIC
+       DECLARE 
+       PROCEDURE MyProc3 PUBLIC
            INPUT    name        Pic X(50)
            OUTPUT   price       Pic S9(5)V9(2).
-           PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-
+      
        END PROGRAM DocForFunctions.
+      

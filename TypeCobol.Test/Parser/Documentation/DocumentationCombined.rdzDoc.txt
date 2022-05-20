@@ -1,11 +1,19 @@
+Line 52[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
+Line 63[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
+Line 56[12,30] <27, Error, Syntax> - Syntax error : PROCEDURE should begin in AreaA. It was found in 'AreaB'.
+Line 75[12,30] <27, Error, Syntax> - Syntax error : PROCEDURE should begin in AreaA. It was found in 'AreaB'.
 Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 46[13,18] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: myDate
+Line 47[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: bla
 Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
-Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
-Line 66[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
-Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
-Line 77[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
-Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
+Line 53[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 55[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+Line 61[10,19] <37, Warning, General> - Warning: Formalized comment field is declared more than once : deprecated
+Line 69[10,19] <37, Warning, General> - Warning: Formalized comment field is declared more than once : deprecated
+Line 62[13,16] <37, Warning, General> - Warning: Formalized comment field is declared more than once : todo
+Line 70[13,16] <37, Warning, General> - Warning: Formalized comment field is declared more than once : todo
+Line 73[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
+Line 74[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Nodes properties ========================
 Name : DocCombined
 Description : My program 
@@ -135,26 +143,6 @@ ToDo :
     todo1
     todo 2
 Parameters : 
-    Name : myDate
-    Info : just a date
-    PassingType : Input
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : DATE
-        Picture : 
-    --------
-    Name : bla
-    Info : bla < 2
-    PassingType : Input
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : 
-        Picture : S9(1)V9(12)
-    --------
     Name : myBool
     Info : 
     PassingType : InOut
@@ -187,44 +175,8 @@ Parameters :
 
 ---------------------
 
-Name : MyPrivateProc
-Description : MyPrivateProc is a Proc but Private 
-Visibility : Private
-Namespace : DocCombined
-NodeType : Function
-IsDeprecated : True
-Deprecated : 
-ReplacedBy : 
-Restriction : 
-See : 
-Needs : 
-ToDo : 
-    Add a body
-Parameters : 
-    Name : myDate
-    Info : 
-    PassingType : Input
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : DATE
-        Picture : 
-    --------
-    Name : toto
-    Info : 
-    PassingType : Output
-    DataType : 
-        Usage : 
-        MaxOccurence : 1
-        DefaultValue : 
-        TypeName : BOOL
-        Picture : 
-
----------------------
-
 Name : MyLocalProc
-Description : MyLocalProc is a Proc but Local (no access modifier) 
+Description : MyPrivateProc is a Proc but Private 
 Visibility : Local
 Namespace : DocCombined
 NodeType : Function
@@ -235,6 +187,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
+    Add a body PROCEDURE DIVISION. CONTINUE. END-DECLARE. <<< MyLocalProc is a Proc but Local (no access modifier)
     Add a body
 Parameters : 
     Name : myDate
@@ -322,7 +275,7 @@ Parameters :
 
 ---------------------
 
-== MyPrivateProc ==
+== MyLocalProc ==
 Description : MyPrivateProc is a Proc but Private 
 Deprecated : *is present*
 ReplacedBy : 
@@ -330,19 +283,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
-    Add a body
-Parameters : 
-
----------------------
-
-== MyLocalProc ==
-Description : MyLocalProc is a Proc but Local (no access modifier) 
-Deprecated : *is present*
-ReplacedBy : 
-Restriction : 
-See : 
-Needs : 
-ToDo : 
+    Add a body PROCEDURE DIVISION. CONTINUE. END-DECLARE. <<< MyLocalProc is a Proc but Local (no access modifier)
     Add a body
 Parameters : 
 
