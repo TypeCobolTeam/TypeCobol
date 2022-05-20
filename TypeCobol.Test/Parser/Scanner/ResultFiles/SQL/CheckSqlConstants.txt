@@ -1,37 +1,38 @@
 -- Line 1 --
-[1,4:NULL]<SQL_NULL>
+[1,2:-1]<IntegerLiteral>{-1}
 -- Line 2 --
-[1,6:025.50]<DecimalLiteral>{2550|2>25.5}
+[1,4:NULL]<SQL_NULL>
 -- Line 3 --
-[1,21:1228512541.34578E0222]<SQL_DecimalFloatingPointLiteral>
+[1,6:025.50]<DecimalLiteral>{2550|2>25.5}
 -- Line 4 --
-[1,5:5.5E2]<FloatingPointLiteral>{55|1>5.5E2>550}
+[1,21:1228512541.34578E0222]<SQL_DecimalFloatingPointLiteral>
 -- Line 5 --
-[1,6:SELECT]<SQL_SELECT>
-[8,10:200]<IntegerLiteral>{200}
+[1,5:5.5E2]<FloatingPointLiteral>{55|1>5.5E2>550}
 -- Line 6 --
 [1,6:SELECT]<SQL_SELECT>
-[8,10:-10]<IntegerLiteral>{-10}
+[8,10:200]<IntegerLiteral>{200}
 -- Line 7 --
 [1,6:SELECT]<SQL_SELECT>
-[8,11:Test]<UserDefinedWord>
+[8,10:-10]<IntegerLiteral>{-10}
 -- Line 8 --
 [1,6:SELECT]<SQL_SELECT>
-[8,11:-NaN]<SQL_DecimalFloatingPointLiteral>
+[8,11:Test]<UserDefinedWord>
 -- Line 9 --
 [1,6:SELECT]<SQL_SELECT>
-[8,15:infinity]<SQL_DecimalFloatingPointLiteral>
+[8,11:-NaN]<SQL_DecimalFloatingPointLiteral>
 -- Line 10 --
 [1,6:SELECT]<SQL_SELECT>
-[8,14+:GX'041']<SQL_GraphicStringLiteral>(',Y,Y)
-Line 0[8,14] <50, Error, Syntax> - The number of hexadecimal digits in graphic-string constant must be a multiple of 4 and must not exceed 32704.
+[8,15:infinity]<SQL_DecimalFloatingPointLiteral>
 -- Line 11 --
 [1,6:SELECT]<SQL_SELECT>
-[8,23+:UX'004100420043']<SQL_GraphicStringLiteral>(',Y,Y)
+[8,14:GX'041']<SQL_GraphicStringLiteral>(G,Y,N)
 -- Line 12 --
 [1,6:SELECT]<SQL_SELECT>
-[8,12+:BX'1']<SQL_BinaryStringLiteral>(',Y,Y)
-Line 0[8,12] <49, Error, Syntax> - The number of hexadecimal digits in binary-string constant must be even and must not exceed 32704.
+[8,23:UX'004100420043']<SQL_GraphicStringLiteral>(U,Y,N)
 -- Line 13 --
+[1,6:SELECT]<SQL_SELECT>
+[8,12:BX'1']<SQL_BinaryStringLiteral>(B,Y,N)
+Line 0[8,12] <49, Error, Tokens> - The number of hexadecimal digits in binary-string constant must be even and must not exceed 32704.
+-- Line 14 --
 [1,4:DATE]<UserDefinedWord>
 [6,17:'10/08/1998']<AlphanumericLiteral>(',Y,Y){10/08/1998}

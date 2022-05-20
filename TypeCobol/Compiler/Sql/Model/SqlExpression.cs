@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler.Scanner;
+﻿using System;
+using System.Diagnostics;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql;
 
 namespace TypeCobol.Compiler.Sql.Model
@@ -26,6 +28,7 @@ namespace TypeCobol.Compiler.Sql.Model
         public SqlConstant(Token literal)
         {
             Literal = literal;
+            Debug.Assert(literal.TokenType == TokenType.SQL_NULL || literal.TokenType == TokenType.IntegerLiteral || literal.TokenType == TokenType.DecimalLiteral||literal.TokenType == TokenType.SQL_DecimalFloatingPointLiteral || literal.TokenType == TokenType.FloatingPointLiteral || literal.TokenType == TokenType.AlphanumericLiteral || literal.TokenType == TokenType.SQL_BinaryStringLiteral || literal.TokenType == TokenType.SQL_GraphicStringLiteral || literal.TokenType == TokenType.HexadecimalAlphanumericLiteral);
             switch (literal.TokenType)
             {
                 case (TokenType.SQL_NULL):
@@ -40,6 +43,12 @@ namespace TypeCobol.Compiler.Sql.Model
                 case (TokenType.FloatingPointLiteral):
                     Type = SqlConstantType.FloatingPoint;
                     break;
+                case (TokenType.AlphanumericLiteral):
+                    Type = SqlConstantType.FloatingPoint;
+                    break;
+                case (TokenType.HexadecimalAlphanumericLiteral):
+                    Type = SqlConstantType.FloatingPoint;
+                    break;
                 case (TokenType.SQL_DecimalFloatingPointLiteral):
                     Type = SqlConstantType.DecimalFloatingPoint;
                     break;
@@ -49,6 +58,8 @@ namespace TypeCobol.Compiler.Sql.Model
                 case (TokenType.SQL_GraphicStringLiteral):
                     Type = SqlConstantType.GraphicString;
                     break;
+                default:
+                    throw new InvalidOperationException($"Unexpected literal token type '{literal.TokenType}' for SQL Constant.");
             }
         }
 
@@ -85,7 +96,6 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             TokenKind = tokenKind;
             Kind = kind;
-
         }
 
         public override SqlConstantType Type => SqlConstantType.Datetime;

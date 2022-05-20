@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Scanner;
+﻿using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Scanner
 {
@@ -32,7 +27,6 @@ namespace TypeCobol.Compiler.Sql.Scanner
         public DecimalFloatingPointSpecialValue? SpecialValue { get; set; }
 
         public FloatingPointLiteralTokenValue NumericConstant { get; }
-
 
         public DecimalFloatingPointLiteralTokenValue(FloatingPointLiteralTokenValue numericConstant) : base(LiteralTokenValueType.DecimalFloatingPoint)
         {

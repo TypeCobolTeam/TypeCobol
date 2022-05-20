@@ -267,15 +267,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             if (context.date() != null)
             {
-                return new DatetimeConstant((Token) context.AlphanumericLiteral(),DatetimeConstantKind.Date ,context.date().KeywordDATE as Token) ;
+                return new DatetimeConstant((Token)context.AlphanumericLiteral(),DatetimeConstantKind.Date, (Token)context.date().KeywordDATE) ;
             }
             else if (context.time()!=null)
             {
-                return new DatetimeConstant((Token)context.AlphanumericLiteral(), DatetimeConstantKind.Time, context.time().KeywordTIME as Token);
+                return new DatetimeConstant((Token)context.AlphanumericLiteral(), DatetimeConstantKind.Time, (Token)context.time().KeywordTIME );
             }
             else if (context.timestamp()!=null)
             {
-                return new DatetimeConstant((Token)context.AlphanumericLiteral(), DatetimeConstantKind.Timestamp, context.timestamp().KeywordTIMESTAMP as Token);
+                return new DatetimeConstant((Token)context.AlphanumericLiteral(), DatetimeConstantKind.Timestamp, (Token)context.timestamp().KeywordTIMESTAMP );
             }
             return null;
         }

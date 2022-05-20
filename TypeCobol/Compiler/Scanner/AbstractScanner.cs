@@ -325,7 +325,8 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.SQL_BinaryStringLiteral:
                     {
                         string binaryDigits = sbValue.ToString();
-                        if (binaryDigits.Length % 2 != 0 || binaryDigits.Length > 32704)
+                        var binaryDigitsLength = binaryDigits.Length - 3;
+                        if (binaryDigitsLength % 2 != 0 || binaryDigitsLength > 32704)
                         {
                             tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInBinaryStringLiteral, token);
                         }
@@ -338,11 +339,8 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.SQL_GraphicStringLiteral:
                     {
                         string graphicString = sbValue.ToString();
-                        if (graphicString.Length % 4 != 0)
-                        {
-                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
-                        }
-                        if ((line[startIndex] == 'U' || line[startIndex] == 'u')&& graphicString.Length > 32704)
+                        var graphicStringLength = graphicString.Length - 3;
+                        if (graphicStringLength % 4 != 0 && graphicStringLength > 32704)
                         {
                             tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
                         }

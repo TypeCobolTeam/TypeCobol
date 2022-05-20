@@ -12,6 +12,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
     /// </summary>
     public class SqlScanner : AbstractScanner
     {
+        private const char SQL_DECIMAL_POINT = '.';
         private static readonly Dictionary<string, DecimalFloatingPointSpecialValueType> _SpecialValues =
             new Dictionary<string, DecimalFloatingPointSpecialValueType>(StringComparer.OrdinalIgnoreCase)
             {
@@ -48,23 +49,6 @@ namespace TypeCobol.Compiler.Sql.Scanner
 
             // Start scanning at the given index
             currentIndex = startIndex;
-            if (IsSqlKeywordPart(line[currentIndex]))
-            {
-                //Consume all sql-keyword compatible chars
-                for (; currentIndex <= lastIndex && IsSqlKeywordPart(line[currentIndex]); currentIndex++)
-                {
-                }
-
-                string tokenText = line.Substring(startIndex, currentIndex - startIndex);
-                //Try to match keyword text
-                var tokenType =
-                    TokenUtils.GetSqlKeywordTokenTypeFromTokenString(tokenText);
-                if (tokenType!=TokenType.UserDefinedWord)
-                {
-                    return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                }
-            }
-
             switch (line[startIndex])
             {
                 case ' ':
@@ -116,7 +100,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                         return decimalFloatingPointSpecialValueToken;
                     }
 
-                    return ScanUserDefinedWord(startIndex);
+                    return ScanKeyWordOrUserDefinedWord(startIndex);
                 case '\'':
                 case '"':
                     return ScanAlphanumericLiteral(startIndex, TokenType.AlphanumericLiteral, null);
@@ -128,7 +112,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     }
                     else
                     {
-                        return ScanUserDefinedWord(startIndex);
+                        return ScanKeyWordOrUserDefinedWord(startIndex);
                     }
                 case 'B':
                 case 'b':
@@ -139,7 +123,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     }
                     else
                     {
-                        return ScanUserDefinedWord(startIndex);
+                        return ScanKeyWordOrUserDefinedWord(startIndex);
                     }
                 case 'U':
                 case 'u':
@@ -152,10 +136,10 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     }
                     else
                     {
-                        return ScanUserDefinedWord(startIndex);
+                        return ScanKeyWordOrUserDefinedWord(startIndex);
                     }
                 default:
-                    return ScanUserDefinedWord(startIndex);
+                    return ScanKeyWordOrUserDefinedWord(startIndex);
 
             }
         }
@@ -172,7 +156,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 return decimalFloatingPointSpecialValueToken;
             }
 
-            var token = ScanNumericLiteral(startIndex, '.');
+            var token = ScanNumericLiteral(startIndex, SQL_DECIMAL_POINT);
             switch (token.TokenType)
             {
                 case TokenType.IntegerLiteral:
@@ -197,9 +181,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 //Check IntegerLiteral range
                 if (literalValueLength > 19)
                 {
-                    //Out of range
-                    this.tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token,
-                        "Number is too big : " + literalValue.Number);
+                    CheckDecimalLiteral();
                 }
             }
             void CheckDecimalLiteral()
@@ -254,18 +236,18 @@ namespace TypeCobol.Compiler.Sql.Scanner
             out DecimalFloatingPointLiteralTokenValue decimalFloatingPointLiteralTokenValue)
 
         {
-            decimalFloatingPointLiteralTokenValue = null;
-            for (int index = startIndex; index <= lastIndex && char.IsLetter(line[index]); index++)
+            for (; currentIndex <= lastIndex && IsSqlKeywordPart(line[currentIndex]); currentIndex++)
             {
             }
-
-            string text = null;
-            text = hasExplicitSign ? line.Substring(startIndex + 1, currentIndex - startIndex - 1) : line.Substring(startIndex, currentIndex - startIndex);
-            var tryToGetValue = _SpecialValues.TryGetValue(text, out var outPut);
-            if (tryToGetValue != true) return false;
-            //negative
-            decimalFloatingPointLiteralTokenValue = new DecimalFloatingPointLiteralTokenValue(new DecimalFloatingPointSpecialValue(hasExplicitSign, outPut));
-            return true;
+            string tokenText = line.Substring(startIndex, currentIndex - startIndex);
+            var text = hasExplicitSign ? line.Substring(startIndex + 1, currentIndex - startIndex - 1) : line.Substring(startIndex, currentIndex - startIndex);
+            if (_SpecialValues.TryGetValue(text, out var specialValueType))
+            {
+                decimalFloatingPointLiteralTokenValue = new DecimalFloatingPointLiteralTokenValue(new DecimalFloatingPointSpecialValue(hasExplicitSign, specialValueType));
+                return true;
+            }
+            decimalFloatingPointLiteralTokenValue = null;
+            return false;
         }
 
         private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType,
@@ -307,13 +289,18 @@ namespace TypeCobol.Compiler.Sql.Scanner
             }
         }
 
-        private Token ScanUserDefinedWord(int startIndex)
+        private Token ScanKeyWordOrUserDefinedWord(int startIndex)
         {
+            //Consume all sql-keyword compatible chars
             for (; currentIndex <= lastIndex && IsSqlKeywordPart(line[currentIndex]); currentIndex++)
             {
             }
 
-            return new Token(TokenType.UserDefinedWord, startIndex, currentIndex - 1, tokensLine);
+            string tokenText = line.Substring(startIndex, currentIndex - startIndex);
+            //Try to match keyword text
+            var tokenType =
+                TokenUtils.GetSqlKeywordTokenTypeFromTokenString(tokenText);
+            return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
         }
 
     }
