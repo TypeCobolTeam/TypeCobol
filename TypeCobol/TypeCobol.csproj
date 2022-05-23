@@ -36,34 +36,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseListener.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\CodeElementsBaseListener.cs')">
       <Link>Compiler\Parser\Generated\CodeElementsBaseListener.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseVisitor.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\CodeElementsBaseVisitor.cs')">
       <Link>Compiler\Parser\Generated\CodeElementsBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsListener.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\CodeElementsListener.cs')">
       <Link>Compiler\Parser\Generated\CodeElementsListener.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsParser.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsParser.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\CodeElementsParser.cs')">
       <Link>Compiler\Parser\Generated\CodeElementsParser.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs')">
       <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs')">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseVisitor.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseVisitor.cs')">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsListener.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsListener.cs')">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsListener.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsParser.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsParser.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsParser.cs')">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsParser.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsVisitor.cs" Condition="Exists('$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsVisitor.cs')">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsVisitor.cs</Link>
     </Compile>
     <Compile Include="**\*.cs" />
