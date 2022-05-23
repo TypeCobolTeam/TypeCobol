@@ -326,7 +326,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         string binaryDigits = sbValue.ToString();
                         var binaryDigitsLength = binaryDigits.Length;
-                        if (binaryDigitsLength < 2 || binaryDigitsLength % 2 != 0 || binaryDigitsLength > 32704)
+                        if (binaryDigitsLength % 2 != 0 || binaryDigitsLength > 32704)
                         {
                             tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInBinaryStringLiteral, token);
                         }
@@ -340,7 +340,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         string graphicString = sbValue.ToString();
                         var graphicStringLength = graphicString.Length;
-                        if (graphicStringLength < 4 || graphicStringLength % 4 != 0 && graphicStringLength > 32704)
+                        if (graphicStringLength % 4 != 0 || graphicStringLength > 32704)
                         {
                             tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
                         }

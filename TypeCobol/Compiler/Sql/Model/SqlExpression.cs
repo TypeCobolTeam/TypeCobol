@@ -27,57 +27,44 @@ namespace TypeCobol.Compiler.Sql.Model
         public SqlConstant(Token literal)
         {
             Literal = literal;
-            Debug.Assert(literal.TokenType == TokenType.SQL_NULL ||
-                         literal.TokenType == TokenType.IntegerLiteral ||
-                         literal.TokenType == TokenType.FloatingPointLiteral ||
-                         literal.TokenType == TokenType.DecimalLiteral ||
-                         literal.TokenType == TokenType.SQL_DecimalFloatingPointLiteral ||
-                         literal.TokenType == TokenType.AlphanumericLiteral || literal.TokenType == TokenType.HexadecimalAlphanumericLiteral ||
-                         literal.TokenType == TokenType.SQL_BinaryStringLiteral ||
-                         literal.TokenType == TokenType.SQL_GraphicStringLiteral);
-            switch (literal.TokenType)
-            {
-                case TokenType.SQL_NULL:
-                    Type = SqlConstantType.Null;
-                    break;
-                case TokenType.IntegerLiteral:
-                    Type = SqlConstantType.Integer;
-                    break;
-                case TokenType.FloatingPointLiteral:
-                    Type = SqlConstantType.FloatingPoint;
-                    break;
-                case TokenType.DecimalLiteral:
-                    Type = SqlConstantType.Decimal;
-                    break;
-                case TokenType.SQL_DecimalFloatingPointLiteral:
-                    Type = SqlConstantType.DecimalFloatingPoint;
-                    break;
-                case TokenType.AlphanumericLiteral:
-                case TokenType.HexadecimalAlphanumericLiteral:
-                    Type = SqlConstantType.CharacterString;
-                    break;
-                case TokenType.SQL_BinaryStringLiteral:
-                    Type = SqlConstantType.BinaryString;
-                    break;
-                case TokenType.SQL_GraphicStringLiteral:
-                    Type = SqlConstantType.GraphicString;
-                    break;
-                default:
-                    throw new InvalidOperationException($"Unexpected literal token type '{literal.TokenType}' for SQL Constant.");
-            }
         }
 
-        public virtual SqlConstantType Type { get; } //based on Literal.TokenType, can be any SqlConstantType except Datetime
-        /*
-        * Literal.TokenType =   SQL_NULL (sql-specific keyword)
-        *                     | IntegerLiteral
-        *                     | FloatingPointLiteral
-        *                     | DecimalLiteral
-        *                     | DecimalFloatingPointLiteral (sql-specific)
-        *                     | AlphanumericLiteral / HexadecimalAlphanumericLiteral
-        *                     | BinaryStringLiteral (sql-specific)
-        *                     | GraphicStringLiteral (sql-specific)
-        */
+        public virtual SqlConstantType Type
+        {
+            get
+            {
+                Debug.Assert(Literal.TokenType == TokenType.SQL_NULL ||
+                             Literal.TokenType == TokenType.IntegerLiteral ||
+                             Literal.TokenType == TokenType.FloatingPointLiteral ||
+                             Literal.TokenType == TokenType.DecimalLiteral ||
+                             Literal.TokenType == TokenType.SQL_DecimalFloatingPointLiteral ||
+                             Literal.TokenType == TokenType.AlphanumericLiteral || Literal.TokenType == TokenType.HexadecimalAlphanumericLiteral ||
+                             Literal.TokenType == TokenType.SQL_BinaryStringLiteral ||
+                             Literal.TokenType == TokenType.SQL_GraphicStringLiteral);
+                switch (Literal.TokenType)
+                {
+                    case TokenType.SQL_NULL:
+                        return SqlConstantType.Null;
+                    case TokenType.IntegerLiteral:
+                        return SqlConstantType.Integer;
+                    case TokenType.FloatingPointLiteral:
+                        return SqlConstantType.FloatingPoint;
+                    case TokenType.DecimalLiteral:
+                        return SqlConstantType.Decimal;
+                    case TokenType.SQL_DecimalFloatingPointLiteral:
+                        return SqlConstantType.DecimalFloatingPoint;
+                    case TokenType.AlphanumericLiteral:
+                    case TokenType.HexadecimalAlphanumericLiteral:
+                        return SqlConstantType.CharacterString;
+                    case TokenType.SQL_BinaryStringLiteral:
+                        return SqlConstantType.BinaryString;
+                    case TokenType.SQL_GraphicStringLiteral:
+                        return SqlConstantType.GraphicString;
+                    default:
+                        throw new InvalidOperationException($"Unexpected literal token type '{Literal.TokenType}' for SQL Constant.");
+                }
+            }
+        }
 
         public Token Literal { get; }
 

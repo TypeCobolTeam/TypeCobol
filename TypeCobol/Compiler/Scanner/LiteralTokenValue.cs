@@ -142,7 +142,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// For the number 5.43, the number of decimal digits is 2
         /// </summary>
-        public int  DecimalDigits { get; }
+        public int DecimalDigits { get; }
 
         public double Number { get; }
 
