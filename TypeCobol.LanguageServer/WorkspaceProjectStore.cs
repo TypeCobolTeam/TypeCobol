@@ -21,7 +21,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         internal class DuplicatedProjectException : Exception
         {
-            internal DuplicatedProjectException(string key) : base("Duplicate Project:" + key)
+            internal DuplicatedProjectException(string key) : base($"Duplicate Project: '{key}'")
             {
             }
         }
@@ -29,7 +29,8 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// The dictionary of WorkspaceProject Keys to WorkspaceProject instance.
         /// </summary>
-        private readonly ConcurrentDictionary<string, WorkspaceProject> _workspaceProjects;
+        private readonly ConcurrentDictionary<string, WorkspaceProject> _namedProjects;
+
         /// <summary>
         /// Underlying workspace project
         /// </summary>
@@ -38,7 +39,23 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Enumeration on WorkspaceProject instances
         /// </summary>
-        public IEnumerable<WorkspaceProject> NamedProjects => _workspaceProjects.Values;
+        public IEnumerable<WorkspaceProject> NamedProjects => _namedProjects.Values;
+
+        /// <summary>
+        /// Enumeration of all projects, that is Default and Named ones.
+        /// </summary>
+        public IEnumerable<WorkspaceProject> AllProjects
+        {
+            get
+            {
+                yield return DefaultWorkspaceProject;
+                foreach (var namedProject in _namedProjects.Values)
+                {
+                    yield return namedProject;
+                }
+            }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -46,7 +63,7 @@ namespace TypeCobol.LanguageServer
         internal WorkspaceProjectStore(Workspace workspace)
         {
             this._workspace = workspace;
-            this._workspaceProjects = new ConcurrentDictionary<string, WorkspaceProject>(StringComparer.OrdinalIgnoreCase);
+            this._namedProjects = new ConcurrentDictionary<string, WorkspaceProject>(StringComparer.OrdinalIgnoreCase);
             CreateDefaultWorkspaceProject();
         }
 
@@ -78,35 +95,6 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Find a WorkspaceProject instance by its key.
-        /// If the key is null the Default Workspace Project is returned.
-        /// </summary>
-        /// <param name="projectKey">The Project's key</param>
-        /// <returns>The WorkspaceProject instance if one exists, null otherwise</returns>
-        private WorkspaceProject FindProject(string projectKey)
-        {
-            if (projectKey == null)
-                return DefaultWorkspaceProject;
-            if (_workspaceProjects.TryGetValue(projectKey, out WorkspaceProject project))
-                return project;
-            return null;
-        }
-
-        /// <summary>
-        /// Add a WorkspaceProject instance
-        /// </summary>
-        /// <param name="project">The project instance to be added</param>
-        /// <exception cref="DuplicatedProjectException">If a project with the same key already exists in the store</exception>
-        private void AddProject(WorkspaceProject project)
-        {
-            System.Diagnostics.Debug.Assert(project != null && project.ProjectKey != null);
-            if (!_workspaceProjects.TryAdd(project.ProjectKey, project))
-            {
-                throw new DuplicatedProjectException(project.ProjectKey);
-            }
-        }
-
-        /// <summary>
         /// Create a WorkspaceProject instance, and add it to the store.
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
@@ -115,10 +103,7 @@ namespace TypeCobol.LanguageServer
         private WorkspaceProject CreateWorkspaceProject(string projectKey)
         {
             System.Diagnostics.Debug.Assert(projectKey != null);
-            if (_workspaceProjects.ContainsKey(projectKey))
-            {
-                throw new DuplicatedProjectException(projectKey);
-            }
+            
             //We don't have the information about the real RootDirectory.
             //We use the RootDirectory from the Workspace because it has no consequences as long as
             //this folder contains no copy
@@ -126,39 +111,45 @@ namespace TypeCobol.LanguageServer
                 _workspace.Configuration.Format, this.DefaultWorkspaceProject.Project.CompilationOptions,
                 this.DefaultWorkspaceProject.Project.AnalyzerProvider);
             WorkspaceProject workspaceProject = new WorkspaceProject(projectKey, compilationProject, _workspace);
-            AddProject(workspaceProject);
-            return workspaceProject;
-        }
-
-        /// <summary>
-        /// Refresh all documents in all WorkspaceProject instances
-        /// </summary>
-        internal void RefreshOpenedFiles()
-        {
-            this.DefaultWorkspaceProject.RefreshOpenedFiles();
-            foreach (var wksProject in _workspaceProjects.Values)
+            if (!_namedProjects.TryAdd(projectKey, workspaceProject))
             {
-                wksProject.RefreshOpenedFiles();
+                throw new DuplicatedProjectException(projectKey);
             }
+
+            return workspaceProject;
         }
 
         /// <summary>
         /// Get or create a project.
         /// </summary>
         /// <param name="projectKey">The key of the project to get or to create, if null then the default project is returned</param>
-        /// <returns></returns>
+        /// <returns>Existing or newly created WorkspaceProject instance</returns>
         internal WorkspaceProject GetOrCreateProject(string projectKey)
         {
             if (projectKey == null)
                 return DefaultWorkspaceProject;
-            // Determine the target project.
-            WorkspaceProject targetWorkspaceProject = FindProject(projectKey);
-            if (targetWorkspaceProject == null)
-            {   // The target project does not exists ==> We must create this new workspace project.
-                targetWorkspaceProject = CreateWorkspaceProject(projectKey);
-            }
-            return targetWorkspaceProject;
+
+            return _namedProjects.GetOrAdd(projectKey, CreateWorkspaceProject);
         }
+
+        /// <summary>
+        /// Find a WorkspaceProject by its project key.
+        /// Return default WorkspaceProject when given key is null.
+        /// </summary>
+        /// <param name="projectKey">Project key, can be null.</param>
+        /// <param name="project">[out] Found WorkspaceProject instance, null if no project matches the given key.</param>
+        /// <returns>True if a project has been found, False otherwise.</returns>
+        internal bool TryGetProject(string projectKey, out WorkspaceProject project)
+        {
+            if (projectKey == null)
+            {
+                project = DefaultWorkspaceProject;
+                return true;
+            }
+
+            return _namedProjects.TryGetValue(projectKey, out project);
+        }
+
 
         /// <summary>
         /// Remove a project from this workspace.
@@ -169,15 +160,13 @@ namespace TypeCobol.LanguageServer
         {
             if (workspaceProject != this.DefaultWorkspaceProject)
             {
-                bool bRemoved = this._workspaceProjects.TryRemove(workspaceProject.ProjectKey, out var storedProject);
+                bool bRemoved = this._namedProjects.TryRemove(workspaceProject.ProjectKey, out var storedProject);
                 // Assertion: If the project has been removed it must correspond to the one that was stored.
                 System.Diagnostics.Debug.Assert(!bRemoved || (storedProject == workspaceProject));
                 return bRemoved;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
     }
 }
