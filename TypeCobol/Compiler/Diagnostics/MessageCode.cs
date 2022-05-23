@@ -58,7 +58,9 @@ namespace TypeCobol.Compiler.Diagnostics
         UnsupportedLanguageFeature = 48,
         //For SQL
         InvalidNumberOfCharsInBinaryStringLiteral = 49,
-        InvalidNumberOfCharsInGraphicStringLiteral = 50
+        InvalidNumberOfCharsInGraphicStringLiteral = 50,
+        InvalidExponentInDecimalFloatingPointLiteral=51,
+        InvalidMantissaInDecimalFloatingPointLiteral=52
 
     }
 }

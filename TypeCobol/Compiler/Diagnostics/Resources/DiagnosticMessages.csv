@@ -48,3 +48,5 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 4;48;1;{0}-only feature: {1};0;0;
 2;49;1;The number of hexadecimal digits in binary-string constant must be even and must not exceed 32704.;0;0;Page
 2;50;1;The number of hexadecimal digits in graphic-string constant must be a multiple of 4 and must not exceed 32704.;0;0;Page
+2;51;1;The number of digits in the exponent of a decimal floating-point constant must not exceed 4.;0;0;Page
+2;52;1;The number of digits in the mantissa of a decimal floating-point constant must not exceed 34.;0;0;Page
