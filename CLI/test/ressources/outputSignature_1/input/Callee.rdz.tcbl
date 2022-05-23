@@ -45,9 +45,9 @@
         - make my second type my first type
         - get another type
           @Params:
-        - MyType2: my second type
-        - MyType3: my third type
-        - Mydate: today date
+            - MyType2: my second type
+            - MyType3: my third type
+            - Mydate: today date
       %>>>
        PROCEDURE DIVISION.
        
