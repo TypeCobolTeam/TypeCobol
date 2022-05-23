@@ -23,24 +23,22 @@ namespace TypeCobol.LanguageServer
         /// Keys are not case sensitive.
         /// </summary>
         internal string ProjectKey { get; }
+
         /// <summary>
         /// Associated CompilationProject instance.
         /// </summary>
         internal CompilationProject Project { get; private set; }
+
         /// <summary>
         /// A Dictionary to associate an Uri of a Document to its Context.
         /// it represents all documents belonging to the associated project.
         /// </summary>
         private readonly ConcurrentDictionary<Uri, DocumentContext> _openedDocuments;
+
         /// <summary>
         /// Underlying parent workspace.
         /// </summary>
         private readonly Workspace _workspace;
-
-        /// <summary>
-        /// Enumeration on opened documents.
-        /// </summary>
-        internal IEnumerable<DocumentContext> OpenedDocuments => _openedDocuments.Values;
 
         /// <summary>
         /// Constructor of a WorkspaceProject instance.
@@ -192,12 +190,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 Project = newCompilationProject;
-                // Change the target CompilationProject instance for each document.
-                foreach (var docCtx in _openedDocuments.Values)
-                {
-                    docCtx.FileCompiler.CompilationProject = newCompilationProject;
-                }
-                _workspace.RefreshProjectDocuments(this, false);
+                RefreshOpenedDocuments(); //Note: we recreated the CompilationProject instance, so we always have a new empty copy cache.
             }
         }
 
@@ -209,9 +202,15 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Refresh all documents of this WorkspaceProject instance
         /// </summary>
-        internal void RefreshOpenedFiles()
+        public void RefreshOpenedDocuments()
         {
-            _workspace.RefreshProjectDocuments(this, true);
+            if (!IsEmpty)
+            {
+                foreach (var openedDocument in _openedDocuments.Values)
+                {
+                    _workspace.RefreshOpenedDocument(openedDocument);
+                }
+            }
         }
     }
 }

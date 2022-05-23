@@ -48,13 +48,6 @@ namespace TypeCobol.Compiler.Directives
         /// Instance of the CPY Copy name map
         /// </summary>
         public CopyNameMapFile CpyCopyNameMap { get; set; }
-
-        /// <summary>
-        /// Check if using the current Instance, the Given name corresponds to a CPY copy name. 
-        /// </summary>
-        /// <param name="name">The Copy's name</param>
-        /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public bool HasCpyCopy(string name) => CpyCopyNameMap?.Contains(name) ?? false;
 #else
         private bool _useEuroInformationLegacyReplacingSyntax = false;
 #endif
