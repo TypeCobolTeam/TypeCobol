@@ -110,6 +110,7 @@ namespace TypeCobol.Compiler.Scanner
     {
         public DecimalLiteralTokenValue(string sign, string integerPart, string decimalPart) : base(LiteralTokenValueType.Decimal)
         {
+            HasSign = !string.IsNullOrEmpty(sign);
             IntegerValue = BigInteger.Parse(integerPart + decimalPart);
             DecimalDigits = decimalPart.Length;
             Number = (double)IntegerValue / Math.Pow(10, DecimalDigits);
@@ -119,6 +120,19 @@ namespace TypeCobol.Compiler.Scanner
                 Number = -Number;
             }
         }
+
+        public DecimalLiteralTokenValue(IntegerLiteralTokenValue integer) : base(LiteralTokenValueType.Decimal)
+        {
+            HasSign = integer.HasSign;
+            IntegerValue = integer.Number;
+            DecimalDigits = 0;
+            Number = (double)IntegerValue;
+        }
+
+        /// <summary>
+        /// True if a sign was explicitly written as the first character of the integer literal
+        /// </summary>
+        public bool HasSign { get; }
 
         /// <summary>
         /// For the number 5.43, the integer value is 543

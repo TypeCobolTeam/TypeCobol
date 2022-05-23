@@ -25,13 +25,14 @@
 [8,15:infinity]<SQL_DecimalFloatingPointLiteral>
 -- Line 11 --
 [1,6:SELECT]<SQL_SELECT>
-[8,14:GX'041']<SQL_GraphicStringLiteral>(G,Y,N)
+[8,14+:GX'041']<SQL_GraphicStringLiteral>(',Y,Y)
+Line 0[8,14] <50, Error, Tokens> - The number of hexadecimal digits in graphic-string constant must be a multiple of 4 and must not exceed 32704.
 -- Line 12 --
 [1,6:SELECT]<SQL_SELECT>
-[8,23:UX'004100420043']<SQL_GraphicStringLiteral>(U,Y,N)
+[8,23+:UX'004100420043']<SQL_GraphicStringLiteral>(',Y,Y)
 -- Line 13 --
 [1,6:SELECT]<SQL_SELECT>
-[8,12:BX'1']<SQL_BinaryStringLiteral>(B,Y,N)
+[8,12+:BX'1']<SQL_BinaryStringLiteral>(',Y,Y)
 Line 0[8,12] <49, Error, Tokens> - The number of hexadecimal digits in binary-string constant must be even and must not exceed 32704.
 -- Line 14 --
 [1,4:DATE]<UserDefinedWord>

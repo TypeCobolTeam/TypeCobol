@@ -32,11 +32,10 @@ namespace TypeCobol.Compiler.Sql.Scanner
         {
             NumericConstant = numericConstant;
         }
+
         public DecimalFloatingPointLiteralTokenValue(DecimalFloatingPointSpecialValue decimalFloatingPointSpecialValue) : base(LiteralTokenValueType.DecimalFloatingPoint)
         {
             SpecialValue = decimalFloatingPointSpecialValue;
         }
-
     }
-
 }

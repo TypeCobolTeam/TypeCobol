@@ -265,18 +265,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private DatetimeConstant CreateDatetimeConstant(CodeElementsParser.Datetime_constantContext context)
         {
+            var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral());
             if (context.date() != null)
             {
-                return new DatetimeConstant((Token)context.AlphanumericLiteral(),DatetimeConstantKind.Date, (Token)context.date().KeywordDATE) ;
+                return new DatetimeConstant(literal, DatetimeConstantKind.Date, (Token)context.date().KeywordDATE);
             }
-            else if (context.time()!=null)
+
+            if (context.time() != null)
             {
-                return new DatetimeConstant((Token)context.AlphanumericLiteral(), DatetimeConstantKind.Time, (Token)context.time().KeywordTIME );
+                return new DatetimeConstant(literal, DatetimeConstantKind.Time, (Token)context.time().KeywordTIME);
             }
-            else if (context.timestamp()!=null)
+
+            if (context.timestamp() != null)
             {
-                return new DatetimeConstant((Token)context.AlphanumericLiteral(), DatetimeConstantKind.Timestamp, (Token)context.timestamp().KeywordTIMESTAMP );
+                return new DatetimeConstant(literal, DatetimeConstantKind.Timestamp, (Token)context.timestamp().KeywordTIMESTAMP);
             }
+
             return null;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Sql;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
@@ -19,8 +18,8 @@ namespace TypeCobol.Compiler.Sql.Model
         DecimalFloatingPoint,
         CharacterString,
         BinaryString,
-        Datetime,
-        GraphicString
+        GraphicString,
+        Datetime
     }
 
     public class SqlConstant : SqlExpression
@@ -28,34 +27,39 @@ namespace TypeCobol.Compiler.Sql.Model
         public SqlConstant(Token literal)
         {
             Literal = literal;
-            Debug.Assert(literal.TokenType == TokenType.SQL_NULL || literal.TokenType == TokenType.IntegerLiteral || literal.TokenType == TokenType.DecimalLiteral||literal.TokenType == TokenType.SQL_DecimalFloatingPointLiteral || literal.TokenType == TokenType.FloatingPointLiteral || literal.TokenType == TokenType.AlphanumericLiteral || literal.TokenType == TokenType.SQL_BinaryStringLiteral || literal.TokenType == TokenType.SQL_GraphicStringLiteral || literal.TokenType == TokenType.HexadecimalAlphanumericLiteral);
+            Debug.Assert(literal.TokenType == TokenType.SQL_NULL ||
+                         literal.TokenType == TokenType.IntegerLiteral ||
+                         literal.TokenType == TokenType.FloatingPointLiteral ||
+                         literal.TokenType == TokenType.DecimalLiteral ||
+                         literal.TokenType == TokenType.SQL_DecimalFloatingPointLiteral ||
+                         literal.TokenType == TokenType.AlphanumericLiteral || literal.TokenType == TokenType.HexadecimalAlphanumericLiteral ||
+                         literal.TokenType == TokenType.SQL_BinaryStringLiteral ||
+                         literal.TokenType == TokenType.SQL_GraphicStringLiteral);
             switch (literal.TokenType)
             {
-                case (TokenType.SQL_NULL):
+                case TokenType.SQL_NULL:
                     Type = SqlConstantType.Null;
                     break;
-                case (TokenType.IntegerLiteral):
+                case TokenType.IntegerLiteral:
                     Type = SqlConstantType.Integer;
                     break;
-                case (TokenType.DecimalLiteral):
+                case TokenType.FloatingPointLiteral:
+                    Type = SqlConstantType.FloatingPoint;
+                    break;
+                case TokenType.DecimalLiteral:
                     Type = SqlConstantType.Decimal;
                     break;
-                case (TokenType.FloatingPointLiteral):
-                    Type = SqlConstantType.FloatingPoint;
-                    break;
-                case (TokenType.AlphanumericLiteral):
-                    Type = SqlConstantType.FloatingPoint;
-                    break;
-                case (TokenType.HexadecimalAlphanumericLiteral):
-                    Type = SqlConstantType.FloatingPoint;
-                    break;
-                case (TokenType.SQL_DecimalFloatingPointLiteral):
+                case TokenType.SQL_DecimalFloatingPointLiteral:
                     Type = SqlConstantType.DecimalFloatingPoint;
                     break;
-                case (TokenType.SQL_BinaryStringLiteral):
+                case TokenType.AlphanumericLiteral:
+                case TokenType.HexadecimalAlphanumericLiteral:
+                    Type = SqlConstantType.CharacterString;
+                    break;
+                case TokenType.SQL_BinaryStringLiteral:
                     Type = SqlConstantType.BinaryString;
                     break;
-                case (TokenType.SQL_GraphicStringLiteral):
+                case TokenType.SQL_GraphicStringLiteral:
                     Type = SqlConstantType.GraphicString;
                     break;
                 default:
@@ -64,16 +68,16 @@ namespace TypeCobol.Compiler.Sql.Model
         }
 
         public virtual SqlConstantType Type { get; } //based on Literal.TokenType, can be any SqlConstantType except Datetime
-     /*
-     * Literal.TokenType =   SQL_NULL (sql-specific keyword)
-     *                     | IntegerLiteral
-     *                     | FloatingPointLiteral
-     *                     | DecimalLiteral
-     *                     | DecimalFloatingPointLiteral (sql-specific)
-     *                     | AlphanumericLiteral / HexadecimalAlphanumericLiteral
-     *                     | BinaryStringLiteral (sql-specific)
-     *                     | GraphicStringLiteral (sql-specific)
-     */
+        /*
+        * Literal.TokenType =   SQL_NULL (sql-specific keyword)
+        *                     | IntegerLiteral
+        *                     | FloatingPointLiteral
+        *                     | DecimalLiteral
+        *                     | DecimalFloatingPointLiteral (sql-specific)
+        *                     | AlphanumericLiteral / HexadecimalAlphanumericLiteral
+        *                     | BinaryStringLiteral (sql-specific)
+        *                     | GraphicStringLiteral (sql-specific)
+        */
 
         public Token Literal { get; }
 
@@ -100,8 +104,8 @@ namespace TypeCobol.Compiler.Sql.Model
 
         public override SqlConstantType Type => SqlConstantType.Datetime;
 
-        public DatetimeConstantKind Kind { get; } 
+        public DatetimeConstantKind Kind { get; }
 
-        public Token TokenKind { get; } 
+        public Token TokenKind { get; }
     }
 }

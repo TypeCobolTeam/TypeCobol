@@ -325,8 +325,8 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.SQL_BinaryStringLiteral:
                     {
                         string binaryDigits = sbValue.ToString();
-                        var binaryDigitsLength = binaryDigits.Length - 3;
-                        if (binaryDigitsLength % 2 != 0 || binaryDigitsLength > 32704)
+                        var binaryDigitsLength = binaryDigits.Length;
+                        if (binaryDigitsLength < 2 || binaryDigitsLength % 2 != 0 || binaryDigitsLength > 32704)
                         {
                             tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInBinaryStringLiteral, token);
                         }
@@ -339,12 +339,16 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.SQL_GraphicStringLiteral:
                     {
                         string graphicString = sbValue.ToString();
-                        var graphicStringLength = graphicString.Length - 3;
-                        if (graphicStringLength % 4 != 0 && graphicStringLength > 32704)
+                        var graphicStringLength = graphicString.Length;
+                        if (graphicStringLength < 4 || graphicStringLength % 4 != 0 && graphicStringLength > 32704)
                         {
                             tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInGraphicStringLiteral, token);
                         }
-                        value = new AlphanumericLiteralTokenValue(graphicString, tokensLine.ScanState.EncodingForAlphanumericLiterals);
+
+                        var encoding = line[startIndex] == 'U' || line[startIndex] == 'u'
+                            ? Encoding.Unicode
+                            : tokensLine.ScanState.EncodingForAlphanumericLiterals;
+                        value = new AlphanumericLiteralTokenValue(graphicString, encoding);
                         break;
                     }
                 default:
