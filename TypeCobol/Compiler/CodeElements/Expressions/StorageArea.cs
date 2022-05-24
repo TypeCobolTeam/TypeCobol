@@ -109,7 +109,8 @@ namespace TypeCobol.Compiler.CodeElements
         Index,
         StorageAreaPropertySpecialRegister, // allocated on reference
         FilePropertySpecialRegister, // one per file description with LINAGE clause
-        FunctionCallResult // allocated on reference
+        FunctionCallResult, // allocated on reference
+        SqlStorageArea
     }
 
 	/// <summary>
@@ -431,8 +432,13 @@ namespace TypeCobol.Compiler.CodeElements
                 && this.ContinueVisitToChildren(astVisitor, FunctionCall, DataDescriptionEntry);
         }
     }
-
-
+    public class SqlStorageArea : BaseStorageArea
+    {
+        public SqlStorageArea(SymbolReference symbol) : base(StorageAreaKind.SqlStorageArea)
+        {
+            this.SymbolReference = symbol;
+        }
+    }
 
     /// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
     public abstract class FunctionCall : IVisitable {

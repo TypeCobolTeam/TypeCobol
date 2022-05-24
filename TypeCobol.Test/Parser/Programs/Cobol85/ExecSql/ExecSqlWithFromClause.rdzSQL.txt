@@ -7,27 +7,45 @@ line 6: SelectStatement
       - Selections = [
         - Selections[0] = TableOrViewAllColumnsSelection
           - TableOrViewOrCorrelationName = TableViewCorrelationName
-            - Name = d IN i IN i
+            - Name = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = d IN i IN i
       ]
     - FromClause = FromClause
       - TableReferences = [
         - TableReferences[0] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = rr IN iid
+            - Name = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = rr IN iid
           - CorrelationClause = CorrelationClause
-            - CorrelationName = new
+            - CorrelationName = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = new
             - NewColumnNames = [
-              - NewColumnNames[0] = h
-              - NewColumnNames[1] = k
+              - NewColumnNames[0] = SqlColumnName
+                - Symbol = SqlSymbol
+                  - SymbolReference = h
+              - NewColumnNames[1] = SqlColumnName
+                - Symbol = SqlSymbol
+                  - SymbolReference = k
             ]
         - TableReferences[1] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = uma
+            - Name = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = uma
           - CorrelationClause = CorrelationClause
-            - CorrelationName = ka
+            - CorrelationName = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = ka
             - NewColumnNames = [
-              - NewColumnNames[0] = l
-              - NewColumnNames[1] = u
+              - NewColumnNames[0] = SqlColumnName
+                - Symbol = SqlSymbol
+                  - SymbolReference = l
+              - NewColumnNames[1] = SqlColumnName
+                - Symbol = SqlSymbol
+                  - SymbolReference = u
             ]
       ]
   - SubQuery = <NULL>

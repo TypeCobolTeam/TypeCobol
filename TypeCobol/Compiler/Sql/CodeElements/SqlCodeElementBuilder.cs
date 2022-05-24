@@ -151,18 +151,14 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private CorrelationClause CreateCorrelationClause(CodeElementsParser.Correlation_clauseContext context)
         {
-            Token correlationNameToken = context.correlation_name as Token;
-            SymbolReference correlationName = new SymbolReference(
-                new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
-
+            var correlationNameToken = ParseTreeUtils.GetTokenFromTerminalNode(context.correlation_name().column_name().UserDefinedWord());
+            SqlColumnName correlationName = CreateSqlColumnName(context.correlation_name().column_name());
             if (context.new_column_names() != null)
             {
-                List<SymbolReference> newColumnNamesList = new List<SymbolReference>();
+                List<SqlColumnName> newColumnNamesList = new List<SqlColumnName>();
                 foreach (var columnName in context.new_column_names().new_column_name())
                 {
-                    SymbolReference newColumnName = new SymbolReference(
-                        new AlphanumericValue(columnName.start as Token),
-                        SymbolType.SqlIdentifier);
+                    SqlColumnName newColumnName = CreateSqlColumnName(columnName.column_name());
                     newColumnNamesList.Add(newColumnName);
                 }
                 CorrelationClause correlationClause = new CorrelationClause(correlationName, newColumnNamesList);
@@ -176,8 +172,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             Token name = tableOrViewOrCorrelationName.Name as Token;
             Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
             Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-            SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
-            return new TableViewCorrelationName(fullName);
+            SymbolReference fullNameSymbolReference = CreateSymbolReference(name, schemaName, dbms);
+            var fullColumnNameSymbol = new SqlSymbol(new SqlStorageArea(fullNameSymbolReference), SqlSymbolType.ColumnName);
+            return new TableViewCorrelationName(new SqlColumnName(fullColumnNameSymbol));
         }
 
         private SelectClause CreateSelectClause(CodeElementsParser.Sql_selectClauseContext context)
@@ -219,9 +216,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 Token name = tableOrViewOrCorrelationName.Name as Token;
                 Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
                 Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                SymbolReference fullNameSymbolReference = CreateSymbolReference(name, schemaName, dbms);
+                var columnNameSymbol = new SqlSymbol(new SqlStorageArea(fullNameSymbolReference), SqlSymbolType.ColumnName);
+                var fullName = new SqlColumnName(columnNameSymbol);
                 return new TableOrViewAllColumnsSelection(new TableViewCorrelationName(fullName));
-
             }
 
             return null;
@@ -233,17 +231,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (nameToken != null)
             {
                 SymbolReference name = new SymbolReference(new AlphanumericValue(nameToken),
-                    SymbolType.SqlIdentifier);
+                    SymbolType.ColumnName);
                 if (qualifierToken != null)
                 {
                     SymbolReference qualifier =
                         new SymbolReference(new AlphanumericValue(qualifierToken),
-                            SymbolType.SqlIdentifier);
+                            SymbolType.ColumnName);
                     if (topLevelQualifierToken != null)
                     {
                         SymbolReference topLevelQualifier =
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
-                                SymbolType.SqlIdentifier);
+                                SymbolType.ColumnName);
                         QualifiedSymbolReference tail = new QualifiedSymbolReference( qualifier, topLevelQualifier);
                         SymbolReference fullName= new QualifiedSymbolReference( name, tail);
                         return fullName;
@@ -281,6 +279,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 return new DatetimeConstant(literal, DatetimeConstantKind.Timestamp, (Token)context.timestamp().KeywordTIMESTAMP);
             }
 
+            return null;
+        }
+        private SqlColumnName CreateSqlColumnName(CodeElementsParser.Column_nameContext context)
+        {
+            if (context.UserDefinedWord() != null)
+            {
+                var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
+                var literalReferenceSymbol = new SymbolReference(new AlphanumericValue(literal), SymbolType.ColumnName);
+                var sqlLiteralSymbol = new SqlSymbol(new SqlStorageArea(literalReferenceSymbol), SqlSymbolType.ColumnName);
+                return new SqlColumnName(sqlLiteralSymbol);
+            }
             return null;
         }
     }

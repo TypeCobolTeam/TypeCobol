@@ -1,19 +1,25 @@
 ﻿--- Sql Statements ---
 line 6: TruncateStatement
 - TableName = TableViewCorrelationName
-  - Name = INVENTORY
+  - Name = SqlColumnName
+    - Symbol = SqlSymbol
+      - SymbolReference = INVENTORY
 - StorageManagement = ReuseStorage
 - DeleteTriggersHandling = IgnoreDeleteTriggers
 - IsImmediate = <NULL>
 line 10: TruncateStatement
 - TableName = TableViewCorrelationName
-  - Name = INVENTORY
+  - Name = SqlColumnName
+    - Symbol = SqlSymbol
+      - SymbolReference = INVENTORY
 - StorageManagement = DropStorage
 - DeleteTriggersHandling = RestrictWhenDeleteTriggers
 - IsImmediate = True
 line 15: TruncateStatement
 - TableName = TableViewCorrelationName
-  - Name = INVENTORY
+  - Name = SqlColumnName
+    - Symbol = SqlSymbol
+      - SymbolReference = INVENTORY
 - StorageManagement = ReuseStorage
 - DeleteTriggersHandling = RestrictWhenDeleteTriggers
 - IsImmediate = <NULL>

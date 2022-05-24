@@ -7,16 +7,22 @@ line 6: SelectStatement
       - Selections = [
         - Selections[0] = TableOrViewAllColumnsSelection
           - TableOrViewOrCorrelationName = TableViewCorrelationName
-            - Name = d IN i IN i
+            - Name = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = d IN i IN i
         - Selections[1] = TableOrViewAllColumnsSelection
           - TableOrViewOrCorrelationName = TableViewCorrelationName
-            - Name = i IN e
+            - Name = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = i IN e
       ]
     - FromClause = FromClause
       - TableReferences = [
         - TableReferences[0] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = a
+            - Name = SqlColumnName
+              - Symbol = SqlSymbol
+                - SymbolReference = a
           - CorrelationClause = <NULL>
       ]
   - SubQuery = <NULL>
