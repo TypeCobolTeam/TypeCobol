@@ -223,12 +223,12 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 Debug.Assert(token.LiteralValue is DecimalFloatingPointLiteralTokenValue);
                 if (exponentLength > 4)
                 {
-                    tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
+                    tokensLine.AddDiagnostic(MessageCode.InvalidExponentInDecimalFloatingPointLiteral, token);
                 }
 
                 if (mantissaLength > 34)
                 {
-                    tokensLine.AddDiagnostic(MessageCode.InvalidMantissaInFloatingPointLiteral, token);
+                    tokensLine.AddDiagnostic(MessageCode.InvalidMantissaInDecimalFloatingPointLiteral, token);
                 }
             }
         }
