@@ -19,6 +19,12 @@ namespace TypeCobol.Compiler.Sql.Scanner
         }
 
         private const char SQL_DECIMAL_POINT = '.';
+        private const int SQL_MAX_INTEGER_LENGTH = 19;
+        private const int SQL_MAX_DECIMAL_LENGTH = 31;
+        private const int SQL_MAX_FLOATING_POINT_EXPONENT_LENGTH = 2;
+        private const int SQL_MAX_FLOATING_POINT_MANTISSA_LENGTH = 17;
+        private const int SQL_MAX_DECIMAL_FLOATING_POINT_EXPONENT_LENGTH = 4;
+        private const int SQL_MAX_DECIMAL_FLOATING_POINT_MANTISSA_LENGTH = 34;
 
         private static readonly Dictionary<string, DecimalFloatingPointSpecialValueType> _SpecialValues =
             new Dictionary<string, DecimalFloatingPointSpecialValueType>(StringComparer.OrdinalIgnoreCase)
@@ -176,7 +182,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 int literalValueLength = literalValue.Number.ToString().Length - (literalValue.HasSign ? 1 : 0);
 
                 //Check IntegerLiteral range
-                if (literalValueLength > 19)
+                if (literalValueLength > SQL_MAX_INTEGER_LENGTH)
                 {
                     //Too many digits for IntegerLiteral, try DecimalLiteral
                     token.CorrectType(TokenType.DecimalLiteral);
@@ -192,7 +198,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 int literalValueLength = literalValue.IntegerValue.ToString().Length - (literalValue.HasSign ? 1 : 0);
 
                 //Check DecimalLiteral range
-                if (literalValueLength > 31)
+                if (literalValueLength > SQL_MAX_DECIMAL_LENGTH)
                 {
                     //Out of range
                     this.tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Decimal is too big: " + literalValue.Number);
@@ -209,7 +215,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
                 int exponentLength = exponent.Number.ToString().Length - (exponent.HasSign ? 1 : 0);
                 var mantissa = literalValue.Mantissa;
                 int mantissaLength = mantissa.IntegerValue.ToString().Length - (mantissa.HasSign ? 1 : 0);
-                if (exponentLength > 2 || mantissaLength > 17)
+                if (exponentLength > SQL_MAX_FLOATING_POINT_EXPONENT_LENGTH || mantissaLength > SQL_MAX_FLOATING_POINT_MANTISSA_LENGTH)
                 {
                     //Try DecimalFloatingPointLiteral
                     token.CorrectType(TokenType.SQL_DecimalFloatingPointLiteral);
@@ -221,12 +227,12 @@ namespace TypeCobol.Compiler.Sql.Scanner
             void CheckDecimalFloatingPointLiteral(int exponentLength, int mantissaLength)
             {
                 Debug.Assert(token.LiteralValue is DecimalFloatingPointLiteralTokenValue);
-                if (exponentLength > 4)
+                if (exponentLength > SQL_MAX_DECIMAL_FLOATING_POINT_EXPONENT_LENGTH)
                 {
                     tokensLine.AddDiagnostic(MessageCode.InvalidExponentInDecimalFloatingPointLiteral, token);
                 }
 
-                if (mantissaLength > 34)
+                if (mantissaLength > SQL_MAX_DECIMAL_FLOATING_POINT_MANTISSA_LENGTH)
                 {
                     tokensLine.AddDiagnostic(MessageCode.InvalidMantissaInDecimalFloatingPointLiteral, token);
                 }
