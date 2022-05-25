@@ -94,5 +94,10 @@ namespace TypeCobol.Compiler.Sql.Model
         public DatetimeConstantKind Kind { get; }
 
         public Token TokenKind { get; }
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return base.VisitSqlObject(visitor) && visitor.Visit(this);
+        }
     }
 }
