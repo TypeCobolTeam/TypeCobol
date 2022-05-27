@@ -1,0 +1,21 @@
+﻿--- Diagnostics ---
+Line 9[14,21] <27, Error, Syntax> - Syntax error : rule sql_mode failed predicate: { string.Equals(CurrentToken.Text, "MODE", System.StringComparison.OrdinalIgnoreCase) }? RuleStack=codeElement>lockTableStatement>sql_mode,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+
+--- Sql Statements ---
+line6: lockTableStatement
+- Table = TableViewCorrelationName
+  - Name = EMP8df IN DSN
+- PartitionId = <NULL>
+- Mode = Exclusive
+line7: lockTableStatement
+- Table = TableViewCorrelationName
+  - Name = EMP IN DSN IN DBD
+- PartitionId = SqlConstant
+  - LiteralValue = 8
+- Mode = Shared
+line8: lockTableStatement
+- Table = TableViewCorrelationName
+  - Name = EMP IN DSN IN DBD
+- PartitionId = SqlConstant
+  - LiteralValue = 100
+- Mode = Shared

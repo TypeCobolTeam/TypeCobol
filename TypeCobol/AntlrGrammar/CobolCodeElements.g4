@@ -215,6 +215,7 @@ codeElement:
 	| selectStatement
 	| rollbackStatement
 	| truncateStatement
+	| lockTableStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8300,6 +8301,10 @@ correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?
 new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
 new_column_name: UserDefinedWord;
 
+lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
+share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);
+exclusive: ({ string.Equals(CurrentToken.Text, "EXCLUSIVE", System.StringComparison.OrdinalIgnoreCase) }? KeywordEXCLUSIVE=UserDefinedWord);
+sql_mode: ({ string.Equals(CurrentToken.Text, "MODE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMODE=UserDefinedWord);
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
