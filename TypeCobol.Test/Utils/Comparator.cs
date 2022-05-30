@@ -535,7 +535,7 @@ namespace TypeCobol.Test.Utils
             }
             public override bool Visit(LockTableStatement lockTableStatement)
             {
-                _writer.WriteLine($"line{lockTableStatement.Line}: {nameof(lockTableStatement)}");
+                _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");
                 DumpSqlObject(nameof(lockTableStatement.Table), lockTableStatement.Table);
                 DumpSqlObject(nameof(lockTableStatement.PartitionId), lockTableStatement.PartitionId);
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);

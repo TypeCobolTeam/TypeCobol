@@ -2285,5 +2285,5 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateLockTableStatement(context);
         }
-	}
+    }
 }

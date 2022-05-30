@@ -286,7 +286,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {
             var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
-            SyntaxProperty<bool> isPartition = context.SQL_PARTITION() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_PARTITION())) : new SyntaxProperty<bool>(false, null);
             var partitionId = context.IntegerLiteral() != null
                 ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
                 : null;
@@ -302,7 +301,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     new SyntaxProperty<LockMode>(LockMode.Exclusive, ParseTreeUtils.GetFirstToken(context.exclusive()));
             }
 
-            return new LockTableStatement(tableName, partitionId, mode, isPartition);
+            return new LockTableStatement(tableName, partitionId, mode);
         }
     }
 }

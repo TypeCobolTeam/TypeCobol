@@ -19,25 +19,20 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 
         public SyntaxProperty<LockMode> Mode { get; }
 
-        public SyntaxProperty<bool> IsPartitionInteger { get; }
-
         public LockTableStatement(TableViewCorrelationName table, SqlConstant partitionId,
-            SyntaxProperty<LockMode> mode, SyntaxProperty<bool> isPartitionInteger) : base(
-            CodeElementType.LockTableStatement, StatementType.LockTableStatement)
+            SyntaxProperty<LockMode> mode) : base(CodeElementType.LockTableStatement, StatementType.LockTableStatement)
         {
             Table = table;
             PartitionId = partitionId;
             Mode = mode;
-            IsPartitionInteger = isPartitionInteger;
         }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                                                     && this.ContinueVisitToChildren(astVisitor, Mode,
-                                                         IsPartitionInteger)
+                                                     && this.ContinueVisitToChildren(astVisitor, Mode)
                                                      && astVisitor.SqlVisitor != null
-                                                     && astVisitor.SqlVisitor.ContinueVisit(PartitionId,Table);
+                                                     && astVisitor.SqlVisitor.ContinueVisit(PartitionId, Table);
         }
     }
 }
