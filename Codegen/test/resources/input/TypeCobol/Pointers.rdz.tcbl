@@ -32,7 +32,8 @@
            SET pointer0::pointerStat::backupPointer UP BY noPointer.
       
       * Multiple Increment 
-           SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY
+           SET pointer0::pntr,pointer0::backupPointer, pointer1 
+           DOWN BY 12.
       
       * Arithmetic expression 
            SET pointer0::pntr, pointer0::backupPointer 
