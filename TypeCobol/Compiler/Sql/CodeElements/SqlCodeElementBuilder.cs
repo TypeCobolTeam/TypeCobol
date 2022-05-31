@@ -151,7 +151,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private CorrelationClause CreateCorrelationClause(CodeElementsParser.Correlation_clauseContext context)
         {
-            var correlationNameToken = context.correlation_name as Token;
+            Token correlationNameToken = context.correlation_name as Token;
             SymbolReference correlationName = new SymbolReference(
                 new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
             if (context.new_column_names() != null)
