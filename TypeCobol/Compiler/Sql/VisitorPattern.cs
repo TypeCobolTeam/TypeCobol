@@ -29,7 +29,6 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] UnpackedRowSelection unpackedRowSelection);
         bool Visit([NotNull] TableOrViewAllColumnsSelection tableOrViewAllColumnsSelection);
         bool Visit([NotNull] SqlExpression sqlExpression);
-        bool Visit([NotNull] SqlObject sqlObject);
     }
 
     /// <summary>
@@ -55,7 +54,6 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(SingleTableReference singleTableReference) => true;
         public virtual bool Visit(CorrelationClause correlationClause) => true;
         public virtual bool Visit(SqlExpression sqlExpression) => true;
-        public virtual bool Visit(SqlObject sqlObject) => true;
     }
 
     /// <summary>

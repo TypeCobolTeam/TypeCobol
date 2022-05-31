@@ -151,8 +151,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private CorrelationClause CreateCorrelationClause(CodeElementsParser.Correlation_clauseContext context)
         {
-            var correlationNameToken = ParseTreeUtils.GetTokenFromTerminalNode(context.correlation_name().column_name().UserDefinedWord());
-            SqlColumnName correlationName = CreateSqlColumnName(context.correlation_name().column_name());
+            var correlationNameToken = context.correlation_name as Token;
+            SymbolReference correlationName =
+                new SymbolReference(new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
             if (context.new_column_names() != null)
             {
                 List<SqlColumnName> newColumnNamesList = new List<SqlColumnName>();
@@ -172,9 +173,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             Token name = tableOrViewOrCorrelationName.Name as Token;
             Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
             Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-            SymbolReference fullNameSymbolReference = CreateSymbolReference(name, schemaName, dbms);
-            var fullColumnNameSymbol = new SqlSymbol(new SqlStorageArea(fullNameSymbolReference), SqlSymbolType.ColumnName);
-            return new TableViewCorrelationName(new SqlColumnName(fullColumnNameSymbol));
+            SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+            return new TableViewCorrelationName(fullName);
         }
 
         private SelectClause CreateSelectClause(CodeElementsParser.Sql_selectClauseContext context)
@@ -216,9 +216,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 Token name = tableOrViewOrCorrelationName.Name as Token;
                 Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
                 Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
-                SymbolReference fullNameSymbolReference = CreateSymbolReference(name, schemaName, dbms);
-                var columnNameSymbol = new SqlSymbol(new SqlStorageArea(fullNameSymbolReference), SqlSymbolType.ColumnName);
-                var fullName = new SqlColumnName(columnNameSymbol);
+                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
                 return new TableOrViewAllColumnsSelection(new TableViewCorrelationName(fullName));
             }
 
@@ -231,17 +229,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (nameToken != null)
             {
                 SymbolReference name = new SymbolReference(new AlphanumericValue(nameToken),
-                    SymbolType.ColumnName);
+                    SymbolType.SqlIdentifier);
                 if (qualifierToken != null)
                 {
                     SymbolReference qualifier =
                         new SymbolReference(new AlphanumericValue(qualifierToken),
-                            SymbolType.ColumnName);
+                            SymbolType.SqlIdentifier);
                     if (topLevelQualifierToken != null)
                     {
                         SymbolReference topLevelQualifier =
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
-                                SymbolType.ColumnName);
+                                SymbolType.SqlIdentifier);
                         QualifiedSymbolReference tail = new QualifiedSymbolReference( qualifier, topLevelQualifier);
                         SymbolReference fullName= new QualifiedSymbolReference( name, tail);
                         return fullName;
@@ -287,8 +285,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
                 var literalReferenceSymbol = new SymbolReference(new AlphanumericValue(literal), SymbolType.ColumnName);
-                var sqlLiteralSymbol = new SqlSymbol(new SqlStorageArea(literalReferenceSymbol), SqlSymbolType.ColumnName);
-                return new SqlColumnName(sqlLiteralSymbol);
+                return new SqlColumnName(literalReferenceSymbol);
             }
             return null;
         }

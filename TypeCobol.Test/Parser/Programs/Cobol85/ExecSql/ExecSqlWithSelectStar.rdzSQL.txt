@@ -11,9 +11,7 @@ line 6: SelectStatement
       - TableReferences = [
         - TableReferences[0] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = a
+            - Name = a
           - CorrelationClause = <NULL>
       ]
   - SubQuery = <NULL>
@@ -29,9 +27,7 @@ line 7: SelectStatement
       - TableReferences = [
         - TableReferences[0] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = a
+            - Name = a
           - CorrelationClause = <NULL>
       ]
   - SubQuery = <NULL>
@@ -47,9 +43,7 @@ line 8: SelectStatement
       - TableReferences = [
         - TableReferences[0] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = a
+            - Name = a
           - CorrelationClause = <NULL>
       ]
   - SubQuery = <NULL>

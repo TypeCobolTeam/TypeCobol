@@ -5,9 +5,9 @@ namespace TypeCobol.Compiler.Sql.Model
 {
     public class TableViewCorrelationName : SqlObject
     {
-        public SqlColumnName Name { get; }
+        public SymbolReference Name { get; }
 
-        public TableViewCorrelationName(SqlColumnName name)
+        public TableViewCorrelationName(SymbolReference name)
         {
             Name = name;
         }

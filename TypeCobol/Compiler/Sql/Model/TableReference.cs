@@ -27,10 +27,10 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class CorrelationClause : SqlObject
     {
-        public SqlColumnName CorrelationName {get;}
+        public SymbolReference CorrelationName {get;}
         public List<SqlColumnName> NewColumnNames {get;}
 
-        public CorrelationClause(SqlColumnName correlationName, List<SqlColumnName> newColumnNames)
+        public CorrelationClause(SymbolReference correlationName, List<SqlColumnName> newColumnNames)
         {
             CorrelationName = correlationName;
             NewColumnNames = newColumnNames;

@@ -7,45 +7,31 @@ line 6: SelectStatement
       - Selections = [
         - Selections[0] = TableOrViewAllColumnsSelection
           - TableOrViewOrCorrelationName = TableViewCorrelationName
-            - Name = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = d IN i IN i
+            - Name = d IN i IN i
       ]
     - FromClause = FromClause
       - TableReferences = [
         - TableReferences[0] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = rr IN iid
+            - Name = rr IN iid
           - CorrelationClause = CorrelationClause
-            - CorrelationName = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = new
+            - CorrelationName = new
             - NewColumnNames = [
               - NewColumnNames[0] = SqlColumnName
-                - Symbol = SqlSymbol
-                  - SymbolReference = h
+                - Symbol = h
               - NewColumnNames[1] = SqlColumnName
-                - Symbol = SqlSymbol
-                  - SymbolReference = k
+                - Symbol = k
             ]
         - TableReferences[1] = SingleTableReference
           - TableOrViewName = TableViewCorrelationName
-            - Name = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = uma
+            - Name = uma
           - CorrelationClause = CorrelationClause
-            - CorrelationName = SqlColumnName
-              - Symbol = SqlSymbol
-                - SymbolReference = ka
+            - CorrelationName = ka
             - NewColumnNames = [
               - NewColumnNames[0] = SqlColumnName
-                - Symbol = SqlSymbol
-                  - SymbolReference = l
+                - Symbol = l
               - NewColumnNames[1] = SqlColumnName
-                - Symbol = SqlSymbol
-                  - SymbolReference = u
+                - Symbol = u
             ]
       ]
   - SubQuery = <NULL>
