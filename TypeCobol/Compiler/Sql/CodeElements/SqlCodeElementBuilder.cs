@@ -152,8 +152,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         private CorrelationClause CreateCorrelationClause(CodeElementsParser.Correlation_clauseContext context)
         {
             var correlationNameToken = context.correlation_name as Token;
-            SymbolReference correlationName =
-                new SymbolReference(new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
+            SymbolReference correlationName = new SymbolReference(
+                new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
             if (context.new_column_names() != null)
             {
                 List<SqlColumnName> newColumnNamesList = new List<SqlColumnName>();
@@ -218,6 +218,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
                 SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
                 return new TableOrViewAllColumnsSelection(new TableViewCorrelationName(fullName));
+
             }
 
             return null;
