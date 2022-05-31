@@ -154,6 +154,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             Token correlationNameToken = context.correlation_name as Token;
             SymbolReference correlationName = new SymbolReference(
                 new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
+
             if (context.new_column_names() != null)
             {
                 List<SqlColumnName> newColumnNamesList = new List<SqlColumnName>();
