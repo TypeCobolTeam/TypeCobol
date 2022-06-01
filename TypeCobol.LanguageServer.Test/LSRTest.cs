@@ -294,6 +294,13 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void CompletionAfterAddTo()
+        {
+            LSRTestHelper.Test("CompletionAfterAddTo", LsrTestingOptions.NoLsrTesting, true, false, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void ProcedureCompletion()
         {
             LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
