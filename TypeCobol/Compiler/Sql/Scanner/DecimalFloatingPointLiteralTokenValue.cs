@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
         Infinity
     }
 
-    public readonly struct DecimalFloatingPointSpecialValue
+    public class DecimalFloatingPointSpecialValue
     {
         public DecimalFloatingPointSpecialValue(bool isNegative, DecimalFloatingPointSpecialValueType decimalFloatingPointSpecialValue)
         {
@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
 
     public class DecimalFloatingPointLiteralTokenValue : LiteralTokenValue
     {
-        public DecimalFloatingPointSpecialValue? SpecialValue { get; set; }
+        public DecimalFloatingPointSpecialValue SpecialValue { get; }
 
         public FloatingPointLiteralTokenValue NumericConstant { get; }
 
