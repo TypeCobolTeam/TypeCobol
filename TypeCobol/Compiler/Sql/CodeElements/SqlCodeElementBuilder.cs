@@ -283,5 +283,27 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+        private HostVariable CreateSqlHostVariable(CodeElementsParser.HostVariableContext context)
+        {
+            if (context.mainVariable != null)
+            {
+                Token mainVariableToken = (Token) context.mainVariable;
+                SymbolReference mainSymbolReference = new SymbolReference(
+                    new AlphanumericValue(mainVariableToken), SymbolType.SqlVariable);
+                if (context.indicatorVariable != null)
+                {
+                    Token indicatorVariableToken = (Token)context.indicatorVariable;
+                    SymbolReference indicatorVariableSymbolReference = new SymbolReference(
+                        new AlphanumericValue(mainVariableToken), SymbolType.SqlVariable);
+                    return new HostVariable(mainSymbolReference, indicatorVariableSymbolReference);
+                }
+                else
+                {
+                    return new HostVariable(mainSymbolReference,null);
+                }
+            }
+            
+            return null;
+        }
     }
 }

@@ -8300,6 +8300,9 @@ correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?
 new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
 new_column_name: UserDefinedWord;
 
+hostVariable: ColonSeparator mainVariable=UserDefinedWord ((indicator)? ColonSeparator indicatorVariable=UserDefinedWord)?;
+indicator: ({string.Equals(CurrentToken.Text, "INDICATOR", System.StringComparison.OrdinalIgnoreCase) }? KeywordINDICATOR=UserDefinedWord);
+
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
