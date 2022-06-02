@@ -240,41 +240,76 @@ namespace TypeCobol.Compiler.CupPreprocessor
         {
             DeleteDirective deleteDirective = (DeleteDirective)CompilerDirective;
 
-            bool isFirst = true;
-            int previous = -42;
-            foreach(Token integerLiteralToken in seqNumField)
-            {
-                System.Diagnostics.Debug.Assert(integerLiteralToken.TokenType == TokenType.IntegerLiteral);
-                int current = (int)((IntegerLiteralTokenValue)integerLiteralToken.LiteralValue).Number;
 
-                if (isFirst)
+            foreach(Token token in seqNumField)
+            {
+                if (token.TokenType == TokenType.IntegerLiteral)
                 {
-                    previous = current;
-                    isFirst = false;
-                }
-                else
-                {
-                    DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
-                    range.From = previous;
+                    
+                    int current = (int)((IntegerLiteralTokenValue)token.LiteralValue).Number;
+
+                    //Report error for negative number and ignore them
                     if (current < 0)
                     {
-                        range.To = -current;
-                        isFirst = true;
+                        Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid value: " + current + ". Excepted a positive integer.");
+                        CompilerDirective.AddDiagnostic(error);
                     }
                     else
                     {
-                        range.To = previous;
-                        previous = current;
+                        DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                        range.From = current;
+                        range.To = current;
+                        deleteDirective.SequenceNumberRangesList.Add(range);
                     }
-                    deleteDirective.SequenceNumberRangesList.Add(range);
+                    
                 }
-            }
-            if (!isFirst && previous >= 0)
-            {
-                DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
-                range.From = previous;
-                range.To = previous;
-                deleteDirective.SequenceNumberRangesList.Add(range);
+                else if (token.TokenType == TokenType.UserDefinedWord)
+                {
+                    var numbers = token.Text.Split('-');
+                    
+                    if (numbers.Length != 2)
+                    {
+                        Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid range format");
+                        CompilerDirective.AddDiagnostic(error);
+                    }
+                    else
+                    {
+                        DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                        bool isOk = true;
+
+                        if (int.TryParse(numbers[0], out var temp))
+                        {
+                            range.From = temp;
+                        }
+                        else
+                        {
+                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid value: " + numbers[0] + ". Excepted a positive integer.");
+                            CompilerDirective.AddDiagnostic(error);
+                            isOk = false;
+                        }
+                        
+                        if (int.TryParse(numbers[1], out temp))
+                        {
+                            range.To = temp;
+                        }
+                        else
+                        {
+                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid value: " + numbers[1] + ". Excepted a positive integer.");
+                            CompilerDirective.AddDiagnostic(error);
+                            isOk = false;
+                        }
+
+                        if (isOk)
+                        {
+                            deleteDirective.SequenceNumberRangesList.Add(range);
+                        }//else ignore values
+                    }
+                }
+                else
+                {
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), $"Unexpected token: ${token} of type ${token.TokenType}");
+                    CompilerDirective.AddDiagnostic(error);
+                }
             }
         }
 

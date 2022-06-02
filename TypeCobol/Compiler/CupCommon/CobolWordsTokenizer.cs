@@ -259,10 +259,10 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
-        /// Enter in the Stop Scanning Mode if the next is not of the given type
+        /// Enter in the Stop Scanning Mode if the next token is not one of the given type
         /// </summary>
         /// <param name="nextTokenType"></param>
-        public void EnterStopScanningModeIfNextNotToken(TokenType nextTokenType)
+        public void EnterStopScanningModeIfNextNotToken(params TokenType[] nextTokenType)
         {
             Token currentToken = base.CurrentToken;
             if (currentToken == null)
@@ -271,7 +271,7 @@ namespace TypeCobol.Compiler.CupCommon
                 return;//Ignore if end of file
             Token nextToken = base.NextToken();
             base.PreviousToken();
-            if (nextToken != null && nextToken.TokenType != nextTokenType)
+            if (nextToken != null && nextTokenType.All(t=>t!=nextToken.TokenType))
             {
                 EnterStopScanningMode();
             }
