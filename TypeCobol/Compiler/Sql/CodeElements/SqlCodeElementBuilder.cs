@@ -157,12 +157,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.new_column_names() != null)
             {
-                List<SqlColumnName> newColumnNamesList = new List<SqlColumnName>();
-                foreach (var columnName in context.new_column_names().new_column_name())
-                {
-                    SqlColumnName newColumnName = CreateSqlColumnName(columnName.column_name());
-                    newColumnNamesList.Add(newColumnName);
-                }
+                List<SqlColumnName> newColumnNamesList = (from columnName in context.new_column_names().column_name() where columnName.Diagnostics == null select CreateSqlColumnName(columnName)).ToList();
                 CorrelationClause correlationClause = new CorrelationClause(correlationName, newColumnNamesList);
                 return correlationClause;
             }

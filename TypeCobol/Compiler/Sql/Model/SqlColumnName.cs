@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Sql.Model
             this.Symbol = symbol;
         }
 
-        private SymbolReference Symbol { get; }
+        public SymbolReference Symbol { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
