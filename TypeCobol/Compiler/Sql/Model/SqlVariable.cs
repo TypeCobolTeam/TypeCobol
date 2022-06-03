@@ -43,12 +43,13 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
+            base.DumpContent(output, indentLevel);
             DumpProperty(output, nameof(IndicatorReference), IndicatorReference, indentLevel);
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this);
+            return base.VisitSqlObject(visitor) && visitor.Visit(this);
         }
     }
 }

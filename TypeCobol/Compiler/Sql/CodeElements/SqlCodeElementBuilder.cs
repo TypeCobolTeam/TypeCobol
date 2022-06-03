@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -287,23 +288,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             if (context.mainVariable != null)
             {
-                Token mainVariableToken = (Token) context.mainVariable;
-                SymbolReference mainSymbolReference = new SymbolReference(
-                    new AlphanumericValue(mainVariableToken), SymbolType.SqlVariable);
-                if (context.indicatorVariable != null)
-                {
-                    Token indicatorVariableToken = (Token)context.indicatorVariable;
-                    SymbolReference indicatorVariableSymbolReference = new SymbolReference(
-                        new AlphanumericValue(mainVariableToken), SymbolType.SqlVariable);
-                    return new HostVariable(mainSymbolReference, indicatorVariableSymbolReference);
-                }
-                else
-                {
-                    return new HostVariable(mainSymbolReference,null);
-                }
+                return new HostVariable(CreateHostVariableSymbolReference(context.mainVariable), CreateHostVariableSymbolReference(context.indicatorVariable));
             }
-            
+
             return null;
+
+            SymbolReference CreateHostVariableSymbolReference(IToken userDefinedWord)
+            {
+                if (userDefinedWord == null) return null;
+                var token = (Token) userDefinedWord;
+                return new SymbolReference(new AlphanumericValue(token), SymbolType.SqlIdentifier);
+            }
         }
     }
 }
