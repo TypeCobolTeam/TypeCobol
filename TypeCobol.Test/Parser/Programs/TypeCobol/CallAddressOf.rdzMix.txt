@@ -15,9 +15,7 @@
            IN-OUT   adrsPointer1     Pointer
            OUTPUT   adrsPointer2     Pointer
                         .
-Line 18[12,23] <27, Error, Syntax> - Syntax error : END-DECLARE should begin in AreaA. It was found in 'AreaB'.
-Line 18[12,23] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
-           END-DECLARE.
+       END-DECLARE.
       
            CALL MyProc
 Line 21[18,24] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE

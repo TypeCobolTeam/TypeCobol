@@ -15,7 +15,7 @@
            IN-OUT   adrsPointer1     Pointer
            OUTPUT   adrsPointer2     Pointer
                         .
-           END-DECLARE.
+       END-DECLARE.
       
            CALL MyProc
            INPUT ADDRESS OF W-Date

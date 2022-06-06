@@ -28,7 +28,8 @@
        01 DuplicatedVar     TYPE Bool.
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
-      *KO TypeDefs in Global-Storage Section are not referenced in Symbo
+      *KO TypeDefs in Global-Storage Section are not referenced in 
+	  *SymbolTable
        01 invalidTypedVar TYPE ForbiddenTypedef.
       
        01 DefInMainAsGlobalAndNested global pic X.
@@ -75,11 +76,11 @@
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accessible
       * in nested procedure from Global Storage
-       MOVE G-Date TO myDate.
-       MOVE G-TechCtx TO TestCtx.
+           MOVE G-Date TO myDate.
+           MOVE G-TechCtx TO TestCtx.
       
       *KO Rule GLOBALSS_ALWAYS_RESOLVE
-      fInGlobalStorageAndNested is defined twice
+      DefInGlobalStorageAndNested is defined twice
            move DefInGlobalStorageAndNested
              to DefInMainAsGlobalAndNested
            .

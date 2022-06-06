@@ -98,10 +98,11 @@ Line 87[13,29] <30, Error, Semantics> - Semantic error: Type circular reference 
        procedure division.
            move MyVar::A5var::B5Var::C5Var to MyVar::A5var::B5Var::C5Var
       
-      *KO, A5Var must not be a valid child of C5Var as it's a circular r
-Line 94[45,49] <30, Error, Semantics> - Semantic error: Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
+      *KO, A5Var must not be a valid child of C5Var as it's a circular
+      * reference
+Line 95[45,49] <30, Error, Semantics> - Semantic error: Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
            move MyVar::A5var::B5Var::C5Var::A5Var 
-Line 95[44,48] <30, Error, Semantics> - Semantic error: Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
+Line 96[44,48] <30, Error, Semantics> - Semantic error: Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
             to MyVar::A5var::B5Var::C5Var::A5Var
            .
        end-declare.

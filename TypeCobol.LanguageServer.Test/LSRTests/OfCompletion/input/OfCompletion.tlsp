@@ -15,59 +15,59 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":0},\"end\":{\"line\":17,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":0},\"end\":{\"line\":17,\"character\":0}},\"rangeLength\":0,\"text\":\"           \"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":7},\"end\":{\"line\":17,\"character\":7}},\"rangeLength\":0,\"text\":\"M\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":11},\"end\":{\"line\":17,\"character\":11}},\"rangeLength\":0,\"text\":\"M\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":8},\"end\":{\"line\":17,\"character\":8}},\"rangeLength\":0,\"text\":\"O\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":12}},\"rangeLength\":0,\"text\":\"O\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":9},\"end\":{\"line\":17,\"character\":9}},\"rangeLength\":0,\"text\":\"V\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":13},\"end\":{\"line\":17,\"character\":13}},\"rangeLength\":0,\"text\":\"V\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":10},\"end\":{\"line\":17,\"character\":10}},\"rangeLength\":0,\"text\":\"E\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":14},\"end\":{\"line\":17,\"character\":14}},\"rangeLength\":0,\"text\":\"E\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":11},\"end\":{\"line\":17,\"character\":11}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":15},\"end\":{\"line\":17,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":12}},\"rangeLength\":0,\"text\":\"v\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":16},\"end\":{\"line\":17,\"character\":16}},\"rangeLength\":0,\"text\":\"v\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":13},\"end\":{\"line\":17,\"character\":13}},\"rangeLength\":0,\"text\":\"a\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":17},\"end\":{\"line\":17,\"character\":17}},\"rangeLength\":0,\"text\":\"a\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":14},\"end\":{\"line\":17,\"character\":14}},\"rangeLength\":0,\"text\":\"r\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":18},\"end\":{\"line\":17,\"character\":18}},\"rangeLength\":0,\"text\":\"r\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":15},\"end\":{\"line\":17,\"character\":15}},\"rangeLength\":0,\"text\":\"1\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":19},\"end\":{\"line\":17,\"character\":19}},\"rangeLength\":0,\"text\":\"1\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":16},\"end\":{\"line\":17,\"character\":16}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":20},\"end\":{\"line\":17,\"character\":20}},\"rangeLength\":0,\"text\":\" \"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":17},\"end\":{\"line\":17,\"character\":17}},\"rangeLength\":0,\"text\":\"o\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":21},\"end\":{\"line\":17,\"character\":21}},\"rangeLength\":0,\"text\":\"o\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":18},\"end\":{\"line\":17,\"character\":18}},\"rangeLength\":0,\"text\":\"f\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":22},\"end\":{\"line\":17,\"character\":22}},\"rangeLength\":0,\"text\":\"f\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":19},\"end\":{\"line\":17,\"character\":19}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":23},\"end\":{\"line\":17,\"character\":23}},\"rangeLength\":0,\"text\":\" \"}]}}"
     },
     {
       "category": 0,
@@ -75,7 +75,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":20,\"character\":12},\"end\":{\"line\":20,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : missing user defined word at ''\"},{\"range\":{\"start\":{\"line\":18,\"character\":13},\"end\":{\"line\":18,\"character\":16}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol <missing UserDefinedWord>.var1 is not referenced\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9046269398298322725.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":20,\"character\":16},\"end\":{\"line\":20,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : missing user defined word at ''\"},{\"range\":{\"start\":{\"line\":18,\"character\":17},\"end\":{\"line\":18,\"character\":20}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol <missing UserDefinedWord>.var1 is not referenced\"}]}}"
     },
     {
       "category": 2,

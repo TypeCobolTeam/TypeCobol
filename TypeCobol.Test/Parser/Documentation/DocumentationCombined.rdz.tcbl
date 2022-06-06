@@ -49,19 +49,19 @@
           -blu: will be ignored
       %>>>
        DECLARE PROCEDURE MyProc PUBLIC
-	@@ -54,10 +54,10 @@
+           INPUT myDate TYPE Date
            IN-OUT   myBool      TYPE BOOL
            OUTPUT   toto        TYPE BOOL
                     bli         Pic PPP999PPP.
-           PROCEDURE DIVISION.
+      PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 
       %<<< MyPrivateProc is a Proc but Private
         @deprecated
           @ todo: Add a body
-	@@ -68,16 +68,16 @@
-           PROCEDURE DIVISION.
+      %>>>
+      PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 
@@ -72,7 +72,7 @@
        DECLARE PROCEDURE MyLocalProc
            INPUT    myDate      TYPE Date
            OUTPUT   toto        TYPE BOOL.
-           PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 

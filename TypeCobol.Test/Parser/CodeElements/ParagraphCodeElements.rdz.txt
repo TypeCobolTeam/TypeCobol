@@ -31,9 +31,9 @@ Line 61[44,46] <27, Error, Syntax> - Syntax error : Duplicate currency symbol 'Y
 
 [[RepositoryParagraph]] [14,23:REPOSITORY]<REPOSITORY> --> [24,24+:.]<PeriodSeparator>
 
-[[RepositoryParagraph]] [14,23:REPOSITORY]<REPOSITORY> --> [22,22+:.]<PeriodSeparator>
+[[RepositoryParagraph]] [14,23:REPOSITORY]<REPOSITORY> --> [28,28+:.]<PeriodSeparator>
 
-[[RepositoryParagraph]] [14,23:Repository]<REPOSITORY> --> [60,61:. ]<PeriodSeparator>
+[[RepositoryParagraph]] [14,23:Repository]<REPOSITORY> --> [66,67:. ]<PeriodSeparator>
 
 [[SourceComputerParagraph]] [8,22:SOURCE-COMPUTER]<SOURCE_COMPUTER> --> [23,23+:.]<PeriodSeparator>
 
@@ -53,7 +53,7 @@ Line 61[44,46] <27, Error, Syntax> - Syntax error : Duplicate currency symbol 'Y
 
 [[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [26,26+:.]<PeriodSeparator>
 
-[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [63,63+:.]<PeriodSeparator>
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [69,69+:.]<PeriodSeparator>
 
 [[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [47,47+:.]<PeriodSeparator>
 

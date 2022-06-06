@@ -1,9 +1,11 @@
-﻿Line 43[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
-Line 44[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'CONTINUE' expecting {DataDivisionHeader, ProcedureDivisionHeader, FunctionDeclarationEnd}
-Line 12[13,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
+﻿Line 12[13,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
 Line 14[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
 Line 29[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
 Line 30[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+Line 41[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: name
+Line 42[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+Line 53[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: name
+Line 54[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
 ======================== Documentation ========================
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
@@ -71,6 +73,59 @@ Line 30[21,25] <37, Warning, General> - Warning: Parameter does not have any des
       },
       "Info": "this is not a description",
       "Name": "desc",
+      "PassingType": 1
+    }
+  ]
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Description": "MyProc2 description ",
+  "Name": "MyProc2",
+  "Namespace": "DocForFunctions",
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(50)"
+      },
+      "Name": "name",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(5)V9(2)"
+      },
+      "Name": "price",
+      "PassingType": 1
+    }
+  ]
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Description": "MyProc3 description ",
+  "Name": "MyProc3",
+  "Namespace": "DocForFunctions",
+  "Visibility": 1,
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(50)"
+      },
+      "Name": "name",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(5)V9(2)"
+      },
+      "Name": "price",
       "PassingType": 1
     }
   ]

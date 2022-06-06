@@ -12,11 +12,11 @@
 000101-LATING SEQUENCE IS MyAlphabet2 SEGMENT-LIMIT IS 49.
 000110       REPOSITORY.
 000120       REPOSITORY.
-000130 CLASS MyClass1.
+000130       CLASS MyClass1.
 000140       Repository. 
-000150 Class jobjectArray is "jobjectArray" 
-000160 Class Employee is "com.acme.Employee" 
-000170 Class Department is "jobjectArray:com.acme.Employee". 
+000150       Class jobjectArray is "jobjectArray" 
+000160       Class Employee is "com.acme.Employee" 
+000170       Class Department is "jobjectArray:com.acme.Employee". 
 000180 SOURCE-COMPUTER.
 000190 SOURCE-COMPUTER. IBM-390.
 000200 SOURCE-COMPUTER. IBM-391 DEBUGGING MODE.
@@ -46,8 +46,8 @@
 000410 SYMBOLIC CHARACTERS MySimChar5 MySimChar6 MySimChar7 150 154 157
 000411  IN MyStdAlphabet2.
 000420 SPECIAL-NAMES.
-000430 CLASS MyCharset1 "abcd"
-000440 CLASS MyCharset2 IS "abc" "d" THROUGH "j" 38 57 THRU 78.
+000430       CLASS MyCharset1 "abcd"
+000440       CLASS MyCharset2 IS "abc" "d" THROUGH "j" 38 57 THRU 78.
 000450 SPECIAL-NAMES.
 000460 CURRENCY "H"
 000470 CURRENCY "EUR" PICTURE SYMBOL '€'

@@ -40,7 +40,7 @@
        DECLARE PROCEDURE MyProc2
            INPUT    name        Pic X(50)
            OUTPUT   price       Pic S9(5)V9(2).
-      PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
       

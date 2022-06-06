@@ -1,19 +1,8 @@
-Line 52[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
-Line 63[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
-Line 56[12,30] <27, Error, Syntax> - Syntax error : PROCEDURE should begin in AreaA. It was found in 'AreaB'.
-Line 75[12,30] <27, Error, Syntax> - Syntax error : PROCEDURE should begin in AreaA. It was found in 'AreaB'.
+Line 56[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
+Line 64[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
+Line 65[12,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '%<<< ... CONTINUE'
+Line 57[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'CONTINUE' expecting {DataDivisionHeader, ProcedureDivisionHeader, FunctionDeclarationEnd}
 Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
-Line 46[13,18] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: myDate
-Line 47[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: bla
-Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
-Line 53[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-Line 55[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
-Line 61[10,19] <37, Warning, General> - Warning: Formalized comment field is declared more than once : deprecated
-Line 69[10,19] <37, Warning, General> - Warning: Formalized comment field is declared more than once : deprecated
-Line 62[13,16] <37, Warning, General> - Warning: Formalized comment field is declared more than once : todo
-Line 70[13,16] <37, Warning, General> - Warning: Formalized comment field is declared more than once : todo
-Line 73[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
-Line 74[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Documentation ========================
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
@@ -82,81 +71,6 @@ Line 74[21,24] <37, Warning, General> - Warning: Parameter does not have any des
   "DocDataType": {
     "MaxOccurence": 1
   }
-}
----------------------
-
-{
-  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
-  "Deprecated": "It is deprecated ",
-  "Description": "MyProc info \r\n",
-  "Name": "MyProc",
-  "Namespace": "DocCombined",
-  "Needs": [
-    "long need"
-  ],
-  "ToDos": [
-    "todo1",
-    "todo 2"
-  ],
-  "Visibility": 1,
-  "Parameters": [
-    {
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      },
-      "Name": "myBool",
-      "PassingType": 2
-    },
-    {
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      },
-      "Info": "toto",
-      "Name": "toto",
-      "PassingType": 1
-    },
-    {
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "Picture": "PPP999PPP"
-      },
-      "Name": "bli",
-      "PassingType": 1
-    }
-  ]
-}
----------------------
-
-{
-  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
-  "Deprecated": "",
-  "Description": "MyPrivateProc is a Proc but Private ",
-  "Name": "MyLocalProc",
-  "Namespace": "DocCombined",
-  "ToDos": [
-    "Add a body PROCEDURE DIVISION. CONTINUE. END-DECLARE. <<< MyLocalProc is a Proc but Local (no access modifier)",
-    "Add a body"
-  ],
-  "Parameters": [
-    {
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "DATE"
-      },
-      "Name": "myDate",
-      "PassingType": 0
-    },
-    {
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      },
-      "Name": "toto",
-      "PassingType": 1
-    }
-  ]
 }
 ---------------------
 
