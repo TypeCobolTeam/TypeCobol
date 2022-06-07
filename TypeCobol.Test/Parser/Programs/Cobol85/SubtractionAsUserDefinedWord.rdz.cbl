@@ -5,8 +5,17 @@
         01 a pic 9.
         01 300-200X  pic 9 value 1.
         01 200X-100X pic 9 value 1.
+      *KO variable must contains at least one alphabetic char
+        01 400-500 pic 9.
 
        procedure division.
+      *Should be KO. 400-500 is not a valid variable name because it
+      *   contains no alphabetic char
+      *   The parser will only report the error on the variable 
+      *   declaration.
+           compute a = 400-500
+
+
       *KO  "300-200X-100X" was not defined as a data-name.
       *    The statement was discarded.
            compute a = 300-200X-100X.
@@ -117,10 +126,6 @@
       *TODO #2251 our scanner must scan it as "-300" (integer) 
       *    and "E"
            compute a = -300E
-
-      *TODO Numeric paragraph name are not supported yet
-           perform 300
            .
-       300.
-           exit.
+
        END PROGRAM DVZF0OSM.

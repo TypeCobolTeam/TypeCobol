@@ -11,6 +11,7 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -863,17 +864,23 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
 
             var parentTypeDefinition = (node as DataDefinition)?.ParentTypeDefinition;
-            var foundQualified =
-                node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
-                        ? area.SymbolReference.URI
-                        : new URI(area.ToString()),
-                    parentTypeDefinition);
+
+            var uri = area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString());
+            var foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(uri, parentTypeDefinition);
             var found = foundQualified.Select(v => v.Value);
 
             var foundCount = found.Count();
 
             if (foundCount == 0)
             {
+                var plainUri = uri.ToString();
+                //Helper diagnostic for subtraction between numeric written without spaces around minus operator.
+                //Only do this diagnostic if the variable contains no alpha, because otherwise the most standard use case is simply an undefined variable.
+                if (plainUri.All(c=>Char.IsDigit(c) || c=='-'))
+                {
+                    DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. For subtraction, please add spaces around minus operator: " + string.Join(" - ", plainUri.Split('-')));
+                }
+
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }

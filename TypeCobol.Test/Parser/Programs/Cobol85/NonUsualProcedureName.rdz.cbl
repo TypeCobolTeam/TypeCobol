@@ -22,6 +22,10 @@
                    300-000-PAR3 OF 300-000-SEC1 300 TIMES
       *Ok Number too big
            perform 300303030303030303030303030303030303030 TIMES
+
+      *TODO Numeric paragraph name are not supported yet
+           perform 300
+
            goback.
            REPLACE ==:PAR1:== BY ==PAR2==.
       *Ok
@@ -43,5 +47,8 @@
        300-000-SEC1 section.
            DISPLAY "IN SECTION".
        300-000-PAR3.
+           exit.
+
+       300.
            exit.
        END PROGRAM MyPgm.
