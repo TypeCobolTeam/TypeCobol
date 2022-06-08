@@ -86,7 +86,8 @@
       *     A blank was missing before character"E"in column 28.
       *     A blank was assumed.
       *TODO #2251 our scanner must scan it as "+300" (integer) and "E"
-           compute a = +300E
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = +300E
       *KO  "E" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
@@ -94,21 +95,24 @@
       *    A blank was missing before character"+"in column 29.
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "+300" (integer) and "E"
-           compute a = +300E+14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = +300E+14
       *KO "E-14" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer) 
       *     and "E-14"
-           compute a = -300E-14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E-14
       *KO  "E14" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer) 
       *    and "E14"
-           compute a = -300E14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E14
       *KO  "E" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
@@ -117,7 +121,8 @@
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer), 
       *     "E" and "+14"
-           compute a = -300E+14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E+14
 
       *KO  "E"was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
@@ -125,7 +130,8 @@
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer) 
       *    and "E"
-           compute a = -300E
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E
            .
 
        END PROGRAM DVZF0OSM.

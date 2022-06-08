@@ -101,16 +101,8 @@ Line 81[24,29] <30, Error, Semantics> - Semantic error: Symbol 300E14 is not ref
       *     A blank was missing before character"E"in column 28.
       *     A blank was assumed.
       *TODO #2251 our scanner must scan it as "+300" (integer) and "E"
-Line 89[24,28] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
-Line 89[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeException: L'index se trouve en dehors des limites du tableau.
-   à TypeCobol.Compiler.Parser.CobolExpressionsBuilder.CreateArithmeticExpression(ArithmeticExpressionContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs:ligne 577
-   à TypeCobol.Compiler.Parser.CobolStatementsBuilder.CreateComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs:ligne 282
-   à TypeCobol.Compiler.Parser.CodeElementBuilder.EnterComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs:ligne 1596
-   à TypeCobol.Compiler.Parser.Generated.CodeElementsParser.ComputeStatementContext.EnterRule(IParseTreeListener listener) dans C:\Users\SMEDILOL\workspaces\TypeCobol\obj\EI_Debug\TypeCobol\CodeElementsParser.cs:ligne 18430
-   à Antlr4.Runtime.Tree.ParseTreeWalker.EnterRule(IParseTreeListener listener, IRuleNode r)
-   à Antlr4.Runtime.Tree.ParseTreeWalker.Walk(IParseTreeListener listener, IParseTree t)
-   à TypeCobol.Compiler.Parser.CodeElementsParserStep.ParseProcessedTokensLinesChanges(ProcessedTokensDocument processedTokensDocument, IList`1 processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementsParserStep.cs:ligne 266
-           compute a = +300E
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = +300E
       *KO  "E" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
@@ -118,48 +110,24 @@ Line 89[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeExc
       *    A blank was missing before character"+"in column 29.
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "+300" (integer) and "E"
-Line 97[24,31] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
-Line 97[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeException: L'index se trouve en dehors des limites du tableau.
-   à TypeCobol.Compiler.Parser.CobolExpressionsBuilder.CreateArithmeticExpression(ArithmeticExpressionContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs:ligne 577
-   à TypeCobol.Compiler.Parser.CobolStatementsBuilder.CreateComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs:ligne 282
-   à TypeCobol.Compiler.Parser.CodeElementBuilder.EnterComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs:ligne 1596
-   à TypeCobol.Compiler.Parser.Generated.CodeElementsParser.ComputeStatementContext.EnterRule(IParseTreeListener listener) dans C:\Users\SMEDILOL\workspaces\TypeCobol\obj\EI_Debug\TypeCobol\CodeElementsParser.cs:ligne 18430
-   à Antlr4.Runtime.Tree.ParseTreeWalker.EnterRule(IParseTreeListener listener, IRuleNode r)
-   à Antlr4.Runtime.Tree.ParseTreeWalker.Walk(IParseTreeListener listener, IParseTree t)
-   à TypeCobol.Compiler.Parser.CodeElementsParserStep.ParseProcessedTokensLinesChanges(ProcessedTokensDocument processedTokensDocument, IList`1 processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementsParserStep.cs:ligne 266
-           compute a = +300E+14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = +300E+14
       *KO "E-14" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer) 
       *     and "E-14"
-Line 104[24,31] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
-Line 104[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeException: L'index se trouve en dehors des limites du tableau.
-   à TypeCobol.Compiler.Parser.CobolExpressionsBuilder.CreateArithmeticExpression(ArithmeticExpressionContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs:ligne 577
-   à TypeCobol.Compiler.Parser.CobolStatementsBuilder.CreateComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs:ligne 282
-   à TypeCobol.Compiler.Parser.CodeElementBuilder.EnterComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs:ligne 1596
-   à TypeCobol.Compiler.Parser.Generated.CodeElementsParser.ComputeStatementContext.EnterRule(IParseTreeListener listener) dans C:\Users\SMEDILOL\workspaces\TypeCobol\obj\EI_Debug\TypeCobol\CodeElementsParser.cs:ligne 18430
-   à Antlr4.Runtime.Tree.ParseTreeWalker.EnterRule(IParseTreeListener listener, IRuleNode r)
-   à Antlr4.Runtime.Tree.ParseTreeWalker.Walk(IParseTreeListener listener, IParseTree t)
-   à TypeCobol.Compiler.Parser.CodeElementsParserStep.ParseProcessedTokensLinesChanges(ProcessedTokensDocument processedTokensDocument, IList`1 processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementsParserStep.cs:ligne 266
-           compute a = -300E-14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E-14
       *KO  "E14" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer) 
       *    and "E14"
-Line 111[24,30] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
-Line 111[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeException: L'index se trouve en dehors des limites du tableau.
-   à TypeCobol.Compiler.Parser.CobolExpressionsBuilder.CreateArithmeticExpression(ArithmeticExpressionContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs:ligne 577
-   à TypeCobol.Compiler.Parser.CobolStatementsBuilder.CreateComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs:ligne 282
-   à TypeCobol.Compiler.Parser.CodeElementBuilder.EnterComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs:ligne 1596
-   à TypeCobol.Compiler.Parser.Generated.CodeElementsParser.ComputeStatementContext.EnterRule(IParseTreeListener listener) dans C:\Users\SMEDILOL\workspaces\TypeCobol\obj\EI_Debug\TypeCobol\CodeElementsParser.cs:ligne 18430
-   à Antlr4.Runtime.Tree.ParseTreeWalker.EnterRule(IParseTreeListener listener, IRuleNode r)
-   à Antlr4.Runtime.Tree.ParseTreeWalker.Walk(IParseTreeListener listener, IParseTree t)
-   à TypeCobol.Compiler.Parser.CodeElementsParserStep.ParseProcessedTokensLinesChanges(ProcessedTokensDocument processedTokensDocument, IList`1 processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementsParserStep.cs:ligne 266
-           compute a = -300E14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E14
       *KO  "E" was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
       *    A blank was missing before character"E"in column 28.
@@ -168,16 +136,8 @@ Line 111[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeEx
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer), 
       *     "E" and "+14"
-Line 120[24,31] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
-Line 120[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeException: L'index se trouve en dehors des limites du tableau.
-   à TypeCobol.Compiler.Parser.CobolExpressionsBuilder.CreateArithmeticExpression(ArithmeticExpressionContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs:ligne 577
-   à TypeCobol.Compiler.Parser.CobolStatementsBuilder.CreateComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs:ligne 282
-   à TypeCobol.Compiler.Parser.CodeElementBuilder.EnterComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs:ligne 1596
-   à TypeCobol.Compiler.Parser.Generated.CodeElementsParser.ComputeStatementContext.EnterRule(IParseTreeListener listener) dans C:\Users\SMEDILOL\workspaces\TypeCobol\obj\EI_Debug\TypeCobol\CodeElementsParser.cs:ligne 18430
-   à Antlr4.Runtime.Tree.ParseTreeWalker.EnterRule(IParseTreeListener listener, IRuleNode r)
-   à Antlr4.Runtime.Tree.ParseTreeWalker.Walk(IParseTreeListener listener, IParseTree t)
-   à TypeCobol.Compiler.Parser.CodeElementsParserStep.ParseProcessedTokensLinesChanges(ProcessedTokensDocument processedTokensDocument, IList`1 processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementsParserStep.cs:ligne 266
-           compute a = -300E+14
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E+14
 
       *KO  "E"was invalid.  Skipped to the next verb, period or
       *    procedure-name definition.
@@ -185,16 +145,8 @@ Line 120[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeEx
       *    A blank was assumed.
       *TODO #2251 our scanner must scan it as "-300" (integer) 
       *    and "E"
-Line 128[24,28] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
-Line 128[12,18] <31, Error, Semantics> - Runtime error: System.IndexOutOfRangeException: L'index se trouve en dehors des limites du tableau.
-   à TypeCobol.Compiler.Parser.CobolExpressionsBuilder.CreateArithmeticExpression(ArithmeticExpressionContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs:ligne 577
-   à TypeCobol.Compiler.Parser.CobolStatementsBuilder.CreateComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs:ligne 282
-   à TypeCobol.Compiler.Parser.CodeElementBuilder.EnterComputeStatement(ComputeStatementContext context) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs:ligne 1596
-   à TypeCobol.Compiler.Parser.Generated.CodeElementsParser.ComputeStatementContext.EnterRule(IParseTreeListener listener) dans C:\Users\SMEDILOL\workspaces\TypeCobol\obj\EI_Debug\TypeCobol\CodeElementsParser.cs:ligne 18430
-   à Antlr4.Runtime.Tree.ParseTreeWalker.EnterRule(IParseTreeListener listener, IRuleNode r)
-   à Antlr4.Runtime.Tree.ParseTreeWalker.Walk(IParseTreeListener listener, IParseTree t)
-   à TypeCobol.Compiler.Parser.CodeElementsParserStep.ParseProcessedTokensLinesChanges(ProcessedTokensDocument processedTokensDocument, IList`1 processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation) dans C:\Users\SMEDILOL\workspaces\TypeCobol\TypeCobol\Compiler\Parser\CodeElementsParserStep.cs:ligne 266
-           compute a = -300E
+      *Keep line commented, otherwise it produces an exception
+      *    compute a = -300E
            .
 
        END PROGRAM DVZF0OSM.
