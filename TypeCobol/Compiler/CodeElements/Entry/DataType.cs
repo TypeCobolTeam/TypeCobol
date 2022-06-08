@@ -13,14 +13,20 @@ namespace TypeCobol.Compiler.CodeElements
         //Characters for alphanumeric
         public static char[] XChars = { 'X', 'x' };
         //Characters in FloatingPoint
-        public static char[] EChars = { 'E', 'e' };
+        public static char[] FloatingPointOnlyChars = { 'E', 'e' };
         //Characters for alphabetic
         public static char[] AChars = { 'A', 'a' };
-        public static char[] DbcsChars = { 'G', 'g', 'N', 'n' };
+        public static char[] DbcsAndNationalChars = { 'G', 'g', 'N', 'n' };
         //Characters for Numeric
         public static char[] NumericChars = { '9', 'S', 'V', 'P', 's', 'v', 'p' };
+
         public static char[] EditingBase = { 'B', 'b', '0', '/' };
-        public static char[] Basic = { '.', 'Z', 'z', '+', '-', '*', 'D', 'd'/*,'B'*/, 'C', 'c'/*,'S'*/, 'R', 'r', ','};
+
+        /// <summary>
+        /// Is not exactly numeric edited only as Floating point can also use some of these chars.
+        /// But with the current algorithm to determine DataType, floating point are checked only with FloatingPointOnlyChars.
+        /// </summary>
+        public static char[] NumericEditedOnly = { '.', 'Z', 'z', '+', '-', '*', 'D', 'd'/*,'B'*/, 'C', 'c'/*,'S'*/, 'R', 'r', ','};
 
 
         public static readonly DataType Unknown = new DataType("?");
@@ -34,18 +40,6 @@ namespace TypeCobol.Compiler.CodeElements
         public static readonly DataType FloatingPoint = new DataType("FloatingPoint");
         public static readonly DataType Occurs = new DataType("Array");
         public static readonly DataType Level88 = new DataType("Level88");
-
-        // [TYPECOBOL]
-        //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
-        public static readonly DataType Boolean = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-        //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
-        public static readonly DataType Date = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-        //Currency is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
-        public static readonly DataType Currency = new DataType("CURRENCY", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-        //String built in type
-        public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-
-        public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String };
 
 
         public string Name { get; }
@@ -171,34 +165,36 @@ namespace TypeCobol.Compiler.CodeElements
 
                 //1.1 FloatingPoint is the only type that can contains 'E'
                 //so return directly
-                if (Array.IndexOf(EChars, c) > -1)
+                if (Array.IndexOf(FloatingPointOnlyChars, c) > -1)
                 {
                     return DataType.FloatingPoint;// ±?E±99 
                 }
 
                 //1.2 National(-edited) are returned as DBCS
                 //Why? Create an issue ?
-                if (Array.IndexOf(DbcsChars, c) > -1)
+                if (Array.IndexOf(DbcsAndNationalChars, c) > -1)
                 {
                     return DataType.DBCS;
                 }
-
-
-                //Could also be a FloatingPoint, but a floating point requires a 'E'
-                if (Array.IndexOf(Basic, c) > -1)
-                {
-                    numericEdited = true;
-                }
+                //1.3 Only NumericEdited can use currency symbol
                 if (Array.IndexOf(currencies, c) > -1)
                 {
+                    return DataType.NumericEdited;
+                }
+
+                //2. Potential match : We must scan all chars to determine the type
+
+
+                //A FloatingPoint can also use these chars but it requires a 'E'.
+                //It cannot be a fast-path, because the letter 'E' can be encountered later.
+                if (Array.IndexOf(NumericEditedOnly, c) > -1)
+                {
                     numericEdited = true;
                 }
-                
                 if (Array.IndexOf(NumericChars, c) > -1)
                 {
+                    //numericEdited can also have these values, but without NumericEditedOnly, it's a numeric
                     numeric = true;
-                    //numericEdited can also have these values, but without Basic, it's a numeric
-                    
                 }
                 if (Array.IndexOf(AChars, c) > -1)
                 {
@@ -208,15 +204,11 @@ namespace TypeCobol.Compiler.CodeElements
                 {
                     numericForAlpha = true;
                 }
-
-                //DBCS and National(-edited) can also use these chars
-                //but a G or N is mandatory
                 if (Array.IndexOf(EditingBase, c) > -1)
                 {
+                    //DBCS and National(-edited) can also use these chars but a G or N is mandatory
+                    //numericEdited can also have these values, but without NumericEditedOnly, it's a numeric
                     editingBase = true;
-
-                    //numericEdited can also have these values, but without Basic, it's a numeric
-                    //National(-edited) and DBCS can also have these values, but without DbcsChars, it's a numeric
                 }
                 if (Array.IndexOf(XChars, c) > -1)
                 {
@@ -224,7 +216,7 @@ namespace TypeCobol.Compiler.CodeElements
                 }
             }
 
-            //End
+            //3. Determine type
             if (numericEdited)
             {
                 return DataType.NumericEdited;
@@ -238,7 +230,6 @@ namespace TypeCobol.Compiler.CodeElements
             {
                 return DataType.Alphanumeric;
             }
-
             if (editingBase)
             {
                 return DataType.NumericEdited;
@@ -249,11 +240,11 @@ namespace TypeCobol.Compiler.CodeElements
             }
 
 
-            else if (alphanumeric)
+            if (alphanumeric)
             {
                 return DataType.Alphanumeric;
             }
-            else if (alphabetic)
+            if (alphabetic)
             {
                 return DataType.Alphabetic;
 
@@ -262,8 +253,18 @@ namespace TypeCobol.Compiler.CodeElements
             return DataType.Unknown;
         }
 
+        // [TYPECOBOL]
+        //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
+        public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+        public static readonly DataType Date = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //Currency is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+        public static readonly DataType Currency = new DataType("CURRENCY", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //String built in type
+        public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
-        
+        public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String };
+
         private static Nodes.TypeDefinition CreateBuiltIn(DataType type)
         {
             var dataTypeDescriptionEntry = CreateBuiltInDataTypeDescriptionEntry(type);
@@ -351,6 +352,13 @@ namespace TypeCobol.Compiler.CodeElements
             return node;
         }
 
+        public static readonly TypeDefinition BooleanType = CreateBuiltIn(Boolean);
+        public static readonly TypeDefinition DateType = CreateBuiltIn(Date);
+        public static readonly TypeDefinition CurrencyType = CreateBuiltIn(Currency);
+        public static readonly TypeDefinition StringType = CreateBuiltIn(String);
+
+        public static readonly TypeDefinition[] BuiltInCustomTypeDefinitions = { BooleanType, DateType, CurrencyType, StringType };
+        // [/TYPECOBOL]
     }
     public enum RestrictionLevel
     {
