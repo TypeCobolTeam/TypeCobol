@@ -1,5 +1,19 @@
-﻿--- Sql Statements ---
+﻿Line 10[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', user defined word} RuleStack=codeElement>whenEverStatement>sqlGotoHostLabel,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+
+--- Sql Statements ---
 line 6: WhenEverStatement
 - ExceptionCondition = Sqlerror
 - NextStatementType = Goto
 - HostLabel = ENDDATA
+line 7: WhenEverStatement
+- ExceptionCondition = Sqlwarning
+- NextStatementType = Continue
+- HostLabel = <NULL>
+line 8: WhenEverStatement
+- ExceptionCondition = NotFound
+- NextStatementType = Goto
+- HostLabel = LabelName
+line 9: WhenEverStatement
+- ExceptionCondition = NotFound
+- NextStatementType = Goto
+- HostLabel = <NULL>

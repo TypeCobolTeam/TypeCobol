@@ -3,7 +3,10 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
              EXEC SQL 
-              WHENEVER SQLERROR GOTO ENDDATA         
+              WHENEVER SQLERROR GOTO ENDDATA  
+              WHENEVER SQLWARNING CONTINUE
+              WHENEVER NOT FOUND GO TO : LabelName
+              WHENEVER NOT FOUND GO TO 
              END-EXEC.
        PROCEDURE DIVISION.
          
