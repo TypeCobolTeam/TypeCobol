@@ -1,4 +1,5 @@
-﻿Line 10[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', user defined word} RuleStack=codeElement>whenEverStatement>sqlGotoHostLabel,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+﻿--- Diagnostics ---
+Line 10[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', user defined word} RuleStack=codeElement>whenEverStatement>sqlGotoHostLabel,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
 line 6: WhenEverStatement
