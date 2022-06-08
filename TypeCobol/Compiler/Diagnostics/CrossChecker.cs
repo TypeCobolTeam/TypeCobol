@@ -828,7 +828,7 @@ namespace TypeCobol.Compiler.Diagnostics
             //positioned before dataDescription.
             if (dataDefinition.ChildrenCount > 0)
             {
-                var lastChild = ((DataDefinition) dataDefinition.Children[dataDefinition.ChildrenCount - 1]);
+                var lastChild = dataDefinition.Children[dataDefinition.ChildrenCount - 1];
 
                 return lastChild.CodeElement != null
                        && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry
