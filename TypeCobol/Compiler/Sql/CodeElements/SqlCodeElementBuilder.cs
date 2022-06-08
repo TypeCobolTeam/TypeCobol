@@ -262,5 +262,26 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+
+        private DatetimeConstant CreateDatetimeConstant(CodeElementsParser.Datetime_constantContext context)
+        {
+            var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral());
+            if (context.date() != null)
+            {
+                return new DatetimeConstant(literal, DatetimeConstantKind.Date, (Token)context.date().KeywordDATE);
+            }
+
+            if (context.time() != null)
+            {
+                return new DatetimeConstant(literal, DatetimeConstantKind.Time, (Token)context.time().KeywordTIME);
+            }
+
+            if (context.timestamp() != null)
+            {
+                return new DatetimeConstant(literal, DatetimeConstantKind.Timestamp, (Token)context.timestamp().KeywordTIMESTAMP);
+            }
+
+            return null;
+        }
     }
 }

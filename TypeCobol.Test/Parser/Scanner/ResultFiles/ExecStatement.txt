@@ -39,7 +39,6 @@
 
 -- Line 8 --
 [4,4:c]<UserDefinedWord>
-[5,5:']<ExecStatementText>
 [6,8:est]<UserDefinedWord>
 [10,11:la]<UserDefinedWord>
 [13,15:fin]<UserDefinedWord>

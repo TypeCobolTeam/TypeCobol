@@ -71,15 +71,12 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                IntegerLiteralTokenValue integerLiteralValue = Token.LiteralValue as IntegerLiteralTokenValue;
-                if (integerLiteralValue != null)
+                if (Token.LiteralValue is IntegerLiteralTokenValue integerLiteralValue)
                 {
-                    return integerLiteralValue.Number;
+                    return (long)integerLiteralValue.Number; //Cast may fail if value is too small/too big for Int64
                 }
-                else
-                {
-                    throw new InvalidOperationException("Unexpected literal token type");
-                }
+
+                throw new InvalidOperationException("Unexpected literal token type");
             }
         }
 
@@ -102,7 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
                 switch (Token.TokenType)
                 {
                     case TokenType.IntegerLiteral:
-                        return ((IntegerLiteralTokenValue)Token.LiteralValue).Number;
+                        return (double)((IntegerLiteralTokenValue)Token.LiteralValue).Number;
                     case TokenType.DecimalLiteral:
                         return ((DecimalLiteralTokenValue)Token.LiteralValue).Number;
                     case TokenType.FloatingPointLiteral:
@@ -147,7 +144,7 @@ namespace TypeCobol.Compiler.CodeElements
                 switch (Token.TokenType)
                 {
                     case TokenType.IntegerLiteral:
-                        return ((IntegerLiteralTokenValue)Token.LiteralValue).Number;
+                        return (long)((IntegerLiteralTokenValue)Token.LiteralValue).Number; //Cast may fail if value is too small/too big for Int64
                     case TokenType.ZERO:
                     case TokenType.ZEROS:
                     case TokenType.ZEROES:

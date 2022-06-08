@@ -83,7 +83,10 @@
         SqlKeywords = 527,
 
         // 820 -> 820 : SQL Syntax separators
-        SqlSyntaxSeparators = 820
+        SqlSyntaxSeparators = 820,
+
+        // 821 -> 823 : SQL Literals
+        SqlLiterals = 821
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -916,5 +919,8 @@
         SQL_YEARS = 818,
         SQL_ZONE = 819,
         SQL_CommaSeparator = 820,
+        SQL_DecimalFloatingPointLiteral = 821,
+        SQL_BinaryStringLiteral = 822,
+        SQL_GraphicStringLiteral = 823,
     }
 }
