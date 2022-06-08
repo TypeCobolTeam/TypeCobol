@@ -533,6 +533,15 @@ namespace TypeCobol.Test.Utils
 
                 return true;
             }
+
+            public override bool Visit(WhenEverStatement whenEverStatement)
+            {
+                _writer.WriteLine($"line {whenEverStatement.Line}: {nameof(WhenEverStatement)}");
+                DumpObject(nameof(whenEverStatement.ExceptionCondition), whenEverStatement.ExceptionCondition);
+                DumpObject(nameof(whenEverStatement.NextStatementType), whenEverStatement.NextStatementType);
+                DumpObject(nameof(whenEverStatement.HostLabel), whenEverStatement.HostLabel);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

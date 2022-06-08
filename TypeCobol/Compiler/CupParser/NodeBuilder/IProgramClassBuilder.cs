@@ -831,6 +831,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="truncate">The corresponding  Truncate Statement Code Element</param>
         void OnTruncateStatement([NotNull] TruncateStatement truncate);
+        /// <summary>
+        /// Enter a WhenEver Statement Node
+        /// </summary>
+        /// <param name="whenEver">The corresponding WhenEver Statement Code Element</param>
+        void OnWhenEverStatement([NotNull] WhenEverStatement whenEver);
         #endregion
     }
 }

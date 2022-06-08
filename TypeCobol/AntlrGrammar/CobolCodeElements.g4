@@ -215,6 +215,7 @@ codeElement:
 	| selectStatement
 	| rollbackStatement
 	| truncateStatement
+	| whenEverStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8299,6 +8300,13 @@ single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?
 correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
 new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
 new_column_name: UserDefinedWord;
+
+sqlError: ({ string.Equals(CurrentToken.Text, "SQLERROR", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLERROR=UserDefinedWord);
+sqlWarning: ({ string.Equals(CurrentToken.Text, "SQLWARNING", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLWARNING=UserDefinedWord);
+sqlFound: ({ string.Equals(CurrentToken.Text, "FOUND", System.StringComparison.OrdinalIgnoreCase) }? KeywordFOUND=UserDefinedWord);
+whenEverStatement: SQL_WHENEVER (sqlNotFound | sqlError | sqlWarning) (SQL_CONTINUE | sqlGotoHostLabel);
+sqlNotFound: SQL_NOT sqlFound;
+sqlGotoHostLabel: (SQL_GOTO | SQL_GO SQL_TO) ColonSeparator? hostLabel=UserDefinedWord;
 
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);

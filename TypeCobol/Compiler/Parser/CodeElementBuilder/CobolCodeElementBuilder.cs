@@ -2280,5 +2280,10 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateTruncateStatement(context);
         }
-    }
+        public override void EnterWhenEverStatement([NotNull] CodeElementsParser.WhenEverStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateWhenEverStatement(context);
+        }
+	}
 }

@@ -1,0 +1,5 @@
+﻿--- Sql Statements ---
+line 6: WhenEverStatement
+- ExceptionCondition = Sqlerror
+- NextStatementType = Goto
+- HostLabel = ENDDATA

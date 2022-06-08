@@ -1635,5 +1635,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnTruncateStatement(truncate);
         }
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
+        {
+            Enter(new WhenEver(whenEver), whenEver);
+            Exit();
+            Dispatcher.OnWhenEverStatement(whenEver);
+        }
     }
 }

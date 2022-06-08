@@ -283,5 +283,43 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+
+        public WhenEverStatement CreateWhenEverStatement(CodeElementsParser.WhenEverStatementContext context)
+        {
+            if (context != null)
+            {
+                SyntaxProperty<ExceptionConditionType> exceptionCondition = null;
+                SyntaxProperty<NextStatementType> nextStatementType = null;
+                SymbolReference hostLabel = null;
+                if (context.sqlError() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.Sqlerror, ParseTreeUtils.GetFirstToken(context.sqlError()));
+                }
+                if (context.sqlWarning() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.Sqlwarning, ParseTreeUtils.GetFirstToken(context.sqlWarning()));
+                }
+                if (context.sqlNotFound() != null )
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.NotFound, ParseTreeUtils.GetFirstToken(context.sqlNotFound()));
+                }
+                if (context.SQL_CONTINUE() != null)
+                {
+                    nextStatementType = new SyntaxProperty<NextStatementType>(NextStatementType.Continue, ParseTreeUtils.GetFirstToken(context.SQL_CONTINUE()));
+                }
+                else if (context.sqlGotoHostLabel() != null)
+                {
+                    nextStatementType = new SyntaxProperty<NextStatementType>(NextStatementType.Goto, ParseTreeUtils.GetFirstToken(context.sqlGotoHostLabel()));
+                    if (context.sqlGotoHostLabel().hostLabel != null)
+                    {
+                        hostLabel= new SymbolReference(new AlphanumericValue(context.sqlGotoHostLabel().hostLabel as Token), SymbolType.SqlIdentifier);
+                    }
+                }
+
+                return new WhenEverStatement(exceptionCondition, nextStatementType, hostLabel);
+
+            }
+            return null;
+        }
     }
 }
