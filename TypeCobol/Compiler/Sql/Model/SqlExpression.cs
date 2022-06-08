@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Model
@@ -98,6 +100,26 @@ namespace TypeCobol.Compiler.Sql.Model
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return base.VisitSqlObject(visitor) && visitor.Visit(this);
+        }
+    }
+
+    public class SqlColumnName : SqlExpression
+    {
+        public SqlColumnName(SymbolReference symbol)
+        {
+            this.Symbol = symbol;
+        }
+
+        public SymbolReference Symbol { get; }
+
+        protected override void DumpContent(TextWriter output, int indentLevel)
+        {
+            DumpProperty(output, nameof(Symbol), Symbol, indentLevel);
+        }
+
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this);
         }
     }
 }

@@ -278,13 +278,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
         private SqlColumnName CreateSqlColumnName(CodeElementsParser.Column_nameContext context)
         {
-            if (context.UserDefinedWord() != null)
-            {
                 var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
                 var literalReferenceSymbol = new SymbolReference(new AlphanumericValue(literal), SymbolType.ColumnName);
                 return new SqlColumnName(literalReferenceSymbol);
-            }
-            return null;
         }
     }
 }
