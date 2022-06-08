@@ -10,6 +10,44 @@ namespace TypeCobol.Compiler.CodeElements
 {
     public class DataType : ICobolLanguageLevel, IVisitable, IEquatable<DataType>
     {
+        //Characters for alphanumeric
+        public static char[] XChars = { 'X', 'x' };
+        //Characters in FloatingPoint
+        public static char[] EChars = { 'E', 'e' };
+        //Characters for alphabetic
+        public static char[] AChars = { 'A', 'a' };
+        public static char[] DbcsChars = { 'G', 'g', 'N', 'n' };
+        //Characters for Numeric
+        public static char[] NumericChars = { '9', 'S', 'V', 'P', 's', 'v', 'p' };
+        public static char[] EditingBase = { 'B', 'b', '0', '/' };
+        public static char[] Basic = { '.', 'Z', 'z', '+', '-', '*', 'D', 'd'/*,'B'*/, 'C', 'c'/*,'S'*/, 'R', 'r', ','};
+
+
+        public static readonly DataType Unknown = new DataType("?");
+        public static readonly DataType Omitted = new DataType("Omitted");
+        public static readonly DataType Alphabetic = new DataType("Alphabetic");
+        public static readonly DataType Numeric = new DataType("Numeric");
+        public static readonly DataType NumericEdited = new DataType("NumericEdited");
+        public static readonly DataType Alphanumeric = new DataType("Alphanumeric");
+        public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
+        public static readonly DataType DBCS = new DataType("DBCS");
+        public static readonly DataType FloatingPoint = new DataType("FloatingPoint");
+        public static readonly DataType Occurs = new DataType("Array");
+        public static readonly DataType Level88 = new DataType("Level88");
+
+        // [TYPECOBOL]
+        //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
+        public static readonly DataType Boolean = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+        public static readonly DataType Date = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //Currency is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+        public static readonly DataType Currency = new DataType("CURRENCY", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //String built in type
+        public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+
+        public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String };
+
+
         public string Name { get; }
         public RestrictionLevel RestrictionLevel { get; internal set; }
         public CobolLanguageLevel CobolLanguageLevel  { get; }
@@ -72,8 +110,12 @@ namespace TypeCobol.Compiler.CodeElements
 
         public static DataType Create(string picture)
         {
-            Init();
-            return DoCreate2(picture, EditingBaseAndBasic);
+            return DoCreate(picture, '$');
+        }
+
+        public static DataType Create(string picture, char[] currencies)
+        {
+            return DoCreate(picture, currencies);
         }
 
         /// <summary>
@@ -90,126 +132,138 @@ namespace TypeCobol.Compiler.CodeElements
             }
             return DataType.Unknown;
         }
-        public static DataType Create(string picture, char[] currencies)
-        {
-            var all = new char[Basic.Length + currencies.Length];
-            Basic.CopyTo(all, 0);
-            currencies.CopyTo(all, Basic.Length);
-            return DoCreate(picture, all);
-        }
 
-        private static DataType DoCreate(string picture, char[] numericEditingSpecificChars)
-        {
-            char[] editingNumeric = new char[EditingBase.Length + numericEditingSpecificChars.Length];
-            EditingBase.CopyTo(editingNumeric, 0);
-            numericEditingSpecificChars.CopyTo(editingNumeric, EditingBase.Length);
-            return DoCreate2(picture, editingNumeric);
-        }
-
-
-        public static void Init()
-        {
-            if (EditingBaseAndBasic == null)
-            {
-                EditingBaseAndBasic = new char[EditingBase.Length + Basic.Length];
-                EditingBase.CopyTo(EditingBaseAndBasic, 0);
-                Basic.CopyTo(EditingBaseAndBasic, EditingBase.Length);
-            }
-        }
-
-        private static DataType DoCreate2(string picture, char[] editingNumeric)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <param name="currencies">Chars used for currencies</param>
+        /// <returns></returns>
+        private static DataType DoCreate(string picture, params char[] currencies)
         {
             bool insideParenthesis = false;
-            for (var i = 0; i < picture.Length; i++)
+
+            bool alphabetic = false;
+            bool alphanumeric = false;
+            
+            bool editingBase = false;
+            bool numericForAlpha = false;
+            bool numeric = false;
+            bool numericEdited = false;
+            
+            foreach (var c in picture)
             {
-                if (picture[i] == '(')
+                //Skip chars inside parenthesis
+                if (c == '(')
                 {
                     insideParenthesis = true;
                 }
-                else if (picture[i] == ')')
+                else if (c == ')')
                 {
                     insideParenthesis = false;
                 }
-
                 if (insideParenthesis)
                 {
                     continue;
                 }
-                if (Array.IndexOf(EChars, picture[i]) > -1)
+
+                //1. Fast return : Exclusive chars
+
+                //1.1 FloatingPoint is the only type that can contains 'E'
+                //so return directly
+                if (Array.IndexOf(EChars, c) > -1)
                 {
                     return DataType.FloatingPoint;// ±?E±99 
                 }
-                else if (Array.IndexOf(XChars, picture[i]) > -1)
-                {
-                    if (Array.IndexOf(EditingBase, picture[i]) > -1)
-                    {
-                        return DataType.AlphanumericEdited;
-                    }
-                    else
-                    {
-                        return DataType.Alphanumeric;
-                    }
-                }
-                else if (Array.IndexOf(AChars, picture[i]) > -1)
-                {
-                    return DataType.Alphabetic;
-                }
-                else if (Array.IndexOf(DbcsChars, picture[i]) > -1)
+
+                //1.2 National(-edited) are returned as DBCS
+                //Why? Create an issue ?
+                if (Array.IndexOf(DbcsChars, c) > -1)
                 {
                     return DataType.DBCS;
                 }
-                else if (Array.IndexOf(editingNumeric, picture[i]) > -1)
+
+
+                //Could also be a FloatingPoint, but a floating point requires a 'E'
+                if (Array.IndexOf(Basic, c) > -1)
                 {
-                    return DataType.NumericEdited;
+                    numericEdited = true;
                 }
-                else if (Array.IndexOf(NumericChars, picture[i]) > -1)
+                if (Array.IndexOf(currencies, c) > -1)
                 {
-                    return DataType.Numeric;
+                    numericEdited = true;
+                }
+                
+                if (Array.IndexOf(NumericChars, c) > -1)
+                {
+                    numeric = true;
+                    //numericEdited can also have these values, but without Basic, it's a numeric
+                    
+                }
+                if (Array.IndexOf(AChars, c) > -1)
+                {
+                    alphabetic = true;
+                }
+                if (c == '9')
+                {
+                    numericForAlpha = true;
+                }
+
+                //DBCS and National(-edited) can also use these chars
+                //but a G or N is mandatory
+                if (Array.IndexOf(EditingBase, c) > -1)
+                {
+                    editingBase = true;
+
+                    //numericEdited can also have these values, but without Basic, it's a numeric
+                    //National(-edited) and DBCS can also have these values, but without DbcsChars, it's a numeric
+                }
+                if (Array.IndexOf(XChars, c) > -1)
+                {
+                    alphanumeric = true;
                 }
             }
+
+            //End
+            if (numericEdited)
+            {
+                return DataType.NumericEdited;
+            }
+
+            if (editingBase && (alphanumeric || alphabetic))
+            {
+                return DataType.AlphanumericEdited;
+            }
+            if (numericForAlpha && (alphanumeric || alphabetic))
+            {
+                return DataType.Alphanumeric;
+            }
+
+            if (editingBase)
+            {
+                return DataType.NumericEdited;
+            }
+            if (numeric)
+            {
+                return DataType.Numeric;
+            }
+
+
+            else if (alphanumeric)
+            {
+                return DataType.Alphanumeric;
+            }
+            else if (alphabetic)
+            {
+                return DataType.Alphabetic;
+
+            }
+
             return DataType.Unknown;
         }
 
 
-        //Characters for alphanumeric
-        public static char[] XChars = { 'X', 'x' };
-        //Characters in FloatingPoint
-        public static char[] EChars = { 'E', 'e' };
-        //Characters for alphabetic
-        public static char[] AChars = { 'A', 'a' };
-        public static char[] DbcsChars = { 'G', 'g', 'N', 'n' };
-        //Characters for Numeric
-        public static char[] NumericChars = { '9', 'S', 'V', 'P', 's', 'v', 'p' };
-        public static char[] EditingBase = { 'B', 'b', '0', '/' };
-        public static char[] Basic = { '.', 'Z', 'z', '+', '-', '*', 'D', 'd'/*,'B'*/, 'C', 'c'/*,'S'*/};
-        public static char[] EditingBaseAndBasic;
-
-
-
-         public static readonly DataType Unknown            = new DataType("?");
-        public static readonly DataType Omitted            = new DataType("Omitted");
-        public static readonly DataType Alphabetic         = new DataType("Alphabetic");
-        public static readonly DataType Numeric            = new DataType("Numeric");
-        public static readonly DataType NumericEdited      = new DataType("NumericEdited");
-        public static readonly DataType Alphanumeric       = new DataType("Alphanumeric");
-        public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
-        public static readonly DataType DBCS               = new DataType("DBCS");
-        public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
-        public static readonly DataType Occurs             = new DataType("Array");
-        public static readonly DataType Level88            = new DataType("Level88");
-
-        // [TYPECOBOL]
-        //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
-        public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-        //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
-        public static readonly DataType Date = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-        //Currency is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
-        public static readonly DataType Currency = new DataType("CURRENCY", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-        //String built in type
-        public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-
-        public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String };
-
+        
         private static Nodes.TypeDefinition CreateBuiltIn(DataType type)
         {
             var dataTypeDescriptionEntry = CreateBuiltInDataTypeDescriptionEntry(type);
@@ -297,13 +351,6 @@ namespace TypeCobol.Compiler.CodeElements
             return node;
         }
 
-        public static readonly TypeDefinition BooleanType = CreateBuiltIn(Boolean);
-        public static readonly TypeDefinition DateType = CreateBuiltIn(Date);
-        public static readonly TypeDefinition CurrencyType = CreateBuiltIn(Currency);
-        public static readonly TypeDefinition StringType = CreateBuiltIn(String);
-
-        public static readonly TypeDefinition[] BuiltInCustomTypeDefinitions = { BooleanType, DateType, CurrencyType, StringType };
-        // [/TYPECOBOL]
     }
     public enum RestrictionLevel
     {
