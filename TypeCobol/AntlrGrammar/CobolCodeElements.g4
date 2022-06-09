@@ -215,6 +215,7 @@ codeElement:
 	| selectStatement
 	| rollbackStatement
 	| truncateStatement
+	| savepointStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8299,6 +8300,13 @@ single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?
 correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
 new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
 new_column_name: UserDefinedWord;
+
+sqlRetain: ({ string.Equals(CurrentToken.Text, "RETAIN", System.StringComparison.OrdinalIgnoreCase) }? KeywordRETAIN=UserDefinedWord);
+sqlCursors: ({ string.Equals(CurrentToken.Text, "CURSORS", System.StringComparison.OrdinalIgnoreCase) }? KeywordCURSORS=UserDefinedWord);
+sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? KeywordLOCKS=UserDefinedWord);
+onRollbackRetainCursorsClause: SQL_ON SQL_ROLLBACK sqlRetain sqlCursors;
+onRollbackRetainLocksClause: SQL_ON SQL_ROLLBACK sqlRetain sqlLocks;
+savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? SQL_ON SQL_ROLLBACK sqlRetain ((sqlCursors onRollbackRetainLocksClause?) | (sqlLocks onRollbackRetainCursorsClause));
 
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);

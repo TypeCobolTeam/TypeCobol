@@ -854,5 +854,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnSavepointStatement([NotNull] SavepointStatement truncate)
+        {
+
+        }
     }
 }

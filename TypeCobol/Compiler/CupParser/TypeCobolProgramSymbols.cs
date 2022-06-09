@@ -12,7 +12,7 @@ public class TypeCobolProgramSymbols {
   public const int DataRenamesEntry = 32;
   public const int DeleteStatement = 49;
   public const int MoveStatement = 69;
-  public const int FunctionDeclarationEnd = 135;
+  public const int FunctionDeclarationEnd = 136;
   public const int PerformProcedureStatement = 73;
   public const int FactoryEnd = 8;
   public const int ReadStatementEnd = 119;
@@ -42,7 +42,7 @@ public class TypeCobolProgramSymbols {
   public const int InspectStatement = 64;
   public const int SpecialNamesParagraph = 38;
   public const int MethodEnd = 12;
-  public const int GlobalStorageSectionHeader = 137;
+  public const int GlobalStorageSectionHeader = 138;
   public const int WhenOtherCondition = 105;
   public const int CallStatement = 44;
   public const int AddStatementEnd = 107;
@@ -82,10 +82,11 @@ public class TypeCobolProgramSymbols {
   public const int NextSentenceStatement = 71;
   public const int ExitProgramStatement = 57;
   public const int ExecStatementText = 55;
-  public const int FunctionDeclarationHeader = 134;
+  public const int FunctionDeclarationHeader = 135;
   public const int FileControlEntry = 34;
   public const int IOControlEntry = 35;
-  public const int ProcedureStyleCall = 136;
+  public const int ProcedureStyleCall = 137;
+  public const int SavepointStatement = 133;
   public const int UnstringStatementEnd = 126;
   public const int DeclarativesHeader = 16;
   public const int JsonParseStatement = 67;
@@ -103,7 +104,7 @@ public class TypeCobolProgramSymbols {
   public const int InitializeStatement = 63;
   public const int ComputeStatementEnd = 109;
   public const int ObjectIdentification = 9;
-  public const int LibraryCopy = 133;
+  public const int LibraryCopy = 134;
   public const int ProgramEnd = 4;
   public const int SortStatement = 81;
   public const int FileDescriptionEntry = 29;
@@ -134,7 +135,7 @@ public class TypeCobolProgramSymbols {
   public const int IfStatementEnd = 114;
   public const int RewriteStatementEnd = 121;
   public const int ComputeStatement = 47;
-  public const int Program = 138;
+  public const int Program = 139;
   public const int SearchStatement = 79;
   public const int DivideStatement = 51;
   public const int NotOnSizeErrorCondition = 102;

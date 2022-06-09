@@ -533,6 +533,14 @@ namespace TypeCobol.Test.Utils
 
                 return true;
             }
+            public override bool Visit(SavepointStatement savepointStatement)
+            {
+                _writer.WriteLine($"line {savepointStatement.Line}: {nameof(SavepointStatement)}");
+                DumpObject(nameof(savepointStatement.SavepointName), savepointStatement.SavepointName);
+                DumpObject(nameof(savepointStatement.IsUnique), savepointStatement.IsUnique);
+                DumpObject(nameof(savepointStatement.RetainLocks), savepointStatement.RetainLocks);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

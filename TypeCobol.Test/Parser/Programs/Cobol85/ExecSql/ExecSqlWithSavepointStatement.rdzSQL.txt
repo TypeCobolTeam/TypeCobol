@@ -1,0 +1,13 @@
+﻿--- Sql Statements ---
+line 6: SavepointStatement
+- SavepointName = B
+- IsUnique = True
+- RetainLocks = <NULL>
+line 9: SavepointStatement
+- SavepointName = A
+- IsUnique = <NULL>
+- RetainLocks = True
+line 13: SavepointStatement
+- SavepointName = B
+- IsUnique = True
+- RetainLocks = True

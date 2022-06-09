@@ -389,6 +389,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Rollback rollback);
         bool Visit([NotNull] TruncateStatement truncateStatement);
         bool Visit([NotNull] Truncate truncate);
+        bool Visit([NotNull] SavepointStatement savepointStatement);
+        bool Visit([NotNull] Savepoint savepoint);
     }
 
 
@@ -1529,6 +1531,15 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit([NotNull] Truncate truncate)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SavepointStatement savepointStatement)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] Savepoint savepoint)
         {
             return true;
         }

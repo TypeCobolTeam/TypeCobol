@@ -21,6 +21,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 case TokenType.SQL_COMMIT:
                 case TokenType.SQL_ROLLBACK:
                 case TokenType.SQL_SELECT:
+                case TokenType.SQL_SAVEPOINT:
                     return true;
                 default:
                     return false;

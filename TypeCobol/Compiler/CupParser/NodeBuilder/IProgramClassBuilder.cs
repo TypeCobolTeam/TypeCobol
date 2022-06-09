@@ -831,6 +831,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="truncate">The corresponding  Truncate Statement Code Element</param>
         void OnTruncateStatement([NotNull] TruncateStatement truncate);
+        /// <summary>
+        /// Enter a Savepoint Statement Node
+        /// </summary>
+        /// <param name="savepoint">The corresponding  Savepoint Statement Code Element</param>
+        void OnSavepointStatement([NotNull] SavepointStatement savepoint);
         #endregion
     }
 }
