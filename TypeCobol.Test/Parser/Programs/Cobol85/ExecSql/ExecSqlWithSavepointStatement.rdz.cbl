@@ -13,6 +13,11 @@
               SAVEPOINT B UNIQUE 
               ON ROLLBACK RETAIN LOCKS
               ON ROLLBACK RETAIN CURSORS
+
+              SAVEPOINT B UNIQUE             
+
+              SAVEPOINT sYst UNIQUE                         
+              ON ROLLBACK RETAIN CURSORS
          
              END-EXEC.
        PROCEDURE DIVISION.

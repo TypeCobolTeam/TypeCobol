@@ -2285,6 +2285,7 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateSavepointStatement(context);
-        }
+            SqlCodeElementCheckers.OnSavepointStatementChecker(CodeElement, context);
+		}
     }
 }

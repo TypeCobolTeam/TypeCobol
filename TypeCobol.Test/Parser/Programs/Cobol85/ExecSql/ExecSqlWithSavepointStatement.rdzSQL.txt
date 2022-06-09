@@ -1,4 +1,8 @@
-﻿--- Sql Statements ---
+﻿--- Diagnostics ---
+Line 19[15,23] <27, Error, Syntax> - Syntax error : mismatched input 'SAVEPOINT' expecting ON RuleStack=codeElement>savepointStatement,  OffendingSymbol=[15,23:SAVEPOINT]<SQL_SAVEPOINT>
+Line 19[15,23] <27, Error, Syntax> - Syntax error : Invalid savepoint-name, it must not begin with 'SYS'. RuleStack=codeElement>savepointStatement,  OffendingSymbol=[15,23:SAVEPOINT]<SQL_SAVEPOINT>
+
+--- Sql Statements ---
 line 6: SavepointStatement
 - SavepointName = B
 - IsUnique = True
@@ -11,3 +15,11 @@ line 13: SavepointStatement
 - SavepointName = B
 - IsUnique = True
 - RetainLocks = True
+line 17: SavepointStatement
+- SavepointName = B
+- IsUnique = True
+- RetainLocks = <NULL>
+line 19: SavepointStatement
+- SavepointName = sYst
+- IsUnique = True
+- RetainLocks = <NULL>
