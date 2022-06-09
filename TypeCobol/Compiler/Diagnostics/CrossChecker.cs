@@ -867,24 +867,26 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var uri = area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString());
             var foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(uri, parentTypeDefinition);
-            var found = foundQualified.Select(v => v.Value);
 
-            var foundCount = found.Count();
-
-            if (foundCount == 0)
+            if (foundQualified.Count == 0)
             {
-                var plainUri = uri.ToString();
-                //Helper diagnostic for subtraction between numeric written without spaces around minus operator.
-                //Only do this diagnostic if the variable contains no alpha, because otherwise the most standard use case is simply an undefined variable.
-                if (plainUri.All(c=>Char.IsDigit(c) || c=='-'))
+                //Helper diagnostic for subtraction between numeric written without spaces around minus sign.
+                //Only do this diagnostic if :
+                //  - the variable contains no alpha, because otherwise the most standard use case is simply an undefined variable.
+                //  - SymbolReference is NOT qualified (OF, IN, ::), otherwise it's clearly not an arithmetic subtraction.
+                if (area.SymbolReference != null && area.SymbolReference.IsQualifiedReference == false)
                 {
-                    DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. For subtraction, please add spaces around minus operator: " + string.Join(" - ", plainUri.Split('-')));
+                    if (area.SymbolReference.Name.All(c => char.IsDigit(c) || c == '-'))
+                    {
+                        DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. Arithmetic operations requires spaces around minus sign: " + string.Join(" - ", area.SymbolReference.Name.Split('-')));
+                    }
                 }
+               
 
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
-            else if (foundCount > 1)
+            else if (foundQualified.Count > 1)
             {
                 bool isFirst = true;
                 string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine +
@@ -902,15 +904,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
-            else if (foundCount == 1)
+            else if (foundQualified.Count == 1)
             {
-                var dataDefinitionFound = found.First();
-                var dataDefinitionPath = foundQualified.First().Key;
+                var dataDefinitionFound = foundQualified[0].Value;
+                var dataDefinitionPath = foundQualified[0].Key;
 
-                if (foundQualified.Count == 1)
-                {
-                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
-                }
+                IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
 
                 if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {

@@ -7,6 +7,11 @@
         01 200X-100X pic 9 value 1.
       *KO variable must contains at least one alphabetic char
         01 400-500 pic 9.
+      *KO variable must contains at least one alphabetic char
+        01 99-99.
+      *KO variable must contains at least one alphabetic char
+          05 88-88 pic 9.
+
 
        procedure division.
       *Should be KO. 400-500 is not a valid variable name because it
@@ -14,6 +19,26 @@
       *   The parser will only report the error on the variable 
       *   declaration.
            compute a = 400-500
+
+      *Should be KO. 99-99 and 88-88 are not valid variable name because it
+      *   contains no alphabetic char
+      *   The parser will only report the error on the variable 
+      *   declaration.
+           compute a = 88-88 of 99-99
+
+      *Same tests with unknown variables 
+      *Should be KO. 400-500 is not a valid variable name because it
+      *   contains no alphabetic char
+      *   The parser will only report the error on the variable 
+      *   declaration.
+           compute a = 66-66
+
+      *Should be KO. 99-99 and 88-88 are not valid variable name because it
+      *   contains no alphabetic char
+      *   The parser will only report the error on the variable 
+      *   declaration.
+           compute a = 55-55 of 44-44
+
 
 
       *KO  "300-200X-100X" was not defined as a data-name.

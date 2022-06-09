@@ -30,18 +30,18 @@
 
 -- Line 11 --
 *** DIRECTIVE INVALID SYNTAX -> DELETE ([1,6:DELETE]<DELETE_CD>[8,14:000001-]<UserDefinedWord>) ***
-Line 11[8,14] <27, Error, Syntax> - Syntax error : Invalid value: . Excepted a positive integer.
+Line 11[8,14] <27, Error, Syntax> - Syntax error : Invalid value: . Expected a positive integer.
 
 -- Line 12 --
 *** DIRECTIVE DELETE 1->1 2->2 ([1,6:DELETE]<DELETE_CD>[8,13:000001]<IntegerLiteral>{1}[15,20:000002]<IntegerLiteral>{2}) ***
 
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> DELETE 2->2 ([1,6:DELETE]<DELETE_CD>[8,14:000001-]<UserDefinedWord>[15,15:,]<CommaSeparator>[16,21:000002]<IntegerLiteral>{2}) ***
-Line 13[8,14] <27, Error, Syntax> - Syntax error : Invalid value: . Excepted a positive integer.
+Line 13[8,14] <27, Error, Syntax> - Syntax error : Invalid value: . Expected a positive integer.
 
 -- Line 14 --
 *** DIRECTIVE INVALID SYNTAX -> DELETE ([1,6:DELETE]<DELETE_CD>[8,14:-000002]<IntegerLiteral>{-2}) ***
-Line 14[8,14] <27, Error, Syntax> - Syntax error : Invalid value: -2. Excepted a positive integer.
+Line 14[8,14] <27, Error, Syntax> - Syntax error : Invalid value: -2. Expected a positive integer.
 
 -- Line 15 --
 

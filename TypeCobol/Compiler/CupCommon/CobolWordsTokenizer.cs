@@ -271,7 +271,7 @@ namespace TypeCobol.Compiler.CupCommon
                 return;//Ignore if end of file
             Token nextToken = base.NextToken();
             base.PreviousToken();
-            if (nextToken != null && nextTokenType.All(t=>t!=nextToken.TokenType))
+            if (nextToken != null && nextTokenType.All(t => t != nextToken.TokenType))
             {
                 EnterStopScanningMode();
             }

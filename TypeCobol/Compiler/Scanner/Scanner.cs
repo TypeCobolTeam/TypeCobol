@@ -1391,12 +1391,12 @@ namespace TypeCobol.Compiler.Scanner
                 // 123 is a valid user defined word (for section & paragraph names) AND a valid numeric literal.
                 // 000010-000050 is interpreted as a UserDefinedWord
                 //Depending on the context it could be
-                // - a range of numbers (for DELETE_CB)
+                // - a range of numbers (for DELETE_CD)
                 //     - See sequence-number-fields of compiler directive statements
                 // - a paragraph name
                 //The scanner will then always match 000010-000050 as a UserDefinedWord.
                 //The check to be sure that a variable name contains at least alphabetic char
-                //must be done at CodeElement level.
+                //is done at CodeElement level.
                 
                 // CURRENT behavior of method ScanNumericLiteral :
                 // This method matches chars as long as they are characters allowed in a numeric literal.

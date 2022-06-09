@@ -242,18 +242,16 @@ namespace TypeCobol.Compiler.CupPreprocessor
             DeleteDirective deleteDirective = (DeleteDirective)CompilerDirective;
 
 
-            foreach(Token token in seqNumField)
+            foreach (Token token in seqNumField)
             {
                 if (token.TokenType == TokenType.IntegerLiteral)
                 {
-                    
                     int current = (int)((IntegerLiteralTokenValue)token.LiteralValue).Number;
 
                     //Report error for negative number and ignore them
                     if (current < 0)
                     {
-                        Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid value: " + current + ". Excepted a positive integer.");
-                        CompilerDirective.AddDiagnostic(error);
+                        AddInvalidIntegerDiagnostic(current.ToString());
                     }
                     else
                     {
@@ -262,53 +260,52 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         range.To = current;
                         deleteDirective.SequenceNumberRangesList.Add(range);
                     }
-                    
                 }
                 else if (token.TokenType == TokenType.UserDefinedWord)
                 {
                     var numbers = token.Text.Split('-');
-                    
+
                     if (numbers.Length != 2)
                     {
-                        Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid range format");
+                        Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                            "Invalid range format");
                         CompilerDirective.AddDiagnostic(error);
                     }
                     else
                     {
                         DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
-                        bool isOk = true;
-
-                        if (int.TryParse(numbers[0], out var temp))
+                        if (TryParseIntOrAddDiagnostic(numbers[0], out var temp))
                         {
                             range.From = temp;
-                        }
-                        else
-                        {
-                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid value: " + numbers[0] + ". Excepted a positive integer.");
-                            CompilerDirective.AddDiagnostic(error);
-                            isOk = false;
-                        }
-                        
-                        if (int.TryParse(numbers[1], out temp))
-                        {
-                            range.To = temp;
-                        }
-                        else
-                        {
-                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), "Invalid value: " + numbers[1] + ". Excepted a positive integer.");
-                            CompilerDirective.AddDiagnostic(error);
-                            isOk = false;
-                        }
+                            if (TryParseIntOrAddDiagnostic(numbers[1], out temp))
+                            {
+                                range.To = temp;
+                                deleteDirective.SequenceNumberRangesList.Add(range);
+                            }
+                        } //else ignore values
 
-                        if (isOk)
+                        bool TryParseIntOrAddDiagnostic(string invalidInteger, out int result)
                         {
-                            deleteDirective.SequenceNumberRangesList.Add(range);
-                        }//else ignore values
+                            if (!int.TryParse(invalidInteger, out result))
+                            {
+                                AddInvalidIntegerDiagnostic(invalidInteger);
+                                return false;
+                            }
+                            return true;
+                        }
                     }
                 }
                 else
                 {
-                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), $"Unexpected token: ${token} of type ${token.TokenType}");
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                        $"Unexpected token: ${token} of type ${token.TokenType}");
+                    CompilerDirective.AddDiagnostic(error);
+                }
+
+                void AddInvalidIntegerDiagnostic(string invalidInteger)
+                {
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                        "Invalid value: " + invalidInteger + ". Expected a positive integer.");
                     CompilerDirective.AddDiagnostic(error);
                 }
             }
