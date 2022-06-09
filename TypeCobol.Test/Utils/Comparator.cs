@@ -538,8 +538,8 @@ namespace TypeCobol.Test.Utils
             {
                 _writer.WriteLine($"line {whenEverStatement.Line}: {nameof(WhenEverStatement)}");
                 DumpObject(nameof(whenEverStatement.ExceptionCondition), whenEverStatement.ExceptionCondition);
-                DumpObject(nameof(whenEverStatement.NextStatementType), whenEverStatement.NextStatementType);
-                DumpObject(nameof(whenEverStatement.HostLabel), whenEverStatement.HostLabel);
+                DumpObject(nameof(whenEverStatement.BranchingType), whenEverStatement.BranchingType);
+                DumpObject(nameof(whenEverStatement.TargetSectionOrParagraph), whenEverStatement.TargetSectionOrParagraph);
                 return true;
             }
         }

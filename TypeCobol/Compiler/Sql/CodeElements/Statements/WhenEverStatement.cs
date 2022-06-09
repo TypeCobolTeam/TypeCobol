@@ -5,10 +5,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
     public enum ExceptionConditionType
     {
         NotFound,
-        Sqlerror,
-        Sqlwarning
+        SqlError,
+        SqlWarning
     }
-    public enum NextStatementType
+    public enum BranchingType
     {
         Continue,
         Goto
@@ -16,21 +16,21 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 
     public class WhenEverStatement : SqlStatementElement
     {
-        public SymbolReference HostLabel { get; }
+        public SymbolReference TargetSectionOrParagraph { get; }
         public SyntaxProperty<ExceptionConditionType> ExceptionCondition { get; }
-        public SyntaxProperty<NextStatementType> NextStatementType { get; }
+        public SyntaxProperty<BranchingType> BranchingType { get; }
 
-        public WhenEverStatement(SyntaxProperty<ExceptionConditionType> exceptionCondition, SyntaxProperty<NextStatementType> nextStatementType, SymbolReference hostLabel) : base(CodeElementType.WhenEverStatement, StatementType.WhenEverStatement)
+        public WhenEverStatement(SyntaxProperty<ExceptionConditionType> exceptionCondition, SyntaxProperty<BranchingType> branchingType, SymbolReference targetSectionOrParagraph) : base(CodeElementType.WhenEverStatement, StatementType.WhenEverStatement)
         {
             ExceptionCondition = exceptionCondition;
-            NextStatementType = nextStatementType;
-            HostLabel = hostLabel;
+            BranchingType = branchingType;
+            TargetSectionOrParagraph = targetSectionOrParagraph;
         }
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                                                      && this.ContinueVisitToChildren(astVisitor, ExceptionCondition,
-                                                         NextStatementType, HostLabel);
+                                                         BranchingType, TargetSectionOrParagraph);
         }
     }
 }

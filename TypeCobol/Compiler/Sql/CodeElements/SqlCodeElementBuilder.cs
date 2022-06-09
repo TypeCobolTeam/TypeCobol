@@ -289,16 +289,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (context != null)
             {
                 SyntaxProperty<ExceptionConditionType> exceptionCondition = null;
-                SyntaxProperty<NextStatementType> nextStatementType = null;
-                SymbolReference hostLabel = null;
+                SyntaxProperty<BranchingType> branchingType = null;
+                SymbolReference targetSectionOrParagraph = null;
                 if (context.sqlError() != null)
                 {
-                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.Sqlerror,
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.SqlError,
                         ParseTreeUtils.GetFirstToken(context.sqlError()));
                 }
                 else if (context.sqlWarning() != null)
                 {
-                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.Sqlwarning,
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.SqlWarning,
                         ParseTreeUtils.GetFirstToken(context.sqlWarning()));
                 }
                 else if (context.sqlNotFound() != null)
@@ -309,22 +309,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
                 if (context.SQL_CONTINUE() != null)
                 {
-                    nextStatementType = new SyntaxProperty<NextStatementType>(NextStatementType.Continue,
+                    branchingType = new SyntaxProperty<BranchingType>(BranchingType.Continue,
                         ParseTreeUtils.GetFirstToken(context.SQL_CONTINUE()));
                 }
                 else if (context.sqlGotoHostLabel() != null)
                 {
-                    nextStatementType = new SyntaxProperty<NextStatementType>(NextStatementType.Goto,
+                    branchingType = new SyntaxProperty<BranchingType>(BranchingType.Goto,
                         ParseTreeUtils.GetFirstToken(context.sqlGotoHostLabel()));
                     if (context.sqlGotoHostLabel().hostLabel != null)
                     {
-                        hostLabel = new SymbolReference(
+                        targetSectionOrParagraph = new SymbolReference(
                             new AlphanumericValue(context.sqlGotoHostLabel().hostLabel as Token),
                             SymbolType.SqlIdentifier);
                     }
                 }
 
-                return new WhenEverStatement(exceptionCondition, nextStatementType, hostLabel);
+                return new WhenEverStatement(exceptionCondition, branchingType, targetSectionOrParagraph);
             }
 
             return null;
