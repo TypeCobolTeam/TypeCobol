@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Model
@@ -68,6 +69,10 @@ namespace TypeCobol.Compiler.Sql.Model
 
         public Token Literal { get; }
 
+        protected override void DumpContent(TextWriter output, int indentLevel)
+        {
+            DumpProperty(output, nameof(Literal.LiteralValue), Literal.LiteralValue, indentLevel);
+        }
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
             return visitor.Visit(this);

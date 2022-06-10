@@ -533,6 +533,14 @@ namespace TypeCobol.Test.Utils
 
                 return true;
             }
+            public override bool Visit(LockTableStatement lockTableStatement)
+            {
+                _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");
+                DumpSqlObject(nameof(lockTableStatement.Table), lockTableStatement.Table);
+                DumpSqlObject(nameof(lockTableStatement.PartitionId), lockTableStatement.PartitionId);
+                DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

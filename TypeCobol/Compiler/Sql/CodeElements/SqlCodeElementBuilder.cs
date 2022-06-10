@@ -300,5 +300,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 return new SymbolReference(new AlphanumericValue(token), SymbolType.SqlIdentifier);
             }
         }
+        public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
+        {
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            var partitionId = context.IntegerLiteral() != null
+                ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
+                : null;
+            SyntaxProperty<LockMode> mode = null;
+            if (context.share() != null)
+            {
+                mode =
+                    new SyntaxProperty<LockMode>(LockMode.Shared, ParseTreeUtils.GetFirstToken(context.share()));
+            }
+            else if (context.exclusive() != null)
+            {
+                mode =
+                    new SyntaxProperty<LockMode>(LockMode.Exclusive, ParseTreeUtils.GetFirstToken(context.exclusive()));
+            }
+
+            return new LockTableStatement(tableName, partitionId, mode);
+        }
     }
 }
