@@ -383,7 +383,8 @@ namespace TypeCobol.Compiler.Scanner
                     //A range of number contains only numeric character or char '-'
                     case TokenType.DELETE:
                         if (newToken.TokenType == TokenType.IntegerLiteral
-                            || (newToken.TokenType == TokenType.UserDefinedWord && newToken.Text.All(c=>Char.IsDigit(c) || c=='-')))
+                            || (newToken.TokenType == TokenType.UserDefinedWord &&
+                                newToken.Text.All(c => char.IsDigit(c) || c == '-')))
                         {
                             LastSignificantToken.CorrectType(TokenType.DELETE_CD);
                         }

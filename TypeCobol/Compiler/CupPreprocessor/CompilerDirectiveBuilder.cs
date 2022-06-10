@@ -284,11 +284,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
                             }
                         } //else ignore values
 
-                        bool TryParseIntOrAddDiagnostic(string invalidInteger, out int result)
+                        bool TryParseIntOrAddDiagnostic(string integerText, out int result)
                         {
-                            if (!int.TryParse(invalidInteger, out result))
+                            if (!int.TryParse(integerText, out result))
                             {
-                                AddInvalidIntegerDiagnostic(invalidInteger);
+                                AddInvalidIntegerDiagnostic(integerText);
                                 return false;
                             }
                             return true;
@@ -304,8 +304,17 @@ namespace TypeCobol.Compiler.CupPreprocessor
 
                 void AddInvalidIntegerDiagnostic(string invalidInteger)
                 {
-                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
-                        "Invalid value: " + invalidInteger + ". Expected a positive integer.");
+                    string errorMessage;
+                    if (string.IsNullOrWhiteSpace(invalidInteger))
+                    {
+                        errorMessage = "No value provided. Expected a positive integer.";
+                    }
+                    else
+                    {
+                        errorMessage = "Invalid value: " + invalidInteger + ". Expected a positive integer.";
+                    }
+
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), errorMessage);
                     CompilerDirective.AddDiagnostic(error);
                 }
             }

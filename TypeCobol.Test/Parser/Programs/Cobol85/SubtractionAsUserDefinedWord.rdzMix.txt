@@ -34,7 +34,7 @@ Line 13[14,18] <27, Error, Syntax> - Syntax error : Variable name must contain a
       *   contains no alphabetic char
       *   The parser will only report the error on the variable 
       *   declaration.
-Line 34[12,28] <27, Error, Syntax> - Syntax error : Variable must contains at least one alphabetic char. Arithmetic operations requires spaces around minus sign: 66 - 66
+Line 34[12,28] <27, Error, Syntax> - Syntax error : Variable must contains at least one alphabetic char. Arithmetic operations require spaces around minus sign: 66 - 66
 Line 34[24,28] <30, Error, Semantics> - Semantic error: Symbol 66-66 is not referenced
            compute a = 66-66
 
@@ -61,7 +61,7 @@ Line 51[28,31] <27, Error, Syntax> - Syntax error : extraneous input '-200' expe
            compute a = 300 - 200X-100X.
       *KO  Expected a numeric data item or a numeric literal, but
       *    found"300-100".  The"COMPUTE"statement was discarded.
-Line 56[12,30] <27, Error, Syntax> - Syntax error : Variable must contains at least one alphabetic char. Arithmetic operations requires spaces around minus sign: 300 - 100
+Line 56[12,30] <27, Error, Syntax> - Syntax error : Variable must contains at least one alphabetic char. Arithmetic operations require spaces around minus sign: 300 - 100
 Line 56[24,30] <30, Error, Semantics> - Semantic error: Symbol 300-100 is not referenced
            compute a = 300-100
       *KO  "100" was invalid.  Skipped to the next verb, period or
@@ -71,7 +71,7 @@ Line 56[24,30] <30, Error, Semantics> - Semantic error: Symbol 300-100 is not re
       *KO  "300" was a name that ended with one or more hyphens.
       *    The hyphens were discarded.
 Line 63[29,31] <27, Error, Syntax> - Syntax error : extraneous input '100' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
-Line 63[12,27] <27, Error, Syntax> - Syntax error : Variable must contains at least one alphabetic char. Arithmetic operations requires spaces around minus sign: 300 - 
+Line 63[12,27] <27, Error, Syntax> - Syntax error : Variable must contains at least one alphabetic char. Arithmetic operations require spaces around minus sign: 300 - 
 Line 63[24,27] <30, Error, Semantics> - Semantic error: Symbol 300- is not referenced
            compute a = 300- 100
       *KO  "-100" was invalid.  Skipped to the next verb, period or

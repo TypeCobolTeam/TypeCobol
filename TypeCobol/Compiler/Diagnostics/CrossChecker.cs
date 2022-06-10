@@ -878,7 +878,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (area.SymbolReference.Name.All(c => char.IsDigit(c) || c == '-'))
                     {
-                        DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. Arithmetic operations requires spaces around minus sign: " + string.Join(" - ", area.SymbolReference.Name.Split('-')));
+                        DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. Arithmetic operations require spaces around minus sign: " + string.Join(" - ", area.SymbolReference.Name.Split('-')));
                     }
                 }
                
