@@ -283,21 +283,23 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+
         public SavepointStatement CreateSavepointStatement(CodeElementsParser.SavepointStatementContext context)
         {
             if (context == null) return null;
             SymbolReference savepointName = null;
-            SyntaxProperty<bool> retainLocks = null;
             if (context.savepoint_name != null)
             {
-                savepointName=new SymbolReference(new AlphanumericValue(context.savepoint_name as Token), SymbolType.SqlIdentifier);
+                savepointName = new SymbolReference(new AlphanumericValue((Token) context.savepoint_name),
+                    SymbolType.SqlIdentifier);
             }
-            if (context.onRollbackRetainLocksClause() != null || context.sqlLocks() != null)
-            {
-                var token = context.onRollbackRetainLocksClause() != null ? ParseTreeUtils.GetFirstToken(context.onRollbackRetainLocksClause()) : ParseTreeUtils.GetFirstToken(context.sqlLocks());
-                retainLocks = new SyntaxProperty<bool>(true, token);
-            }
-            var isUnique = context.SQL_UNIQUE() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_UNIQUE())) : null;
+
+            var retainLocks = context.sqlLocks() != null
+                ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.sqlLocks()))
+                : null;
+            var isUnique = context.SQL_UNIQUE() != null
+                ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_UNIQUE()))
+                : null;
             return new SavepointStatement(savepointName, retainLocks, isUnique);
         }
     }

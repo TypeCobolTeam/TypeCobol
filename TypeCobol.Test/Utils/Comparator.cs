@@ -536,7 +536,7 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(SavepointStatement savepointStatement)
             {
                 _writer.WriteLine($"line {savepointStatement.Line}: {nameof(SavepointStatement)}");
-                DumpObject(nameof(savepointStatement.SavepointName), savepointStatement.SavepointName);
+                DumpObject(nameof(savepointStatement.Name), savepointStatement.Name);
                 DumpObject(nameof(savepointStatement.IsUnique), savepointStatement.IsUnique);
                 DumpObject(nameof(savepointStatement.RetainLocks), savepointStatement.RetainLocks);
                 return true;

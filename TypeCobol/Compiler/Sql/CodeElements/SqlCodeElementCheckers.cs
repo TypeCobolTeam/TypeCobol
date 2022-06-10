@@ -1,23 +1,21 @@
-﻿using TypeCobol.Compiler.CodeElements;
+﻿using System;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.CodeElements
 {
-    class SqlCodeElementCheckers
+    internal static class SavepointStatementChecker
     {
-        public static void OnSavepointStatementChecker(CodeElement codeElement, CodeElementsParser.SavepointStatementContext context)
+        public static void OnCodeElement(SavepointStatement savepointStatement, CodeElementsParser.SavepointStatementContext context)
         {
-            if (context.savepoint_name == null) return;
-            var savePointName = context.savepoint_name.Text;
-            if (savePointName.Length == 0 || savePointName.Length <= 3) return;
-            var text = savePointName.Substring(0, 3);
-            if (text.ToUpper() == "SYS")
+            var savePointName = savepointStatement.Name.ToString();
+            if (savePointName.StartsWith("SYS", StringComparison.OrdinalIgnoreCase))
             {
-                DiagnosticUtils.AddError(codeElement, "Invalid savepoint-name, it must not begin with 'SYS'.",
+                DiagnosticUtils.AddError(savepointStatement, "Invalid savepoint-name, it must not begin with 'SYS'.",
                     context);
             }
-
         }
     }
 }

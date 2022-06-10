@@ -8304,9 +8304,8 @@ new_column_name: UserDefinedWord;
 sqlRetain: ({ string.Equals(CurrentToken.Text, "RETAIN", System.StringComparison.OrdinalIgnoreCase) }? KeywordRETAIN=UserDefinedWord);
 sqlCursors: ({ string.Equals(CurrentToken.Text, "CURSORS", System.StringComparison.OrdinalIgnoreCase) }? KeywordCURSORS=UserDefinedWord);
 sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? KeywordLOCKS=UserDefinedWord);
-onRollbackRetainCursorsClause: SQL_ON SQL_ROLLBACK sqlRetain sqlCursors;
-onRollbackRetainLocksClause: SQL_ON SQL_ROLLBACK sqlRetain sqlLocks;
-savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? SQL_ON SQL_ROLLBACK sqlRetain ((sqlCursors onRollbackRetainLocksClause?) | (sqlLocks onRollbackRetainCursorsClause));
+onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
+savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain ((sqlCursors (onRollbackRetain sqlLocks)?) | (sqlLocks onRollbackRetain sqlCursors));
 
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
