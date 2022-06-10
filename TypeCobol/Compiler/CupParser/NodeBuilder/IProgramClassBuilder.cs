@@ -836,6 +836,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="whenEver">The corresponding WhenEver Statement Code Element</param>
         void OnWhenEverStatement([NotNull] WhenEverStatement whenEver);
+        /// <summary>
+        /// Enter a LockTable Statement Node
+        /// </summary>
+        /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
+        void OnLockTableStatement([NotNull] LockTableStatement lockTable);
         #endregion
     }
 }

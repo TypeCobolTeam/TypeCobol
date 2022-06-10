@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
         /// <returns>True if yes, no otherwise</returns>
         private static bool IsSqlKeywordPart(char c)
         {
-            return c == '-' || char.IsLetter(c);
+            return c == '-' || char.IsLetterOrDigit(c);
         }
 
         public SqlScanner(string line, int startIndex, int lastIndex, TokensLine tokensLine,

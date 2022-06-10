@@ -391,6 +391,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Truncate truncate);
         bool Visit([NotNull] WhenEverStatement whenEverStatement);
         bool Visit([NotNull] WhenEver whenEver);
+        bool Visit([NotNull] LockTableStatement lockTableStatement);
+        bool Visit([NotNull] LockTable lockTable);
     }
 
 
@@ -1541,6 +1543,14 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit([NotNull] WhenEver whenEver)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] LockTableStatement lockTableStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] LockTable lockTable)
         {
             return true;
         }
