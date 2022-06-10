@@ -236,6 +236,7 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SelectStatement SelectSt
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.RollbackStatement RollbackStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.TruncateStatement TruncateStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SavepointStatement SavepointStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.LockTableStatement LockTableStatement;
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -798,6 +799,8 @@ sqlStatement ::= CommitStatement:stmt
 {: my_parser.Builder.OnRollbackStatement(stmt); :}
 |	TruncateStatement:stmt
 {: my_parser.Builder.OnTruncateStatement(stmt); :}
+|	LockTableStatement:stmt
+{: my_parser.Builder.OnLockTableStatement(stmt); :}
 |	SavepointStatement:stmt
 {: my_parser.Builder.OnSavepointStatement(stmt); :}
 ;

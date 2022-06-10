@@ -1641,5 +1641,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnSavepointStatement(savepoint);
         }
+        public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
+        {
+            Enter(new LockTable(lockTable), lockTable);
+            Exit();
+            Dispatcher.OnLockTableStatement(lockTable);
+        }
     }
 }

@@ -836,6 +836,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="savepoint">The corresponding  Savepoint Statement Code Element</param>
         void OnSavepointStatement([NotNull] SavepointStatement savepoint);
+        /// <summary>
+        /// Enter a LockTable Statement Node
+        /// </summary>
+        /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
+        void OnLockTableStatement([NotNull] LockTableStatement lockTable);
         #endregion
     }
 }
