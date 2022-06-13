@@ -10,11 +10,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public static void OnCodeElement(SavepointStatement savepointStatement,
             CodeElementsParser.SavepointStatementContext context)
         {
-            var savePointName = savepointStatement.Name.ToString();
-            if (savePointName.StartsWith("SYS", StringComparison.OrdinalIgnoreCase))
+            if (savepointStatement.Name != null)
             {
-                DiagnosticUtils.AddError(savepointStatement, "Invalid savepoint-name, it must not begin with 'SYS'.",
-                    context);
+                var savePointName = savepointStatement.Name.ToString();
+                if (savePointName.StartsWith("SYS", StringComparison.OrdinalIgnoreCase))
+                {
+                    DiagnosticUtils.AddError(savepointStatement,
+                        "Invalid savepoint-name, it must not begin with 'SYS'.",
+                        context);
+                }
             }
         }
     }
