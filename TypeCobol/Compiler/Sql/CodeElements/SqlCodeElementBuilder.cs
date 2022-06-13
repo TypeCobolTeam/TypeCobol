@@ -319,7 +319,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     if (context.sqlGotoHostLabel().hostLabel != null)
                     {
                         targetSectionOrParagraph = new SymbolReference(
-                            new AlphanumericValue(context.sqlGotoHostLabel().hostLabel as Token),
+                            new AlphanumericValue((Token)context.sqlGotoHostLabel().hostLabel),
                             SymbolType.SqlIdentifier);
                     }
                 }
