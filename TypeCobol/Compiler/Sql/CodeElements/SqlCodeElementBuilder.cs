@@ -303,5 +303,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return new LockTableStatement(tableName, partitionId, mode);
         }
+
+        public DropTableStatement CreateDropTableStatement(CodeElementsParser.DropTableStatementContext context)
+        {
+            if (context.tableName != null)
+            {
+                var name = (Token) context.tableName.Name;
+                var schemaName = (Token) context.tableName.SchemaName;
+                var dbms = (Token) context.tableName.DBMS;
+                var tableName = new TableViewCorrelationName(CreateSymbolReference(name, schemaName, dbms));
+                return new DropTableStatement(tableName);
+            }
+            else if (context.aliasName != null)
+            {
+                var aliasName = new SymbolReference(new AlphanumericValue((Token) context.aliasName),
+                    SymbolType.SqlIdentifier);
+                return new DropTableStatement(aliasName);
+            }
+
+            return null;
+        }
     }
 }

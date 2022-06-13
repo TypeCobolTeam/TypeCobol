@@ -134,7 +134,8 @@ namespace TypeCobol.Compiler.CodeElements
         SelectStatement,
         RollbackStatement,
         TruncateStatement,
-        LockTableStatement
+        LockTableStatement,
+        DropTableStatement
 
     }
 }

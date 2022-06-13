@@ -391,6 +391,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Truncate truncate);
         bool Visit([NotNull] LockTableStatement lockTableStatement);
         bool Visit([NotNull] LockTable lockTable);
+        bool Visit([NotNull] DropTableStatement dropTableStatement);
+        bool Visit([NotNull] DropTable dropTable);
     }
 
 
@@ -1539,6 +1541,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] LockTable lockTable)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DropTableStatement dropTableStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DropTable dropTable)
         {
             return true;
         }

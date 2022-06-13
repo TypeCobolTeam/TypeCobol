@@ -1,0 +1,5 @@
+﻿--- Sql Statements ---
+line 6: DropTableStatement
+- TableName = TableViewCorrelationName
+  - Name = r IN h IN nom
+- AliasName = <NULL>

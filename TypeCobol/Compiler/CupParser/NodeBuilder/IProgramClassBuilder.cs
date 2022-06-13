@@ -836,6 +836,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
         void OnLockTableStatement([NotNull] LockTableStatement lockTable);
+        /// <summary>
+        /// Enter a DropTable Statement Node
+        /// </summary>
+        /// <param name="dropTable">The corresponding  DropTable Statement Code Element</param>
+        void OnDropTableStatement([NotNull] DropTableStatement dropTable);
         #endregion
     }
 }

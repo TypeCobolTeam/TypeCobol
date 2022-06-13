@@ -541,6 +541,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
                 return true;
             }
+
+            public override bool Visit(DropTableStatement dropTableStatement)
+            {
+                _writer.WriteLine($"line {dropTableStatement.Line}: {nameof(DropTableStatement)}");
+                DumpSqlObject(nameof(dropTableStatement.TableName), dropTableStatement.TableName);
+                DumpObject(nameof(dropTableStatement.AliasName), dropTableStatement.AliasName);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)
