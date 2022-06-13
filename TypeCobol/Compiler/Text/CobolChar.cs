@@ -22,6 +22,11 @@ namespace TypeCobol.Compiler.Text
             return isCobolWordChar[(byte)chr];
         }
 
+        public static bool IsCobolAlphabeticChar(char chr)
+        {
+            return ('A' <= chr && chr <= 'Z') || ('a' <= chr && chr <= 'z');
+        }
+
         /// <summary>
         /// True if the current char can be a separator between two Cobol words
         /// </summary>

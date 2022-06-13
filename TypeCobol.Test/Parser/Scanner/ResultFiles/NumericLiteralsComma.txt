@@ -35,25 +35,43 @@
 [7,14:-,35e-17]<FloatingPointLiteral>{-35|2>-0.35E-17>-3.5E-18}
 [16,27:-50,7851E+20]<FloatingPointLiteral>{-507851|4>-50.7851E20>-5.07851E+21}
 [29,41:+,45486756E+1]<FloatingPointLiteral>{45486756|8>0.45486756E1>4.5486756}
-[43,47:10,E2]<InvalidToken>
-[49,53:10e+4]<FloatingPointLiteral>{10|0>10E4>100000}
-[55,63:,55E+9847]<FloatingPointLiteral>{55|2>0.55E9847>Infinity}
+[43,44:10]<UserDefinedWord>
+[45,45:,]<CommaSeparator>
+[46,47:E2]<UserDefinedWord>
+[49,51:10e]<UserDefinedWord>
+[52,53:+4]<IntegerLiteral>{4}
+[55,63:,55E+9847]<InvalidToken>{55|2>0.55E9847>Infinity}
 [65,68:,25e]<InvalidToken>
-Line 0[43,47] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
-Line 0[49,53] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
 Line 0[55,63] <18, Error, Tokens> - Invalid floating point numeric literal format : the exponent is represented by an E followed by an optional sign and one or two digits (E+99)
 Line 0[65,68] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
 
 -- Line 5 --
-[1,7:1234537]<IntegerLiteral>{1234537}
+[2,8:,25e-24]<FloatingPointLiteral>{25|2>0.25E-24>2.5E-25}
+[9,10:-1]<IntegerLiteral>{-1}
+[13,19:,25e-24]<FloatingPointLiteral>{25|2>0.25E-24>2.5E-25}
+[20,23:-100]<IntegerLiteral>{-100}
+[25,31:,25e-24]<FloatingPointLiteral>{25|2>0.25E-24>2.5E-25}
+[32,35:-100]<IntegerLiteral>{-100}
+[36,39:-123]<IntegerLiteral>{-123}
 
 -- Line 6 --
-[1,8:+1234567]<IntegerLiteral>{1234567}
+[1,7:,25e-24]<FloatingPointLiteral>{25|2>0.25E-24>2.5E-25}
+[8,8:X]<UserDefinedWord>
+[10,16:,25e-24]<FloatingPointLiteral>{25|2>0.25E-24>2.5E-25}
+[17,19:X-1]<UserDefinedWord>
+[21,27:,25e-24]<FloatingPointLiteral>{25|2>0.25E-24>2.5E-25}
+[28,31:X-1X]<UserDefinedWord>
 
 -- Line 7 --
-[1,8:,1234567]<DecimalLiteral>{1234567|7>0.1234567}
+[1,7:1234537]<IntegerLiteral>{1234537}
 
 -- Line 8 --
+[1,8:+1234567]<IntegerLiteral>{1234567}
+
+-- Line 9 --
+[1,8:,1234567]<DecimalLiteral>{1234567|7>0.1234567}
+
+-- Line 10 --
 [2,9:-,321E18]<FloatingPointLiteral>{-321|3>-0.321E18>-3.21E+17}
 [10,10+:,]<CommaSeparator>
 

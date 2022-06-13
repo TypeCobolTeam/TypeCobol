@@ -46,6 +46,12 @@ namespace TypeCobol.Compiler.Diagnostics
                         context?.dataNameDefinition());
                 }
 
+                //Variable name in Cobol must contains at least one alphabetic char.
+                if (!data.DataName.Name.Any(CobolChar.IsCobolAlphabeticChar))
+                {
+                    DiagnosticUtils.AddError(data, "Variable name must contain at least one alphabetic char.", context?.dataNameDefinition());
+                }
+
                 //Retrieve VALUE token through context
                 var valueClauseContexts = context?.children.OfType<CodeElementsParser.ValueClauseContext>();
                 Token valueToken = null;
