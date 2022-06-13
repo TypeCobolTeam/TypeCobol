@@ -5,7 +5,7 @@ using TypeCobol.Compiler.Sql.CodeElements.Statements;
 namespace TypeCobol.Compiler.Sql.Nodes
 {
     /// <summary>
-    /// Sql ROLLBACK Node
+    /// Sql SAVEPOINT Node
     /// </summary>
     public class Savepoint : GenericNode<SavepointStatement>, Statement
     {
