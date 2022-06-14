@@ -105,12 +105,12 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class SqlColumnName : SqlExpression
     {
-        public SqlColumnName(SymbolReference symbol)
+        public SqlColumnName(SymbolDefinition symbol)
         {
             this.Symbol = symbol;
         }
 
-        public SymbolReference Symbol { get; }
+        public SymbolDefinition Symbol { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {

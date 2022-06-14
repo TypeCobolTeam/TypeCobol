@@ -73,10 +73,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private SavePointClause CreateSavePointClause(CodeElementsParser.SavePointClauseContext context)
         {
-            SymbolReference savePointName = null;
+            SymbolDefinition savePointName = null;
             if (context.savePoint_name != null)
             {
-                savePointName = new SymbolReference(new AlphanumericValue((Token)context.savePoint_name), SymbolType.SqlIdentifier);
+                savePointName = new SymbolDefinition(new AlphanumericValue((Token)context.savePoint_name), SymbolType.SavepointName);
             }
             return new SavePointClause(savePointName);
         }
@@ -153,7 +153,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             Token correlationNameToken = context.correlation_name as Token;
             SymbolReference correlationName = new SymbolReference(
-                new AlphanumericValue(correlationNameToken), SymbolType.SqlIdentifier);
+                new AlphanumericValue(correlationNameToken), SymbolType.CorrelationName);
 
             if (context.new_column_names() != null)
             {
@@ -226,17 +226,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (nameToken != null)
             {
                 SymbolReference name = new SymbolReference(new AlphanumericValue(nameToken),
-                    SymbolType.SqlIdentifier);
+                    SymbolType.ColumnName);
                 if (qualifierToken != null)
                 {
                     SymbolReference qualifier =
                         new SymbolReference(new AlphanumericValue(qualifierToken),
-                            SymbolType.SqlIdentifier);
+                            SymbolType.SchemaName);
                     if (topLevelQualifierToken != null)
                     {
                         SymbolReference topLevelQualifier =
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
-                                SymbolType.SqlIdentifier);
+                                SymbolType.DBMSName);
                         QualifiedSymbolReference tail = new QualifiedSymbolReference( qualifier, topLevelQualifier);
                         SymbolReference fullName= new QualifiedSymbolReference( name, tail);
                         return fullName;
@@ -279,7 +279,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         private SqlColumnName CreateSqlColumnName(CodeElementsParser.Column_nameContext context)
         {
                 var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
-                var literalReferenceSymbol = new SymbolReference(new AlphanumericValue(literal), SymbolType.ColumnName);
+                var literalReferenceSymbol = new SymbolDefinition(new AlphanumericValue(literal), SymbolType.ColumnName);
                 return new SqlColumnName(literalReferenceSymbol);
         }
     }

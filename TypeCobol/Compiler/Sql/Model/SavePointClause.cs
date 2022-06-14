@@ -5,8 +5,8 @@ namespace TypeCobol.Compiler.Sql.Model
 {
     public class SavePointClause : SqlObject
     {
-        public SymbolReference SavePointName { get; }
-        public SavePointClause(SymbolReference savePointName)
+        public SymbolDefinition SavePointName { get; }
+        public SavePointClause(SymbolDefinition savePointName)
         {
             SavePointName = savePointName;
         }

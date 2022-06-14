@@ -41,8 +41,12 @@ namespace TypeCobol.Compiler.CodeElements
         // Used when the type of the symbol has not yet been resolved
         TO_BE_RESOLVED,
         // For SQL
-        SqlIdentifier,
-        ColumnName
+        DBMSName,
+        SchemaName,
+        ColumnName,
+        TableOrViewName,
+        CorrelationName,
+        SavepointName
     }
 
     public static class SymbolTypeUtils {
