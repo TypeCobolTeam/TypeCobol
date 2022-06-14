@@ -8307,7 +8307,8 @@ share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.Ordi
 exclusive: ({ string.Equals(CurrentToken.Text, "EXCLUSIVE", System.StringComparison.OrdinalIgnoreCase) }? KeywordEXCLUSIVE=UserDefinedWord);
 sql_mode: ({ string.Equals(CurrentToken.Text, "MODE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMODE=UserDefinedWord);
 
-dropTableStatement: SQL_DROP SQL_TABLE ((tableName = tableOrViewOrCorrelationName) | (aliasName = UserDefinedWord));
+dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
+tableOrAliasName: tableOrViewOrCorrelationName;
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);

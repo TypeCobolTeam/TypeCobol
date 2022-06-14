@@ -22,6 +22,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 case TokenType.SQL_ROLLBACK:
                 case TokenType.SQL_SELECT:
                 case TokenType.SQL_LOCK:
+                case TokenType.SQL_DROP:
                     return true;
                 default:
                     return false;

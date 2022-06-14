@@ -306,22 +306,47 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         public DropTableStatement CreateDropTableStatement(CodeElementsParser.DropTableStatementContext context)
         {
-            if (context.tableName != null)
+            if (context.tableOrAliasName() != null)
             {
-                var name = (Token) context.tableName.Name;
-                var schemaName = (Token) context.tableName.SchemaName;
-                var dbms = (Token) context.tableName.DBMS;
-                var tableName = new TableViewCorrelationName(CreateSymbolReference(name, schemaName, dbms));
+                var name = (Token) context.tableOrAliasName().tableOrViewOrCorrelationName().Name;
+                var schemaName = (Token) context.tableOrAliasName().tableOrViewOrCorrelationName().SchemaName;
+                var dbms = (Token) context.tableOrAliasName().tableOrViewOrCorrelationName().DBMS;
+                var tableName = new TableViewCorrelationName(CreateTableOrAliasName(name, schemaName, dbms));
                 return new DropTableStatement(tableName);
             }
-            else if (context.aliasName != null)
+            return null;
+        }
+        public SymbolReference CreateTableOrAliasName (Token nameToken, Token qualifierToken,
+        Token topLevelQualifierToken)
+        {
+            if (nameToken == null) return null;
+            if (qualifierToken != null)
             {
-                var aliasName = new SymbolReference(new AlphanumericValue((Token) context.aliasName),
+                var name = new SymbolReference(new AlphanumericValue(nameToken),
                     SymbolType.SqlIdentifier);
-                return new DropTableStatement(aliasName);
+                var qualifier =
+                    new SymbolReference(new AlphanumericValue(qualifierToken),
+                        SymbolType.SqlIdentifier);
+                if (topLevelQualifierToken != null)
+                {
+                    var topLevelQualifier =
+                        new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
+                            SymbolType.SqlIdentifier);
+                    var tail = new QualifiedSymbolReference(qualifier, topLevelQualifier);
+                    var fullName = new QualifiedSymbolReference(name, tail);
+                    return fullName;
+                }
+                else
+                {
+                    var fullName = new QualifiedSymbolReference(name, qualifier);
+                    return fullName;
+                }
+            }
+            else
+            {
+                return new AmbiguousSymbolReference(new AlphanumericValue(nameToken), new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
             }
 
-            return null;
         }
     }
 }

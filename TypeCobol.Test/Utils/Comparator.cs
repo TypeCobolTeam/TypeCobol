@@ -545,8 +545,7 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(DropTableStatement dropTableStatement)
             {
                 _writer.WriteLine($"line {dropTableStatement.Line}: {nameof(DropTableStatement)}");
-                DumpSqlObject(nameof(dropTableStatement.TableName), dropTableStatement.TableName);
-                DumpObject(nameof(dropTableStatement.AliasName), dropTableStatement.AliasName);
+                DumpSqlObject(nameof(dropTableStatement.TableOrAliasName), dropTableStatement.TableOrAliasName);
                 return true;
             }
         }
