@@ -216,6 +216,7 @@ codeElement:
 	| rollbackStatement
 	| truncateStatement
 	| lockTableStatement
+	| releaseSavepointStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8300,6 +8301,7 @@ single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?
 correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
 new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
 new_column_name: UserDefinedWord;
+releaseSavepointStatement: SQL_RELEASE SQL_TO? SQL_SAVEPOINT (savepoint_name=UserDefinedWord);
 
 lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
 share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);
