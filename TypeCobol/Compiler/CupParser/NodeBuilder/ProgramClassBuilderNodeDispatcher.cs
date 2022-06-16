@@ -865,6 +865,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnTruncateStatement(truncate);
         }
+
+        public void OnWhenEverStatement(WhenEverStatement whenEver)
+        {
+            foreach (var listener in _listeners) listener.OnWhenEverStatement(whenEver);
+        }
         public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
         {
             foreach (var listener in _listeners) listener.OnLockTableStatement(lockTable);

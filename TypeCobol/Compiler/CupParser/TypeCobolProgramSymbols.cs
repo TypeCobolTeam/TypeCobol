@@ -27,7 +27,7 @@ public class TypeCobolProgramSymbols {
   public const int ReleaseStatement = 76;
   public const int SelectStatement = 130;
   public const int WhenCondition = 104;
-  public const int LockTableStatement = 133;
+  public const int LockTableStatement = 134;
   public const int XmlGenerateStatement = 89;
   public const int FreeStatement = 59;
   public const int AtEndCondition = 91;
@@ -64,6 +64,7 @@ public class TypeCobolProgramSymbols {
   public const int OnExceptionCondition = 95;
   public const int ObjectEnd = 10;
   public const int StopStatement = 83;
+  public const int WhenEverStatement = 133;
   public const int InvalidKeyCondition = 99;
   public const int error = 1;
   public const int SentenceEnd = 28;
