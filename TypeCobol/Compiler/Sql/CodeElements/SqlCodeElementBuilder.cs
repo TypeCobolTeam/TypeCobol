@@ -304,10 +304,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return new LockTableStatement(tableName, partitionId, mode);
         }
 
-        public ReleaseSavepointStatement CreateReleaseSavepointStatement(CodeElementsParser.ReleaseSavepointStatementContext context)
+        public ReleaseSavepointStatement CreateReleaseSavepointStatement(
+            CodeElementsParser.ReleaseSavepointStatementContext context)
         {
-            if (context.savepoint_name == null) return null;
-            var savepointName=new SymbolReference((new AlphanumericValue((Token)context.savepoint_name)), SymbolType.SqlIdentifier);
+            var savepointName = new SymbolReference((new AlphanumericValue((Token) context.savepoint_name)),
+                SymbolType.SqlIdentifier);
             return new ReleaseSavepointStatement(savepointName);
         }
     }

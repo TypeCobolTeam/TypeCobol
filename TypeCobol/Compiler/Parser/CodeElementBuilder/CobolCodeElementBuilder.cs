@@ -2285,10 +2285,11 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateLockTableStatement(context);
         }
+
         public override void EnterReleaseSavepointStatement([NotNull] CodeElementsParser.ReleaseSavepointStatementContext context)
         {
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateReleaseSavepointStatement(context);
         }
-	}
+    }
 }

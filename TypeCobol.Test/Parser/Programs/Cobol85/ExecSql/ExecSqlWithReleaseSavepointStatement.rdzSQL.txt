@@ -1,8 +1,10 @@
 ﻿--- Diagnostics ---
-Line 8[14,21] <27, Error, Syntax> - Syntax error : missing user defined word at 'END-EXEC' RuleStack=codeElement>releaseSavepointStatement,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+Line 9[14,21] <27, Error, Syntax> - Syntax error : missing user defined word at 'END-EXEC' RuleStack=codeElement>releaseSavepointStatement,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
 line 6: ReleaseSavepointStatement
 - SavepointName = A
 line 7: ReleaseSavepointStatement
+- SavepointName = B
+line 8: ReleaseSavepointStatement
 - SavepointName = <missing UserDefinedWord>
