@@ -484,35 +484,34 @@ namespace TypeCobol.Test.Utils
                 _writer = new StringWriter(builder);
             }
 
-            private void DumpSqlObject(string name, SqlObject sqlObject)
+            private void DumpObject(string name, object value)
             {
                 _writer.Write($"- {name} = ");
-                if (sqlObject != null)
+                if (value == null)
+                {
+                    _writer.WriteLine("<NULL>");
+                }
+                else if (value is SqlObject sqlObject)
                 {
                     sqlObject.Dump(_writer, 1);
                 }
                 else
                 {
-                    _writer.WriteLine("<NULL>");
+                    _writer.WriteLine(value.ToString());
                 }
-            }
-            private void DumpObject(string name, object @object)
-            {
-                _writer.Write($"- {name} = ");
-                _writer.WriteLine(@object != null ? @object.ToString():"<NULL>");
             }
 
             public override bool Visit(SelectStatement selectStatement)
             {
                 _writer.WriteLine($"line {selectStatement.Line}: {nameof(SelectStatement)}");
-                DumpSqlObject(nameof(selectStatement.FullSelect), selectStatement.FullSelect);
+                DumpObject(nameof(selectStatement.FullSelect), selectStatement.FullSelect);
                 return true;
             }
 
             public override bool Visit(RollbackStatement rollbackStatement)
             {
                 _writer.WriteLine($"line {rollbackStatement.Line}: {nameof(RollbackStatement)}");
-                DumpSqlObject(nameof(rollbackStatement.SavePointClause), rollbackStatement.SavePointClause);
+                DumpObject(nameof(rollbackStatement.SavePointClause), rollbackStatement.SavePointClause);
                 return true;
             }
 
@@ -526,11 +525,20 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(TruncateStatement truncateStatement)
             {
                 _writer.WriteLine($"line {truncateStatement.Line}: {nameof(TruncateStatement)}");
-                DumpSqlObject(nameof(truncateStatement.TableName), truncateStatement.TableName);
+                DumpObject(nameof(truncateStatement.TableName), truncateStatement.TableName);
                 DumpObject(nameof(truncateStatement.StorageManagement), truncateStatement.StorageManagement);
                 DumpObject(nameof(truncateStatement.DeleteTriggersHandling), truncateStatement.DeleteTriggersHandling);
-                DumpObject(nameof(truncateStatement.IsImmediate), truncateStatement.IsImmediate);
+                DumpObject(nameof(truncateStatement.IsImmediate),  truncateStatement.IsImmediate);
 
+                return true;
+            }
+
+            public override bool Visit(WhenEverStatement whenEverStatement)
+            {
+                _writer.WriteLine($"line {whenEverStatement.Line}: {nameof(WhenEverStatement)}");
+                DumpObject(nameof(whenEverStatement.ExceptionCondition), whenEverStatement.ExceptionCondition);
+                DumpObject(nameof(whenEverStatement.BranchingType), whenEverStatement.BranchingType);
+                DumpObject(nameof(whenEverStatement.TargetSectionOrParagraph), whenEverStatement.TargetSectionOrParagraph);
                 return true;
             }
             public override bool Visit(SavepointStatement savepointStatement)
@@ -544,8 +552,8 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(LockTableStatement lockTableStatement)
             {
                 _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");
-                DumpSqlObject(nameof(lockTableStatement.Table), lockTableStatement.Table);
-                DumpSqlObject(nameof(lockTableStatement.PartitionId), lockTableStatement.PartitionId);
+                DumpObject(nameof(lockTableStatement.Table), lockTableStatement.Table);
+                DumpObject(nameof(lockTableStatement.PartitionId), lockTableStatement.PartitionId);
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
                 return true;
             }

@@ -1,6 +1,6 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOMFL06.
-Line 3[8,21] <27, Error, Syntax> - Syntax error : extraneous input 'datadivision.' expecting {ExecStatementText, ExecStatementEnd, CommitStatement, SelectStatement, RollbackStatement, TruncateStatement, SavepointStatement, LockTableStatement}
+Line 3[8,21] <27, Error, Syntax> - Syntax error : extraneous input 'datadivision.' expecting {ExecStatementText, ExecStatementEnd, CommitStatement, SelectStatement, RollbackStatement, TruncateStatement, SavepointStatement, WhenEverStatement, LockTableStatement}
        data division.
        working-storage section.
       *Issue #2121, this would previously throw an InvalidCastException

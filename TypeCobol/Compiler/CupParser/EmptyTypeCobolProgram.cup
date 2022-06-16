@@ -142,6 +142,7 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SelectStatement SelectSt
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.RollbackStatement RollbackStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.TruncateStatement TruncateStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SavepointStatement SavepointStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.WhenEverStatement WhenEverStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.LockTableStatement LockTableStatement;
 
 
@@ -706,6 +707,8 @@ sqlStatement ::= CommitStatement:stmt
 |	TruncateStatement:stmt 
 {: :}
 |	SavepointStatement:stmt 
+{: :}
+|	WhenEverStatement:stmt 
 {: :}
 |	LockTableStatement:stmt 
 {: :}

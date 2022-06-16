@@ -837,6 +837,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="savepoint">The corresponding  Savepoint Statement Code Element</param>
         void OnSavepointStatement([NotNull] SavepointStatement savepoint);
         /// <summary>
+        /// Enter a WhenEver Statement Node
+        /// </summary>
+        /// <param name="whenEver">The corresponding WhenEver Statement Code Element</param>
+        void OnWhenEverStatement([NotNull] WhenEverStatement whenEver);
+        /// <summary>
         /// Enter a LockTable Statement Node
         /// </summary>
         /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
