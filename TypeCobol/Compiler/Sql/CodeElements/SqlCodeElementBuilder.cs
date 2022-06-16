@@ -282,5 +282,71 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 var literalReferenceSymbol = new SymbolReference(new AlphanumericValue(literal), SymbolType.ColumnName);
                 return new SqlColumnName(literalReferenceSymbol);
         }
+
+        public WhenEverStatement CreateWhenEverStatement(CodeElementsParser.WhenEverStatementContext context)
+        {
+            if (context != null)
+            {
+                SyntaxProperty<ExceptionConditionType> exceptionCondition = null;
+                SyntaxProperty<BranchingType> branchingType = null;
+                SymbolReference targetSectionOrParagraph = null;
+                if (context.sqlError() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.SqlError,
+                        ParseTreeUtils.GetFirstToken(context.sqlError()));
+                }
+                else if (context.sqlWarning() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.SqlWarning,
+                        ParseTreeUtils.GetFirstToken(context.sqlWarning()));
+                }
+                else if (context.sqlNotFound() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.NotFound,
+                        ParseTreeUtils.GetFirstToken(context.sqlNotFound()));
+                }
+
+                if (context.SQL_CONTINUE() != null)
+                {
+                    branchingType = new SyntaxProperty<BranchingType>(BranchingType.Continue,
+                        ParseTreeUtils.GetFirstToken(context.SQL_CONTINUE()));
+                }
+                else if (context.sqlGotoHostLabel() != null)
+                {
+                    branchingType = new SyntaxProperty<BranchingType>(BranchingType.Goto,
+                        ParseTreeUtils.GetFirstToken(context.sqlGotoHostLabel()));
+                    if (context.sqlGotoHostLabel().hostLabel != null)
+                    {
+                        targetSectionOrParagraph = new SymbolReference(
+                            new AlphanumericValue((Token)context.sqlGotoHostLabel().hostLabel),
+                            SymbolType.SqlIdentifier);
+                    }
+                }
+
+                return new WhenEverStatement(exceptionCondition, branchingType, targetSectionOrParagraph);
+            }
+
+            return null;
+        }
+        public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
+        {
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            var partitionId = context.IntegerLiteral() != null
+                ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
+                : null;
+            SyntaxProperty<LockMode> mode = null;
+            if (context.share() != null)
+            {
+                mode =
+                    new SyntaxProperty<LockMode>(LockMode.Shared, ParseTreeUtils.GetFirstToken(context.share()));
+            }
+            else if (context.exclusive() != null)
+            {
+                mode =
+                    new SyntaxProperty<LockMode>(LockMode.Exclusive, ParseTreeUtils.GetFirstToken(context.exclusive()));
+            }
+
+            return new LockTableStatement(tableName, partitionId, mode);
+        }
     }
 }

@@ -170,6 +170,8 @@ namespace TypeCobol.Compiler.CodeElements
         SelectStatement,
         RollbackStatement,
         TruncateStatement,
+        WhenEverStatement,
+        LockTableStatement,
 
         // [TYPECOBOL]
         LibraryCopy,
