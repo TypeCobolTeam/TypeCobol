@@ -854,5 +854,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
+        {
+
+        }
+        public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
+        {
+
+        }
     }
 }
