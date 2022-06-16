@@ -284,6 +284,52 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+
+        public WhenEverStatement CreateWhenEverStatement(CodeElementsParser.WhenEverStatementContext context)
+        {
+            if (context != null)
+            {
+                SyntaxProperty<ExceptionConditionType> exceptionCondition = null;
+                SyntaxProperty<BranchingType> branchingType = null;
+                SymbolReference targetSectionOrParagraph = null;
+                if (context.sqlError() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.SqlError,
+                        ParseTreeUtils.GetFirstToken(context.sqlError()));
+                }
+                else if (context.sqlWarning() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.SqlWarning,
+                        ParseTreeUtils.GetFirstToken(context.sqlWarning()));
+                }
+                else if (context.sqlNotFound() != null)
+                {
+                    exceptionCondition = new SyntaxProperty<ExceptionConditionType>(ExceptionConditionType.NotFound,
+                        ParseTreeUtils.GetFirstToken(context.sqlNotFound()));
+                }
+
+                if (context.SQL_CONTINUE() != null)
+                {
+                    branchingType = new SyntaxProperty<BranchingType>(BranchingType.Continue,
+                        ParseTreeUtils.GetFirstToken(context.SQL_CONTINUE()));
+                }
+                else if (context.sqlGotoHostLabel() != null)
+                {
+                    branchingType = new SyntaxProperty<BranchingType>(BranchingType.Goto,
+                        ParseTreeUtils.GetFirstToken(context.sqlGotoHostLabel()));
+                    if (context.sqlGotoHostLabel().hostLabel != null)
+                    {
+                        targetSectionOrParagraph = new SymbolReference(
+                            new AlphanumericValue((Token)context.sqlGotoHostLabel().hostLabel),
+                            SymbolType.SqlIdentifier);
+                    }
+                }
+
+                return new WhenEverStatement(exceptionCondition, branchingType, targetSectionOrParagraph);
+            }
+
+            return null;
+        }
         private HostVariable CreateSqlHostVariable(CodeElementsParser.HostVariableContext context)
         {
             if (context.mainVariable != null)
