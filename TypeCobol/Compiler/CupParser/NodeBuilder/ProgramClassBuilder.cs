@@ -1641,5 +1641,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnLockTableStatement(lockTable);
         }
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
+        {
+            Enter(new WhenEver(whenEver), whenEver);
+            Exit();
+            Dispatcher.OnWhenEverStatement(whenEver);
+        }
     }
 }
