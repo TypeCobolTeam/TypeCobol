@@ -357,40 +357,45 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 var name = (Token) context.tableOrAliasName().tableOrViewOrCorrelationName().Name;
                 var schemaName = (Token) context.tableOrAliasName().tableOrViewOrCorrelationName().SchemaName;
                 var dbms = (Token) context.tableOrAliasName().tableOrViewOrCorrelationName().DBMS;
-                var tableName = new TableViewCorrelationName(CreateTableOrAliasName(name, schemaName, dbms));
-                return new DropTableStatement(tableName);
+                var tableOrAliasName = CreateTableOrAliasName(context.tableOrAliasName());
+                return new DropTableStatement(tableOrAliasName);
             }
             return null;
         }
-        public SymbolReference CreateTableOrAliasName (Token nameToken, Token qualifierToken,
-        Token topLevelQualifierToken)
+
+        private TableViewCorrelationName CreateTableOrAliasName(CodeElementsParser.TableOrAliasNameContext context)
         {
-            if (nameToken == null) return null;
-            if (qualifierToken != null)
+            if (context.tableOrViewOrCorrelationName().Name == null) return null;
+            var nameToken = (Token) context.tableOrViewOrCorrelationName().Name;
+            var name = new SymbolReference(new AlphanumericValue(nameToken),
+                SymbolType.SqlIdentifier);
+            if (context.tableOrViewOrCorrelationName().SchemaName != null)
             {
-                var name = new SymbolReference(new AlphanumericValue(nameToken),
-                    SymbolType.SqlIdentifier);
+                var qualifierToken = (Token) context.tableOrViewOrCorrelationName().SchemaName;
                 var qualifier =
                     new SymbolReference(new AlphanumericValue(qualifierToken),
                         SymbolType.SqlIdentifier);
-                if (topLevelQualifierToken != null)
+                if (context.tableOrViewOrCorrelationName().DBMS != null)
                 {
+                    var topLevelQualifierToken = (Token) context.tableOrViewOrCorrelationName().DBMS;
                     var topLevelQualifier =
                         new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
                             SymbolType.SqlIdentifier);
                     var tail = new QualifiedSymbolReference(qualifier, topLevelQualifier);
                     var fullName = new QualifiedSymbolReference(name, tail);
-                    return fullName;
+                    return new TableViewCorrelationName(fullName);
                 }
                 else
                 {
                     var fullName = new QualifiedSymbolReference(name, qualifier);
-                    return fullName;
+                    return new TableViewCorrelationName(fullName);
                 }
             }
             else
             {
-                return new AmbiguousSymbolReference(new AlphanumericValue(nameToken), new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
+                var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
+                    new SymbolType[] {SymbolType.SqlIdentifier, SymbolType.SqlIdentifier});
+                return new TableViewCorrelationName(aliasName);
             }
 
         }
