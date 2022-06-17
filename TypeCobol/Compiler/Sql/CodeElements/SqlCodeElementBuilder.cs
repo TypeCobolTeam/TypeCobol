@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -327,6 +328,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             return null;
+        }
+        private HostVariable CreateSqlHostVariable(CodeElementsParser.HostVariableContext context)
+        {
+            if (context.mainVariable != null)
+            {
+                return new HostVariable(CreateHostVariableSymbolReference(context.mainVariable), CreateHostVariableSymbolReference(context.indicatorVariable));
+            }
+
+            return null;
+
+            SymbolReference CreateHostVariableSymbolReference(IToken userDefinedWord)
+            {
+                if (userDefinedWord == null) return null;
+                var token = (Token) userDefinedWord;
+                return new SymbolReference(new AlphanumericValue(token), SymbolType.SqlIdentifier);
+            }
         }
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {

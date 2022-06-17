@@ -8309,6 +8309,9 @@ whenEverStatement: SQL_WHENEVER (sqlNotFound | sqlError | sqlWarning) (SQL_CONTI
 sqlNotFound: SQL_NOT sqlFound;
 sqlGotoHostLabel: (SQL_GOTO | SQL_GO SQL_TO) ColonSeparator? hostLabel=UserDefinedWord;
 
+hostVariable: ColonSeparator mainVariable=UserDefinedWord ((indicator)? ColonSeparator indicatorVariable=UserDefinedWord)?;
+indicator: ({string.Equals(CurrentToken.Text, "INDICATOR", System.StringComparison.OrdinalIgnoreCase) }? KeywordINDICATOR=UserDefinedWord);
+
 lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
 share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);
 exclusive: ({ string.Equals(CurrentToken.Text, "EXCLUSIVE", System.StringComparison.OrdinalIgnoreCase) }? KeywordEXCLUSIVE=UserDefinedWord);
