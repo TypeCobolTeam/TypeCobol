@@ -854,7 +854,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
-        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)   
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
         {
 
         }
