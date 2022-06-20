@@ -8300,8 +8300,8 @@ table_reference: single_table_or_view_reference;
 //TODO Add period-specification syntax
 single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?;
 correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
-new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
-new_column_name: UserDefinedWord;
+new_column_names: LeftParenthesisSeparator column_name (SQL_CommaSeparator column_name)* RightParenthesisSeparator;
+column_name:UserDefinedWord;
 releaseSavepointStatement: SQL_RELEASE SQL_TO? SQL_SAVEPOINT (savepoint_name=UserDefinedWord);
 
 sqlError: ({ string.Equals(CurrentToken.Text, "SQLERROR", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLERROR=UserDefinedWord);
