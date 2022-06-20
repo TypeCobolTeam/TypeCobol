@@ -7,6 +7,9 @@
              FROM 
              iid.rr as new (h,k)
              , uma as ka(l,u)
+             SELECT * 
+             FROM 
+             t_table as new_name (c1,,)
             END-EXEC.
        PROCEDURE DIVISION.
            GOBACK
