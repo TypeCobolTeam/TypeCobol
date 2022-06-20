@@ -549,6 +549,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
                 return true;
             }
+            public override bool Visit(ConnectStatement connectStatement)
+            {
+                _writer.WriteLine($"line {connectStatement.Line}: {nameof(ConnectStatement)}");
+                DumpObject(nameof(connectStatement.Target), connectStatement.Target);
+                DumpObject(nameof(connectStatement.Authorization), connectStatement.Authorization);
+                DumpObject(nameof(connectStatement.Reset), connectStatement.Reset);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

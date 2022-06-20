@@ -1647,5 +1647,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnWhenEverStatement(whenEver);
         }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+            Enter(new Connect(connect), connect);
+            Exit();
+            Dispatcher.OnConnectStatement(connect);
+        }
     }
 }

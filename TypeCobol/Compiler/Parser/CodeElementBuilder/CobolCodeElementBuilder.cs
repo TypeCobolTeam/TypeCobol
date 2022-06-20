@@ -2291,5 +2291,10 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateLockTableStatement(context);
         }
-    }
+        public override void EnterConnectStatement([NotNull] CodeElementsParser.ConnectStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateConnectStatement(context);
+        }
+	}
 }

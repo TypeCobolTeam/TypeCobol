@@ -365,5 +365,64 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return new LockTableStatement(tableName, partitionId, mode);
         }
+        public ConnectStatement CreateConnectStatement(CodeElementsParser.ConnectStatementContext context)
+        {
+            ConnectionTarget connectionTarget = null;
+            ConnectionAuthorization connectionAuthorization = null;
+            SyntaxProperty<bool> reset = null;
+            if (context.targetClause() != null)
+            {
+                connectionTarget = CreateConnectionTarget(context.targetClause());
+                if (context.targetClause().authorizationClause() != null)
+                {
+                    connectionAuthorization = CreateConnectionAuthorization(context.targetClause().authorizationClause());
+                }
+
+            }
+            else if (context.authorizationClause() != null)
+            {
+                connectionAuthorization = CreateConnectionAuthorization(context.authorizationClause());
+            }
+
+            else if (context.sqlReset() != null)
+            {
+                reset = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.sqlReset()));
+            }
+
+            return new ConnectStatement(connectionAuthorization, reset, connectionTarget);
+        }
+
+        public ConnectionTarget CreateConnectionTarget(CodeElementsParser.TargetClauseContext context)
+        {
+            SyntaxProperty<string> locationNameLiteral = null;
+            HostVariable locationNameVariable = null;
+            if (context.locationName != null)
+            {
+                locationNameLiteral = new SyntaxProperty<string>(context.locationName.ToString(), ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
+            }
+
+            if (context.hostVariable() != null)
+            {
+                locationNameVariable = CreateSqlHostVariable(context.hostVariable());
+            }
+
+            return new ConnectionTarget(locationNameLiteral, locationNameVariable);
+        }
+        public ConnectionAuthorization CreateConnectionAuthorization(CodeElementsParser.AuthorizationClauseContext context)
+        {
+            HostVariable userName = null;
+            HostVariable password = null;
+            if (context.userName != null)
+            {
+                userName = CreateSqlHostVariable(context.userName);
+            }
+
+            if (context.password != null)
+            {
+                password = CreateSqlHostVariable(context.password);
+            }
+
+            return new ConnectionAuthorization(userName, password);
+        }
     }
 }

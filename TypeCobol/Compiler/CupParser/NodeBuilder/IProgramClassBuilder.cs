@@ -841,6 +841,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
         void OnLockTableStatement([NotNull] LockTableStatement lockTable);
+        /// <summary>
+        /// Enter a Connect Statement Node
+        /// </summary>
+        /// <param name="connect">The corresponding  Connect Statement Code Element</param>
+        void OnConnectStatement([NotNull] ConnectStatement connect);
         #endregion
     }
 }

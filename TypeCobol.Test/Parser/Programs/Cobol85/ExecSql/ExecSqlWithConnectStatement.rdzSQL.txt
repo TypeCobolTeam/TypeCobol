@@ -1,0 +1,36 @@
+﻿--- Diagnostics ---
+Line 10[29,30] <27, Error, Syntax> - Syntax error : extraneous input 'TO' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[29,30:TO]<SQL_TO>
+
+--- Sql Statements ---
+line 6: ConnectStatement
+- Target = <NULL>
+- Authorization = <NULL>
+- Reset = <NULL>
+line 7: ConnectStatement
+- Target = <NULL>
+- Authorization = <NULL>
+- Reset = True
+line 8: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = [26,31:EASTDB]<UserDefinedWord>
+  - LocationNameVariable = <NULL>
+- Authorization = <NULL>
+- Reset = <NULL>
+line 9: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = <NULL>
+  - LocationNameVariable = HostVariable
+    - MainReference = LOC
+    - IndicatorReference = <NULL>
+- Authorization = ConnectionAuthorization
+  - UserName = HostVariable
+    - MainReference = AUTHID
+    - IndicatorReference = <NULL>
+  - Password = HostVariable
+    - MainReference = PASSWORD
+    - IndicatorReference = <NULL>
+- Reset = <NULL>
+line 10: ConnectStatement
+- Target = <NULL>
+- Authorization = <NULL>
+- Reset = True
