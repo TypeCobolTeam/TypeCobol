@@ -7,4 +7,4 @@ line 6: ReleaseSavepointStatement
 line 7: ReleaseSavepointStatement
 - SavepointName = B
 line 8: ReleaseSavepointStatement
-- SavepointName = <missing UserDefinedWord>
+- SavepointName = <NULL>

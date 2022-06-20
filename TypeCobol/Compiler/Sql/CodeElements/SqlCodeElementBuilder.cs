@@ -353,8 +353,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public ReleaseSavepointStatement CreateReleaseSavepointStatement(
             CodeElementsParser.ReleaseSavepointStatementContext context)
         {
-            var savepointName = new SymbolReference((new AlphanumericValue((Token) context.savepoint_name)),
-                SymbolType.SqlIdentifier);
+            var savepointName = context.Diagnostics == null ? new SymbolReference(new AlphanumericValue((Token)context.savepoint_name), SymbolType.SqlIdentifier) : null;
             return new ReleaseSavepointStatement(savepointName);
         }
     }
