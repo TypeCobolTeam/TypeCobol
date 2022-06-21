@@ -6,7 +6,7 @@
       *        YMYCOPY1
       *        ).
                                                                
-      
+
        ENVIRONMENT DIVISION.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
@@ -16,4 +16,5 @@
        PROCEDURE DIVISION.
            MOVE 4 TO MYCOPY-CODE.
            MOVE 'B' TO MYCOPY1-DATA.
-       END PROGRAM MYCPYTST.      
+       END PROGRAM MYCPYTST.  
+       

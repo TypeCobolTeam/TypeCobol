@@ -1,8 +1,11 @@
-Line 56[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
-Line 64[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
-Line 65[12,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '%<<< ... CONTINUE'
-Line 57[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'CONTINUE' expecting {DataDivisionHeader, ProcedureDivisionHeader, FunctionDeclarationEnd}
 Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+Line 66[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
+Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
+Line 77[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
+Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Documentation ========================
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
@@ -71,6 +74,129 @@ Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support
   "DocDataType": {
     "MaxOccurence": 1
   }
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "It is deprecated ",
+  "Description": "MyProc info \r\n",
+  "Name": "MyProc",
+  "Namespace": "DocCombined",
+  "Needs": [
+    "long need"
+  ],
+  "ToDos": [
+    "todo1",
+    "todo 2"
+  ],
+  "Visibility": 1,
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Info": "just a date",
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(1)V9(12)"
+      },
+      "Info": "bla < 2",
+      "Name": "bla",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "myBool",
+      "PassingType": 2
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Info": "toto",
+      "Name": "toto",
+      "PassingType": 1
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "PPP999PPP"
+      },
+      "Name": "bli",
+      "PassingType": 1
+    }
+  ]
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "MyPrivateProc is a Proc but Private ",
+  "Name": "MyPrivateProc",
+  "Namespace": "DocCombined",
+  "ToDos": [
+    "Add a body"
+  ],
+  "Visibility": 2,
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "toto",
+      "PassingType": 1
+    }
+  ]
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "MyLocalProc is a Proc but Local (no access modifier) ",
+  "Name": "MyLocalProc",
+  "Namespace": "DocCombined",
+  "ToDos": [
+    "Add a body"
+  ],
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "toto",
+      "PassingType": 1
+    }
+  ]
 }
 ---------------------
 
