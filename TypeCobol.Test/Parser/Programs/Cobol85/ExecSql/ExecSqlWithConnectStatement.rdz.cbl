@@ -8,6 +8,7 @@
               CONNECT TO EASTDB
               CONNECT TO :LOC USER :AUTHID USING :PASSWORD
               CONNECT RESET TO
+              CONNECT USER :UserName USING :UserPassword
              END-EXEC.
        PROCEDURE DIVISION.
          

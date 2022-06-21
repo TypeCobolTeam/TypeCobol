@@ -12,7 +12,7 @@ line 7: ConnectStatement
 - Reset = True
 line 8: ConnectStatement
 - Target = ConnectionTarget
-  - LocationNameLiteral = [26,31:EASTDB]<UserDefinedWord>
+  - LocationNameLiteral = EASTDB
   - LocationNameVariable = <NULL>
 - Authorization = <NULL>
 - Reset = <NULL>
@@ -34,3 +34,13 @@ line 10: ConnectStatement
 - Target = <NULL>
 - Authorization = <NULL>
 - Reset = True
+line 11: ConnectStatement
+- Target = <NULL>
+- Authorization = ConnectionAuthorization
+  - UserName = HostVariable
+    - MainReference = UserName
+    - IndicatorReference = <NULL>
+  - Password = HostVariable
+    - MainReference = UserPassword
+    - IndicatorReference = <NULL>
+- Reset = <NULL>

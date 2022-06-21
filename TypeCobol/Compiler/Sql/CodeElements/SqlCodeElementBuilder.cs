@@ -392,23 +392,24 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return new ConnectStatement(connectionAuthorization, reset, connectionTarget);
         }
 
-        public ConnectionTarget CreateConnectionTarget(CodeElementsParser.TargetClauseContext context)
+        private ConnectionTarget CreateConnectionTarget(CodeElementsParser.TargetClauseContext context)
         {
             SyntaxProperty<string> locationNameLiteral = null;
             HostVariable locationNameVariable = null;
             if (context.locationName != null)
             {
-                locationNameLiteral = new SyntaxProperty<string>(context.locationName.ToString(), ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
+                locationNameLiteral = new SyntaxProperty<string>(context.locationName.Text, ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
             }
 
-            if (context.hostVariable() != null)
+            else if (context.hostVariable() != null)
             {
                 locationNameVariable = CreateSqlHostVariable(context.hostVariable());
             }
 
             return new ConnectionTarget(locationNameLiteral, locationNameVariable);
         }
-        public ConnectionAuthorization CreateConnectionAuthorization(CodeElementsParser.AuthorizationClauseContext context)
+
+        private ConnectionAuthorization CreateConnectionAuthorization(CodeElementsParser.AuthorizationClauseContext context)
         {
             HostVariable userName = null;
             HostVariable password = null;
