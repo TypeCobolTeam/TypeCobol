@@ -359,21 +359,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private TableViewCorrelationName CreateTableOrAliasName(CodeElementsParser.TableOrAliasNameContext context)
         {
-            if (context.tableOrViewOrCorrelationName().Name == null) return null;
-            var nameToken = (Token)context.tableOrViewOrCorrelationName().Name;
+            if (context.tableOrViewOrCorrelationName() == null) return null;
+            var nameToken = (Token) context.tableOrViewOrCorrelationName().Name;
             if (context.tableOrViewOrCorrelationName().SchemaName != null)
             {
                 var qualifierToken = (Token) context.tableOrViewOrCorrelationName().SchemaName;
-                var topLevelQualifierToken = (Token)context.tableOrViewOrCorrelationName().DBMS;
-                return new TableViewCorrelationName(CreateSymbolReference(nameToken,qualifierToken,topLevelQualifierToken));
-            }
-            else
-            {
-                var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
-                    new SymbolType[] {SymbolType.SqlIdentifier, SymbolType.SqlIdentifier});
-                return new TableViewCorrelationName(aliasName);
+                var topLevelQualifierToken = (Token) context.tableOrViewOrCorrelationName().DBMS;
+                return new TableViewCorrelationName(CreateSymbolReference(nameToken, qualifierToken,
+                    topLevelQualifierToken));
             }
 
+            var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
+                new SymbolType[] {SymbolType.SqlIdentifier, SymbolType.SqlIdentifier});
+            return new TableViewCorrelationName(aliasName);
         }
     }
 }
