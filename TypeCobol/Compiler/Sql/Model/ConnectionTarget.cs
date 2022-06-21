@@ -5,13 +5,13 @@ namespace TypeCobol.Compiler.Sql.Model
 {
     public class ConnectionTarget : SqlObject
     {
-        public ConnectionTarget(SyntaxProperty<string> locationNameLiteral, HostVariable locationNameVariable)
+        public ConnectionTarget(SyntaxValue<string> locationNameLiteral, HostVariable locationNameVariable)
         {
             LocationNameLiteral = locationNameLiteral;
             LocationNameVariable = locationNameVariable;
         }
 
-        public SyntaxProperty<string> LocationNameLiteral { get; }
+        public SyntaxValue<string> LocationNameLiteral { get; }
         public HostVariable LocationNameVariable { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)

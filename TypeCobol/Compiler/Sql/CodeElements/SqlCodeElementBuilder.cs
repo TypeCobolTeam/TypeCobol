@@ -394,11 +394,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private ConnectionTarget CreateConnectionTarget(CodeElementsParser.TargetClauseContext context)
         {
-            SyntaxProperty<string> locationNameLiteral = null;
+            SyntaxValue<string> locationNameLiteral = null;
             HostVariable locationNameVariable = null;
             if (context.locationName != null)
             {
-                locationNameLiteral = new SyntaxProperty<string>(context.locationName.Text, ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
+                locationNameLiteral = new AlphanumericValue(ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
             }
 
             else if (context.hostVariable() != null)
