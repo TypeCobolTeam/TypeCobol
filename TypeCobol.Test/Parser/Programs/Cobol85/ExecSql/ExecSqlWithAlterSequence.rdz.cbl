@@ -1,0 +1,22 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZMFT3.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+             EXEC SQL               
+              ALTER SEQUENCE org_seq RESTART
+              ALTER SEQUENCE RESTART INCREMENT BY 5.0
+              ALTER SEQUENCE org_seq2 MINVALUE 6.0
+              ALTER SEQUENCE org_seq2 MAXVALUE 7.0
+              ALTER SEQUENCE org_seq2 NO CYCLE
+              ALTER SEQUENCE org_seq2 CYCLE
+              ALTER SEQUENCE org_seq2 CACHE 100
+              ALTER SEQUENCE org_seq2 NO CACHE
+              ALTER SEQUENCE org_seq2 ORDER
+              ALTER SEQUENCE org_seq2 NO ORDER
+              ALTER SEQUENCE org_seq2 NO ORDER RESTART INCREMENT BY 5.0
+             END-EXEC.
+       PROCEDURE DIVISION.
+         
+           GOBACK
+           .
+       END PROGRAM DVZZMFT3.

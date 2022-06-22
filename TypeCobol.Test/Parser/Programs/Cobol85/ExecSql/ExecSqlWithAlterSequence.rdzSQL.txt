@@ -1,0 +1,127 @@
+﻿--- Sql Statements ---
+line 6: AlterSequenceStatement
+- SequenceName = org_seq
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 7: AlterSequenceStatement
+- SequenceName = RESTART
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = SqlConstant
+  - LiteralValue = 50|1>5
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 8: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = SqlConstant
+  - LiteralValue = 60|1>6
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 9: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = SqlConstant
+  - LiteralValue = 70|1>7
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 10: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 11: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = True
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 12: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = SqlConstant
+  - LiteralValue = 100
+- NoCache = False
+- Ordered = <NULL>
+line 13: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 14: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = True
+line 15: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 16: AlterSequenceStatement
+- SequenceName = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = SqlConstant
+  - LiteralValue = 50|1>5
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>

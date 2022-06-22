@@ -874,5 +874,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnLockTableStatement(lockTable);
         }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+            foreach (var listener in _listeners) listener.OnAlterSequenceStatement(alterSequence);
+        }
     }
 }

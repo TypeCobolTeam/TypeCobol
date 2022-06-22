@@ -841,6 +841,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
         void OnLockTableStatement([NotNull] LockTableStatement lockTable);
+        /// <summary>
+        /// Enter a AlterSequence Statement Node
+        /// </summary>
+        /// <param name="alterSequence">The corresponding  AlterSequence Statement Code Element</param>
+        void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence);
         #endregion
     }
 }

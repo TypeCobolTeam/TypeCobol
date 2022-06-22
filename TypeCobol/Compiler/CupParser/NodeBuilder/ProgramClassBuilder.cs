@@ -1647,5 +1647,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnWhenEverStatement(whenEver);
         }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+            Enter(new AlterSequence(alterSequence), alterSequence);
+            Exit();
+            Dispatcher.OnAlterSequenceStatement(alterSequence);
+        }
     }
 }

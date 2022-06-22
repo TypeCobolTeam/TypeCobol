@@ -172,6 +172,7 @@ namespace TypeCobol.Compiler.CodeElements
         TruncateStatement,
         WhenEverStatement,
         LockTableStatement,
+        AlterSequenceStatement,
 
         // [TYPECOBOL]
         LibraryCopy,

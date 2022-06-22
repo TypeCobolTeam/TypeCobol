@@ -393,6 +393,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] WhenEver whenEver);
         bool Visit([NotNull] LockTableStatement lockTableStatement);
         bool Visit([NotNull] LockTable lockTable);
+        bool Visit([NotNull] AlterSequenceStatement alterSequenceStatement);
+        bool Visit([NotNull] AlterSequence alterSequence);
     }
 
 
@@ -1551,6 +1553,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] LockTable lockTable)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] AlterSequenceStatement alterSequenceStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] AlterSequence alterSequence)
         {
             return true;
         }

@@ -365,5 +365,74 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return new LockTableStatement(tableName, partitionId, mode);
         }
+
+        public AlterSequenceStatement CreateAlterSequenceStatement(
+            CodeElementsParser.AlterSequenceStatementContext context)
+        {
+            SymbolReference sequenceName = null;
+            SyntaxProperty<bool> restart = null;
+            SqlConstant restartValue = null;
+            SqlConstant incrementValue = null;
+            SqlConstant minValue = null;
+            SqlConstant maxValue = null;
+            SyntaxProperty<bool> cycle = null;
+            SqlConstant cacheSize = null;
+            SyntaxProperty<bool> ordered = null;
+            if (context.sequence_name != null)
+            {
+                sequenceName = new SymbolReference(new AlphanumericValue((Token) context.sequence_name),
+                    SymbolType.SqlIdentifier);
+            }
+
+            foreach (var alterSequenceClause in context.alterSequenceClause())
+            {
+                if (alterSequenceClause.restartClause() != null &&
+                    alterSequenceClause.restartClause().numeric_constant != null)
+                {
+                    restartValue = new SqlConstant((Token) alterSequenceClause.restartClause().numeric_constant);
+                    restart = new SyntaxProperty<bool>(true,
+                        (Token) alterSequenceClause.restartClause().restart().KeywordRESTART);
+                }
+
+                if (alterSequenceClause.incrementClause() != null &&
+                    alterSequenceClause.incrementClause().numeric_constant != null)
+                {
+                    incrementValue = new SqlConstant((Token) alterSequenceClause.incrementClause().numeric_constant);
+                }
+
+                if (alterSequenceClause.minValueClause() != null &&
+                    alterSequenceClause.minValueClause().numeric_constant != null)
+                {
+                    minValue = new SqlConstant((Token) alterSequenceClause.minValueClause().numeric_constant);
+                }
+
+                if (alterSequenceClause.maxValueClause() != null &&
+                    alterSequenceClause.maxValueClause().numeric_constant != null)
+                {
+                    maxValue = new SqlConstant((Token) alterSequenceClause.maxValueClause().numeric_constant);
+                }
+
+                if (alterSequenceClause.cycle() != null)
+                {
+                    cycle = new SyntaxProperty<bool>(true,
+                        (Token) alterSequenceClause.cycle().KeywordCYCLE);
+                }
+
+                if (alterSequenceClause.cacheClause() != null &&
+                    alterSequenceClause.cacheClause().numeric_constant != null)
+                {
+                    cacheSize = new SqlConstant((Token) alterSequenceClause.cacheClause().numeric_constant);
+                }
+
+                if (alterSequenceClause.SQL_ORDER() != null)
+                {
+                    ordered = new SyntaxProperty<bool>(true,
+                        ParseTreeUtils.GetFirstToken(alterSequenceClause.SQL_ORDER()));
+                }
+            }
+
+            return new AlterSequenceStatement(sequenceName, restart, restartValue, incrementValue, minValue, maxValue,
+                cycle, cacheSize, ordered);
+        }
     }
 }
