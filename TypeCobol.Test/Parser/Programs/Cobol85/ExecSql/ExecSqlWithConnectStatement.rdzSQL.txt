@@ -44,3 +44,23 @@ line 11: ConnectStatement
     - MainReference = UserPassword
     - IndicatorReference = <NULL>
 - Reset = <NULL>
+line 12: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = <NULL>
+  - LocationNameVariable = HostVariable
+    - MainReference = LOC2
+    - IndicatorReference = <NULL>
+- Authorization = <NULL>
+- Reset = <NULL>
+line 13: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = LOC3
+  - LocationNameVariable = <NULL>
+- Authorization = ConnectionAuthorization
+  - UserName = HostVariable
+    - MainReference = AUTHID3
+    - IndicatorReference = <NULL>
+  - Password = HostVariable
+    - MainReference = PASSWORD3
+    - IndicatorReference = <NULL>
+- Reset = <NULL>

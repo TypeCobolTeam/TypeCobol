@@ -370,12 +370,12 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             ConnectionTarget connectionTarget = null;
             ConnectionAuthorization connectionAuthorization = null;
             SyntaxProperty<bool> reset = null;
-            if (context.targetClause() != null)
+            if (context.connectionTarget() != null)
             {
-                connectionTarget = CreateConnectionTarget(context.targetClause());
-                if (context.targetClause().authorizationClause() != null)
+                connectionTarget = CreateConnectionTarget(context.connectionTarget());
+                if (context.connectionTarget().authorizationClause() != null)
                 {
-                    connectionAuthorization = CreateConnectionAuthorization(context.targetClause().authorizationClause());
+                    connectionAuthorization = CreateConnectionAuthorization(context.connectionTarget().authorizationClause());
                 }
 
             }
@@ -392,7 +392,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return new ConnectStatement(connectionAuthorization, reset, connectionTarget);
         }
 
-        private ConnectionTarget CreateConnectionTarget(CodeElementsParser.TargetClauseContext context)
+        private ConnectionTarget CreateConnectionTarget(CodeElementsParser.ConnectionTargetContext context)
         {
             SyntaxValue<string> locationNameLiteral = null;
             HostVariable locationNameVariable = null;
