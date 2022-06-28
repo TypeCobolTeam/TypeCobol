@@ -686,8 +686,11 @@ conditionalExpression:
 
 // ... more details on the evaluation of classCondition p257/258 ...
 
+parenthesedIdentifier:
+	identifier | (LeftParenthesisSeparator identifier RightParenthesisSeparator);
+
 classCondition:
-	identifier IS? NOT? (characterClassNameReference | dataItemContentType);
+	parenthesedIdentifier IS? NOT? (characterClassNameReference | dataItemContentType);
 
 dataItemContentType: 
 	(NUMERIC | ALPHABETIC | ALPHABETIC_LOWER | ALPHABETIC_UPPER | DBCS | KANJI);

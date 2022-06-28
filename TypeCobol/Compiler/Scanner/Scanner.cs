@@ -1377,7 +1377,6 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         return ScanCharacterString(startIndex);
                     }
-
                 // p9: COBOL words with single-byte characters
                 // A COBOL word is a character-string that forms a user-defined word, a system-name, or a reserved word. 
                 // Each character of a COBOL word is selected from the following set: 
@@ -1390,43 +1389,26 @@ namespace TypeCobol.Compiler.Scanner
 
                 // PROBLEMS : 
                 // 123 is a valid user defined word (for section & paragraph names) AND a valid numeric literal.
-                // 123E-4 is a valid user defined word (for any type of name) AND a valid numeric literal (floating point format).
-                // 123-456 is a valid user defined word (fol section & paragraph names), AND it could be interpreted as two numeric literals,
-                //   NB: it is NOT a valid subtraction (minus must be preceded and followedf by space) but we would like to display a nice error 
-                //   message informing the user that these spaces are mandatory, because a subtraction was most likey intended in this case.
-                // 000010-000050 should be interpreted as a range of numbers (indicated by separating the two bounding numbers of the range 
-                //   by a hyphen) in sequence-number-fields of compiler directive statements (ex: DELETE).
-
+                // 000010-000050 is interpreted as a UserDefinedWord
+                //Depending on the context it could be
+                // - a range of numbers (for DELETE_CD)
+                //     - See sequence-number-fields of compiler directive statements
+                // - a paragraph name
+                //The scanner will then always match 000010-000050 as a UserDefinedWord.
+                //The check to be sure that a variable name contains at least alphabetic char
+                //is done at CodeElement level.
+                
                 // CURRENT behavior of method ScanNumericLiteral :
                 // This method matches chars as long as they are characters allowed in a numeric literal.
                 // Then, it checks the format of the matched string, and returns either a NumericLiteral or Invalid token.
-                // If we write 123ABC, ScanNumericLiteral will match only 123, return a perfectly valid numeric literal,
-                // and place the currentIndex to match the next token on the char A.
+                // If we write 123ABC, ScanNumericLiteral will match 123ABC.
 
-                // PROPOSED SOLUTION :
-                // * in the Scanner :
+                // SOLUTION:
                 // If a token is starting with a digit, we first try to scan it as a numeric literal (most common case).
                 // Then we check if the character directly following the numeric literal is a valid character for a user defined word.
-                // We also check as a special case if this character is not '-', followed by a digit or an invalid char, because we need 
-                // to interpret 123-456 as two numeric literals without separator (notably for range of numbers)and 123- is not valid.
                 // If it is not valid (space, separator ...), we simply return the numeric literal token.
                 // If it is valid, we reset the state of the scanner and try to scan this word as a character string 
                 // (keyword, user defined word ...).
-                // * in the Grammar :
-                // We must allow numeric literal tokens (in addition to user defind words) in section and paragraph name rules.
-
-                // => additional PROBLEM after test : 
-                // 123. is already matched by the grammar in the reference documentation as a valid dataDescriptionEntry.
-                // But according to the same spec, 123. is also a valid paragraphHeader.
-                // TO DO : check which one of the two alternatives must be favored in the real world ?
-                // In the meantime, nothing was changed in the grammar file : purely numeric paragraph identifiers are not supported.
-
-                // LIMITATIONS :
-                // User defined words of the form 123E-4 or 123-4X are valid according to the spec but will not be supported 
-                // by this compiler. 
-                // These cases are considered highly improbable, but we will have to check on a large body of existing programs.
-                // Purely numeric aragraph and section names are not supported.
-
                 case '0':
                 case '1':
                 case '2':
@@ -1445,22 +1427,27 @@ namespace TypeCobol.Compiler.Scanner
                     int saveCurrentIndex = currentIndex;
                     Token numericLiteralToken = ScanNumericLiteral(startIndex);
 
-                    // 2. Then check to see if the next char would be valid inside a CobolWord
-                    bool nextCharIsACobolWordChar = (currentIndex <= lastIndex) && CobolChar.IsCobolWordChar(line[currentIndex]);
-                    if(nextCharIsACobolWordChar && line[currentIndex] == '-')
+
+                    // 2. a FloatingPointLiteral contains a character '.' or ',' which is invalid
+                    // in a UserDefinedWord or a keyword, so we can return this token directly.
+                    if (numericLiteralToken.TokenType == TokenType.FloatingPointLiteral)
                     {
-                        nextCharIsACobolWordChar = nextCharIsACobolWordChar && currentIndex < lastIndex
-                            && CobolChar.IsCobolWordChar(line[currentIndex + 1])
-                            && !Char.IsDigit(line[currentIndex + 1]);
+                        return numericLiteralToken;
                     }
 
-                    // 3.1. Return a numeric literal token
-                    if (!nextCharIsACobolWordChar)
+                    //TODO : Paragraph and section with name like "123" are currently not handled 
+
+                    if (numericLiteralToken.TokenType != TokenType.InvalidToken 
+                        && !((currentIndex <= lastIndex) && CobolChar.IsCobolWordChar(line[currentIndex])))
                     {
+                        // 3. Return a numeric literal token because there is no valid Cobol char that follows this token
                         return numericLiteralToken;
                     }
                     else
                     {
+                        //4. Handle UserDefinedWord like  123-456, 123X or 123-X
+
+                        //ScanNumericLiteral can return InvalidToken, in this case it's better to rescan it as a UserDefinedWord
                         // Reset scanner state
                         currentIndex = saveCurrentIndex;
                         if (numericLiteralToken.TokenType == TokenType.InvalidToken)
@@ -1468,8 +1455,7 @@ namespace TypeCobol.Compiler.Scanner
                             tokensLine.ClearDiagnosticsForToken(numericLiteralToken);
                         }
 
-                        // 3.2 Try to scan a Cobol character string
-                        //UserDefinedWord = 36,
+                        //Try to scan a Cobol character string: UserDefinedWord or PartialCobolWord
                         return ScanCharacterString(startIndex);
                     }
                 default:
@@ -1744,8 +1730,13 @@ namespace TypeCobol.Compiler.Scanner
                                      *                      08.
                                      * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
                                      * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
+                                     *
+                                     * 'ZERO', 'ZEROS' and 'ZEROES' figurative constants can also be used among values so they are considered too.
                                      */
-                                    return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral && lastSignificantToken.TokenFamily != TokenFamily.AlphanumericLiteral;
+                                    return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral &&
+                                           lastSignificantToken.TokenType != TokenType.ZERO &&
+                                           lastSignificantToken.TokenType != TokenType.ZEROS &&
+                                           lastSignificantToken.TokenType != TokenType.ZEROES;
                                 }
 
                                 return false;
@@ -1786,7 +1777,7 @@ namespace TypeCobol.Compiler.Scanner
             }
             while (currentCharStillInLiteral && lookupEndIndex <= lastIndex);
             lookupEndIndex = (lookupEndIndex > lastIndex) ? lastIndex : lookupEndIndex - 1;
-            // we may have consumed one additonal character after the end of the literal
+            // we may have consumed one additional character after the end of the literal
             if ((line[lookupEndIndex] == decimalPoint || line[lookupEndIndex] == '+' || line[lookupEndIndex] == '-') && lookupEndIndex > startIndex)
             {
                 lookupEndIndex--;
@@ -1806,11 +1797,14 @@ namespace TypeCobol.Compiler.Scanner
                     if (string.IsNullOrEmpty(mantissaDecimalPart))
                     {
                         tokensLine.AddDiagnostic(MessageCode.InvalidMantissaInFloatingPointLiteral, token);
+                        token.TokenType = TokenType.InvalidToken;
                     }
+
                     string exponent = fpMatch.Groups[5].Value;
                     if (exponent.Length > 2)
                     {
                         tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
+                        token.TokenType = TokenType.InvalidToken;
                     }
                     token.LiteralValue = new FloatingPointLiteralTokenValue(fpMatch.Groups[1].Value, fpMatch.Groups[2].Value, mantissaDecimalPart, fpMatch.Groups[4].Value, exponent);
                     return token;

@@ -5,6 +5,7 @@ using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupPreprocessor
@@ -98,7 +99,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         CopyTextNameVariations.Add(variation);
                     }
 
-                    if (this.TypeCobolOptions.HasCpyCopy(variation.TextName))
+                    if (this.TypeCobolOptions.IsCpyCopy(variation.TextName))
                     {
                         // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
                         copy.RemoveFirst01Level = true;
@@ -240,41 +241,82 @@ namespace TypeCobol.Compiler.CupPreprocessor
         {
             DeleteDirective deleteDirective = (DeleteDirective)CompilerDirective;
 
-            bool isFirst = true;
-            int previous = -42;
-            foreach(Token integerLiteralToken in seqNumField)
-            {
-                System.Diagnostics.Debug.Assert(integerLiteralToken.TokenType == TokenType.IntegerLiteral);
-                int current = (int)((IntegerLiteralTokenValue)integerLiteralToken.LiteralValue).Number;
 
-                if (isFirst)
+            foreach (Token token in seqNumField)
+            {
+                if (token.TokenType == TokenType.IntegerLiteral)
                 {
-                    previous = current;
-                    isFirst = false;
-                }
-                else
-                {
-                    DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
-                    range.From = previous;
+                    int current = (int)((IntegerLiteralTokenValue)token.LiteralValue).Number;
+
+                    //Report error for negative number and ignore them
                     if (current < 0)
                     {
-                        range.To = -current;
-                        isFirst = true;
+                        AddInvalidIntegerDiagnostic(current.ToString());
                     }
                     else
                     {
-                        range.To = previous;
-                        previous = current;
+                        DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                        range.From = current;
+                        range.To = current;
+                        deleteDirective.SequenceNumberRangesList.Add(range);
                     }
-                    deleteDirective.SequenceNumberRangesList.Add(range);
                 }
-            }
-            if (!isFirst && previous >= 0)
-            {
-                DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
-                range.From = previous;
-                range.To = previous;
-                deleteDirective.SequenceNumberRangesList.Add(range);
+                else if (token.TokenType == TokenType.UserDefinedWord)
+                {
+                    var numbers = token.Text.Split('-');
+
+                    if (numbers.Length != 2)
+                    {
+                        Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                            "Invalid range format");
+                        CompilerDirective.AddDiagnostic(error);
+                    }
+                    else
+                    {
+                        DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                        if (TryParseIntOrAddDiagnostic(numbers[0], out var temp))
+                        {
+                            range.From = temp;
+                            if (TryParseIntOrAddDiagnostic(numbers[1], out temp))
+                            {
+                                range.To = temp;
+                                deleteDirective.SequenceNumberRangesList.Add(range);
+                            }
+                        } //else ignore values
+
+                        bool TryParseIntOrAddDiagnostic(string integerText, out int result)
+                        {
+                            if (!int.TryParse(integerText, out result))
+                            {
+                                AddInvalidIntegerDiagnostic(integerText);
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                        $"Unexpected token: ${token} of type ${token.TokenType}");
+                    CompilerDirective.AddDiagnostic(error);
+                }
+
+                void AddInvalidIntegerDiagnostic(string invalidInteger)
+                {
+                    string errorMessage;
+                    if (string.IsNullOrWhiteSpace(invalidInteger))
+                    {
+                        errorMessage = "No value provided. Expected a positive integer.";
+                    }
+                    else
+                    {
+                        errorMessage = "Invalid value: " + invalidInteger + ". Expected a positive integer.";
+                    }
+
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), errorMessage);
+                    CompilerDirective.AddDiagnostic(error);
+                }
             }
         }
 
