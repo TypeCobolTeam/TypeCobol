@@ -34,7 +34,8 @@
       
        PARA-G.
              DISPLAY 'IN PARA-G '.
-           GOBACK.
+      
+             GOBACK.
       
        END-DECLARE.
       
