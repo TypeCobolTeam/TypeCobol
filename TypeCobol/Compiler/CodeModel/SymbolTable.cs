@@ -771,7 +771,7 @@ namespace TypeCobol.Compiler.CodeModel
                 else
                 {
                     //Match paragraphs located directly in the PROCEDURE DIVISION
-                    matchParentSection = p => p.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
+                    matchParentSection = MatchRootParagraph;
                 }
 
                 //If we get results in the same section, we return them. Otherwise, just return candidates with correct name.
@@ -780,6 +780,72 @@ namespace TypeCobol.Compiler.CodeModel
             }
 
             return EmptyParagraphList;
+        }
+
+        private static bool MatchRootParagraph(Paragraph paragraph)
+        {
+            #region Temporary debug code to help fix #2185
+
+            if (paragraph.Parent == null)
+            {
+                // We can't get much info if the node has no parent, attempt to dump its content in log...
+                var contextualData = new Dictionary<string, object>() { { "paragraphToText", ToText(paragraph) } };
+                Logging.LoggingSystem.LogMessage(Logging.LogLevel.Error, "SymbolTable.GetParagraph, paragraph parent is null", contextualData);
+                return false;
+            }
+
+            if (paragraph.Parent.CodeElement == null)
+            {
+                string paragraphToText = ToText(paragraph);
+                string programName = paragraph.Root.MainProgram.Name;
+                int paragraphLine = paragraph.CodeElement.Line;
+                string paragraphParentType = paragraph.Parent.GetType().FullName;
+                string nodeBefore = ToText(GetNodeBefore(paragraph));
+                string nodeAfter = ToText(GetNodeAfter(paragraph));
+                var contextualData = new Dictionary<string, object>()
+                                     {
+                                         { "paragraphToText", paragraphToText },
+                                         { "programName", programName },
+                                         { "paragraphLine", paragraphLine },
+                                         { "paragraphParentType", paragraphParentType },
+                                         { "nodeBefore", nodeBefore },
+                                         { "nodeAfter", nodeAfter }
+                                     };
+                Logging.LoggingSystem.LogMessage(Logging.LogLevel.Error, "SymbolTable.GetParagraph, paragraph parent code element is null", contextualData);
+                return false;
+            }
+
+            string ToText(Node node)
+            {
+                if (node == null) return "<NULL>";
+
+                string result = node.CodeElement?.SourceText ?? node.GetType().FullName;
+                foreach (var child in node.Children)
+                {
+                    result += Environment.NewLine;
+                    result += ToText(child);
+                }
+
+                return result;
+            }
+
+            Node GetNodeBefore(Node node)
+            {
+                Debug.Assert(node != null && node.Parent != null);
+                int index = node.Parent.ChildIndex(node);
+                return index > 0 ? node.Parent.Children[index - 1] : null;
+            }
+
+            Node GetNodeAfter(Node node)
+            {
+                Debug.Assert(node != null && node.Parent != null);
+                int index = node.Parent.ChildIndex(node);
+                return index < node.Parent.ChildrenCount - 1 ? node.Parent.Children[index + 1] : null;
+            }
+
+            #endregion
+
+            return paragraph.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
         }
 
         /// <summary>
