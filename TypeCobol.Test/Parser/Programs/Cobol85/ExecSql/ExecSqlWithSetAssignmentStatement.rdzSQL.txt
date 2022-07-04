@@ -1,0 +1,164 @@
+﻿--- Sql Statements ---
+line 6: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 50000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+    ]
+]
+line 7: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = <NULL>
+        - IsNull = True
+        - IsDefault = <NULL>
+    ]
+]
+line 8: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = <NULL>
+        - IsNull = <NULL>
+        - IsDefault = True
+    ]
+  - Assignments[1] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+      - Targets[1] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = COMMISSION
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 50000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+      - Values[1] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 8000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+    ]
+]
+line 10: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+      - Targets[1] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = COMMISSION
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 50000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+      - Values[1] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 8000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+    ]
+]
+line 11: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+      - Targets[1] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = COMMISSION
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = <NULL>
+        - IsNull = True
+        - IsDefault = <NULL>
+      - Values[1] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 8000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+    ]
+]
+line 12: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY_1
+          - IndicatorReference = <NULL>
+      - Targets[1] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = COMMISSION_1
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 50000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+      - Values[1] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 8000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+    ]
+  - Assignments[1] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY_2
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 50000
+        - IsNull = <NULL>
+        - IsDefault = <NULL>
+    ]
+]

@@ -1647,5 +1647,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnWhenEverStatement(whenEver);
         }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            Enter(new SetAssignment(setAssignment), setAssignment);
+            Exit();
+            Dispatcher.OnSetAssignmentStatement(setAssignment);
+        }
     }
 }

@@ -79,6 +79,8 @@ namespace TypeCobol.Compiler.Sql.Scanner
                     return ScanOneChar(startIndex, TokenType.RightParenthesisSeparator);
                 case ':':
                     return ScanOneChar(startIndex, TokenType.ColonSeparator);
+                case '=':
+                    return ScanOneChar(startIndex, TokenType.EqualOperator);
                 case '0':
                 case '1':
                 case '2':

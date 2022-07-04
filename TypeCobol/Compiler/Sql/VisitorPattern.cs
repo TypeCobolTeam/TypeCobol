@@ -31,6 +31,9 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] SqlExpression sqlExpression);
         bool Visit([NotNull] SqlConstant sqlConstant);
         bool Visit([NotNull] DatetimeConstant datetimeConstant);
+        bool Visit([NotNull] Assignment assignment);
+        bool Visit([NotNull] TargetVariable targetVariable);
+        bool Visit([NotNull] SourceValue sourceValue);
     }
 
     /// <summary>
@@ -58,6 +61,9 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(SqlExpression sqlExpression) => true;
         public virtual bool Visit(SqlConstant sqlConstant) => true;
         public virtual bool Visit(DatetimeConstant datetimeConstant) => true;
+        public virtual bool Visit(Assignment assignment) => true;
+        public virtual bool Visit(TargetVariable targetVariable) => true;
+        public virtual bool Visit(SourceValue sourceValue) => true;
     }
 
     /// <summary>

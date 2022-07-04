@@ -841,6 +841,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
         void OnLockTableStatement([NotNull] LockTableStatement lockTable);
+        /// <summary>
+        /// Enter a Set Assignment Statement Node
+        /// </summary>
+        /// <param name="setAssignment">The corresponding  SetAssignment Statement Code Element</param>
+        void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment);
         #endregion
     }
 }

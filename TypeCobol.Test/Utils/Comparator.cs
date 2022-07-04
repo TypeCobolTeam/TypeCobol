@@ -486,19 +486,7 @@ namespace TypeCobol.Test.Utils
 
             private void DumpObject(string name, object value)
             {
-                _writer.Write($"- {name} = ");
-                if (value == null)
-                {
-                    _writer.WriteLine("<NULL>");
-                }
-                else if (value is SqlObject sqlObject)
-                {
-                    sqlObject.Dump(_writer, 1);
-                }
-                else
-                {
-                    _writer.WriteLine(value.ToString());
-                }
+                SqlObject.DumpProperty(_writer, name, value, 0);
             }
 
             public override bool Visit(SelectStatement selectStatement)
@@ -547,6 +535,12 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(lockTableStatement.Table), lockTableStatement.Table);
                 DumpObject(nameof(lockTableStatement.PartitionId), lockTableStatement.PartitionId);
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
+                return true;
+            }
+            public override bool Visit(SetAssignmentStatement setAssignmentStatement)
+            {
+                _writer.WriteLine($"line {setAssignmentStatement.Line}: {nameof(SetAssignmentStatement)}");
+                DumpObject(nameof(setAssignmentStatement.Assignments), setAssignmentStatement.Assignments);
                 return true;
             }
         }

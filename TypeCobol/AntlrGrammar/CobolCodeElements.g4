@@ -217,6 +217,7 @@ codeElement:
 	| truncateStatement
 	| whenEverStatement
 	| lockTableStatement
+	| setAssignmentStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8320,6 +8321,22 @@ date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.Ordina
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
 datetime_constant: (date | time | timestamp) AlphanumericLiteral;
+
+//TODO Complete TargetVariable , sqlVariable and sqlExpression
+sqlVariable: hostVariable;
+targetVariable: sqlVariable;
+sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant;
+sqlExpression: sqlVariable | column_name | sqlConstant | SQL_NULL;
+sourceValue: sqlExpression | SQL_DEFAULT;
+setAssignmentStatement: SQL_SET assignmentClause (SQL_CommaSeparator assignmentClause)*;
+assignmentClause: simpleAssignmentClause | multipleAssignmentClause;
+simpleAssignmentClause: targetVariable EqualOperator sourceValue;
+multipleAssignmentClause: LeftParenthesisSeparator targetVariable (SQL_CommaSeparator targetVariable)* RightParenthesisSeparator EqualOperator sourceValueClause;
+sourceValueClause: LeftParenthesisSeparator sourceValueClauses RightParenthesisSeparator;
+sourceValueClauses: repeatedSourceValue | (SQL_VALUES  ( sourceValue | (LeftParenthesisSeparator repeatedSourceValue RightParenthesisSeparator)));
+repeatedSourceValue: sourceValue (SQL_CommaSeparator sourceValue)*;
+//TODO Add arrays and row-subselect
+
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------

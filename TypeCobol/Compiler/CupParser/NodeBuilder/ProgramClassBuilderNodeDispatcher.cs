@@ -874,5 +874,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnLockTableStatement(lockTable);
         }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            foreach (var listener in _listeners) listener.OnSetAssignmentStatement(setAssignment);
+        }
     }
 }

@@ -365,5 +365,110 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return new LockTableStatement(tableName, partitionId, mode);
         }
+
+        public SetAssignmentStatement CreateSetAssignmentStatement(CodeElementsParser.SetAssignmentStatementContext context)
+        {
+            IList<Assignment> assignments = context.assignmentClause().Select(assignment => CreateAssignmentClause(assignment)).ToList();
+            return new SetAssignmentStatement(assignments);
+        }
+
+        private Assignment CreateAssignmentClause(CodeElementsParser.AssignmentClauseContext context)
+        {
+            if (context.simpleAssignmentClause() != null)
+            {
+                return CreateSimpleAssignmentClause(context.simpleAssignmentClause());
+            }
+            else if (context.multipleAssignmentClause() != null)
+            { 
+                return CreateMultipleAssignmentClause(context.multipleAssignmentClause());
+            }
+            return null;
+        }
+
+        private Assignment CreateMultipleAssignmentClause(CodeElementsParser.MultipleAssignmentClauseContext context)
+        {
+            IList<SourceValue> values = new List<SourceValue>();
+            IList<TargetVariable> targets = context.targetVariable().Select(targetVariable => CreateTargetVariable(targetVariable)).ToList();
+
+            if (context.sourceValueClause().sourceValueClauses().repeatedSourceValue() != null)
+            {
+                values = CreateRepeatedSourceValue(context.sourceValueClause().sourceValueClauses()
+                    .repeatedSourceValue());
+            }
+            else if (context.sourceValueClause().sourceValueClauses().sourceValue() != null)
+            {
+                values.Add(CreateSourceValue(context.sourceValueClause().sourceValueClauses().sourceValue()));
+            }
+            return new Assignment(targets, values);
+        }
+        private Assignment CreateSimpleAssignmentClause(CodeElementsParser.SimpleAssignmentClauseContext context)
+        {
+            IList<TargetVariable> targets = new List<TargetVariable>();
+            IList<SourceValue> values = new List<SourceValue>();
+            if (context.targetVariable() != null)
+            {
+                targets.Add(new TargetVariable(CreateSqlVariable(context.targetVariable().sqlVariable())));
+            }
+            if (context.sourceValue() != null)
+            {
+                values.Add(CreateSourceValue(context.sourceValue()));
+            }
+            return new Assignment(targets, values);
+        }
+
+        public List<SourceValue> CreateRepeatedSourceValue(CodeElementsParser.RepeatedSourceValueContext context)
+        {
+            var sourceValues = context.sourceValue().Select(CreateSourceValue).ToList();
+            return sourceValues;
+        }
+
+        public TargetVariable CreateTargetVariable(CodeElementsParser.TargetVariableContext context)
+        {
+            return context.sqlVariable() != null ? new TargetVariable(CreateSqlVariable(context.sqlVariable())) : null;
+        }
+        public SourceValue CreateSourceValue(CodeElementsParser.SourceValueContext context)
+        {
+            SqlExpression expression = null;
+            SyntaxProperty<bool> isNull = null;
+            var isDefault = context.SQL_DEFAULT() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_DEFAULT())) : null;
+            if (context.sqlExpression() == null) return new SourceValue(expression, isNull, isDefault);
+            if (context.sqlExpression().SQL_NULL() != null)
+            {
+                isNull = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.sqlExpression().SQL_NULL()));
+            }
+            else
+            {
+                expression = CreateSqlExpression(context.sqlExpression());
+            }
+            return new SourceValue(expression, isNull, isDefault);
+        }
+
+        public SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
+        {
+            if (context.hostVariable() != null)
+            {
+                return CreateSqlHostVariable(context.hostVariable());
+            }
+            //TODO Add other conditions when adding new  Sql Variable Types 
+            return null;
+        }
+
+
+        public SqlExpression CreateSqlExpression(CodeElementsParser.SqlExpressionContext context)
+        {
+            if (context.column_name() != null)
+            {
+               return CreateSqlColumnName(context.column_name());
+            }
+            else if (context.sqlConstant() != null)
+            {
+                return new SqlConstant(ParseTreeUtils.GetFirstToken(context.sqlConstant()));
+            }
+            else if (context.sqlVariable() != null)
+            {
+                return CreateSqlVariable(context.sqlVariable());
+            }
+            return null;
+        }
     }
 }
