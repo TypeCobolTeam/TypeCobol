@@ -20,6 +20,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         "The number of source value specifications (expression, NULL, or DEFAULT) on the right side of the equal sign must match the number of target specifications on the left side of the statement.",
                         context);
                 }
+                //todo  Check that DEFAULT is specified when the corresponding target is a global variable or a transition variable. If DEFAULT is specified for a transition variable in an advanced trigger, then all target variables must be transition variables, and all source values must be specified with the DEFAULT keyword.
             }
         }
     }
