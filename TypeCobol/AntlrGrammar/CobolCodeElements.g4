@@ -8318,7 +8318,7 @@ sqlRetain: ({ string.Equals(CurrentToken.Text, "RETAIN", System.StringComparison
 sqlCursors: ({ string.Equals(CurrentToken.Text, "CURSORS", System.StringComparison.OrdinalIgnoreCase) }? KeywordCURSORS=UserDefinedWord);
 sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? KeywordLOCKS=UserDefinedWord);
 onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
-savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain ((sqlCursors (onRollbackRetain sqlLocks)?) | (sqlLocks onRollbackRetain sqlCursors));
+savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
 
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
