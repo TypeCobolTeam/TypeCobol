@@ -874,5 +874,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnLockTableStatement(lockTable);
         }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+            foreach (var listener in _listeners) listener.OnReleaseSavepointStatement(releaseSavepoint);
+        }
     }
 }

@@ -365,5 +365,12 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return new LockTableStatement(tableName, partitionId, mode);
         }
+
+        public ReleaseSavepointStatement CreateReleaseSavepointStatement(
+            CodeElementsParser.ReleaseSavepointStatementContext context)
+        {
+            var savepointName = context.Diagnostics == null ? new SymbolReference(new AlphanumericValue((Token)context.savepoint_name), SymbolType.SqlIdentifier) : null;
+            return new ReleaseSavepointStatement(savepointName);
+        }
     }
 }
