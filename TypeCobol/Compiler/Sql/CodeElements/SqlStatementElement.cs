@@ -24,6 +24,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 case TokenType.SQL_SAVEPOINT:
                 case TokenType.SQL_WHENEVER:
                 case TokenType.SQL_LOCK:
+                case TokenType.SQL_RELEASE:
                     return true;
                 default:
                     return false;

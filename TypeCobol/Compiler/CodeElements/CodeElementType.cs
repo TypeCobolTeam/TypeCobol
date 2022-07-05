@@ -173,6 +173,7 @@ namespace TypeCobol.Compiler.CodeElements
         SavepointStatement,
         WhenEverStatement,
         LockTableStatement,
+        ReleaseSavepointStatement,
 
         // [TYPECOBOL]
         LibraryCopy,

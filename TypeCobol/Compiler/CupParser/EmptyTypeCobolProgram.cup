@@ -144,6 +144,8 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.TruncateStatement Trunca
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SavepointStatement SavepointStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.WhenEverStatement WhenEverStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.LockTableStatement LockTableStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ReleaseSavepointStatement ReleaseSavepointStatement;
+
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -711,6 +713,8 @@ sqlStatement ::= CommitStatement:stmt
 |	WhenEverStatement:stmt 
 {: :}
 |	LockTableStatement:stmt 
+{: :}
+|	ReleaseSavepointStatement:stmt 
 {: :}
 ;
 
