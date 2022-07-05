@@ -368,7 +368,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         public SetAssignmentStatement CreateSetAssignmentStatement(CodeElementsParser.SetAssignmentStatementContext context)
         {
-            IList<Assignment> assignments = context.assignmentClause().Select(assignment => CreateAssignmentClause(assignment)).ToList();
+            IList<Assignment> assignments = context.assignmentClause().Select(CreateAssignmentClause).ToList();
             return new SetAssignmentStatement(assignments);
         }
 
@@ -387,8 +387,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private Assignment CreateMultipleAssignmentClause(CodeElementsParser.MultipleAssignmentClauseContext context)
         {
-            IList<SourceValue> values = new List<SourceValue>();
-            IList<TargetVariable> targets = context.targetVariable().Select(targetVariable => CreateTargetVariable(targetVariable)).ToList();
+            IList<SourceValue> values = null;
+            IList<TargetVariable> targets = context.targetVariable().Select(CreateTargetVariable).ToList();
 
             if (context.sourceValueClause().sourceValueClauses().repeatedSourceValue() != null)
             {
@@ -397,10 +397,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
             else if (context.sourceValueClause().sourceValueClauses().sourceValue() != null)
             {
-                values.Add(CreateSourceValue(context.sourceValueClause().sourceValueClauses().sourceValue()));
+                values = new List<SourceValue>
+                {
+                    CreateSourceValue(context.sourceValueClause().sourceValueClauses().sourceValue())
+                };
             }
+
             return new Assignment(targets, values);
         }
+
         private Assignment CreateSimpleAssignmentClause(CodeElementsParser.SimpleAssignmentClauseContext context)
         {
             IList<TargetVariable> targets = new List<TargetVariable>();
@@ -416,34 +421,28 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return new Assignment(targets, values);
         }
 
-        public List<SourceValue> CreateRepeatedSourceValue(CodeElementsParser.RepeatedSourceValueContext context)
+        private List<SourceValue> CreateRepeatedSourceValue(CodeElementsParser.RepeatedSourceValueContext context)
         {
             var sourceValues = context.sourceValue().Select(CreateSourceValue).ToList();
             return sourceValues;
         }
 
-        public TargetVariable CreateTargetVariable(CodeElementsParser.TargetVariableContext context)
+        private TargetVariable CreateTargetVariable(CodeElementsParser.TargetVariableContext context)
         {
             return context.sqlVariable() != null ? new TargetVariable(CreateSqlVariable(context.sqlVariable())) : null;
         }
-        public SourceValue CreateSourceValue(CodeElementsParser.SourceValueContext context)
+
+        private SourceValue CreateSourceValue(CodeElementsParser.SourceValueContext context)
         {
-            SqlExpression expression = null;
-            SyntaxProperty<bool> isNull = null;
-            var isDefault = context.SQL_DEFAULT() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_DEFAULT())) : null;
-            if (context.sqlExpression() == null) return new SourceValue(expression, isNull, isDefault);
-            if (context.sqlExpression().SQL_NULL() != null)
-            {
-                isNull = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.sqlExpression().SQL_NULL()));
-            }
-            else
-            {
-                expression = CreateSqlExpression(context.sqlExpression());
-            }
-            return new SourceValue(expression, isNull, isDefault);
+            if (context.sqlExpression() == null) return null;
+            var isDefault = context.SQL_DEFAULT() != null
+                ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_DEFAULT()))
+                : null;
+            var expression = CreateSqlExpression(context.sqlExpression());
+            return new SourceValue(expression, isDefault);
         }
 
-        public SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
+        private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
         {
             if (context.hostVariable() != null)
             {
@@ -454,7 +453,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
 
 
-        public SqlExpression CreateSqlExpression(CodeElementsParser.SqlExpressionContext context)
+        private SqlExpression CreateSqlExpression(CodeElementsParser.SqlExpressionContext context)
         {
             if (context.column_name() != null)
             {
@@ -467,6 +466,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             else if (context.sqlVariable() != null)
             {
                 return CreateSqlVariable(context.sqlVariable());
+            }
+            else if (context.SQL_NULL() != null)
+            {
+                return new SqlConstant(ParseTreeUtils.GetFirstToken(context.SQL_NULL()));
             }
             return null;
         }

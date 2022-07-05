@@ -862,7 +862,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
-        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement lockTable)
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
         {
 
         }

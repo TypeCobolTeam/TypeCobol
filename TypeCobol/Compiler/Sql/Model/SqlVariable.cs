@@ -33,6 +33,7 @@ namespace TypeCobol.Compiler.Sql.Model
     public class HostVariable : SqlVariable
     {
         public SymbolReference IndicatorReference { get; }
+        public override SqlExpressionType ExpressionType => SqlExpressionType.Variable;
 
         public HostVariable(SymbolReference mainReference, SymbolReference indicatorReference) : base(mainReference)
         {

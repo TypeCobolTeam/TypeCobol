@@ -50,13 +50,12 @@ namespace TypeCobol.Compiler.Sql.Model
     public class SourceValue : SqlObject
     {
         public SqlExpression Expression { get; }
-        public SyntaxProperty<bool> IsNull { get; }
         public SyntaxProperty<bool> IsDefault { get; }
+        public bool IsNull => Expression?.ExpressionType == SqlExpressionType.Constant && ((SqlConstant)Expression).ConstantType == SqlConstantType.Null;
 
-        public SourceValue(SqlExpression expression, SyntaxProperty<bool> isNull, SyntaxProperty<bool> isDefault)
+        public SourceValue(SqlExpression expression, SyntaxProperty<bool> isDefault)
         {
             Expression = expression;
-            IsNull = isNull;
             IsDefault = isDefault;
         }
 
