@@ -862,6 +862,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+
+        }
         public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
         {
 

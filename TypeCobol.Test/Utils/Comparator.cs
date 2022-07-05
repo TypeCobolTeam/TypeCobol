@@ -537,6 +537,12 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
                 return true;
             }
+            public override bool Visit(ReleaseSavepointStatement releaseSavepointStatement)
+            {
+                _writer.WriteLine($"line {releaseSavepointStatement.Line}: {nameof(ReleaseSavepointStatement)}");
+                DumpObject(nameof(releaseSavepointStatement.SavepointName), releaseSavepointStatement.SavepointName);
+                return true;
+            }
             public override bool Visit(SetAssignmentStatement setAssignmentStatement)
             {
                 _writer.WriteLine($"line {setAssignmentStatement.Line}: {nameof(SetAssignmentStatement)}");
