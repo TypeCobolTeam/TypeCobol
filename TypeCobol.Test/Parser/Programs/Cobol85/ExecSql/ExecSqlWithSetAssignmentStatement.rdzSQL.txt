@@ -1,5 +1,6 @@
 ﻿--- Diagnostics ---
 Line 11[29,38] <27, Error, Syntax> - Syntax error : missing ':' at 'COMMISSION' RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>targetVariable>sqlVariable>hostVariable,  OffendingSymbol=[29,38:COMMISSION]<UserDefinedWord>
+Line 16[15,17] <27, Error, Syntax> - Syntax error : The number of source value specifications (expression, NULL, or DEFAULT) on the right side of the equal sign must match the number of target specifications on the left side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[15,17:SET]<SQL_SET>
 Line 18[45,45] <27, Error, Syntax> - Syntax error : mismatched input ',' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>sourceValueClause>sourceValueClauses,  OffendingSymbol=[45,45:,]<SQL_CommaSeparator>
 
 --- Sql Statements ---

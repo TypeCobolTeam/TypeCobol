@@ -2303,6 +2303,7 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateSetAssignmentStatement(context);
-        }
+            SqlCodeElementCheckers.OnSetAssignmentStatementChecker(CodeElement, context);
+		}
     }
 }
