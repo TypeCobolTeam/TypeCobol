@@ -5,9 +5,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     public class DropTableStatement : SqlStatementElement
     {
-        public TableViewCorrelationName TableOrAliasName { get; }
+        public SymbolReference TableOrAliasName { get; }
 
-        public DropTableStatement(TableViewCorrelationName tableOrAliasName) : base(CodeElementType.DropTableStatement,
+        public DropTableStatement(SymbolReference tableOrAliasName) : base(CodeElementType.DropTableStatement,
             StatementType.DropTableStatement)
         {
             TableOrAliasName = tableOrAliasName;
@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                                                      && astVisitor.SqlVisitor != null
-                                                     && astVisitor.SqlVisitor.ContinueVisit(TableOrAliasName);
+                                                     && astVisitor.Visit(TableOrAliasName);
 
         }
     }

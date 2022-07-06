@@ -3,13 +3,10 @@ Line 9[15,18] <27, Error, Syntax> - Syntax error : mismatched input 'DROP' expec
 
 --- Sql Statements ---
 line 6: DropTableStatement
-- TableOrAliasName = TableViewCorrelationName
-  - Name = r IN h IN nom
+- TableOrAliasName = r IN h IN nom
 line 7: DropTableStatement
-- TableOrAliasName = TableViewCorrelationName
-  - Name = myTable
+- TableOrAliasName = myTable
 line 8: DropTableStatement
 - TableOrAliasName = <NULL>
 line 9: DropTableStatement
-- TableOrAliasName = TableViewCorrelationName
-  - Name = b IN a
+- TableOrAliasName = b IN a

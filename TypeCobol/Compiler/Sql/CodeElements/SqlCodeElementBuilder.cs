@@ -17,12 +17,12 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
         public CodeElement CreateTruncateStatement(CodeElementsParser.TruncateStatementContext context)
         {
-            var tableName = CreateTableOrAliasName(context.tableName);
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableName);
             var storageManagementClause =
                 CreateStorageManagementClause(context.storageManagementClause());
             var deleteTriggersHandlingClause = CreateDeleteTriggersHandlingClause(context.deleteTriggersHandlingClause());
             var isImmediate = context.SQL_IMMEDIATE() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_IMMEDIATE())) : null;
-            return new TruncateStatement(tableName, storageManagementClause, deleteTriggersHandlingClause,isImmediate);
+            return new TruncateStatement(tableName, storageManagementClause, deleteTriggersHandlingClause, isImmediate);
         }
 
         private SyntaxProperty<TruncateStatement.StorageManagementOption> CreateStorageManagementClause(CodeElementsParser.StorageManagementClauseContext context)
@@ -32,8 +32,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.ReuseStorage, ParseTreeUtils.GetFirstToken(context.reuse()));
             }
-           
-            else if (context.SQL_DROP()!=null)
+
+            else if (context.SQL_DROP() != null)
             {
                 storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.DropStorage, ParseTreeUtils.GetFirstToken(context.SQL_DROP()));
             }
@@ -137,13 +137,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private SingleTableReference CreateSingleTableOrViewReference(CodeElementsParser.Table_referenceContext context)
         {
-            var tableRef = CreateTableOrAliasName(context
+            TableViewCorrelationName tableRef = CreateTableOrViewOrCorrelationName(context
                 .single_table_or_view_reference().tableOrViewOrCorrelationName());
             CorrelationClause correlationClause = null;
             if ((context.single_table_or_view_reference().correlation_clause() != null))
             {
-                 correlationClause =
-                    CreateCorrelationClause(context.single_table_or_view_reference().correlation_clause());
+                correlationClause =
+                   CreateCorrelationClause(context.single_table_or_view_reference().correlation_clause());
             }
             SingleTableReference tableReference = new SingleTableReference(tableRef, correlationClause);
             return tableReference;
@@ -171,6 +171,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
+        private TableViewCorrelationName CreateTableOrViewOrCorrelationName(CodeElementsParser.TableOrViewOrCorrelationNameContext tableOrViewOrCorrelationName)
+        {
+            Token name = tableOrViewOrCorrelationName.Name as Token;
+            Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+            Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+            SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+            return new TableViewCorrelationName(fullName);
+        }
+
         private SelectClause CreateSelectClause(CodeElementsParser.Sql_selectClauseContext context)
         {
             SyntaxProperty<SelectionModifier> selectionModifier = null;
@@ -192,17 +201,34 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.selections() != null)
             {
-                var tableOrViewAllColumnsSelections = context.selections().selection().Select(selection =>
-                    new TableOrViewAllColumnsSelection(CreateTableOrAliasName(selection.tableOrViewAllColumnsSelection()
-                        .tableOrViewOrCorrelationName()))).ToList();
+                var tableOrViewAllColumnsSelections = context.selections().selection().Select(CreateSelection)
+                    .Where(selection => selection != null).ToList();
+
                 return new SelectClause(selectionModifier, tableOrViewAllColumnsSelections);
             }
 
             return null;
         }
 
+        private TableOrViewAllColumnsSelection CreateSelection(CodeElementsParser.SelectionContext context)
+        {
+            if (context.tableOrViewAllColumnsSelection() != null)
+            {
+                var tableOrViewOrCorrelationName =
+                    context.tableOrViewAllColumnsSelection().tableOrViewOrCorrelationName();
+                Token name = tableOrViewOrCorrelationName.Name as Token;
+                Token schemaName = tableOrViewOrCorrelationName.SchemaName as Token;
+                Token dbms = tableOrViewOrCorrelationName.DBMS as Token;
+                SymbolReference fullName = CreateSymbolReference(name, schemaName, dbms);
+                return new TableOrViewAllColumnsSelection(new TableViewCorrelationName(fullName));
+
+            }
+
+            return null;
+        }
+
         private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken,
-            Token topLevelQualifierToken)
+            Token topLevelQualifierToken = null)
         {
             if (nameToken != null)
             {
@@ -218,13 +244,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         SymbolReference topLevelQualifier =
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
                                 SymbolType.SqlIdentifier);
-                        QualifiedSymbolReference tail = new QualifiedSymbolReference( qualifier, topLevelQualifier);
-                        SymbolReference fullName= new QualifiedSymbolReference( name, tail);
+                        QualifiedSymbolReference tail = new QualifiedSymbolReference(qualifier, topLevelQualifier);
+                        SymbolReference fullName = new QualifiedSymbolReference(name, tail);
                         return fullName;
                     }
                     else
                     {
-                        SymbolReference fullName = new QualifiedSymbolReference(name,qualifier);
+                        SymbolReference fullName = new QualifiedSymbolReference(name, qualifier);
                         return fullName;
                     }
                 }
@@ -305,7 +331,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {
-            var tableName = CreateTableOrAliasName(context.tableOrViewOrCorrelationName());
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
             var partitionId = context.IntegerLiteral() != null
                 ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
                 : null;
@@ -327,29 +353,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public DropTableStatement CreateDropTableStatement(CodeElementsParser.DropTableStatementContext context)
         {
             if (context.tableOrAliasName() == null) return null;
-            var tableOrAliasName = CreateTableOrAliasName(context.tableOrAliasName().tableOrViewOrCorrelationName());
+            var tableOrAliasName = CreateTableOrAliasName(context.tableOrAliasName());
             return new DropTableStatement(tableOrAliasName);
         }
 
-        private TableViewCorrelationName CreateTableOrAliasName(CodeElementsParser.TableOrViewOrCorrelationNameContext context)
+        private SymbolReference CreateTableOrAliasName(CodeElementsParser.TableOrAliasNameContext context)
         {
-            if (context.Name == null) return null;
-            var nameToken = (Token) context.Name;
-            Token topLevelQualifierToken = null;
-            if (context.SchemaName != null)
+            if (context.tableOrViewOrCorrelationName().Name == null) return null;
+            var nameToken = (Token)context.tableOrViewOrCorrelationName().Name;
+            if (context.tableOrViewOrCorrelationName().SchemaName != null)
             {
-                var qualifierToken = (Token) context.SchemaName;
-                if (context.DBMS != null)
-                {
-                    topLevelQualifierToken = (Token)context.DBMS;
-                }
-                return new TableViewCorrelationName(CreateSymbolReference(nameToken, qualifierToken,
-                    topLevelQualifierToken));
+                var qualifierToken = (Token)context.tableOrViewOrCorrelationName().SchemaName;
+                var topLevelQualifierToken = (Token)context.tableOrViewOrCorrelationName().DBMS;
+                return CreateSymbolReference(nameToken, qualifierToken,
+                    topLevelQualifierToken);
             }
 
             var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
-                new SymbolType[] {SymbolType.SqlIdentifier, SymbolType.SqlIdentifier});
-            return new TableViewCorrelationName(aliasName);
+                new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
+            return aliasName;
         }
     }
 }
