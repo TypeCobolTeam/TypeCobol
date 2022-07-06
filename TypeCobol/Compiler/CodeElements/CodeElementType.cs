@@ -172,6 +172,7 @@ namespace TypeCobol.Compiler.CodeElements
         TruncateStatement,
         WhenEverStatement,
         LockTableStatement,
+        ReleaseSavepointStatement,
         DropTableStatement,
 
         // [TYPECOBOL]

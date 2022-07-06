@@ -842,6 +842,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
         void OnLockTableStatement([NotNull] LockTableStatement lockTable);
         /// <summary>
+        /// Enter a ReleaseSavepoint Statement Node
+        /// </summary>
+        /// <param name="releaseSavepoint">The corresponding  ReleaseSavepoint Statement Code Element</param>
+        void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint);
+        /// <summary>
         /// Enter a DropTable Statement Node
         /// </summary>
         /// <param name="dropTable">The corresponding  DropTable Statement Code Element</param>

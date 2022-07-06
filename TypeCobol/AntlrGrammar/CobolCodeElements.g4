@@ -217,6 +217,7 @@ codeElement:
 	| truncateStatement
 	| whenEverStatement
 	| lockTableStatement
+	| releaseSavepointStatement
 	| dropTableStatement
 
 //	[TYPECOBOL]
@@ -8300,8 +8301,9 @@ table_reference: single_table_or_view_reference;
 //TODO Add period-specification syntax
 single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?;
 correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
-new_column_names: LeftParenthesisSeparator new_column_name (SQL_CommaSeparator new_column_name)* RightParenthesisSeparator;
-new_column_name: UserDefinedWord;
+new_column_names: LeftParenthesisSeparator column_name (SQL_CommaSeparator column_name)* RightParenthesisSeparator;
+column_name:UserDefinedWord;
+releaseSavepointStatement: SQL_RELEASE SQL_TO? SQL_SAVEPOINT (savepoint_name=UserDefinedWord);
 
 sqlError: ({ string.Equals(CurrentToken.Text, "SQLERROR", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLERROR=UserDefinedWord);
 sqlWarning: ({ string.Equals(CurrentToken.Text, "SQLWARNING", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLWARNING=UserDefinedWord);
@@ -8309,6 +8311,9 @@ sqlFound: ({ string.Equals(CurrentToken.Text, "FOUND", System.StringComparison.O
 whenEverStatement: SQL_WHENEVER (sqlNotFound | sqlError | sqlWarning) (SQL_CONTINUE | sqlGotoHostLabel);
 sqlNotFound: SQL_NOT sqlFound;
 sqlGotoHostLabel: (SQL_GOTO | SQL_GO SQL_TO) ColonSeparator? hostLabel=UserDefinedWord;
+
+hostVariable: ColonSeparator mainVariable=UserDefinedWord ((indicator)? ColonSeparator indicatorVariable=UserDefinedWord)?;
+indicator: ({string.Equals(CurrentToken.Text, "INDICATOR", System.StringComparison.OrdinalIgnoreCase) }? KeywordINDICATOR=UserDefinedWord);
 
 lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
 share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);

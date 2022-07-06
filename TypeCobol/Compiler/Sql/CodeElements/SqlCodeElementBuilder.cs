@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -157,14 +158,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.new_column_names() != null)
             {
-                List<SymbolReference> newColumnNamesList = new List<SymbolReference>();
-                foreach (var columnName in context.new_column_names().new_column_name())
-                {
-                    SymbolReference newColumnName = new SymbolReference(
-                        new AlphanumericValue(columnName.start as Token),
-                        SymbolType.SqlIdentifier);
-                    newColumnNamesList.Add(newColumnName);
-                }
+                List<SqlColumnName> newColumnNamesList = (from columnName in context.new_column_names().column_name() where columnName.Diagnostics == null select CreateSqlColumnName(columnName)).ToList();
                 CorrelationClause correlationClause = new CorrelationClause(correlationName, newColumnNamesList);
                 return correlationClause;
             }
@@ -283,6 +277,12 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+        private SqlColumnName CreateSqlColumnName(CodeElementsParser.Column_nameContext context)
+        {
+                var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
+                var literalReferenceSymbol = new SymbolReference(new AlphanumericValue(literal), SymbolType.ColumnName);
+                return new SqlColumnName(literalReferenceSymbol);
+        }
 
         public WhenEverStatement CreateWhenEverStatement(CodeElementsParser.WhenEverStatementContext context)
         {
@@ -329,6 +329,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+        private HostVariable CreateSqlHostVariable(CodeElementsParser.HostVariableContext context)
+        {
+            if (context.mainVariable != null)
+            {
+                return new HostVariable(CreateHostVariableSymbolReference(context.mainVariable), CreateHostVariableSymbolReference(context.indicatorVariable));
+            }
+
+            return null;
+
+            SymbolReference CreateHostVariableSymbolReference(IToken userDefinedWord)
+            {
+                if (userDefinedWord == null) return null;
+                var token = (Token) userDefinedWord;
+                return new SymbolReference(new AlphanumericValue(token), SymbolType.SqlIdentifier);
+            }
+        }
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {
             var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
@@ -348,6 +364,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             return new LockTableStatement(tableName, partitionId, mode);
+        }
+
+        public ReleaseSavepointStatement CreateReleaseSavepointStatement(
+            CodeElementsParser.ReleaseSavepointStatementContext context)
+        {
+            var savepointName = context.Diagnostics == null ? new SymbolReference(new AlphanumericValue((Token)context.savepoint_name), SymbolType.SqlIdentifier) : null;
+            return new ReleaseSavepointStatement(savepointName);
         }
 
         public DropTableStatement CreateDropTableStatement(CodeElementsParser.DropTableStatementContext context)
