@@ -8313,16 +8313,15 @@ sqlGotoHostLabel: (SQL_GOTO | SQL_GO SQL_TO) ColonSeparator? hostLabel=UserDefin
 hostVariable: ColonSeparator mainVariable=UserDefinedWord ((indicator)? ColonSeparator indicatorVariable=UserDefinedWord)?;
 indicator: ({string.Equals(CurrentToken.Text, "INDICATOR", System.StringComparison.OrdinalIgnoreCase) }? KeywordINDICATOR=UserDefinedWord);
 
-restart: ({ string.Equals(CurrentToken.Text, "RESTART", System.StringComparison.OrdinalIgnoreCase) }? KeywordRESTART=UserDefinedWord);
 sqlIncrement: ({ string.Equals(CurrentToken.Text, "INCREMENT", System.StringComparison.OrdinalIgnoreCase) }? KeywordINCREMENT=UserDefinedWord);
 minvalue: ({ string.Equals(CurrentToken.Text, "MINVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMINVALUE=UserDefinedWord);
 maxvalue: ({ string.Equals(CurrentToken.Text, "MAXVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMAXVALUE=UserDefinedWord);
 cycle: ({ string.Equals(CurrentToken.Text, "CYCLE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCYCLE=UserDefinedWord);
 cache: ({ string.Equals(CurrentToken.Text, "CACHE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCACHE=UserDefinedWord);
 
-alterSequenceStatement: SQL_ALTER SQL_SEQUENCE (sequence_name=UserDefinedWord) alterSequenceClause alterSequenceClause*;
+alterSequenceStatement: SQL_ALTER SQL_SEQUENCE (sequence_name=tableOrViewOrCorrelationName) alterSequenceClause alterSequenceClause*;
 alterSequenceClause: restartClause | incrementClause | minValueClause | maxValueClause | cacheClause | cycle | SQL_ORDER | noClauses;
-restartClause: restart ( SQL_WITH (numeric_constant=DecimalLiteral))? ;
+restartClause: SQL_RESTART ( SQL_WITH (numeric_constant=DecimalLiteral))? ;
 incrementClause: sqlIncrement SQL_BY (numeric_constant=DecimalLiteral);
 minValueClause: minvalue (numeric_constant=DecimalLiteral);
 maxValueClause: maxvalue (numeric_constant=DecimalLiteral);

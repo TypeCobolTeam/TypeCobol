@@ -1,7 +1,26 @@
-﻿--- Sql Statements ---
+﻿--- Diagnostics ---
+Line 6[15,19] <27, Error, Syntax> - Syntax error : MinValue can not be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 14[15,19] <27, Error, Syntax> - Syntax error : At least one option must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 20[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {user defined word, NO, ORDER, RESTART} RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+
+--- Sql Statements ---
 line 6: AlterSequenceStatement
-- SequenceName = org_seq
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
 - Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = SqlConstant
+  - LiteralValue = 80|1>8
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 8: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq
+- Restart = True
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
 - MinValue = <NULL>
@@ -10,8 +29,9 @@ line 6: AlterSequenceStatement
 - CacheSize = <NULL>
 - NoCache = True
 - Ordered = <NULL>
-line 7: AlterSequenceStatement
-- SequenceName = RESTART
+line 9: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq
 - Restart = <NULL>
 - RestartValue = <NULL>
 - IncrementValue = SqlConstant
@@ -22,8 +42,9 @@ line 7: AlterSequenceStatement
 - CacheSize = <NULL>
 - NoCache = True
 - Ordered = <NULL>
-line 8: AlterSequenceStatement
-- SequenceName = org_seq2
+line 10: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
 - Restart = <NULL>
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
@@ -34,8 +55,9 @@ line 8: AlterSequenceStatement
 - CacheSize = <NULL>
 - NoCache = True
 - Ordered = <NULL>
-line 9: AlterSequenceStatement
-- SequenceName = org_seq2
+line 11: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
 - Restart = <NULL>
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
@@ -46,19 +68,9 @@ line 9: AlterSequenceStatement
 - CacheSize = <NULL>
 - NoCache = True
 - Ordered = <NULL>
-line 10: AlterSequenceStatement
-- SequenceName = org_seq2
-- Restart = <NULL>
-- RestartValue = <NULL>
-- IncrementValue = <NULL>
-- MinValue = <NULL>
-- MaxValue = <NULL>
-- Cycle = <NULL>
-- CacheSize = <NULL>
-- NoCache = True
-- Ordered = <NULL>
-line 11: AlterSequenceStatement
-- SequenceName = org_seq2
+line 12: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
 - Restart = <NULL>
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
@@ -68,8 +80,21 @@ line 11: AlterSequenceStatement
 - CacheSize = <NULL>
 - NoCache = True
 - Ordered = <NULL>
-line 12: AlterSequenceStatement
-- SequenceName = org_seq2
+line 13: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = True
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = <NULL>
+line 14: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
 - Restart = <NULL>
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
@@ -80,30 +105,9 @@ line 12: AlterSequenceStatement
   - LiteralValue = 100
 - NoCache = False
 - Ordered = <NULL>
-line 13: AlterSequenceStatement
-- SequenceName = org_seq2
-- Restart = <NULL>
-- RestartValue = <NULL>
-- IncrementValue = <NULL>
-- MinValue = <NULL>
-- MaxValue = <NULL>
-- Cycle = <NULL>
-- CacheSize = <NULL>
-- NoCache = True
-- Ordered = <NULL>
-line 14: AlterSequenceStatement
-- SequenceName = org_seq2
-- Restart = <NULL>
-- RestartValue = <NULL>
-- IncrementValue = <NULL>
-- MinValue = <NULL>
-- MaxValue = <NULL>
-- Cycle = <NULL>
-- CacheSize = <NULL>
-- NoCache = True
-- Ordered = True
 line 15: AlterSequenceStatement
-- SequenceName = org_seq2
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
 - Restart = <NULL>
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
@@ -114,11 +118,48 @@ line 15: AlterSequenceStatement
 - NoCache = True
 - Ordered = <NULL>
 line 16: AlterSequenceStatement
-- SequenceName = org_seq2
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
 - Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = True
+line 17: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = True
+line 18: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
+- Restart = True
 - RestartValue = <NULL>
 - IncrementValue = SqlConstant
   - LiteralValue = 50|1>5
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- NoCache = True
+- Ordered = True
+line 19: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq3
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
 - MinValue = <NULL>
 - MaxValue = <NULL>
 - Cycle = <NULL>

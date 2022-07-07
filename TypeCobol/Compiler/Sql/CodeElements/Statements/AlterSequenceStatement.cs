@@ -5,7 +5,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     public class AlterSequenceStatement : SqlStatementElement
     {
-        public SymbolReference SequenceName { get; }
+        public TableViewCorrelationName SequenceName { get; }
         public SyntaxProperty<bool> Restart { get; }
         public SqlConstant RestartValue { get; }
         public SqlConstant IncrementValue { get; }
@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
         public bool NoCache => CacheSize == null;
         public SyntaxProperty<bool> Ordered { get; }
 
-        public AlterSequenceStatement(SymbolReference sequenceName, SyntaxProperty<bool> restart,
+        public AlterSequenceStatement(TableViewCorrelationName sequenceName, SyntaxProperty<bool> restart,
             SqlConstant restartValue, SqlConstant incrementValue, SqlConstant minValue, SqlConstant maxValue,
             SyntaxProperty<bool> cycle, SqlConstant cacheSize, SyntaxProperty<bool> ordered) : base(
             CodeElementType.AlterSequenceStatement, StatementType.AlterSequenceStatement)
@@ -35,10 +35,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                                                     && this.ContinueVisitToChildren(astVisitor, SequenceName, Restart,
+                                                     && this.ContinueVisitToChildren(astVisitor, Restart,
                                                          Cycle, Ordered)
                                                      && astVisitor.SqlVisitor != null
-                                                     && astVisitor.SqlVisitor.ContinueVisit(RestartValue,
+                                                     && astVisitor.SqlVisitor.ContinueVisit(SequenceName, RestartValue,
                                                          IncrementValue, MinValue, MaxValue, CacheSize);
         }
     }
