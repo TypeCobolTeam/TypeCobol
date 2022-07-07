@@ -854,6 +854,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnSavepointStatement([NotNull] SavepointStatement truncate)
+        {
+
+        }
         public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
         {
 

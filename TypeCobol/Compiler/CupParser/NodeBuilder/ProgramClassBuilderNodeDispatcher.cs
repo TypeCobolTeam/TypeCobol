@@ -865,6 +865,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnTruncateStatement(truncate);
         }
+        public void OnSavepointStatement([NotNull] SavepointStatement savepoint)
+        {
+            foreach (var listener in _listeners) listener.OnSavepointStatement(savepoint);
+        }
 
         public void OnWhenEverStatement(WhenEverStatement whenEver)
         {

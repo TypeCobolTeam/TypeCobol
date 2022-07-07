@@ -541,6 +541,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(whenEverStatement.TargetSectionOrParagraph), whenEverStatement.TargetSectionOrParagraph);
                 return true;
             }
+            public override bool Visit(SavepointStatement savepointStatement)
+            {
+                _writer.WriteLine($"line {savepointStatement.Line}: {nameof(SavepointStatement)}");
+                DumpObject(nameof(savepointStatement.Name), savepointStatement.Name);
+                DumpObject(nameof(savepointStatement.IsUnique), savepointStatement.IsUnique);
+                DumpObject(nameof(savepointStatement.RetainLocks), savepointStatement.RetainLocks);
+                return true;
+            }
             public override bool Visit(LockTableStatement lockTableStatement)
             {
                 _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");

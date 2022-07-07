@@ -2297,5 +2297,13 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateReleaseSavepointStatement(context);
         }
+
+        public override void EnterSavepointStatement([NotNull] CodeElementsParser.SavepointStatementContext context)
+        {
+            Context = context;
+            var savepointStatement = _sqlCodeElementBuilder.CreateSavepointStatement(context);
+            CodeElement = savepointStatement;
+            SavepointStatementChecker.OnCodeElement(savepointStatement, context);
+        }
     }
 }
