@@ -389,10 +389,14 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Rollback rollback);
         bool Visit([NotNull] TruncateStatement truncateStatement);
         bool Visit([NotNull] Truncate truncate);
+        bool Visit([NotNull] SavepointStatement savepointStatement);
+        bool Visit([NotNull] Savepoint savepoint);
         bool Visit([NotNull] WhenEverStatement whenEverStatement);
         bool Visit([NotNull] WhenEver whenEver);
         bool Visit([NotNull] LockTableStatement lockTableStatement);
         bool Visit([NotNull] LockTable lockTable);
+        bool Visit([NotNull] ReleaseSavepointStatement releaseSavepointStatement);
+        bool Visit([NotNull] ReleaseSavepoint releaseSavepoint);
         bool Visit([NotNull] AlterSequenceStatement alterSequenceStatement);
         bool Visit([NotNull] AlterSequence alterSequence);
     }
@@ -1538,6 +1542,15 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return true;
         }
+        public virtual bool Visit([NotNull] SavepointStatement savepointStatement)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] Savepoint savepoint)
+        {
+            return true;
+        }
 
         public virtual bool Visit([NotNull] WhenEverStatement whenEverStatement)
         {
@@ -1553,6 +1566,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] LockTable lockTable)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] ReleaseSavepointStatement releaseSavepointStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] ReleaseSavepoint releaseSavepoint)
         {
             return true;
         }

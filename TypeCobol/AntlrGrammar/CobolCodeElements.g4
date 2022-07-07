@@ -217,6 +217,8 @@ codeElement:
 	| truncateStatement
 	| whenEverStatement
 	| lockTableStatement
+	| releaseSavepointStatement
+	| savepointStatement
 	| alterSequenceStatement
 
 //	[TYPECOBOL]
@@ -8302,6 +8304,7 @@ single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?
 correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
 new_column_names: LeftParenthesisSeparator column_name (SQL_CommaSeparator column_name)* RightParenthesisSeparator;
 column_name:UserDefinedWord;
+releaseSavepointStatement: SQL_RELEASE SQL_TO? SQL_SAVEPOINT (savepoint_name=UserDefinedWord);
 
 sqlError: ({ string.Equals(CurrentToken.Text, "SQLERROR", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLERROR=UserDefinedWord);
 sqlWarning: ({ string.Equals(CurrentToken.Text, "SQLWARNING", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLWARNING=UserDefinedWord);
@@ -8332,6 +8335,12 @@ lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITI
 share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);
 exclusive: ({ string.Equals(CurrentToken.Text, "EXCLUSIVE", System.StringComparison.OrdinalIgnoreCase) }? KeywordEXCLUSIVE=UserDefinedWord);
 sql_mode: ({ string.Equals(CurrentToken.Text, "MODE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMODE=UserDefinedWord);
+sqlRetain: ({ string.Equals(CurrentToken.Text, "RETAIN", System.StringComparison.OrdinalIgnoreCase) }? KeywordRETAIN=UserDefinedWord);
+sqlCursors: ({ string.Equals(CurrentToken.Text, "CURSORS", System.StringComparison.OrdinalIgnoreCase) }? KeywordCURSORS=UserDefinedWord);
+sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? KeywordLOCKS=UserDefinedWord);
+onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
+savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
+
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);

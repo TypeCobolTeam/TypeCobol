@@ -284,6 +284,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 return new SqlColumnName(literalReferenceSymbol);
         }
 
+        public SavepointStatement CreateSavepointStatement(CodeElementsParser.SavepointStatementContext context)
+        {
+            if (context == null) return null;
+            SymbolReference savepointName = null;
+            if (context.savepoint_name != null)
+            {
+                savepointName = new SymbolReference(new AlphanumericValue((Token) context.savepoint_name),
+                    SymbolType.SqlIdentifier);
+            }
+
+            var retainLocks = context.sqlLocks() != null
+                ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.sqlLocks()))
+                : null;
+            var isUnique = context.SQL_UNIQUE() != null
+                ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_UNIQUE()))
+                : null;
+            return new SavepointStatement(savepointName, retainLocks, isUnique);
+        }
+
         public WhenEverStatement CreateWhenEverStatement(CodeElementsParser.WhenEverStatementContext context)
         {
             if (context != null)
@@ -364,6 +383,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             return new LockTableStatement(tableName, partitionId, mode);
+        }
+
+        public ReleaseSavepointStatement CreateReleaseSavepointStatement(
+            CodeElementsParser.ReleaseSavepointStatementContext context)
+        {
+            var savepointName = context.Diagnostics == null ? new SymbolReference(new AlphanumericValue((Token)context.savepoint_name), SymbolType.SqlIdentifier) : null;
+            return new ReleaseSavepointStatement(savepointName);
         }
         public enum AlterSequenceClauseTypes 
         {

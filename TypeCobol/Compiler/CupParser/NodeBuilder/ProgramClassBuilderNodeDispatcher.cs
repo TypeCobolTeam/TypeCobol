@@ -865,6 +865,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnTruncateStatement(truncate);
         }
+        public void OnSavepointStatement([NotNull] SavepointStatement savepoint)
+        {
+            foreach (var listener in _listeners) listener.OnSavepointStatement(savepoint);
+        }
 
         public void OnWhenEverStatement(WhenEverStatement whenEver)
         {
@@ -873,6 +877,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
         {
             foreach (var listener in _listeners) listener.OnLockTableStatement(lockTable);
+        }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+            foreach (var listener in _listeners) listener.OnReleaseSavepointStatement(releaseSavepoint);
         }
         public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
         {
