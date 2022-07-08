@@ -221,7 +221,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
-        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken,
+        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken = null,
             Token topLevelQualifierToken = null)
         {
             if (nameToken != null)
@@ -375,7 +375,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         public DropTableStatement CreateDropTableStatement(CodeElementsParser.DropTableStatementContext context)
         {
-            if (context.tableOrAliasName() == null) return null;
             var tableOrAliasName = CreateTableOrAliasName(context.tableOrAliasName());
             return new DropTableStatement(tableOrAliasName);
         }

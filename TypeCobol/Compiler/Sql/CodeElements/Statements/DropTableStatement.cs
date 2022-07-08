@@ -16,8 +16,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                                                     && astVisitor.SqlVisitor != null
-                                                     && astVisitor.Visit(TableOrAliasName);
+                                                     && this.ContinueVisitToChildren(astVisitor, TableOrAliasName);
 
         }
     }
