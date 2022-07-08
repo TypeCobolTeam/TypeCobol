@@ -2298,6 +2298,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = _sqlCodeElementBuilder.CreateReleaseSavepointStatement(context);
         }
 
+        public override void EnterSavepointStatement([NotNull] CodeElementsParser.SavepointStatementContext context)
+        {
+            Context = context;
+            var savepointStatement = _sqlCodeElementBuilder.CreateSavepointStatement(context);
+            CodeElement = savepointStatement;
+            SavepointStatementChecker.OnCodeElement(savepointStatement, context);
+        }
+
         public override void EnterDropTableStatement([NotNull] CodeElementsParser.DropTableStatementContext context)
         {
             Context = context;
