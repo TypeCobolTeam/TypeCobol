@@ -1,0 +1,5 @@
+﻿--- Sql Statements ---
+line 6: ExecuteImmediateStatement
+- Expression = HostVariable
+  - MainReference = var1
+  - IndicatorReference = <NULL>

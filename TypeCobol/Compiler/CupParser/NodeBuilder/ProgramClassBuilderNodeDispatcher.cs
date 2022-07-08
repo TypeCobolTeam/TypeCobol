@@ -882,5 +882,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnReleaseSavepointStatement(releaseSavepoint);
         }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
+        {
+            foreach (var listener in _listeners) listener.OnExecuteImmediateStatement(executeImmediate);
+        }
     }
 }

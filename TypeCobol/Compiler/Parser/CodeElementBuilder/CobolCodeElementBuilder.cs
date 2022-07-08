@@ -2305,5 +2305,10 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = savepointStatement;
             SavepointStatementChecker.OnCodeElement(savepointStatement, context);
         }
-    }
+        public override void EnterExecuteImmediateStatement([NotNull] CodeElementsParser.ExecuteImmediateStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateExecuteImmediateStatement(context);
+		}
+	}
 }

@@ -219,6 +219,7 @@ codeElement:
 	| lockTableStatement
 	| releaseSavepointStatement
 	| savepointStatement
+	| executeImmediateStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8329,6 +8330,11 @@ date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.Ordina
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
 datetime_constant: (date | time | timestamp) AlphanumericLiteral;
+
+sqlVariable: hostVariable;
+sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant;
+sqlExpression: sqlVariable | column_name | sqlConstant | SQL_NULL;
+executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE sqlExpression;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------

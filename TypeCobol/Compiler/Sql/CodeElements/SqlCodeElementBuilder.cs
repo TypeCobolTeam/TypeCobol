@@ -391,5 +391,31 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             var savepointName = context.Diagnostics == null ? new SymbolReference(new AlphanumericValue((Token)context.savepoint_name), SymbolType.SqlIdentifier) : null;
             return new ReleaseSavepointStatement(savepointName);
         }
+
+        public ExecuteImmediateStatement CreateExecuteImmediateStatement(CodeElementsParser.ExecuteImmediateStatementContext context)
+        {
+            if (context.sqlExpression() == null) return null;
+            if (context.sqlExpression().sqlVariable() != null)
+            {
+                return new ExecuteImmediateStatement(CreateSqlVariable(context.sqlExpression().sqlVariable()));
+            }
+            else if (context.sqlExpression().sqlConstant() != null)
+            {
+                var stringLiteral =
+                    new SqlConstant(ParseTreeUtils.GetFirstToken(context.sqlExpression().sqlConstant()));
+                //TODO add support for string expressions
+            }
+
+            return null;
+        }
+        private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
+        {
+            if (context.hostVariable() != null)
+            {
+                return CreateSqlHostVariable(context.hostVariable());
+            }
+            //TODO Add other conditions when adding new  Sql Variable Types 
+            return null;
+        }
     }
 }

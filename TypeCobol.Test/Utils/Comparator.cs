@@ -563,6 +563,12 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(releaseSavepointStatement.SavepointName), releaseSavepointStatement.SavepointName);
                 return true;
             }
+            public override bool Visit(ExecuteImmediateStatement executeImmediateStatement)
+            {
+                _writer.WriteLine($"line {executeImmediateStatement.Line}: {nameof(ExecuteImmediateStatement)}");
+                DumpObject(nameof(executeImmediateStatement.Expression), executeImmediateStatement.Expression);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

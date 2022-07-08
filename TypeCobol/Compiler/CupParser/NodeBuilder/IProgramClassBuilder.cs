@@ -851,6 +851,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="releaseSavepoint">The corresponding  ReleaseSavepoint Statement Code Element</param>
         void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint);
+        /// <summary>
+        /// Enter a ExecuteImmediate Statement Node
+        /// </summary>
+        /// <param name="executeImmediate">The corresponding  ExecuteImmediate Statement Code Element</param>
+        void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate);
         #endregion
     }
 }
