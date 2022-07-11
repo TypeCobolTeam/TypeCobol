@@ -17,8 +17,9 @@
 [24,29:000003]<IntegerLiteral>{3}
 
 -- Line 6 --
-*** DIRECTIVE INSERT 1 ([1,6:insert]<INSERT>[8,13:000001]<IntegerLiteral>{1}) ***
-[14,20:-000010]<IntegerLiteral>{-10}
+*** DIRECTIVE INVALID SYNTAX -> INSERT 0 ([1,6:insert]<INSERT>) ***
+[8,20:000001-000010]<UserDefinedWord>
+Line 6[8,20] <27, Error, Syntax> - Syntax error : mismatched input '000001-000010' expecting integer literal
 
 -- Line 7 --
 *** DIRECTIVE INVALID SYNTAX -> INSERT 0 ([1,6:INSERT]<INSERT>) ***
@@ -29,18 +30,20 @@ Line 8[1,6] <27, Error, Syntax> - Syntax error : mismatched input 'INSERT' expec
 [14,14+:,]<CommaSeparator>
 
 -- Line 9 --
-*** DIRECTIVE INSERT 1 ([1,6:INSERT]<INSERT>[8,13:000001]<IntegerLiteral>{1}) ***
-[14,14+:-]<MinusOperator>
+*** DIRECTIVE INVALID SYNTAX -> INSERT 0 ([1,6:INSERT]<INSERT>) ***
+[8,14:000001-]<UserDefinedWord>
+Line 9[8,14] <27, Error, Syntax> - Syntax error : mismatched input '000001-' expecting integer literal
 
 -- Line 10 --
 *** DIRECTIVE INSERT 1 ([1,6:INSERT]<INSERT>[8,13:000001]<IntegerLiteral>{1}) ***
 [15,20:000002]<IntegerLiteral>{2}
 
 -- Line 11 --
-*** DIRECTIVE INSERT 1 ([1,6:INSERT]<INSERT>[8,13:000001]<IntegerLiteral>{1}) ***
-[14,14:-]<MinusOperator>
+*** DIRECTIVE INVALID SYNTAX -> INSERT 0 ([1,6:INSERT]<INSERT>) ***
+[8,14:000001-]<UserDefinedWord>
 [15,15:,]<CommaSeparator>
 [16,21:000002]<IntegerLiteral>{2}
+Line 11[8,14] <27, Error, Syntax> - Syntax error : mismatched input '000001-' expecting integer literal
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> INSERT -2 ([1,6:INSERT]<INSERT>[8,14:-000002]<IntegerLiteral>{-2}) ***

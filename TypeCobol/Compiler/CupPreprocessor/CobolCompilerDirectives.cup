@@ -793,13 +793,20 @@ deleteCompilerStatement ::=
 // Each entry in the sequence-number-field must be separated from the preceding entry 
 // by a comma >>> followed by a space <<<.
 deleteSequenceNumberField ::=
-	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); :} 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral, TokenType.UserDefinedWord); :} 
 	IntegerLiteral:il
 	{: RESULT = new TokenList() {il}; :}
 |	deleteSequenceNumberField:snf 
-	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); :} 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral, TokenType.UserDefinedWord); :} 
 	IntegerLiteral:il
 	{: snf.Add(il); RESULT = snf; :}
+|	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral, TokenType.UserDefinedWord); :} 
+	UserDefinedWord:udw
+	{: RESULT = new TokenList() {udw}; :}
+|	deleteSequenceNumberField:snf 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral, TokenType.UserDefinedWord); :} 
+	UserDefinedWord:udw
+	{: snf.Add(udw); RESULT = snf; :}
 ;
 
 // p539: EJECT statement 
