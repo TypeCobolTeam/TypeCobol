@@ -1,5 +1,13 @@
-﻿--- Sql Statements ---
+﻿--- Diagnostics ---
+Line 9[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>executeImmediateStatement>sqlExpression,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+
+--- Sql Statements ---
 line 6: ExecuteImmediateStatement
 - Expression = HostVariable
   - MainReference = var1
   - IndicatorReference = <NULL>
+line 7: ExecuteImmediateStatement
+- Expression = SqlConstant
+  - LiteralValue = SELECT * FROM table1
+line 8: ExecuteImmediateStatement
+- Expression = <NULL>

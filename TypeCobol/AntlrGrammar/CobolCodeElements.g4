@@ -8332,8 +8332,8 @@ timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringCompari
 datetime_constant: (date | time | timestamp) AlphanumericLiteral;
 
 sqlVariable: hostVariable;
-sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant;
-sqlExpression: sqlVariable | column_name | sqlConstant | SQL_NULL;
+sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
+sqlExpression: sqlVariable | column_name | sqlConstant ;
 executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE sqlExpression;
 // ------------------------------
 // End of DB2 coprocessor

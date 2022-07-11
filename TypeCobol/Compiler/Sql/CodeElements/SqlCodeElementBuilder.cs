@@ -394,20 +394,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         public ExecuteImmediateStatement CreateExecuteImmediateStatement(CodeElementsParser.ExecuteImmediateStatementContext context)
         {
-            if (context.sqlExpression() == null) return null;
-            if (context.sqlExpression().sqlVariable() != null)
+            SqlExpression sqlExpression = null;
+            if (context.sqlExpression() != null)
             {
-                return new ExecuteImmediateStatement(CreateSqlVariable(context.sqlExpression().sqlVariable()));
-            }
-            else if (context.sqlExpression().sqlConstant() != null)
-            {
-                var stringLiteral =
-                    new SqlConstant(ParseTreeUtils.GetFirstToken(context.sqlExpression().sqlConstant()));
-                //TODO add support for string expressions
+                sqlExpression = CreateSqlExpression(context.sqlExpression());
             }
 
-            return null;
+            //TODO add support for string expressions
+            return new ExecuteImmediateStatement(sqlExpression);
         }
+
         private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
         {
             if (context.hostVariable() != null)
@@ -415,6 +411,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 return CreateSqlHostVariable(context.hostVariable());
             }
             //TODO Add other conditions when adding new  Sql Variable Types 
+            return null;
+        }
+        private SqlExpression CreateSqlExpression(CodeElementsParser.SqlExpressionContext context)
+        {
+            if (context.column_name() != null)
+            {
+                return CreateSqlColumnName(context.column_name());
+            }
+            else if (context.sqlConstant() != null)
+            {
+                return new SqlConstant(ParseTreeUtils.GetFirstToken(context.sqlConstant()));
+            }
+            else if (context.sqlVariable() != null)
+            {
+                return CreateSqlVariable(context.sqlVariable());
+            }
             return null;
         }
     }
