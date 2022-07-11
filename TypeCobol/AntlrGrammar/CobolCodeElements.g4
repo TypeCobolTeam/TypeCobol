@@ -219,6 +219,7 @@ codeElement:
 	| lockTableStatement
 	| releaseSavepointStatement
 	| savepointStatement
+	| connectStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8314,6 +8315,11 @@ sqlGotoHostLabel: (SQL_GOTO | SQL_GO SQL_TO) ColonSeparator? hostLabel=UserDefin
 
 hostVariable: ColonSeparator mainVariable=UserDefinedWord ((indicator)? ColonSeparator indicatorVariable=UserDefinedWord)?;
 indicator: ({string.Equals(CurrentToken.Text, "INDICATOR", System.StringComparison.OrdinalIgnoreCase) }? KeywordINDICATOR=UserDefinedWord);
+
+sqlReset: ({ string.Equals(CurrentToken.Text, "RESET", System.StringComparison.OrdinalIgnoreCase) }? KeywordRESET=UserDefinedWord);
+authorizationClause:  SQL_USER (userName = hostVariable) SQL_USING (password = hostVariable);
+connectStatement: SQL_CONNECT (connectionTarget | sqlReset | authorizationClause)?;
+connectionTarget: SQL_TO ((locationName = UserDefinedWord) | hostVariable) authorizationClause?;
 
 lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
 share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);

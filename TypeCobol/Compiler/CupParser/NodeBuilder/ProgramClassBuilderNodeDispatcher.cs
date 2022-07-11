@@ -882,5 +882,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnReleaseSavepointStatement(releaseSavepoint);
         }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+            foreach (var listener in _listeners) listener.OnConnectStatement(connect);
+        }
     }
 }

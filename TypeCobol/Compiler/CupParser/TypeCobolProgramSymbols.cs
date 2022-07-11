@@ -35,7 +35,7 @@ public class TypeCobolProgramSymbols {
   public const int XmlParseStatement = 90;
   public const int ExitProgramStatement = 57;
   public const int AcceptStatement = 40;
-  public const int FunctionDeclarationHeader = 138;
+  public const int FunctionDeclarationHeader = 139;
   public const int StartStatementEnd = 123;
   public const int IfStatement = 62;
   public const int LocalStorageSectionHeader = 23;
@@ -44,7 +44,7 @@ public class TypeCobolProgramSymbols {
   public const int MethodIdentification = 11;
   public const int SourceComputerParagraph = 36;
   public const int SectionHeader = 18;
-  public const int FunctionDeclarationEnd = 139;
+  public const int ConnectStatement = 137;
   public const int FileControlEntry = 34;
   public const int MergeStatement = 68;
   public const int ObjectComputerParagraph = 37;
@@ -57,13 +57,13 @@ public class TypeCobolProgramSymbols {
   public const int JsonParseStatement = 67;
   public const int StringStatement = 84;
   public const int SavepointStatement = 133;
-  public const int LibraryCopy = 137;
+  public const int LibraryCopy = 138;
   public const int DataConditionEntry = 33;
   public const int ParagraphHeader = 25;
   public const int AddStatementEnd = 107;
   public const int WhenCondition = 104;
   public const int NotAtEndOfPageCondition = 94;
-  public const int Program = 142;
+  public const int Program = 143;
   public const int SentenceEnd = 28;
   public const int SubtractStatementEnd = 125;
   public const int DeclarativesEnd = 17;
@@ -90,6 +90,7 @@ public class TypeCobolProgramSymbols {
   public const int DataDivisionHeader = 14;
   public const int error = 1;
   public const int NotOnExceptionCondition = 96;
+  public const int FunctionDeclarationEnd = 140;
   public const int JsonGenerateStatement = 66;
   public const int AddStatement = 41;
   public const int ExecStatement = 54;
@@ -121,7 +122,7 @@ public class TypeCobolProgramSymbols {
   public const int DataRenamesEntry = 32;
   public const int GobackStatement = 60;
   public const int ReturnStatement = 77;
-  public const int ProcedureStyleCall = 140;
+  public const int ProcedureStyleCall = 141;
   public const int LinkageSectionHeader = 24;
   public const int RewriteStatement = 78;
   public const int EnvironmentDivisionHeader = 13;
@@ -138,7 +139,7 @@ public class TypeCobolProgramSymbols {
   public const int InvokeStatement = 65;
   public const int CallStatementEnd = 108;
   public const int RollbackStatement = 131;
-  public const int GlobalStorageSectionHeader = 141;
+  public const int GlobalStorageSectionHeader = 142;
   public const int OnSizeErrorCondition = 101;
   public const int SetStatement = 80;
   public const int EOF = 0;

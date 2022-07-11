@@ -2305,5 +2305,11 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = savepointStatement;
             SavepointStatementChecker.OnCodeElement(savepointStatement, context);
         }
+
+        public override void EnterConnectStatement([NotNull] CodeElementsParser.ConnectStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateConnectStatement(context);
+        }
     }
 }

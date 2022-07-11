@@ -870,5 +870,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+
+        }
     }
 }
