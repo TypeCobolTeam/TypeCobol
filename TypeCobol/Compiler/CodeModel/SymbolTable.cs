@@ -771,7 +771,7 @@ namespace TypeCobol.Compiler.CodeModel
                 else
                 {
                     //Match paragraphs located directly in the PROCEDURE DIVISION
-                    matchParentSection = p => p.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
+                    matchParentSection = MatchRootParagraph;
                 }
 
                 //If we get results in the same section, we return them. Otherwise, just return candidates with correct name.
@@ -780,6 +780,29 @@ namespace TypeCobol.Compiler.CodeModel
             }
 
             return EmptyParagraphList;
+        }
+
+        private static bool MatchRootParagraph(Paragraph paragraph)
+        {
+            #region Temporary debug code to help fix #2185
+
+            if (paragraph.Parent == null)
+            {
+                var debugData = Logging.LoggingSystemExtensions.CreateDebugData(paragraph);
+                Logging.LoggingSystem.LogMessage(Logging.LogLevel.Error, "SymbolTable.GetParagraph, paragraph parent is null", debugData);
+                return false;
+            }
+
+            if (paragraph.Parent.CodeElement == null)
+            {
+                var debugData = Logging.LoggingSystemExtensions.CreateDebugData(paragraph);
+                Logging.LoggingSystem.LogMessage(Logging.LogLevel.Error, "SymbolTable.GetParagraph, paragraph parent code element is null", debugData);
+                return false;
+            }
+
+            #endregion
+
+            return paragraph.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
         }
 
         /// <summary>
