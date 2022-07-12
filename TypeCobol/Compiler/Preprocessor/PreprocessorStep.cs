@@ -137,6 +137,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser directivesParser =
                     new TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator);
                 directivesParser.ErrorReporter = cupCobolErrorStrategy;
+                directiveBuilder.ResetCompilerDirective();
                 directivesParser.Builder = directiveBuilder;
                 TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
                 perfStatsForParserInvocation.OnStopParsing(0, 0);

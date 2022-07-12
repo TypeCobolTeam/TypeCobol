@@ -28,6 +28,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
         /// </summary>
         public CompilerDirective CompilerDirective { get; private set; }
 
+        public void ResetCompilerDirective()
+        {
+            CompilerDirective = null;
+        }
+
         private string GetName(TypeCobol.Compiler.Scanner.Token name)
         {
             return name?.Text.Trim('\'').Trim('\"');
