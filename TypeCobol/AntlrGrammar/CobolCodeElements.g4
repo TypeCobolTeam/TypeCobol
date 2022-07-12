@@ -220,6 +220,7 @@ codeElement:
 	| releaseSavepointStatement
 	| savepointStatement
 	| connectStatement
+	| dropTableStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8331,6 +8332,9 @@ sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.O
 onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
 savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
 
+
+dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
+tableOrAliasName: tableOrViewOrCorrelationName;
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);

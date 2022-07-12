@@ -886,5 +886,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnConnectStatement(connect);
         }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+            foreach (var listener in _listeners) listener.OnDropTableStatement(dropTable);
+        }
     }
 }

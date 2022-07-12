@@ -2311,5 +2311,11 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateConnectStatement(context);
         }
+
+        public override void EnterDropTableStatement([NotNull] CodeElementsParser.DropTableStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateDropTableStatement(context);
+        }
     }
 }
