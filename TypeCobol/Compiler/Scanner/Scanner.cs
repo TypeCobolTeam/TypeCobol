@@ -96,7 +96,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
-            if (textLine.Type == CobolTextLineType.Comment || (tokensLine.Type == CobolTextLineType.Debug && !IsDebugLineActive(tokensLine)))
+            if (textLine.Type == CobolTextLineType.Comment || (tokensLine.Type == CobolTextLineType.Debug && !IsDebuggingModeActive(tokensLine.ScanState, tokensLine.SourceText)))
             {
                 if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
                 {
@@ -220,11 +220,12 @@ namespace TypeCobol.Compiler.Scanner
         }
 #endif
 
-        private static bool IsDebugLineActive(ITokensLine tokensLine)
+        private static bool IsDebuggingModeActive(MultilineScanState lineScanState, string lineSourceText)
         {
-            System.Diagnostics.Debug.Assert(tokensLine.Type == CobolTextLineType.Debug);
+            System.Diagnostics.Debug.Assert(lineScanState != null);
+            System.Diagnostics.Debug.Assert(lineSourceText != null);
 
-            if (!tokensLine.ScanState.WithDebuggingMode)
+            if (!lineScanState.WithDebuggingMode)
             {
                 /*
                  * DebuggingMode is inactive but REPLACE directives are a special case.
@@ -234,7 +235,7 @@ namespace TypeCobol.Compiler.Scanner
                  * So an inactive debug line has to be parsed as regular source if it participates
                  * in a REPLACE directive.
                  */
-                return tokensLine.ScanState.InsideReplaceDirective || StartsWithReplace();
+                return lineScanState.InsideReplaceDirective || StartsWithReplace();
             }
 
             //DebuggingMode is active, debug line is considered as regular source line.
@@ -243,7 +244,7 @@ namespace TypeCobol.Compiler.Scanner
             bool StartsWithReplace()
             {
                 string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
-                return tokensLine.SourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
+                return lineSourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -270,7 +271,7 @@ namespace TypeCobol.Compiler.Scanner
             for (; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine line = continuationLinesGroup[i];
-                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && IsDebugLineActive(line)))
+                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && IsDebuggingModeActive(scanState, line.SourceText)))
                 {
                     hasSource = true;
                     break;
