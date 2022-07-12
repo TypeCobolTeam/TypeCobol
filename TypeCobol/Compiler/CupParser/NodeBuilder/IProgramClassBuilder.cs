@@ -852,6 +852,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="releaseSavepoint">The corresponding  ReleaseSavepoint Statement Code Element</param>
         void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint);
         /// <summary>
+        /// Enter a Connect Statement Node
+        /// </summary>
+        /// <param name="connect">The corresponding  Connect Statement Code Element</param>
+        void OnConnectStatement([NotNull] ConnectStatement connect);
+        /// <summary>
         /// Enter a DropTable Statement Node
         /// </summary>
         /// <param name="dropTable">The corresponding  DropTable Statement Code Element</param>

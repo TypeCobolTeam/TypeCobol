@@ -563,6 +563,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(releaseSavepointStatement.SavepointName), releaseSavepointStatement.SavepointName);
                 return true;
             }
+            public override bool Visit(ConnectStatement connectStatement)
+            {
+                _writer.WriteLine($"line {connectStatement.Line}: {nameof(ConnectStatement)}");
+                DumpObject(nameof(connectStatement.Target), connectStatement.Target);
+                DumpObject(nameof(connectStatement.Authorization), connectStatement.Authorization);
+                DumpObject(nameof(connectStatement.Reset), connectStatement.Reset);
+                return true;
+            }
 
             public override bool Visit(DropTableStatement dropTableStatement)
             {

@@ -391,6 +391,66 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             var savepointName = context.Diagnostics == null ? new SymbolReference(new AlphanumericValue((Token)context.savepoint_name), SymbolType.SqlIdentifier) : null;
             return new ReleaseSavepointStatement(savepointName);
         }
+        public ConnectStatement CreateConnectStatement(CodeElementsParser.ConnectStatementContext context)
+        {
+            ConnectionTarget connectionTarget = null;
+            ConnectionAuthorization connectionAuthorization = null;
+            SyntaxProperty<bool> reset = null;
+            if (context.connectionTarget() != null)
+            {
+                connectionTarget = CreateConnectionTarget(context.connectionTarget());
+                if (context.connectionTarget().authorizationClause() != null)
+                {
+                    connectionAuthorization = CreateConnectionAuthorization(context.connectionTarget().authorizationClause());
+                }
+
+            }
+            else if (context.authorizationClause() != null)
+            {
+                connectionAuthorization = CreateConnectionAuthorization(context.authorizationClause());
+            }
+
+            else if (context.sqlReset() != null)
+            {
+                reset = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.sqlReset()));
+            }
+
+            return new ConnectStatement(connectionAuthorization, reset, connectionTarget);
+        }
+
+        private ConnectionTarget CreateConnectionTarget(CodeElementsParser.ConnectionTargetContext context)
+        {
+            SyntaxValue<string> locationNameLiteral = null;
+            HostVariable locationNameVariable = null;
+            if (context.locationName != null)
+            {
+                locationNameLiteral = new AlphanumericValue(ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
+            }
+
+            else if (context.hostVariable() != null)
+            {
+                locationNameVariable = CreateSqlHostVariable(context.hostVariable());
+            }
+
+            return new ConnectionTarget(locationNameLiteral, locationNameVariable);
+        }
+
+        private ConnectionAuthorization CreateConnectionAuthorization(CodeElementsParser.AuthorizationClauseContext context)
+        {
+            HostVariable userName = null;
+            HostVariable password = null;
+            if (context.userName != null)
+            {
+                userName = CreateSqlHostVariable(context.userName);
+            }
+
+            if (context.password != null)
+            {
+                password = CreateSqlHostVariable(context.password);
+            }
+
+            return new ConnectionAuthorization(userName, password);
+        }
 
         public DropTableStatement CreateDropTableStatement(CodeElementsParser.DropTableStatementContext context)
         {
