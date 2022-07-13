@@ -553,7 +553,17 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(If ifNode)
         {
-            if (ifNode?.Children != null && !(ifNode.Children.Last() is End))
+            #region Temporary debug code for #2266
+
+            if (ifNode.Children.Count == 0)
+            {
+                var debugData = Logging.LoggingSystemExtensions.CreateDebugData(ifNode);
+                Logging.LoggingSystem.LogMessage(Logging.LogLevel.Error, "CrossCompleteChecker.Visit, found invalid IF node", debugData);
+            }
+
+            #endregion
+
+            if (!(ifNode.Children.Last() is End))
             {
                 DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
