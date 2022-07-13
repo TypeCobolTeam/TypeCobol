@@ -239,6 +239,8 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SavepointStatement Savep
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.WhenEverStatement WhenEverStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.LockTableStatement LockTableStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ReleaseSavepointStatement ReleaseSavepointStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ConnectStatement ConnectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DropTableStatement DropTableStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ExecuteImmediateStatement ExecuteImmediateStatement;
 
 
@@ -810,6 +812,10 @@ sqlStatement ::= CommitStatement:stmt
 {: my_parser.Builder.OnReleaseSavepointStatement(stmt); :}
 |	SavepointStatement:stmt
 {: my_parser.Builder.OnSavepointStatement(stmt); :}
+|	ConnectStatement:stmt
+{: my_parser.Builder.OnConnectStatement(stmt); :}
+|	DropTableStatement:stmt
+{: my_parser.Builder.OnDropTableStatement(stmt); :}
 |	ExecuteImmediateStatement:stmt
 {: my_parser.Builder.OnExecuteImmediateStatement(stmt); :}
 ;
