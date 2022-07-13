@@ -138,7 +138,8 @@ namespace TypeCobol.Compiler.CodeElements
         WhenEverStatement,
         LockTableStatement,
         ReleaseSavepointStatement,
-        ConnectStatement
+        ConnectStatement,
+        GetDiagnosticsStatement
 
     }
 }

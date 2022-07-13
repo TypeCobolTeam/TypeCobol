@@ -146,6 +146,7 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.WhenEverStatement WhenEv
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.LockTableStatement LockTableStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ReleaseSavepointStatement ReleaseSavepointStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ConnectStatement ConnectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.GetDiagnosticsStatement GetDiagnosticsStatement;
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -717,6 +718,8 @@ sqlStatement ::= CommitStatement:stmt
 |	ReleaseSavepointStatement:stmt 
 {: :}
 |	ConnectStatement:stmt 
+{: :}
+|	GetDiagnosticsStatement:stmt 
 {: :}
 ;
 

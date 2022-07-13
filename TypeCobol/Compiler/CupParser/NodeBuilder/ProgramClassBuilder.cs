@@ -1665,5 +1665,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnConnectStatement(connect);
         }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+            Enter(new GetDiagnostics(getDiagnostics), getDiagnostics);
+            Exit();
+            Dispatcher.OnGetDiagnosticsStatement(getDiagnostics);
+        }
     }
 }

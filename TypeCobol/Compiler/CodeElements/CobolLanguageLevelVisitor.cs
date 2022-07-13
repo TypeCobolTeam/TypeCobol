@@ -399,6 +399,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ReleaseSavepoint releaseSavepoint);
         bool Visit([NotNull] ConnectStatement connectStatement);
         bool Visit([NotNull] Connect connect);
+        bool Visit([NotNull] GetDiagnosticsStatement getDiagnosticsStatement);
+        bool Visit([NotNull] GetDiagnostics getDiagnostics);
     }
 
 
@@ -1582,6 +1584,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] Connect connect)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] GetDiagnosticsStatement getDiagnosticsStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] GetDiagnostics getDiagnostics)
         {
             return true;
         }

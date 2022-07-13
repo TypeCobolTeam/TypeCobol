@@ -1,0 +1,155 @@
+﻿--- Sql Statements ---
+line 6: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - Type = Condition
+  - DiagnosticIdVariable = <NULL>
+  - DiagnosticIdLiteral = SqlConstant
+    - LiteralValue = 1
+  - Assignments = [
+    - Assignments[0] = SingleInformationAssignment
+      - ItemName = DB2_RETURNED_SQLCODE
+      - Storage = HostVariable
+        - MainReference = dasqlcode
+        - IndicatorReference = <NULL>
+    - Assignments[1] = SingleInformationAssignment
+      - ItemName = DB2_TOKEN_COUNT
+      - Storage = HostVariable
+        - MainReference = datokencnt
+        - IndicatorReference = <NULL>
+    - Assignments[2] = SingleInformationAssignment
+      - ItemName = DB2_ORDINAL_TOKEN_1
+      - Storage = HostVariable
+        - MainReference = datoken1
+        - IndicatorReference = <NULL>
+    - Assignments[3] = SingleInformationAssignment
+      - ItemName = DB2_ORDINAL_TOKEN_2
+      - Storage = HostVariable
+        - MainReference = datoken2
+        - IndicatorReference = <NULL>
+    - Assignments[4] = SingleInformationAssignment
+      - ItemName = DB2_ORDINAL_TOKEN_3
+      - Storage = HostVariable
+        - MainReference = datoken3
+        - IndicatorReference = <NULL>
+    - Assignments[5] = SingleInformationAssignment
+      - ItemName = DB2_ORDINAL_TOKEN_4
+      - Storage = HostVariable
+        - MainReference = datoken4
+        - IndicatorReference = <NULL>
+    - Assignments[6] = SingleInformationAssignment
+      - ItemName = DB2_ORDINAL_TOKEN_5
+      - Storage = HostVariable
+        - MainReference = datoken5
+        - IndicatorReference = <NULL>
+    - Assignments[7] = SingleInformationAssignment
+      - ItemName = DB2_MESSAGE_ID
+      - Storage = HostVariable
+        - MainReference = dasqlerrd1b
+        - IndicatorReference = <NULL>
+    - Assignments[8] = SingleInformationAssignment
+      - ItemName = MESSAGE_TEXT
+      - Storage = HostVariable
+        - MainReference = damsgtext
+        - IndicatorReference = <NULL>
+    - Assignments[9] = SingleInformationAssignment
+      - ItemName = DB2_MODULE_DETECTING_ERROR
+      - Storage = HostVariable
+        - MainReference = dasqlerrp
+        - IndicatorReference = <NULL>
+    - Assignments[10] = SingleInformationAssignment
+      - ItemName = RETURNED_SQLSTATE
+      - Storage = HostVariable
+        - MainReference = dasqlstate
+        - IndicatorReference = <NULL>
+  ]
+line 18: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - Type = Condition
+  - DiagnosticIdVariable = HostVariable
+    - MainReference = i
+    - IndicatorReference = <NULL>
+  - DiagnosticIdLiteral = <NULL>
+  - Assignments = [
+    - Assignments[0] = SingleInformationAssignment
+      - ItemName = RETURNED_SQLST
+      - Storage = HostVariable
+        - MainReference = retsqlstate
+        - IndicatorReference = <NULL>
+  ]
+line 19: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - Type = Condition
+  - DiagnosticIdVariable = HostVariable
+    - MainReference = HV_PRODUCT_ID
+    - IndicatorReference = <NULL>
+  - DiagnosticIdLiteral = <NULL>
+  - Assignments = [
+    - Assignments[0] = SingleInformationAssignment
+      - ItemName = DB2_PRODUCT_
+      - Storage = HostVariable
+        - MainReference = i
+        - IndicatorReference = <NULL>
+  ]
+line 20: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Type = Combined
+  - Storage = HostVariable
+    - MainReference = var4
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = StatementInformationItem
+      - Type = Statement
+    - Items[1] = ConditionInformationItem
+      - Type = Condition
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = SqlConstant
+        - LiteralValue = 3
+    - Items[2] = ConnectionInformationItem
+      - Type = Connection
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+  ]
+line 22: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = True
+- RequestedInformation = StatementInformation
+  - Type = Statement
+  - Assignments = [
+    - Assignments[0] = CompositeInformationAssignment
+      - ItemNames = [
+        - ItemNames[0] = DB2_LAST_ROW
+        - ItemNames[1] = MORE
+      ]
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+  ]
+line 23: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = True
+- RequestedInformation = StatementInformation
+  - Type = Statement
+  - Assignments = [
+    - Assignments[0] = CompositeInformationAssignment
+      - ItemNames = [
+        - ItemNames[0] = DB2_LAST_ROW
+      ]
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+    - Assignments[1] = CompositeInformationAssignment
+      - ItemNames = [
+        - ItemNames[0] = MORE
+      ]
+      - Storage = HostVariable
+        - MainReference = var2
+        - IndicatorReference = <NULL>
+  ]

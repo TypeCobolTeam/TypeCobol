@@ -886,5 +886,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnConnectStatement(connect);
         }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+            foreach (var listener in _listeners) listener.OnGetDiagnosticsStatement(getDiagnostics);
+        }
     }
 }

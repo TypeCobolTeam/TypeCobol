@@ -220,6 +220,7 @@ codeElement:
 	| releaseSavepointStatement
 	| savepointStatement
 	| connectStatement
+	| getDiagnosticsStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8330,6 +8331,23 @@ sqlCursors: ({ string.Equals(CurrentToken.Text, "CURSORS", System.StringComparis
 sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? KeywordLOCKS=UserDefinedWord);
 onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
 savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
+
+sqlVariable: hostVariable;
+sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
+sqlExpression: sqlVariable | column_name | sqlConstant;
+
+stacked: ({ string.Equals(CurrentToken.Text, "STACKED", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTACKED=UserDefinedWord);
+diagnostics: ({ string.Equals(CurrentToken.Text, "DIAGNOSTICS", System.StringComparison.OrdinalIgnoreCase) }? KeywordDIAGNOSTICS=UserDefinedWord);
+getDiagnosticsStatement: SQL_GET (SQL_CURRENT | stacked)?  diagnostics (statementInformationClauses | conditionInformationClause | combinedInformationClause);
+statementInformationClauses: statementInformationClause (SQL_CommaSeparator statementInformationClause)*;
+statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemNameClause ;
+statementInformationItemNameClause: statementInformationItemName (SQL_CommaSeparator statementInformationItemName)*;
+statementInformationItemName: UserDefinedWord;
+conditionInformationClause: SQL_CONDITION ((variable_2=sqlVariable) | IntegerLiteral) repeatedConnectionOrConditionInformation(SQL_CommaSeparator repeatedConnectionOrConditionInformation)*;
+repeatedConnectionOrConditionInformation: (variable_3=sqlVariable) EqualOperator UserDefinedWord; 
+
+combinedInformationClause: (variable_4=sqlVariable) EqualOperator SQL_ALL repeatedCombinedInformation (SQL_CommaSeparator repeatedCombinedInformation)*;
+repeatedCombinedInformation: SQL_STATEMENT | ( (SQL_CONNECTION | SQL_CONDITION) ((variable_5=sqlVariable) | IntegerLiteral)?);
 
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);

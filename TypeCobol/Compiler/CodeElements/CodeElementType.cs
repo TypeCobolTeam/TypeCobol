@@ -175,6 +175,7 @@ namespace TypeCobol.Compiler.CodeElements
         LockTableStatement,
         ReleaseSavepointStatement,
         ConnectStatement,
+        GetDiagnosticsStatement,
 
         // [TYPECOBOL]
         LibraryCopy,

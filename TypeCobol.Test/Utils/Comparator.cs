@@ -486,19 +486,7 @@ namespace TypeCobol.Test.Utils
 
             private void DumpObject(string name, object value)
             {
-                _writer.Write($"- {name} = ");
-                if (value == null)
-                {
-                    _writer.WriteLine("<NULL>");
-                }
-                else if (value is SqlObject sqlObject)
-                {
-                    sqlObject.Dump(_writer, 1);
-                }
-                else
-                {
-                    _writer.WriteLine(value.ToString());
-                }
+                SqlObject.DumpProperty(_writer, name, value, 0);
             }
 
             public override bool Visit(SelectStatement selectStatement)
@@ -569,6 +557,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(connectStatement.Target), connectStatement.Target);
                 DumpObject(nameof(connectStatement.Authorization), connectStatement.Authorization);
                 DumpObject(nameof(connectStatement.Reset), connectStatement.Reset);
+                return true;
+            }
+            public override bool Visit(GetDiagnosticsStatement getDiagnosticsStatement)
+            {
+                _writer.WriteLine($"line {getDiagnosticsStatement.Line}: {nameof(GetDiagnosticsStatement)}");
+                DumpObject(nameof(getDiagnosticsStatement.IsCurrent), getDiagnosticsStatement.IsCurrent);
+                DumpObject(nameof(getDiagnosticsStatement.IsStacked), getDiagnosticsStatement.IsStacked);
+                DumpObject(nameof(getDiagnosticsStatement.RequestedInformation), getDiagnosticsStatement.RequestedInformation);
                 return true;
             }
         }

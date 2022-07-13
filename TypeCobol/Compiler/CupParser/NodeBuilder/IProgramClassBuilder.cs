@@ -856,6 +856,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="connect">The corresponding  Connect Statement Code Element</param>
         void OnConnectStatement([NotNull] ConnectStatement connect);
+        /// <summary>
+        /// Enter a GetDiagnostics Statement Node
+        /// </summary>
+        /// <param name="getDiagnostics">The corresponding  GetDiagnostics Statement Code Element</param>
+        void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics);
         #endregion
     }
 }

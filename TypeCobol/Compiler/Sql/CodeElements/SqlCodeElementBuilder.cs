@@ -451,5 +451,150 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return new ConnectionAuthorization(userName, password);
         }
+        private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
+        {
+            if (context.hostVariable() != null)
+            {
+                return CreateSqlHostVariable(context.hostVariable());
+            }
+            //TODO Add other conditions when adding new  Sql Variable Types 
+            return null;
+        }
+
+        public GetDiagnosticsStatement CreateGetDiagnosticsStatement(CodeElementsParser.GetDiagnosticsStatementContext context)
+        {
+            var isCurrent = context.SQL_CURRENT() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_CURRENT())) : null;
+            var isStacked = context.stacked() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.stacked())) : null;
+            Information requestedInformation = null;
+            if (context.statementInformationClauses() != null)
+            {
+                requestedInformation = CreateStatementInformation(context.statementInformationClauses());
+            }
+            else if (context.conditionInformationClause() != null)
+            {
+                requestedInformation = CreateConditionInformationClause(context.conditionInformationClause());
+            }
+            else if (context.combinedInformationClause() != null)
+            {
+                requestedInformation = CreateCombinedInformationClause(context.combinedInformationClause());
+            }
+            return new GetDiagnosticsStatement(isCurrent, isStacked, requestedInformation);
+        }
+
+        private StatementInformation CreateStatementInformation(CodeElementsParser.StatementInformationClausesContext context)
+        {
+            var assignments = context.statementInformationClause().Select(CompositeInformationAssignment).Cast<InformationAssignment>().ToList();
+
+            return new StatementInformation(assignments);
+        }
+
+        private CompositeInformationAssignment CompositeInformationAssignment(CodeElementsParser.StatementInformationClauseContext context)
+        {
+            SqlVariable storage = null;
+            var itemNames = new List<SymbolReference>();
+            if (context.variable_1 != null)
+            {
+                storage = CreateSqlVariable(context.variable_1);
+            }
+
+            if (context.statementInformationItemNameClause() != null)
+            {
+                itemNames.AddRange(context.statementInformationItemNameClause().statementInformationItemName().Select(itemName => new SymbolReference(new AlphanumericValue(ParseTreeUtils.GetTokenFromTerminalNode(itemName.UserDefinedWord())), SymbolType.SqlIdentifier)));
+            }
+
+            return new CompositeInformationAssignment(itemNames, storage);
+        }
+
+        private ConditionInformation CreateConditionInformationClause(CodeElementsParser.ConditionInformationClauseContext context)
+        {
+            SqlVariable diagnosticIdVariable = null;
+            SqlConstant diagnosticIdLiteral = null;
+            if (context.variable_2 != null)
+            {
+                diagnosticIdVariable = CreateSqlVariable(context.variable_2);
+            }
+            else if (context.IntegerLiteral() != null)
+            {
+                diagnosticIdLiteral = new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
+            }
+
+            var assignments = context.repeatedConnectionOrConditionInformation().Select(assignment => CreateSingleInformationAssignment(assignment)).Cast<InformationAssignment>().ToList();
+            return new ConditionInformation(diagnosticIdVariable, diagnosticIdLiteral, assignments);
+        }
+
+        private SingleInformationAssignment CreateSingleInformationAssignment(CodeElementsParser.RepeatedConnectionOrConditionInformationContext context)
+        {
+            SymbolReference itemName = null;
+            SqlVariable storage = null;
+            if (context.variable_3 != null)
+            {
+                storage = CreateSqlVariable(context.variable_3);
+            }
+
+            if (context.UserDefinedWord() != null)
+            {
+                itemName = new SymbolReference(
+                    new AlphanumericValue(
+                        ParseTreeUtils.GetTokenFromTerminalNode(context
+                            .UserDefinedWord())), SymbolType.SqlIdentifier);
+            }
+
+            return new SingleInformationAssignment(itemName, storage);
+        }
+
+        private CombinedInformation CreateCombinedInformationClause(CodeElementsParser.CombinedInformationClauseContext context)
+        {
+            SqlVariable storage = null;
+            if (context.variable_4 != null)
+            {
+                storage = CreateSqlVariable(context.variable_4);
+            }
+
+            var items = context.repeatedCombinedInformation().Select(combinedInformationItem => CreateCombinedInformationItem(combinedInformationItem)).ToList();
+            return new CombinedInformation(storage, items);
+        }
+
+        private CombinedInformationItem CreateCombinedInformationItem(CodeElementsParser.RepeatedCombinedInformationContext context)
+        {
+            if (context.SQL_STATEMENT() != null)
+            {
+                return new StatementInformationItem();
+            }
+
+            else if (context.SQL_CONDITION() != null)
+            {
+                SqlVariable diagnosticIdVariable = null;
+                SqlConstant diagnosticIdLiteral = null;
+                if (context.variable_5 != null)
+                {
+                    diagnosticIdVariable = CreateSqlVariable(context.variable_5);
+                }
+                else if (context.IntegerLiteral() != null)
+                {
+                    diagnosticIdLiteral =
+                        new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
+                }
+
+                return new ConditionInformationItem(diagnosticIdVariable, diagnosticIdLiteral);
+            }
+            else if (context.SQL_CONNECTION() != null)
+            {
+                SqlVariable diagnosticIdVariable = null;
+                SqlConstant diagnosticIdLiteral = null;
+                if (context.variable_5 != null)
+                {
+                    diagnosticIdVariable = CreateSqlVariable(context.variable_5);
+                }
+                else if (context.IntegerLiteral() != null)
+                {
+                    diagnosticIdLiteral =
+                        new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
+                }
+
+                return new ConnectionInformationItem(diagnosticIdVariable, diagnosticIdLiteral);
+            }
+
+            return null;
+        }
     }
 }
