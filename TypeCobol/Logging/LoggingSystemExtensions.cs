@@ -99,7 +99,7 @@ namespace TypeCobol.Logging
             {
                 string indentString = new string(' ', 2 * indent);
 
-                if (node == null) return indentString + "<NULL>";
+                if (node == null) return indentString + NULL;
 
                 string text;
                 if (node.CodeElement != null)
