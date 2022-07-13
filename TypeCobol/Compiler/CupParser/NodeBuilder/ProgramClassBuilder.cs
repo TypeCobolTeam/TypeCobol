@@ -1665,6 +1665,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnConnectStatement(connect);
         }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+            Enter(new DropTable(dropTable), dropTable);
+            Exit();
+            Dispatcher.OnDropTableStatement(dropTable);
+        }
         public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
         {
             Enter(new GetDiagnostics(getDiagnostics), getDiagnostics);

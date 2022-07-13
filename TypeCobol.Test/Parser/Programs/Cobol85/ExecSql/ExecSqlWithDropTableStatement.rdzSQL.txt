@@ -1,0 +1,12 @@
+﻿--- Diagnostics ---
+Line 9[15,18] <27, Error, Syntax> - Syntax error : mismatched input 'DROP' expecting user defined word RuleStack=codeElement>dropTableStatement>tableOrAliasName>tableOrViewOrCorrelationName,  OffendingSymbol=[15,18:DROP]<SQL_DROP>
+
+--- Sql Statements ---
+line 6: DropTableStatement
+- TableOrAliasName = r IN h IN nom
+line 7: DropTableStatement
+- TableOrAliasName = myTable
+line 8: DropTableStatement
+- TableOrAliasName = <NULL>
+line 9: DropTableStatement
+- TableOrAliasName = b IN a

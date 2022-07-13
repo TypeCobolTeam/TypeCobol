@@ -220,6 +220,7 @@ codeElement:
 	| releaseSavepointStatement
 	| savepointStatement
 	| connectStatement
+	| dropTableStatement
 	| getDiagnosticsStatement
 
 //	[TYPECOBOL]
@@ -8332,6 +8333,9 @@ sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.O
 onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
 savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
 
+
+dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
+tableOrAliasName: tableOrViewOrCorrelationName;
 sqlVariable: hostVariable;
 sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
 sqlExpression: sqlVariable | column_name | sqlConstant;

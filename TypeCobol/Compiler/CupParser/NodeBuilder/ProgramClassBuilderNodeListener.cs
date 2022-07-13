@@ -874,6 +874,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+
+        }
         public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
         {
 

@@ -559,6 +559,13 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(connectStatement.Reset), connectStatement.Reset);
                 return true;
             }
+
+            public override bool Visit(DropTableStatement dropTableStatement)
+            {
+                _writer.WriteLine($"line {dropTableStatement.Line}: {nameof(DropTableStatement)}");
+                DumpObject(nameof(dropTableStatement.TableOrAliasName), dropTableStatement.TableOrAliasName);
+                return true;
+            }
             public override bool Visit(GetDiagnosticsStatement getDiagnosticsStatement)
             {
                 _writer.WriteLine($"line {getDiagnosticsStatement.Line}: {nameof(GetDiagnosticsStatement)}");

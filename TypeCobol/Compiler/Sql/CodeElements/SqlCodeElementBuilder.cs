@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 CreateStorageManagementClause(context.storageManagementClause());
             var deleteTriggersHandlingClause = CreateDeleteTriggersHandlingClause(context.deleteTriggersHandlingClause());
             var isImmediate = context.SQL_IMMEDIATE() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_IMMEDIATE())) : null;
-            return new TruncateStatement(tableName, storageManagementClause, deleteTriggersHandlingClause,isImmediate);
+            return new TruncateStatement(tableName, storageManagementClause, deleteTriggersHandlingClause, isImmediate);
         }
 
         private SyntaxProperty<TruncateStatement.StorageManagementOption> CreateStorageManagementClause(CodeElementsParser.StorageManagementClauseContext context)
@@ -33,8 +33,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.ReuseStorage, ParseTreeUtils.GetFirstToken(context.reuse()));
             }
-           
-            else if (context.SQL_DROP()!=null)
+
+            else if (context.SQL_DROP() != null)
             {
                 storageManagement = new SyntaxProperty<TruncateStatement.StorageManagementOption>(TruncateStatement.StorageManagementOption.DropStorage, ParseTreeUtils.GetFirstToken(context.SQL_DROP()));
             }
@@ -143,8 +143,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             CorrelationClause correlationClause = null;
             if ((context.single_table_or_view_reference().correlation_clause() != null))
             {
-                 correlationClause =
-                    CreateCorrelationClause(context.single_table_or_view_reference().correlation_clause());
+                correlationClause =
+                   CreateCorrelationClause(context.single_table_or_view_reference().correlation_clause());
             }
             SingleTableReference tableReference = new SingleTableReference(tableRef, correlationClause);
             return tableReference;
@@ -221,8 +221,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
-        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken,
-            Token topLevelQualifierToken)
+        private SymbolReference CreateSymbolReference(Token nameToken, Token qualifierToken = null,
+            Token topLevelQualifierToken = null)
         {
             if (nameToken != null)
             {
@@ -238,13 +238,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         SymbolReference topLevelQualifier =
                             new SymbolReference(new AlphanumericValue(topLevelQualifierToken),
                                 SymbolType.SqlIdentifier);
-                        QualifiedSymbolReference tail = new QualifiedSymbolReference( qualifier, topLevelQualifier);
-                        SymbolReference fullName= new QualifiedSymbolReference( name, tail);
+                        QualifiedSymbolReference tail = new QualifiedSymbolReference(qualifier, topLevelQualifier);
+                        SymbolReference fullName = new QualifiedSymbolReference(name, tail);
                         return fullName;
                     }
                     else
                     {
-                        SymbolReference fullName = new QualifiedSymbolReference(name,qualifier);
+                        SymbolReference fullName = new QualifiedSymbolReference(name, qualifier);
                         return fullName;
                     }
                 }
@@ -450,6 +450,29 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             return new ConnectionAuthorization(userName, password);
+        }
+
+        public DropTableStatement CreateDropTableStatement(CodeElementsParser.DropTableStatementContext context)
+        {
+            var tableOrAliasName = CreateTableOrAliasName(context.tableOrAliasName());
+            return new DropTableStatement(tableOrAliasName);
+        }
+
+        private SymbolReference CreateTableOrAliasName(CodeElementsParser.TableOrAliasNameContext context)
+        {
+            if (context.tableOrViewOrCorrelationName().Name == null) return null;
+            var nameToken = (Token)context.tableOrViewOrCorrelationName().Name;
+            if (context.tableOrViewOrCorrelationName().SchemaName != null)
+            {
+                var qualifierToken = (Token)context.tableOrViewOrCorrelationName().SchemaName;
+                var topLevelQualifierToken = (Token)context.tableOrViewOrCorrelationName().DBMS;
+                return CreateSymbolReference(nameToken, qualifierToken,
+                    topLevelQualifierToken);
+            }
+
+            var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
+                new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
+            return aliasName;
         }
         private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
         {
