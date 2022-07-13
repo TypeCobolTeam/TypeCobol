@@ -504,13 +504,18 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
             else if (context.sqlConstant() != null)
             {
-                return new SqlConstant(ParseTreeUtils.GetFirstToken(context.sqlConstant()));
+                return CreateSqlConstant(context.sqlConstant());
             }
             else if (context.sqlVariable() != null)
             {
                 return CreateSqlVariable(context.sqlVariable());
             }
             return null;
+        }
+
+        private SqlConstant CreateSqlConstant(CodeElementsParser.SqlConstantContext context)
+        {
+            return context.datetime_constant() != null ? CreateDatetimeConstant(context.datetime_constant()) : new SqlConstant(ParseTreeUtils.GetFirstToken(context));
         }
     }
 }

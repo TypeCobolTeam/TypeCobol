@@ -2318,11 +2318,12 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = _sqlCodeElementBuilder.CreateDropTableStatement(context);
         }
 
-        public override void EnterExecuteImmediateStatement(
-            [NotNull] CodeElementsParser.ExecuteImmediateStatementContext context)
+        public override void EnterExecuteImmediateStatement([NotNull] CodeElementsParser.ExecuteImmediateStatementContext context)
         {
             Context = context;
-            CodeElement = _sqlCodeElementBuilder.CreateExecuteImmediateStatement(context);
+            var executeImmediateStatement = _sqlCodeElementBuilder.CreateExecuteImmediateStatement(context);
+            CodeElement = executeImmediateStatement;
+			ExecuteImmediateStatementChecker.OnCodeElement(executeImmediateStatement, context);
         }
     }
 }

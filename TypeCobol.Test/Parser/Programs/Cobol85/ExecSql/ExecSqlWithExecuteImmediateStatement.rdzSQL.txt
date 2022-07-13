@@ -1,5 +1,6 @@
 ﻿--- Diagnostics ---
-Line 9[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>executeImmediateStatement>sqlExpression,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+Line 7[14,20] <27, Error, Syntax> - Syntax error : The host variable mustn't have any indicator variable RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
+Line 10[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>executeImmediateStatement>sqlExpression,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
 line 6: ExecuteImmediateStatement
@@ -7,7 +8,11 @@ line 6: ExecuteImmediateStatement
   - MainReference = var1
   - IndicatorReference = <NULL>
 line 7: ExecuteImmediateStatement
+- Expression = HostVariable
+  - MainReference = var2
+  - IndicatorReference = var3
+line 8: ExecuteImmediateStatement
 - Expression = SqlConstant
   - LiteralValue = SELECT * FROM table1
-line 8: ExecuteImmediateStatement
+line 9: ExecuteImmediateStatement
 - Expression = <NULL>
