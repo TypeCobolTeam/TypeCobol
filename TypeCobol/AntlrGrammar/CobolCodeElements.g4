@@ -8347,7 +8347,7 @@ statementInformationClauses: statementInformationClause (SQL_CommaSeparator stat
 statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemNameClause ;
 statementInformationItemNameClause: statementInformationItemName (SQL_CommaSeparator statementInformationItemName)*;
 statementInformationItemName: UserDefinedWord;
-conditionInformationClause: SQL_CONDITION ((variable_2=sqlVariable) | IntegerLiteral) repeatedConnectionOrConditionInformation(SQL_CommaSeparator repeatedConnectionOrConditionInformation)*;
+conditionInformationClause: SQL_CONDITION ((variable_2=sqlVariable) | IntegerLiteral) repeatedConnectionOrConditionInformation (SQL_CommaSeparator repeatedConnectionOrConditionInformation)*;
 repeatedConnectionOrConditionInformation: (variable_3=sqlVariable) EqualOperator UserDefinedWord; 
 
 combinedInformationClause: (variable_4=sqlVariable) EqualOperator SQL_ALL repeatedCombinedInformation (SQL_CommaSeparator repeatedCombinedInformation)*;

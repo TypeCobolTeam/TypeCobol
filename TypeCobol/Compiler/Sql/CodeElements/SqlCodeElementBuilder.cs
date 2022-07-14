@@ -506,12 +506,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private StatementInformation CreateStatementInformation(CodeElementsParser.StatementInformationClausesContext context)
         {
-            var assignments = context.statementInformationClause().Select(CompositeInformationAssignment).Cast<InformationAssignment>().ToList();
-
+            var assignments = new List<InformationAssignment>();
+            foreach (var assignment in context.statementInformationClause())
+            {
+                assignments.Add(CreateCompositeInformationAssignment(assignment));
+            }
             return new StatementInformation(assignments);
         }
 
-        private CompositeInformationAssignment CompositeInformationAssignment(CodeElementsParser.StatementInformationClauseContext context)
+        private CompositeInformationAssignment CreateCompositeInformationAssignment(CodeElementsParser.StatementInformationClauseContext context)
         {
             SqlVariable storage = null;
             var itemNames = new List<SymbolReference>();
@@ -522,7 +525,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.statementInformationItemNameClause() != null)
             {
-                itemNames.AddRange(context.statementInformationItemNameClause().statementInformationItemName().Select(itemName => new SymbolReference(new AlphanumericValue(ParseTreeUtils.GetTokenFromTerminalNode(itemName.UserDefinedWord())), SymbolType.SqlIdentifier)));
+
+                itemNames.AddRange(context.statementInformationItemNameClause().statementInformationItemName().Select(itemName => CreateSymbolReference(ParseTreeUtils.GetTokenFromTerminalNode(itemName.UserDefinedWord()))));
             }
 
             return new CompositeInformationAssignment(itemNames, storage);
@@ -532,6 +536,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             SqlVariable diagnosticIdVariable = null;
             SqlConstant diagnosticIdLiteral = null;
+            var assignments = new List<InformationAssignment>();
             if (context.variable_2 != null)
             {
                 diagnosticIdVariable = CreateSqlVariable(context.variable_2);
@@ -540,8 +545,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 diagnosticIdLiteral = new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
             }
-
-            var assignments = context.repeatedConnectionOrConditionInformation().Select(assignment => CreateSingleInformationAssignment(assignment)).Cast<InformationAssignment>().ToList();
+            foreach (var assignment in context.repeatedConnectionOrConditionInformation())
+            {
+                assignments.Add(CreateSingleInformationAssignment(assignment));
+            }
             return new ConditionInformation(diagnosticIdVariable, diagnosticIdLiteral, assignments);
         }
 
@@ -556,10 +563,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.UserDefinedWord() != null)
             {
-                itemName = new SymbolReference(
-                    new AlphanumericValue(
-                        ParseTreeUtils.GetTokenFromTerminalNode(context
-                            .UserDefinedWord())), SymbolType.SqlIdentifier);
+                itemName = CreateSymbolReference(ParseTreeUtils.GetTokenFromTerminalNode(context
+                    .UserDefinedWord()));
             }
 
             return new SingleInformationAssignment(itemName, storage);
@@ -568,53 +573,52 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         private CombinedInformation CreateCombinedInformationClause(CodeElementsParser.CombinedInformationClauseContext context)
         {
             SqlVariable storage = null;
+            var items = new List<CombinedInformationItem>();
             if (context.variable_4 != null)
             {
                 storage = CreateSqlVariable(context.variable_4);
             }
-
-            var items = context.repeatedCombinedInformation().Select(combinedInformationItem => CreateCombinedInformationItem(combinedInformationItem)).ToList();
+            foreach (var combinedInformationItem in context.repeatedCombinedInformation())
+            {
+                items.Add(CreateCombinedInformationItem(combinedInformationItem));
+            }
             return new CombinedInformation(storage, items);
         }
 
-        private CombinedInformationItem CreateCombinedInformationItem(CodeElementsParser.RepeatedCombinedInformationContext context)
+        private CombinedInformationItem CreateCombinedInformationItem(
+            CodeElementsParser.RepeatedCombinedInformationContext context)
         {
             if (context.SQL_STATEMENT() != null)
             {
-                return new StatementInformationItem();
+                return new CombinedInformationItem(CombinedInformationItemType.Statement, null, null);
             }
 
             else if (context.SQL_CONDITION() != null)
             {
-                SqlVariable diagnosticIdVariable = null;
-                SqlConstant diagnosticIdLiteral = null;
-                if (context.variable_5 != null)
-                {
-                    diagnosticIdVariable = CreateSqlVariable(context.variable_5);
-                }
-                else if (context.IntegerLiteral() != null)
-                {
-                    diagnosticIdLiteral =
-                        new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
-                }
-
-                return new ConditionInformationItem(diagnosticIdVariable, diagnosticIdLiteral);
+                CreateConnectionOrConditionInformation(out var diagnosticIdVariable, out var diagnosticIdLiteral);
+                return new CombinedInformationItem(CombinedInformationItemType.Condition, diagnosticIdVariable, diagnosticIdLiteral);
             }
             else if (context.SQL_CONNECTION() != null)
             {
-                SqlVariable diagnosticIdVariable = null;
-                SqlConstant diagnosticIdLiteral = null;
+                CreateConnectionOrConditionInformation(out var diagnosticIdVariable, out var diagnosticIdLiteral);
+                return new CombinedInformationItem(CombinedInformationItemType.Connection, diagnosticIdVariable, diagnosticIdLiteral);
+            }
+
+            void CreateConnectionOrConditionInformation(out SqlVariable diagnosticIdVariable,
+                out SqlConstant diagnosticIdLiteral)
+            {
+                diagnosticIdVariable = null;
+                diagnosticIdLiteral = null;
                 if (context.variable_5 != null)
                 {
                     diagnosticIdVariable = CreateSqlVariable(context.variable_5);
+
                 }
                 else if (context.IntegerLiteral() != null)
                 {
                     diagnosticIdLiteral =
                         new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
                 }
-
-                return new ConnectionInformationItem(diagnosticIdVariable, diagnosticIdLiteral);
             }
 
             return null;

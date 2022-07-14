@@ -7,6 +7,10 @@ namespace TypeCobol.Compiler.Sql.Model
     public abstract class Information : SqlObject
     {
         public abstract InformationType Type { get; }
+        protected override bool VisitSqlObject(ISqlVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 
     public enum InformationType
@@ -29,13 +33,12 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            DumpProperty(output, nameof(Type), Type, indentLevel);
             DumpProperty(output, nameof(Assignments), Assignments, indentLevel);
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this) &&
+            return base.VisitSqlObject(visitor) && visitor.Visit(this) &&
                    visitor.ContinueVisit(Assignments);
         }
     }
@@ -72,14 +75,13 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
+            base.DumpContent(output, indentLevel);
             DumpProperty(output, nameof(ItemName), ItemName, indentLevel);
-            DumpProperty(output, nameof(Storage), Storage, indentLevel);
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this) &&
-                   visitor.ContinueVisit(Storage);
+            return base.VisitSqlObject(visitor) && visitor.Visit(this);
         }
     }
 
@@ -94,14 +96,14 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
+            base.DumpContent(output, indentLevel);
             DumpProperty(output, nameof(ItemNames), ItemNames, indentLevel);
-            DumpProperty(output, nameof(Storage), Storage, indentLevel);
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this) &&
-                   visitor.ContinueVisit(Storage);
+            return base.VisitSqlObject(visitor) && visitor.Visit(this);
+
         }
     }
 
@@ -123,7 +125,6 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            DumpProperty(output, nameof(Type), Type, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdVariable), DiagnosticIdVariable, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdLiteral), DiagnosticIdLiteral, indentLevel);
             DumpProperty(output, nameof(Assignments), Assignments, indentLevel);
@@ -132,7 +133,8 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this) &&
+            return base.VisitSqlObject(visitor) && 
+                   visitor.Visit(this) &&
                    visitor.ContinueVisit(Assignments) &&
                    visitor.ContinueVisit(DiagnosticIdVariable, DiagnosticIdLiteral);
         }
@@ -152,7 +154,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            DumpProperty(output, nameof(Type), Type, indentLevel);
+            base.DumpContent(output, indentLevel);
             DumpProperty(output, nameof(Storage), Storage, indentLevel);
             DumpProperty(output, nameof(Items), Items, indentLevel);
 
@@ -160,8 +162,9 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
         {
-            return visitor.Visit(this) &&
-                   visitor.ContinueVisit(Storage);
+            return base.VisitSqlObject(visitor) &&
+                   visitor.Visit(this) &&
+                   visitor.ContinueVisit(Storage) && visitor.ContinueVisit(Items);
         }
     }
 
@@ -172,70 +175,23 @@ namespace TypeCobol.Compiler.Sql.Model
         Connection
     }
 
-    public abstract class CombinedInformationItem : SqlObject
+    public class CombinedInformationItem : SqlObject
     {
-        public abstract CombinedInformationItemType Type { get; }
-    }
-
-    public class StatementInformationItem : CombinedInformationItem
-    {
-        public override CombinedInformationItemType Type => CombinedInformationItemType.Statement;
-
-        protected override void DumpContent(TextWriter output, int indentLevel)
+        public CombinedInformationItem(CombinedInformationItemType type, SqlVariable diagnosticIdVariable,
+            SqlConstant diagnosticIdLiteral)
         {
-            DumpProperty(output, nameof(Type), Type, indentLevel);
-        }
-
-        protected override bool VisitSqlObject(ISqlVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
-    }
-
-    public class ConditionInformationItem : CombinedInformationItem
-    {
-        public ConditionInformationItem(SqlVariable diagnosticIdVariable, SqlConstant diagnosticIdLiteral)
-        {
+            Type = type;
             DiagnosticIdVariable = diagnosticIdVariable;
             DiagnosticIdLiteral = diagnosticIdLiteral;
         }
 
-        public override CombinedInformationItemType Type => CombinedInformationItemType.Condition;
-
+        public CombinedInformationItemType Type { get; }
         public SqlVariable DiagnosticIdVariable { get; }
         public SqlConstant DiagnosticIdLiteral { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            DumpProperty(output, nameof(Type), Type, indentLevel);
-            DumpProperty(output, nameof(DiagnosticIdVariable), DiagnosticIdVariable, indentLevel);
-            DumpProperty(output, nameof(DiagnosticIdLiteral), DiagnosticIdLiteral, indentLevel);
-
-        }
-
-        protected override bool VisitSqlObject(ISqlVisitor visitor)
-        {
-            return visitor.Visit(this) &&
-                   visitor.ContinueVisit(DiagnosticIdVariable, DiagnosticIdLiteral);
-        }
-    }
-
-    public class ConnectionInformationItem : CombinedInformationItem
-    {
-        public ConnectionInformationItem(SqlVariable diagnosticIdVariable, SqlConstant diagnosticIdLiteral)
-        {
-            DiagnosticIdVariable = diagnosticIdVariable;
-            DiagnosticIdLiteral = diagnosticIdLiteral;
-        }
-
-        public override CombinedInformationItemType Type => CombinedInformationItemType.Connection;
-
-        public SqlVariable DiagnosticIdVariable { get; }
-        public SqlConstant DiagnosticIdLiteral { get; }
-
-        protected override void DumpContent(TextWriter output, int indentLevel)
-        {
-            DumpProperty(output, nameof(Type), Type, indentLevel);
+            base.DumpContent(output, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdVariable), DiagnosticIdVariable, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdLiteral), DiagnosticIdLiteral, indentLevel);
 
