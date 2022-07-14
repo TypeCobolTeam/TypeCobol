@@ -10,8 +10,7 @@ namespace TypeCobol.Compiler.Sql.Model
     {
         Variable,
         ColumnName,
-        Constant,
-        Null
+        Constant
     }
     public abstract class SqlExpression : SqlObject
     {

@@ -713,6 +713,8 @@ sqlStatement ::= CommitStatement:stmt
 {: :}
 |	ReleaseSavepointStatement:stmt 
 {: :}
+|	SetAssignmentStatement:stmt 
+{: :}
 ;
 
 execStatementEnd ::= ExecStatementEnd:stmt

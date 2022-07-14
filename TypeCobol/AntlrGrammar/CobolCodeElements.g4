@@ -8327,8 +8327,8 @@ datetime_constant: (date | time | timestamp) AlphanumericLiteral;
 //TODO Complete TargetVariable , sqlVariable and sqlExpression
 sqlVariable: hostVariable;
 targetVariable: sqlVariable;
-sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant;
-sqlExpression: sqlVariable | column_name | sqlConstant | SQL_NULL;
+sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
+sqlExpression: sqlVariable | column_name | sqlConstant ;
 sourceValue: sqlExpression | SQL_DEFAULT;
 setAssignmentStatement: SQL_SET assignmentClause (SQL_CommaSeparator assignmentClause)*;
 assignmentClause: simpleAssignmentClause | multipleAssignmentClause;

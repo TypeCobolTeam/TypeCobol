@@ -1,6 +1,7 @@
 ﻿--- Diagnostics ---
 Line 11[29,38] <27, Error, Syntax> - Syntax error : missing ':' at 'COMMISSION' RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>targetVariable>sqlVariable>hostVariable,  OffendingSymbol=[29,38:COMMISSION]<UserDefinedWord>
-Line 16[15,17] <27, Error, Syntax> - Syntax error : The number of source value specifications (expression, NULL, or DEFAULT) on the right side of the equal sign must match the number of target specifications on the left side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[15,17:SET]<SQL_SET>
+Line 16[15,17] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[15,17:SET]<SQL_SET>
+Line 18[15,17] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[15,17:SET]<SQL_SET>
 Line 18[45,45] <27, Error, Syntax> - Syntax error : mismatched input ',' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>sourceValueClause>sourceValueClauses,  OffendingSymbol=[45,45:,]<SQL_CommaSeparator>
 
 --- Sql Statements ---
@@ -17,7 +18,6 @@ line 6: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 50000
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -34,7 +34,6 @@ line 7: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = <NULL>
-        - IsNull = True
         - IsDefault = <NULL>
     ]
 ]
@@ -48,7 +47,9 @@ line 8: SetAssignmentStatement
           - IndicatorReference = <NULL>
     ]
     - Values = [
-      - Values[0] = <NULL>
+      - Values[0] = SourceValue
+        - Expression = <NULL>
+        - IsDefault = True
     ]
   - Assignments[1] = Assignment
     - Targets = [
@@ -65,12 +66,10 @@ line 8: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 50000
-        - IsNull = False
         - IsDefault = <NULL>
       - Values[1] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 8000
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -91,12 +90,10 @@ line 10: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 50000
-        - IsNull = False
         - IsDefault = <NULL>
       - Values[1] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 8000
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -117,12 +114,10 @@ line 11: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 50000
-        - IsNull = False
         - IsDefault = <NULL>
       - Values[1] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 8000
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -143,12 +138,10 @@ line 12: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = <NULL>
-        - IsNull = True
         - IsDefault = <NULL>
       - Values[1] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 8000
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -169,12 +162,10 @@ line 13: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 50000
-        - IsNull = False
         - IsDefault = <NULL>
       - Values[1] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 8000
-        - IsNull = False
         - IsDefault = <NULL>
     ]
   - Assignments[1] = Assignment
@@ -188,7 +179,6 @@ line 13: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 50000
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -205,7 +195,6 @@ line 15: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 499
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -226,7 +215,6 @@ line 16: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 5
-        - IsNull = False
         - IsDefault = <NULL>
     ]
 ]
@@ -247,9 +235,10 @@ line 17: SetAssignmentStatement
       - Values[0] = SourceValue
         - Expression = SqlConstant
           - LiteralValue = 5
-        - IsNull = False
         - IsDefault = <NULL>
-      - Values[1] = <NULL>
+      - Values[1] = SourceValue
+        - Expression = <NULL>
+        - IsDefault = True
     ]
 ]
 line 18: SetAssignmentStatement
@@ -265,5 +254,6 @@ line 18: SetAssignmentStatement
           - MainReference = COMMISSION
           - IndicatorReference = <NULL>
     ]
-    - Values = <NULL>
+    - Values = [
+    ]
 ]

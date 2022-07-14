@@ -62,7 +62,6 @@ namespace TypeCobol.Compiler.Sql.Model
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
             DumpProperty(output, nameof(Expression), Expression, indentLevel);
-            DumpProperty(output, nameof(IsNull), IsNull, indentLevel);
             DumpProperty(output, nameof(IsDefault), IsDefault, indentLevel);
         }
 
