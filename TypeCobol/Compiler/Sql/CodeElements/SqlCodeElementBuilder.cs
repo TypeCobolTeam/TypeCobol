@@ -474,7 +474,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
             return aliasName;
         }
-        public enum AlterSequenceClauseTypes 
+
+        public enum AlterSequenceClauseType
         {
             MinValue,
             MaxValue,
@@ -484,140 +485,234 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             Restart,
             Increment
         }
-
-        public AlterSequenceStatement CreateAlterSequenceStatement(
-            CodeElementsParser.AlterSequenceStatementContext context)
+        public AlterSequenceStatement CreateAlterSequenceStatement(CodeElementsParser.AlterSequenceStatementContext context)
         {
+            var duplicates = new List<ParserRuleContextWithDiagnostics>();
+
+            var clauseSet = new HashSet<AlterSequenceClauseType>();
             TableViewCorrelationName sequenceName = null;
+            SyntaxProperty<bool> cycle = null;
             SyntaxProperty<bool> restart = null;
-            SqlConstant restartValue = null;
-            SqlConstant incrementValue = null;
+            SyntaxProperty<bool> cache = null;
+            SyntaxProperty<bool> ordered = null;
             SqlConstant minValue = null;
             SqlConstant maxValue = null;
-            SyntaxProperty<bool> cycle = null;
+            SqlConstant restartValue = null;
+            SqlConstant incrementValue = null;
             SqlConstant cacheSize = null;
-            SyntaxProperty<bool> ordered = null;
-            var existingClauses = new List<AlterSequenceClauseTypes>();
             if (context.sequence_name != null)
             {
                 sequenceName = CreateTableOrViewOrCorrelationName(context.sequence_name);
             }
 
-            foreach (var alterSequenceClause in context.alterSequenceClause())
+            foreach (var alterSequenceClauseContext in context.alterSequenceClause())
             {
-                if (alterSequenceClause.restartClause() != null)
+                if (alterSequenceClauseContext.minValueClause() != null)
                 {
-                    restart = alterSequenceClause.restartClause().SQL_RESTART() != null
-                        ? new SyntaxProperty<bool>(true,
-                            ParseTreeUtils.GetFirstToken(alterSequenceClause.restartClause().SQL_RESTART()))
-                        : null;
-                    if (alterSequenceClause.restartClause().numeric_constant != null)
+                    var minValueClause = alterSequenceClauseContext.minValueClause();
+                    if (clauseSet.Add(AlterSequenceClauseType.MinValue))
                     {
-                        restartValue =
-                            new SqlConstant((Token) alterSequenceClause.restartClause().numeric_constant);
-
+                        System.Diagnostics.Debug.Assert(minValue == null);
+                        minValue = new SqlConstant((Token) minValueClause.numeric_constant);
                     }
-
-                    existingClauses.Add(AlterSequenceClauseTypes.Restart);
-                }
-
-                if (alterSequenceClause.incrementClause() != null)
-                {
-
-                    if (alterSequenceClause.incrementClause().numeric_constant != null)
+                    else
                     {
-
-                        incrementValue =
-                            new SqlConstant((Token) alterSequenceClause.incrementClause().numeric_constant);
-                    }
-
-                    existingClauses.Add(AlterSequenceClauseTypes.Increment);
-                }
-
-                if (alterSequenceClause.minValueClause() != null)
-                {
-                    if (alterSequenceClause.minValueClause().numeric_constant != null)
-                    {
-                        minValue = new SqlConstant((Token) alterSequenceClause.minValueClause().numeric_constant);
-                    }
-
-                    existingClauses.Add(AlterSequenceClauseTypes.MinValue);
-                }
-
-                if (alterSequenceClause.maxValueClause() != null)
-                {
-                    if (alterSequenceClause.maxValueClause().numeric_constant != null)
-                    {
-                        maxValue = new SqlConstant((Token) alterSequenceClause.maxValueClause().numeric_constant);
-                    }
-
-                    existingClauses.Add(AlterSequenceClauseTypes.MaxValue);
-                }
-
-                if (alterSequenceClause.cycle() != null)
-                {
-                    if (alterSequenceClause.cycle().KeywordCYCLE != null)
-                    {
-                        cycle = new SyntaxProperty<bool>(true,
-                            (Token) alterSequenceClause.cycle().KeywordCYCLE);
-                        existingClauses.Add(AlterSequenceClauseTypes.Cycle);
+                        System.Diagnostics.Debug.Assert(minValue != null);
+                        duplicates.Add(minValueClause);
                     }
                 }
 
-                if (alterSequenceClause.cacheClause() != null)
+                if (alterSequenceClauseContext.maxValueClause() != null)
                 {
-
-                    if (alterSequenceClause.cacheClause().numeric_constant != null)
+                    var maxValueClause = alterSequenceClauseContext.maxValueClause();
+                    if (clauseSet.Add(AlterSequenceClauseType.MaxValue))
                     {
-                        cacheSize = new SqlConstant((Token) alterSequenceClause.cacheClause().numeric_constant);
+                        System.Diagnostics.Debug.Assert(maxValue == null);
+                        maxValue = new SqlConstant((Token) maxValueClause.numeric_constant);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(maxValue != null);
+                        duplicates.Add(maxValueClause);
+                    }
+                }
+
+                if (alterSequenceClauseContext.restartClause() != null)
+                {
+                    var restartClause = alterSequenceClauseContext.restartClause();
+                    if (clauseSet.Add(AlterSequenceClauseType.Restart))
+                    {
+                        System.Diagnostics.Debug.Assert(restart == null);
+                        restart = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(restartClause));
+                        if (restartClause.numeric_constant != null)
+                        {
+                            restartValue = new SqlConstant((Token)restartClause.numeric_constant);
+
+                        }
+
+                        if (alterSequenceClauseContext.restartClause().numeric_constant != null)
+                        {
+                            restartValue = new SqlConstant((Token) restartClause.numeric_constant);
+                        }
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(restart!=null);
+                        duplicates.Add(restartClause);
+                    }
+                    
+                    
+                }
+
+                if (alterSequenceClauseContext.SQL_ORDER() != null)
+                {
+                    var orderedClause = alterSequenceClauseContext.SQL_ORDER();
+                    if (clauseSet.Add(AlterSequenceClauseType.Ordered))
+                    {
+                        System.Diagnostics.Debug.Assert(ordered == null);
+                        ordered = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(orderedClause));
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(ordered != null);
+                        duplicates.Add((ParserRuleContextWithDiagnostics) orderedClause);
+                    }
+                }
+
+                if (alterSequenceClauseContext.incrementClause() != null)
+                {
+                    var incrementClause = alterSequenceClauseContext.incrementClause();
+                    if (clauseSet.Add(AlterSequenceClauseType.Increment))
+                    {
+                        System.Diagnostics.Debug.Assert(incrementValue == null);
+                        incrementValue = new SqlConstant((Token) incrementClause.numeric_constant);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(incrementValue != null);
+                        duplicates.Add(incrementClause);
+                    }
+                }
+
+                if (alterSequenceClauseContext.cacheClause() != null)
+                {
+                    var cacheClause = alterSequenceClauseContext.cacheClause();
+                    if (clauseSet.Add(AlterSequenceClauseType.Cache))
+                    {
+                        System.Diagnostics.Debug.Assert(cacheSize == null);
+                        cacheSize = new SqlConstant((Token) cacheClause.numeric_constant);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(cacheSize != null);
+                        duplicates.Add(cacheClause);
+                    }
+                }
+
+                if (alterSequenceClauseContext.cycle() != null)
+                {
+                    var cycleClause = alterSequenceClauseContext.cycle();
+                    if (clauseSet.Add(AlterSequenceClauseType.Cycle))
+                    {
+                        System.Diagnostics.Debug.Assert(cycle == null);
+                        cycle = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(cycleClause));
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(cycle != null);
+                        duplicates.Add(cycleClause);
+                    }
+                }
+
+                if (alterSequenceClauseContext.noClauses() != null)
+                {
+                    if (alterSequenceClauseContext.noClauses().minvalue() != null)
+                    {
+                        var noMinValueClause = alterSequenceClauseContext.noClauses().minvalue();
+                        if (clauseSet.Add(AlterSequenceClauseType.MinValue))
+                        {
+                            System.Diagnostics.Debug.Assert(minValue == null);
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(minValue != null);
+                            duplicates.Add(noMinValueClause);
+                        }
                     }
 
-                    existingClauses.Add(AlterSequenceClauseTypes.Cache);
-                }
+                    if (alterSequenceClauseContext.noClauses().maxvalue() != null)
+                    {
+                        var noMaxValueClause = alterSequenceClauseContext.noClauses().maxvalue();
+                        if (clauseSet.Add(AlterSequenceClauseType.MaxValue))
+                        {
+                            System.Diagnostics.Debug.Assert(maxValue == null);
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(maxValue != null);
+                            duplicates.Add(noMaxValueClause);
+                        }
+                    }
 
-                if (alterSequenceClause.SQL_ORDER() != null)
-                {
-                    ordered = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(alterSequenceClause.SQL_ORDER()));
-                    existingClauses.Add(AlterSequenceClauseTypes.Ordered);
-                }
+                    if (alterSequenceClauseContext.noClauses().cycle() != null)
+                    {
+                        var noCycleClause = alterSequenceClauseContext.noClauses().cycle();
+                        if (clauseSet.Add(AlterSequenceClauseType.Cycle))
+                        {
+                            System.Diagnostics.Debug.Assert(cycle == null);
+                            cycle = new SyntaxProperty<bool>(false,
+                                ParseTreeUtils.GetTokenFromTerminalNode(alterSequenceClauseContext.noClauses()
+                                    .SQL_NO()));
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(cycle != null);
+                            duplicates.Add(noCycleClause);
+                        }
+                    }
 
-                if (alterSequenceClause.noClauses() == null) continue;
-                if (alterSequenceClause.noClauses().SQL_ORDER() != null)
-                {
-                    ordered = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(alterSequenceClause.noClauses().SQL_ORDER()));
-                    existingClauses.Add(AlterSequenceClauseTypes.Ordered);
-                }
-                else if (alterSequenceClause.noClauses().cycle() != null)
-                {
-                    cycle = new SyntaxProperty<bool>(true,
-                        (Token) alterSequenceClause.noClauses().cycle().KeywordCYCLE);
-                    existingClauses.Add(AlterSequenceClauseTypes.Cycle);
-                }
-                else if (alterSequenceClause.noClauses().maxvalue() != null)
-                {
-                    existingClauses.Add(AlterSequenceClauseTypes.MaxValue);
-                }
-                else if (alterSequenceClause.noClauses().minvalue() != null)
-                {
-                    existingClauses.Add(AlterSequenceClauseTypes.MinValue);
-                }
-                else if (alterSequenceClause.noClauses().cache() != null)
-                {
-                    existingClauses.Add(AlterSequenceClauseTypes.Cache);
+                    if (alterSequenceClauseContext.noClauses().cache() != null)
+                    {
+                        var noCacheClause = alterSequenceClauseContext.noClauses().cache();
+                        if (clauseSet.Add(AlterSequenceClauseType.Cycle))
+                        {
+                            System.Diagnostics.Debug.Assert(cache == null);
+                            cache = new SyntaxProperty<bool>(false,
+                                ParseTreeUtils.GetTokenFromTerminalNode(alterSequenceClauseContext.noClauses()
+                                    .SQL_NO()));
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(cycle != null);
+                            duplicates.Add(noCacheClause);
+                        }
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().SQL_ORDER() != null)
+                    {
+                        var noOrderedClause = alterSequenceClauseContext.noClauses().SQL_ORDER();
+                        if (clauseSet.Add(AlterSequenceClauseType.Cycle))
+                        {
+                            System.Diagnostics.Debug.Assert(ordered == null);
+                            ordered = new SyntaxProperty<bool>(false,
+                                ParseTreeUtils.GetTokenFromTerminalNode(alterSequenceClauseContext.noClauses()
+                                    .SQL_NO()));
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(ordered != null);
+                            duplicates.Add((ParserRuleContextWithDiagnostics) noOrderedClause);
+                        }
+                    }
                 }
             }
 
-            var duplicates = existingClauses.GroupBy(x => x)
-                .SelectMany(g => g.Skip(1))
-                .Distinct()
-                .ToList();
             var alterSequenceStatement = new AlterSequenceStatement(sequenceName, restart, restartValue, incrementValue,
                 minValue, maxValue,
                 cycle, cacheSize, ordered);
             IntegrateAlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, context);
             return (alterSequenceStatement);
+            
         }
     }
 }

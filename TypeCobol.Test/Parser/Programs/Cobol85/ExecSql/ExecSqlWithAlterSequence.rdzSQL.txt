@@ -1,6 +1,7 @@
 ﻿--- Diagnostics ---
-Line 6[15,19] <27, Error, Syntax> - Syntax error : MinValue can not be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
-Line 14[15,19] <27, Error, Syntax> - Syntax error : At least one option must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 6[15,19] <27, Error, Syntax> - Syntax error : [4607 4599 2005 1196] can not be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 15[15,19] <27, Error, Syntax> - Syntax error : At least one option must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 19[15,19] <27, Error, Syntax> - Syntax error : At least one option must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
 Line 20[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {user defined word, NO, ORDER, RESTART} RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
@@ -11,7 +12,7 @@ line 6: AlterSequenceStatement
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
 - MinValue = SqlConstant
-  - LiteralValue = 80|1>8
+  - LiteralValue = 60|1>6
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
@@ -76,7 +77,7 @@ line 12: AlterSequenceStatement
 - IncrementValue = <NULL>
 - MinValue = <NULL>
 - MaxValue = <NULL>
-- Cycle = True
+- Cycle = False
 - CacheSize = <NULL>
 - NoCache = True
 - Ordered = <NULL>
@@ -140,7 +141,7 @@ line 17: AlterSequenceStatement
 - Cycle = <NULL>
 - CacheSize = <NULL>
 - NoCache = True
-- Ordered = True
+- Ordered = False
 line 18: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
   - Name = org_seq2
@@ -153,7 +154,7 @@ line 18: AlterSequenceStatement
 - Cycle = <NULL>
 - CacheSize = <NULL>
 - NoCache = True
-- Ordered = True
+- Ordered = False
 line 19: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
   - Name = org_seq3

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.CodeElements
 {
-    public static class SavepointStatementChecker
+    internal static class SavepointStatementChecker
     {
         public static void OnCodeElement(SavepointStatement savepointStatement, CodeElementsParser.SavepointStatementContext context)
         {
@@ -21,9 +22,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
         }
     }
-    public static class IntegrateAlterSequenceStatementChecker
+
+    internal static class IntegrateAlterSequenceStatementChecker
     {
-        public static void OnCodeElement(AlterSequenceStatement alterSequenceStatement, List<SqlCodeElementBuilder.AlterSequenceClauseTypes> duplicatedClauses,
+        public static void OnCodeElement(AlterSequenceStatement alterSequenceStatement, List<ParserRuleContextWithDiagnostics> duplicatedClauses,
             CodeElementsParser.AlterSequenceStatementContext context)
         {
             foreach (var clauseType in duplicatedClauses)
@@ -36,7 +38,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 alterSequenceStatement.MaxValue == null &&
                 alterSequenceStatement.Ordered == null && alterSequenceStatement.Restart == null &&
                 alterSequenceStatement.IncrementValue == null && alterSequenceStatement.Cycle == null &&
-                alterSequenceStatement.NoCache == false)
+                alterSequenceStatement.CacheSize == null)
             {
                 DiagnosticUtils.AddError(alterSequenceStatement, "At least one option must be specified", context);
             }
