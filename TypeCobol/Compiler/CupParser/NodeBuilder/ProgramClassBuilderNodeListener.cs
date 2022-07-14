@@ -870,6 +870,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+
+        }
         public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
         {
 
