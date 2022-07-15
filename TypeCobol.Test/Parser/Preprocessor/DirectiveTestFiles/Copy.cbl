@@ -67,3 +67,5 @@
 000001              end-call                                         
 000001              end-if==   
 000001 .                                      
+
+000001 COPY TEXTNAME1. COPY
