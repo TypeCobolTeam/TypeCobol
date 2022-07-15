@@ -389,12 +389,18 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Rollback rollback);
         bool Visit([NotNull] TruncateStatement truncateStatement);
         bool Visit([NotNull] Truncate truncate);
+        bool Visit([NotNull] SavepointStatement savepointStatement);
+        bool Visit([NotNull] Savepoint savepoint);
         bool Visit([NotNull] WhenEverStatement whenEverStatement);
         bool Visit([NotNull] WhenEver whenEver);
         bool Visit([NotNull] LockTableStatement lockTableStatement);
         bool Visit([NotNull] LockTable lockTable);
         bool Visit([NotNull] ReleaseSavepointStatement releaseSavepointStatement);
         bool Visit([NotNull] ReleaseSavepoint releaseSavepoint);
+        bool Visit([NotNull] ConnectStatement connectStatement);
+        bool Visit([NotNull] Connect connect);
+        bool Visit([NotNull] DropTableStatement dropTableStatement);
+        bool Visit([NotNull] DropTable dropTable);
         bool Visit([NotNull] SetAssignmentStatement setAssignmentStatement);
         bool Visit([NotNull] SetAssignment setAssignment);
     }
@@ -1540,6 +1546,15 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return true;
         }
+        public virtual bool Visit([NotNull] SavepointStatement savepointStatement)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] Savepoint savepoint)
+        {
+            return true;
+        }
 
         public virtual bool Visit([NotNull] WhenEverStatement whenEverStatement)
         {
@@ -1563,6 +1578,22 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] ReleaseSavepoint releaseSavepoint)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] ConnectStatement connectStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] Connect connect)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DropTableStatement dropTableStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DropTable dropTable)
         {
             return true;
         }

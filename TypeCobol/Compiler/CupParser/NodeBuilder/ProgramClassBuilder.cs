@@ -1635,6 +1635,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnTruncateStatement(truncate);
         }
+        public void OnSavepointStatement([NotNull] SavepointStatement savepoint)
+        {
+            Enter(new Savepoint(savepoint), savepoint);
+            Exit();
+            Dispatcher.OnSavepointStatement(savepoint);
+        }
         public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
         {
             Enter(new LockTable(lockTable), lockTable);
@@ -1652,6 +1658,18 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new WhenEver(whenEver), whenEver);
             Exit();
             Dispatcher.OnWhenEverStatement(whenEver);
+        }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+            Enter(new Connect(connect), connect);
+            Exit();
+            Dispatcher.OnConnectStatement(connect);
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+            Enter(new DropTable(dropTable), dropTable);
+            Exit();
+            Dispatcher.OnDropTableStatement(dropTable);
         }
         public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
         {

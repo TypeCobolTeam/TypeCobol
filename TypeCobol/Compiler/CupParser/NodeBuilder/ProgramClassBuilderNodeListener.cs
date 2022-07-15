@@ -854,6 +854,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnSavepointStatement([NotNull] SavepointStatement truncate)
+        {
+
+        }
         public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
         {
 
@@ -863,6 +867,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
         public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+
+        }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
         {
 
         }

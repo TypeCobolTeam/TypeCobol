@@ -2298,13 +2298,33 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = _sqlCodeElementBuilder.CreateReleaseSavepointStatement(context);
         }
 
+        public override void EnterSavepointStatement([NotNull] CodeElementsParser.SavepointStatementContext context)
+        {
+            Context = context;
+            var savepointStatement = _sqlCodeElementBuilder.CreateSavepointStatement(context);
+            CodeElement = savepointStatement;
+            SavepointStatementChecker.OnCodeElement(savepointStatement, context);
+        }
+
+        public override void EnterConnectStatement([NotNull] CodeElementsParser.ConnectStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateConnectStatement(context);
+        }
+
+        public override void EnterDropTableStatement([NotNull] CodeElementsParser.DropTableStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateDropTableStatement(context);
+        }
+
         public override void EnterSetAssignmentStatement(
             [NotNull] CodeElementsParser.SetAssignmentStatementContext context)
         {
             Context = context;
             var statement = _sqlCodeElementBuilder.CreateSetAssignmentStatement(context);
             CodeElement = statement;
-            SqlCodeElementCheckers.OnCodeElement(statement, context);
+            SetAssignmentStatementChecker.OnCodeElement(statement, context);
         }
     }
 }

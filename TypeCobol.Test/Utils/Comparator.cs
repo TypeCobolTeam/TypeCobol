@@ -529,6 +529,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(whenEverStatement.TargetSectionOrParagraph), whenEverStatement.TargetSectionOrParagraph);
                 return true;
             }
+            public override bool Visit(SavepointStatement savepointStatement)
+            {
+                _writer.WriteLine($"line {savepointStatement.Line}: {nameof(SavepointStatement)}");
+                DumpObject(nameof(savepointStatement.Name), savepointStatement.Name);
+                DumpObject(nameof(savepointStatement.IsUnique), savepointStatement.IsUnique);
+                DumpObject(nameof(savepointStatement.RetainLocks), savepointStatement.RetainLocks);
+                return true;
+            }
             public override bool Visit(LockTableStatement lockTableStatement)
             {
                 _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");
@@ -541,6 +549,21 @@ namespace TypeCobol.Test.Utils
             {
                 _writer.WriteLine($"line {releaseSavepointStatement.Line}: {nameof(ReleaseSavepointStatement)}");
                 DumpObject(nameof(releaseSavepointStatement.SavepointName), releaseSavepointStatement.SavepointName);
+                return true;
+            }
+            public override bool Visit(ConnectStatement connectStatement)
+            {
+                _writer.WriteLine($"line {connectStatement.Line}: {nameof(ConnectStatement)}");
+                DumpObject(nameof(connectStatement.Target), connectStatement.Target);
+                DumpObject(nameof(connectStatement.Authorization), connectStatement.Authorization);
+                DumpObject(nameof(connectStatement.Reset), connectStatement.Reset);
+                return true;
+            }
+
+            public override bool Visit(DropTableStatement dropTableStatement)
+            {
+                _writer.WriteLine($"line {dropTableStatement.Line}: {nameof(DropTableStatement)}");
+                DumpObject(nameof(dropTableStatement.TableOrAliasName), dropTableStatement.TableOrAliasName);
                 return true;
             }
             public override bool Visit(SetAssignmentStatement setAssignmentStatement)
