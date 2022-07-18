@@ -632,8 +632,8 @@ namespace TypeCobol.LanguageServer
 #endif
 
             Configuration = new TypeCobolConfiguration();
-
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
+
             TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
