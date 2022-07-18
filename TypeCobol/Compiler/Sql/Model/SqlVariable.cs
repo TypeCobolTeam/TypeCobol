@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             IndicatorReference = indicatorReference;
         }
-
+        public override SqlExpressionType ExpressionType => SqlExpressionType.Variable;
         public override VariableType Type => VariableType.HostVariable;
 
         protected override void DumpContent(TextWriter output, int indentLevel)
@@ -51,5 +51,6 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             return base.VisitSqlObject(visitor) && visitor.Visit(this);
         }
+
     }
 }

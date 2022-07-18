@@ -24,19 +24,50 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
     }
 
-    public static class ExecuteImmediateStatementChecker
+    internal static class ExecuteImmediateStatementChecker
     {
         public static void OnCodeElement(ExecuteImmediateStatement executeImmediateStatement, CodeElementsParser.ExecuteImmediateStatementContext context)
         {
-            var test = executeImmediateStatement.Expression is HostVariable;
-            if (!test) return;
-            var hostVariable = (HostVariable) executeImmediateStatement.Expression;
-            if (hostVariable.IndicatorReference != null)
+            var expressionType = executeImmediateStatement.Expression?.ExpressionType;
+            switch (expressionType)
             {
+                case SqlExpressionType.Variable:
+                    var variable = (SqlVariable) executeImmediateStatement.Expression;
+                    if (variable.Type != VariableType.HostVariable)
+                    {
+                        DiagnosticUtils.AddError(executeImmediateStatement,
+                            "The sql variable must be a host variable in EXECUTE IMMEDIATE statement",
+                            context);
+                    }
+                    else
+                    {
+                        if (((HostVariable) variable).IndicatorReference != null)
+                        {
+                            DiagnosticUtils.AddError(executeImmediateStatement,
+                                "An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement",
+                                context);
+                        }
+                    }
+
+                    break;
+
+                case SqlExpressionType.Constant:
+                    var constant = (SqlConstant)executeImmediateStatement.Expression;
+                    if (constant.Type != SqlConstantType.CharacterString)
+                    {
+                        DiagnosticUtils.AddError(executeImmediateStatement,
+                            "The constant must be Alphanumeric in EXECUTE IMMEDIATE statement",
+                            context);
+                    }
+                    break;
+                default:
                 DiagnosticUtils.AddError(executeImmediateStatement,
-                    "The host variable mustn't have any indicator variable",
+                    "Only 2 types of expression are allowed in EXECUTE IMMEDIATE statement: variable or constant",
                     context);
+                break;
+
             }
         }
+
     }
 }

@@ -6,6 +6,7 @@
              EXECUTE IMMEDIATE :var1 
              EXECUTE IMMEDIATE :var2 INDICATOR :var3
              EXECUTE IMMEDIATE 'SELECT * FROM table1'
+             EXECUTE IMMEDIATE 555
              EXECUTE IMMEDIATE 
              END-EXEC.
        PROCEDURE DIVISION.

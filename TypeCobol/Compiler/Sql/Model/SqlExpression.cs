@@ -6,9 +6,15 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
+    public enum SqlExpressionType
+    {
+        Variable,
+        ColumnName,
+        Constant
+    }
     public abstract class SqlExpression : SqlObject
     {
-
+        public abstract SqlExpressionType ExpressionType { get; }
     }
 
     public enum SqlConstantType
@@ -30,7 +36,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             Literal = literal;
         }
-
+        public override SqlExpressionType ExpressionType => SqlExpressionType.Constant;
         public virtual SqlConstantType Type
         {
             get
@@ -113,7 +119,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             this.Symbol = symbol;
         }
-
+        public override SqlExpressionType ExpressionType => SqlExpressionType.ColumnName;
         public SymbolReference Symbol { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)

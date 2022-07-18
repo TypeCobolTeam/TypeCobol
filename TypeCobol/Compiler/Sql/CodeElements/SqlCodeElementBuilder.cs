@@ -502,11 +502,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 return CreateSqlColumnName(context.column_name());
             }
-            else if (context.sqlConstant() != null)
+
+            if (context.sqlConstant() != null)
             {
                 return CreateSqlConstant(context.sqlConstant());
             }
-            else if (context.sqlVariable() != null)
+
+            if (context.sqlVariable() != null)
             {
                 return CreateSqlVariable(context.sqlVariable());
             }

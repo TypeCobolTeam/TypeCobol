@@ -2323,7 +2323,7 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             var executeImmediateStatement = _sqlCodeElementBuilder.CreateExecuteImmediateStatement(context);
             CodeElement = executeImmediateStatement;
-			ExecuteImmediateStatementChecker.OnCodeElement(executeImmediateStatement, context);
+            ExecuteImmediateStatementChecker.OnCodeElement(executeImmediateStatement, context);
         }
     }
 }
