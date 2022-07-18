@@ -271,6 +271,8 @@ namespace TypeCobol.Compiler.Scanner
             for (; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine line = continuationLinesGroup[i];
+
+                // Line's scan state is set by Scanner.ScanTokensLine, so use local variable scanState instead of line's property
                 if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && IsDebuggingModeActive(scanState, line.SourceText)))
                 {
                     hasSource = true;
