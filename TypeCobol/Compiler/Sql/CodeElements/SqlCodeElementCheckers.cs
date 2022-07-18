@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
-using TypeCobol.Compiler.Sql.Model;
 
 namespace TypeCobol.Compiler.Sql.CodeElements
 {
-    public static class SavepointStatementChecker
+    internal static class SavepointStatementChecker
     {
-        internal static void OnCodeElement(SavepointStatement savepointStatement,
+        public static void OnCodeElement(SavepointStatement savepointStatement,
             CodeElementsParser.SavepointStatementContext context)
         {
             if (savepointStatement.Name != null)
@@ -24,25 +22,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
     }
 
-    public static class SetAssignmentStatementChecker
+    internal static class SetAssignmentStatementChecker
     {
-        internal static void OnCodeElement(SetAssignmentStatement setAssignmentStatement,
+        public static void OnCodeElement(SetAssignmentStatement setAssignmentStatement,
             CodeElementsParser.SetAssignmentStatementContext context)
         {
             foreach (var assignment in setAssignmentStatement.Assignments)
             {
-                IList<SourceValue> values = new List<SourceValue>();
-                IList<TargetVariable> targets = new List<TargetVariable>();
-                if (assignment.Values != null)
-                {
-                    values = assignment.Values;
-                }
-
-                if (assignment.Targets != null)
-                {
-                    targets = assignment.Targets;
-                }
-
+                var values = assignment.Values;
+                var targets = assignment.Targets;
                 if (values.Count != targets.Count)
                 {
                     DiagnosticUtils.AddError(setAssignmentStatement,

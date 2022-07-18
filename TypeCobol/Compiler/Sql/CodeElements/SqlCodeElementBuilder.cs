@@ -521,7 +521,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             IList<SourceValue> values = new List<SourceValue>();
             if (context.targetVariable() != null)
             {
-                targets.Add(new TargetVariable(CreateSqlVariable(context.targetVariable().sqlVariable())));
+                targets.Add(CreateTargetVariable(context.targetVariable()));
             }
             if (context.sourceValue() != null)
             {
@@ -574,11 +574,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                return CreateSqlColumnName(context.column_name());
             }
-            else if (context.sqlConstant() != null)
+
+            if (context.sqlConstant() != null)
             {
                 return new SqlConstant(ParseTreeUtils.GetFirstToken(context.sqlConstant()));
             }
-            else if (context.sqlVariable() != null)
+
+            if (context.sqlVariable() != null)
             {
                 return CreateSqlVariable(context.sqlVariable());
             }
