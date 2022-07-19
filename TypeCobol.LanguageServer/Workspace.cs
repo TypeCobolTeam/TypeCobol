@@ -615,10 +615,13 @@ namespace TypeCobol.LanguageServer
             return false;
         }
 
-        public string GetDefaultCopyFolder()
+        public static string GetDefaultCopyFolder
         {
-            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-            return folder + @"\DefaultCopies\";
+            get
+            {
+                var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                return folder + @"\DefaultCopies\";
+            }
         }
 
         /// <summary>
@@ -637,7 +640,7 @@ namespace TypeCobol.LanguageServer
             TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
-            Configuration.CopyFolders.Add(GetDefaultCopyFolder());
+            Configuration.CopyFolders.Add(GetDefaultCopyFolder);
 
             if (Configuration.Telemetry)
                 AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
