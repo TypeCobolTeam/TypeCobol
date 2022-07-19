@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
@@ -9,7 +10,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 {
     internal static class SavepointStatementChecker
     {
-        public static void OnCodeElement(SavepointStatement savepointStatement, CodeElementsParser.SavepointStatementContext context)
+        public static void OnCodeElement(SavepointStatement savepointStatement,
+            CodeElementsParser.SavepointStatementContext context)
         {
             if (savepointStatement.Name != null)
             {
@@ -25,20 +27,18 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
     internal static class IntegrateAlterSequenceStatementChecker
     {
-        public static void OnCodeElement(AlterSequenceStatement alterSequenceStatement, List<ParserRuleContextWithDiagnostics> duplicatedClauses,
+        public static void OnCodeElement(AlterSequenceStatement alterSequenceStatement,
+            List<IParseTree> duplicatedClauses, bool emptyClauseSet,
             CodeElementsParser.AlterSequenceStatementContext context)
         {
             foreach (var clauseType in duplicatedClauses)
             {
-                DiagnosticUtils.AddError(alterSequenceStatement, clauseType + " can not be specified more than once",
+                DiagnosticUtils.AddError(alterSequenceStatement,
+                    clauseType.GetChild(0).GetText() + " can not be specified more than once",
                     context);
             }
 
-            if (alterSequenceStatement != null && alterSequenceStatement.MinValue == null &&
-                alterSequenceStatement.MaxValue == null &&
-                alterSequenceStatement.Ordered == null && alterSequenceStatement.Restart == null &&
-                alterSequenceStatement.IncrementValue == null && alterSequenceStatement.Cycle == null &&
-                alterSequenceStatement.CacheSize == null)
+            if (emptyClauseSet)
             {
                 DiagnosticUtils.AddError(alterSequenceStatement, "At least one option must be specified", context);
             }

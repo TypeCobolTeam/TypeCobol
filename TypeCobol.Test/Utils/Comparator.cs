@@ -590,7 +590,6 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(AlterSequenceStatement.MaxValue), alterSequenceStatement.MaxValue);
                 DumpObject(nameof(AlterSequenceStatement.Cycle), alterSequenceStatement.Cycle);
                 DumpObject(nameof(AlterSequenceStatement.CacheSize), alterSequenceStatement.CacheSize);
-                DumpObject(nameof(AlterSequenceStatement.NoCache), alterSequenceStatement.NoCache);
                 DumpObject(nameof(AlterSequenceStatement.Ordered), alterSequenceStatement.Ordered);
                 return true;
             }

@@ -13,7 +13,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
         public SqlConstant MaxValue { get; }
         public SyntaxProperty<bool> Cycle { get; }
         public SqlConstant CacheSize { get; }
-        public bool NoCache => CacheSize == null;
         public SyntaxProperty<bool> Ordered { get; }
 
         public AlterSequenceStatement(TableViewCorrelationName sequenceName, SyntaxProperty<bool> restart,

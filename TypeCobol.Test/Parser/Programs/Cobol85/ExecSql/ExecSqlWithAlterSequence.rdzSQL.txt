@@ -1,6 +1,5 @@
 ﻿--- Diagnostics ---
-Line 6[15,19] <27, Error, Syntax> - Syntax error : [4607 4599 2005 1196] can not be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
-Line 15[15,19] <27, Error, Syntax> - Syntax error : At least one option must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 6[15,19] <27, Error, Syntax> - Syntax error : MINVALUE can not be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
 Line 19[15,19] <27, Error, Syntax> - Syntax error : At least one option must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
 Line 20[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {user defined word, NO, ORDER, RESTART} RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
@@ -12,11 +11,10 @@ line 6: AlterSequenceStatement
 - RestartValue = <NULL>
 - IncrementValue = <NULL>
 - MinValue = SqlConstant
-  - LiteralValue = 60|1>6
+  - LiteralValue = 80|1>8
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 8: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -28,7 +26,6 @@ line 8: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 9: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -41,7 +38,6 @@ line 9: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 10: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -54,7 +50,6 @@ line 10: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 11: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -67,7 +62,6 @@ line 11: AlterSequenceStatement
   - LiteralValue = 70|1>7
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 12: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -79,7 +73,6 @@ line 12: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = False
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 13: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -91,7 +84,6 @@ line 13: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = True
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 14: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -104,7 +96,6 @@ line 14: AlterSequenceStatement
 - Cycle = <NULL>
 - CacheSize = SqlConstant
   - LiteralValue = 100
-- NoCache = False
 - Ordered = <NULL>
 line 15: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -116,7 +107,6 @@ line 15: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
 line 16: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -128,7 +118,6 @@ line 16: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = True
 line 17: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -140,7 +129,6 @@ line 17: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = False
 line 18: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -153,7 +141,6 @@ line 18: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = False
 line 19: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -165,5 +152,4 @@ line 19: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- NoCache = True
 - Ordered = <NULL>
