@@ -604,7 +604,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             var alterSequenceStatement = new AlterSequenceStatement(sequenceName, restart, restartValue, incrementValue,
                 minValue, maxValue, cycle, cacheSize, ordered);
-            IntegrateAlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, !clauseSet.Any(),
+            AlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, !clauseSet.Any(),
                 context);
             return (alterSequenceStatement);
 

@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         }
     }
 
-    internal static class IntegrateAlterSequenceStatementChecker
+    internal static class AlterSequenceStatementChecker
     {
         public static void OnCodeElement(AlterSequenceStatement alterSequenceStatement,
             List<IParseTree> duplicatedClauses, bool emptyClauseSet,
