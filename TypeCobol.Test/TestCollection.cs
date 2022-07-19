@@ -77,6 +77,7 @@ namespace TypeCobol.Test {
             TestContinuations.CheckKeywordsAndUserDefinedWords();
             TestContinuations.CheckPictureCharacterString();
             TestContinuations.CheckCommentEntry();
+            TestContinuations.CheckContinuationsMixedWithDebug();
 
             TestRealPrograms.CheckAllFilesForExceptions();
         }
