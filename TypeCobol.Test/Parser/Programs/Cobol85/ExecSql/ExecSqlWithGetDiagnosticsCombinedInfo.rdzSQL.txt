@@ -1,0 +1,30 @@
+﻿--- Diagnostics ---
+Line 8[40,48] <27, Error, Syntax> - Syntax error : no viable alternative at input ': ... STATEMENT' RuleStack=codeElement>getDiagnosticsStatement,  OffendingSymbol=[40,48:STATEMENT]<SQL_STATEMENT>
+
+--- Sql Statements ---
+line 6: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Storage = HostVariable
+    - MainReference = var4
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[1] = CombinedInformationItem
+      - Type = Condition
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = SqlConstant
+        - LiteralValue = 3
+    - Items[2] = CombinedInformationItem
+      - Type = Connection
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+  ]
+line 8: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = <NULL>

@@ -102,13 +102,16 @@ line 20: GetDiagnosticsStatement
     - IndicatorReference = <NULL>
   - Items = [
     - Items[0] = CombinedInformationItem
+      - Type = Statement
       - DiagnosticIdVariable = <NULL>
       - DiagnosticIdLiteral = <NULL>
     - Items[1] = CombinedInformationItem
+      - Type = Condition
       - DiagnosticIdVariable = <NULL>
       - DiagnosticIdLiteral = SqlConstant
         - LiteralValue = 3
     - Items[2] = CombinedInformationItem
+      - Type = Connection
       - DiagnosticIdVariable = <NULL>
       - DiagnosticIdLiteral = <NULL>
   ]

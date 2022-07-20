@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class SingleInformationAssignment : InformationAssignment
     {
-        public SingleInformationAssignment(SymbolReference itemName, SqlVariable storage) : base(storage)
+        public SingleInformationAssignment(SqlVariable storage, SymbolReference itemName) : base(storage)
         {
             ItemName = itemName;
         }
@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class CompositeInformationAssignment : InformationAssignment
     {
-        public CompositeInformationAssignment(List<SymbolReference> itemNames, SqlVariable storage) : base(storage)
+        public CompositeInformationAssignment(SqlVariable storage, List<SymbolReference> itemNames) : base(storage)
         {
             ItemNames = itemNames;
         }
@@ -192,6 +192,7 @@ namespace TypeCobol.Compiler.Sql.Model
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
             base.DumpContent(output, indentLevel);
+            DumpProperty(output, nameof(Type), Type, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdVariable), DiagnosticIdVariable, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdLiteral), DiagnosticIdLiteral, indentLevel);
 
