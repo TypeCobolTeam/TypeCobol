@@ -176,7 +176,7 @@ namespace TypeCobol.LanguageServer
             var newCopyFolders = oldCopyFolders.ToList();
             if (copyFolders != null)
             {
-                newCopyFolders = copyFolders.Union(new []{ Workspace.GetDefaultCopyFolder }, StringComparer.OrdinalIgnoreCase).ToList();
+                newCopyFolders = copyFolders.Union(new []{ Workspace.DefaultCopyFolder }, StringComparer.OrdinalIgnoreCase).ToList();
                 if (AreCopyFoldersDifferent(oldCopyFolders, newCopyFolders))
                 {
                     updateCopyFolders = true;
