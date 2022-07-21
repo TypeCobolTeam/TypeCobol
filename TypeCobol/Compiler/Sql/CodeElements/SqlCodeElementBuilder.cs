@@ -521,33 +521,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     }
                 }
 
-                if (alterSequenceClauseContext.incrementClause() != null)
+                if (alterSequenceClauseContext.incrementClause() != null &&
+                    alterSequenceClauseContext.incrementClause().numeric_constant != null)
                 {
                     SetOption(alterSequenceClauseContext.incrementClause(), AlterSequenceClauseType.Increment,
-                        c => {});
-                    if (alterSequenceClauseContext.incrementClause().numeric_constant != null)
-                    {
-                        incrementValue =
-                            new SqlConstant((Token) alterSequenceClauseContext.incrementClause().numeric_constant);
-                    }
+                        c => incrementValue = new SqlConstant((Token)c.numeric_constant));
                 }
 
-                if (alterSequenceClauseContext.minValueClause() != null)
+                if (alterSequenceClauseContext.minValueClause() != null &&
+                    alterSequenceClauseContext.minValueClause().numeric_constant != null)
                 {
-                    if (alterSequenceClauseContext.minValueClause().numeric_constant != null)
-                    {
-                        SetOption(alterSequenceClauseContext.minValueClause(), AlterSequenceClauseType.MinValue,
-                            c => minValue = new SqlConstant((Token) alterSequenceClauseContext.minValueClause().numeric_constant));
-                    }
+                    SetOption(alterSequenceClauseContext.minValueClause(), AlterSequenceClauseType.MinValue,
+                        c => minValue = new SqlConstant((Token)c.numeric_constant));
                 }
 
-                if (alterSequenceClauseContext.maxValueClause() != null)
+                if (alterSequenceClauseContext.maxValueClause() != null &&
+                    alterSequenceClauseContext.maxValueClause().numeric_constant != null)
                 {
-                    if (alterSequenceClauseContext.maxValueClause().numeric_constant != null)
-                    {
-                        SetOption(alterSequenceClauseContext.maxValueClause(), AlterSequenceClauseType.MaxValue,
-                            c => maxValue = new SqlConstant((Token) alterSequenceClauseContext.maxValueClause().numeric_constant));
-                    }
+                    SetOption(alterSequenceClauseContext.maxValueClause(), AlterSequenceClauseType.MaxValue,
+                        c => maxValue = new SqlConstant((Token)c.numeric_constant));
                 }
 
                 if (alterSequenceClauseContext.cycle() != null)
@@ -556,14 +548,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         c => cycle = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
                 }
 
-                if (alterSequenceClauseContext.cacheClause() != null)
+                if (alterSequenceClauseContext.cacheClause() != null &&
+                    alterSequenceClauseContext.cacheClause().numeric_constant != null)
                 {
-                    if (alterSequenceClauseContext.cacheClause().numeric_constant != null)
-                    {
-                        SetOption(alterSequenceClauseContext.cacheClause(), AlterSequenceClauseType.Cache,
-                            c => cacheSize =
-                                new SqlConstant((Token) alterSequenceClauseContext.cacheClause().numeric_constant));
-                    }
+                    SetOption(alterSequenceClauseContext.cacheClause(), AlterSequenceClauseType.Cache,
+                        c => cacheSize = new SqlConstant((Token)c.numeric_constant));
                 }
 
                 if (alterSequenceClauseContext.SQL_ORDER() != null)
@@ -610,9 +599,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 minValue, maxValue, cycle, cacheSize, ordered);
             AlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, clauseSet.Count == 0,
                 context);
-            return (alterSequenceStatement);
+            return alterSequenceStatement;
 
-            void SetOption(IParseTree clause, AlterSequenceClauseType type, Action<IParseTree> set)
+            void SetOption<TClause>(TClause clause, AlterSequenceClauseType type, Action<TClause> set)
+                where TClause : IParseTree
             {
                 if (clauseSet.Add(type))
                 {
