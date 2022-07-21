@@ -146,6 +146,14 @@ namespace TypeCobol.LanguageServer
         public string CpyCopyNamesMapFilePath { get; set; }
 #endif
 
+        public static readonly string DefaultCopyFolder;
+
+        static Workspace()
+        {
+            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+            DefaultCopyFolder = folder + @"\DefaultCopies\";
+        }
+
         public Workspace(string rootDirectoryFullName, string workspaceName, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             this._allOpenedDocuments = new ConcurrentDictionary<Uri, DocumentContext>();
@@ -615,6 +623,7 @@ namespace TypeCobol.LanguageServer
             return false;
         }
 
+
         /// <summary>
         /// Handle the Configuration change notification.
         /// </summary>
@@ -631,8 +640,7 @@ namespace TypeCobol.LanguageServer
             TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
-            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-            Configuration.CopyFolders.Add(folder + @"\DefaultCopies\");
+            Configuration.CopyFolders.Add(DefaultCopyFolder);
 
             if (Configuration.Telemetry)
                 AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry

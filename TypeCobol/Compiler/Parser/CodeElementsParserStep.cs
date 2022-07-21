@@ -332,12 +332,19 @@ namespace TypeCobol.Compiler.Parser
                             //Rule TCLIMITATION_NO_CE_ACROSS_SOURCES
                             if (codeElement.IsAcrossSourceFile())
                             {
-                                DiagnosticUtils.AddError(codeElement,
-                                    "A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)",
-                                    MessageCode.TypeCobolParserLimitation);
+                                if (compilerOptions.IsCobolLanguage)
+                                {
+                                    //Allowed in pure Cobol, emit a warning
+                                    DiagnosticUtils.AddError(codeElement, "A Cobol statement should not be across 2 sources files (eg. Main program and a COPY)", MessageCode.Warning);
+                                }
+                                else
+                                {
+                                    //Incompatible with TC Codegen, create an error
+                                    DiagnosticUtils.AddError(codeElement, null, MessageCode.TypeCobolParserLimitation);
+                                }
                             }
 
-                            // Add code element to the list                    
+                            // Add code element to the list
                             codeElementsLine.AddCodeElement(codeElement);
                         }
                     }
