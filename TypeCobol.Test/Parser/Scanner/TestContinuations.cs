@@ -275,5 +275,18 @@
             string result = ScannerUtils.ScanLines(tokensLines);
             ScannerUtils.CheckWithResultFile(result, testName);
         }
+
+        public static void CheckContinuationsMixedWithDebug()
+        {
+            string testName = "Debug-continuations";
+            TestTokensLine[] tokensLines = new TestTokensLine[] {
+                                                                    new TestTokensLine('D', "   05 var1 PIC X(3000) VALUE 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+                                                                    new TestTokensLine('-', "    'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),
+                                                                    new TestTokensLine('D', "    'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
+                                                                    new TestTokensLine('-', "    'DDDDDDDDDDDDDDDDDD'.")
+                                                                };
+            string result = ScannerUtils.ScanLines(tokensLines);
+            ScannerUtils.CheckWithResultFile(result, testName);
+        }
     }
 }
