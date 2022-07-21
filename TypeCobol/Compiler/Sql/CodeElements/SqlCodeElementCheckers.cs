@@ -28,19 +28,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
     internal static class AlterSequenceStatementChecker
     {
         public static void OnCodeElement(AlterSequenceStatement alterSequenceStatement,
-            List<IParseTree> duplicatedClauses, bool emptyClauseSet,
+            List<string> duplicatedClauses, bool emptyClauseSet,
             CodeElementsParser.AlterSequenceStatementContext context)
         {
             foreach (var clauseType in duplicatedClauses)
             {
                 DiagnosticUtils.AddError(alterSequenceStatement,
-                    clauseType.GetChild(0).GetText() + " can not be specified more than once",
+                    clauseType + " cannot be specified more than once",
                     context);
             }
 
             if (emptyClauseSet)
             {
-                DiagnosticUtils.AddError(alterSequenceStatement, "At least one option must be specified", context);
+                DiagnosticUtils.AddError(alterSequenceStatement, "At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified", context);
             }
         }
     }

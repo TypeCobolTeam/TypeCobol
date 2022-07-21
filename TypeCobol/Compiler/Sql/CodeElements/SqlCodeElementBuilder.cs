@@ -483,7 +483,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             MinValue,
             MaxValue,
             Cycle,
-            Ordered,
+            Order,
             Cache,
             Restart,
             Increment
@@ -492,7 +492,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public AlterSequenceStatement CreateAlterSequenceStatement(
             CodeElementsParser.AlterSequenceStatementContext context)
         {
-            var duplicates = new List<IParseTree>();
+            var duplicates = new List<string>();
             var clauseSet = new HashSet<AlterSequenceClauseType>();
             TableViewCorrelationName sequenceName = null;
             SyntaxProperty<bool> ordered = null;
@@ -524,7 +524,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 if (alterSequenceClauseContext.incrementClause() != null)
                 {
                     SetOption(alterSequenceClauseContext.incrementClause(), AlterSequenceClauseType.Increment,
-                        c => ParseTreeUtils.GetFirstToken(alterSequenceClauseContext.incrementClause()));
+                        c => {});
                     if (alterSequenceClauseContext.incrementClause().numeric_constant != null)
                     {
                         incrementValue =
@@ -534,23 +534,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
                 if (alterSequenceClauseContext.minValueClause() != null)
                 {
-                    SetOption(alterSequenceClauseContext.minValueClause(), AlterSequenceClauseType.MinValue,
-                        c => ParseTreeUtils.GetFirstToken(alterSequenceClauseContext.minValueClause()));
                     if (alterSequenceClauseContext.minValueClause().numeric_constant != null)
                     {
-                        minValue = new SqlConstant((Token) alterSequenceClauseContext.minValueClause()
-                            .numeric_constant);
+                        SetOption(alterSequenceClauseContext.minValueClause(), AlterSequenceClauseType.MinValue,
+                            c => minValue = new SqlConstant((Token) alterSequenceClauseContext.minValueClause().numeric_constant));
                     }
                 }
 
                 if (alterSequenceClauseContext.maxValueClause() != null)
                 {
-                    SetOption(alterSequenceClauseContext.maxValueClause(), AlterSequenceClauseType.MaxValue,
-                        c => ParseTreeUtils.GetFirstToken(alterSequenceClauseContext.maxValueClause()));
                     if (alterSequenceClauseContext.maxValueClause().numeric_constant != null)
                     {
-                        maxValue = new SqlConstant((Token) alterSequenceClauseContext.maxValueClause()
-                            .numeric_constant);
+                        SetOption(alterSequenceClauseContext.maxValueClause(), AlterSequenceClauseType.MaxValue,
+                            c => maxValue = new SqlConstant((Token) alterSequenceClauseContext.maxValueClause().numeric_constant));
                     }
                 }
 
@@ -562,17 +558,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
                 if (alterSequenceClauseContext.cacheClause() != null)
                 {
-                    SetOption(alterSequenceClauseContext.cacheClause(), AlterSequenceClauseType.Cache,
-                        c => ParseTreeUtils.GetFirstToken(c));
                     if (alterSequenceClauseContext.cacheClause().numeric_constant != null)
                     {
-                        cacheSize = new SqlConstant((Token) alterSequenceClauseContext.cacheClause().numeric_constant);
+                        SetOption(alterSequenceClauseContext.cacheClause(), AlterSequenceClauseType.Cache,
+                            c => cacheSize =
+                                new SqlConstant((Token) alterSequenceClauseContext.cacheClause().numeric_constant));
                     }
                 }
 
                 if (alterSequenceClauseContext.SQL_ORDER() != null)
                 {
-                    SetOption(alterSequenceClauseContext.SQL_ORDER(), AlterSequenceClauseType.Ordered,
+                    SetOption(alterSequenceClauseContext.SQL_ORDER(), AlterSequenceClauseType.Order,
                         c => ordered = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
                 }
 
@@ -588,23 +584,31 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
                     if (alterSequenceClauseContext.noClauses().SQL_ORDER() != null)
                     {
-                        SetOption(noKeyword, AlterSequenceClauseType.Ordered,
+                        SetOption(noKeyword, AlterSequenceClauseType.Order,
                             c => ordered = new SyntaxProperty<bool>(false,
                                 ParseTreeUtils.GetTokenFromTerminalNode(noKeyword)));
                     }
 
                     if (alterSequenceClauseContext.noClauses().cache() != null)
                     {
-                        SetOption(noKeyword, AlterSequenceClauseType.Cache,
-                            c => ParseTreeUtils.GetTokenFromTerminalNode(noKeyword));
+                        SetOption(noKeyword, AlterSequenceClauseType.Cache,c=> {});
                     }
 
+                    if (alterSequenceClauseContext.noClauses().maxvalue() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.MaxValue, c => {});
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().minvalue() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.MinValue, c => {});
+                    }
                 }
             }
 
             var alterSequenceStatement = new AlterSequenceStatement(sequenceName, restart, restartValue, incrementValue,
                 minValue, maxValue, cycle, cacheSize, ordered);
-            AlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, !clauseSet.Any(),
+            AlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, clauseSet.Count == 0,
                 context);
             return (alterSequenceStatement);
 
@@ -616,7 +620,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
                 else
                 {
-                    duplicates.Add(clause);
+                    duplicates.Add(type.ToString());
                 }
             }
         }

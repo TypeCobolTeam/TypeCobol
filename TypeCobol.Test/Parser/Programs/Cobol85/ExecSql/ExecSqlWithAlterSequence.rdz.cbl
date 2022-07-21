@@ -6,7 +6,9 @@
               ALTER SEQUENCE org_seq2 MINVALUE 6.0
               MINVALUE 8.0    
               ALTER SEQUENCE org_seq RESTART
+              ALTER SEQUENCE org_seq RESTART WITH 100.0
               ALTER SEQUENCE org_seq INCREMENT BY 5.0
+              ALTER SEQUENCE org_seq2 MAXVALUE 25.0 NO MAXVALUE
               ALTER SEQUENCE org_seq2 MINVALUE 6.0
               ALTER SEQUENCE org_seq2 MAXVALUE 7.0
               ALTER SEQUENCE org_seq2 NO CYCLE
