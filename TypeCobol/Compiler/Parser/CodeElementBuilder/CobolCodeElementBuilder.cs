@@ -1604,12 +1604,13 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			if (context.divideSimple() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateDivideStatement(context.divideSimple());
-			} else
-			if (context.divideGiving() != null) {
+			} else if (context.divideGiving() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateDivideGivingStatement(context.divideGiving());
-			} else
-			if (context.divideRemainder() != null) {
+			} else if (context.divideRemainder() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateDivideRemainderStatement(context.divideRemainder());
+			} else {
+				//Default
+				CodeElement = new DivideSimpleStatement() { SendingAndReceivingStorageAreas = new RoundedResult[0] };
 			}
 		}
 		public override void EnterDivideStatementEnd(CodeElementsParser.DivideStatementEndContext context) {
