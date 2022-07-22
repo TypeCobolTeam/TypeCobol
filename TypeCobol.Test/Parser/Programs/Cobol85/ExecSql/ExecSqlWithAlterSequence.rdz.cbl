@@ -17,7 +17,7 @@
               ALTER SEQUENCE org_seq2 NO CYCLE
               ALTER SEQUENCE org_seq2 CYCLE
               ALTER SEQUENCE org_seq2 CACHE 100
-               ALTER SEQUENCE org_seq2 CACHE 100.55
+              ALTER SEQUENCE org_seq2 CACHE 200.55
               ALTER SEQUENCE org_seq2 NO CACHE
               ALTER SEQUENCE org_seq2 ORDER
               ALTER SEQUENCE org_seq2 NO ORDER

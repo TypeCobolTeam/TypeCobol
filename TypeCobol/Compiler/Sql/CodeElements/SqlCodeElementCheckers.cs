@@ -100,16 +100,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
             }
 
-            if (alterSequenceStatement.CacheSize != null)
-            {
-                var tokenValue = alterSequenceStatement.CacheSize.Literal.LiteralValue;
-                if (tokenValue.Type != LiteralTokenValueType.Integer)
-                {
-
-                    DiagnosticUtils.AddError(alterSequenceStatement, "The cache size should be an integer", context);
-                }
-            }
         }
-
+        
     }
 }
