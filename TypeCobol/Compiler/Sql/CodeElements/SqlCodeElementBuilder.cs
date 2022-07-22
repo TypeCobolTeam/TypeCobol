@@ -496,7 +496,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private Assignment CreateMultipleAssignmentClause(CodeElementsParser.MultipleAssignmentClauseContext context)
         {
-            IList<SourceValue> values = new List<SourceValue>();
+            IList<SourceValue> values;
             IList<TargetVariable> targets = context.targetVariable().Select(CreateTargetVariable).ToList();
 
             if (context.sourceValueClause().sourceValueClauses().repeatedSourceValue() != null)
@@ -510,6 +510,10 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 {
                     CreateSourceValue(context.sourceValueClause().sourceValueClauses().sourceValue())
                 };
+            }
+            else
+            {
+                values = new List<SourceValue>();
             }
 
             return new Assignment(targets, values);
@@ -577,7 +581,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (context.sqlConstant() != null)
             {
-                return new SqlConstant(ParseTreeUtils.GetFirstToken(context.sqlConstant()));
+                return CreateSqlConstant(context.sqlConstant());
             }
 
             if (context.sqlVariable() != null)
@@ -586,5 +590,13 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
             return null;
         }
+
+        private SqlConstant CreateSqlConstant(CodeElementsParser.SqlConstantContext context)
+        {
+            return context.datetime_constant() != null
+                ? CreateDatetimeConstant(context.datetime_constant())
+                : new SqlConstant(ParseTreeUtils.GetFirstToken(context));
+        }
+
     }
 }
