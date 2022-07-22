@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Antlr4.Runtime.Tree;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.CodeElements
@@ -40,8 +39,77 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (emptyClauseSet)
             {
-                DiagnosticUtils.AddError(alterSequenceStatement, "At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified", context);
+                DiagnosticUtils.AddError(alterSequenceStatement,
+                    "At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified",
+                    context);
+            }
+
+            if (alterSequenceStatement.MinValue != null)
+            {
+                var tokenValue = alterSequenceStatement.MinValue.Literal.LiteralValue;
+                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
+                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
+                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                if (!isInteger)
+                {
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        " The minValue decimal should be without non-zero digits in the right of the decimal point",
+                        context);
+                }
+            }
+
+            if (alterSequenceStatement.MaxValue != null)
+            {
+                var tokenValue = alterSequenceStatement.MaxValue.Literal.LiteralValue;
+                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
+                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
+                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                if (!isInteger)
+                {
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        "The maxValue decimal should be without non-zero digits in the right of the decimal point",
+                        context);
+                }
+            }
+
+            if (alterSequenceStatement.RestartValue != null)
+            {
+                var tokenValue = alterSequenceStatement.RestartValue.Literal.LiteralValue;
+                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
+                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
+                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                if (!isInteger)
+                {
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        "The restartValue decimal should be without non-zero digits in the right of the decimal point",
+                        context);
+                }
+            }
+
+            if (alterSequenceStatement.IncrementValue != null)
+            {
+                var tokenValue = alterSequenceStatement.IncrementValue.Literal.LiteralValue;
+                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
+                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
+                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                if (!isInteger)
+                {
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        "The IncrementValue decimal should be without non-zero digits in the right of the decimal point",
+                        context);
+                }
+            }
+
+            if (alterSequenceStatement.CacheSize != null)
+            {
+                var tokenValue = alterSequenceStatement.CacheSize.Literal.LiteralValue;
+                if (tokenValue.Type != LiteralTokenValueType.Integer)
+                {
+
+                    DiagnosticUtils.AddError(alterSequenceStatement, "The cache size should be an integer", context);
+                }
             }
         }
+
     }
 }
