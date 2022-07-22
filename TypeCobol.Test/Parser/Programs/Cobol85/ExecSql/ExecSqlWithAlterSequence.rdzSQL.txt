@@ -4,11 +4,13 @@ Line 10[15,19] <27, Error, Syntax> - Syntax error : The restartValue decimal sho
 Line 12[15,19] <27, Error, Syntax> - Syntax error : MaxValue cannot be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
 Line 14[15,19] <27, Error, Syntax> - Syntax error :  The minValue decimal should be without non-zero digits in the right of the decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
 Line 16[15,19] <27, Error, Syntax> - Syntax error : The maxValue decimal should be without non-zero digits in the right of the decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
-Line 20[15,19] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
-Line 20[39,43] <27, Error, Syntax> - Syntax error : no viable alternative at input 'CACHE' RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[39,43:CACHE]<UserDefinedWord>
-Line 26[15,19] <27, Error, Syntax> - Syntax error : The IncrementValue decimal should be without non-zero digits in the right of the decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
-Line 27[16,20] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[16,20:ALTER]<SQL_ALTER>
-Line 28[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {user defined word, NO, ORDER, RESTART} RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+Line 20[15,19] <27, Error, Syntax> - Syntax error : The cache size should be positive RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 20[15,19] <27, Error, Syntax> - Syntax error : The cache size should be greater than 2  RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 21[15,19] <27, Error, Syntax> - Syntax error : The cache size should be greater than 2  RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 27[15,19] <27, Error, Syntax> - Syntax error : The IncrementValue decimal should be without non-zero digits in the right of the decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 28[15,19] <27, Error, Syntax> - Syntax error : The maxValue must be greater than or equal to the minimum value. RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 29[15,19] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[15,19:ALTER]<SQL_ALTER>
+Line 30[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {user defined word, NO, ORDER, RESTART} RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
 line 6: AlterSequenceStatement
@@ -173,7 +175,8 @@ line 20: AlterSequenceStatement
 - MinValue = <NULL>
 - MaxValue = <NULL>
 - Cycle = <NULL>
-- CacheSize = <NULL>
+- CacheSize = SqlConstant
+  - LiteralValue = -20
 - Ordered = <NULL>
 line 21: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -184,7 +187,8 @@ line 21: AlterSequenceStatement
 - MinValue = <NULL>
 - MaxValue = <NULL>
 - Cycle = <NULL>
-- CacheSize = <NULL>
+- CacheSize = SqlConstant
+  - LiteralValue = 1
 - Ordered = <NULL>
 line 22: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
@@ -196,7 +200,7 @@ line 22: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- Ordered = True
+- Ordered = <NULL>
 line 23: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
   - Name = org_seq2
@@ -207,8 +211,19 @@ line 23: AlterSequenceStatement
 - MaxValue = <NULL>
 - Cycle = <NULL>
 - CacheSize = <NULL>
-- Ordered = False
+- Ordered = True
 line 24: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = <NULL>
+- MaxValue = <NULL>
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- Ordered = False
+line 25: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
   - Name = org_seq2
 - Restart = True
@@ -220,7 +235,7 @@ line 24: AlterSequenceStatement
 - Cycle = <NULL>
 - CacheSize = <NULL>
 - Ordered = False
-line 26: AlterSequenceStatement
+line 27: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
   - Name = org_seq
 - Restart = <NULL>
@@ -232,7 +247,20 @@ line 26: AlterSequenceStatement
 - Cycle = <NULL>
 - CacheSize = <NULL>
 - Ordered = <NULL>
-line 27: AlterSequenceStatement
+line 28: AlterSequenceStatement
+- SequenceName = TableViewCorrelationName
+  - Name = org_seq2
+- Restart = <NULL>
+- RestartValue = <NULL>
+- IncrementValue = <NULL>
+- MinValue = SqlConstant
+  - LiteralValue = 60|1>6
+- MaxValue = SqlConstant
+  - LiteralValue = 50|1>5
+- Cycle = <NULL>
+- CacheSize = <NULL>
+- Ordered = <NULL>
+line 29: AlterSequenceStatement
 - SequenceName = TableViewCorrelationName
   - Name = org_seq3
 - Restart = <NULL>

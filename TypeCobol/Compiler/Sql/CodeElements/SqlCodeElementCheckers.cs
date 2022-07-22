@@ -70,6 +70,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         "The maxValue decimal should be without non-zero digits in the right of the decimal point",
                         context);
                 }
+
+                if (alterSequenceStatement.MinValue != null)
+                {
+                    var minTokenValue = alterSequenceStatement.MinValue.Literal.LiteralValue;
+                    if (minTokenValue.Type != LiteralTokenValueType.Decimal) return;
+                    var minDecimalLiteral = (DecimalLiteralTokenValue) minTokenValue;
+                    if (minDecimalLiteral.Number > decimalLiteral.Number)
+                    {
+                        DiagnosticUtils.AddError(alterSequenceStatement,
+                            "The maxValue must be greater than or equal to the minimum value.",
+                            context);
+                    }
+                }
             }
 
             if (alterSequenceStatement.RestartValue != null)
@@ -100,6 +113,24 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
             }
 
+            if (alterSequenceStatement.CacheSize != null)
+            {
+                var tokenValue = alterSequenceStatement.CacheSize.Literal.LiteralValue;
+                var integerLiteral = (IntegerLiteralTokenValue) tokenValue;
+                if (integerLiteral.HasSign)
+                {
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        "The cache size should be positive",
+                        context);
+                }
+
+                if (integerLiteral.Number < 2)
+                {
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        "The cache size should be greater than 2 ",
+                        context);
+                }
+            }
         }
 
     }
