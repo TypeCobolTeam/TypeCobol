@@ -1638,13 +1638,13 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			if (context.subtractSimple() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateSubtractStatement(context.subtractSimple());
-			}
-			else
-			if (context.subtractGiving() != null) {
+			} else if (context.subtractGiving() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateSubtractGivingStatement(context.subtractGiving());
-			} else
-			if (context.subtractCorresponding() != null) {
+			} else if (context.subtractCorresponding() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateSubtractCorrespondingStatement(context.subtractCorresponding());
+			} else {
+				//Default
+				CodeElement = new SubtractSimpleStatement() { VariablesTogether = new NumericVariable[0], SendingAndReceivingStorageAreas = new RoundedResult[0] };
 			}
 		}
 		public override void EnterSubtractStatementEnd(CodeElementsParser.SubtractStatementEndContext context) {
