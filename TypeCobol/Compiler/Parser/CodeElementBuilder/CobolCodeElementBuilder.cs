@@ -1622,9 +1622,11 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			if (context.multiplySimple() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateMultiplyStatement(context.multiplySimple());
-			} else
-			if (context.multiplyGiving() != null) {
+			} else if (context.multiplyGiving() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateMultiplyGivingStatement(context.multiplyGiving());
+			} else {
+				//Default
+				CodeElement = new MultiplySimpleStatement() { SendingAndReceivingStorageAreas = new RoundedResult[0] };
 			}
 		}
 		public override void EnterMultiplyStatementEnd(CodeElementsParser.MultiplyStatementEndContext context) {
