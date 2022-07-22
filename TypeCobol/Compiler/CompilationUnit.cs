@@ -132,7 +132,7 @@ namespace TypeCobol.Compiler
 
 #if DEBUG
             //Update CE diag count for future checks
-            _codeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            _codeElementDiagnosticCount = AllDiagnostics(true).Count;
 #endif
         }
 
@@ -161,7 +161,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         private void CheckCodeElementDiagnostics()
         {
-            var actualCodeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            var actualCodeElementDiagnosticCount = AllDiagnostics(true).Count;
             if (actualCodeElementDiagnosticCount != _codeElementDiagnosticCount)
             {
                 System.Diagnostics.Debug.Fail("CodeElement diagnostics should not be created after CE phase !");
@@ -421,87 +421,85 @@ namespace TypeCobol.Compiler
         public InspectedProgramClassDocument CodeAnalysisDocumentSnapshot { get; private set; }
 
         /// <summary>
-        /// Return diagnostics attached directly to a CodeElement or to CodeElementsDocumentSnapshot
-        /// </summary>
-        /// <returns></returns>
-
-        private IList<Diagnostic> OnlyCodeElementDiagnostics() {
-            var codeElementDiagnostics = new List<Diagnostic>();
-
-            if (CodeElementsDocumentSnapshot?.ParserDiagnostics != null)
-            {
-                codeElementDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
-            }
-
-            if (CodeElementsDocumentSnapshot != null)
-            {
-                foreach (var ce in CodeElementsDocumentSnapshot.CodeElements)
-                {
-                    if (ce.Diagnostics != null)
-                    {
-                        codeElementDiagnostics.AddRange(ce.Diagnostics);
-                    }
-                }
-            }
-
-            return codeElementDiagnostics;
-        }
-
-        /// <summary>
         /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibility
-        /// to exclude Node diagnostics and/or Quality diagnostics
-        /// Note that a snapshot only contains diagnostics related to its own phase.
+        /// to get only diagnostics up to CodeElement phase.
         /// </summary>
-        /// <param name="includeNodeDiagnostics">True to include diagnostics produced by Node phase</param>
-        /// <param name="includeQualityDiagnostics">True to include diagnostics produced by QualityCheck</param>
+        /// <param name="onlyCodeElementDiagnostics">True to get diagnostics produced up to CodeElement phase, False to get everything.</param>
         /// <returns>A list of selected diagnostics.</returns>
-        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics, bool includeQualityDiagnostics)
+        public IList<Diagnostic> AllDiagnostics(bool onlyCodeElementDiagnostics)
         {
-            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
-
-            allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
-
-            if (includeNodeDiagnostics)
+            CodeElementsDocument codeElementsDocumentSnapshot;
+            lock (lockObjectForCodeElementsDocumentSnapshot)
             {
-                lock (lockObjectForTemporarySemanticDocument)
+                codeElementsDocumentSnapshot = CodeElementsDocumentSnapshot;
+            }
+
+            //No CodeElements yet, so the base method will return every diagnostics
+            if (codeElementsDocumentSnapshot == null)
+            {
+                return base.AllDiagnostics();
+            }
+
+            var diagnostics = new List<Diagnostic>();
+            foreach (var codeElementsLine in codeElementsDocumentSnapshot.Lines)
+            {
+                AddScannerDiagnostics(codeElementsLine, diagnostics);
+                AddPreprocessorDiagnostics(codeElementsLine, diagnostics);
+
+                //CodeElement parsing diagnostics
+                if (codeElementsLine.ParserDiagnostics != null)
                 {
-                    if (TemporaryProgramClassDocumentSnapshot != null)
-                    {
-                        allDiagnostics.AddRange(TemporaryProgramClassDocumentSnapshot.Diagnostics);
-                    }
+                    diagnostics.AddRange(codeElementsLine.ParserDiagnostics);
                 }
 
-                lock (lockObjectForProgramClassDocumentSnapshot)
+                //Diagnostics on CodeElement themselves
+                if (codeElementsLine.CodeElements != null)
                 {
-                    if (ProgramClassDocumentSnapshot != null)
+                    foreach (var codeElement in codeElementsLine.CodeElements)
                     {
-                        //Get all nodes diagnostics using visitor. 
-                        ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
+                        if (codeElement.Diagnostics != null)
+                        {
+                            diagnostics.AddRange(codeElement.Diagnostics);
+                        }
                     }
                 }
             }
 
-            if (includeQualityDiagnostics)
+            if (onlyCodeElementDiagnostics) return diagnostics; //No need to go further
+
+            TemporarySemanticDocument temporarySemanticDocument;
+            lock (lockObjectForTemporarySemanticDocument)
             {
-                lock (lockObjectForCodeAnalysisDocumentSnapshot)
-                {
-                    if (CodeAnalysisDocumentSnapshot != null)
-                    {
-                        allDiagnostics.AddRange(CodeAnalysisDocumentSnapshot.Diagnostics);
-                    }
-                }
+                temporarySemanticDocument = TemporaryProgramClassDocumentSnapshot;
             }
 
-            return allDiagnostics;
+            if (temporarySemanticDocument == null) return diagnostics;
+
+            //Node parsing diagnostics
+            diagnostics.AddRange(temporarySemanticDocument.Diagnostics);
+
+            //Diagnostics on nodes themselves
+            temporarySemanticDocument.Root?.AcceptASTVisitor(new DiagnosticsChecker(diagnostics));
+
+            //Code analysis diagnostics
+            InspectedProgramClassDocument inspectedProgramClassDocument;
+            lock (lockObjectForCodeAnalysisDocumentSnapshot)
+            {
+                inspectedProgramClassDocument = CodeAnalysisDocumentSnapshot;
+            }
+
+            if (inspectedProgramClassDocument == null) return diagnostics;
+
+            diagnostics.AddRange(inspectedProgramClassDocument.Diagnostics);
+
+            return diagnostics;
         }
 
         /// <summary>
-        /// Return all diagnostics from all snaphost
+        /// Return all diagnostics from all snapshots
         /// </summary>
         /// <returns></returns>
-        public override IList<Diagnostic> AllDiagnostics() {
-            return AllDiagnostics(true, true);
-        }
+        public override IList<Diagnostic> AllDiagnostics() => AllDiagnostics(false);
 
         /// <summary>
         /// Subscribe to this event to be notified of all changes in the complete program or class view of the document

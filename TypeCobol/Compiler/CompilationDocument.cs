@@ -20,6 +20,27 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class CompilationDocument
     {
+        protected static void AddScannerDiagnostics(ITokensLine tokensLine, List<Diagnostic> diagnostics)
+        {
+            if (tokensLine.ScannerDiagnostics != null)
+            {
+                diagnostics.AddRange(tokensLine.ScannerDiagnostics);
+            }
+        }
+
+        protected static void AddPreprocessorDiagnostics(IProcessedTokensLine processedTokensLine, List<Diagnostic> diagnostics)
+        {
+            if (processedTokensLine.CompilerListingControlDirective?.Diagnostics != null)
+            {
+                diagnostics.AddRange(processedTokensLine.CompilerListingControlDirective.Diagnostics);
+            }
+
+            if (processedTokensLine.PreprocessorDiagnostics != null)
+            {
+                diagnostics.AddRange(processedTokensLine.PreprocessorDiagnostics);
+            }
+        }
+
         /// <summary>
         /// Text source name and format
         /// </summary>
@@ -767,23 +788,49 @@ namespace TypeCobol.Compiler
 
 
         /// <summary>
-        /// Return all diagnostics from all snaphost
+        /// Return all diagnostics from all snapshots
         /// </summary>
         /// <returns></returns>
         public virtual IList<Diagnostic> AllDiagnostics()
         {
-            var allDiagnostics = new List<Diagnostic>();
+            var diagnostics = new List<Diagnostic>();
 
-            if (TokensDocumentSnapshot != null)
+            ProcessedTokensDocument processedTokensDocument;
+            lock (lockObjectForProcessedTokensDocumentSnapshot)
             {
-                allDiagnostics.AddRange(TokensDocumentSnapshot.AllDiagnostics);
-            }
-            if (ProcessedTokensDocumentSnapshot != null && ProcessedTokensDocumentSnapshot.AllDiagnostics != null)
-            {
-                allDiagnostics.AddRange(ProcessedTokensDocumentSnapshot.AllDiagnostics);
+                processedTokensDocument = ProcessedTokensDocumentSnapshot;
             }
 
-            return allDiagnostics;
+            if (processedTokensDocument != null)
+            {
+                //We got a ProcessedTokensDocument, iterate over its lines
+                foreach (var processedTokensLine in processedTokensDocument.Lines)
+                {
+                    AddScannerDiagnostics(processedTokensLine, diagnostics);
+                    AddPreprocessorDiagnostics(processedTokensLine, diagnostics);
+                }
+            }
+            else
+            {
+                //Try get a TokensDocument...
+                TokensDocument tokensDocument;
+                lock (lockObjectForDocumentLines)
+                {
+                    tokensDocument = TokensDocumentSnapshot;
+                }
+
+                if (tokensDocument != null)
+                {
+                    //Iterate over TokensLines
+                    foreach (var tokensLine in tokensDocument.Lines)
+                    {
+                        AddScannerDiagnostics(tokensLine, diagnostics);
+                    }
+                }
+                //else no snapshot available yet
+            }
+
+            return diagnostics;
         }
 
 #if EUROINFO_RULES
