@@ -351,10 +351,7 @@ namespace TypeCobol.Compiler.Parser
                                 }
                                 else
                                 {
-                                    foreach (var diagnostic in diagnosticsToReport)
-                                    {
-                                        codeElement.Diagnostics.Add(diagnostic);
-                                    }
+                                    codeElement.Diagnostics.AddRange(diagnosticsToReport);
                                 }
 
                                 diagnosticsToReport.Clear();

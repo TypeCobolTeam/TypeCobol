@@ -72,7 +72,7 @@ namespace TypeCobol.Compiler.Parser
                 }
                 // Attach all tokens consumed by the parser for this code element
                 // Collect all error messages encoutered while parsing this code element
-                IList<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
+                List<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
                 AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
                 if (diagnostics.Count > 0)
                 {
@@ -91,21 +91,18 @@ namespace TypeCobol.Compiler.Parser
             }
 		}
 
-        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, IList<Diagnostic> diagnostics, ParserRuleContext context)
+        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, List<Diagnostic> diagnostics, ParserRuleContext context)
         {
             var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
             if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
             {
-                foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
-                {
-                    diagnostics.Add(ruleDiagnostic);
-                }
+				diagnostics.AddRange(ruleNodeWithDiagnostics.Diagnostics);
             }
             if (context.children != null)
             {
                 foreach(var childNode in context.children)
                 {
-                    if(childNode is IRuleNode)
+                    if (childNode is IRuleNode)
                     {                        
                         AddTokensConsumedAndDiagnosticsAttachedInContext(consumedTokens, diagnostics, (ParserRuleContext)((IRuleNode)childNode).RuleContext);
                     }
