@@ -72,7 +72,7 @@ namespace TypeCobol.Compiler.Parser
                 }
                 // Attach all tokens consumed by the parser for this code element
                 // Collect all error messages encoutered while parsing this code element
-                IList<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
+                List<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
                 AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
                 if (diagnostics.Count > 0)
                 {
@@ -91,21 +91,18 @@ namespace TypeCobol.Compiler.Parser
             }
 		}
 
-        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, IList<Diagnostic> diagnostics, ParserRuleContext context)
+        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, List<Diagnostic> diagnostics, ParserRuleContext context)
         {
             var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
             if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
             {
-                foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
-                {
-                    diagnostics.Add(ruleDiagnostic);
-                }
+				diagnostics.AddRange(ruleNodeWithDiagnostics.Diagnostics);
             }
             if (context.children != null)
             {
                 foreach(var childNode in context.children)
                 {
-                    if(childNode is IRuleNode)
+                    if (childNode is IRuleNode)
                     {                        
                         AddTokensConsumedAndDiagnosticsAttachedInContext(consumedTokens, diagnostics, (ParserRuleContext)((IRuleNode)childNode).RuleContext);
                     }
@@ -1604,12 +1601,13 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			if (context.divideSimple() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateDivideStatement(context.divideSimple());
-			} else
-			if (context.divideGiving() != null) {
+			} else if (context.divideGiving() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateDivideGivingStatement(context.divideGiving());
-			} else
-			if (context.divideRemainder() != null) {
+			} else if (context.divideRemainder() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateDivideRemainderStatement(context.divideRemainder());
+			} else {
+				//Default
+				CodeElement = new DivideSimpleStatement() { SendingAndReceivingStorageAreas = new RoundedResult[0] };
 			}
 		}
 		public override void EnterDivideStatementEnd(CodeElementsParser.DivideStatementEndContext context) {
@@ -1621,9 +1619,11 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			if (context.multiplySimple() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateMultiplyStatement(context.multiplySimple());
-			} else
-			if (context.multiplyGiving() != null) {
+			} else if (context.multiplyGiving() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateMultiplyGivingStatement(context.multiplyGiving());
+			} else {
+				//Default
+				CodeElement = new MultiplySimpleStatement() { SendingAndReceivingStorageAreas = new RoundedResult[0] };
 			}
 		}
 		public override void EnterMultiplyStatementEnd(CodeElementsParser.MultiplyStatementEndContext context) {
@@ -1635,13 +1635,13 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			if (context.subtractSimple() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateSubtractStatement(context.subtractSimple());
-			}
-			else
-			if (context.subtractGiving() != null) {
+			} else if (context.subtractGiving() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateSubtractGivingStatement(context.subtractGiving());
-			} else
-			if (context.subtractCorresponding() != null) {
+			} else if (context.subtractCorresponding() != null) {
 				CodeElement = _cobolStatementsBuilder.CreateSubtractCorrespondingStatement(context.subtractCorresponding());
+			} else {
+				//Default
+				CodeElement = new SubtractSimpleStatement() { VariablesTogether = new NumericVariable[0], SendingAndReceivingStorageAreas = new RoundedResult[0] };
 			}
 		}
 		public override void EnterSubtractStatementEnd(CodeElementsParser.SubtractStatementEndContext context) {
