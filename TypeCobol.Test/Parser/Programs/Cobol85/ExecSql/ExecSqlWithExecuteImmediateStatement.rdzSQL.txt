@@ -1,7 +1,6 @@
 ﻿--- Diagnostics ---
 Line 7[14,20] <27, Error, Syntax> - Syntax error : An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
-Line 9[14,20] <27, Error, Syntax> - Syntax error : The constant must be Alphanumeric in EXECUTE IMMEDIATE statement RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
-Line 10[14,20] <27, Error, Syntax> - Syntax error : Only 2 types of expression are allowed in EXECUTE IMMEDIATE statement: variable or constant RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
+Line 9[14,20] <27, Error, Syntax> - Syntax error : Invalid literal found after EXECUTE IMMEDIATE, variable or string-expression was expected. RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
 Line 11[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>executeImmediateStatement>sqlExpression,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---

@@ -56,13 +56,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     if (constant.Type != SqlConstantType.CharacterString)
                     {
                         DiagnosticUtils.AddError(executeImmediateStatement,
-                            "The constant must be Alphanumeric in EXECUTE IMMEDIATE statement",
+                            "Invalid literal found after EXECUTE IMMEDIATE, variable or string-expression was expected.",
                             context);
                     }
                     break;
+                case null:
+                    break;
                 default:
                 DiagnosticUtils.AddError(executeImmediateStatement,
-                    "Only 2 types of expression are allowed in EXECUTE IMMEDIATE statement: variable or constant",
+                    "Invalid expression found after EXECUTE IMMEDIATE, variable or string-expression was expected.",
                     context);
                 break;
 

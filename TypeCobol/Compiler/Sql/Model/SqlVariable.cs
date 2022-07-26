@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.Sql.Model
         public abstract VariableType Type { get; }
 
         public SymbolReference MainReference { get; }
-
+        public override SqlExpressionType ExpressionType => SqlExpressionType.Variable;
         protected SqlVariable(SymbolReference mainReference)
         {
             MainReference = mainReference;
@@ -38,7 +38,6 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             IndicatorReference = indicatorReference;
         }
-        public override SqlExpressionType ExpressionType => SqlExpressionType.Variable;
         public override VariableType Type => VariableType.HostVariable;
 
         protected override void DumpContent(TextWriter output, int indentLevel)
