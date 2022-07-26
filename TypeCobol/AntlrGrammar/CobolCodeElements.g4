@@ -8341,17 +8341,20 @@ timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringCompari
 datetime_constant: (date | time | timestamp) AlphanumericLiteral;
 
 //TODO Complete TargetVariable , sqlVariable and sqlExpression
-sqlVariable: hostVariable;
-targetVariable: sqlVariable;
+//Regroup all variables used in a SQL context
+//See https://www.ibm.com/docs/en/db2-for-zos/12?topic=elements-variables
+//Parameter markers variables are out of scope here, because it seems related only to PREPARE statement
+sqlVariable: hostVariable; //TODO global-variable-name | session-variable-name | SQL-parameter-name | SQL-variable-name | transition-variable-name
+sqlSetTargetVariable: sqlVariable; //TODO can session-variable-name be used in SET statement ?
 sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
 sqlExpression: sqlVariable | column_name | sqlConstant ;
 sourceValue: sqlExpression | SQL_DEFAULT;
 setAssignmentStatement: SQL_SET assignmentClause (SQL_CommaSeparator assignmentClause)*;
-assignmentClause: simpleAssignmentClause | multipleAssignmentClause;
-simpleAssignmentClause: targetVariable EqualOperator sourceValue;
-multipleAssignmentClause: LeftParenthesisSeparator targetVariable (SQL_CommaSeparator targetVariable)* RightParenthesisSeparator EqualOperator sourceValueClause;
+assignmentClause: simpleAssignmentClause | multipleAssignmentClause;   //TODO arrayAssignment
+simpleAssignmentClause: sqlSetTargetVariable EqualOperator sourceValue;
+multipleAssignmentClause: LeftParenthesisSeparator sqlSetTargetVariable (SQL_CommaSeparator sqlSetTargetVariable)* RightParenthesisSeparator EqualOperator sourceValueClause;
 sourceValueClause: LeftParenthesisSeparator sourceValueClauses RightParenthesisSeparator;
-sourceValueClauses: repeatedSourceValue | (SQL_VALUES  ( sourceValue | (LeftParenthesisSeparator repeatedSourceValue RightParenthesisSeparator)));
+sourceValueClauses: repeatedSourceValue | (SQL_VALUES  ( sourceValue | (LeftParenthesisSeparator repeatedSourceValue RightParenthesisSeparator)));  //TODO row-subselect
 repeatedSourceValue: sourceValue (SQL_CommaSeparator sourceValue)*;
 //TODO Add arrays and row-subselect
 

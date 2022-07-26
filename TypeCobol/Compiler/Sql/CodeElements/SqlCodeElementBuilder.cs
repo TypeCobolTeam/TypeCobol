@@ -497,7 +497,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         private Assignment CreateMultipleAssignmentClause(CodeElementsParser.MultipleAssignmentClauseContext context)
         {
             IList<SourceValue> values;
-            IList<TargetVariable> targets = context.targetVariable().Select(CreateTargetVariable).ToList();
+            IList<TargetVariable> targets = context.sqlSetTargetVariable().Select(CreateTargetVariable).ToList();
 
             if (context.sourceValueClause().sourceValueClauses().repeatedSourceValue() != null)
             {
@@ -523,9 +523,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             IList<TargetVariable> targets = new List<TargetVariable>();
             IList<SourceValue> values = new List<SourceValue>();
-            if (context.targetVariable() != null)
+            if (context.sqlSetTargetVariable() != null)
             {
-                targets.Add(CreateTargetVariable(context.targetVariable()));
+                targets.Add(CreateTargetVariable(context.sqlSetTargetVariable()));
             }
             if (context.sourceValue() != null)
             {
@@ -540,7 +540,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return sourceValues;
         }
 
-        private TargetVariable CreateTargetVariable(CodeElementsParser.TargetVariableContext context)
+        private TargetVariable CreateTargetVariable(CodeElementsParser.SqlSetTargetVariableContext context)
         {
             return context.sqlVariable() != null ? new TargetVariable(CreateSqlVariable(context.sqlVariable())) : null;
         }
