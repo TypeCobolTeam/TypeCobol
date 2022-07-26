@@ -6,7 +6,7 @@ line 6: GetDiagnosticsStatement
 - IsCurrent = <NULL>
 - IsStacked = <NULL>
 - RequestedInformation = CombinedInformation
-  - Storage = HostVariable
+  - Variable = HostVariable
     - MainReference = var4
     - IndicatorReference = <NULL>
   - Items = [

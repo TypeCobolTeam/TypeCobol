@@ -4,7 +4,10 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Sql.Model
 {
-    public abstract class Information : SqlObject
+    /// <summary>
+    /// Information retrieved by a GET DIAGNOSTICS statement.
+    /// </summary>
+    public abstract class GetDiagnosticInformation : SqlObject
     {
         public abstract InformationType Type { get; }
         protected override bool VisitSqlObject(ISqlVisitor visitor)
@@ -20,16 +23,16 @@ namespace TypeCobol.Compiler.Sql.Model
         Combined
     }
 
-    public class StatementInformation : Information
+    public class StatementInformation : GetDiagnosticInformation
     {
-        public StatementInformation(List<InformationAssignment> assignments)
+        public StatementInformation(List<CompositeInformationAssignment> assignments)
         {
             Assignments = assignments;
         }
 
         public override InformationType Type => InformationType.Statement;
 
-        public List<InformationAssignment> Assignments { get; }
+        public List<CompositeInformationAssignment> Assignments { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
@@ -85,6 +88,9 @@ namespace TypeCobol.Compiler.Sql.Model
         }
     }
 
+    /// <summary>
+    /// Represent a statement-information which use multiple statement-information-item-name
+    /// </summary>
     public class CompositeInformationAssignment : InformationAssignment
     {
         public CompositeInformationAssignment(SqlVariable storage, List<SymbolReference> itemNames) : base(storage)
@@ -107,10 +113,10 @@ namespace TypeCobol.Compiler.Sql.Model
         }
     }
 
-    public class ConditionInformation : Information
+    public class ConditionInformation : GetDiagnosticInformation
     {
         public ConditionInformation(SqlVariable diagnosticIdVariable, SqlConstant diagnosticIdLiteral,
-            List<InformationAssignment> assignments)
+            List<SingleInformationAssignment> assignments)
         {
             DiagnosticIdVariable = diagnosticIdVariable;
             DiagnosticIdLiteral = diagnosticIdLiteral;
@@ -121,7 +127,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
         public SqlVariable DiagnosticIdVariable { get; }
         public SqlConstant DiagnosticIdLiteral { get; }
-        public List<InformationAssignment> Assignments { get; }
+        public List<SingleInformationAssignment> Assignments { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
@@ -140,22 +146,22 @@ namespace TypeCobol.Compiler.Sql.Model
         }
     }
 
-    public class CombinedInformation : Information
+    public class CombinedInformation : GetDiagnosticInformation
     {
-        public CombinedInformation(SqlVariable storage, List<CombinedInformationItem> items)
+        public CombinedInformation(SqlVariable variable, List<CombinedInformationItem> items)
         {
-            Storage = storage;
+            Variable = variable;
             Items = items;
         }
 
         public override InformationType Type => InformationType.Combined;
-        public SqlVariable Storage { get; }
+        public SqlVariable Variable { get; }
         public List<CombinedInformationItem> Items { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
             base.DumpContent(output, indentLevel);
-            DumpProperty(output, nameof(Storage), Storage, indentLevel);
+            DumpProperty(output, nameof(Variable), Variable, indentLevel);
             DumpProperty(output, nameof(Items), Items, indentLevel);
 
         }
@@ -164,7 +170,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             return base.VisitSqlObject(visitor) &&
                    visitor.Visit(this) &&
-                   visitor.ContinueVisit(Storage) && visitor.ContinueVisit(Items);
+                   visitor.ContinueVisit(Variable) && visitor.ContinueVisit(Items);
         }
     }
 

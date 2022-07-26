@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
@@ -368,9 +368,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {
             var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
-            var partitionId = context.IntegerLiteral() != null
-                ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
-                : null;
+            var partitionId = context.IntegerLiteral() != null ?CreateSqlConstant(context.IntegerLiteral()) : null;
             SyntaxProperty<LockMode> mode = null;
             if (context.share() != null)
             {
@@ -485,11 +483,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
+        private SqlConstant CreateSqlConstant(ITerminalNode node)
+        {
+            return node != null ? new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(node)) : null;
+        }
         public GetDiagnosticsStatement CreateGetDiagnosticsStatement(CodeElementsParser.GetDiagnosticsStatementContext context)
         {
             var isCurrent = context.SQL_CURRENT() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_CURRENT())) : null;
             var isStacked = context.stacked() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.stacked())) : null;
-            Information requestedInformation = null;
+            GetDiagnosticInformation requestedInformation = null;
             if (context.statementInformationClauses() != null)
             {
                 requestedInformation = CreateStatementInformation(context.statementInformationClauses());
@@ -507,11 +509,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private StatementInformation CreateStatementInformation(CodeElementsParser.StatementInformationClausesContext context)
         {
-            var assignments = new List<InformationAssignment>();
-            foreach (var assignment in context.statementInformationClause())
-            {
-                assignments.Add(CreateCompositeInformationAssignment(assignment));
-            }
+            var assignments = context.statementInformationClause().Select(assignment => CreateCompositeInformationAssignment(assignment)).ToList();
             return new StatementInformation(assignments);
         }
 
@@ -537,19 +535,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             SqlVariable diagnosticIdVariable = null;
             SqlConstant diagnosticIdLiteral = null;
-            var assignments = new List<InformationAssignment>();
             if (context.variable_2 != null)
             {
                 diagnosticIdVariable = CreateSqlVariable(context.variable_2);
             }
             else if (context.IntegerLiteral() != null)
             {
-                diagnosticIdLiteral = new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
+                diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
             }
-            foreach (var assignment in context.repeatedConnectionOrConditionInformation())
-            {
-                assignments.Add(CreateSingleInformationAssignment(assignment));
-            }
+
+            var assignments = context.repeatedConnectionOrConditionInformation().Select(assignment => CreateSingleInformationAssignment(assignment)).ToList();
             return new ConditionInformation(diagnosticIdVariable, diagnosticIdLiteral, assignments);
         }
 
@@ -589,35 +584,32 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         private CombinedInformationItem CreateCombinedInformationItem(
             CodeElementsParser.RepeatedCombinedInformationContext context)
         {
-            SqlVariable diagnosticIdVariable = null;
-            SqlConstant diagnosticIdLiteral = null;
             if (context.SQL_STATEMENT() != null)
             {
                 return new CombinedInformationItem(CombinedInformationItemType.Statement, null, null);
             }
-
             if (context.SQL_CONDITION() != null)
             {
-                CreateDiagnosticId();
-                return new CombinedInformationItem(CombinedInformationItemType.Condition, diagnosticIdVariable, diagnosticIdLiteral);
+                return LocalCreateCombinedInformationItem(CombinedInformationItemType.Condition);
             }
             if (context.SQL_CONNECTION() != null)
             {
-                CreateDiagnosticId();
-                return new CombinedInformationItem(CombinedInformationItemType.Connection, diagnosticIdVariable, diagnosticIdLiteral);
+                return LocalCreateCombinedInformationItem(CombinedInformationItemType.Connection);
             }
-
-            void CreateDiagnosticId()
+            CombinedInformationItem LocalCreateCombinedInformationItem(CombinedInformationItemType combinedInformationItemType)
             {
+                SqlVariable diagnosticIdVariable = null;
+                SqlConstant diagnosticIdLiteral = null;
                 if (context.variable_5 != null)
                 {
                     diagnosticIdVariable = CreateSqlVariable(context.variable_5);
                 }
                 else if (context.IntegerLiteral() != null)
                 {
-                     diagnosticIdLiteral =
+                    diagnosticIdLiteral =
                         new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
                 }
+                return new CombinedInformationItem(combinedInformationItemType, diagnosticIdVariable, diagnosticIdLiteral);
             }
 
             return null;
