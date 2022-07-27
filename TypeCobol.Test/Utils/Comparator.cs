@@ -210,6 +210,14 @@ namespace TypeCobol.Test.Utils
                         continue;
                 }
 #endif
+                string containingDirectory = Path.GetDirectoryName(samplePath);
+                bool enableSqlParsing = containingDirectory != null && containingDirectory.IndexOf("SQL", StringComparison.InvariantCultureIgnoreCase) >= 0;
+                if (enableSqlParsing)
+                {
+                    //Temporary
+                    continue;
+                }
+
                 IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
 				if (comparators.Count < 1) {
 					Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
