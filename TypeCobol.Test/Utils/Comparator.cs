@@ -198,14 +198,9 @@ namespace TypeCobol.Test.Utils
 		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
+                // Automatically enable SQL parsing for samples located in a directory containing "SQL" within its path
                 string containingDirectory = Path.GetDirectoryName(samplePath);
                 bool enableSqlParsing = containingDirectory != null && containingDirectory.IndexOf("SQL", StringComparison.InvariantCultureIgnoreCase) >= 0;
-                if (enableSqlParsing)
-                {
-                    //Temporary
-                    continue;
-                }
-
                 IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
 				if (comparators.Count < 1) {
 					Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
@@ -216,6 +211,7 @@ namespace TypeCobol.Test.Utils
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
                     var unit = new TestUnit(comparator, _copyExtensions);
                     unit.Compiler.CompilerOptions.IsCobolLanguage = isCobolLanguage;
+                    unit.Compiler.CompilerOptions.EnableSqlParsing = enableSqlParsing;
                     unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
