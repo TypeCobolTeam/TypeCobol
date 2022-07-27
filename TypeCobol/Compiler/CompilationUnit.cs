@@ -292,13 +292,22 @@ namespace TypeCobol.Compiler
                     //Direct copy parsing : remove redundant root 01 level if any.
                     if (UseDirectCopyParsing)
                     {
-                        var firstDataDefinition = root.MainProgram
+                        var workingStorageSection = root.MainProgram
                             .Children[0]  //Data Division
-                            .Children[0]  //Working-Storage Section
-                            .Children[0]; //First data def
-                        if (firstDataDefinition.ChildrenCount == 0)
+                            .Children[0]; //Working-Storage Section
+                        if (workingStorageSection.ChildrenCount > 0)
                         {
-                            firstDataDefinition.Remove();
+                            var firstDataDefinition = workingStorageSection.Children[0];
+                            if (firstDataDefinition.ChildrenCount == 0)
+                            {
+                                firstDataDefinition.Remove();
+                            }
+                        }
+                        else
+                        {
+                            //Copy contains instructions that could not be parsed as a DataDefinition
+                            var diagnostic = new Diagnostic(MessageCode.Warning, Diagnostic.Position.Default, "This parser does not support COPYs containing COBOL statements.");
+                            newDiagnostics.Add(diagnostic);
                         }
                     }
 
