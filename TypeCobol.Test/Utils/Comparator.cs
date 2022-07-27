@@ -198,18 +198,6 @@ namespace TypeCobol.Test.Utils
 		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
-#if SQL_PARSING
-                var fileName = Path.GetFileName(samplePath);
-                switch (fileName)
-                {
-                    case "ExecSqlInDataDivision.rdz.cbl":
-                    case "Program.pgm":        
-                    case "ParagraphSection.rdz.cbl":
-                    case "EXEC.cbl":
-                    case "NodeBuilder-UnexpectedChild.rdz.tcbl":
-                        continue;
-                }
-#endif
                 string containingDirectory = Path.GetDirectoryName(samplePath);
                 bool enableSqlParsing = containingDirectory != null && containingDirectory.IndexOf("SQL", StringComparison.InvariantCultureIgnoreCase) >= 0;
                 if (enableSqlParsing)
