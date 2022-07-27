@@ -33,14 +33,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 case SqlExpressionType.Variable:
                     var variable = (SqlVariable) executeImmediateStatement.Expression;
-                    if (variable.Type != VariableType.HostVariable)
+                    if (variable.Type == VariableType.HostVariable)
                     {
-                        DiagnosticUtils.AddError(executeImmediateStatement,
-                            "The sql variable must be a host variable in EXECUTE IMMEDIATE statement",
-                            context);
-                    }
-                    else
-                    {
+
                         if (((HostVariable) variable).IndicatorReference != null)
                         {
                             DiagnosticUtils.AddError(executeImmediateStatement,
@@ -61,6 +56,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     }
                     break;
                 case null:
+                    //Invalid statement but we have the syntax error from ANTLR
                     break;
                 default:
                 DiagnosticUtils.AddError(executeImmediateStatement,
