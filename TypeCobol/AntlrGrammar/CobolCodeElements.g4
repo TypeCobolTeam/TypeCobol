@@ -8318,8 +8318,6 @@ sqlGotoHostLabel: (SQL_GOTO | SQL_GO SQL_TO) ColonSeparator? hostLabel=UserDefin
 hostVariable: ColonSeparator mainVariable=UserDefinedWord ((indicator)? ColonSeparator indicatorVariable=UserDefinedWord)?;
 indicator: ({string.Equals(CurrentToken.Text, "INDICATOR", System.StringComparison.OrdinalIgnoreCase) }? KeywordINDICATOR=UserDefinedWord);
 
-sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
-
 sqlReset: ({ string.Equals(CurrentToken.Text, "RESET", System.StringComparison.OrdinalIgnoreCase) }? KeywordRESET=UserDefinedWord);
 authorizationClause:  SQL_USER (userName = hostVariable) SQL_USING (password = hostVariable);
 connectStatement: SQL_CONNECT (connectionTarget | sqlReset | authorizationClause)?;

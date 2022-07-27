@@ -7,6 +7,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
     {
         public TableViewCorrelationName SequenceName { get; }
         public SyntaxProperty<bool> Restart { get; }
+        public SyntaxProperty<bool> Cache { get; }
+        public SyntaxProperty<bool> HasMinValue { get; }
+        public SyntaxProperty<bool> HasMaxValue { get; }
         public SqlConstant RestartValue { get; }
         public SqlConstant IncrementValue { get; }
         public SqlConstant MinValue { get; }
@@ -17,7 +20,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 
         public AlterSequenceStatement(TableViewCorrelationName sequenceName, SyntaxProperty<bool> restart,
             SqlConstant restartValue, SqlConstant incrementValue, SqlConstant minValue, SqlConstant maxValue,
-            SyntaxProperty<bool> cycle, SqlConstant cacheSize, SyntaxProperty<bool> ordered) : base(
+            SyntaxProperty<bool> cycle, SqlConstant cacheSize, SyntaxProperty<bool> ordered, SyntaxProperty<bool> cache,
+            SyntaxProperty<bool> hasMinValue, SyntaxProperty<bool> hasMaxValue) : base(
             CodeElementType.AlterSequenceStatement, StatementType.AlterSequenceStatement)
         {
             SequenceName = sequenceName;
@@ -29,13 +33,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
             Cycle = cycle;
             CacheSize = cacheSize;
             Ordered = ordered;
+            Cache = cache;
+            HasMinValue = hasMinValue;
+            HasMaxValue = hasMaxValue;
         }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                                                      && this.ContinueVisitToChildren(astVisitor, Restart,
-                                                         Cycle, Ordered)
+                                                         Cycle, Ordered, HasMinValue, HasMaxValue, Cache)
                                                      && astVisitor.SqlVisitor != null
                                                      && astVisitor.SqlVisitor.ContinueVisit(SequenceName, RestartValue,
                                                          IncrementValue, MinValue, MaxValue, CacheSize);

@@ -586,9 +586,12 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(AlterSequenceStatement.Restart), alterSequenceStatement.Restart);
                 DumpObject(nameof(AlterSequenceStatement.RestartValue), alterSequenceStatement.RestartValue);
                 DumpObject(nameof(AlterSequenceStatement.IncrementValue), alterSequenceStatement.IncrementValue);
+                DumpObject(nameof(AlterSequenceStatement.HasMinValue), alterSequenceStatement.HasMinValue);
                 DumpObject(nameof(AlterSequenceStatement.MinValue), alterSequenceStatement.MinValue);
+                DumpObject(nameof(AlterSequenceStatement.HasMaxValue), alterSequenceStatement.HasMaxValue);
                 DumpObject(nameof(AlterSequenceStatement.MaxValue), alterSequenceStatement.MaxValue);
                 DumpObject(nameof(AlterSequenceStatement.Cycle), alterSequenceStatement.Cycle);
+                DumpObject(nameof(AlterSequenceStatement.Cache), alterSequenceStatement.Cache);
                 DumpObject(nameof(AlterSequenceStatement.CacheSize), alterSequenceStatement.CacheSize);
                 DumpObject(nameof(AlterSequenceStatement.Ordered), alterSequenceStatement.Ordered);
                 return true;

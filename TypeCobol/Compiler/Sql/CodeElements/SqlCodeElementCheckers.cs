@@ -37,6 +37,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     context);
             }
 
+            bool isInteger = false;
             if (emptyClauseSet)
             {
                 DiagnosticUtils.AddError(alterSequenceStatement,
@@ -46,36 +47,29 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (alterSequenceStatement.MinValue != null)
             {
-                var tokenValue = alterSequenceStatement.MinValue.Literal.LiteralValue;
-                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
-                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
-                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                CheckIsInteger(alterSequenceStatement.MinValue.Literal);
                 if (!isInteger)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
-                        " The minValue decimal should be without non-zero digits in the right of the decimal point",
+                        " In minValue only digits '0' are allowed after decimal point",
                         context);
                 }
             }
 
             if (alterSequenceStatement.MaxValue != null)
             {
-                var tokenValue = alterSequenceStatement.MaxValue.Literal.LiteralValue;
-                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
-                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
-                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                var decimalLiteral = (DecimalLiteralTokenValue)alterSequenceStatement.MaxValue.Literal.LiteralValue;
+                CheckIsInteger(alterSequenceStatement.MaxValue.Literal);
                 if (!isInteger)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
-                        "The maxValue decimal should be without non-zero digits in the right of the decimal point",
+                        "In maxValue only digits '0' are allowed after decimal point",
                         context);
                 }
 
                 if (alterSequenceStatement.MinValue != null)
                 {
-                    var minTokenValue = alterSequenceStatement.MinValue.Literal.LiteralValue;
-                    if (minTokenValue.Type != LiteralTokenValueType.Decimal) return;
-                    var minDecimalLiteral = (DecimalLiteralTokenValue) minTokenValue;
+                    var minDecimalLiteral = (DecimalLiteralTokenValue)alterSequenceStatement.MinValue.Literal.LiteralValue;
                     if (minDecimalLiteral.Number > decimalLiteral.Number)
                     {
                         DiagnosticUtils.AddError(alterSequenceStatement,
@@ -87,28 +81,22 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (alterSequenceStatement.RestartValue != null)
             {
-                var tokenValue = alterSequenceStatement.RestartValue.Literal.LiteralValue;
-                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
-                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
-                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                CheckIsInteger(alterSequenceStatement.RestartValue.Literal);
                 if (!isInteger)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
-                        "The restartValue decimal should be without non-zero digits in the right of the decimal point",
+                        "In RESTART value only digits '0' are allowed after decimal point",
                         context);
                 }
             }
 
             if (alterSequenceStatement.IncrementValue != null)
             {
-                var tokenValue = alterSequenceStatement.IncrementValue.Literal.LiteralValue;
-                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
-                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
-                bool isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                CheckIsInteger(alterSequenceStatement.IncrementValue.Literal);
                 if (!isInteger)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
-                        "The IncrementValue decimal should be without non-zero digits in the right of the decimal point",
+                        "The INCREMENT value only digits '0' are allowed after decimal point",
                         context);
                 }
             }
@@ -117,19 +105,20 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 var tokenValue = alterSequenceStatement.CacheSize.Literal.LiteralValue;
                 var integerLiteral = (IntegerLiteralTokenValue) tokenValue;
-                if (integerLiteral.HasSign)
-                {
-                    DiagnosticUtils.AddError(alterSequenceStatement,
-                        "The cache size should be positive",
-                        context);
-                }
-
                 if (integerLiteral.Number < 2)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
-                        "The cache size should be greater than 2 ",
+                        "Minimum value for cache size is 2",
                         context);
                 }
+
+            }
+            void CheckIsInteger(Token optionValue)
+            {
+                var tokenValue = optionValue.LiteralValue;
+                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
+                var decimalLiteral = (DecimalLiteralTokenValue)tokenValue;
+                isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
             }
         }
 
