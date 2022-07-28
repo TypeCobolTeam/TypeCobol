@@ -29,7 +29,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             foreach (var assignment in setAssignmentStatement.Assignments)
             {
-                if (assignment == null) continue;
                 var values = assignment.Values;
                 var targets = assignment.Targets;
                 if (values.Count != targets.Count)
