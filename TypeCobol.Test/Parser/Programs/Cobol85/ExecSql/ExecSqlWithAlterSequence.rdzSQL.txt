@@ -1,12 +1,12 @@
 ﻿--- Diagnostics ---
-Line 17[21,25] <27, Error, Syntax> - Syntax error : In RESTART value only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
-Line 20[21,25] <27, Error, Syntax> - Syntax error : The INCREMENT value only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 17[21,25] <27, Error, Syntax> - Syntax error : In RESTART VALUE only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 20[21,25] <27, Error, Syntax> - Syntax error : In INCREMENT VALUE only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 28[21,25] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 28[45,52] <27, Error, Syntax> - Syntax error : no viable alternative at input 'MINVALUE' RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[45,52:MINVALUE]<UserDefinedWord>
-Line 34[21,25] <27, Error, Syntax> - Syntax error :  In minValue only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 34[21,25] <27, Error, Syntax> - Syntax error : In MINVALUE only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 40[21,25] <27, Error, Syntax> - Syntax error : MaxValue cannot be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
-Line 40[21,25] <27, Error, Syntax> - Syntax error : In maxValue only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
-Line 44[21,25] <27, Error, Syntax> - Syntax error : In maxValue only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 40[21,25] <27, Error, Syntax> - Syntax error : In MAXVALUE only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 44[21,25] <27, Error, Syntax> - Syntax error : In MAXVALUE only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 46[21,25] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 46[45,52] <27, Error, Syntax> - Syntax error : no viable alternative at input 'MAXVALUE' RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[45,52:MAXVALUE]<UserDefinedWord>
 Line 57[21,25] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>

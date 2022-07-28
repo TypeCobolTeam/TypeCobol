@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -37,7 +38,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     context);
             }
 
-            bool isInteger = false;
             if (emptyClauseSet)
             {
                 DiagnosticUtils.AddError(alterSequenceStatement,
@@ -47,29 +47,20 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (alterSequenceStatement.MinValue != null)
             {
-                CheckIsInteger(alterSequenceStatement.MinValue.Literal);
-                if (!isInteger)
-                {
-                    DiagnosticUtils.AddError(alterSequenceStatement,
-                        " In minValue only digits '0' are allowed after decimal point",
-                        context);
-                }
+                CheckIsInteger("MINVALUE",
+                    alterSequenceStatement.MinValue.Literal);
             }
 
             if (alterSequenceStatement.MaxValue != null)
             {
-                var decimalLiteral = (DecimalLiteralTokenValue)alterSequenceStatement.MaxValue.Literal.LiteralValue;
-                CheckIsInteger(alterSequenceStatement.MaxValue.Literal);
-                if (!isInteger)
-                {
-                    DiagnosticUtils.AddError(alterSequenceStatement,
-                        "In maxValue only digits '0' are allowed after decimal point",
-                        context);
-                }
+                var decimalLiteral = (DecimalLiteralTokenValue) alterSequenceStatement.MaxValue.Literal.LiteralValue;
+                CheckIsInteger("MAXVALUE",
+                    alterSequenceStatement.MaxValue.Literal);
 
                 if (alterSequenceStatement.MinValue != null)
                 {
-                    var minDecimalLiteral = (DecimalLiteralTokenValue)alterSequenceStatement.MinValue.Literal.LiteralValue;
+                    var minDecimalLiteral =
+                        (DecimalLiteralTokenValue) alterSequenceStatement.MinValue.Literal.LiteralValue;
                     if (minDecimalLiteral.Number > decimalLiteral.Number)
                     {
                         DiagnosticUtils.AddError(alterSequenceStatement,
@@ -81,24 +72,14 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             if (alterSequenceStatement.RestartValue != null)
             {
-                CheckIsInteger(alterSequenceStatement.RestartValue.Literal);
-                if (!isInteger)
-                {
-                    DiagnosticUtils.AddError(alterSequenceStatement,
-                        "In RESTART value only digits '0' are allowed after decimal point",
-                        context);
-                }
+                CheckIsInteger("RESTART VALUE",
+                    alterSequenceStatement.RestartValue.Literal);
             }
 
             if (alterSequenceStatement.IncrementValue != null)
             {
-                CheckIsInteger(alterSequenceStatement.IncrementValue.Literal);
-                if (!isInteger)
-                {
-                    DiagnosticUtils.AddError(alterSequenceStatement,
-                        "The INCREMENT value only digits '0' are allowed after decimal point",
-                        context);
-                }
+                CheckIsInteger("INCREMENT VALUE",
+                    alterSequenceStatement.IncrementValue.Literal);
             }
 
             if (alterSequenceStatement.CacheSize != null)
@@ -113,12 +94,21 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
 
             }
-            void CheckIsInteger(Token optionValue)
+
+            void CheckIsInteger(string optionName, Token optionValue)
             {
                 var tokenValue = optionValue.LiteralValue;
+                Debug.Assert(tokenValue.Type == LiteralTokenValueType.Integer ||
+                             tokenValue.Type == LiteralTokenValueType.Decimal);
                 if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
-                var decimalLiteral = (DecimalLiteralTokenValue)tokenValue;
-                isInteger = Math.Abs(decimalLiteral.Number % 1) < double.Epsilon;
+                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
+                var isInteger = Math.Abs(decimalLiteral.Number % 1) <= double.Epsilon;
+                if (!isInteger)
+                {
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        "In " + optionName + " only digits '0' are allowed after decimal point",
+                        context);
+                }
             }
         }
 
