@@ -477,7 +477,8 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         public SetAssignmentStatement CreateSetAssignmentStatement(CodeElementsParser.SetAssignmentStatementContext context)
         {
-            IList<Assignment> assignments = (from assignment in context.assignmentClause() where assignment != null select CreateAssignmentClause(assignment) into assignmentClause where assignmentClause != null select assignmentClause).ToList();
+            IList<Assignment> assignments = context.assignmentClause().Select(CreateAssignmentClause)
+                .Where(a => a != null).ToList();
             return new SetAssignmentStatement(assignments);
         }
 
