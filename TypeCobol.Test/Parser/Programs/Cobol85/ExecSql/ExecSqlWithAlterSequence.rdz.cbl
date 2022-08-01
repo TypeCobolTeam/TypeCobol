@@ -3,23 +3,21 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370.
-       SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
+      *SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
        data division.
        working-storage section.
-           
        procedure division.
            EXEC SQL ALTER SEQUENCE org_seq RESTART
            END-EXEC.
-           EXEC SQL ALTER SEQUENCE org_seq RESTART WITH 100.0
+           EXEC SQL ALTER SEQUENCE org_seq RESTART WITH 100
            END-EXEC.
       *KO
       *DSNH336I DSNHSM5S THE SCALE OF THE DECIMAL NUMBER MUST BE ZERO
-           EXEC SQL ALTER SEQUENCE org_seq 
-           RESTART WITH 100.1
+           EXEC SQL ALTER SEQUENCE org_seq RESTART WITH 100.1
            END-EXEC.
-           EXEC SQL ALTER SEQUENCE org_seq INCREMENT BY 5.1
+           EXEC SQL ALTER SEQUENCE org_seq INCREMENT BY 5
            END-EXEC.
-           EXEC SQL ALTER SEQUENCE org_seq INCREMENT BY 5.0
+           EXEC SQL ALTER SEQUENCE org_seq INCREMENT BY 5
            END-EXEC.
            EXEC SQL ALTER SEQUENCE org_seq NO MINVALUE
            END-EXEC.
@@ -37,7 +35,7 @@
            END-EXEC.
       *KO
       *DSNH628I DSNHSM5S THE CLAUSES ARE MUTUALLY EXCLUSIVE
-           EXEC SQL ALTER SEQUENCE org_seq2 MAXVALUE 25.1 NO MAXVALUE
+           EXEC SQL ALTER SEQUENCE org_seq2 MAXVALUE 25 NO MAXVALUE
            END-EXEC.
       *KO
       *DSNH336I DSNHSM5S THE SCALE OF THE DECIMAL NUMBER MUST BE ZERO
@@ -81,7 +79,7 @@
            END-EXEC.
       *KO
       *The maxValue must be greater than or equal to the minimum value
-           EXEC SQL ALTER SEQUENCE org_seq2 MINVALUE 6.0 MAXVALUE 5.0
+           EXEC SQL ALTER SEQUENCE org_seq2 MINVALUE 6 MAXVALUE 5
            END-EXEC.
       *KO
       *At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE,

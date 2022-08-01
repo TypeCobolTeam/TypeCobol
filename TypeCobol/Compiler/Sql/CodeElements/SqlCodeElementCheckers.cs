@@ -111,6 +111,5 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
             }
         }
-
     }
 }

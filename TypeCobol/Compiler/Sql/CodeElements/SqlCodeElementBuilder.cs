@@ -259,6 +259,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
+        private SqlConstant CreateSqlConstant(ITerminalNode terminalNode)
+        {
+            return new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(terminalNode));
+        }
+
+        private SqlConstant CreateSqlConstant(IToken token)
+        {
+            return new SqlConstant((Token) token);
+        }
+
         private DatetimeConstant CreateDatetimeConstant(CodeElementsParser.Datetime_constantContext context)
         {
             var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral());
@@ -370,7 +380,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
             var partitionId = context.IntegerLiteral() != null
-                ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
+                ? CreateSqlConstant(context.IntegerLiteral())
                 : null;
             SyntaxProperty<LockMode> mode = null;
             if (context.share() != null)
@@ -519,8 +529,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         c => restart = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
                     if (alterSequenceClauseContext.restartClause().numeric_constant != null)
                     {
-                        restartValue =
-                            new SqlConstant((Token) alterSequenceClauseContext.restartClause().numeric_constant);
+                        restartValue = CreateSqlConstant(alterSequenceClauseContext.restartClause().numeric_constant);
                     }
                 }
 
@@ -528,7 +537,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     alterSequenceClauseContext.incrementClause().numeric_constant != null)
                 {
                     SetOption(alterSequenceClauseContext.incrementClause(), AlterSequenceClauseType.Increment,
-                        c => incrementValue = new SqlConstant((Token) c.numeric_constant));
+                        c => incrementValue = CreateSqlConstant(c.numeric_constant));
                 }
 
                 if (alterSequenceClauseContext.minValueClause() != null)
@@ -537,8 +546,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         c => hasMinValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
                     if (alterSequenceClauseContext.minValueClause().numeric_constant != null)
                     {
-                        minValue = new SqlConstant((Token) alterSequenceClauseContext.minValueClause()
-                            .numeric_constant);
+                        minValue = CreateSqlConstant(alterSequenceClauseContext.minValueClause().numeric_constant);
                     }
                 }
 
@@ -548,8 +556,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         c => hasMaxValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
                     if (alterSequenceClauseContext.maxValueClause().numeric_constant != null)
                     {
-                        maxValue = new SqlConstant((Token) alterSequenceClauseContext.maxValueClause()
-                            .numeric_constant);
+                        maxValue = CreateSqlConstant(alterSequenceClauseContext.maxValueClause().numeric_constant);
                     }
                 }
 
@@ -565,7 +572,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         c => cache = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
                     if (alterSequenceClauseContext.cacheClause().numeric_constant != null)
                     {
-                        cacheSize = new SqlConstant((Token) alterSequenceClauseContext.cacheClause().numeric_constant);
+                        cacheSize = CreateSqlConstant(alterSequenceClauseContext.cacheClause().numeric_constant);
                     }
                 }
 
