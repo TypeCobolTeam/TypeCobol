@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 case TokenType.SQL_LOCK:
                 case TokenType.SQL_RELEASE:
                 case TokenType.SQL_DROP:
-                case TokenType.EXECUTE:
+                case TokenType.SQL_EXECUTE:
                     return true;
                 default:
                     return false;

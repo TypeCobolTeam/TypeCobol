@@ -32,20 +32,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             switch (expressionType)
             {
                 case SqlExpressionType.Variable:
-                    var variable = (SqlVariable) executeImmediateStatement.Expression;
-                    if (variable.Type == VariableType.HostVariable)
+                    var variable = (SqlVariable)executeImmediateStatement.Expression;
+                    if (variable.Type == VariableType.HostVariable &&
+                        ((HostVariable)variable).IndicatorReference != null)
                     {
-
-                        if (((HostVariable) variable).IndicatorReference != null)
-                        {
-                            DiagnosticUtils.AddError(executeImmediateStatement,
-                                "An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement",
-                                context);
-                        }
+                        DiagnosticUtils.AddError(executeImmediateStatement,
+                            "An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement",
+                            context);
                     }
 
                     break;
-
                 case SqlExpressionType.Constant:
                     var constant = (SqlConstant)executeImmediateStatement.Expression;
                     if (constant.Type != SqlConstantType.CharacterString)
@@ -54,18 +50,18 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                             "Invalid literal found after EXECUTE IMMEDIATE, variable or string-expression was expected.",
                             context);
                     }
+
                     break;
                 case null:
                     //Invalid statement but we have the syntax error from ANTLR
                     break;
                 default:
-                DiagnosticUtils.AddError(executeImmediateStatement,
-                    "Invalid expression found after EXECUTE IMMEDIATE, variable or string-expression was expected.",
-                    context);
-                break;
+                    DiagnosticUtils.AddError(executeImmediateStatement,
+                        "Invalid expression found after EXECUTE IMMEDIATE, variable or string-expression was expected.",
+                        context);
+                    break;
 
             }
         }
-
     }
 }
