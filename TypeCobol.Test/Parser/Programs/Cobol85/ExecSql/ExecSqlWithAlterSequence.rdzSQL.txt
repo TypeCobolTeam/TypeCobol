@@ -1,14 +1,14 @@
 ﻿--- Diagnostics ---
-Line 16[21,25] <27, Error, Syntax> - Syntax error : In RESTART VALUE, only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 16[21,25] <27, Error, Syntax> - Syntax error : In RESTART value, only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 26[21,25] <27, Error, Syntax> - Syntax error : MINVALUE cannot be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 32[21,25] <27, Error, Syntax> - Syntax error : In MINVALUE, only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 38[21,25] <27, Error, Syntax> - Syntax error : MAXVALUE cannot be specified more than once RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 42[21,25] <27, Error, Syntax> - Syntax error : In MAXVALUE, only digits '0' are allowed after decimal point RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 55[21,25] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 55[45,49] <27, Error, Syntax> - Syntax error : no viable alternative at input 'CACHE' RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[45,49:CACHE]<UserDefinedWord>
-Line 61[21,25] <27, Error, Syntax> - Syntax error : Minimum value for cache size is 2 RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
-Line 68[21,25] <27, Error, Syntax> - Syntax error : Minimum value for cache size is 2 RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
-Line 82[21,25] <27, Error, Syntax> - Syntax error : The maxValue must be greater than or equal to the minimum value. RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 61[21,25] <27, Error, Syntax> - Syntax error : Minimum value for CACHE size is 2 RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 68[21,25] <27, Error, Syntax> - Syntax error : Minimum value for CACHE size is 2 RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
+Line 82[21,25] <27, Error, Syntax> - Syntax error : The MAXVALUE must be greater than or equal to the MINVALUE. RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 90[21,25] <27, Error, Syntax> - Syntax error : At least one option among RESTART, INCREMENT, MINVALUE, MAXVALUE, CYCLE, CACHE or ORDER must be specified RuleStack=codeElement>alterSequenceStatement,  OffendingSymbol=[21,25:ALTER]<SQL_ALTER>
 Line 91[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {user defined word, NO, ORDER, RESTART} RuleStack=codeElement>alterSequenceStatement>alterSequenceClause,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
 

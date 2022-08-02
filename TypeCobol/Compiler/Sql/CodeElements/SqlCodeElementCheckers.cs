@@ -57,19 +57,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 if (minValue.HasValue && minValue > maxValue)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
-                        "The maxValue must be greater than or equal to the minimum value.", context);
+                        "The MAXVALUE must be greater than or equal to the MINVALUE.", context);
                 }
             }
 
             if (alterSequenceStatement.RestartValue != null)
             {
-                CheckIsInteger("RESTART VALUE",
+                CheckIsInteger("RESTART value",
                     alterSequenceStatement.RestartValue.Literal);
             }
 
             if (alterSequenceStatement.IncrementValue != null)
             {
-                CheckIsInteger("INCREMENT VALUE",
+                CheckIsInteger("INCREMENT value",
                     alterSequenceStatement.IncrementValue.Literal);
             }
 
@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 if (integerLiteral.Number < 2)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
-                        "Minimum value for cache size is 2",
+                        "Minimum value for CACHE size is 2",
                         context);
                 }
 
