@@ -488,17 +488,38 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 return CreateSimpleAssignmentClause(context.simpleAssignmentClause());
             }
-            else if (context.multipleAssignmentClause() != null)
+            
+            if (context.multipleAssignmentClause() != null)
             { 
                 return CreateMultipleAssignmentClause(context.multipleAssignmentClause());
             }
+            
             return null;
+        }
+
+        private Assignment CreateSimpleAssignmentClause(CodeElementsParser.SimpleAssignmentClauseContext context)
+        {
+            IList<TargetVariable> targets = new List<TargetVariable>();
+            IList<SourceValue> values = new List<SourceValue>();
+            if (context.sqlSetTargetVariable() != null)
+            {
+                var variable = CreateTargetVariable(context.sqlSetTargetVariable());
+                if (variable != null)
+                {
+                    targets.Add(variable);
+                }
+            }
+            if (context.sourceValue() != null)
+            {
+                values.Add(CreateSourceValue(context.sourceValue()));
+            }
+            return new Assignment(targets, values);
         }
 
         private Assignment CreateMultipleAssignmentClause(CodeElementsParser.MultipleAssignmentClauseContext context)
         {
             IList<SourceValue> values;
-            IList<TargetVariable> targets = context.sqlSetTargetVariable().Select(CreateTargetVariable).ToList();
+            IList<TargetVariable> targets = context.sqlSetTargetVariable().Select(CreateTargetVariable).Where(v => v != null).ToList();
 
             if (context.sourceValueClause().sourceValueClauses().repeatedSourceValue() != null)
             {
@@ -517,21 +538,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 values = new List<SourceValue>();
             }
 
-            return new Assignment(targets, values);
-        }
-
-        private Assignment CreateSimpleAssignmentClause(CodeElementsParser.SimpleAssignmentClauseContext context)
-        {
-            IList<TargetVariable> targets = new List<TargetVariable>();
-            IList<SourceValue> values = new List<SourceValue>();
-            if (context.sqlSetTargetVariable() != null)
-            {
-                targets.Add(CreateTargetVariable(context.sqlSetTargetVariable()));
-            }
-            if (context.sourceValue() != null)
-            {
-                values.Add(CreateSourceValue(context.sourceValue()));
-            }
             return new Assignment(targets, values);
         }
 
@@ -568,10 +574,9 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 return CreateSqlHostVariable(context.hostVariable());
             }
-            //TODO Add other conditions when adding new  Sql Variable Types 
+            //TODO Add other conditions when adding new Sql Variable Types 
             return null;
         }
-
 
         private SqlExpression CreateSqlExpression(CodeElementsParser.SqlExpressionContext context)
         {
@@ -598,6 +603,5 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 ? CreateDatetimeConstant(context.datetime_constant())
                 : new SqlConstant(ParseTreeUtils.GetFirstToken(context));
         }
-
     }
 }
