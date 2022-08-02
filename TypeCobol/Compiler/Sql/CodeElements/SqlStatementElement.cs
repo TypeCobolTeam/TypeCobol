@@ -19,14 +19,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             switch (tokenType)
             {
                 case TokenType.SQL_COMMIT:
-                case TokenType.SQL_ROLLBACK:
-                case TokenType.SQL_SELECT:
-                case TokenType.SQL_SAVEPOINT:
-                case TokenType.SQL_WHENEVER:
+                case TokenType.SQL_CONNECT:
+                case TokenType.SQL_DROP:
                 case TokenType.SQL_LOCK:
                 case TokenType.SQL_RELEASE:
-                case TokenType.SQL_DROP:
+                case TokenType.SQL_ROLLBACK:
+                case TokenType.SQL_SAVEPOINT:
+                case TokenType.SQL_SELECT:
                 case TokenType.SQL_SET:
+                case TokenType.SQL_TRUNCATE:
+                case TokenType.SQL_WHENEVER:
+                //TODO ALTER
+                //TODO GET
+                //TODO EXECUTE
                     return true;
                 default:
                     return false;
