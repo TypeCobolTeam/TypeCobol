@@ -259,14 +259,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
-        private SqlConstant CreateSqlConstant(ITerminalNode terminalNode)
+        private SqlConstant CreateSqlConstant(CodeElementsParser.NumericConstantContext context)
         {
-            return new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(terminalNode));
+            var terminalNode = context.IntegerLiteral() ?? context.DecimalLiteral();
+            return CreateSqlConstant(terminalNode);
         }
 
-        private SqlConstant CreateSqlConstant(IToken token)
+        private SqlConstant CreateSqlConstant(ITerminalNode terminal)
         {
-            return new SqlConstant((Token) token);
+            return new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(terminal));
         }
 
         private DatetimeConstant CreateDatetimeConstant(CodeElementsParser.Datetime_constantContext context)
@@ -483,7 +484,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
-                new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
+                new [] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
             return aliasName;
         }
 
@@ -504,18 +505,20 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             var duplicates = new List<string>();
             var clauseSet = new HashSet<AlterSequenceClauseType>();
+
             TableViewCorrelationName sequenceName = null;
-            SyntaxProperty<bool> ordered = null;
-            SyntaxProperty<bool> cycle = null;
             SyntaxProperty<bool> restart = null;
-            SyntaxProperty<bool> hasMaxValue = null;
-            SyntaxProperty<bool> hasMinValue = null;
-            SyntaxProperty<bool> cache = null;
-            SqlConstant minValue = null;
-            SqlConstant maxValue = null;
             SqlConstant restartValue = null;
             SqlConstant incrementValue = null;
+            SyntaxProperty<bool> hasMinValue = null;
+            SqlConstant minValue = null;
+            SyntaxProperty<bool> hasMaxValue = null;
+            SqlConstant maxValue = null;
+            SyntaxProperty<bool> cycle = null;
+            SyntaxProperty<bool> hasCache = null;
             SqlConstant cacheSize = null;
+            SyntaxProperty<bool> ordered = null;
+
             if (context.sequence_name != null)
             {
                 sequenceName = CreateTableOrViewOrCorrelationName(context.sequence_name);
@@ -527,37 +530,39 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 {
                     SetOption(alterSequenceClauseContext.restartClause(), AlterSequenceClauseType.Restart,
                         c => restart = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
-                    if (alterSequenceClauseContext.restartClause().numeric_constant != null)
+                    if (alterSequenceClauseContext.restartClause().numericConstant() != null)
                     {
-                        restartValue = CreateSqlConstant(alterSequenceClauseContext.restartClause().numeric_constant);
+                        restartValue = CreateSqlConstant(alterSequenceClauseContext.restartClause().numericConstant());
                     }
                 }
 
                 if (alterSequenceClauseContext.incrementClause() != null &&
-                    alterSequenceClauseContext.incrementClause().numeric_constant != null)
+                    alterSequenceClauseContext.incrementClause().numericConstant() != null)
                 {
                     SetOption(alterSequenceClauseContext.incrementClause(), AlterSequenceClauseType.Increment,
-                        c => incrementValue = CreateSqlConstant(c.numeric_constant));
+                        c => incrementValue = CreateSqlConstant(c.numericConstant()));
                 }
 
-                if (alterSequenceClauseContext.minValueClause() != null)
+                if (alterSequenceClauseContext.minValueClause() != null &&
+                    alterSequenceClauseContext.minValueClause().numericConstant() != null)
                 {
                     SetOption(alterSequenceClauseContext.minValueClause(), AlterSequenceClauseType.MinValue,
-                        c => hasMinValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
-                    if (alterSequenceClauseContext.minValueClause().numeric_constant != null)
-                    {
-                        minValue = CreateSqlConstant(alterSequenceClauseContext.minValueClause().numeric_constant);
-                    }
+                        c =>
+                        {
+                            hasMinValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c));
+                            minValue = CreateSqlConstant(c.numericConstant());
+                        });
                 }
 
-                if (alterSequenceClauseContext.maxValueClause() != null)
+                if (alterSequenceClauseContext.maxValueClause() != null &&
+                    alterSequenceClauseContext.maxValueClause().numericConstant() != null)
                 {
                     SetOption(alterSequenceClauseContext.maxValueClause(), AlterSequenceClauseType.MaxValue,
-                        c => hasMaxValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
-                    if (alterSequenceClauseContext.maxValueClause().numeric_constant != null)
-                    {
-                        maxValue = CreateSqlConstant(alterSequenceClauseContext.maxValueClause().numeric_constant);
-                    }
+                        c =>
+                        {
+                            hasMaxValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c));
+                            maxValue = CreateSqlConstant(c.numericConstant());
+                        });
                 }
 
                 if (alterSequenceClauseContext.cycle() != null)
@@ -566,14 +571,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                         c => cycle = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
                 }
 
-                if (alterSequenceClauseContext.cacheClause() != null)
+                if (alterSequenceClauseContext.cacheClause() != null &&
+                    alterSequenceClauseContext.cacheClause().IntegerLiteral() != null)
                 {
                     SetOption(alterSequenceClauseContext.cacheClause(), AlterSequenceClauseType.Cache,
-                        c => cache = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
-                    if (alterSequenceClauseContext.cacheClause().numeric_constant != null)
-                    {
-                        cacheSize = CreateSqlConstant(alterSequenceClauseContext.cacheClause().numeric_constant);
-                    }
+                        c =>
+                        {
+                            hasCache = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c));
+                            cacheSize = CreateSqlConstant(c.IntegerLiteral());
+                        });
                 }
 
                 if (alterSequenceClauseContext.SQL_ORDER() != null)
@@ -585,44 +591,43 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 if (alterSequenceClauseContext.noClauses() != null)
                 {
                     var noKeyword = alterSequenceClauseContext.noClauses().SQL_NO();
+                    if (alterSequenceClauseContext.noClauses().minvalue() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.MinValue,
+                            c => hasMinValue =
+                                new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().maxvalue() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.MaxValue,
+                            c => hasMaxValue =
+                                new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+
                     if (alterSequenceClauseContext.noClauses().cycle() != null)
                     {
                         SetOption(noKeyword, AlterSequenceClauseType.Cycle,
-                            c => cycle = new SyntaxProperty<bool>(false,
-                                ParseTreeUtils.GetTokenFromTerminalNode(noKeyword)));
+                            c => cycle = new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().cache() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.Cache,
+                            c => hasCache =
+                                new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
                     }
 
                     if (alterSequenceClauseContext.noClauses().SQL_ORDER() != null)
                     {
                         SetOption(noKeyword, AlterSequenceClauseType.Order,
-                            c => ordered = new SyntaxProperty<bool>(false,
-                                ParseTreeUtils.GetTokenFromTerminalNode(noKeyword)));
-                    }
-
-                    if (alterSequenceClauseContext.noClauses().cache() != null)
-                    {
-                        SetOption(noKeyword, AlterSequenceClauseType.Cache, c => cache = new SyntaxProperty<bool>(false,
-                            ParseTreeUtils.GetTokenFromTerminalNode(noKeyword)));
-                    }
-
-                    if (alterSequenceClauseContext.noClauses().maxvalue() != null)
-                    {
-                        SetOption(noKeyword, AlterSequenceClauseType.MaxValue, c => hasMaxValue =
-                            new SyntaxProperty<bool>(false,
-                                ParseTreeUtils.GetTokenFromTerminalNode(noKeyword)));
-                    }
-
-                    if (alterSequenceClauseContext.noClauses().minvalue() != null)
-                    {
-                        SetOption(noKeyword, AlterSequenceClauseType.MinValue, c => hasMinValue =
-                            new SyntaxProperty<bool>(false,
-                                ParseTreeUtils.GetTokenFromTerminalNode(noKeyword)));
+                            c => ordered = new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
                     }
                 }
             }
 
             var alterSequenceStatement = new AlterSequenceStatement(sequenceName, restart, restartValue, incrementValue,
-                minValue, maxValue, cycle, cacheSize, ordered, cache, hasMinValue, hasMaxValue);
+                hasMinValue, minValue, hasMaxValue, maxValue, cycle, hasCache, cacheSize, ordered);
             AlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, clauseSet.Count == 0,
                 context);
             return alterSequenceStatement;
@@ -636,7 +641,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
                 else
                 {
-                    duplicates.Add(type.ToString());
+                    duplicates.Add(type.ToString().ToUpper());
                 }
             }
         }

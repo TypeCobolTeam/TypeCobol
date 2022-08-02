@@ -45,28 +45,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     context);
             }
 
+            double? minValue = null;
             if (alterSequenceStatement.MinValue != null)
             {
-                CheckIsInteger("MINVALUE",
-                    alterSequenceStatement.MinValue.Literal);
+                minValue = CheckIsInteger("MINVALUE", alterSequenceStatement.MinValue.Literal);
             }
 
             if (alterSequenceStatement.MaxValue != null)
             {
-                var decimalLiteral = (DecimalLiteralTokenValue) alterSequenceStatement.MaxValue.Literal.LiteralValue;
-                CheckIsInteger("MAXVALUE",
-                    alterSequenceStatement.MaxValue.Literal);
-
-                if (alterSequenceStatement.MinValue != null)
+                double maxValue = CheckIsInteger("MAXVALUE", alterSequenceStatement.MaxValue.Literal);
+                if (minValue.HasValue && minValue > maxValue)
                 {
-                    var minDecimalLiteral =
-                        (DecimalLiteralTokenValue) alterSequenceStatement.MinValue.Literal.LiteralValue;
-                    if (minDecimalLiteral.Number > decimalLiteral.Number)
-                    {
-                        DiagnosticUtils.AddError(alterSequenceStatement,
-                            "The maxValue must be greater than or equal to the minimum value.",
-                            context);
-                    }
+                    DiagnosticUtils.AddError(alterSequenceStatement,
+                        "The maxValue must be greater than or equal to the minimum value.", context);
                 }
             }
 
@@ -85,7 +76,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             if (alterSequenceStatement.CacheSize != null)
             {
                 var tokenValue = alterSequenceStatement.CacheSize.Literal.LiteralValue;
-                var integerLiteral = (IntegerLiteralTokenValue) tokenValue;
+                var integerLiteral = (IntegerLiteralTokenValue)tokenValue;
                 if (integerLiteral.Number < 2)
                 {
                     DiagnosticUtils.AddError(alterSequenceStatement,
@@ -95,20 +86,31 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             }
 
-            void CheckIsInteger(string optionName, Token optionValue)
+            double CheckIsInteger(string optionName, Token optionValue)
             {
                 var tokenValue = optionValue.LiteralValue;
-                Debug.Assert(tokenValue.Type == LiteralTokenValueType.Integer ||
-                             tokenValue.Type == LiteralTokenValueType.Decimal);
-                if (tokenValue.Type != LiteralTokenValueType.Decimal) return;
-                var decimalLiteral = (DecimalLiteralTokenValue) tokenValue;
-                var isInteger = Math.Abs(decimalLiteral.Number % 1) <= double.Epsilon;
-                if (!isInteger)
+                Debug.Assert(tokenValue != null);
+
+                double value;
+                if (tokenValue.Type == LiteralTokenValueType.Integer)
                 {
-                    DiagnosticUtils.AddError(alterSequenceStatement,
-                        "In " + optionName + " only digits '0' are allowed after decimal point",
-                        context);
+                    value = (double)((IntegerLiteralTokenValue)tokenValue)
+                        .Number; //Cast may fail if value is too large for double range
                 }
+                else
+                {
+                    Debug.Assert(tokenValue.Type == LiteralTokenValueType.Decimal);
+                    var decimalLiteral = (DecimalLiteralTokenValue)tokenValue;
+                    value = decimalLiteral.Number;
+                    var isInteger = Math.Abs(value % 1) <= double.Epsilon;
+                    if (!isInteger)
+                    {
+                        DiagnosticUtils.AddError(alterSequenceStatement,
+                            "In " + optionName + ", only digits '0' are allowed after decimal point", context);
+                    }
+                }
+
+                return value;
             }
         }
     }

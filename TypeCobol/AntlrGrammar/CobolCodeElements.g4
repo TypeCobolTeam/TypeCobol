@@ -8331,12 +8331,13 @@ cache: ({ string.Equals(CurrentToken.Text, "CACHE", System.StringComparison.Ordi
 
 alterSequenceStatement: SQL_ALTER SQL_SEQUENCE (sequence_name=tableOrViewOrCorrelationName) alterSequenceClause alterSequenceClause*;
 alterSequenceClause: restartClause | incrementClause | minValueClause | maxValueClause | cacheClause | cycle | SQL_ORDER | noClauses;
-restartClause: SQL_RESTART ( SQL_WITH (numeric_constant=DecimalLiteral))? ;
-incrementClause: sqlIncrement SQL_BY (numeric_constant=DecimalLiteral);
-minValueClause: minvalue (numeric_constant=DecimalLiteral);
-maxValueClause: maxvalue (numeric_constant=DecimalLiteral);
-cacheClause: cache (numeric_constant=IntegerLiteral);
+restartClause: SQL_RESTART (SQL_WITH numericConstant)? ;
+incrementClause: sqlIncrement SQL_BY numericConstant;
+minValueClause: minvalue numericConstant;
+maxValueClause: maxvalue numericConstant;
+cacheClause: cache IntegerLiteral;
 noClauses: SQL_NO (minvalue | maxvalue | SQL_ORDER | cycle | cache);
+numericConstant: IntegerLiteral | DecimalLiteral;
 
 lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
 share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);
