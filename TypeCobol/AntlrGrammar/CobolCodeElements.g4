@@ -8347,13 +8347,13 @@ statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInfo
 //statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemNameClause;
 //statementInformationItemNameClause: statementInformationItemName (SQL_CommaSeparator statementInformationItemName)*;
 //statementInformationItemName: UserDefinedWord;
-//But it doesn't works
+//But it doesn't work
 
 conditionInformationClause: SQL_CONDITION ((variable_2=sqlVariable) | IntegerLiteral) repeatedConnectionOrConditionInformation (SQL_CommaSeparator repeatedConnectionOrConditionInformation)*;
 repeatedConnectionOrConditionInformation: (variable_3=sqlVariable) EqualOperator UserDefinedWord; 
 
 combinedInformationClause: (variable_4=sqlVariable) EqualOperator SQL_ALL repeatedCombinedInformation (SQL_CommaSeparator repeatedCombinedInformation)*;
-repeatedCombinedInformation: SQL_STATEMENT | ( (SQL_CONNECTION | SQL_CONDITION) ((variable_5=sqlVariable) | IntegerLiteral)?);
+repeatedCombinedInformation: SQL_STATEMENT | ((SQL_CONNECTION | SQL_CONDITION) ((variable_5=sqlVariable) | IntegerLiteral)?);
 
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);

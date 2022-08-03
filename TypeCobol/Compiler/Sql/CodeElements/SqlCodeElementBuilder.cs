@@ -473,6 +473,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
             return aliasName;
         }
+
         private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
         {
             if (context.hostVariable() != null)
@@ -487,6 +488,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             return node != null ? new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(node)) : null;
         }
+
         public GetDiagnosticsStatement CreateGetDiagnosticsStatement(CodeElementsParser.GetDiagnosticsStatementContext context)
         {
             var isCurrent = context.SQL_CURRENT() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_CURRENT())) : null;
@@ -509,7 +511,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private StatementInformation CreateStatementInformation(CodeElementsParser.StatementInformationClausesContext context)
         {
-            var assignments = context.statementInformationClause().Select(assignment => CreateInformationAssignment(assignment)).ToList();
+            var assignments = context.statementInformationClause().Select(CreateInformationAssignment).ToList();
             return new StatementInformation(assignments);
         }
 
@@ -542,7 +544,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
             }
-            var assignments = context.repeatedConnectionOrConditionInformation().Select(assignment => CreateInformationAssignment(assignment)).ToList();
+            var assignments = context.repeatedConnectionOrConditionInformation().Select(CreateInformationAssignment).ToList();
             return new ConditionInformation(diagnosticIdVariable, diagnosticIdLiteral, assignments);
         }
 
@@ -593,13 +595,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
             if (context.SQL_CONDITION() != null)
             {
-                return LocalCreateCombinedInformationItem(CombinedInformationItemType.Condition);
+                return NewCombinedInformationItem(CombinedInformationItemType.Condition);
             }
             if (context.SQL_CONNECTION() != null)
             {
-                return LocalCreateCombinedInformationItem(CombinedInformationItemType.Connection);
+                return NewCombinedInformationItem(CombinedInformationItemType.Connection);
             }
-            CombinedInformationItem LocalCreateCombinedInformationItem(CombinedInformationItemType combinedInformationItemType)
+            return null;
+
+            CombinedInformationItem NewCombinedInformationItem(CombinedInformationItemType combinedInformationItemType)
             {
                 SqlVariable diagnosticIdVariable = null;
                 SqlConstant diagnosticIdLiteral = null;
@@ -614,8 +618,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
                 return new CombinedInformationItem(combinedInformationItemType, diagnosticIdVariable, diagnosticIdLiteral);
             }
-
-            return null;
         }
 
     }

@@ -2,6 +2,7 @@
 Line 14[12,19] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: SQLCA
 Line 62[41,49] <27, Error, Syntax> - Syntax error : no viable alternative at input ': ... STATEMENT' RuleStack=codeElement>getDiagnosticsStatement,  OffendingSymbol=[41,49:STATEMENT]<SQL_STATEMENT>
 Line 72[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {CONDITION, CONNECTION, STATEMENT} RuleStack=codeElement>getDiagnosticsStatement>combinedInformationClause>repeatedCombinedInformation,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
+Line 77[15,17] <27, Error, Syntax> - Syntax error : Duplicate STATEMENT clause. RuleStack=codeElement>getDiagnosticsStatement,  OffendingSymbol=[15,17:GET]<SQL_GET>
 
 --- Sql Statements ---
 line 20: GetDiagnosticsStatement

@@ -2322,7 +2322,9 @@ namespace TypeCobol.Compiler.Parser
             [NotNull] CodeElementsParser.GetDiagnosticsStatementContext context)
         {
             Context = context;
-            CodeElement = _sqlCodeElementBuilder.CreateGetDiagnosticsStatement(context);
+            var statement = _sqlCodeElementBuilder.CreateGetDiagnosticsStatement(context);
+            CodeElement = statement;
+			GetDiagnosticsStatementChecker.OnCodeElement(statement, context);
         }
     }
 }

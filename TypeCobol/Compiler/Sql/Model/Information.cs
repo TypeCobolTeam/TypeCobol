@@ -48,7 +48,6 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class InformationAssignment : SqlObject
     {
-
         public InformationAssignment(SqlVariable storage, SymbolReference itemName)
         {
             Storage = storage;
@@ -93,7 +92,6 @@ namespace TypeCobol.Compiler.Sql.Model
             DumpProperty(output, nameof(DiagnosticIdVariable), DiagnosticIdVariable, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdLiteral), DiagnosticIdLiteral, indentLevel);
             DumpProperty(output, nameof(Assignments), Assignments, indentLevel);
-
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
@@ -119,10 +117,8 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            base.DumpContent(output, indentLevel);
             DumpProperty(output, nameof(Variable), Variable, indentLevel);
             DumpProperty(output, nameof(Items), Items, indentLevel);
-
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
@@ -156,11 +152,9 @@ namespace TypeCobol.Compiler.Sql.Model
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
-            base.DumpContent(output, indentLevel);
             DumpProperty(output, nameof(Type), Type, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdVariable), DiagnosticIdVariable, indentLevel);
             DumpProperty(output, nameof(DiagnosticIdLiteral), DiagnosticIdLiteral, indentLevel);
-
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
