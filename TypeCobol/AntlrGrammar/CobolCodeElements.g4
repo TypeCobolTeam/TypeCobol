@@ -8337,16 +8337,18 @@ savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? 
 dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
 tableOrAliasName: tableOrViewOrCorrelationName;
 sqlVariable: hostVariable;
-sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
-sqlExpression: sqlVariable | column_name | sqlConstant;
 
 stacked: ({ string.Equals(CurrentToken.Text, "STACKED", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTACKED=UserDefinedWord);
 diagnostics: ({ string.Equals(CurrentToken.Text, "DIAGNOSTICS", System.StringComparison.OrdinalIgnoreCase) }? KeywordDIAGNOSTICS=UserDefinedWord);
 getDiagnosticsStatement: SQL_GET (SQL_CURRENT | stacked)?  diagnostics (statementInformationClauses | conditionInformationClause | combinedInformationClause);
 statementInformationClauses: statementInformationClause (SQL_CommaSeparator statementInformationClause)*;
-statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemNameClause ;
-statementInformationItemNameClause: statementInformationItemName (SQL_CommaSeparator statementInformationItemName)*;
-statementInformationItemName: UserDefinedWord;
+statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemName=UserDefinedWord;
+//According to specification, we should have:
+//statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemNameClause;
+//statementInformationItemNameClause: statementInformationItemName (SQL_CommaSeparator statementInformationItemName)*;
+//statementInformationItemName: UserDefinedWord;
+//But it doesn't works
+
 conditionInformationClause: SQL_CONDITION ((variable_2=sqlVariable) | IntegerLiteral) repeatedConnectionOrConditionInformation (SQL_CommaSeparator repeatedConnectionOrConditionInformation)*;
 repeatedConnectionOrConditionInformation: (variable_3=sqlVariable) EqualOperator UserDefinedWord; 
 

@@ -35,8 +35,6 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] ConnectionAuthorization connectionAuthorization);
         bool Visit([NotNull] GetDiagnosticInformation getDiagnosticInformation);
         bool Visit([NotNull] StatementInformation statementInformation);
-        bool Visit([NotNull] SingleInformationAssignment singleInformationAssignment);
-        bool Visit([NotNull] CompositeInformationAssignment compositeInformationAssignment );
         bool Visit([NotNull] InformationAssignment informationAssignment);
         bool Visit([NotNull] ConditionInformation conditionInformation);
         bool Visit([NotNull] CombinedInformation combinedInformation);
@@ -74,9 +72,7 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(StatementInformation statementInformation) => true;
         public virtual bool Visit(ConditionInformation conditionInformation) => true;
         public virtual bool Visit(CombinedInformation combinedInformation) => true;
-        public virtual bool Visit(SingleInformationAssignment singleInformationAssignment) => true;
         public virtual bool Visit(InformationAssignment informationAssignment) => true;
-        public virtual bool Visit(CompositeInformationAssignment compositeInformationAssignment) => true;
         public virtual bool Visit(CombinedInformationItem combinedInformationItem) => true;
     }
 

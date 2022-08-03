@@ -1,35 +1,182 @@
-﻿--- Sql Statements ---
-line 7: GetDiagnosticsStatement
+--- Diagnostics ---
+Line 27[12,33] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: SQLCA
+Line 64[59,62] <27, Error, Syntax> - Syntax error : missing ':' at 'MORE' RuleStack=codeElement>getDiagnosticsStatement>statementInformationClauses>statementInformationClause>sqlVariable>hostVariable,  OffendingSymbol=[59,62:MORE]<UserDefinedWord>
+Line 65[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting '=' RuleStack=codeElement>getDiagnosticsStatement>statementInformationClauses>statementInformationClause,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
+Line 78[68,71] <27, Error, Syntax> - Syntax error : missing ':' at 'MORE' RuleStack=codeElement>getDiagnosticsStatement>statementInformationClauses>statementInformationClause>sqlVariable>hostVariable,  OffendingSymbol=[68,71:MORE]<UserDefinedWord>
+Line 79[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting '=' RuleStack=codeElement>getDiagnosticsStatement>statementInformationClauses>statementInformationClause,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
+
+--- Sql Statements ---
+line 32: GetDiagnosticsStatement
 - IsCurrent = <NULL>
-- IsStacked = True
+- IsStacked = <NULL>
 - RequestedInformation = StatementInformation
   - Assignments = [
-    - Assignments[0] = CompositeInformationAssignment
+    - Assignments[0] = InformationAssignment
       - Storage = HostVariable
         - MainReference = var1
         - IndicatorReference = <NULL>
-      - ItemNames = [
-        - ItemNames[0] = DB2_LAST_ROW
-        - ItemNames[1] = MORE
-      ]
+      - ItemName = DB2_GET_DIAGNOSTICS_DIAGNOSTICS
   ]
-line 8: GetDiagnosticsStatement
+line 36: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = StatementInformation
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_SQL_NESTING_LEVEL
+  ]
+line 40: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = StatementInformation
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var01
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_LAST_ROW
+    - Assignments[1] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var02
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_NUMBER_PARAMETER_MARKERS
+    - Assignments[2] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var03
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_NUMBER_RESULT_SETS
+    - Assignments[3] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var04
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_NUMBER_ROWS
+    - Assignments[4] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var05
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_RETURN_STATUS
+    - Assignments[5] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var06
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_SQL_ATTR_CURSOR_HOLD
+    - Assignments[6] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var07
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_SQL_ATTR_CURSOR_ROWSET
+    - Assignments[7] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var08
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_SQL_ATTR_CURSOR_SCROLLABLE
+    - Assignments[8] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var09
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_SQL_ATTR_CURSOR_SENSITIVITY
+    - Assignments[9] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var10
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_SQL_ATTR_CURSOR_TYPE
+    - Assignments[10] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var11
+        - IndicatorReference = <NULL>
+      - ItemName = MORE
+    - Assignments[11] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var12
+        - IndicatorReference = <NULL>
+      - ItemName = NUMBER
+    - Assignments[12] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var13
+        - IndicatorReference = <NULL>
+      - ItemName = ROW_COUNT
+  ]
+line 56: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = StatementInformation
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_LAST_ROW
+  ]
+line 64: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = StatementInformation
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_LAST_ROW
+    - Assignments[1] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = MORE
+        - IndicatorReference = <NULL>
+      - ItemName = <NULL>
+  ]
+line 69: GetDiagnosticsStatement
+- IsCurrent = True
+- IsStacked = <NULL>
+- RequestedInformation = StatementInformation
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_GET_DIAGNOSTICS_DIAGNOSTICS
+  ]
+line 78: GetDiagnosticsStatement
+- IsCurrent = True
+- IsStacked = <NULL>
+- RequestedInformation = StatementInformation
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_LAST_ROW
+    - Assignments[1] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = MORE
+        - IndicatorReference = <NULL>
+      - ItemName = <NULL>
+  ]
+line 84: GetDiagnosticsStatement
 - IsCurrent = <NULL>
 - IsStacked = True
 - RequestedInformation = StatementInformation
   - Assignments = [
-    - Assignments[0] = CompositeInformationAssignment
+    - Assignments[0] = InformationAssignment
       - Storage = HostVariable
         - MainReference = var1
         - IndicatorReference = <NULL>
-      - ItemNames = [
-        - ItemNames[0] = DB2_LAST_ROW
-      ]
-    - Assignments[1] = CompositeInformationAssignment
+      - ItemName = DB2_LAST_ROW
+  ]
+line 90: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = True
+- RequestedInformation = StatementInformation
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var1
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_LAST_ROW
+    - Assignments[1] = InformationAssignment
       - Storage = HostVariable
         - MainReference = var2
         - IndicatorReference = <NULL>
-      - ItemNames = [
-        - ItemNames[0] = MORE
-      ]
+      - ItemName = MORE
   ]

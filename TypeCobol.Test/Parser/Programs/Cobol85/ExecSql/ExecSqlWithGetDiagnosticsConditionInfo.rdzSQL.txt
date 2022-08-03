@@ -1,5 +1,10 @@
-﻿--- Sql Statements ---
-line 6: GetDiagnosticsStatement
+--- Diagnostics ---
+Line 27[12,33] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: SQLCA
+Line 58[40,42] <27, Error, Syntax> - Syntax error : mismatched input 'ALL' expecting user defined word RuleStack=codeElement>getDiagnosticsStatement>conditionInformationClause>repeatedConnectionOrConditionInformation,  OffendingSymbol=[40,42:ALL]<SQL_ALL>
+Line 58[38,38] <27, Error, Syntax> - Syntax error : mismatched input '=' expecting ':' RuleStack=codeElement>getDiagnosticsStatement>conditionInformationClause>repeatedConnectionOrConditionInformation>sqlVariable>hostVariable,  OffendingSymbol=[38,38:=]<EqualOperator>
+
+--- Sql Statements ---
+line 32: GetDiagnosticsStatement
 - IsCurrent = <NULL>
 - IsStacked = <NULL>
 - RequestedInformation = ConditionInformation
@@ -7,89 +12,102 @@ line 6: GetDiagnosticsStatement
   - DiagnosticIdLiteral = SqlConstant
     - LiteralValue = 1
   - Assignments = [
-    - Assignments[0] = SingleInformationAssignment
+    - Assignments[0] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = dasqlcode
+        - MainReference = var01
         - IndicatorReference = <NULL>
       - ItemName = DB2_RETURNED_SQLCODE
-    - Assignments[1] = SingleInformationAssignment
+    - Assignments[1] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = datokencnt
+        - MainReference = var02
         - IndicatorReference = <NULL>
       - ItemName = DB2_TOKEN_COUNT
-    - Assignments[2] = SingleInformationAssignment
+    - Assignments[2] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = datoken1
+        - MainReference = var03
         - IndicatorReference = <NULL>
       - ItemName = DB2_ORDINAL_TOKEN_1
-    - Assignments[3] = SingleInformationAssignment
+    - Assignments[3] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = datoken2
+        - MainReference = var04
         - IndicatorReference = <NULL>
       - ItemName = DB2_ORDINAL_TOKEN_2
-    - Assignments[4] = SingleInformationAssignment
+    - Assignments[4] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = datoken3
+        - MainReference = var05
         - IndicatorReference = <NULL>
       - ItemName = DB2_ORDINAL_TOKEN_3
-    - Assignments[5] = SingleInformationAssignment
+    - Assignments[5] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = datoken4
+        - MainReference = var06
         - IndicatorReference = <NULL>
       - ItemName = DB2_ORDINAL_TOKEN_4
-    - Assignments[6] = SingleInformationAssignment
+    - Assignments[6] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = datoken5
+        - MainReference = var07
         - IndicatorReference = <NULL>
       - ItemName = DB2_ORDINAL_TOKEN_5
-    - Assignments[7] = SingleInformationAssignment
+    - Assignments[7] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = dasqlerrd1b
+        - MainReference = var08
         - IndicatorReference = <NULL>
       - ItemName = DB2_MESSAGE_ID
-    - Assignments[8] = SingleInformationAssignment
+    - Assignments[8] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = damsgtext
+        - MainReference = var09
         - IndicatorReference = <NULL>
       - ItemName = MESSAGE_TEXT
-    - Assignments[9] = SingleInformationAssignment
+    - Assignments[9] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = dasqlerrp
+        - MainReference = var10
         - IndicatorReference = <NULL>
       - ItemName = DB2_MODULE_DETECTING_ERROR
-    - Assignments[10] = SingleInformationAssignment
+    - Assignments[10] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = dasqlstate
+        - MainReference = var11
         - IndicatorReference = <NULL>
       - ItemName = RETURNED_SQLSTATE
   ]
-line 18: GetDiagnosticsStatement
+line 46: GetDiagnosticsStatement
 - IsCurrent = <NULL>
 - IsStacked = <NULL>
 - RequestedInformation = ConditionInformation
   - DiagnosticIdVariable = HostVariable
-    - MainReference = i
+    - MainReference = var01
     - IndicatorReference = <NULL>
   - DiagnosticIdLiteral = <NULL>
   - Assignments = [
-    - Assignments[0] = SingleInformationAssignment
+    - Assignments[0] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = retsqlstate
+        - MainReference = var02
         - IndicatorReference = <NULL>
-      - ItemName = RETURNED_SQLST
+      - ItemName = RETURNED_SQLSTATE
   ]
-line 19: GetDiagnosticsStatement
+line 50: GetDiagnosticsStatement
 - IsCurrent = <NULL>
 - IsStacked = <NULL>
 - RequestedInformation = ConditionInformation
   - DiagnosticIdVariable = HostVariable
-    - MainReference = HV_PRODUCT_ID
+    - MainReference = var01
     - IndicatorReference = <NULL>
   - DiagnosticIdLiteral = <NULL>
   - Assignments = [
-    - Assignments[0] = SingleInformationAssignment
+    - Assignments[0] = InformationAssignment
       - Storage = HostVariable
-        - MainReference = i
+        - MainReference = var02
         - IndicatorReference = <NULL>
       - ItemName = DB2_PRODUCT_ID
+  ]
+line 57: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - DiagnosticIdVariable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - DiagnosticIdLiteral = <NULL>
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = <NULL>
+      - ItemName = <NULL>
   ]

@@ -509,26 +509,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         private StatementInformation CreateStatementInformation(CodeElementsParser.StatementInformationClausesContext context)
         {
-            var assignments = context.statementInformationClause().Select(assignment => CreateCompositeInformationAssignment(assignment)).ToList();
+            var assignments = context.statementInformationClause().Select(assignment => CreateInformationAssignment(assignment)).ToList();
             return new StatementInformation(assignments);
         }
 
-        private CompositeInformationAssignment CreateCompositeInformationAssignment(CodeElementsParser.StatementInformationClauseContext context)
+        private InformationAssignment CreateInformationAssignment(CodeElementsParser.StatementInformationClauseContext context)
         {
+            SymbolReference itemName = null;
             SqlVariable storage = null;
-            var itemNames = new List<SymbolReference>();
             if (context.variable_1 != null)
             {
                 storage = CreateSqlVariable(context.variable_1);
             }
 
-            if (context.statementInformationItemNameClause() != null)
+            if (context.statementInformationItemName != null)
             {
-
-                itemNames.AddRange(context.statementInformationItemNameClause().statementInformationItemName().Select(itemName => CreateSymbolReference(ParseTreeUtils.GetTokenFromTerminalNode(itemName.UserDefinedWord()))));
+                itemName = CreateSymbolReference((Token)context.statementInformationItemName);
             }
 
-            return new CompositeInformationAssignment(storage, itemNames);
+            return new InformationAssignment(storage, itemName);
         }
 
         private ConditionInformation CreateConditionInformationClause(CodeElementsParser.ConditionInformationClauseContext context)
@@ -543,12 +542,12 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
             }
-
-            var assignments = context.repeatedConnectionOrConditionInformation().Select(assignment => CreateSingleInformationAssignment(assignment)).ToList();
+            var assignments = context.repeatedConnectionOrConditionInformation().Select(assignment => CreateInformationAssignment(assignment)).ToList();
             return new ConditionInformation(diagnosticIdVariable, diagnosticIdLiteral, assignments);
         }
 
-        private SingleInformationAssignment CreateSingleInformationAssignment(CodeElementsParser.RepeatedConnectionOrConditionInformationContext context)
+
+        private InformationAssignment CreateInformationAssignment(CodeElementsParser.RepeatedConnectionOrConditionInformationContext context)
         {
             SymbolReference itemName = null;
             SqlVariable storage = null;
@@ -563,7 +562,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                     .UserDefinedWord()));
             }
 
-            return new SingleInformationAssignment(storage, itemName);
+            return new InformationAssignment(storage, itemName);
         }
 
         private CombinedInformation CreateCombinedInformationClause(CodeElementsParser.CombinedInformationClauseContext context)
@@ -576,7 +575,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
             foreach (var combinedInformationItem in context.repeatedCombinedInformation())
             {
-                items.Add(CreateCombinedInformationItem(combinedInformationItem));
+                var combinedInformation = CreateCombinedInformationItem(combinedInformationItem);
+                if (combinedInformation != null)
+                {
+                    items.Add(combinedInformation);
+                }
             }
             return new CombinedInformation(storage, items);
         }

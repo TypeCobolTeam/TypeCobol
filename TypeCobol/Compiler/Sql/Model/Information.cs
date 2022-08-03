@@ -25,14 +25,14 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public class StatementInformation : GetDiagnosticInformation
     {
-        public StatementInformation(List<CompositeInformationAssignment> assignments)
+        public StatementInformation(List<InformationAssignment> assignments)
         {
             Assignments = assignments;
         }
 
         public override InformationType Type => InformationType.Statement;
 
-        public List<CompositeInformationAssignment> Assignments { get; }
+        public List<InformationAssignment> Assignments { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
@@ -46,18 +46,23 @@ namespace TypeCobol.Compiler.Sql.Model
         }
     }
 
-    public abstract class InformationAssignment : SqlObject
+    public class InformationAssignment : SqlObject
     {
-        protected InformationAssignment(SqlVariable storage)
+
+        public InformationAssignment(SqlVariable storage, SymbolReference itemName)
         {
             Storage = storage;
+            ItemName = itemName;
         }
 
         public SqlVariable Storage { get; }
 
+        public SymbolReference ItemName { get; }
+
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
             DumpProperty(output, nameof(Storage), Storage, indentLevel);
+            DumpProperty(output, nameof(ItemName), ItemName, indentLevel);
         }
 
         protected override bool VisitSqlObject(ISqlVisitor visitor)
@@ -67,56 +72,10 @@ namespace TypeCobol.Compiler.Sql.Model
         }
     }
 
-    public class SingleInformationAssignment : InformationAssignment
-    {
-        public SingleInformationAssignment(SqlVariable storage, SymbolReference itemName) : base(storage)
-        {
-            ItemName = itemName;
-        }
-
-        public SymbolReference ItemName { get; }
-
-        protected override void DumpContent(TextWriter output, int indentLevel)
-        {
-            base.DumpContent(output, indentLevel);
-            DumpProperty(output, nameof(ItemName), ItemName, indentLevel);
-        }
-
-        protected override bool VisitSqlObject(ISqlVisitor visitor)
-        {
-            return base.VisitSqlObject(visitor) && visitor.Visit(this);
-        }
-    }
-
-    /// <summary>
-    /// Represent a statement-information which use multiple statement-information-item-name
-    /// </summary>
-    public class CompositeInformationAssignment : InformationAssignment
-    {
-        public CompositeInformationAssignment(SqlVariable storage, List<SymbolReference> itemNames) : base(storage)
-        {
-            ItemNames = itemNames;
-        }
-
-        public List<SymbolReference> ItemNames { get; }
-
-        protected override void DumpContent(TextWriter output, int indentLevel)
-        {
-            base.DumpContent(output, indentLevel);
-            DumpProperty(output, nameof(ItemNames), ItemNames, indentLevel);
-        }
-
-        protected override bool VisitSqlObject(ISqlVisitor visitor)
-        {
-            return base.VisitSqlObject(visitor) && visitor.Visit(this);
-
-        }
-    }
-
     public class ConditionInformation : GetDiagnosticInformation
     {
         public ConditionInformation(SqlVariable diagnosticIdVariable, SqlConstant diagnosticIdLiteral,
-            List<SingleInformationAssignment> assignments)
+            List<InformationAssignment> assignments)
         {
             DiagnosticIdVariable = diagnosticIdVariable;
             DiagnosticIdLiteral = diagnosticIdLiteral;
@@ -127,7 +86,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
         public SqlVariable DiagnosticIdVariable { get; }
         public SqlConstant DiagnosticIdLiteral { get; }
-        public List<SingleInformationAssignment> Assignments { get; }
+        public List<InformationAssignment> Assignments { get; }
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {

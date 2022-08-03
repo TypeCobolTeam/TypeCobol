@@ -1,13 +1,111 @@
-﻿--- Diagnostics ---
-Line 8[40,48] <27, Error, Syntax> - Syntax error : no viable alternative at input ': ... STATEMENT' RuleStack=codeElement>getDiagnosticsStatement,  OffendingSymbol=[40,48:STATEMENT]<SQL_STATEMENT>
+--- Diagnostics ---
+Line 14[12,19] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: SQLCA
+Line 62[41,49] <27, Error, Syntax> - Syntax error : no viable alternative at input ': ... STATEMENT' RuleStack=codeElement>getDiagnosticsStatement,  OffendingSymbol=[41,49:STATEMENT]<SQL_STATEMENT>
+Line 72[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {CONDITION, CONNECTION, STATEMENT} RuleStack=codeElement>getDiagnosticsStatement>combinedInformationClause>repeatedCombinedInformation,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
-line 6: GetDiagnosticsStatement
+line 20: GetDiagnosticsStatement
 - IsCurrent = <NULL>
 - IsStacked = <NULL>
 - RequestedInformation = CombinedInformation
   - Variable = HostVariable
-    - MainReference = var4
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Condition
+      - DiagnosticIdVariable = HostVariable
+        - MainReference = var02
+        - IndicatorReference = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+  ]
+line 24: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+  ]
+line 28: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[1] = CombinedInformationItem
+      - Type = Condition
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[2] = CombinedInformationItem
+      - Type = Connection
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+  ]
+line 33: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[1] = CombinedInformationItem
+      - Type = Condition
+      - DiagnosticIdVariable = HostVariable
+        - MainReference = var01
+        - IndicatorReference = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[2] = CombinedInformationItem
+      - Type = Connection
+      - DiagnosticIdVariable = HostVariable
+        - MainReference = var02
+        - IndicatorReference = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+  ]
+line 39: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[1] = CombinedInformationItem
+      - Type = Condition
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[2] = CombinedInformationItem
+      - Type = Connection
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = SqlConstant
+        - LiteralValue = 2
+  ]
+line 45: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
     - IndicatorReference = <NULL>
   - Items = [
     - Items[0] = CombinedInformationItem
@@ -24,7 +122,56 @@ line 6: GetDiagnosticsStatement
       - DiagnosticIdVariable = <NULL>
       - DiagnosticIdLiteral = <NULL>
   ]
-line 8: GetDiagnosticsStatement
+line 53: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[1] = CombinedInformationItem
+      - Type = Condition
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = SqlConstant
+        - LiteralValue = 3
+    - Items[2] = CombinedInformationItem
+      - Type = Connection
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = SqlConstant
+        - LiteralValue = 2
+  ]
+line 62: GetDiagnosticsStatement
 - IsCurrent = <NULL>
 - IsStacked = <NULL>
 - RequestedInformation = <NULL>
+line 71: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+  ]
+line 77: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = CombinedInformation
+  - Variable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - Items = [
+    - Items[0] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+    - Items[1] = CombinedInformationItem
+      - Type = Statement
+      - DiagnosticIdVariable = <NULL>
+      - DiagnosticIdLiteral = <NULL>
+  ]
