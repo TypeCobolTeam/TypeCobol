@@ -368,7 +368,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {
             var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
-            var partitionId = context.IntegerLiteral() != null ?CreateSqlConstant(context.IntegerLiteral()) : null;
+            var partitionId = CreateSqlConstant(context.IntegerLiteral());
             SyntaxProperty<LockMode> mode = null;
             if (context.share() != null)
             {
@@ -613,8 +613,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
                 else if (context.IntegerLiteral() != null)
                 {
-                    diagnosticIdLiteral =
-                        new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
+                    diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
                 }
                 return new CombinedInformationItem(combinedInformationItemType, diagnosticIdVariable, diagnosticIdLiteral);
             }
