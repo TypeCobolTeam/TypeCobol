@@ -1,51 +1,17 @@
 ﻿--- Code Elements ---
 [[ExecStatement]] [1,4:EXEC]<EXEC> --> [6,8:SQL]<ExecTranslatorName>
 
-[[ExecStatementText]] [3,8:UPDATE]<ExecStatementText> --> [3,8:UPDATE]<ExecStatementText>
+[[ExecStatementText]] [3,16:UPDATE TIDCA01]<ExecStatementText> --> [3,16:UPDATE TIDCA01]<ExecStatementText>
 
-[[ExecStatementText]] [10,14:TIDCA]<ExecStatementText> --> [10,14:TIDCA]<ExecStatementText>
+[[ExecStatementText]] [1,12:  SET x = :y]<ExecStatementText> --> [1,12:  SET x = :y]<ExecStatementText>
 
-[[ExecStatementText]] [15,16:01]<ExecStatementText> --> [15,16:01]<ExecStatementText>
+[[ExecStatementText]] [1,16:    WHERE a = :b]<ExecStatementText> --> [1,16:    WHERE a = :b]<ExecStatementText>
 
-[[ExecStatementText]] [3,5:SET]<ExecStatementText> --> [3,5:SET]<ExecStatementText>
+[[ExecStatementText]] [1,16:      AND c = :d]<ExecStatementText> --> [1,16:      AND c = :d]<ExecStatementText>
 
-[[ExecStatementText]] [7,7:x]<ExecStatementText> --> [7,7:x]<ExecStatementText>
+[[ExecStatementText]] [1,16:      AND e = :f]<ExecStatementText> --> [1,16:      AND e = :f]<ExecStatementText>
 
-[[ExecStatementText]] [9,11:= :]<ExecStatementText> --> [9,11:= :]<ExecStatementText>
-
-[[ExecStatementText]] [12,12:y]<ExecStatementText> --> [12,12:y]<ExecStatementText>
-
-[[ExecStatementText]] [5,9:WHERE]<ExecStatementText> --> [5,9:WHERE]<ExecStatementText>
-
-[[ExecStatementText]] [11,11:a]<ExecStatementText> --> [11,11:a]<ExecStatementText>
-
-[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
-
-[[ExecStatementText]] [16,16:b]<ExecStatementText> --> [16,16:b]<ExecStatementText>
-
-[[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [11,11:c]<ExecStatementText> --> [11,11:c]<ExecStatementText>
-
-[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
-
-[[ExecStatementText]] [16,16:d]<ExecStatementText> --> [16,16:d]<ExecStatementText>
-
-[[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [11,11:e]<ExecStatementText> --> [11,11:e]<ExecStatementText>
-
-[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
-
-[[ExecStatementText]] [16,16:f]<ExecStatementText> --> [16,16:f]<ExecStatementText>
-
-[[ExecStatementText]] [7,9:AND]<ExecStatementText> --> [7,9:AND]<ExecStatementText>
-
-[[ExecStatementText]] [11,11:g]<ExecStatementText> --> [11,11:g]<ExecStatementText>
-
-[[ExecStatementText]] [13,15:= :]<ExecStatementText> --> [13,15:= :]<ExecStatementText>
-
-[[ExecStatementText]] [16,16:h]<ExecStatementText> --> [16,16:h]<ExecStatementText>
+[[ExecStatementText]] [1,16:      AND g = :h]<ExecStatementText> --> [1,16:      AND g = :h]<ExecStatementText>
 
 [[ExecStatementEnd]] [1,8:END-EXEC]<END_EXEC> --> [1,8:END-EXEC]<END_EXEC>
 

@@ -1,8 +1,7 @@
 -- Line 1 --
 [1,4:EXEC]<EXEC>
 [6,8:SQL]<ExecTranslatorName>
-[10,15:DELETE]<SQL_DELETE>
-[17,21:Table]<SQL_TABLE>
+[10,21:DELETE Table]<ExecStatementText>
 [23,30:END-EXEC]<END_EXEC>
 [31,31+:.]<PeriodSeparator>
 
@@ -28,21 +27,13 @@
 [4,6:SQL]<ExecTranslatorName>
 
 -- Line 6 --
-[3,6:tout]<UserDefinedWord>
-[8,9:un]<UserDefinedWord>
-[11,13:tas]<UserDefinedWord>
-[15,16:de]<UserDefinedWord>
-[18,23:blabla]<UserDefinedWord>
+[3,23:tout un tas de blabla]<ExecStatementText>
 
 -- Line 7 --
-[6,14:bliblibli]<UserDefinedWord>
+[1,14:     bliblibli]<ExecStatementText>
 
 -- Line 8 --
-[4,4:c]<UserDefinedWord>
-[6,8:est]<UserDefinedWord>
-[10,11:la]<UserDefinedWord>
-[13,15:fin]<UserDefinedWord>
-[16,16:.]<PeriodSeparator>
+[1,16:   c est la fin.]<ExecStatementText>
 [17,24:END-EXEC]<END_EXEC>
 [26,28:ici]<UserDefinedWord>
 [29,29+:.]<PeriodSeparator>
