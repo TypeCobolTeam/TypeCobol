@@ -1329,8 +1329,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     condition = new WhenCondition();
                     whensearch.ApplyPropertiesToCE(condition);
 
-                    condition.SelectionObjects = new EvaluateSelectionObject[1];
-                    condition.SelectionObjects[0] = new EvaluateSelectionObject();
+                    condition.SelectionObjects = new SelectionObject[1];
+                    condition.SelectionObjects[0] = new SelectionObject();
                     condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
                 }
                 else
