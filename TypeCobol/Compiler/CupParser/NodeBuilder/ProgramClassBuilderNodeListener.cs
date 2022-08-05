@@ -878,6 +878,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+
+        }
         public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
         {
 

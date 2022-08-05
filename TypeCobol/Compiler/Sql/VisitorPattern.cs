@@ -33,6 +33,9 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] DatetimeConstant datetimeConstant);
         bool Visit([NotNull] ConnectionTarget connectionTarget);
         bool Visit([NotNull] ConnectionAuthorization connectionAuthorization);
+        bool Visit([NotNull] Assignment assignment);
+        bool Visit([NotNull] TargetVariable targetVariable);
+        bool Visit([NotNull] SourceValue sourceValue);
         bool Visit([NotNull] GetDiagnosticInformation getDiagnosticInformation);
         bool Visit([NotNull] StatementInformation statementInformation);
         bool Visit([NotNull] InformationAssignment informationAssignment);
@@ -68,6 +71,9 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(DatetimeConstant datetimeConstant) => true;
         public virtual bool Visit(ConnectionTarget connectionTarget) => true;
         public virtual bool Visit(ConnectionAuthorization connectionAuthorization) => true;
+        public virtual bool Visit(Assignment assignment) => true;
+        public virtual bool Visit(TargetVariable targetVariable) => true;
+        public virtual bool Visit(SourceValue sourceValue) => true;
         public virtual bool Visit(GetDiagnosticInformation getDiagnosticInformation) => true;
         public virtual bool Visit(StatementInformation statementInformation) => true;
         public virtual bool Visit(ConditionInformation conditionInformation) => true;

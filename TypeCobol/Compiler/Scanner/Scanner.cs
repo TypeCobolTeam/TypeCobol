@@ -1951,7 +1951,7 @@ namespace TypeCobol.Compiler.Scanner
                 tokensLine.ScanState.InsideSql = true;
             }
 
-            if (tokensLine.ScanState.InsideSql)
+            if (tokensLine.ScanState.InsideSql && compilerOptions.EnableSqlParsing)
             {
                 // Use dedicated SQL scanner
                 if (_sqlScanner == null)

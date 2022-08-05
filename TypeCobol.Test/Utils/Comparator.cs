@@ -198,18 +198,9 @@ namespace TypeCobol.Test.Utils
 		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
-#if SQL_PARSING
-                var fileName = Path.GetFileName(samplePath);
-                switch (fileName)
-                {
-                    case "ExecSqlInDataDivision.rdz.cbl":
-                    case "Program.pgm":        
-                    case "ParagraphSection.rdz.cbl":
-                    case "EXEC.cbl":
-                    case "NodeBuilder-UnexpectedChild.rdz.tcbl":
-                        continue;
-                }
-#endif
+                // Automatically enable SQL parsing for samples located in a directory containing "SQL" within its path
+                string containingDirectory = Path.GetDirectoryName(samplePath);
+                bool enableSqlParsing = containingDirectory != null && containingDirectory.IndexOf("SQL", StringComparison.InvariantCultureIgnoreCase) >= 0;
                 IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
 				if (comparators.Count < 1) {
 					Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
@@ -220,6 +211,7 @@ namespace TypeCobol.Test.Utils
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
                     var unit = new TestUnit(comparator, _copyExtensions);
                     unit.Compiler.CompilerOptions.IsCobolLanguage = isCobolLanguage;
+                    unit.Compiler.CompilerOptions.EnableSqlParsing = enableSqlParsing;
                     unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
@@ -529,6 +521,7 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(whenEverStatement.TargetSectionOrParagraph), whenEverStatement.TargetSectionOrParagraph);
                 return true;
             }
+
             public override bool Visit(SavepointStatement savepointStatement)
             {
                 _writer.WriteLine($"line {savepointStatement.Line}: {nameof(SavepointStatement)}");
@@ -537,6 +530,7 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(savepointStatement.RetainLocks), savepointStatement.RetainLocks);
                 return true;
             }
+
             public override bool Visit(LockTableStatement lockTableStatement)
             {
                 _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");
@@ -545,12 +539,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
                 return true;
             }
+
             public override bool Visit(ReleaseSavepointStatement releaseSavepointStatement)
             {
                 _writer.WriteLine($"line {releaseSavepointStatement.Line}: {nameof(ReleaseSavepointStatement)}");
                 DumpObject(nameof(releaseSavepointStatement.SavepointName), releaseSavepointStatement.SavepointName);
                 return true;
             }
+
             public override bool Visit(ConnectStatement connectStatement)
             {
                 _writer.WriteLine($"line {connectStatement.Line}: {nameof(ConnectStatement)}");
@@ -566,6 +562,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(dropTableStatement.TableOrAliasName), dropTableStatement.TableOrAliasName);
                 return true;
             }
+
+            public override bool Visit(SetAssignmentStatement setAssignmentStatement)
+            {
+                _writer.WriteLine($"line {setAssignmentStatement.Line}: {nameof(SetAssignmentStatement)}");
+                DumpObject(nameof(setAssignmentStatement.Assignments), setAssignmentStatement.Assignments);
+                return true;
+            }
+
             public override bool Visit(GetDiagnosticsStatement getDiagnosticsStatement)
             {
                 _writer.WriteLine($"line {getDiagnosticsStatement.Line}: {nameof(GetDiagnosticsStatement)}");
