@@ -139,7 +139,8 @@ namespace TypeCobol.Compiler.CodeElements
         LockTableStatement,
         ReleaseSavepointStatement,
         ConnectStatement,
-        DropTableStatement
+        DropTableStatement,
+        SetAssignmentStatement
 
     }
 }

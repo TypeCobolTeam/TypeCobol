@@ -401,6 +401,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Connect connect);
         bool Visit([NotNull] DropTableStatement dropTableStatement);
         bool Visit([NotNull] DropTable dropTable);
+        bool Visit([NotNull] SetAssignmentStatement setAssignmentStatement);
+        bool Visit([NotNull] SetAssignment setAssignment);
     }
 
 
@@ -1592,6 +1594,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] DropTable dropTable)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SetAssignmentStatement setAssignmentStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SetAssignment setAssignment)
         {
             return true;
         }

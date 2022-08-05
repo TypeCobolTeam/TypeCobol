@@ -1671,5 +1671,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnDropTableStatement(dropTable);
         }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            Enter(new SetAssignment(setAssignment), setAssignment);
+            Exit();
+            Dispatcher.OnSetAssignmentStatement(setAssignment);
+        }
     }
 }

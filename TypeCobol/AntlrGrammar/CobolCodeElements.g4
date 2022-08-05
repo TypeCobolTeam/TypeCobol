@@ -221,6 +221,7 @@ codeElement:
 	| savepointStatement
 	| connectStatement
 	| dropTableStatement
+	| setAssignmentStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8332,13 +8333,31 @@ sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.O
 onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
 savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
 
-
 dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
 tableOrAliasName: tableOrViewOrCorrelationName;
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
 time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
 datetime_constant: (date | time | timestamp) AlphanumericLiteral;
+
+//TODO Complete TargetVariable , sqlVariable and sqlExpression
+//Regroup all variables used in a SQL context
+//See https://www.ibm.com/docs/en/db2-for-zos/12?topic=elements-variables
+//Parameter markers variables are out of scope here, because it seems related only to PREPARE statement
+sqlVariable: hostVariable; //TODO global-variable-name | session-variable-name | SQL-parameter-name | SQL-variable-name | transition-variable-name
+sqlSetTargetVariable: sqlVariable; //TODO can session-variable-name be used in SET statement ?
+sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
+sqlExpression: sqlVariable | column_name | sqlConstant ;
+sourceValue: sqlExpression | SQL_DEFAULT;
+setAssignmentStatement: SQL_SET assignmentClause (SQL_CommaSeparator assignmentClause)*;
+assignmentClause: simpleAssignmentClause | multipleAssignmentClause;   //TODO arrayAssignment
+simpleAssignmentClause: sqlSetTargetVariable EqualOperator sourceValue;
+multipleAssignmentClause: LeftParenthesisSeparator sqlSetTargetVariable (SQL_CommaSeparator sqlSetTargetVariable)* RightParenthesisSeparator EqualOperator sourceValueClause;
+sourceValueClause: LeftParenthesisSeparator sourceValueClauses RightParenthesisSeparator;
+sourceValueClauses: repeatedSourceValue | (SQL_VALUES  ( sourceValue | (LeftParenthesisSeparator repeatedSourceValue RightParenthesisSeparator)));  //TODO row-subselect
+repeatedSourceValue: sourceValue (SQL_CommaSeparator sourceValue)*;
+//TODO Add arrays and row-subselect
+
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------

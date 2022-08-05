@@ -2317,5 +2317,14 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateDropTableStatement(context);
         }
+
+        public override void EnterSetAssignmentStatement(
+            [NotNull] CodeElementsParser.SetAssignmentStatementContext context)
+        {
+            Context = context;
+            var statement = _sqlCodeElementBuilder.CreateSetAssignmentStatement(context);
+            CodeElement = statement;
+            SetAssignmentStatementChecker.OnCodeElement(statement, context);
+        }
     }
 }

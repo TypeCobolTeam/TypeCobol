@@ -176,6 +176,7 @@ namespace TypeCobol.Compiler.CodeElements
         ReleaseSavepointStatement,
         ConnectStatement,
         DropTableStatement,
+        SetAssignmentStatement,
 
         // [TYPECOBOL]
         LibraryCopy,
