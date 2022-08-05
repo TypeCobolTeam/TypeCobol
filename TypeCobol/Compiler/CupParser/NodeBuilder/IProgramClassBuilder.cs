@@ -862,6 +862,16 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="dropTable">The corresponding  DropTable Statement Code Element</param>
         void OnDropTableStatement([NotNull] DropTableStatement dropTable);
         /// <summary>
+        /// Enter a Set Assignment Statement Node
+        /// </summary>
+        /// <param name="setAssignment">The corresponding  SetAssignment Statement Code Element</param>
+        void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment);
+        /// <summary>
+        /// Enter a GetDiagnostics Statement Node
+        /// </summary>
+        /// <param name="getDiagnostics">The corresponding  GetDiagnostics Statement Code Element</param>
+        void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics);
+        /// <summary>
         /// Enter a AlterSequence Statement Node
         /// </summary>
         /// <param name="alterSequence">The corresponding  AlterSequence Statement Code Element</param>

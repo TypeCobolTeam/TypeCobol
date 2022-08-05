@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.Sql.Model
     public abstract class SqlObject : IVisitable
     {
         //To help implement DumpContent methods in various SqlObjects
-        protected static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
+        public static void DumpProperty(TextWriter output, string name, object value, int indentLevel)
         {
             string indent = new string(' ', 2 * indentLevel);
             output.Write($"{indent}- {name} = ");

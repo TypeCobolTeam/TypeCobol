@@ -1671,6 +1671,18 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnDropTableStatement(dropTable);
         }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            Enter(new SetAssignment(setAssignment), setAssignment);
+            Exit();
+            Dispatcher.OnSetAssignmentStatement(setAssignment);
+        }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+            Enter(new GetDiagnostics(getDiagnostics), getDiagnostics);
+            Exit();
+            Dispatcher.OnGetDiagnosticsStatement(getDiagnostics);
+        }
         public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
         {
             Enter(new AlterSequence(alterSequence), alterSequence);

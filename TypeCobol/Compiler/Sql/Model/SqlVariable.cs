@@ -10,6 +10,7 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public abstract class SqlVariable : SqlExpression
     {
+        public override SqlExpressionType ExpressionType => SqlExpressionType.Variable;
         public abstract VariableType Type { get; }
 
         public SymbolReference MainReference { get; }
