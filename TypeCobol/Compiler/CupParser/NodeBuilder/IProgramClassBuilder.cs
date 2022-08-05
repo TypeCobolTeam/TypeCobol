@@ -866,6 +866,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="setAssignment">The corresponding  SetAssignment Statement Code Element</param>
         void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment);
+        /// <summary>
+        /// Enter a GetDiagnostics Statement Node
+        /// </summary>
+        /// <param name="getDiagnostics">The corresponding  GetDiagnostics Statement Code Element</param>
+        void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics);
         #endregion
     }
 }

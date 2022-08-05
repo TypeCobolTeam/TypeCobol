@@ -140,7 +140,8 @@ namespace TypeCobol.Compiler.CodeElements
         ReleaseSavepointStatement,
         ConnectStatement,
         DropTableStatement,
-        SetAssignmentStatement
+        SetAssignmentStatement,
+        GetDiagnosticsStatement
 
     }
 }

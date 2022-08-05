@@ -36,6 +36,12 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] Assignment assignment);
         bool Visit([NotNull] TargetVariable targetVariable);
         bool Visit([NotNull] SourceValue sourceValue);
+        bool Visit([NotNull] GetDiagnosticInformation getDiagnosticInformation);
+        bool Visit([NotNull] StatementInformation statementInformation);
+        bool Visit([NotNull] InformationAssignment informationAssignment);
+        bool Visit([NotNull] ConditionInformation conditionInformation);
+        bool Visit([NotNull] CombinedInformation combinedInformation);
+        bool Visit([NotNull] CombinedInformationItem combinedInformationItem);
     }
 
     /// <summary>
@@ -68,6 +74,12 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(Assignment assignment) => true;
         public virtual bool Visit(TargetVariable targetVariable) => true;
         public virtual bool Visit(SourceValue sourceValue) => true;
+        public virtual bool Visit(GetDiagnosticInformation getDiagnosticInformation) => true;
+        public virtual bool Visit(StatementInformation statementInformation) => true;
+        public virtual bool Visit(ConditionInformation conditionInformation) => true;
+        public virtual bool Visit(CombinedInformation combinedInformation) => true;
+        public virtual bool Visit(InformationAssignment informationAssignment) => true;
+        public virtual bool Visit(CombinedInformationItem combinedInformationItem) => true;
     }
 
     /// <summary>

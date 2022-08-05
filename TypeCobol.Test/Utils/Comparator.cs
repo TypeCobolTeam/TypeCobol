@@ -521,6 +521,7 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(whenEverStatement.TargetSectionOrParagraph), whenEverStatement.TargetSectionOrParagraph);
                 return true;
             }
+
             public override bool Visit(SavepointStatement savepointStatement)
             {
                 _writer.WriteLine($"line {savepointStatement.Line}: {nameof(SavepointStatement)}");
@@ -529,6 +530,7 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(savepointStatement.RetainLocks), savepointStatement.RetainLocks);
                 return true;
             }
+
             public override bool Visit(LockTableStatement lockTableStatement)
             {
                 _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");
@@ -537,12 +539,14 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
                 return true;
             }
+
             public override bool Visit(ReleaseSavepointStatement releaseSavepointStatement)
             {
                 _writer.WriteLine($"line {releaseSavepointStatement.Line}: {nameof(ReleaseSavepointStatement)}");
                 DumpObject(nameof(releaseSavepointStatement.SavepointName), releaseSavepointStatement.SavepointName);
                 return true;
             }
+
             public override bool Visit(ConnectStatement connectStatement)
             {
                 _writer.WriteLine($"line {connectStatement.Line}: {nameof(ConnectStatement)}");
@@ -558,10 +562,20 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(dropTableStatement.TableOrAliasName), dropTableStatement.TableOrAliasName);
                 return true;
             }
+
             public override bool Visit(SetAssignmentStatement setAssignmentStatement)
             {
                 _writer.WriteLine($"line {setAssignmentStatement.Line}: {nameof(SetAssignmentStatement)}");
                 DumpObject(nameof(setAssignmentStatement.Assignments), setAssignmentStatement.Assignments);
+                return true;
+            }
+
+            public override bool Visit(GetDiagnosticsStatement getDiagnosticsStatement)
+            {
+                _writer.WriteLine($"line {getDiagnosticsStatement.Line}: {nameof(GetDiagnosticsStatement)}");
+                DumpObject(nameof(getDiagnosticsStatement.IsCurrent), getDiagnosticsStatement.IsCurrent);
+                DumpObject(nameof(getDiagnosticsStatement.IsStacked), getDiagnosticsStatement.IsStacked);
+                DumpObject(nameof(getDiagnosticsStatement.RequestedInformation), getDiagnosticsStatement.RequestedInformation);
                 return true;
             }
         }

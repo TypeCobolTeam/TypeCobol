@@ -2326,5 +2326,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
             SetAssignmentStatementChecker.OnCodeElement(statement, context);
         }
+
+        public override void EnterGetDiagnosticsStatement(
+            [NotNull] CodeElementsParser.GetDiagnosticsStatementContext context)
+        {
+            Context = context;
+            var statement = _sqlCodeElementBuilder.CreateGetDiagnosticsStatement(context);
+            CodeElement = statement;
+            GetDiagnosticsStatementChecker.OnCodeElement(statement, context);
+        }
     }
 }

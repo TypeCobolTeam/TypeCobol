@@ -148,7 +148,7 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ReleaseSavepointStatemen
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ConnectStatement ConnectStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DropTableStatement DropTableStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SetAssignmentStatement SetAssignmentStatement;
-
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.GetDiagnosticsStatement GetDiagnosticsStatement;
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -724,6 +724,8 @@ sqlStatement ::= CommitStatement:stmt
 |	DropTableStatement:stmt 
 {: :}
 |	SetAssignmentStatement:stmt 
+{: :}
+|	GetDiagnosticsStatement:stmt 
 {: :}
 ;
 

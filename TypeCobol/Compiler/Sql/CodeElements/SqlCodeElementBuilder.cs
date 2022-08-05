@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -367,9 +368,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {
             var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
-            var partitionId = context.IntegerLiteral() != null
-                ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
-                : null;
+            var partitionId = CreateSqlConstant(context.IntegerLiteral());
             SyntaxProperty<LockMode> mode = null;
             if (context.share() != null)
             {
@@ -471,7 +470,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
-                new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
+                new [] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
             return aliasName;
         }
 
@@ -603,5 +602,141 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 ? CreateDatetimeConstant(context.datetime_constant())
                 : new SqlConstant(ParseTreeUtils.GetFirstToken(context));
         }
+
+        private SqlConstant CreateSqlConstant(ITerminalNode node)
+        {
+            return node != null ? new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(node)) : null;
+        }
+
+        public GetDiagnosticsStatement CreateGetDiagnosticsStatement(CodeElementsParser.GetDiagnosticsStatementContext context)
+        {
+            var isCurrent = context.SQL_CURRENT() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_CURRENT())) : null;
+            var isStacked = context.stacked() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.stacked())) : null;
+            GetDiagnosticInformation requestedInformation = null;
+            if (context.statementInformationClauses() != null)
+            {
+                requestedInformation = CreateStatementInformation(context.statementInformationClauses());
+            }
+            else if (context.conditionInformationClause() != null)
+            {
+                requestedInformation = CreateConditionInformationClause(context.conditionInformationClause());
+            }
+            else if (context.combinedInformationClause() != null)
+            {
+                requestedInformation = CreateCombinedInformationClause(context.combinedInformationClause());
+            }
+            return new GetDiagnosticsStatement(isCurrent, isStacked, requestedInformation);
+        }
+
+        private StatementInformation CreateStatementInformation(CodeElementsParser.StatementInformationClausesContext context)
+        {
+            var assignments = context.statementInformationClause().Select(CreateInformationAssignment).ToList();
+            return new StatementInformation(assignments);
+        }
+
+        private InformationAssignment CreateInformationAssignment(CodeElementsParser.StatementInformationClauseContext context)
+        {
+            SymbolReference itemName = null;
+            SqlVariable storage = null;
+            if (context.variable_1 != null)
+            {
+                storage = CreateSqlVariable(context.variable_1);
+            }
+
+            if (context.statementInformationItemName != null)
+            {
+                itemName = CreateSymbolReference((Token)context.statementInformationItemName);
+            }
+
+            return new InformationAssignment(storage, itemName);
+        }
+
+        private ConditionInformation CreateConditionInformationClause(CodeElementsParser.ConditionInformationClauseContext context)
+        {
+            SqlVariable diagnosticIdVariable = null;
+            SqlConstant diagnosticIdLiteral = null;
+            if (context.variable_2 != null)
+            {
+                diagnosticIdVariable = CreateSqlVariable(context.variable_2);
+            }
+            else if (context.IntegerLiteral() != null)
+            {
+                diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
+            }
+            var assignments = context.repeatedConnectionOrConditionInformation().Select(CreateInformationAssignment).ToList();
+            return new ConditionInformation(diagnosticIdVariable, diagnosticIdLiteral, assignments);
+        }
+
+
+        private InformationAssignment CreateInformationAssignment(CodeElementsParser.RepeatedConnectionOrConditionInformationContext context)
+        {
+            SymbolReference itemName = null;
+            SqlVariable storage = null;
+            if (context.variable_3 != null)
+            {
+                storage = CreateSqlVariable(context.variable_3);
+            }
+
+            if (context.UserDefinedWord() != null)
+            {
+                itemName = CreateSymbolReference(ParseTreeUtils.GetTokenFromTerminalNode(context
+                    .UserDefinedWord()));
+            }
+
+            return new InformationAssignment(storage, itemName);
+        }
+
+        private CombinedInformation CreateCombinedInformationClause(CodeElementsParser.CombinedInformationClauseContext context)
+        {
+            SqlVariable storage = null;
+            var items = new List<CombinedInformationItem>();
+            if (context.variable_4 != null)
+            {
+                storage = CreateSqlVariable(context.variable_4);
+            }
+            foreach (var combinedInformationItem in context.repeatedCombinedInformation())
+            {
+                var combinedInformation = CreateCombinedInformationItem(combinedInformationItem);
+                if (combinedInformation != null)
+                {
+                    items.Add(combinedInformation);
+                }
+            }
+            return new CombinedInformation(storage, items);
+        }
+
+        private CombinedInformationItem CreateCombinedInformationItem(
+            CodeElementsParser.RepeatedCombinedInformationContext context)
+        {
+            if (context.SQL_STATEMENT() != null)
+            {
+                return new CombinedInformationItem(CombinedInformationItemType.Statement, null, null);
+            }
+            if (context.SQL_CONDITION() != null)
+            {
+                return NewCombinedInformationItem(CombinedInformationItemType.Condition);
+            }
+            if (context.SQL_CONNECTION() != null)
+            {
+                return NewCombinedInformationItem(CombinedInformationItemType.Connection);
+            }
+            return null;
+
+            CombinedInformationItem NewCombinedInformationItem(CombinedInformationItemType combinedInformationItemType)
+            {
+                SqlVariable diagnosticIdVariable = null;
+                SqlConstant diagnosticIdLiteral = null;
+                if (context.variable_5 != null)
+                {
+                    diagnosticIdVariable = CreateSqlVariable(context.variable_5);
+                }
+                else if (context.IntegerLiteral() != null)
+                {
+                    diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
+                }
+                return new CombinedInformationItem(combinedInformationItemType, diagnosticIdVariable, diagnosticIdLiteral);
+            }
+        }
+
     }
 }

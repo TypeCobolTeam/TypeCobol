@@ -222,6 +222,7 @@ codeElement:
 	| connectStatement
 	| dropTableStatement
 	| setAssignmentStatement
+	| getDiagnosticsStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8335,19 +8336,39 @@ savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? 
 
 dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
 tableOrAliasName: tableOrViewOrCorrelationName;
-date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
-time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
-timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
-datetime_constant: (date | time | timestamp) AlphanumericLiteral;
 
 //TODO Complete TargetVariable , sqlVariable and sqlExpression
 //Regroup all variables used in a SQL context
 //See https://www.ibm.com/docs/en/db2-for-zos/12?topic=elements-variables
 //Parameter markers variables are out of scope here, because it seems related only to PREPARE statement
 sqlVariable: hostVariable; //TODO global-variable-name | session-variable-name | SQL-parameter-name | SQL-variable-name | transition-variable-name
+
+sqlConstant: SQL_NULL | IntegerLiteral | FloatingPointLiteral | DecimalLiteral | SQL_DecimalFloatingPointLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | datetime_constant;
+sqlExpression: sqlVariable | column_name | sqlConstant;
+
+stacked: ({ string.Equals(CurrentToken.Text, "STACKED", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTACKED=UserDefinedWord);
+diagnostics: ({ string.Equals(CurrentToken.Text, "DIAGNOSTICS", System.StringComparison.OrdinalIgnoreCase) }? KeywordDIAGNOSTICS=UserDefinedWord);
+getDiagnosticsStatement: SQL_GET (SQL_CURRENT | stacked)?  diagnostics (statementInformationClauses | conditionInformationClause | combinedInformationClause);
+statementInformationClauses: statementInformationClause (SQL_CommaSeparator statementInformationClause)*;
+statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemName=UserDefinedWord;
+//According to specification, we should have:
+//statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemNameClause;
+//statementInformationItemNameClause: statementInformationItemName (SQL_CommaSeparator statementInformationItemName)*;
+//statementInformationItemName: UserDefinedWord;
+//But it doesn't work
+
+conditionInformationClause: SQL_CONDITION ((variable_2=sqlVariable) | IntegerLiteral) repeatedConnectionOrConditionInformation (SQL_CommaSeparator repeatedConnectionOrConditionInformation)*;
+repeatedConnectionOrConditionInformation: (variable_3=sqlVariable) EqualOperator UserDefinedWord; 
+
+combinedInformationClause: (variable_4=sqlVariable) EqualOperator SQL_ALL repeatedCombinedInformation (SQL_CommaSeparator repeatedCombinedInformation)*;
+repeatedCombinedInformation: SQL_STATEMENT | ((SQL_CONNECTION | SQL_CONDITION) ((variable_5=sqlVariable) | IntegerLiteral)?);
+
+date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
+time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
+timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
+datetime_constant: (date | time | timestamp) AlphanumericLiteral;
+
 sqlSetTargetVariable: sqlVariable; //TODO can session-variable-name be used in SET statement ?
-sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
-sqlExpression: sqlVariable | column_name | sqlConstant ;
 sourceValue: sqlExpression | SQL_DEFAULT;
 setAssignmentStatement: SQL_SET assignmentClause (SQL_CommaSeparator assignmentClause)*;
 assignmentClause: simpleAssignmentClause | multipleAssignmentClause;   //TODO arrayAssignment
