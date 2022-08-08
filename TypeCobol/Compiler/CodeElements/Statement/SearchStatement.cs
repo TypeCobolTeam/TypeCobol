@@ -85,18 +85,4 @@ public class SearchBinaryStatement: SearchStatement {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
         }
     }
-
-/// <summary>Conditional expression case for the SEARCH statement.</summary>
-public class WhenSearchCondition: StatementElement {
-	public WhenSearchCondition(): base((CodeElementType)int.MaxValue, (StatementType)int.MaxValue) { }
-
-	public ConditionalExpression Condition { get; set; }
-
-        public override bool VisitCodeElement(IASTVisitor astVisitor)
-        {
-            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, Condition);
-        }
-    }
-
 }

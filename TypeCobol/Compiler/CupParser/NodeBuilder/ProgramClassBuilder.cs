@@ -1321,22 +1321,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new WhenGroup(), null);// enter WHEN group
             foreach (var cond in conditions)
             {
-                TypeCobol.Compiler.CodeElements.WhenCondition condition = null;
-                if (cond is TypeCobol.Compiler.CodeElements.WhenSearchCondition)
-                {
-                    TypeCobol.Compiler.CodeElements.WhenSearchCondition whensearch =
-                        cond as TypeCobol.Compiler.CodeElements.WhenSearchCondition;
-                    condition = new WhenCondition();
-                    whensearch.ApplyPropertiesToCE(condition);
-
-                    condition.SelectionObjects = new SelectionObject[1];
-                    condition.SelectionObjects[0] = new SelectionObject();
-                    condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
-                }
-                else
-                {
-                    condition = cond as TypeCobol.Compiler.CodeElements.WhenCondition;
-                }
+                System.Diagnostics.Debug.Assert(cond is WhenCondition);
+                var condition = (WhenCondition)cond;
                 Enter(new When(condition), condition);
                 Exit();
             }
