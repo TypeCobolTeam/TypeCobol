@@ -432,9 +432,6 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WhenOtherCondition:
                         this.CurrentProgramCfgBuilder.EnterWhenOther((WhenOther)node);
                         break;
-                    case CodeElementType.WhenSearchCondition:
-                        this.CurrentProgramCfgBuilder.EnterWhenSearch((WhenSearch)node);
-                        break;
                     // Statement conditions
                     case CodeElementType.AtEndCondition:
                     case CodeElementType.NotAtEndCondition:
@@ -582,9 +579,6 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     case CodeElementType.WhenOtherCondition:
                         this.CurrentProgramCfgBuilder.LeaveWhenOther((WhenOther)node);
-                        break;
-                    case CodeElementType.WhenSearchCondition:
-                        this.CurrentProgramCfgBuilder.LeaveWhenSearch((WhenSearch)node);
                         break;
                     // Statement conditions
                     case CodeElementType.AtEndCondition:
@@ -1937,7 +1931,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Handle a When Search Condition for a Search instruction.
         /// </summary>
         /// <param name="condition">The condition, if null then this means the AT END condition</param>
-        public override void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenSearchCondition condition)
+        public override void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenCondition condition)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);

@@ -110,7 +110,6 @@ namespace TypeCobol.Compiler.CodeElements
         RewriteStatement,
         SearchSerialStatement,
         SearchBinaryStatement,
-        WhenSearchCondition,
         SetStatementForAssignment,
         SetStatementForIndexes,
         SetStatementForSwitches,

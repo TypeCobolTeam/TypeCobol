@@ -1468,9 +1468,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.EndSearchStatementWithBody(end);
         }
 
-        public virtual void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenSearchCondition condition)
+        public virtual void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenCondition condition)
         {
-            Enter(new WhenSearch(condition), condition);
+            Enter(new When(condition), condition);
             Dispatcher.StartWhenSearchConditionClause(condition);
         }
 

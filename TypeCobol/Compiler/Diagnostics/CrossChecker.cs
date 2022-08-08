@@ -275,7 +275,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         }
                     }
                 }
-                else if (child is WhenSearch whenSearch)
+                else if (child is When whenSearch)
                 {
                     whenSearchCount++;
                     if (whenSearchCount > 1 && search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
@@ -346,15 +346,14 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         
-        public override bool Visit(WhenSearch whenSearch)
+        public override bool Visit(When whenSearch)
         {
-            System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
-            var search = (Search) whenSearch.Parent;
+            if (!(whenSearch.Parent is Search search)) return true; //EVALUATE statement, not our concern here.
 
             if (whenSearch.ChildrenCount == 0)
             {
                 var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
-                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause", messageCode);
+                DiagnosticUtils.AddError(whenSearch, "Missing statement in \"when\" clause", messageCode);
             }
 
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))

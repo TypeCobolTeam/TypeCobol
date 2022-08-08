@@ -88,7 +88,7 @@ public class SearchBinaryStatement: SearchStatement {
 
 /// <summary>Conditional expression case for the SEARCH statement.</summary>
 public class WhenSearchCondition: StatementElement {
-	public WhenSearchCondition(): base(CodeElementType.WhenSearchCondition, StatementType.WhenSearchCondition) { }
+	public WhenSearchCondition(): base((CodeElementType)int.MaxValue, (StatementType)int.MaxValue) { }
 
 	public ConditionalExpression Condition { get; set; }
 

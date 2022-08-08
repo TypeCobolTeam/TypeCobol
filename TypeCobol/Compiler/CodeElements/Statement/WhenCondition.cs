@@ -19,6 +19,23 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SelectionObject[] SelectionObjects { get; set; }
 
+        /// <summary>
+        /// Return conditional expression in case of a single boolean selection object.
+        /// </summary>
+        public ConditionalExpression Condition
+        {
+            get
+            {
+                if (SelectionObjects != null && SelectionObjects.Length == 1)
+                {
+                    var selectionObject = SelectionObjects[0];
+                    return selectionObject.BooleanComparisonVariable?.Expression;
+                }
+
+                return null;
+            }
+        }
+
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)

@@ -1486,10 +1486,11 @@ namespace TypeCobol.Compiler.Parser
 		 // WHEN SEARCH CONDITION //
 		///////////////////////////
 
-		internal CodeElement CreateWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context) {
-			var condition = new WhenSearchCondition();
-			condition.Condition = CobolExpressionsBuilder.CreateConditionalExpression(context.conditionalExpression());
-			return condition;
+		internal CodeElement CreateWhenCondition(CodeElementsParser.WhenSearchConditionContext context) {
+			var conditionalExpression = CobolExpressionsBuilder.CreateConditionalExpression(context.conditionalExpression());
+			var selectionObjects = new SelectionObject[1];
+			selectionObjects[0] = new SelectionObject() { BooleanComparisonVariable = new BooleanValueOrExpression(conditionalExpression) };
+			return new WhenCondition() { SelectionObjects = selectionObjects };
 		}
 
 		  /////////////////////

@@ -17,7 +17,7 @@
       
       *OK, when without instruction
            search all var1
-Line 20[15,34] <37, Warning, General> - Warning: Missing statement in when clause
+Line 20[15,34] <37, Warning, General> - Warning: Missing statement in "when" clause
               when var2(idx) = 'b'
       
            end-search
@@ -35,7 +35,7 @@ Line 20[15,34] <37, Warning, General> - Warning: Missing statement in when claus
            search all var1
               at end
                 display "end"
-Line 37[15,34] <37, Warning, General> - Warning: Missing statement in when clause
+Line 37[15,34] <37, Warning, General> - Warning: Missing statement in "when" clause
               when var2(idx) = 'b'
            end-search
       
@@ -51,7 +51,7 @@ Line 46[15,20] <27, Error, Syntax> - Syntax error : ON AT END clause must appear
            end-search
       
            search all var1
-Line 51[15,34] <37, Warning, General> - Warning: Missing statement in when clause
+Line 51[15,34] <37, Warning, General> - Warning: Missing statement in "when" clause
               when var2(idx) = 'b'
       *KO at end must be before when statement
 Line 53[15,20] <27, Error, Syntax> - Syntax error : ON AT END clause must appear before WHEN.
@@ -81,7 +81,7 @@ Line 70[15,34] <27, Error, Syntax> - Syntax error : Invalid WHEN clause, binary 
            search all var1
               at end
                 display "end"
-Line 77[15,34] <37, Warning, General> - Warning: Missing statement in when clause
+Line 77[15,34] <37, Warning, General> - Warning: Missing statement in "when" clause
               when var2(idx) = 'a'
 Line 78[15,34] <27, Error, Syntax> - Syntax error : Invalid WHEN clause, binary SEARCH only allows a single WHEN clause
               when var2(idx) = 'b'
