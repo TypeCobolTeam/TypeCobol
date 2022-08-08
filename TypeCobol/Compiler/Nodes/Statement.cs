@@ -1,12 +1,8 @@
-﻿using TypeCobol.Compiler.Symbols;
+﻿using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Nodes {
-    using System;
-    using System.Collections.Generic;
-    using TypeCobol.Compiler.CodeElements;
-    using TypeCobol.Compiler.CodeElements.Expressions;
-
-
 
     public interface Statement { }
 

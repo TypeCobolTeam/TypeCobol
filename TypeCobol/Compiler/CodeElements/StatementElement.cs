@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// Base class for all statement CodeElements

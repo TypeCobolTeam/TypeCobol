@@ -6,8 +6,6 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Nodes;
-using Object = TypeCobol.Compiler.Nodes.Object;
-using String = TypeCobol.Compiler.Nodes.String;
 
 namespace TypeCobol.Compiler.CodeElements
 {

@@ -11,7 +11,6 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
