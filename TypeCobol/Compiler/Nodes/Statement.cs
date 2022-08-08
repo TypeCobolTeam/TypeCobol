@@ -641,12 +641,4 @@ namespace TypeCobol.Compiler.Nodes {
             return astVisitor.Visit(this);
         }
     }
-    public class WhenSearch: GenericNode<WhenSearchCondition>, StatementCondition {
-	    public WhenSearch(WhenSearchCondition statement): base(statement) { }
-        public override bool VisitNode(IASTVisitor astVisitor)
-        {
-            return astVisitor.Visit(this);
-        }
-    }
-
 } // end of namespace TypeCobol.Compiler.Nodes

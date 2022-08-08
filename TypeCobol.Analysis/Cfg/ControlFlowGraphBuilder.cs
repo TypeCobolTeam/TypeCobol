@@ -2079,30 +2079,6 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Enter a When Search condition node
-        /// </summary>
-        /// <param name="node">The when search condition node</param>
-        protected virtual void EnterWhenSearch(WhenSearch node)
-        {
-            System.Diagnostics.Debug.Assert(node != null);
-            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
-            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
-
-            ctx.ConditionNodes.Add(node);
-        }
-
-        /// <summary>
-        /// Leave a When Search condition node
-        /// </summary>
-        /// <param name="node">The when search condition node</param>
-        protected virtual void LeaveWhenSearch(WhenSearch node)
-        {
-
-        }
-
-        /// <summary>
         /// Enter a Perform which is a loop.
         /// </summary>
         /// <param name="perform">The perform node</param>

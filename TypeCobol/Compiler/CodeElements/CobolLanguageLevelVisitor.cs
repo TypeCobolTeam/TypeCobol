@@ -328,7 +328,6 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] When when);
         bool Visit([NotNull] WhenOther whenOther);
         bool Visit([NotNull] Search search);
-        bool Visit([NotNull] WhenSearch whenSearch);
 
         bool Visit([NotNull] DataSection dataSection);
         bool Visit([NotNull] DataDivision dataDivision);
@@ -1291,10 +1290,6 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(Search search) {
-            return true;
-        }
-
-        public virtual bool Visit(WhenSearch whenSearch) {
             return true;
         }
 
