@@ -578,6 +578,24 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(getDiagnosticsStatement.RequestedInformation), getDiagnosticsStatement.RequestedInformation);
                 return true;
             }
+
+            public override bool Visit(AlterSequenceStatement alterSequenceStatement)
+            {
+                _writer.WriteLine($"line {alterSequenceStatement.Line}: {nameof(AlterSequenceStatement)}");
+                DumpObject(nameof(AlterSequenceStatement.SequenceName), alterSequenceStatement.SequenceName);
+                DumpObject(nameof(AlterSequenceStatement.Restart), alterSequenceStatement.Restart);
+                DumpObject(nameof(AlterSequenceStatement.RestartValue), alterSequenceStatement.RestartValue);
+                DumpObject(nameof(AlterSequenceStatement.IncrementValue), alterSequenceStatement.IncrementValue);
+                DumpObject(nameof(AlterSequenceStatement.HasMinValue), alterSequenceStatement.HasMinValue);
+                DumpObject(nameof(AlterSequenceStatement.MinValue), alterSequenceStatement.MinValue);
+                DumpObject(nameof(AlterSequenceStatement.HasMaxValue), alterSequenceStatement.HasMaxValue);
+                DumpObject(nameof(AlterSequenceStatement.MaxValue), alterSequenceStatement.MaxValue);
+                DumpObject(nameof(AlterSequenceStatement.Cycle), alterSequenceStatement.Cycle);
+                DumpObject(nameof(AlterSequenceStatement.HasCache), alterSequenceStatement.HasCache);
+                DumpObject(nameof(AlterSequenceStatement.CacheSize), alterSequenceStatement.CacheSize);
+                DumpObject(nameof(AlterSequenceStatement.Ordered), alterSequenceStatement.Ordered);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

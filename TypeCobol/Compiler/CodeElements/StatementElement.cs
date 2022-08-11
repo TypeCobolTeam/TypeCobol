@@ -141,7 +141,8 @@ namespace TypeCobol.Compiler.CodeElements
         ConnectStatement,
         DropTableStatement,
         SetAssignmentStatement,
-        GetDiagnosticsStatement
+        GetDiagnosticsStatement,
+        AlterSequenceStatement
 
     }
 }

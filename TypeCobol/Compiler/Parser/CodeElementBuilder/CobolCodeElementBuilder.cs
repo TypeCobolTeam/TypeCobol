@@ -2335,5 +2335,12 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
             GetDiagnosticsStatementChecker.OnCodeElement(statement, context);
         }
+
+        public override void EnterAlterSequenceStatement(
+            [NotNull] CodeElementsParser.AlterSequenceStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateAlterSequenceStatement(context);
+        }
     }
 }

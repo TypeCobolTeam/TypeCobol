@@ -886,5 +886,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+
+        }
     }
 }

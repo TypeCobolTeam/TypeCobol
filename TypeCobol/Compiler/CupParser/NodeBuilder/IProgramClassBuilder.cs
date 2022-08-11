@@ -871,6 +871,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="getDiagnostics">The corresponding  GetDiagnostics Statement Code Element</param>
         void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics);
+        /// <summary>
+        /// Enter a AlterSequence Statement Node
+        /// </summary>
+        /// <param name="alterSequence">The corresponding  AlterSequence Statement Code Element</param>
+        void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence);
         #endregion
     }
 }

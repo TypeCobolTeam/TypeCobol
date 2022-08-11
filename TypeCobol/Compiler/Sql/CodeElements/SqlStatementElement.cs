@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             switch (tokenType)
             {
-                //TODO ALTER
+                case TokenType.SQL_ALTER:
                 case TokenType.SQL_COMMIT:
                 case TokenType.SQL_CONNECT:
                 case TokenType.SQL_DROP:

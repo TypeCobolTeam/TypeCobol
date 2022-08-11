@@ -223,6 +223,7 @@ codeElement:
 	| dropTableStatement
 	| setAssignmentStatement
 	| getDiagnosticsStatement
+	| alterSequenceStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8323,6 +8324,22 @@ sqlReset: ({ string.Equals(CurrentToken.Text, "RESET", System.StringComparison.O
 authorizationClause:  SQL_USER (userName = hostVariable) SQL_USING (password = hostVariable);
 connectStatement: SQL_CONNECT (connectionTarget | sqlReset | authorizationClause)?;
 connectionTarget: SQL_TO ((locationName = UserDefinedWord) | hostVariable) authorizationClause?;
+
+sqlIncrement: ({ string.Equals(CurrentToken.Text, "INCREMENT", System.StringComparison.OrdinalIgnoreCase) }? KeywordINCREMENT=UserDefinedWord);
+minvalue: ({ string.Equals(CurrentToken.Text, "MINVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMINVALUE=UserDefinedWord);
+maxvalue: ({ string.Equals(CurrentToken.Text, "MAXVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMAXVALUE=UserDefinedWord);
+cycle: ({ string.Equals(CurrentToken.Text, "CYCLE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCYCLE=UserDefinedWord);
+cache: ({ string.Equals(CurrentToken.Text, "CACHE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCACHE=UserDefinedWord);
+
+alterSequenceStatement: SQL_ALTER SQL_SEQUENCE (sequence_name=tableOrViewOrCorrelationName) alterSequenceClause alterSequenceClause*;
+alterSequenceClause: restartClause | incrementClause | minValueClause | maxValueClause | cacheClause | cycle | SQL_ORDER | noClauses;
+restartClause: SQL_RESTART (SQL_WITH numericConstant)? ;
+incrementClause: sqlIncrement SQL_BY numericConstant;
+minValueClause: minvalue numericConstant;
+maxValueClause: maxvalue numericConstant;
+cacheClause: cache IntegerLiteral;
+noClauses: SQL_NO (minvalue | maxvalue | SQL_ORDER | cycle | cache);
+numericConstant: IntegerLiteral | DecimalLiteral;
 
 lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
 share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);
