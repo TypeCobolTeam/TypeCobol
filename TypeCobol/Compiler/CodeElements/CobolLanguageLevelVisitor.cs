@@ -401,6 +401,12 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Connect connect);
         bool Visit([NotNull] DropTableStatement dropTableStatement);
         bool Visit([NotNull] DropTable dropTable);
+        bool Visit([NotNull] SetAssignmentStatement setAssignmentStatement);
+        bool Visit([NotNull] SetAssignment setAssignment);
+        bool Visit([NotNull] GetDiagnosticsStatement getDiagnosticsStatement);
+        bool Visit([NotNull] GetDiagnostics getDiagnostics);
+        bool Visit([NotNull] AlterSequenceStatement alterSequenceStatement);
+        bool Visit([NotNull] AlterSequence alterSequence);
         bool Visit([NotNull] ExecuteImmediateStatement executeImmediateStatement);
         bool Visit([NotNull] ExecuteImmediate executeImmediate);
     }
@@ -1594,6 +1600,30 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] DropTable dropTable)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SetAssignmentStatement setAssignmentStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SetAssignment setAssignment)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] GetDiagnosticsStatement getDiagnosticsStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] GetDiagnostics getDiagnostics)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] AlterSequenceStatement alterSequenceStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] AlterSequence alterSequence)
         {
             return true;
         }

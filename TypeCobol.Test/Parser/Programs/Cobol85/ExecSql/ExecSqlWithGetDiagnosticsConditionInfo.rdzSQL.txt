@@ -1,0 +1,113 @@
+--- Diagnostics ---
+Line 27[12,33] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: SQLCA
+Line 58[40,42] <27, Error, Syntax> - Syntax error : mismatched input 'ALL' expecting user defined word RuleStack=codeElement>getDiagnosticsStatement>conditionInformationClause>repeatedConnectionOrConditionInformation,  OffendingSymbol=[40,42:ALL]<SQL_ALL>
+Line 58[38,38] <27, Error, Syntax> - Syntax error : mismatched input '=' expecting ':' RuleStack=codeElement>getDiagnosticsStatement>conditionInformationClause>repeatedConnectionOrConditionInformation>sqlVariable>hostVariable,  OffendingSymbol=[38,38:=]<EqualOperator>
+
+--- Sql Statements ---
+line 32: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - DiagnosticIdVariable = <NULL>
+  - DiagnosticIdLiteral = SqlConstant
+    - LiteralValue = 1
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var01
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_RETURNED_SQLCODE
+    - Assignments[1] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var02
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_TOKEN_COUNT
+    - Assignments[2] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var03
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_ORDINAL_TOKEN_1
+    - Assignments[3] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var04
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_ORDINAL_TOKEN_2
+    - Assignments[4] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var05
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_ORDINAL_TOKEN_3
+    - Assignments[5] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var06
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_ORDINAL_TOKEN_4
+    - Assignments[6] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var07
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_ORDINAL_TOKEN_5
+    - Assignments[7] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var08
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_MESSAGE_ID
+    - Assignments[8] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var09
+        - IndicatorReference = <NULL>
+      - ItemName = MESSAGE_TEXT
+    - Assignments[9] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var10
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_MODULE_DETECTING_ERROR
+    - Assignments[10] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var11
+        - IndicatorReference = <NULL>
+      - ItemName = RETURNED_SQLSTATE
+  ]
+line 46: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - DiagnosticIdVariable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - DiagnosticIdLiteral = <NULL>
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var02
+        - IndicatorReference = <NULL>
+      - ItemName = RETURNED_SQLSTATE
+  ]
+line 50: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - DiagnosticIdVariable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - DiagnosticIdLiteral = <NULL>
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = HostVariable
+        - MainReference = var02
+        - IndicatorReference = <NULL>
+      - ItemName = DB2_PRODUCT_ID
+  ]
+line 57: GetDiagnosticsStatement
+- IsCurrent = <NULL>
+- IsStacked = <NULL>
+- RequestedInformation = ConditionInformation
+  - DiagnosticIdVariable = HostVariable
+    - MainReference = var01
+    - IndicatorReference = <NULL>
+  - DiagnosticIdLiteral = <NULL>
+  - Assignments = [
+    - Assignments[0] = InformationAssignment
+      - Storage = <NULL>
+      - ItemName = <NULL>
+  ]

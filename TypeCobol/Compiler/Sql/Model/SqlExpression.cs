@@ -36,8 +36,9 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             Literal = literal;
         }
+
         public override SqlExpressionType ExpressionType => SqlExpressionType.Constant;
-        public virtual SqlConstantType Type
+        public virtual SqlConstantType ConstantType
         {
             get
             {
@@ -101,7 +102,7 @@ namespace TypeCobol.Compiler.Sql.Model
             Kind = kind;
         }
 
-        public override SqlConstantType Type => SqlConstantType.Datetime;
+        public override SqlConstantType ConstantType => SqlConstantType.Datetime;
 
         public DatetimeConstantKind Kind { get; }
 

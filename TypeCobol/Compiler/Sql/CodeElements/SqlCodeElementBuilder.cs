@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
@@ -258,6 +259,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return null;
         }
 
+        private SqlConstant CreateSqlConstant(CodeElementsParser.NumericConstantContext context)
+        {
+            var terminalNode = context.IntegerLiteral() ?? context.DecimalLiteral();
+            return CreateSqlConstant(terminalNode);
+        }
+
+        private SqlConstant CreateSqlConstant(ITerminalNode terminal)
+        {
+            return new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(terminal));
+        }
+
         private DatetimeConstant CreateDatetimeConstant(CodeElementsParser.Datetime_constantContext context)
         {
             var literal = ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral());
@@ -368,9 +380,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         public LockTableStatement CreateLockTableStatement(CodeElementsParser.LockTableStatementContext context)
         {
             var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
-            var partitionId = context.IntegerLiteral() != null
-                ? new SqlConstant(ParseTreeUtils.GetFirstToken(context.IntegerLiteral()))
-                : null;
+            var partitionId = context.IntegerLiteral() != null ? CreateSqlConstant(context.IntegerLiteral()) : null;
             SyntaxProperty<LockMode> mode = null;
             if (context.share() != null)
             {
@@ -476,6 +486,431 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return aliasName;
         }
 
+        public SetAssignmentStatement CreateSetAssignmentStatement(CodeElementsParser.SetAssignmentStatementContext context)
+        {
+            IList<Assignment> assignments = context.assignmentClause().Select(CreateAssignmentClause)
+                .Where(a => a != null).ToList();
+            return new SetAssignmentStatement(assignments);
+        }
+
+        private Assignment CreateAssignmentClause(CodeElementsParser.AssignmentClauseContext context)
+        {
+            if (context.simpleAssignmentClause() != null)
+            {
+                return CreateSimpleAssignmentClause(context.simpleAssignmentClause());
+            }
+            
+            if (context.multipleAssignmentClause() != null)
+            { 
+                return CreateMultipleAssignmentClause(context.multipleAssignmentClause());
+            }
+            
+            return null;
+        }
+
+        private Assignment CreateSimpleAssignmentClause(CodeElementsParser.SimpleAssignmentClauseContext context)
+        {
+            IList<TargetVariable> targets = new List<TargetVariable>();
+            IList<SourceValue> values = new List<SourceValue>();
+            if (context.sqlSetTargetVariable() != null)
+            {
+                var variable = CreateTargetVariable(context.sqlSetTargetVariable());
+                if (variable != null)
+                {
+                    targets.Add(variable);
+                }
+            }
+            if (context.sourceValue() != null)
+            {
+                values.Add(CreateSourceValue(context.sourceValue()));
+            }
+            return new Assignment(targets, values);
+        }
+
+        private Assignment CreateMultipleAssignmentClause(CodeElementsParser.MultipleAssignmentClauseContext context)
+        {
+            IList<SourceValue> values;
+            IList<TargetVariable> targets = context.sqlSetTargetVariable().Select(CreateTargetVariable).Where(v => v != null).ToList();
+
+            if (context.sourceValueClause().sourceValueClauses().repeatedSourceValue() != null)
+            {
+                values = CreateRepeatedSourceValue(context.sourceValueClause().sourceValueClauses()
+                    .repeatedSourceValue());
+            }
+            else if (context.sourceValueClause().sourceValueClauses().sourceValue() != null)
+            {
+                values = new List<SourceValue>
+                {
+                    CreateSourceValue(context.sourceValueClause().sourceValueClauses().sourceValue())
+                };
+            }
+            else
+            {
+                values = new List<SourceValue>();
+            }
+
+            return new Assignment(targets, values);
+        }
+
+        private List<SourceValue> CreateRepeatedSourceValue(CodeElementsParser.RepeatedSourceValueContext context)
+        {
+            var sourceValues = context.sourceValue().Select(CreateSourceValue).ToList();
+            return sourceValues;
+        }
+
+        private TargetVariable CreateTargetVariable(CodeElementsParser.SqlSetTargetVariableContext context)
+        {
+            return context.sqlVariable() != null ? new TargetVariable(CreateSqlVariable(context.sqlVariable())) : null;
+        }
+
+        private SourceValue CreateSourceValue(CodeElementsParser.SourceValueContext context)
+        {
+            SyntaxProperty<bool> isDefault = null;
+            SqlExpression expression = null;
+            if (context.sqlExpression() != null)
+            {
+                expression = CreateSqlExpression(context.sqlExpression());
+            }
+            else if (context.SQL_DEFAULT() != null)
+            {
+                isDefault = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_DEFAULT()));
+            }
+
+            return new SourceValue(expression, isDefault);
+        }
+
+        private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
+        {
+            if (context.hostVariable() != null)
+            {
+                return CreateSqlHostVariable(context.hostVariable());
+            }
+            //TODO Add other conditions when adding new Sql Variable Types 
+            return null;
+        }
+
+        private SqlExpression CreateSqlExpression(CodeElementsParser.SqlExpressionContext context)
+        {
+            if (context.column_name() != null)
+            {
+               return CreateSqlColumnName(context.column_name());
+            }
+
+            if (context.sqlConstant() != null)
+            {
+                return CreateSqlConstant(context.sqlConstant());
+            }
+
+            if (context.sqlVariable() != null)
+            {
+                return CreateSqlVariable(context.sqlVariable());
+            }
+            return null;
+        }
+
+        private SqlConstant CreateSqlConstant(CodeElementsParser.SqlConstantContext context)
+        {
+            return context.datetime_constant() != null
+                ? CreateDatetimeConstant(context.datetime_constant())
+                : new SqlConstant(ParseTreeUtils.GetFirstToken(context));
+        }
+
+        /*
+        private SqlConstant CreateSqlConstant(ITerminalNode node)
+        {
+            return node != null ? new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(node)) : null;
+        }
+        */
+
+        public GetDiagnosticsStatement CreateGetDiagnosticsStatement(CodeElementsParser.GetDiagnosticsStatementContext context)
+        {
+            var isCurrent = context.SQL_CURRENT() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.SQL_CURRENT())) : null;
+            var isStacked = context.stacked() != null ? new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.stacked())) : null;
+            GetDiagnosticInformation requestedInformation = null;
+            if (context.statementInformationClauses() != null)
+            {
+                requestedInformation = CreateStatementInformation(context.statementInformationClauses());
+            }
+            else if (context.conditionInformationClause() != null)
+            {
+                requestedInformation = CreateConditionInformationClause(context.conditionInformationClause());
+            }
+            else if (context.combinedInformationClause() != null)
+            {
+                requestedInformation = CreateCombinedInformationClause(context.combinedInformationClause());
+            }
+            return new GetDiagnosticsStatement(isCurrent, isStacked, requestedInformation);
+        }
+
+        private StatementInformation CreateStatementInformation(CodeElementsParser.StatementInformationClausesContext context)
+        {
+            var assignments = context.statementInformationClause().Select(CreateInformationAssignment).ToList();
+            return new StatementInformation(assignments);
+        }
+
+        private InformationAssignment CreateInformationAssignment(CodeElementsParser.StatementInformationClauseContext context)
+        {
+            SymbolReference itemName = null;
+            SqlVariable storage = null;
+            if (context.variable_1 != null)
+            {
+                storage = CreateSqlVariable(context.variable_1);
+            }
+
+            if (context.statementInformationItemName != null)
+            {
+                itemName = CreateSymbolReference((Token)context.statementInformationItemName);
+            }
+
+            return new InformationAssignment(storage, itemName);
+        }
+
+        private ConditionInformation CreateConditionInformationClause(CodeElementsParser.ConditionInformationClauseContext context)
+        {
+            SqlVariable diagnosticIdVariable = null;
+            SqlConstant diagnosticIdLiteral = null;
+            if (context.variable_2 != null)
+            {
+                diagnosticIdVariable = CreateSqlVariable(context.variable_2);
+            }
+            else if (context.IntegerLiteral() != null)
+            {
+                diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
+            }
+            var assignments = context.repeatedConnectionOrConditionInformation().Select(CreateInformationAssignment).ToList();
+            return new ConditionInformation(diagnosticIdVariable, diagnosticIdLiteral, assignments);
+        }
+
+
+        private InformationAssignment CreateInformationAssignment(CodeElementsParser.RepeatedConnectionOrConditionInformationContext context)
+        {
+            SymbolReference itemName = null;
+            SqlVariable storage = null;
+            if (context.variable_3 != null)
+            {
+                storage = CreateSqlVariable(context.variable_3);
+            }
+
+            if (context.UserDefinedWord() != null)
+            {
+                itemName = CreateSymbolReference(ParseTreeUtils.GetTokenFromTerminalNode(context
+                    .UserDefinedWord()));
+            }
+
+            return new InformationAssignment(storage, itemName);
+        }
+
+        private CombinedInformation CreateCombinedInformationClause(CodeElementsParser.CombinedInformationClauseContext context)
+        {
+            SqlVariable storage = null;
+            var items = new List<CombinedInformationItem>();
+            if (context.variable_4 != null)
+            {
+                storage = CreateSqlVariable(context.variable_4);
+            }
+            foreach (var combinedInformationItem in context.repeatedCombinedInformation())
+            {
+                var combinedInformation = CreateCombinedInformationItem(combinedInformationItem);
+                if (combinedInformation != null)
+                {
+                    items.Add(combinedInformation);
+                }
+            }
+            return new CombinedInformation(storage, items);
+        }
+
+        private CombinedInformationItem CreateCombinedInformationItem(
+            CodeElementsParser.RepeatedCombinedInformationContext context)
+        {
+            if (context.SQL_STATEMENT() != null)
+            {
+                return new CombinedInformationItem(CombinedInformationItemType.Statement, null, null);
+            }
+            if (context.SQL_CONDITION() != null)
+            {
+                return NewCombinedInformationItem(CombinedInformationItemType.Condition);
+            }
+            if (context.SQL_CONNECTION() != null)
+            {
+                return NewCombinedInformationItem(CombinedInformationItemType.Connection);
+            }
+            return null;
+
+            CombinedInformationItem NewCombinedInformationItem(CombinedInformationItemType combinedInformationItemType)
+            {
+                SqlVariable diagnosticIdVariable = null;
+                SqlConstant diagnosticIdLiteral = null;
+                if (context.variable_5 != null)
+                {
+                    diagnosticIdVariable = CreateSqlVariable(context.variable_5);
+                }
+                else if (context.IntegerLiteral() != null)
+                {
+                    diagnosticIdLiteral = CreateSqlConstant(context.IntegerLiteral());
+                }
+                return new CombinedInformationItem(combinedInformationItemType, diagnosticIdVariable, diagnosticIdLiteral);
+            }
+        }
+
+
+
+        private enum AlterSequenceClauseType
+        {
+            MinValue,
+            MaxValue,
+            Cycle,
+            Order,
+            Cache,
+            Restart,
+            Increment
+        }
+
+        public AlterSequenceStatement CreateAlterSequenceStatement(
+            CodeElementsParser.AlterSequenceStatementContext context)
+        {
+            var duplicates = new List<string>();
+            var clauseSet = new HashSet<AlterSequenceClauseType>();
+
+            TableViewCorrelationName sequenceName = null;
+            SyntaxProperty<bool> restart = null;
+            SqlConstant restartValue = null;
+            SqlConstant incrementValue = null;
+            SyntaxProperty<bool> hasMinValue = null;
+            SqlConstant minValue = null;
+            SyntaxProperty<bool> hasMaxValue = null;
+            SqlConstant maxValue = null;
+            SyntaxProperty<bool> cycle = null;
+            SyntaxProperty<bool> hasCache = null;
+            SqlConstant cacheSize = null;
+            SyntaxProperty<bool> ordered = null;
+
+            if (context.sequence_name != null)
+            {
+                sequenceName = CreateTableOrViewOrCorrelationName(context.sequence_name);
+            }
+
+            foreach (var alterSequenceClauseContext in context.alterSequenceClause())
+            {
+                if (alterSequenceClauseContext.restartClause() != null)
+                {
+                    SetOption(alterSequenceClauseContext.restartClause(), AlterSequenceClauseType.Restart,
+                        c => restart = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
+                    if (alterSequenceClauseContext.restartClause().numericConstant() != null)
+                    {
+                        restartValue = CreateSqlConstant(alterSequenceClauseContext.restartClause().numericConstant());
+                    }
+                }
+
+                if (alterSequenceClauseContext.incrementClause() != null &&
+                    alterSequenceClauseContext.incrementClause().numericConstant() != null)
+                {
+                    SetOption(alterSequenceClauseContext.incrementClause(), AlterSequenceClauseType.Increment,
+                        c => incrementValue = CreateSqlConstant(c.numericConstant()));
+                }
+
+                if (alterSequenceClauseContext.minValueClause() != null &&
+                    alterSequenceClauseContext.minValueClause().numericConstant() != null)
+                {
+                    SetOption(alterSequenceClauseContext.minValueClause(), AlterSequenceClauseType.MinValue,
+                        c =>
+                        {
+                            hasMinValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c));
+                            minValue = CreateSqlConstant(c.numericConstant());
+                        });
+                }
+
+                if (alterSequenceClauseContext.maxValueClause() != null &&
+                    alterSequenceClauseContext.maxValueClause().numericConstant() != null)
+                {
+                    SetOption(alterSequenceClauseContext.maxValueClause(), AlterSequenceClauseType.MaxValue,
+                        c =>
+                        {
+                            hasMaxValue = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c));
+                            maxValue = CreateSqlConstant(c.numericConstant());
+                        });
+                }
+
+                if (alterSequenceClauseContext.cycle() != null)
+                {
+                    SetOption(alterSequenceClauseContext.cycle(), AlterSequenceClauseType.Cycle,
+                        c => cycle = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
+                }
+
+                if (alterSequenceClauseContext.cacheClause() != null &&
+                    alterSequenceClauseContext.cacheClause().IntegerLiteral() != null)
+                {
+                    SetOption(alterSequenceClauseContext.cacheClause(), AlterSequenceClauseType.Cache,
+                        c =>
+                        {
+                            hasCache = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c));
+                            cacheSize = CreateSqlConstant(c.IntegerLiteral());
+                        });
+                }
+
+                if (alterSequenceClauseContext.SQL_ORDER() != null)
+                {
+                    SetOption(alterSequenceClauseContext.SQL_ORDER(), AlterSequenceClauseType.Order,
+                        c => ordered = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(c)));
+                }
+
+                if (alterSequenceClauseContext.noClauses() != null)
+                {
+                    var noKeyword = alterSequenceClauseContext.noClauses().SQL_NO();
+                    if (alterSequenceClauseContext.noClauses().minvalue() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.MinValue,
+                            c => hasMinValue =
+                                new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().maxvalue() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.MaxValue,
+                            c => hasMaxValue =
+                                new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().cycle() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.Cycle,
+                            c => cycle = new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().cache() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.Cache,
+                            c => hasCache =
+                                new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+
+                    if (alterSequenceClauseContext.noClauses().SQL_ORDER() != null)
+                    {
+                        SetOption(noKeyword, AlterSequenceClauseType.Order,
+                            c => ordered = new SyntaxProperty<bool>(false, ParseTreeUtils.GetTokenFromTerminalNode(c)));
+                    }
+                }
+            }
+
+            var alterSequenceStatement = new AlterSequenceStatement(sequenceName, restart, restartValue, incrementValue,
+                hasMinValue, minValue, hasMaxValue, maxValue, cycle, hasCache, cacheSize, ordered);
+            AlterSequenceStatementChecker.OnCodeElement(alterSequenceStatement, duplicates, clauseSet.Count == 0,
+                context);
+            return alterSequenceStatement;
+
+            void SetOption<TClause>(TClause clause, AlterSequenceClauseType type, Action<TClause> set)
+                where TClause : IParseTree
+            {
+                if (clauseSet.Add(type))
+                {
+                    set(clause);
+                }
+                else
+                {
+                    duplicates.Add(type.ToString().ToUpper());
+                }
+            }
+        }
+
         public ExecuteImmediateStatement CreateExecuteImmediateStatement(CodeElementsParser.ExecuteImmediateStatementContext context)
         {
             SqlVariable statementVariable = null;
@@ -493,16 +928,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             return new ExecuteImmediateStatement(statementVariable, statementExpression);
         }
 
-        private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
-        {
-            if (context.hostVariable() != null)
-            {
-                return CreateSqlHostVariable(context.hostVariable());
-            }
-            //TODO Add other conditions when adding new Sql Variable Types 
-            return null;
-        }
-
         private StringExpression CreateStringExpression(CodeElementsParser.StringExpressionContext context)
         {
             if (context.AlphanumericLiteral() != null)
@@ -511,11 +936,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             return null;
-        }
-
-        private SqlConstant CreateSqlConstant(ITerminalNode node)
-        {
-            return node != null ? new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(node)) : null;
         }
     }
 }

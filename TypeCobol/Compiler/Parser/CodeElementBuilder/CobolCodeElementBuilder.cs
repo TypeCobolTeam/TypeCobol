@@ -2318,6 +2318,31 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = _sqlCodeElementBuilder.CreateDropTableStatement(context);
         }
 
+        public override void EnterSetAssignmentStatement(
+            [NotNull] CodeElementsParser.SetAssignmentStatementContext context)
+        {
+            Context = context;
+            var statement = _sqlCodeElementBuilder.CreateSetAssignmentStatement(context);
+            CodeElement = statement;
+            SetAssignmentStatementChecker.OnCodeElement(statement, context);
+        }
+
+        public override void EnterGetDiagnosticsStatement(
+            [NotNull] CodeElementsParser.GetDiagnosticsStatementContext context)
+        {
+            Context = context;
+            var statement = _sqlCodeElementBuilder.CreateGetDiagnosticsStatement(context);
+            CodeElement = statement;
+            GetDiagnosticsStatementChecker.OnCodeElement(statement, context);
+        }
+
+        public override void EnterAlterSequenceStatement(
+            [NotNull] CodeElementsParser.AlterSequenceStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateAlterSequenceStatement(context);
+        }
+
         public override void EnterExecuteImmediateStatement([NotNull] CodeElementsParser.ExecuteImmediateStatementContext context)
         {
             Context = context;

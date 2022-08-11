@@ -10,10 +10,10 @@ namespace TypeCobol.Compiler.Sql.Model
 
     public abstract class SqlVariable : SqlExpression
     {
-        public abstract VariableType Type { get; }
-
-        public SymbolReference MainReference { get; }
         public override SqlExpressionType ExpressionType => SqlExpressionType.Variable;
+        public abstract VariableType VariableType { get; }
+        public SymbolReference MainReference { get; }
+
         protected SqlVariable(SymbolReference mainReference)
         {
             MainReference = mainReference;
@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             IndicatorReference = indicatorReference;
         }
-        public override VariableType Type => VariableType.HostVariable;
+        public override VariableType VariableType => VariableType.HostVariable;
 
         protected override void DumpContent(TextWriter output, int indentLevel)
         {
@@ -50,6 +50,5 @@ namespace TypeCobol.Compiler.Sql.Model
         {
             return base.VisitSqlObject(visitor) && visitor.Visit(this);
         }
-
     }
 }

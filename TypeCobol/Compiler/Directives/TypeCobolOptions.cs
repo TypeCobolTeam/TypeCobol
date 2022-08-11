@@ -65,6 +65,11 @@ namespace TypeCobol.Compiler.Directives
         public bool OptimizeWhitespaceScanning { get; set; } = true;
 
         /// <summary>
+        /// Enable parsing of SQL code embedded into EXEC SQL [...] END-EXEC blocks.
+        /// </summary>
+        public bool EnableSqlParsing { get; set; } = false;
+
+        /// <summary>
         /// Check if a End statement is aligned with the matching opening statement.
         /// </summary>
         public TypeCobolCheckOption CheckEndAlignment { get; set; }

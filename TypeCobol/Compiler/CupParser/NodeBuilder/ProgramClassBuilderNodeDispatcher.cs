@@ -890,6 +890,18 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnDropTableStatement(dropTable);
         }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            foreach (var listener in _listeners) listener.OnSetAssignmentStatement(setAssignment);
+        }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+            foreach (var listener in _listeners) listener.OnGetDiagnosticsStatement(getDiagnostics);
+        }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+            foreach (var listener in _listeners) listener.OnAlterSequenceStatement(alterSequence);
+        }
         public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
         {
             foreach (var listener in _listeners) listener.OnExecuteImmediateStatement(executeImmediate);

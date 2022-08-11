@@ -140,6 +140,9 @@ namespace TypeCobol.Compiler.CodeElements
         ReleaseSavepointStatement,
         ConnectStatement,
         DropTableStatement,
+        SetAssignmentStatement,
+        GetDiagnosticsStatement,
+        AlterSequenceStatement,
         ExecuteImmediateStatement
 
     }
