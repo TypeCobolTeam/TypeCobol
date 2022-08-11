@@ -581,7 +581,8 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(ExecuteImmediateStatement executeImmediateStatement)
             {
                 _writer.WriteLine($"line {executeImmediateStatement.Line}: {nameof(ExecuteImmediateStatement)}");
-                DumpObject(nameof(executeImmediateStatement.Expression), executeImmediateStatement.Expression);
+                DumpObject(nameof(executeImmediateStatement.StatementVariable), executeImmediateStatement.StatementVariable);
+                DumpObject(nameof(executeImmediateStatement.StatementExpression), executeImmediateStatement.StatementExpression);
                 return true;
             }
         }

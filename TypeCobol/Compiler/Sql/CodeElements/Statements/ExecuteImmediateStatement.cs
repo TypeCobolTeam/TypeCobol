@@ -5,17 +5,21 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     public class ExecuteImmediateStatement : SqlStatementElement
     {
-        public SqlExpression Expression { get; }
+        public SqlVariable StatementVariable { get; }
+        public StringExpression StatementExpression { get; }
 
-        public ExecuteImmediateStatement(SqlExpression expression) : base(CodeElementType.ExecuteImmediateStatement, StatementType.ExecuteImmediateStatement)
+        public ExecuteImmediateStatement(SqlVariable statementVariable, StringExpression statementExpression)
+            : base(CodeElementType.ExecuteImmediateStatement, StatementType.ExecuteImmediateStatement)
         {
-            Expression = expression;
+            StatementVariable = statementVariable;
+            StatementExpression = statementExpression;
         }
+
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                                                      && astVisitor.SqlVisitor != null
-                                                     && astVisitor.SqlVisitor.ContinueVisit(Expression);
+                                                     && astVisitor.SqlVisitor.ContinueVisit(StatementVariable, StatementExpression);
         }
     }
 }

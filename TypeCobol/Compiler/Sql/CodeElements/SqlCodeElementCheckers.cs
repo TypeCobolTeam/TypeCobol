@@ -26,41 +26,19 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
     internal static class ExecuteImmediateStatementChecker
     {
-        public static void OnCodeElement(ExecuteImmediateStatement executeImmediateStatement, CodeElementsParser.ExecuteImmediateStatementContext context)
+        public static void OnCodeElement(ExecuteImmediateStatement executeImmediateStatement,
+            CodeElementsParser.ExecuteImmediateStatementContext context)
         {
-            var expressionType = executeImmediateStatement.Expression?.ExpressionType;
-            switch (expressionType)
+            if (executeImmediateStatement.StatementVariable != null)
             {
-                case SqlExpressionType.Variable:
-                    var variable = (SqlVariable)executeImmediateStatement.Expression;
-                    if (variable.Type == VariableType.HostVariable &&
-                        ((HostVariable)variable).IndicatorReference != null)
-                    {
-                        DiagnosticUtils.AddError(executeImmediateStatement,
-                            "An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement",
-                            context);
-                    }
-
-                    break;
-                case SqlExpressionType.Constant:
-                    var constant = (SqlConstant)executeImmediateStatement.Expression;
-                    if (constant.Type != SqlConstantType.CharacterString)
-                    {
-                        DiagnosticUtils.AddError(executeImmediateStatement,
-                            "Invalid literal found after EXECUTE IMMEDIATE, variable or string-expression was expected.",
-                            context);
-                    }
-
-                    break;
-                case null:
-                    //Invalid statement but we have the syntax error from ANTLR
-                    break;
-                default:
+                //Check that no indicator is present
+                var variable = executeImmediateStatement.StatementVariable;
+                if (variable.Type == VariableType.HostVariable && ((HostVariable)variable).IndicatorReference != null)
+                {
                     DiagnosticUtils.AddError(executeImmediateStatement,
-                        "Invalid expression found after EXECUTE IMMEDIATE, variable or string-expression was expected.",
+                        "An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement",
                         context);
-                    break;
-
+                }
             }
         }
     }

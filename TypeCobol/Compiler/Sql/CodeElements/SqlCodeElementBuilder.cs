@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -471,20 +472,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
 
             var aliasName = new AmbiguousSymbolReference(new AlphanumericValue(nameToken),
-                new SymbolType[] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
+                new [] { SymbolType.SqlIdentifier, SymbolType.SqlIdentifier });
             return aliasName;
         }
 
         public ExecuteImmediateStatement CreateExecuteImmediateStatement(CodeElementsParser.ExecuteImmediateStatementContext context)
         {
-            SqlExpression sqlExpression = null;
-            if (context.sqlExpression() != null)
+            SqlVariable statementVariable = null;
+            StringExpression statementExpression = null;
+
+            if (context.sqlVariable() != null)
             {
-                sqlExpression = CreateSqlExpression(context.sqlExpression());
+                statementVariable = CreateSqlVariable(context.sqlVariable());
+            }
+            else if (context.stringExpression() != null)
+            {
+                statementExpression = CreateStringExpression(context.stringExpression());
             }
 
-            //TODO add support for string expressions
-            return new ExecuteImmediateStatement(sqlExpression);
+            return new ExecuteImmediateStatement(statementVariable, statementExpression);
         }
 
         private SqlVariable CreateSqlVariable(CodeElementsParser.SqlVariableContext context)
@@ -493,31 +499,23 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 return CreateSqlHostVariable(context.hostVariable());
             }
-            //TODO Add other conditions when adding new  Sql Variable Types 
-            return null;
-        }
-        private SqlExpression CreateSqlExpression(CodeElementsParser.SqlExpressionContext context)
-        {
-            if (context.column_name() != null)
-            {
-                return CreateSqlColumnName(context.column_name());
-            }
-
-            if (context.sqlConstant() != null)
-            {
-                return CreateSqlConstant(context.sqlConstant());
-            }
-
-            if (context.sqlVariable() != null)
-            {
-                return CreateSqlVariable(context.sqlVariable());
-            }
+            //TODO Add other conditions when adding new Sql Variable Types 
             return null;
         }
 
-        private SqlConstant CreateSqlConstant(CodeElementsParser.SqlConstantContext context)
+        private StringExpression CreateStringExpression(CodeElementsParser.StringExpressionContext context)
         {
-            return context.datetime_constant() != null ? CreateDatetimeConstant(context.datetime_constant()) : new SqlConstant(ParseTreeUtils.GetFirstToken(context));
+            if (context.AlphanumericLiteral() != null)
+            {
+                return new StringExpression(CreateSqlConstant(context.AlphanumericLiteral()));
+            }
+
+            return null;
+        }
+
+        private SqlConstant CreateSqlConstant(ITerminalNode node)
+        {
+            return node != null ? new SqlConstant(ParseTreeUtils.GetTokenFromTerminalNode(node)) : null;
         }
     }
 }

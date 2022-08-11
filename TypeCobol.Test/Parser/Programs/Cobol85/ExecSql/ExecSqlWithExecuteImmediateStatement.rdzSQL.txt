@@ -1,22 +1,27 @@
 ﻿--- Diagnostics ---
 Line 7[14,20] <27, Error, Syntax> - Syntax error : An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
-Line 9[14,20] <27, Error, Syntax> - Syntax error : Invalid literal found after EXECUTE IMMEDIATE, variable or string-expression was expected. RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
-Line 11[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>executeImmediateStatement>sqlExpression,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+Line 9[32,34] <27, Error, Syntax> - Syntax error : mismatched input '555' expecting {':', alphanumeric literal} RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[32,34:555]<IntegerLiteral>{555}
+Line 11[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', alphanumeric literal} RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
 line 6: ExecuteImmediateStatement
-- Expression = HostVariable
+- StatementVariable = HostVariable
   - MainReference = var1
   - IndicatorReference = <NULL>
+- StatementExpression = <NULL>
 line 7: ExecuteImmediateStatement
-- Expression = HostVariable
+- StatementVariable = HostVariable
   - MainReference = var2
   - IndicatorReference = var3
+- StatementExpression = <NULL>
 line 8: ExecuteImmediateStatement
-- Expression = SqlConstant
-  - LiteralValue = SELECT * FROM table1
+- StatementVariable = <NULL>
+- StatementExpression = StringExpression
+  - Literal = SqlConstant
+    - LiteralValue = SELECT * FROM table1
 line 9: ExecuteImmediateStatement
-- Expression = SqlConstant
-  - LiteralValue = 555
+- StatementVariable = <NULL>
+- StatementExpression = <NULL>
 line 10: ExecuteImmediateStatement
-- Expression = <NULL>
+- StatementVariable = <NULL>
+- StatementExpression = <NULL>

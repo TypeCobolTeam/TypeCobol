@@ -33,6 +33,7 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] DatetimeConstant datetimeConstant);
         bool Visit([NotNull] ConnectionTarget connectionTarget);
         bool Visit([NotNull] ConnectionAuthorization connectionAuthorization);
+        bool Visit([NotNull] StringExpression stringExpression);
     }
 
     /// <summary>
@@ -62,6 +63,7 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(DatetimeConstant datetimeConstant) => true;
         public virtual bool Visit(ConnectionTarget connectionTarget) => true;
         public virtual bool Visit(ConnectionAuthorization connectionAuthorization) => true;
+        public virtual bool Visit(StringExpression stringExpression) => true;
     }
 
     /// <summary>

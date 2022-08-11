@@ -8333,7 +8333,6 @@ sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.O
 onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
 savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
 
-
 dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
 tableOrAliasName: tableOrViewOrCorrelationName;
 date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
@@ -8341,10 +8340,10 @@ time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.Ordina
 timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
 datetime_constant: (date | time | timestamp) AlphanumericLiteral;
 
+executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE (sqlVariable | stringExpression);
 sqlVariable: hostVariable;
-sqlConstant: SQL_DecimalFloatingPointLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | IntegerLiteral | DecimalLiteral | FloatingPointLiteral | datetime_constant | SQL_NULL;
-sqlExpression: sqlVariable | column_name | sqlConstant ;
-executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE sqlExpression;
+//TODO extend stringExpression to support all expressions that yield a string (i.e string concat, function calls returning text,...)
+stringExpression: AlphanumericLiteral;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------
