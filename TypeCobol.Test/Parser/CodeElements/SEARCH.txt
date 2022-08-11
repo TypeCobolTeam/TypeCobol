@@ -29,7 +29,7 @@ SET otherVariable TO True
 
 [[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,26:errorProcedure]<UserDefinedWord>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
 
 [[MoveStatement]] [5,8:MOVE]<MOVE> --> [15,15:y]<UserDefinedWord>
 

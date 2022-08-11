@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// Base class for all statement CodeElements
@@ -110,7 +108,6 @@ namespace TypeCobol.Compiler.CodeElements
         RewriteStatement,
         SearchSerialStatement,
         SearchBinaryStatement,
-        WhenSearchCondition,
         SetStatementForAssignment,
         SetStatementForIndexes,
         SetStatementForSwitches,

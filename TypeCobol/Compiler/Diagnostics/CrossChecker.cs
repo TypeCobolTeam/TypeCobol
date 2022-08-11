@@ -11,7 +11,6 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -275,7 +274,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         }
                     }
                 }
-                else if (child is WhenSearch whenSearch)
+                else if (child is When whenSearch)
                 {
                     whenSearchCount++;
                     if (whenSearchCount > 1 && search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
@@ -346,15 +345,14 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         
-        public override bool Visit(WhenSearch whenSearch)
+        public override bool Visit(When whenSearch)
         {
-            System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
-            var search = (Search) whenSearch.Parent;
+            if (!(whenSearch.Parent is Search search)) return true; //EVALUATE statement, not our concern here.
 
             if (whenSearch.ChildrenCount == 0)
             {
                 var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
-                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause", messageCode);
+                DiagnosticUtils.AddError(whenSearch, "Missing statement in \"when\" clause", messageCode);
             }
 
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
@@ -1127,7 +1125,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else if (dataDefinition.DataType == DataType.Boolean)
             {
-                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
+                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                 { 
                     //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                     FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, dataDefinitionPath);

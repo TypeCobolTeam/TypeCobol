@@ -25,15 +25,16 @@ Line 21[17,26] <27, Error, Syntax> - Syntax error : Missing statement in "when" 
                 when bool1
                 when other continue
            end-evaluate      
-Line 24[12,22] <27, Error, Syntax> - Syntax error : Search statement must have at least one when element.
 Line 24[12,22] <27, Error, Syntax> - Syntax error : Cannot SEARCH in 'var1', data item is not a table.
            search var1
 Line 25[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
-Line 25[17,20] <27, Error, Syntax> - Syntax error : extraneous input 'when' expecting {AtEndCondition, WhenSearchCondition, SearchStatementEnd}
+Line 25[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
+Line 26[17,25] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when var2
                     when var3 display "search"
 Line 28[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
+Line 28[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
            end-search
 Line 30[12,24] <37, Warning, General> - Warning: "when other" is missing
@@ -45,5 +46,4 @@ Line 34[12,23] <27, Error, Syntax> - Syntax error : extraneous input 'end-evalua
            end-evaluate      
            move "hi" to var1
            goback.
-Line 37[8,28] <27, Error, Syntax> - Syntax error : Unexpected orphan "PROGRAM END".
        END PROGRAM WhenTest.

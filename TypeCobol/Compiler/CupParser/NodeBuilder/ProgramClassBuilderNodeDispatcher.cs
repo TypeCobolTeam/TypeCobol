@@ -623,7 +623,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.EndSearchStatementWithBody(end);
         }
 
-        public virtual void StartWhenSearchConditionClause(WhenSearchCondition condition)
+        public virtual void StartWhenSearchConditionClause(WhenCondition condition)
         {
             foreach (var listener in _listeners) listener.StartWhenSearchConditionClause(condition);
         }
