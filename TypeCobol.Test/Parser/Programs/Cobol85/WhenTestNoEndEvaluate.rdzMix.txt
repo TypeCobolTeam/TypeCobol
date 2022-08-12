@@ -23,23 +23,21 @@ Line 16[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" 
 Line 20[17,26] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when bool1
                 when other continue
-Line 22[12,22] <27, Error, Syntax> - Syntax error : Search statement must have at least one when element.
 Line 22[12,22] <27, Error, Syntax> - Syntax error : Cannot SEARCH in 'var1', data item is not a table.
            search var1
 Line 23[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
-Line 23[17,20] <27, Error, Syntax> - Syntax error : extraneous input 'when' expecting {AtEndCondition, WhenSearchCondition, SearchStatementEnd}
+Line 23[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
+Line 24[17,25] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when var2
                     when var3 display "search"
 Line 26[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
+Line 26[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
-Line 27[12,21] <27, Error, Syntax> - Syntax error : extraneous input 'end-search' expecting {SentenceEnd, AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}
            end-search
            evaluate true
                 when bool1 display "evaluate"
                 when other
            move "hi" to var1
            goback.
-Line 33[8,28] <27, Error, Syntax> - Syntax error : Unexpected orphan "PROGRAM END".
-Line 33[8,28] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
        END PROGRAM WhenTest.

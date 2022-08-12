@@ -26,9 +26,6 @@ SET  var1 var2 TO var3
 
 SET  var1 ADDRESS(var2) var3 TO var4
 
-[[SetStatement]] No Consumed Tokens
-
-
 [[SetStatement]] [1,3:set]<SET> --> [10,11:to]<TO>
 
 SET  var1 ADDRESS(var2) var3 TO ADDRESS(var4)

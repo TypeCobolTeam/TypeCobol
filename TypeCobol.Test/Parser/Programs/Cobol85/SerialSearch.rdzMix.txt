@@ -18,7 +18,7 @@
       
            search var1
       *KO when without instruction
-Line 21[15,34] <27, Error, Syntax> - Syntax error : Missing statement in when clause
+Line 21[15,34] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
               when var2(idx) = 'a'
               when var2(idx) = 'b'
                  display "search"
@@ -27,7 +27,7 @@ Line 21[15,34] <27, Error, Syntax> - Syntax error : Missing statement in when cl
       
            search var1
       *KO when without instruction
-Line 29[15,34] <27, Error, Syntax> - Syntax error : Missing statement in when clause
+Line 29[15,34] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
               when var2(idx) = 'b'
            end-search
       

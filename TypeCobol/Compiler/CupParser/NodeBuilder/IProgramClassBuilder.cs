@@ -676,7 +676,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// Start a WHEN SEARCH condition
         /// </summary>
         /// <param name="condition">The WHEN Search condition code element</param>
-        void StartWhenSearchConditionClause([NotNull] TypeCobol.Compiler.CodeElements.WhenSearchCondition condition);
+        void StartWhenSearchConditionClause([NotNull] TypeCobol.Compiler.CodeElements.WhenCondition condition);
         /// <summary>
         /// End the When search condition.
         /// </summary>

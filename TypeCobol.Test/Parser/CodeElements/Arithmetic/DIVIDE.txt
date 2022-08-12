@@ -1,0 +1,43 @@
+﻿--- Diagnostics ---
+Line 21[7,7] <27, Error, Syntax> - Syntax error : no viable alternative at input 'DIVIDE ... .' RuleStack=codeElement>divideStatement,  OffendingSymbol=[7,7+:.]<PeriodSeparator>
+Line 22[13,16] <27, Error, Syntax> - Syntax error : no viable alternative at input 'DIVIDE ... FROM' RuleStack=codeElement>divideStatement,  OffendingSymbol=[13,16:FROM]<FROM>
+Line 23[13,16] <27, Error, Syntax> - Syntax error : no viable alternative at input 'DIVIDE ... WITH' RuleStack=codeElement>divideStatement,  OffendingSymbol=[13,16:WITH]<WITH>
+--- Code Elements ---
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [15,15:b]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [17,17:c]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [30,36:ROUNDED]<ROUNDED>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [24,24:c]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [27,27:d]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [38,44:ROUNDED]<ROUNDED>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [23,23:c]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [24,24:d]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [37,43:ROUNDED]<ROUNDED>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [37,37:d]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [45,45:d]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [36,36:d]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [42,42:d]<UserDefinedWord>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [1,6:DIVIDE]<DIVIDE>
+
+[[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [18,21:var2]<UserDefinedWord>
+
+[[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
+
+[[DivideStatement]] [1,6:DIVIDE]<DIVIDE> --> [18,21:var2]<UserDefinedWord>
+
+[[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
+
