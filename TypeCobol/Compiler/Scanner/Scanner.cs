@@ -1732,7 +1732,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (exponentLength > 2)
                 {
                     tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
-                    token.TokenType = TokenType.InvalidToken;
+                    token.CorrectType(TokenType.InvalidToken);
                 }
             }
         }

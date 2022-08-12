@@ -150,7 +150,7 @@ namespace TypeCobol.Compiler.Scanner
                     if (string.IsNullOrEmpty(mantissaDecimalPart))
                     {
                         tokensLine.AddDiagnostic(MessageCode.InvalidMantissaInFloatingPointLiteral, token);
-                        token.TokenType = TokenType.InvalidToken;
+                        token.CorrectType(TokenType.InvalidToken);
                     }
                     token.LiteralValue = new FloatingPointLiteralTokenValue(fpMatch.Groups[1].Value, fpMatch.Groups[2].Value, mantissaDecimalPart, fpMatch.Groups[4].Value, fpMatch.Groups[5].Value);
                     return token;
