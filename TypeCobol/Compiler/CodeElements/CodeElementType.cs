@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// The Cobol syntax can be decomposed in 117 elementary code elements
@@ -137,7 +131,6 @@ namespace TypeCobol.Compiler.CodeElements
         ElseCondition,
         WhenCondition,
         WhenOtherCondition,
-        WhenSearchCondition,
 
         // Statement ends
 
