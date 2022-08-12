@@ -876,6 +876,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="alterSequence">The corresponding  AlterSequence Statement Code Element</param>
         void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence);
+        /// <summary>
+        /// Enter a ExecuteImmediate Statement Node
+        /// </summary>
+        /// <param name="executeImmediate">The corresponding  ExecuteImmediate Statement Code Element</param>
+        void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate);
         #endregion
     }
 }

@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 case TokenType.SQL_COMMIT:
                 case TokenType.SQL_CONNECT:
                 case TokenType.SQL_DROP:
-                //TODO EXECUTE
+                case TokenType.SQL_EXECUTE:
                 case TokenType.SQL_GET:
                 case TokenType.SQL_LOCK:
                 case TokenType.SQL_RELEASE:

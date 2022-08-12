@@ -407,6 +407,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] GetDiagnostics getDiagnostics);
         bool Visit([NotNull] AlterSequenceStatement alterSequenceStatement);
         bool Visit([NotNull] AlterSequence alterSequence);
+        bool Visit([NotNull] ExecuteImmediateStatement executeImmediateStatement);
+        bool Visit([NotNull] ExecuteImmediate executeImmediate);
     }
 
 
@@ -1622,6 +1624,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] AlterSequence alterSequence)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] ExecuteImmediateStatement executeImmediateStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] ExecuteImmediate executeImmediate)
         {
             return true;
         }

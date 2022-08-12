@@ -902,5 +902,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnAlterSequenceStatement(alterSequence);
         }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
+        {
+            foreach (var listener in _listeners) listener.OnExecuteImmediateStatement(executeImmediate);
+        }
     }
 }

@@ -42,6 +42,7 @@ namespace TypeCobol.Compiler.Sql
         bool Visit([NotNull] ConditionInformation conditionInformation);
         bool Visit([NotNull] CombinedInformation combinedInformation);
         bool Visit([NotNull] CombinedInformationItem combinedInformationItem);
+        bool Visit([NotNull] StringExpression stringExpression);
     }
 
     /// <summary>
@@ -80,6 +81,7 @@ namespace TypeCobol.Compiler.Sql
         public virtual bool Visit(CombinedInformation combinedInformation) => true;
         public virtual bool Visit(InformationAssignment informationAssignment) => true;
         public virtual bool Visit(CombinedInformationItem combinedInformationItem) => true;
+        public virtual bool Visit(StringExpression stringExpression) => true;
     }
 
     /// <summary>

@@ -910,5 +910,32 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
             }
         }
+
+        public ExecuteImmediateStatement CreateExecuteImmediateStatement(CodeElementsParser.ExecuteImmediateStatementContext context)
+        {
+            SqlVariable statementVariable = null;
+            StringExpression statementExpression = null;
+
+            if (context.sqlVariable() != null)
+            {
+                statementVariable = CreateSqlVariable(context.sqlVariable());
+            }
+            else if (context.stringExpression() != null)
+            {
+                statementExpression = CreateStringExpression(context.stringExpression());
+            }
+
+            return new ExecuteImmediateStatement(statementVariable, statementExpression);
+        }
+
+        private StringExpression CreateStringExpression(CodeElementsParser.StringExpressionContext context)
+        {
+            if (context.AlphanumericLiteral() != null)
+            {
+                return new StringExpression(CreateSqlConstant(context.AlphanumericLiteral()));
+            }
+
+            return null;
+        }
     }
 }

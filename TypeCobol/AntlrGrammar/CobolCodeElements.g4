@@ -224,6 +224,7 @@ codeElement:
 	| setAssignmentStatement
 	| getDiagnosticsStatement
 	| alterSequenceStatement
+	| executeImmediateStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8396,6 +8397,9 @@ sourceValueClauses: repeatedSourceValue | (SQL_VALUES  ( sourceValue | (LeftPare
 repeatedSourceValue: sourceValue (SQL_CommaSeparator sourceValue)*;
 //TODO Add arrays and row-subselect
 
+executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE (sqlVariable | stringExpression);
+//TODO extend stringExpression to support all expressions that yield a string (i.e string concat, function calls returning text,...)
+stringExpression: AlphanumericLiteral;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------

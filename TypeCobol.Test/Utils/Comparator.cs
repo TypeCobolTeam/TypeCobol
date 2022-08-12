@@ -596,6 +596,13 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(AlterSequenceStatement.Ordered), alterSequenceStatement.Ordered);
                 return true;
             }
+            public override bool Visit(ExecuteImmediateStatement executeImmediateStatement)
+            {
+                _writer.WriteLine($"line {executeImmediateStatement.Line}: {nameof(ExecuteImmediateStatement)}");
+                DumpObject(nameof(executeImmediateStatement.StatementVariable), executeImmediateStatement.StatementVariable);
+                DumpObject(nameof(executeImmediateStatement.StatementExpression), executeImmediateStatement.StatementExpression);
+                return true;
+            }
         }
 
         public SqlComparator(Paths path, bool debug = false, bool isEI = false)

@@ -179,6 +179,7 @@ namespace TypeCobol.Compiler.CodeElements
         SetAssignmentStatement,
         GetDiagnosticsStatement,
         AlterSequenceStatement,
+        ExecuteImmediateStatement,
 
         // [TYPECOBOL]
         LibraryCopy,

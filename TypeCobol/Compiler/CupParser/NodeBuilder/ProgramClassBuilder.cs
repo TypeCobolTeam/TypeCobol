@@ -1689,5 +1689,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnAlterSequenceStatement(alterSequence);
         }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
+        {
+            Enter(new ExecuteImmediate(executeImmediate), executeImmediate);
+            Exit();
+            Dispatcher.OnExecuteImmediateStatement(executeImmediate);
+        }
     }
 }

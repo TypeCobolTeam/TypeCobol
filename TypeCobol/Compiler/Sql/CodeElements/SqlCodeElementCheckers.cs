@@ -114,7 +114,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 if (sqlVariable == null) return;
 
-                if (sqlVariable.Type == VariableType.HostVariable &&
+                if (sqlVariable.VariableType == VariableType.HostVariable &&
                     ((HostVariable)sqlVariable).IndicatorReference != null)
                 {
                     DiagnosticUtils.AddError(getDiagnosticsStatement, "No indicator variable are allowed for diagnostic identifiers.", context);
@@ -240,6 +240,25 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 }
 
                 return value;
+            }
+        }
+    }
+
+    internal static class ExecuteImmediateStatementChecker
+    {
+        public static void OnCodeElement(ExecuteImmediateStatement executeImmediateStatement,
+            CodeElementsParser.ExecuteImmediateStatementContext context)
+        {
+            if (executeImmediateStatement.StatementVariable != null)
+            {
+                //Check that no indicator is present
+                var variable = executeImmediateStatement.StatementVariable;
+                if (variable.VariableType == VariableType.HostVariable && ((HostVariable)variable).IndicatorReference != null)
+                {
+                    DiagnosticUtils.AddError(executeImmediateStatement,
+                        "An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement",
+                        context);
+                }
             }
         }
     }
