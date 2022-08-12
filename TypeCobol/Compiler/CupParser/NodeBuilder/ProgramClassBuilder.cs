@@ -1,12 +1,16 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Nodes;
+using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -55,13 +59,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private readonly SymbolTable TableOfIntrinsics;
         private readonly SymbolTable TableOfNamespaces;
 
-        public ProgramClassBuilder()
+        private readonly IReadOnlyList<CodeElementsLine> _codeElementsLines;
+
+        public ProgramClassBuilder(IReadOnlyList<CodeElementsLine> codeElementsLines)
         {
             // Intrinsics and Namespaces always exist. Intrinsic table has no enclosing scope.
             TableOfIntrinsics = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             TableOfNamespaces = new SymbolTable(TableOfIntrinsics, SymbolTable.Scope.Namespace);
 
             programsStack = new Stack<Program>();
+
+            _codeElementsLines = codeElementsLines;
         }
 
         public SymbolTable CustomSymbols
@@ -213,6 +221,35 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             else
             {
+                if (CurrentNode != CurrentProgram)
+                {
+                    // This is abnormal, re-synchronize builder with CUP parser
+                    while (CurrentNode != CurrentProgram)
+                    {
+                        Exit();
+                    }
+
+                    var codeElements = new StringBuilder();
+                    var sourceCode = new StringBuilder();
+                    foreach (var codeElementsLine in _codeElementsLines)
+                    {
+                        if (!codeElementsLine.HasCodeElements) continue;
+
+                        foreach (var codeElement in codeElementsLine.CodeElements)
+                        {
+                            codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
+                            sourceCode.AppendLine(codeElement.SourceText);
+                        }
+                    }
+
+                    var contextData = new Dictionary<string, object>()
+                                      {
+                                          { "codeElements", codeElements.ToString() },
+                                          { "sourceCode", sourceCode.ToString() }
+                                      };
+                    LoggingSystem.LogMessage(LogLevel.Error, $"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.", contextData);
+                }
+
                 // Nested
                 CurrentProgram = new NestedProgram(CurrentProgram, programIdentification);
             }
