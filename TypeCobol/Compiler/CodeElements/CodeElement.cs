@@ -152,7 +152,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// List of errors found on this CodeElement
         /// </summary>
 
-        public IList<Diagnostic> Diagnostics { get; set; }
+        public List<Diagnostic> Diagnostics { get; set; }
 
         /// <summary>
         /// Return true if code element has diagnostics.

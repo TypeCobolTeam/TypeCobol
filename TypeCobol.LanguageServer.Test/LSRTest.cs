@@ -290,6 +290,14 @@ namespace TypeCobol.LanguageServer.Test
         public void CompletionAfterWhen()
         {
             LSRTestHelper.Test("CompletionAfterWhen", LsrTestingOptions.NoLsrTesting, true, false, true);
+            LSRTestHelper.Test("CompletionAfterWhen2", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionAfterAddTo()
+        {
+            LSRTestHelper.Test("CompletionAfterAddTo", LsrTestingOptions.NoLsrTesting, true, false, true);
         }
 
         [TestMethod]

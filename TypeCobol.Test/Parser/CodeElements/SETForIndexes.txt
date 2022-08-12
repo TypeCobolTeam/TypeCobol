@@ -33,15 +33,9 @@ SET  table-idx IN myGroup DOWN BY 1
 SET  table-idx IN myGroup DOWN BY myGroup.var1
 [[SentenceEnd]] [45,45+:.]<PeriodSeparator> --> [45,45+:.]<PeriodSeparator>
 
-[[SetStatement]] No Consumed Tokens
-
-
 [[SetStatement]] [1,3:SET]<SET> --> [33,33:1]<IntegerLiteral>{1}
 
 [[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
-
-[[SetStatement]] No Consumed Tokens
-
 
 [[SetStatement]] [1,3:SET]<SET> --> [41,47:myGroup]<UserDefinedWord>
 

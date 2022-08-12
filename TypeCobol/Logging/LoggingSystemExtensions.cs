@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Logging
 {
@@ -66,6 +67,72 @@ namespace TypeCobol.Logging
             }
 
             return builder.ToString();
+        }
+
+        public static IDictionary<string, object> CreateDebugData(Node contextNode)
+        {
+            var result = new Dictionary<string, object>();
+            result.Add("contextNode", ToText(contextNode));
+
+            if (contextNode == null) return result;
+
+            if (contextNode.CodeElement != null)
+            {
+                result.Add("line", contextNode.CodeElement.Line);
+            }
+
+            if (contextNode.Parent != null)
+            {
+                string programName = contextNode.Root.MainProgram?.Name ?? contextNode.Root.Name;
+                string parentType = contextNode.Parent.GetType().FullName;
+                string nodeBefore = ToText(GetNodeBefore(contextNode));
+                string nodeAfter = ToText(GetNodeAfter(contextNode));
+                result.Add("programName", programName);
+                result.Add("parentType", parentType);
+                result.Add("nodeBefore", nodeBefore);
+                result.Add("nodeAfter", nodeAfter);
+            }
+
+            return result;
+
+            string ToText(Node node, int indent = 0)
+            {
+                string indentString = new string(' ', 2 * indent);
+
+                if (node == null) return indentString + NULL;
+
+                string text;
+                if (node.CodeElement != null)
+                {
+                    text = node.CodeElement.SourceText;
+                }
+                else
+                {
+                    text = indentString + node.GetType().FullName;
+                }
+
+                foreach (var child in node.Children)
+                {
+                    text += Environment.NewLine;
+                    text += ToText(child, indent + 1);
+                }
+
+                return text;
+            }
+
+            Node GetNodeBefore(Node node)
+            {
+                System.Diagnostics.Debug.Assert(node != null && node.Parent != null);
+                int index = node.Parent.ChildIndex(node);
+                return index > 0 ? node.Parent.Children[index - 1] : null;
+            }
+
+            Node GetNodeAfter(Node node)
+            {
+                System.Diagnostics.Debug.Assert(node != null && node.Parent != null);
+                int index = node.Parent.ChildIndex(node);
+                return index < node.Parent.ChildrenCount - 1 ? node.Parent.Children[index + 1] : null;
+            }
         }
     }
 }

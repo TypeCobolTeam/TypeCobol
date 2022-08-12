@@ -3,6 +3,7 @@ using Antlr4.Runtime.Tree;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
@@ -11,6 +12,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -224,6 +226,8 @@ namespace TypeCobol.Compiler.Parser
                 // If the parse tree is not empty
                 if (codeElementsParseTree.codeElement() != null && codeElementsParseTree.codeElement().Length > 0)
                 {
+                    List<Diagnostic> diagnosticsToReport = new List<Diagnostic>();
+
                     // Analyze the parse tree for each code element
                     foreach (var codeElementParseTree in codeElementsParseTree.codeElement())
                     {
@@ -311,20 +315,14 @@ namespace TypeCobol.Compiler.Parser
 
                             }
 
-
-                            // Attach consumed tokens and main document line numbers information to the code element
                             if (codeElement.ConsumedTokens.Count == 0)
                             {
-// ISSUE #204:
-                                var tempToken = tokenStream.Lt(1);
-                                if (tempToken != null && tempToken.Type != (int)TokenType.EndOfFile)
+                                // Discard invalid CEs without consumed tokens but report their diagnostics on next CE
+                                if (codeElement.Diagnostics != null)
                                 {
-// if not end of file,
-                                    // add next token to ConsumedTokens to know where is the CodeElement in error
-                                    codeElement.ConsumedTokens.Add((Token) tempToken);
-                                    // this alter CodeElements semantics: in addition to matched tokens,
-                                    // it includes the first token in error if no token has been matched
+                                    diagnosticsToReport.AddRange(codeElement.Diagnostics);
                                 }
+                                continue;
                             }
 
                             //TODO Issue #384 to discuss if this code should stay here:
@@ -332,16 +330,45 @@ namespace TypeCobol.Compiler.Parser
                             //Rule TCLIMITATION_NO_CE_ACROSS_SOURCES
                             if (codeElement.IsAcrossSourceFile())
                             {
-                                DiagnosticUtils.AddError(codeElement,
-                                    "A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)",
-                                    MessageCode.TypeCobolParserLimitation);
+                                if (compilerOptions.IsCobolLanguage)
+                                {
+                                    //Allowed in pure Cobol, emit a warning
+                                    DiagnosticUtils.AddError(codeElement, "A Cobol statement should not be across 2 sources files (eg. Main program and a COPY)", MessageCode.Warning);
+                                }
+                                else
+                                {
+                                    //Incompatible with TC Codegen, create an error
+                                    DiagnosticUtils.AddError(codeElement, null, MessageCode.TypeCobolParserLimitation);
+                                }
                             }
 
-                            // Add code element to the list                    
+                            //Report diagnostics if some incomplete CE have been encountered previously
+                            if (diagnosticsToReport.Count > 0)
+                            {
+                                if (codeElement.Diagnostics == null)
+                                {
+                                    codeElement.Diagnostics = new List<Diagnostic>(diagnosticsToReport);
+                                }
+                                else
+                                {
+                                    codeElement.Diagnostics.AddRange(diagnosticsToReport);
+                                }
+
+                                diagnosticsToReport.Clear();
+                            }
+
+                            // Add code element to the list
                             codeElementsLine.AddCodeElement(codeElement);
                         }
                     }
+
+                    if (diagnosticsToReport.Count > 0)
+                    {
+                        //We still have unreported diagnostics but no CE to attach to... Should not happen.
+                        LoggingSystem.LogMessage(LogLevel.Warning, "Unreported diagnostics found !");
+                    }
                 }
+                
                 // If the parse tree contains errors
                 if (codeElementsParseTree.Diagnostics != null)
                 {

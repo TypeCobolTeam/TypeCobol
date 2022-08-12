@@ -206,7 +206,6 @@ terminal TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition NotOnSizeErrorC
 terminal TypeCobol.Compiler.CodeElements.ElseCondition ElseCondition;
 terminal TypeCobol.Compiler.CodeElements.WhenCondition WhenCondition;
 terminal TypeCobol.Compiler.CodeElements.WhenOtherCondition WhenOtherCondition;
-terminal TypeCobol.Compiler.CodeElements.WhenSearchCondition WhenSearchCondition;
 terminal TypeCobol.Compiler.CodeElements.AddStatementEnd AddStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.CallStatementEnd CallStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.ComputeStatementEnd ComputeStatementEnd;
@@ -1294,9 +1293,7 @@ whenConditionClause ::=  whenEvaluateConditionsStart
 	{: my_parser.Builder.EndWhenConditionClause(); :}
 	;
 
-whenEvaluateCondition ::= WhenSearchCondition:wec
-	{: RESULT = wec; :}
-	| WhenCondition:wec
+whenEvaluateCondition ::= WhenCondition:wec
 	{: RESULT = wec; :}
 	;
 
@@ -1532,7 +1529,7 @@ whenSearchConditionClause ::=
 		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
 	;
 
-whenSearchCondition ::= WhenSearchCondition:wsc 
+whenSearchCondition ::= WhenCondition:wsc 
 	{: my_parser.Builder.StartWhenSearchConditionClause(wsc); :}
 	;
 

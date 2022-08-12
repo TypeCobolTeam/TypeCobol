@@ -1,0 +1,1 @@
+﻿           DISPLAY "This statement comes from a copy"

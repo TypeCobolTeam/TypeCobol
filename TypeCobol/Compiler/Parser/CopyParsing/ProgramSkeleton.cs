@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Parser.CopyParsing
     /// WORKING-STORAGE SECTION.
     /// 01.
     /// --copy content--
-    /// END PROGRAM.
+    /// END PROGRAM copyName.
     ///
     /// The anonymous 01 level allow to include copies without knowing their own starting level,
     /// it is removed at the end of the node phase if it comes out without any child data.

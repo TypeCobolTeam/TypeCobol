@@ -812,7 +812,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
-        public virtual void StartWhenSearchConditionClause(WhenSearchCondition condition)
+        public virtual void StartWhenSearchConditionClause(WhenCondition condition)
         {
 
         }

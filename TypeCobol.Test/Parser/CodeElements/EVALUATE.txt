@@ -1,7 +1,7 @@
 ﻿--- Code Elements ---
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
@@ -11,7 +11,7 @@
 
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [30,33:TRUE]<TRUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
@@ -31,11 +31,11 @@
 
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition2]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition2]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
@@ -45,7 +45,7 @@
 
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
@@ -67,7 +67,7 @@
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition6]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition6]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
@@ -75,7 +75,7 @@
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition9]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition9]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
@@ -89,7 +89,7 @@
 
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,21:conditionname1]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,21:conditionname1]<UserDefinedWord>
 
 [[IfStatement]] [5,6:IF]<IF> --> [8,21:conditionname2]<UserDefinedWord>
 
@@ -98,7 +98,7 @@
 
 [[IfStatementEnd]] [5,10:END-IF]<END_IF> --> [5,10:END-IF]<END_IF>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,21:conditionname3]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,21:conditionname3]<UserDefinedWord>
 
 [[DisplayStatement]] [5,11:DISPLAY]<DISPLAY> --> [13,16+:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
 - variables = "KO"
@@ -109,7 +109,7 @@
 
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
 
 [[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,25:procedureName]<UserDefinedWord>
 
@@ -119,7 +119,7 @@
 
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
 
 [[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
 
@@ -133,7 +133,7 @@
 
 [[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,19:identifier]<UserDefinedWord>
 
-[[WhenSearchCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
 
 [[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname1]<UserDefinedWord>
 
