@@ -1,27 +1,33 @@
-﻿--- Diagnostics ---
-Line 7[14,20] <27, Error, Syntax> - Syntax error : An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,20:EXECUTE]<SQL_EXECUTE>
-Line 9[32,34] <27, Error, Syntax> - Syntax error : mismatched input '555' expecting {':', alphanumeric literal} RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[32,34:555]<IntegerLiteral>{555}
-Line 11[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', alphanumeric literal} RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+--- Diagnostics ---
+Line 16[9,30] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: SQLCA
+Line 31[23,29] <27, Error, Syntax> - Syntax error : An indicator variable must not be specified with a host variable in EXECUTE IMMEDIATE statement RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[23,29:EXECUTE]<SQL_EXECUTE>
+Line 39[41,43] <27, Error, Syntax> - Syntax error : mismatched input '555' expecting {':', alphanumeric literal} RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[41,43:555]<IntegerLiteral>{555}
+Line 43[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', alphanumeric literal} RuleStack=codeElement>executeImmediateStatement,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
 
 --- Sql Statements ---
-line 6: ExecuteImmediateStatement
+line 23: ExecuteImmediateStatement
 - StatementVariable = HostVariable
   - MainReference = var1
   - IndicatorReference = <NULL>
 - StatementExpression = <NULL>
-line 7: ExecuteImmediateStatement
+line 26: ExecuteImmediateStatement
+- StatementVariable = HostVariable
+  - MainReference = var1b
+  - IndicatorReference = <NULL>
+- StatementExpression = <NULL>
+line 31: ExecuteImmediateStatement
 - StatementVariable = HostVariable
   - MainReference = var2
   - IndicatorReference = var3
 - StatementExpression = <NULL>
-line 8: ExecuteImmediateStatement
+line 34: ExecuteImmediateStatement
 - StatementVariable = <NULL>
 - StatementExpression = StringExpression
   - Literal = SqlConstant
     - LiteralValue = SELECT * FROM table1
-line 9: ExecuteImmediateStatement
+line 39: ExecuteImmediateStatement
 - StatementVariable = <NULL>
 - StatementExpression = <NULL>
-line 10: ExecuteImmediateStatement
+line 42: ExecuteImmediateStatement
 - StatementVariable = <NULL>
 - StatementExpression = <NULL>
