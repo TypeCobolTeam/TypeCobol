@@ -873,7 +873,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     var copyDirective = execChild.CodeElement?.FirstCopyDirective;
                     if (referenceCopyDirective != copyDirective)
                     {
-                        DiagnosticUtils.AddError(exec, "Syntax not supported: when embedding SQL statements, EXEC SQL and all its content (including END-EXEC) must be in the same source file.");
+                        DiagnosticUtils.AddError(exec, "Syntax not supported: when embedding SQL statements, EXEC SQL and all its content (including END-EXEC) must be in the same source file.", MessageCode.Warning);
                         break; //Stop on first error, avoid reporting error for every child
                     }
                 }

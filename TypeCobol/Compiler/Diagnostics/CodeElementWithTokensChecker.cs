@@ -30,7 +30,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     break;
             }
 
-            void AddError(string codeElementName) => DiagnosticUtils.AddError(codeElement, $"Syntax not supported: '{codeElementName}' has been found inside COPY.");
+            void AddError(string codeElementName)
+                => DiagnosticUtils.AddError(codeElement, $"Syntax not supported: '{codeElementName}' has been found inside COPY.", MessageCode.Warning);
         }
     }
 }
