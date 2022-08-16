@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must be identified by an FD or SD entry in the DATA DIVISION.
         /// </summary>
         [CanBeNull]
-        public SymbolDefinition FileName { get; set; }
+        public SymbolReference FileName { get; set; }
 
         /// <summary>
         /// The ASSIGN clause associates the name of a file in a program with the actual external name of the data file.

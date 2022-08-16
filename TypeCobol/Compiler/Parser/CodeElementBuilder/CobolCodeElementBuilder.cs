@@ -632,8 +632,8 @@ namespace TypeCobol.Compiler.Parser
 			var entry = new FileControlEntry();
 
 			if (context.selectClause() != null)
-			{
-				entry.FileName = _cobolWordsBuilder.CreateFileNameDefinition(context.selectClause().fileNameDefinition());
+            {
+                entry.FileName = _cobolWordsBuilder.CreateFileNameReference(context.selectClause().fileNameReference());
 				if (context.selectClause().OPTIONAL() != null)
 				{
 					entry.IsOptional = new SyntaxProperty<bool>(true,
@@ -939,7 +939,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.SD() != null)
 				entry.LevelIndicator = new SyntaxProperty<FileDescriptionType>(FileDescriptionType.SortMergeFile, ParseTreeUtils.GetFirstToken(context.SD()));
 
-			entry.FileName = _cobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+            entry.FileName = _cobolWordsBuilder.CreateFileNameDefinition(context.fileNameDefinition());
 
 			if (context.externalClause() != null && context.externalClause().Length > 0) {
 				var externalClauseContext = context.externalClause()[0];

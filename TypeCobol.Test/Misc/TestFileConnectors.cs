@@ -33,13 +33,13 @@ namespace TypeCobol.Test.Misc
             Assert.AreEqual(expectedResults.Count, fileConnectors.Count);
             foreach (var fileConnectorPair in fileConnectors)
             {
-                var symbolDefinition = fileConnectorPair.Key;
+                var symbolReference = fileConnectorPair.Key;
                 var fileControlEntry = fileConnectorPair.Value;
-                Assert.IsNotNull(symbolDefinition);
-                var isExpectedFileName = expectedResults.TryGetValue(symbolDefinition.Name, out var expectedDataSetName);
+                Assert.IsNotNull(symbolReference);
+                var isExpectedFileName = expectedResults.TryGetValue(symbolReference.Name, out var expectedDataSetName);
                 Assert.IsTrue(isExpectedFileName);
                 Assert.IsNotNull(fileControlEntry);
-                Assert.AreEqual(symbolDefinition.Name, fileControlEntry.FileName?.Name);
+                Assert.AreEqual(symbolReference.Name, fileControlEntry.FileName?.Name);
                 Assert.AreEqual(expectedDataSetName, fileControlEntry.ExternalDataSet?.Name);
             }
         }

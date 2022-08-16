@@ -1227,7 +1227,7 @@ fileControlEntry:
 // p130: If the file connector referenced by file-name-1 is an external file connector, all file-control entries in the run unit that reference this file connector must have the same specification for the OPTIONAL phrase.
 
 selectClause:
-    SELECT OPTIONAL? fileNameDefinition;
+    SELECT OPTIONAL? fileNameReference;
 
 // p130: ASSIGN clause
 // The ASSIGN clause associates the name of a file in a program with the actual external name of the data file.
@@ -1731,7 +1731,7 @@ linkageSectionHeader:
 // levelIndicator : (FD | SD);
 
 fileDescriptionEntry: 
-    (FD | SD) fileNameReference 
+    (FD | SD) fileNameDefinition 
     (externalClause |
      globalClause |
      blockContainsClause |
