@@ -186,13 +186,23 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             _CurrentTypeDefinition = null;
             Node lastLevel1Definition = null;
-            while (CurrentNode.CodeElement is DataDefinitionEntry && CurrentNode.CodeElement.Type != CodeElementType.FileDescriptionEntry)
+            while (CurrentNode.CodeElement is DataDefinitionEntry)
             {
+                if (CurrentNode.CodeElement.Type == CodeElementType.FileDescriptionEntry)
+                {
+                    // Do not exit FileDescription, only exit true level-numbered DataDefinitions
+                    // Do not call OnTopLevelDataDefinition, it will be done when ending the FileDescription itself
+                    return;
+                }
+
                 lastLevel1Definition = CurrentNode;
                 Exit();
             }
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse (ReSharper bug ?)
             if (lastLevel1Definition != null)
-                Dispatcher.OnLevel1Definition((DataDefinition) lastLevel1Definition);//Call is made also for level-77.
+                // ReSharper disable once HeuristicUnreachableCode (ReSharper bug ?)
+                Dispatcher.OnTopLevelDataDefinition((DataDefinition) lastLevel1Definition);//Call is made also for level-77.
         }
 
         public virtual void StartCobolCompilationUnit()
@@ -463,7 +473,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
-            ExitLastLevel1Definition();
             var node = new FileDescriptionEntryNode(entry);
             Enter(node, entry);
             node.SymbolTable.AddVariable(node);
@@ -472,27 +481,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndFileDescriptionEntry()
         {
-            // Exit last level 01
             ExitLastLevel1Definition();
 
-            // Exit file description
+            // FileDescription works as a top level data definition for ProgramSymbolTableBuilder
             System.Diagnostics.Debug.Assert(CurrentNode is FileDescriptionEntryNode);
-            var fileDescription = (FileDescriptionEntryNode)CurrentNode;
+            Dispatcher.OnTopLevelDataDefinition((FileDescriptionEntryNode)CurrentNode);
             Exit();
 
             Dispatcher.EndFileDescriptionEntry();
-
-            // FileDescription works as a top level data definition for ProgramSymbolTableBuilder
-            Dispatcher.OnLevel1Definition(fileDescription);
-        }
-
-        public virtual void EndFileDescriptionEntryIfAny()
-        {
-            if (this.CurrentNode is FileDescriptionEntryNode)
-            {
-                EndFileDescriptionEntry();
-            }
-            Dispatcher.EndFileDescriptionEntryIfAny();
         }
 
         public virtual void StartDataDescriptionEntry(DataDescriptionEntry entry)

@@ -108,15 +108,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Are we in a FileDescriptionEntryNode ?
-        /// </summary>
-        private bool InsideFileDescription
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Creates a new ProgramSymbolTableBuilder.
         /// </summary>
         public ProgramSymbolTableBuilder()
@@ -886,19 +877,17 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Level1 Definition Tracker, This tracker is used to create all DataDefinition symbols.
+        /// Top-level Data Definition Tracker, this tracker is used to create all DataDefinition symbols.
         /// </summary>
-        /// <param name="level1Node">The level 1 definition node</param>
-        public override void OnLevel1Definition(DataDefinition level1Node)
+        /// <param name="topLevelDataDefinition">The top-level data definition node</param>
+        public override void OnTopLevelDataDefinition(DataDefinition topLevelDataDefinition)
         {
-            if (InsideFileDescription) return; //We'll be called again when FileDescription is complete
-
             if (CurrentDataDivisionSection != null)
             {
                 var sectionVariables = CurrentDataDivisionSection.Variables;
                 var sectionFlag = CurrentDataDivisionSection.Flag;
 
-                VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, sectionVariables, null);
+                VariableSymbol dataDefSym = DataDefinition2Symbol(topLevelDataDefinition, sectionVariables, null);
                 if (dataDefSym != null)
                 {
                     //TODO SemanticDomain: we must validate all RENAMES at a 01 Level definition
@@ -911,12 +900,6 @@ namespace TypeCobol.Compiler.Domain
                 }
             }
         }
-
-        public override void StartFileDescriptionEntry(FileDescriptionEntry entry)
-            => InsideFileDescription = true;
-
-        public override void EndFileDescriptionEntry()
-            => InsideFileDescription = false;
 
         public override void StartSection(SectionHeader header)
         {
