@@ -24,6 +24,7 @@ namespace TypeCobol.Compiler.CodeElements {
     ///             FunctionCallResultDescriptionEntry
     ///         DataRedefinesEntry
     ///     DataRenamesEntry
+    ///     FileDescriptionEntry
     /// 
     /// </summary>
     public abstract class DataDefinitionEntry: NamedCodeElement {

@@ -939,15 +939,15 @@ namespace TypeCobol.Compiler.Parser
 			if (context.SD() != null)
 				entry.LevelIndicator = new SyntaxProperty<FileDescriptionType>(FileDescriptionType.SortMergeFile, ParseTreeUtils.GetFirstToken(context.SD()));
 
-			entry.FileName = _cobolWordsBuilder.CreateFileNameDefinition(context.fileNameDefinition());
+			entry.DataName = _cobolWordsBuilder.CreateFileNameDefinition(context.fileNameDefinition()); //FileName
 
 			if (context.externalClause() != null && context.externalClause().Length > 0) {
 				var externalClauseContext = context.externalClause()[0];
-				entry.IsExternal = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(externalClauseContext.EXTERNAL()));
+				entry.External = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(externalClauseContext.EXTERNAL()));
 			}
 			if (context.globalClause() != null && context.globalClause().Length > 0) {
 				var globalClauseContext = context.globalClause()[0];
-				entry.IsGlobal = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(globalClauseContext.GLOBAL()));
+				entry.Global = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(globalClauseContext.GLOBAL()));
 			}
 			if (context.blockContainsClause() != null && context.blockContainsClause().Length > 0) {
 				var blockContainsClauseContext = context.blockContainsClause()[0];

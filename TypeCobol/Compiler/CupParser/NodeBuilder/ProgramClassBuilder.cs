@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -187,7 +186,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             _CurrentTypeDefinition = null;
             Node lastLevel1Definition = null;
-            while (CurrentNode.CodeElement is DataDefinitionEntry)
+            while (CurrentNode.CodeElement is DataDefinitionEntry && CurrentNode.CodeElement.Type != CodeElementType.FileDescriptionEntry)
             {
                 lastLevel1Definition = CurrentNode;
                 Exit();
@@ -441,7 +440,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndFileSection()
         {
-            ExitLastLevel1Definition();
             Exit();
             _IsInsideFileSectionContext = false;
             Dispatcher.EndFileSection();
@@ -466,14 +464,26 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
             ExitLastLevel1Definition();
-            Enter(new FileDescriptionEntryNode(entry), entry);
+            var node = new FileDescriptionEntryNode(entry);
+            Enter(node, entry);
+            node.SymbolTable.AddVariable(node);
             Dispatcher.StartFileDescriptionEntry(entry);
         }
 
         public virtual void EndFileDescriptionEntry()
         {
+            // Exit last level 01
+            ExitLastLevel1Definition();
+
+            // Exit file description
+            System.Diagnostics.Debug.Assert(CurrentNode is FileDescriptionEntryNode);
+            var fileDescription = (FileDescriptionEntryNode)CurrentNode;
             Exit();
+
             Dispatcher.EndFileDescriptionEntry();
+
+            // FileDescription works as a top level data definition for ProgramSymbolTableBuilder
+            Dispatcher.OnLevel1Definition(fileDescription);
         }
 
         public virtual void EndFileDescriptionEntryIfAny()

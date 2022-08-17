@@ -108,6 +108,15 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
+        /// Are we in a FileDescriptionEntryNode ?
+        /// </summary>
+        private bool InsideFileDescription
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Creates a new ProgramSymbolTableBuilder.
         /// </summary>
         public ProgramSymbolTableBuilder()
@@ -735,6 +744,12 @@ namespace TypeCobol.Compiler.Domain
                             sym = CreateConditionSymbol(dataDef, currentDomain, typedef);
                         }
                         break;
+                    case CodeElementType.FileDescriptionEntry:
+                    {
+                        //Assimilate a FileDescriptionEntry to a GroupSymbol
+                        sym = CreateGroupSymbol(dataDef, null, Type.UsageFormat.None, currentDomain, typedef);
+                    }
+                        break;
                 }
             }
 
@@ -854,6 +869,15 @@ namespace TypeCobol.Compiler.Domain
                         }
                     }
                         break;
+                    case CodeElementType.FileDescriptionEntry:
+                    {
+                        var fileDescriptionEntry = (FileDescriptionEntry)dataDef.CodeElement;
+                        if (fileDescriptionEntry.IsExternal)
+                            sym.SetFlag(Symbol.Flags.External, true);
+                        if (fileDescriptionEntry.IsGlobal)
+                            sym.SetFlag(Symbol.Flags.Global, true);
+                    }
+                        break;
                     default:
                         System.Diagnostics.Debug.Fail("Unsupported CodeElement type in DecorateSymbol !");
                         break;
@@ -867,6 +891,8 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="level1Node">The level 1 definition node</param>
         public override void OnLevel1Definition(DataDefinition level1Node)
         {
+            if (InsideFileDescription) return; //We'll be called again when FileDescription is complete
+
             if (CurrentDataDivisionSection != null)
             {
                 var sectionVariables = CurrentDataDivisionSection.Variables;
@@ -885,6 +911,12 @@ namespace TypeCobol.Compiler.Domain
                 }
             }
         }
+
+        public override void StartFileDescriptionEntry(FileDescriptionEntry entry)
+            => InsideFileDescription = true;
+
+        public override void EndFileDescriptionEntry()
+            => InsideFileDescription = false;
 
         public override void StartSection(SectionHeader header)
         {
