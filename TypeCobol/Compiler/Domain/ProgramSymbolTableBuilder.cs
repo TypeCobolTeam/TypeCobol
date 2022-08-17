@@ -736,10 +736,10 @@ namespace TypeCobol.Compiler.Domain
                         }
                         break;
                     case CodeElementType.FileDescriptionEntry:
-                    {
-                        //Assimilate a FileDescriptionEntry to a GroupSymbol
-                        sym = CreateGroupSymbol(dataDef, null, Type.UsageFormat.None, currentDomain, typedef);
-                    }
+                        {
+                            //Assimilate a FileDescriptionEntry to a GroupSymbol
+                            sym = CreateGroupSymbol(dataDef, null, Type.UsageFormat.None, currentDomain, typedef);
+                        }
                         break;
                 }
             }
