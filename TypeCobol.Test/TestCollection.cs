@@ -87,6 +87,7 @@ namespace TypeCobol.Test {
         public void CheckSqlScanner()
         {
             TestSqlScanner.CheckSqlConstants();
+            TestSqlScanner.CheckSqlConstants2();
         }
 
         [TestMethod]

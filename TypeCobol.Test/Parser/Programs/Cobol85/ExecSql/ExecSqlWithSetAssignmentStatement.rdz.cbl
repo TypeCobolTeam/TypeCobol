@@ -1,5 +1,9 @@
        IDENTIFICATION DIVISION.
        program-id. DVZZMFT3.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
        data division.
        working-storage section.
        01 SALARY       PIC S9(09) COMP.

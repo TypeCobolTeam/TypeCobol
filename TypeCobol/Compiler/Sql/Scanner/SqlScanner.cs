@@ -18,7 +18,6 @@ namespace TypeCobol.Compiler.Sql.Scanner
             Minus
         }
 
-        private const char SQL_DECIMAL_POINT = '.';
         private const int SQL_MAX_INTEGER_LENGTH = 19;
         private const int SQL_MAX_DECIMAL_LENGTH = 31;
         private const int SQL_MAX_FLOATING_POINT_EXPONENT_LENGTH = 2;
@@ -163,7 +162,9 @@ namespace TypeCobol.Compiler.Sql.Scanner
                        };
             }
 
-            var token = ScanNumericLiteral(startIndex, SQL_DECIMAL_POINT);
+            // Handle DECIMAL-POINT IS COMMA clause
+            char decimalPoint = tokensLine.ScanState.SpecialNames.DecimalPointIsComma ? ',' : '.';
+            var token = ScanNumericLiteral(startIndex, decimalPoint);
             switch (token.TokenType)
             {
                 case TokenType.IntegerLiteral:
