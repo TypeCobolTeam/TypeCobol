@@ -2,23 +2,23 @@
        PROGRAM-ID. DVZZMFT3.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-             EXEC SQL 
+       PROCEDURE DIVISION.
+           EXEC SQL
               TRUNCATE TABLE INVENTORY
               REUSE STORAGE
               IGNORE DELETE TRIGGERS
-
+           END-EXEC
+           EXEC SQL
               TRUNCATE TABLE INVENTORY
-              DROP STORAGE 
+              DROP STORAGE
               RESTRICT WHEN DELETE TRIGGERS
               IMMEDIATE
-
+           END-EXEC
+           EXEC SQL
               TRUNCATE TABLE INVENTORY
               REUSE STORAGE
-              RESTRICT WHEN DELETE TRIGGERS            
-              
-             END-EXEC.
-       PROCEDURE DIVISION.
-         
+              RESTRICT WHEN DELETE TRIGGERS
+           END-EXEC
            GOBACK
            .
        END PROGRAM DVZZMFT3.

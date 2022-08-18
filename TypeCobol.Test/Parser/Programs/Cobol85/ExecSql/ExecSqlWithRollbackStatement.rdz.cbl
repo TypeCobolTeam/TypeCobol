@@ -2,16 +2,25 @@
        PROGRAM-ID. DVZZMFT3.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-             EXEC SQL 
-              ROLLBACK
-              ROLLBACK TO SAVEPOINT A
-              ROLLBACK WORK TO SAVEPOINT A
-              ROLLBACK WORK
-              ROLLBACK TO SAVEPOINT
-              ROLLBACK WORK TO SAVEPOINT
-             END-EXEC.
        PROCEDURE DIVISION.
-         
+           EXEC SQL
+              ROLLBACK
+           END-EXEC
+           EXEC SQL
+              ROLLBACK TO SAVEPOINT A
+           END-EXEC
+           EXEC SQL
+              ROLLBACK WORK TO SAVEPOINT A
+           END-EXEC
+           EXEC SQL
+              ROLLBACK WORK
+           END-EXEC
+           EXEC SQL
+              ROLLBACK TO SAVEPOINT
+           END-EXEC
+           EXEC SQL
+              ROLLBACK WORK TO SAVEPOINT
+           END-EXEC
            GOBACK
            .
        END PROGRAM DVZZMFT3.
