@@ -70,7 +70,7 @@
                OUTPUT PROCEDURE IS SEC07.
 
       *** Testing perform statements in a paragraph of procedure division
-       TEST-PERFORM-PROCEDURE-DIVISION.
+       TEST-PERFORM-PROCDIV.
       *OK PAR02 is uniquely defined in SEC02
            Perform PAR02
            SORT Z-SORT-1 ON ASCENDING Z-SD-1-1-KEY
