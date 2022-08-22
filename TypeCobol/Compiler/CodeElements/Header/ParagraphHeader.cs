@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// A paragraph-name followed by a separator period, optionally followed by
     /// one or more sentences.
     /// </summary>
-    public class ParagraphHeader : NamedCodeElement
+    public class ParagraphHeader : CodeElement, INamedCodeElement
     {
         public ParagraphHeader() : base(CodeElementType.ParagraphHeader)
         { }
@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolDefinition ParagraphName { get; set; }
 
-        public override string Name => ParagraphName?.Name;
+        public string Name => ParagraphName?.Name;
 
         /// <summary>
         /// Debug string

@@ -401,7 +401,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (codeElement is NamedCodeElement namedCodeElement)
+            if (codeElement is INamedCodeElement namedCodeElement)
             {
                 var name = namedCodeElement.Name;
                 if (name != null && name.Length > MAX_NAME_LENGTH)

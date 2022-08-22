@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Section
     /// A section-header optionally followed by one or more paragraphs.
     /// </summary>
-    public class SectionHeader : NamedCodeElement
+    public class SectionHeader : CodeElement, INamedCodeElement
     {
         public SectionHeader() : base(CodeElementType.SectionHeader)
         { }
@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolDefinition SectionName { get; set; }
 
-        public override string Name => SectionName?.Name;
+        public string Name => SectionName?.Name;
 
         /// <summary>
         /// An integer or a positive signed numeric literal ranging in value
