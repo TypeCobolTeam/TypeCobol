@@ -1,0 +1,30 @@
+--- Diagnostics ---
+Line 5[19,32] <37, Warning, General> - Error in copy 'YAAABBB' at line 6 : Warning: 'AAABBB-Var1' could not be suffixed because line ends at column 72.
+Line 5[19,32] <37, Warning, General> - Error in copy 'YAAABBB' at line 8 : Warning: 'AAABBB-Var2-AAABBB-Var2' could not be suffixed because line ends at column 71.
+Line 5[19,32] <37, Warning, General> - Error in copy 'YAAABBB' at line 10 : Warning: 'AAABBB-Var3' could not be suffixed because line ends at column 72.
+Line 5[19,32] <37, Warning, General> - Error in copy 'YAAABBB' at line 15 : Warning: 'AAABBB-Var6' could not be suffixed because line ends at column 72.
+Line 5[19,32] <37, Warning, General> - Error in copy 'YAAABBB' at line 19 : Warning: 'AAABBB-Var20' could not be suffixed because line ends at column 72.
+Line 5[19,32] <27, Error, Syntax> - Error in copy 'YAAABBB' at line 23 : Syntax error : Suffixing 'AAABBB-Var21' will alter VALUE clause, cannot use CPY suffixing here.
+
+--- Program ---
+PROGRAM: DVZF0SOM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  AAABBB:Alphanumeric
+  Group2:Alphanumeric
+  AAABBBZ-Var0:Alphanumeric
+  AAABBB-Var1:Alphanumeric
+  AAABBB-Var2-AAABBB-Var2:Alphanumeric
+  AAABBB-Var3:Alphanumeric
+  AAABBBZ-Var5:Alphanumeric
+  AAABBB-Var6:Alphanumeric
+  AAABBB-Var20:Alphanumeric
+  AAABBB-Var21:Alphanumeric
+  AAABBBZ-Var22:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
