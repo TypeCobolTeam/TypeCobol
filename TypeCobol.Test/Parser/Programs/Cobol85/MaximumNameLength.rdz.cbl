@@ -35,11 +35,11 @@
       *KO 31 chars
           88 V4-4567890123456789012345678901 value 'X'.
 
-         replace ==::== by ==456789-123456789-1234567890==.
+         replace ==:toReplace:== by ==456789-123456789-1234567890==.
       *Ok
-       01 V5-:: pic X.
+       01 V5-:toReplace: pic X.
       *Ko
-       01 V5-::1 pic X.
+       01 V5-:toReplace:1 pic X.
 
          replace off.
 

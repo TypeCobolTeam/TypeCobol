@@ -40,12 +40,12 @@ Line 34[8,48] <27, Error, Syntax> - Syntax error : The COBOL word 'V3-4567890123
 Line 36[11,55] <27, Error, Syntax> - Syntax error : The COBOL word 'V4-4567890123456789012345678901' contains 31 characters which is more than the allowed maximum of 30 characters.
           88 V4-4567890123456789012345678901 value 'X'.
 
-         replace ==::== by ==456789-123456789-1234567890==.
+         replace ==:toReplace:== by ==456789-123456789-1234567890==.
       *Ok
-       01 V5-:: pic X.
+       01 V5-:toReplace: pic X.
       *Ko
-Line 42[8,23] <27, Error, Syntax> - Syntax error : The COBOL word 'V5-456789-123456789-12345678901' contains 31 characters which is more than the allowed maximum of 30 characters.
-       01 V5-::1 pic X.
+Line 42[8,32] <27, Error, Syntax> - Syntax error : The COBOL word 'V5-456789-123456789-12345678901' contains 31 characters which is more than the allowed maximum of 30 characters.
+       01 V5-:toReplace:1 pic X.
 
          replace off.
 
