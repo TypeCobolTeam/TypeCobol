@@ -76,12 +76,17 @@ namespace TypeCobol.Compiler.Directives
             Type = type;
         }
 
-        public CompilerDirectiveType Type { get; private set; }
+        public CompilerDirectiveType Type { get; }
 
         /// <summary>
-        /// List of errors found on this CompilerDirective
+        /// List of errors found when parsing this CompilerDirective
         /// </summary>
-        public IList<Diagnostic> Diagnostics { get; private set; }
+        public IList<Diagnostic> ParsingDiagnostics { get; private set; }
+
+        /// <summary>
+        /// List of errors found when processing this CompilerDirective
+        /// </summary>
+        public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
 
         /// <summary>
         /// Consumed tokens of the COPY. This property is set by the PreprocessorStep
@@ -89,10 +94,16 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public MultilineTokensGroupSelection ConsumedTokens { get; internal set; }
 
-        public void AddDiagnostic(Diagnostic diagnostic)
+        public void AddParsingDiagnostic(Diagnostic diagnostic)
         {
-            if (Diagnostics == null) Diagnostics = new List<Diagnostic>();
-            Diagnostics.Add(diagnostic);
+            if (ParsingDiagnostics == null) ParsingDiagnostics = new List<Diagnostic>();
+            ParsingDiagnostics.Add(diagnostic);
+        }
+
+        public void AddProcessingDiagnostic(Diagnostic diagnostic)
+        {
+            if (ProcessingDiagnostics == null) ProcessingDiagnostics = new List<Diagnostic>();
+            ProcessingDiagnostics.Add(diagnostic);
         }
 
         public override string ToString()

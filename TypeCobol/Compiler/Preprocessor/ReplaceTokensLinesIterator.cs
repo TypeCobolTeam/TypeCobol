@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
@@ -352,9 +353,6 @@ namespace TypeCobol.Compiler.Preprocessor
                 return true;
 
             const int MAX_LINE_LENGTH = (int)CobolFormatAreas.End_B;
-            const string ERROR_MESSAGE_TEMPLATE = "Suffixing '{0}' will alter VALUE clause, cannot use CPY suffixing here.";
-            const string WARNING_MESSAGE_TEMPLATE = "'{0}' could not be suffixed because line ends at column {1}.";
-
             var lastToken = tokensLine.SourceTokens.Last(); //This is safe as the line contains at least one token, the one which is being considered for replacement
             int endColumn;
             if (tokensLine.HasTokenContinuedOnNextLine && LastTokenIsLiteralAllowingSpace())
@@ -363,15 +361,13 @@ namespace TypeCobol.Compiler.Preprocessor
                 endColumn = lastToken.EndColumn;
                 if (endColumn == MAX_LINE_LENGTH)
                 {
-                    //No trailing space, but we can't apply suffix because there is no more room
-                    string message = string.Format(WARNING_MESSAGE_TEMPLATE, token.Text, endColumn);
-                    //TODO warning ???
+                    //No trailing space, but we can't apply suffix because there is no room left
+                    AddWarningOnToken();
                 }
                 else
                 {
-                    //Suffixing would cause 
-                    string message = string.Format(ERROR_MESSAGE_TEMPLATE, token.Text);
-                    //TODO error ???
+                    //Suffixing would cause an alteration to the VALUE, add error
+                    AddErrorOnToken();
                 }
 
                 return false;
@@ -382,8 +378,7 @@ namespace TypeCobol.Compiler.Preprocessor
             endColumn = lastToken.StartIndex + lastToken.Text.TrimEnd().Length;
             if (endColumn + additionalSpaceRequired > MAX_LINE_LENGTH)
             {
-                string message = string.Format(WARNING_MESSAGE_TEMPLATE, token.Text, endColumn);
-                //TODO warning ???
+                AddWarningOnToken();
                 return false;
             }
 
@@ -401,6 +396,28 @@ namespace TypeCobol.Compiler.Preprocessor
                     default:
                         return false;
                 }
+            }
+
+            void AddWarningOnToken()
+            {
+                const string WARNING_MESSAGE_TEMPLATE = "'{0}' could not be suffixed because line ends at column {1}.";
+                string message = string.Format(WARNING_MESSAGE_TEMPLATE, token.Text, endColumn);
+                AddDiagnosticOnToken(MessageCode.Warning, message);
+            }
+
+            void AddErrorOnToken()
+            {
+                const string ERROR_MESSAGE_TEMPLATE = "Suffixing '{0}' will alter VALUE clause, cannot use CPY suffixing here.";
+                string message = string.Format(ERROR_MESSAGE_TEMPLATE, token.Text);
+                AddDiagnosticOnToken(MessageCode.SyntaxErrorInParser, message);
+            }
+
+            void AddDiagnosticOnToken(MessageCode messageCode, string message)
+            {
+                //token is part of a COPY however it has not been wrapped into ImportedToken yet. We have to create Position manually with the proper including directive.
+                var position = new Diagnostic.Position(token.Line, token.Column, token.Line, token.EndColumn, CopyReplacingDirective);
+                var diagnostic = new Diagnostic(messageCode, position, message);
+                CopyReplacingDirective.AddProcessingDiagnostic(diagnostic);
             }
         }
 #endif
