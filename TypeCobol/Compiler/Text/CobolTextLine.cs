@@ -443,7 +443,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Format of the Cobol text line
         /// </summary>
-        public ColumnsLayout ColumnsLayout { get; private set; }
+        public ColumnsLayout ColumnsLayout { get; }
 
         /// <summary>
         /// Cobol text line type : Source, Debug, Comment or Continuation
