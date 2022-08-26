@@ -1,0 +1,51 @@
+--- Diagnostics ---
+Line 5[38,46] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[38,46:DEBUGGING]<DEBUGGING>
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 14 : Warning: 'CCCDDD-ErrorCode-Var' could not be suffixed because line ends at column 72.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 16 : Warning: 'CCCDDD-ErrorCode-CCCDDD-Var2' could not be suffixed because line ends at column 71.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 19 : Warning: 'CCCDDD-ErrorCode-ErrorMsg1' could not be suffixed because line ends at column 72.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 21 : Warning: 'CCCDDD-ErrorCode-ErrorMsg2' could not be suffixed because line ends at column 72.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 30 : Warning: 'CCCDDD-Var20' could not be suffixed because line ends at column 72.
+Line 9[19,32] <27, Error, Syntax> - Error in copy 'YCCCDDD' at line 33 : Syntax error : Suffixing 'CCCDDD-Var21' will alter VALUE clause, cannot use CPY suffixing here.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 56 : Warning: 'CCCDDD-ErrorCode-Var' could not be suffixed because line ends at column 72.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 58 : Warning: 'CCCDDD-ErrorCode-CCCDDD-Var2' could not be suffixed because line ends at column 71.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 61 : Warning: 'CCCDDD-ErrorCode-ErrorMsg1' could not be suffixed because line ends at column 72.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 63 : Warning: 'CCCDDD-ErrorCode-ErrorMsg2' could not be suffixed because line ends at column 72.
+Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 72 : Warning: 'CCCDDD-Var20' could not be suffixed because line ends at column 72.
+Line 13[24,29] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CCCDDD 
+Symbols found: MyPGM::CCCDDD | MyPGM::CCCDDD OffendingSymbol=[24,29:CCCDDD]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: MyPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  CCCDDD:Alphanumeric
+  CCCDDD:Alphanumeric
+  CCCDDDZ-RET-CCCDDDZ-var1:Alphanumeric
+  CCCDDDZ-RET-CCCDDDZ-var1:Alphanumeric
+  CCCDDDZ-RootLv:Alphanumeric
+  CCCDDDZ-RootLv:Alphanumeric
+  CCCDDDZ-ErrorCode:Alphanumeric
+  CCCDDDZ-ErrorCode:Alphanumeric
+  CCCDDD-ErrorCode-Var:Alphanumeric
+  CCCDDD-ErrorCode-Var:Alphanumeric
+  CCCDDD-ErrorCode-CCCDDD-Var2:Alphanumeric
+  CCCDDD-ErrorCode-CCCDDD-Var2:Alphanumeric
+  CCCDDD-ErrorCode-ErrorMsg1:Alphanumeric
+  CCCDDD-ErrorCode-ErrorMsg1:Alphanumeric
+  CCCDDD-ErrorCode-ErrorMsg2:Alphanumeric
+  CCCDDD-ErrorCode-ErrorMsg2:Alphanumeric
+  CCCDDDZ-a901234567890123456789:Alphanumeric
+  CCCDDDZ-a901234567890123456789:Alphanumeric
+  CCCDDDZ-a9012345678901234567890:Alphanumeric
+  CCCDDDZ-a9012345678901234567890:Alphanumeric
+  CCCDDD-Var20:Alphanumeric
+  CCCDDD-Var20:Alphanumeric
+  CCCDDD-Var21:Alphanumeric
+  CCCDDDZ-Var22:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
