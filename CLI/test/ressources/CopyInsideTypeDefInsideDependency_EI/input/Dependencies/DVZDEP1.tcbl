@@ -10,14 +10,14 @@
             COPY YPRTD20 REPLACING CHARACTERS 
                 BY i CHARACTERS BY j CHARACTERS BY k.
       
-       01 CopyInsideContainerInsideTypeDef TYPEDEF STRICT PUBLIC.
+       01 CopyUnderChildInsideTypeDef TYPEDEF STRICT PUBLIC.
             04 CONTAINER. COPY YCONVEA REPLACING 
             ==:Foo:==
            BY
                 ==Too
                ==.
             
-       01 ConventionalTypeDefInDependency TYPEDEF STRICT PUBLIC.
+       01 RegularTypeDefInDependency TYPEDEF STRICT PUBLIC.
             05 firstname PIC X(20).
             05 lastname PIC X(20).
       

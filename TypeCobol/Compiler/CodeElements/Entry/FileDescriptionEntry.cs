@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -7,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Provides information about the physical structure and identification of a file 
     /// </summary>
-    public class FileDescriptionEntry : CodeElement
+    public class FileDescriptionEntry : CodeElement, INamedCodeElement
     {
         public FileDescriptionEntry() : base(CodeElementType.FileDescriptionEntry)
         { }
@@ -24,6 +23,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// and must be unique within this program.
         /// </summary>
         public SymbolReference FileName { get; set; }
+
+        public string Name => FileName?.Name;
 
         /// <summary>
         /// The EXTERNAL clause specifies that a file connector is external, and permits
