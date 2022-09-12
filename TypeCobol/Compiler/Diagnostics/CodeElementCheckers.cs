@@ -389,6 +389,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class CodeElementChecker
     {
+        private const int MAX_NAME_LENGTH = 30;
+
         public static void OnCodeElement(CodeElement codeElement, bool isDebuggingModeEnabled)
         {
             if (isDebuggingModeEnabled)
@@ -396,6 +398,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (codeElement.DebugMode == CodeElement.DebugType.Mix)
                 {
                     DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
+                }
+            }
+
+            if (codeElement is INamedCodeElement namedCodeElement)
+            {
+                var name = namedCodeElement.Name;
+                if (name != null && name.Length > MAX_NAME_LENGTH)
+                {
+                    DiagnosticUtils.AddError(codeElement, $"The COBOL word '{name}' contains {name.Length} characters which is more than the allowed maximum of {MAX_NAME_LENGTH} characters.");
                 }
             }
         }

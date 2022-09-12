@@ -93,7 +93,7 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
   SEC07
   SEC07
 -- PARAGRAPHS --
-  TEST-PERFORM-PROCEDURE-DIVISION
+  TEST-PERFORM-PROCDIV
   PAR01
   PAR01
   PAR01

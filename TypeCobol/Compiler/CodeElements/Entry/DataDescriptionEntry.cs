@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Types;
 
@@ -27,7 +25,7 @@ namespace TypeCobol.Compiler.CodeElements {
     ///     FileDescriptionEntry
     /// 
     /// </summary>
-    public abstract class DataDefinitionEntry: NamedCodeElement {
+    public abstract class DataDefinitionEntry: CodeElement, INamedCodeElement {
 	    protected DataDefinitionEntry(CodeElementType codeElementType) : base(codeElementType) {
 	        this.DataType = DataType.Unknown;
 	    }
@@ -83,7 +81,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	    }
 
 	    private string _Name;
-	    public override string Name { get {
+	    public string Name { get {
 	        if (_Name == null)
 	            _Name = DataName != null? DataName.Name : null;
 

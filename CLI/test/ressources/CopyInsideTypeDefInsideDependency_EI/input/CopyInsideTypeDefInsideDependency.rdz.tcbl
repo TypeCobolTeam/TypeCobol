@@ -4,7 +4,7 @@
        DATA DIVISION.
        Working-STORAGE SECTION.
       
-       01 ConventionalTypeDefInMainProgram TYPEDEF STRICT PUBLIC.
+       01 RegularTypeDefInMainProgram TYPEDEF STRICT PUBLIC.
            05 DATA1 PIC X.
            05 DATA2 PIC X.
       
@@ -14,10 +14,10 @@
            BY ==Flouf==.
       
        01 MyCopiesInsideTypeDef TYPE DVZDEP1::CopiesInsideTypeDef.
-       01 MyCopyInsideContainerInsideTypeDef
-           TYPE DVZDEP1::CopyInsideContainerInsideTypeDef.
+       01 MyCopyUnderChildInsideTypeDef
+           TYPE DVZDEP1::CopyUnderChildInsideTypeDef.
       
-       01 MyTypeDefUsingCopyInsideTypeDef
+       01 MyDataUsingCopyInsideTypeDef
            TYPE DVZDEP2::TypeDefUsingCopyInsideTypeDef.
       
        01 ConventialCopy.
@@ -28,14 +28,14 @@
             ==Soo==.
       
        01 MyConventionalTypeDef
-           TYPE DVZDEP1::ConventionalTypeDefInDependency.
+           TYPE DVZDEP1::RegularTypeDefInDependency.
 
        01 myVar2 TYPE DVZDEP1::Type2.
 	   
        PROCEDURE DIVISION.
             MOVE 'X' TO MyCopiesInsideTypeDef::CONVEA
             MOVE 'X' TO
-                MyCopyInsideContainerInsideTypeDef::CONTAINER::CONVEA
+                MyCopyUnderChildInsideTypeDef::CONTAINER::CONVEA
             MOVE 'X' TO
              myVar2::varA-2::varB-22::CONVEA::CONVEA-SUB::CONVEA-SUB-1
             .
@@ -62,7 +62,7 @@
        DATA DIVISION.
        Working-STORAGE SECTION.
        01 MyCopyInsideTypeDef
-           TYPE PGM1::ConventionalTypeDefInMainProgram.
+           TYPE PGM1::RegularTypeDefInMainProgram.
       
        01 MyCopyTypeDefInMainProgram
            TYPE PGM1::CopyTypeDefInMainProgram.

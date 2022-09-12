@@ -84,7 +84,7 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   useTypeGrp2:Alphanumeric
   useTypeGrp2Stricly:TYPE-GRP-STRICT
   USE-TYPE-GRP-STRICT-RED-2:Alphanumeric
-  USE-TYPE-GRP-STRICT-RED-2-PART1:Numeric
+  USE-TYPE-GRP-STRICT-RED-2-PART:Numeric
   MyVariable:Alphanumeric
   usestrictType1:strictType1
   TYPE-GRP-STRICT-REN:?
