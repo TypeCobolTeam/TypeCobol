@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Nodes {
             var node = o as Node;
             if (node != null)
             {
-                var named = ((Node)o).CodeElement as NamedCodeElement;
+                var named = ((Node)o).CodeElement as INamedCodeElement;
                 return named?.Name;
             }
             else

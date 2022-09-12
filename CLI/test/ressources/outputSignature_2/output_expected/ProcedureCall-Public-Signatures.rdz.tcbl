@@ -9,7 +9,7 @@
             05 MyVar1 PIC X.
             COPY YPRTD20 REPLACING CHARACTERS
                 BY i CHARACTERS BY j CHARACTERS BY k.
-       01 CopyInsideContainerInsideTypeDef TYPEDEF STRICT PUBLIC.
+       01 CopyUnderChildInsideTypeDef TYPEDEF STRICT PUBLIC.
             04 CONTAINER.
             COPY YCONVEA REPLACING
             ==:Foo:==

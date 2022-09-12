@@ -154,7 +154,7 @@
       *items under useTypeGrp2Stricly are renumeroted
            11 USE-TYPE-GRP-STRICT-RED-2 redefines 
                                         TYPE-GRP-STRICT-PART3.
-          15 USE-TYPE-GRP-STRICT-RED-2-PART1 PIC 9 Comp.
+          15 USE-TYPE-GRP-STRICT-RED-2-PART PIC 9 Comp.
       
       *OK
        01 GroupWithLevel77JustAfter typedef.
