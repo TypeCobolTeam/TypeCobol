@@ -106,7 +106,7 @@ Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'stron
         useTypeGrp2
           useTypeGrp2Strong
             USE-TYPE-GRP-STRONG-RED-2
-              USE-TYPE-GRP-STRONG-RED-2-PART1
+              USE-TYPE-GRP-STRONG-RED-2-PART
         GroupWithLevel77JustAfter
           a
         MyVariable
