@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-Line 12[38,38] <27, Error, Syntax> - Syntax error : missing user defined word at ',' RuleStack=codeElement>selectStatement>fullselect>subselect>from_clause>table_references>table_reference>single_table_or_view_reference>correlation_clause>new_column_names>column_name,  OffendingSymbol=[38,38:,]<SQL_CommaSeparator>
-Line 12[39,39] <27, Error, Syntax> - Syntax error : missing user defined word at ')' RuleStack=codeElement>selectStatement>fullselect>subselect>from_clause>table_references>table_reference>single_table_or_view_reference>correlation_clause>new_column_names>column_name,  OffendingSymbol=[39,39:)]<RightParenthesisSeparator>
+Line 14[39,39] <27, Error, Syntax> - Syntax error : missing user defined word at ',' RuleStack=codeElement>selectStatement>fullselect>subselect>from_clause>table_references>table_reference>single_table_or_view_reference>correlation_clause>new_column_names>column_name,  OffendingSymbol=[39,39:,]<SQL_CommaSeparator>
+Line 14[40,40] <27, Error, Syntax> - Syntax error : missing user defined word at ')' RuleStack=codeElement>selectStatement>fullselect>subselect>from_clause>table_references>table_reference>single_table_or_view_reference>correlation_clause>new_column_names>column_name,  OffendingSymbol=[40,40:)]<RightParenthesisSeparator>
 
 --- Sql Statements ---
 line 6: SelectStatement
@@ -39,7 +39,7 @@ line 6: SelectStatement
             ]
       ]
   - SubQuery = <NULL>
-line 10: SelectStatement
+line 12: SelectStatement
 - FullSelect = FullSelect
   - SubSelect = SubSelect
     - SelectClause = SelectClause

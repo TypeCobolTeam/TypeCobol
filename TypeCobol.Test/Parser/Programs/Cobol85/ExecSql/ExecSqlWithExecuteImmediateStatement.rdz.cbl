@@ -2,7 +2,7 @@
        PROGRAM-ID. DVZZMFT3.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
-      *SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       SOURCE-COMPUTER. IBM-370.
        SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
        data division.
        working-storage section.

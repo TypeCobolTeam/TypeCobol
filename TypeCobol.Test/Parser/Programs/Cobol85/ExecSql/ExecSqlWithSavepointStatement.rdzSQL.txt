@@ -1,27 +1,27 @@
 ﻿--- Diagnostics ---
-Line 14[34,38] <27, Error, Syntax> - Syntax error : rule sqlCursors failed predicate: { string.Equals(CurrentToken.Text, "CURSORS", System.StringComparison.OrdinalIgnoreCase) }? RuleStack=codeElement>savepointStatement>sqlCursors,  OffendingSymbol=[34,38:LOCKS]<UserDefinedWord>
-Line 15[34,40] <27, Error, Syntax> - Syntax error : rule sqlLocks failed predicate: { string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? RuleStack=codeElement>savepointStatement>sqlLocks,  OffendingSymbol=[34,40:CURSORS]<UserDefinedWord>
-Line 19[15,23] <27, Error, Syntax> - Syntax error : mismatched input 'SAVEPOINT' expecting ON RuleStack=codeElement>savepointStatement>onRollbackRetain,  OffendingSymbol=[15,23:SAVEPOINT]<SQL_SAVEPOINT>
-Line 19[15,23] <27, Error, Syntax> - Syntax error : Invalid savepoint-name, it must not begin with 'SYS'. RuleStack=codeElement>savepointStatement,  OffendingSymbol=[15,23:SAVEPOINT]<SQL_SAVEPOINT>
+Line 17[34,38] <27, Error, Syntax> - Syntax error : rule sqlCursors failed predicate: { string.Equals(CurrentToken.Text, "CURSORS", System.StringComparison.OrdinalIgnoreCase) }? RuleStack=codeElement>savepointStatement>sqlCursors,  OffendingSymbol=[34,38:LOCKS]<UserDefinedWord>
+Line 18[34,40] <27, Error, Syntax> - Syntax error : rule sqlLocks failed predicate: { string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? RuleStack=codeElement>savepointStatement>sqlLocks,  OffendingSymbol=[34,40:CURSORS]<UserDefinedWord>
+Line 22[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting ON RuleStack=codeElement>savepointStatement>onRollbackRetain,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
+Line 24[15,23] <27, Error, Syntax> - Syntax error : Invalid savepoint-name, it must not begin with 'SYS'. RuleStack=codeElement>savepointStatement,  OffendingSymbol=[15,23:SAVEPOINT]<SQL_SAVEPOINT>
 
 --- Sql Statements ---
-line 6: SavepointStatement
+line 7: SavepointStatement
 - Name = B
 - IsUnique = True
 - RetainLocks = <NULL>
-line 9: SavepointStatement
+line 11: SavepointStatement
 - Name = A
 - IsUnique = <NULL>
 - RetainLocks = True
-line 13: SavepointStatement
+line 16: SavepointStatement
 - Name = B
 - IsUnique = True
 - RetainLocks = True
-line 17: SavepointStatement
+line 21: SavepointStatement
 - Name = B
 - IsUnique = True
 - RetainLocks = <NULL>
-line 19: SavepointStatement
+line 24: SavepointStatement
 - Name = sYst
 - IsUnique = True
 - RetainLocks = <NULL>

@@ -1,22 +1,22 @@
 ﻿--- Diagnostics ---
-Line 10[29,30] <27, Error, Syntax> - Syntax error : extraneous input 'TO' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[29,30:TO]<SQL_TO>
+Line 19[29,30] <27, Error, Syntax> - Syntax error : extraneous input 'TO' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[29,30:TO]<SQL_TO>
 
 --- Sql Statements ---
-line 6: ConnectStatement
-- Target = <NULL>
-- Authorization = <NULL>
-- Reset = <NULL>
 line 7: ConnectStatement
 - Target = <NULL>
 - Authorization = <NULL>
+- Reset = <NULL>
+line 10: ConnectStatement
+- Target = <NULL>
+- Authorization = <NULL>
 - Reset = True
-line 8: ConnectStatement
+line 13: ConnectStatement
 - Target = ConnectionTarget
   - LocationNameLiteral = EASTDB
   - LocationNameVariable = <NULL>
 - Authorization = <NULL>
 - Reset = <NULL>
-line 9: ConnectStatement
+line 16: ConnectStatement
 - Target = ConnectionTarget
   - LocationNameLiteral = <NULL>
   - LocationNameVariable = HostVariable
@@ -30,11 +30,11 @@ line 9: ConnectStatement
     - MainReference = PASSWORD
     - IndicatorReference = <NULL>
 - Reset = <NULL>
-line 10: ConnectStatement
+line 19: ConnectStatement
 - Target = <NULL>
 - Authorization = <NULL>
 - Reset = True
-line 11: ConnectStatement
+line 22: ConnectStatement
 - Target = <NULL>
 - Authorization = ConnectionAuthorization
   - UserName = HostVariable
@@ -44,7 +44,7 @@ line 11: ConnectStatement
     - MainReference = UserPassword
     - IndicatorReference = <NULL>
 - Reset = <NULL>
-line 12: ConnectStatement
+line 25: ConnectStatement
 - Target = ConnectionTarget
   - LocationNameLiteral = <NULL>
   - LocationNameVariable = HostVariable
@@ -52,7 +52,7 @@ line 12: ConnectStatement
     - IndicatorReference = <NULL>
 - Authorization = <NULL>
 - Reset = <NULL>
-line 13: ConnectStatement
+line 28: ConnectStatement
 - Target = ConnectionTarget
   - LocationNameLiteral = LOC3
   - LocationNameVariable = <NULL>

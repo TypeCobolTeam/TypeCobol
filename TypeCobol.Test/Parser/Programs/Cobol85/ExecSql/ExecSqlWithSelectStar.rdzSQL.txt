@@ -15,7 +15,7 @@ line 6: SelectStatement
           - CorrelationClause = <NULL>
       ]
   - SubQuery = <NULL>
-line 7: SelectStatement
+line 9: SelectStatement
 - FullSelect = FullSelect
   - SubSelect = SubSelect
     - SelectClause = SelectClause
@@ -31,7 +31,7 @@ line 7: SelectStatement
           - CorrelationClause = <NULL>
       ]
   - SubQuery = <NULL>
-line 8: SelectStatement
+line 12: SelectStatement
 - FullSelect = FullSelect
   - SubSelect = SubSelect
     - SelectClause = SelectClause

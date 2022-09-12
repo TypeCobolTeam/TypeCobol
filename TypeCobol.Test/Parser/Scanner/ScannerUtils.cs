@@ -114,10 +114,10 @@ namespace TypeCobol.Test.Parser.Scanner
             TestUtils.compareLines(testName, result, expectedResult, PlatformUtils.GetPathForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt"));
         }
 
-        public static string ScanSqlLines(string[] lines)
+        public static string ScanSqlLines(string[] lines, bool decimalPointIsComma)
         {
             //Initial scan state, variable is updated for each line to carry state from one line to the next
-            var scanState = new MultilineScanState(TextSourceInfo.EncodingForAlphanumericLiterals) { InsideSql = true };
+            var scanState = new MultilineScanState(TextSourceInfo.EncodingForAlphanumericLiterals, decimalPointIsComma: decimalPointIsComma) { InsideSql = true };
 
             var result = new StringBuilder();
             for (int i = 0; i < lines.Length; i++)

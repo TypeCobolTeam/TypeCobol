@@ -1,18 +1,18 @@
 ﻿--- Diagnostics ---
-Line 19[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', '('} RuleStack=codeElement>setAssignmentStatement>assignmentClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
-Line 24[23,25] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[23,25:SET]<SQL_SET>
-Line 25[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting '=' RuleStack=codeElement>setAssignmentStatement>assignmentClause>simpleAssignmentClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
-Line 40[37,46] <27, Error, Syntax> - Syntax error : missing ':' at 'COMMISSION' RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>sqlSetTargetVariable>sqlVariable>hostVariable,  OffendingSymbol=[37,46:COMMISSION]<UserDefinedWord>
-Line 53[23,25] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[23,25:SET]<SQL_SET>
-Line 65[23,25] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[23,25:SET]<SQL_SET>
-Line 65[53,53] <27, Error, Syntax> - Syntax error : mismatched input ',' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>sourceValueClause>sourceValueClauses,  OffendingSymbol=[53,53:,]<SQL_CommaSeparator>
-Line 75[27,32] <27, Error, Syntax> - Syntax error : mismatched input 'SALARY' expecting {':', '('} RuleStack=codeElement>setAssignmentStatement>assignmentClause,  OffendingSymbol=[27,32:SALARY]<UserDefinedWord>
+Line 23[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', '('} RuleStack=codeElement>setAssignmentStatement>assignmentClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+Line 28[23,25] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[23,25:SET]<SQL_SET>
+Line 29[14,21] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting '=' RuleStack=codeElement>setAssignmentStatement>assignmentClause>simpleAssignmentClause,  OffendingSymbol=[14,21:END-EXEC]<END_EXEC>
+Line 44[37,46] <27, Error, Syntax> - Syntax error : missing ':' at 'COMMISSION' RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>sqlSetTargetVariable>sqlVariable>hostVariable,  OffendingSymbol=[37,46:COMMISSION]<UserDefinedWord>
+Line 57[23,25] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[23,25:SET]<SQL_SET>
+Line 69[23,25] <27, Error, Syntax> - Syntax error : The number of values on the right hand-side must match the number of targets on the left hand-side of the statement. RuleStack=codeElement>setAssignmentStatement,  OffendingSymbol=[23,25:SET]<SQL_SET>
+Line 69[53,53] <27, Error, Syntax> - Syntax error : mismatched input ',' expecting {separator, alphanumeric literal, numeric literal, symbol, Sql statement starting keyword, ...} RuleStack=codeElement>setAssignmentStatement>assignmentClause>multipleAssignmentClause>sourceValueClause>sourceValueClauses,  OffendingSymbol=[53,53:,]<SQL_CommaSeparator>
+Line 79[27,32] <27, Error, Syntax> - Syntax error : mismatched input 'SALARY' expecting {':', '('} RuleStack=codeElement>setAssignmentStatement>assignmentClause,  OffendingSymbol=[27,32:SALARY]<UserDefinedWord>
 
 --- Sql Statements ---
-line 18: SetAssignmentStatement
+line 22: SetAssignmentStatement
 - Assignments = [
 ]
-line 24: SetAssignmentStatement
+line 28: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -24,7 +24,7 @@ line 24: SetAssignmentStatement
     - Values = [
     ]
 ]
-line 26: SetAssignmentStatement
+line 30: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -40,7 +40,7 @@ line 26: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 28: SetAssignmentStatement
+line 32: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -56,7 +56,7 @@ line 28: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 30: SetAssignmentStatement
+line 34: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -85,7 +85,7 @@ line 30: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 35: SetAssignmentStatement
+line 39: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -100,54 +100,6 @@ line 35: SetAssignmentStatement
         - IsDefault = True
     ]
   - Assignments[1] = Assignment
-    - Targets = [
-      - Targets[0] = TargetVariable
-        - SqlVariable = HostVariable
-          - MainReference = SALARY
-          - IndicatorReference = <NULL>
-      - Targets[1] = TargetVariable
-        - SqlVariable = HostVariable
-          - MainReference = COMMISSION
-          - IndicatorReference = <NULL>
-    ]
-    - Values = [
-      - Values[0] = SourceValue
-        - Expression = SqlConstant
-          - LiteralValue = 50000
-        - IsDefault = <NULL>
-      - Values[1] = SourceValue
-        - Expression = SqlConstant
-          - LiteralValue = 8000
-        - IsDefault = <NULL>
-    ]
-]
-line 38: SetAssignmentStatement
-- Assignments = [
-  - Assignments[0] = Assignment
-    - Targets = [
-      - Targets[0] = TargetVariable
-        - SqlVariable = HostVariable
-          - MainReference = SALARY
-          - IndicatorReference = <NULL>
-      - Targets[1] = TargetVariable
-        - SqlVariable = HostVariable
-          - MainReference = COMMISSION
-          - IndicatorReference = <NULL>
-    ]
-    - Values = [
-      - Values[0] = SourceValue
-        - Expression = SqlConstant
-          - LiteralValue = 50000
-        - IsDefault = <NULL>
-      - Values[1] = SourceValue
-        - Expression = SqlConstant
-          - LiteralValue = 8000
-        - IsDefault = <NULL>
-    ]
-]
-line 40: SetAssignmentStatement
-- Assignments = [
-  - Assignments[0] = Assignment
     - Targets = [
       - Targets[0] = TargetVariable
         - SqlVariable = HostVariable
@@ -185,6 +137,54 @@ line 42: SetAssignmentStatement
     - Values = [
       - Values[0] = SourceValue
         - Expression = SqlConstant
+          - LiteralValue = 50000
+        - IsDefault = <NULL>
+      - Values[1] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 8000
+        - IsDefault = <NULL>
+    ]
+]
+line 44: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+      - Targets[1] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = COMMISSION
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 50000
+        - IsDefault = <NULL>
+      - Values[1] = SourceValue
+        - Expression = SqlConstant
+          - LiteralValue = 8000
+        - IsDefault = <NULL>
+    ]
+]
+line 46: SetAssignmentStatement
+- Assignments = [
+  - Assignments[0] = Assignment
+    - Targets = [
+      - Targets[0] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = SALARY
+          - IndicatorReference = <NULL>
+      - Targets[1] = TargetVariable
+        - SqlVariable = HostVariable
+          - MainReference = COMMISSION
+          - IndicatorReference = <NULL>
+    ]
+    - Values = [
+      - Values[0] = SourceValue
+        - Expression = SqlConstant
           - LiteralValue = <NULL>
         - IsDefault = <NULL>
       - Values[1] = SourceValue
@@ -193,7 +193,7 @@ line 42: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 48: SetAssignmentStatement
+line 52: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -230,7 +230,7 @@ line 48: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 51: SetAssignmentStatement
+line 55: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -246,7 +246,7 @@ line 51: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 53: SetAssignmentStatement
+line 57: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -266,7 +266,7 @@ line 53: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 59: SetAssignmentStatement
+line 63: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -289,7 +289,7 @@ line 59: SetAssignmentStatement
         - IsDefault = True
     ]
 ]
-line 65: SetAssignmentStatement
+line 69: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -305,7 +305,7 @@ line 65: SetAssignmentStatement
     - Values = [
     ]
 ]
-line 71: SetAssignmentStatement
+line 75: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
@@ -363,10 +363,10 @@ line 71: SetAssignmentStatement
         - IsDefault = <NULL>
     ]
 ]
-line 75: SetAssignmentStatement
+line 79: SetAssignmentStatement
 - Assignments = [
 ]
-line 77: SetAssignmentStatement
+line 81: SetAssignmentStatement
 - Assignments = [
   - Assignments[0] = Assignment
     - Targets = [
