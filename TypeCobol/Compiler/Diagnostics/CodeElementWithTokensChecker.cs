@@ -31,7 +31,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             void AddError(string codeElementName)
-                => DiagnosticUtils.AddError(codeElement, $"Syntax not supported: '{codeElementName}' has been found inside COPY.", MessageCode.Warning);
+                => DiagnosticUtils.AddError(codeElement, $"Syntax not supported: '{codeElementName}' has been found inside COPY.");
         }
     }
 }
