@@ -1,0 +1,24 @@
+--- Nodes ---
+?
+  MyPGM
+    environment-division
+      input-output
+        file-control
+          file-control
+    data-division
+      file
+        F-SOR003
+          Group1
+            Var1
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [32,39:F-SOR003]<UserDefinedWord>
+
+        [[MoveStatement]] [12,15:move]<MOVE> --> [24,31:F-SOR003]<UserDefinedWord>
+
+        [[WriteStatement]] [12,16:write]<WRITE> --> [28,35:F-SOR003]<UserDefinedWord>
+
+        [[CallStatement]] [12,15:call]<CALL> --> [29,36:F-SOR003]<UserDefinedWord>
+
+        end
+    end

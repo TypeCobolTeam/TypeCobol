@@ -1527,6 +1527,8 @@ fileNameDefinition: UserDefinedWord;
 
 fileNameReference: UserDefinedWord;
 
+fileNameReferenceAndDataNameDefinition: UserDefinedWord;
+
 // p120: XML-SCHEMA xml-schema-name-1 IS
 // xml-schema-name-1 can be referenced only in an XML PARSE statement.
 // The xml-schema-name in the XML SCHEMA clause can be a DBCS

@@ -11,9 +11,8 @@
           file-control
     data-division
       file
-        [[FileDescriptionEntry]] [2,3:FD]<FD> --> [29,30:. ]<PeriodSeparator>
-
-        FIC-APPEL
+        FAPPEL
+          FIC-APPEL
       working-storage
         MyData
           MyData-val1
