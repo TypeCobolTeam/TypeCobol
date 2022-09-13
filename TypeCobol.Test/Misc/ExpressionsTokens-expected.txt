@@ -3,15 +3,15 @@ Line 28: X equal Z
 Line 32: X not =  Z
 Line 36: X not equal Z
 Line 40: X <  Y
-Line 44: X less Y
+Line 44: X lessthan Y
 Line 48: X >  Y
-Line 52: X greater Y
+Line 52: X greaterthan Y
 Line 56: X <=  Y
-Line 60: X less Y
-Line 64: X not greater Y
+Line 60: X lessthanorequalto Y
+Line 64: X not greaterthan Y
 Line 68: X >=  Y
-Line 72: X greater Y
-Line 76: X not less Y
+Line 72: X greaterthanorequalto Y
+Line 76: X not lessthan Y
 Line 81: X =  Z AND X =  Y
 Line 85: X =  Z OR X =  Y
 Line 89: NOT X =  Z

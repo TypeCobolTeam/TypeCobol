@@ -3,7 +3,6 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
-using System.Diagnostics;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
@@ -839,49 +838,52 @@ namespace TypeCobol.Compiler.Parser
 		internal RelationalOperator CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
         {
             var notToken = context.NOT() == null ? null : ParseTreeUtils.GetFirstToken(context.NOT());
+            IList<Token> operatorTokens;
 
             if (context.strictRelation() != null)
 			{
                 CodeElementsParser.StrictRelationContext strictContext = context.strictRelation();
+                operatorTokens = ParseTreeUtils.GetTokensList(strictContext);
+
 				if(strictContext.GREATER() != null)
 				{
-					return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, ParseTreeUtils.GetFirstToken(strictContext.GREATER())),
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, new TokensGroup(TokenType.GREATER, operatorTokens)),
                         notToken
                         );
 				}
 				else if (strictContext.GreaterThanOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, ParseTreeUtils.GetFirstToken(strictContext.GreaterThanOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, new TokensGroup(TokenType.GreaterThanOperator, operatorTokens)),
                         notToken
                     );
                 }
 				else if (strictContext.LESS() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, ParseTreeUtils.GetFirstToken(strictContext.LESS())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, new TokensGroup(TokenType.LESS, operatorTokens)),
                         notToken
                     );
                 }
 				else if (strictContext.LessThanOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, ParseTreeUtils.GetFirstToken(strictContext.LessThanOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, new TokensGroup(TokenType.LessThanOperator, operatorTokens)),
                         notToken
                     );
                 }
 				else if (strictContext.EQUAL() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, ParseTreeUtils.GetFirstToken(strictContext.EQUAL())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, new TokensGroup(TokenType.EQUAL, operatorTokens)),
                         notToken
                     );
                 }
 				else // if (strictContext.EqualOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, ParseTreeUtils.GetFirstToken(strictContext.EqualOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, new TokensGroup(TokenType.EqualOperator, operatorTokens)),
                         notToken
                     );
                 }
@@ -889,31 +891,33 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				CodeElementsParser.SimpleRelationContext simpleContext = context.simpleRelation();
+                operatorTokens = ParseTreeUtils.GetTokensList(simpleContext);
+
 				if (simpleContext.GREATER() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.GREATER())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, new TokensGroup(TokenType.GREATER, operatorTokens)),
                         notToken
                     );
                 }
 				else if (simpleContext.GreaterThanOrEqualOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.GreaterThanOrEqualOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, new TokensGroup(TokenType.GreaterThanOrEqualOperator, operatorTokens)),
                         notToken
                     );
                 }
 				if (simpleContext.LESS() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.LESS())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, new TokensGroup(TokenType.LESS, operatorTokens)),
                         notToken
                     );
                 }
 				else // if (simpleContext.LessThanOrEqualOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.LessThanOrEqualOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, new TokensGroup(TokenType.LessThanOrEqualOperator, operatorTokens)),
                         notToken
                     );
                 }
