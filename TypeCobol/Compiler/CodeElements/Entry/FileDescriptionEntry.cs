@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Provides information about the physical structure and identification of a file 
     /// </summary>
-    public class FileDescriptionEntry : CodeElement, INamedCodeElement
+    public class FileDescriptionEntry : DataDefinitionEntry
     {
         public FileDescriptionEntry() : base(CodeElementType.FileDescriptionEntry)
         { }
@@ -24,8 +24,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolReference FileName { get; set; }
 
-        public string Name => FileName?.Name;
-
         /// <summary>
         /// The EXTERNAL clause specifies that a file connector is external, and permits
         /// communication between two programs by the sharing of files.
@@ -36,7 +34,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// descriptions of the file are always to the same file. In a run unit, there is only one
         /// representative of an external file.
         /// </summary>
-        public SyntaxProperty<bool> IsExternal { get; set; }
+        public SyntaxProperty<bool> External { get; set; }
+
+        public bool IsExternal => External != null && External.Value;
 
         /// <summary>
         /// The GLOBAL clause specifies that the file connector named by a file-name is a
@@ -51,7 +51,9 @@ namespace TypeCobol.Compiler.CodeElements
         ///   containing program or in any program that directly or indirectly contains the
         ///   containing program.
         /// </summary>
-        public SyntaxProperty<bool> IsGlobal { get; set; }
+        public SyntaxProperty<bool> Global { get; set; }
+
+        public bool IsGlobal => Global != null && Global.Value;
 
         /// <summary>
         /// The BLOCK CONTAINS clause specifies the size of the physical records.
@@ -130,7 +132,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// - If data-name-1 is specified, by the content of the data item referenced by
         ///   data-name-1
         /// - If data-name-1 is not specified, by the value that would have been moved into
-        // /  the data item referenced by data-name-1 had data-name-1 been specified
+        ///  the data item referenced by data-name-1 had data-name-1 been specified
         /// </summary>
         public SymbolReference RecordSizeDependingOn { get; set; }
 

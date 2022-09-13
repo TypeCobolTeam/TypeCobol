@@ -4,13 +4,11 @@
   VARTYPEXT
     data-division
       file
-        [[FileDescriptionEntry]] [8,9:FD]<FD> --> [22,23:. ]<PeriodSeparator>
-
-        PRINT-REC
-        DUMMY-RECORD
-        [[FileDescriptionEntry]] [8,9:FD]<FD> --> [28,29:. ]<PeriodSeparator>
-
-        TEST-REC
+        PRINT-FILE
+          PRINT-REC
+          DUMMY-RECORD
+        TEST-FILE
+          TEST-REC
       working-storage
         sqlcode
         [[ExecStatement]] [10,13:EXEC]<EXEC> --> [15,17:SQL]<ExecTranslatorName>

@@ -28,9 +28,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void Exit(Node node);
 
         /// <summary>
-        /// Tracks level-01 data definitions.
+        /// Tracks top-level data definitions.
+        /// Usually level 01 (or 77) data definitions but can also be a file description node.
         /// </summary>
-        /// <param name="level1Node">Level-01 data definition node.</param>
-        void OnLevel1Definition(DataDefinition level1Node);
+        /// <param name="topLevelDataDefinition">Top level data definition node.</param>
+        void OnTopLevelDataDefinition(DataDefinition topLevelDataDefinition);
     }
 }
