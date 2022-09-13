@@ -493,13 +493,9 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    // --- Temporary base classes for data definition code elements ---
-
-    public abstract class NamedCodeElement : CodeElement
+    public interface INamedCodeElement
     {
-        protected NamedCodeElement(CodeElementType type) : base(type) { }
-
-        public abstract string Name { get; }
+        string Name { get; }
     }
 
     public interface ITypedCodeElement
