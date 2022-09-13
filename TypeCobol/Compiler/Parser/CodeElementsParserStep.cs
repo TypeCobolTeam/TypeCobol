@@ -3,7 +3,6 @@ using Antlr4.Runtime.Tree;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
@@ -340,6 +339,12 @@ namespace TypeCobol.Compiler.Parser
                                     //Incompatible with TC Codegen, create an error
                                     DiagnosticUtils.AddError(codeElement, null, MessageCode.TypeCobolParserLimitation);
                                 }
+                            }
+
+                            //Should also be in a checker, however IsInsideCopy requires tokens to be set (just like IsAcrossSourceFile)
+                            if (codeElement.IsInsideCopy())
+                            {
+                                CodeElementWithTokensChecker.CheckIsScanStateAlteringCodeElement(codeElement);
                             }
 
                             //Report diagnostics if some incomplete CE have been encountered previously
