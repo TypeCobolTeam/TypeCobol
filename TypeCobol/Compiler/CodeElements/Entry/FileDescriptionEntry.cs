@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, 
         /// and must be unique within this program.
         /// </summary>
-        public SymbolDefinition FileName => DataName;
+        public SymbolReference FileName { get; set; }
 
         /// <summary>
         /// The EXTERNAL clause specifies that a file connector is external, and permits

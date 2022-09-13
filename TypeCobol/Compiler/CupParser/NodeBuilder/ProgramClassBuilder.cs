@@ -410,7 +410,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             var currentProg = CurrentProgram;
             if (currentProg.FileConnectors == null)
             {
-                currentProg.FileConnectors = new Dictionary<SymbolReference, FileControlEntry>();
+                currentProg.FileConnectors = new Dictionary<SymbolDefinition, FileControlEntry>();
             }
 
             if (entry.FileName != null)

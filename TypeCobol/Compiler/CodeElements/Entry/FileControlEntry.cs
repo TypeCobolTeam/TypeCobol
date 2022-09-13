@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must be identified by an FD or SD entry in the DATA DIVISION.
         /// </summary>
         [CanBeNull]
-        public SymbolReference FileName { get; set; }
+        public SymbolDefinition FileName { get; set; }
 
         public string Name => FileName?.Name;
 

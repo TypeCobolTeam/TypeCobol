@@ -96,7 +96,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// an external data set, and specifies file organization, access mode, and other
         /// information.
         /// </summary>
-        public IDictionary<SymbolReference, FileControlEntry> FileConnectors { get; set; }
+        public IDictionary<SymbolDefinition, FileControlEntry> FileConnectors { get; set; }
 
         /// <summary>
         /// The I-O-CONTROL paragraph specifies when checkpoints are to be taken 
