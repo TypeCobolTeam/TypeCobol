@@ -734,9 +734,9 @@ fileDescriptionEntries ::=
 
 fileDescriptionEntry ::= 
 	FileDescriptionEntry:fde 
-	{: my_parser.Builder.StartFileDescriptionEntry(fde); my_parser.Builder.EndFileDescriptionEntry(); :}
+	{: my_parser.Builder.StartFileDescriptionEntry(fde); :}
 	dataDefinitionEntries
-	{:  :}
+	{: my_parser.Builder.EndFileDescriptionEntry(); :}
 	;
 
 workingStorageSection ::= /*empty*/

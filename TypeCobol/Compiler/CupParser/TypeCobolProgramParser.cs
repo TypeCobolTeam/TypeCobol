@@ -4859,7 +4859,7 @@ public class CUP_TypeCobolProgramParser_actions {
               if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
                 RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
 		TypeCobol.Compiler.CodeElements.FileDescriptionEntry fde = (TypeCobol.Compiler.CodeElements.FileDescriptionEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
-		  
+		 my_parser.Builder.EndFileDescriptionEntry(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(51/*fileDescriptionEntry*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -4869,7 +4869,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.FileDescriptionEntry fde = (TypeCobol.Compiler.CodeElements.FileDescriptionEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
- my_parser.Builder.StartFileDescriptionEntry(fde); my_parser.Builder.EndFileDescriptionEntry(); 
+ my_parser.Builder.StartFileDescriptionEntry(fde); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(186/*NT$7*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
