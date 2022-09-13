@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Provides information about the physical structure and identification of a file 
     /// </summary>
-    public class FileDescriptionEntry : CodeElement, INamedCodeElement
+    public class FileDescriptionEntry : DataDefinitionEntry
     {
         public FileDescriptionEntry() : base(CodeElementType.FileDescriptionEntry)
         { }
@@ -23,8 +23,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// and must be unique within this program.
         /// </summary>
         public SymbolDefinition FileName => DataName;
-
-        public string Name => DataName?.Name;
 
         /// <summary>
         /// The EXTERNAL clause specifies that a file connector is external, and permits
