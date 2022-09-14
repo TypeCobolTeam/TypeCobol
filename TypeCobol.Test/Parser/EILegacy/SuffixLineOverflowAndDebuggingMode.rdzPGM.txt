@@ -11,6 +11,8 @@ Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 58 : Warn
 Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 61 : Warning: 'CCCDDD-ErrorCode-ErrorMsg1' could not be suffixed because line ends at column 72.
 Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 63 : Warning: 'CCCDDD-ErrorCode-ErrorMsg2' could not be suffixed because line ends at column 72.
 Line 9[19,32] <37, Warning, General> - Error in copy 'YCCCDDD' at line 72 : Warning: 'CCCDDD-Var20' could not be suffixed because line ends at column 72.
+Line 9[19,32] <27, Error, Syntax> - Error in copy 'YCCCDDD' at line 27 : Syntax error : The COBOL word 'CCCDDDZ-a9012345678901234567890' contains 31 characters which is more than the allowed maximum of 30 characters.
+Line 9[19,32] <27, Error, Syntax> - Error in copy 'YCCCDDD' at line 69 : Syntax error : The COBOL word 'CCCDDDZ-a9012345678901234567890' contains 31 characters which is more than the allowed maximum of 30 characters.
 Line 13[24,29] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CCCDDD 
 Symbols found: MyPGM::CCCDDD | MyPGM::CCCDDD OffendingSymbol=[24,29:CCCDDD]<UserDefinedWord>
 
