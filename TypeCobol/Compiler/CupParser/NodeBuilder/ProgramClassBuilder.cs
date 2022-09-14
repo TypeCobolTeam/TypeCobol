@@ -914,7 +914,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         public virtual void CheckStartSentenceLastStatement()
         {
-            if (LastEnteredNode != null)
+            if (LastEnteredNode is Statement)
             {
                 Node parent = LastEnteredNode.Parent;
                 if (parent is Paragraph || parent is ProcedureDivision)
