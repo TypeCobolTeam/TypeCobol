@@ -72,6 +72,7 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
+  Z-SORT-1:?
   Z-SD-1-1-RECORD:Alphanumeric
   Z-SD-1-1-KEY:Numeric
   Level1:Alphanumeric
@@ -92,7 +93,7 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
   SEC07
   SEC07
 -- PARAGRAPHS --
-  TEST-PERFORM-PROCEDURE-DIVISION
+  TEST-PERFORM-PROCDIV
   PAR01
   PAR01
   PAR01

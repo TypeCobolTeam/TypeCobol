@@ -79,12 +79,12 @@ namespace TypeCobol.Compiler.Directives
         public CompilerDirectiveType Type { get; }
 
         /// <summary>
-        /// List of errors found when parsing this CompilerDirective
+        /// List of errors found when parsing this CompilerDirective during Preprocessor step.
         /// </summary>
         public IList<Diagnostic> ParsingDiagnostics { get; private set; }
 
         /// <summary>
-        /// List of errors found when processing this CompilerDirective
+        /// List of errors found when processing this CompilerDirective during CodeElement step.
         /// </summary>
         public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace TypeCobol.Compiler.CodeElements {
 
-    public class ProgramIdentification : CodeElement
+    public class ProgramIdentification : CodeElement, INamedCodeElement
     {
         public ProgramIdentification() : base(CodeElementType.ProgramIdentification) { }
 
@@ -27,6 +27,8 @@
         /// must have unique program-names within that separately compiled program.
         /// </summary>
         public SymbolDefinition ProgramName { get; set; }
+
+        public string Name => ProgramName?.Name;
 
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
