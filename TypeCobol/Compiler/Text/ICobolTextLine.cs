@@ -8,6 +8,11 @@ namespace TypeCobol.Compiler.Text
     public interface ICobolTextLine : ITextLine
     {
         /// <summary>
+        /// Columns format
+        /// </summary>
+        ColumnsLayout ColumnsLayout { get; }
+
+        /// <summary>
         /// Cobol text line type : Source, Debug, Comment or Continuation
         /// </summary>
         CobolTextLineType Type { get; }

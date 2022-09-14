@@ -455,6 +455,18 @@ namespace TypeCobol.Compiler
                 AddScannerDiagnostics(codeElementsLine, diagnostics);
                 AddPreprocessorDiagnostics(codeElementsLine, diagnostics);
 
+                //CompilerDirective processing diagnostics (compiler directives are parsed during Preprocessor step and processed during CodeElement step)
+                if (codeElementsLine.HasCompilerDirectives)
+                {
+                    foreach (var token in codeElementsLine.TokensWithCompilerDirectives)
+                    {
+                        if (token is CompilerDirectiveToken compilerDirectiveToken && compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics != null)
+                        {
+                            diagnostics.AddRange(compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics);
+                        }
+                    }
+                }
+
                 //CodeElement parsing diagnostics
                 if (codeElementsLine.ParserDiagnostics != null)
                 {
