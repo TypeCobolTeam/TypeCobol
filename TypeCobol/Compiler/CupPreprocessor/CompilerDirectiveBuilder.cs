@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             {
                 Token errorToken = optionToken;
                 Diagnostic diag = new Diagnostic(MessageCode.InvalidControlCblCompilerStatementOption, errorToken.Position(), option);
-                CompilerDirective.AddDiagnostic(diag);
+                CompilerDirective.AddParsingDiagnostic(diag);
             }
         }
 
@@ -127,7 +127,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             if (suppress != null)
             {
                 Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Position(), "\"COPY SUPPRESS\" should not be used");
-                CompilerDirective.AddDiagnostic(error);
+                CompilerDirective.AddParsingDiagnostic(error);
             }
 
             // REPLACING
@@ -151,7 +151,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         if (!bReported)
                         {
                             Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Position(), "\"REPLACE\" Empty Comparison Pseudo Text.");
-                            CompilerDirective.AddDiagnostic(error);
+                            CompilerDirective.AddParsingDiagnostic(error);
                             bReported = true;
                         }
                     }
@@ -274,7 +274,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                     {
                         Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
                             "Invalid range format");
-                        CompilerDirective.AddDiagnostic(error);
+                        CompilerDirective.AddParsingDiagnostic(error);
                     }
                     else
                     {
@@ -304,7 +304,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 {
                     Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
                         $"Unexpected token: ${token} of type ${token.TokenType}");
-                    CompilerDirective.AddDiagnostic(error);
+                    CompilerDirective.AddParsingDiagnostic(error);
                 }
 
                 void AddInvalidIntegerDiagnostic(string invalidInteger)
@@ -320,7 +320,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                     }
 
                     Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), errorMessage);
-                    CompilerDirective.AddDiagnostic(error);
+                    CompilerDirective.AddParsingDiagnostic(error);
                 }
             }
         }
@@ -370,7 +370,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             {
                 Token errorToken = sequenceNumber;
                 Diagnostic error = new Diagnostic(MessageCode.InvalidNumericLiteralFormat, errorToken.Position());
-                CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
+                CompilerDirective.AddParsingDiagnostic(error);//TODO proper diagnostic error
             }
         }
 

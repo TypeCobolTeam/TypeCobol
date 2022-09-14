@@ -30,9 +30,9 @@ namespace TypeCobol.Compiler
 
         protected static void AddPreprocessorDiagnostics(IProcessedTokensLine processedTokensLine, List<Diagnostic> diagnostics)
         {
-            if (processedTokensLine.CompilerListingControlDirective?.Diagnostics != null)
+            if (processedTokensLine.CompilerListingControlDirective?.ParsingDiagnostics != null)
             {
-                diagnostics.AddRange(processedTokensLine.CompilerListingControlDirective.Diagnostics);
+                diagnostics.AddRange(processedTokensLine.CompilerListingControlDirective.ParsingDiagnostics);
             }
 
             if (processedTokensLine.PreprocessorDiagnostics != null)
