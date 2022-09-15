@@ -104,7 +104,14 @@ namespace TypeCobol.Logging
                 string text;
                 if (node.CodeElement != null)
                 {
-                    text = node.CodeElement.SourceText;
+                    try
+                    {
+                        text = node.CodeElement.SourceText;
+                    }
+                    catch (Exception e)
+                    {
+                        text = $"Could not dump CodeElement: {e.Message}";
+                    }
                 }
                 else
                 {
