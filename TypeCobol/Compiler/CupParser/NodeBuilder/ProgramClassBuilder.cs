@@ -270,14 +270,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 #region Temporary debug code for #2319
 
-                if (CurrentNode != CurrentProgram)
+                while (CurrentNode != CurrentProgram)
                 {
                     // This is abnormal, re-synchronize builder with CUP parser
-                    while (CurrentNode != CurrentProgram)
-                    {
-                        Exit();
-                    }
-
+                    Exit();
                     LogErrorIncludingFullSourceCode($"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.");
                 }
 
@@ -903,11 +899,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             #region Temporary debug code for #2185
 
-            if (CurrentNode is Sentence)
+            while (!IsValidParagraphParent())
             {
                 // Invalid AST
                 Exit();
                 LogErrorIncludingFullSourceCode($"Invalid parent for paragraph '{header.Name}'.");
+            }
+
+            bool IsValidParagraphParent()
+            {
+                var parentType = CurrentNode.CodeElement?.Type;
+                return parentType == CodeElementType.ProcedureDivisionHeader || parentType == CodeElementType.SectionHeader;
             }
 
             #endregion
