@@ -33,16 +33,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 foreach (var codeElement in codeElementsLine.CodeElements)
                 {
                     codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
-                    string sourceText;
-                    try
-                    {
-                        sourceText = codeElement.SourceText;
-                    }
-                    catch (Exception e)
-                    {
-                        sourceText = $"Could not dump CodeElement: {e.Message}";
-                    }
-                    sourceCode.AppendLine(sourceText);
+                    sourceCode.AppendLine(codeElement.SafeGetSourceText());
                 }
             }
 
