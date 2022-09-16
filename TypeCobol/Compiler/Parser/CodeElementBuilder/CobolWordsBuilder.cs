@@ -823,6 +823,20 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolReference(context.UserDefinedWord(), SymbolType.FileName);
         }
 
+        [CanBeNull]
+        internal SymbolReference CreateFileNameReference([CanBeNull] CodeElementsParser.FileNameReferenceAndDataNameDefinitionContext context)
+        {
+            if (context == null) return null;
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.FileName);
+        }
+
+        [CanBeNull]
+        internal SymbolDefinition CreateDataNameDefinition([CanBeNull] CodeElementsParser.FileNameReferenceAndDataNameDefinitionContext context)
+        {
+            if (context == null) return null;
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.DataName);
+        }
+
         internal SymbolDefinition CreateXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
         {
             return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.XmlSchemaName);

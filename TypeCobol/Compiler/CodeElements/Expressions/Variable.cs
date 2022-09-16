@@ -47,8 +47,7 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
-                && this.ContinueVisitToChildren(astVisitor, StorageArea)
-                && this.ContinueVisitToChildren(astVisitor, MainSymbolReference);
+                && this.ContinueVisitToChildren(astVisitor, StorageArea);
         }
     }
 
@@ -159,8 +158,7 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
-                && this.ContinueVisitToChildren(astVisitor, SymbolReference)
-                && this.ContinueVisitToChildren(astVisitor, MainSymbolReference);
+                && this.ContinueVisitToChildren(astVisitor, SymbolReference);
         }
     }
 

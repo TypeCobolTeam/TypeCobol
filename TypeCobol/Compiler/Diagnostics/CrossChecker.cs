@@ -861,6 +861,27 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Exec exec)
+        {
+            // EXEC SQL and all its children must be in same source file
+            string execTranslatorName = exec.CodeElement.ExecTranslatorName?.Name;
+            if (string.Equals(execTranslatorName, "SQL", StringComparison.OrdinalIgnoreCase) && exec.ChildrenCount > 0)
+            {
+                var referenceCopyDirective = exec.CodeElement.FirstCopyDirective;
+                foreach (var execChild in exec.Children)
+                {
+                    var copyDirective = execChild.CodeElement?.FirstCopyDirective;
+                    if (referenceCopyDirective != copyDirective)
+                    {
+                        DiagnosticUtils.AddError(exec, "Syntax not supported: when embedding SQL statements, EXEC SQL and all its content (including END-EXEC) must be in the same source file.");
+                        break; //Stop on first error, avoid reporting error for every child
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)

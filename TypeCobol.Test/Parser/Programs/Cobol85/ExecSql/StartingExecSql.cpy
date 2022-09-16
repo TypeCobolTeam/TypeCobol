@@ -1,0 +1,2 @@
+           EXEC SQL
+             COMMIT

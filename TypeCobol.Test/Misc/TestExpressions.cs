@@ -2,8 +2,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Misc
@@ -149,15 +152,12 @@ namespace TypeCobol.Test.Misc
             }
         }
 
-
-
         /// <summary>
-        /// Issue #1939, check the Expression trees
+        /// Load and parse Parser/Programs/Cobol85/Expressions.rdz.cbl
+        /// and return all expressions found.
         /// </summary>
-        [TestMethod]
-        [TestCategory("Parsing")]
-        [TestProperty("Time", "fast")]
-        public void CheckExpressionTrees()
+        /// <returns>List of Expression instances.</returns>
+        private static List<Expression> ParseExpressionsReferenceFile()
         {
             var folder = Path.Combine("Parser", "Programs", "Cobol85");
             var fileName = "Expressions";
@@ -172,10 +172,21 @@ namespace TypeCobol.Test.Misc
             // Get all expressions
             var expCollector = new ExpressionCollector();
             root.AcceptASTVisitor(expCollector);
+            return expCollector.Expressions;
+        }
 
+        /// <summary>
+        /// Issue #1939, check the Expression trees
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckExpressionTrees()
+        {
             // Create the expression trees in a string
+            var expressions = ParseExpressionsReferenceFile();
             var strToString = new StringBuilder();
-            foreach (var expression in expCollector.Expressions)
+            foreach (var expression in expressions)
             {
                 strToString.AppendLine(ExpressionToTree(expression));
                 strToString.AppendLine("________________________________________");
@@ -224,6 +235,46 @@ namespace TypeCobol.Test.Misc
                 Expressions.Add(expression);
                 // False to avoid having children expressions
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Build expressions, collect tokens from them using visitor pattern and check result
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckExpressionTokens()
+        {
+            // Collect all expression tokens and dump in a string
+            var expressions = ParseExpressionsReferenceFile();
+            var strToString = new StringBuilder();
+            foreach (var expression in expressions)
+            {
+                var tokenCollector = new TokenCollector();
+                expression.AcceptASTVisitor(tokenCollector);
+                var tokens = tokenCollector.Tokens;
+
+                Assert.IsTrue(tokens.Count > 0);
+                int line = tokens[0].Line;
+                string tokensText = $"Line {line}: {string.Join(" ", tokens.Select(t => t.Text))}";
+                strToString.AppendLine(tokensText);
+            }
+
+            var expectedPath = Path.ChangeExtension(Path.Combine("Misc", "ExpressionsTokens-expected"), "txt");
+            var expected = File.ReadAllText(expectedPath);
+            // ensure the string and the file are the same 
+            TestUtils.compareLines("CheckExpressionTokens", strToString.ToString(), expected, PlatformUtils.GetPathForProjectFile(expectedPath));
+        }
+
+        private class TokenCollector : AbstractAstVisitor
+        {
+            public readonly List<Token> Tokens = new List<Token>();
+
+            public override bool Visit(Token token)
+            {
+                Tokens.Add(token);
+                return true;
             }
         }
     }
