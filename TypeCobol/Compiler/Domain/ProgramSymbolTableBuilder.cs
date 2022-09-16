@@ -735,6 +735,12 @@ namespace TypeCobol.Compiler.Domain
                             sym = CreateConditionSymbol(dataDef, currentDomain, typedef);
                         }
                         break;
+                    case CodeElementType.FileDescriptionEntry:
+                        {
+                            //Assimilate a FileDescriptionEntry to a GroupSymbol
+                            sym = CreateGroupSymbol(dataDef, null, Type.UsageFormat.None, currentDomain, typedef);
+                        }
+                        break;
                 }
             }
 
@@ -854,6 +860,15 @@ namespace TypeCobol.Compiler.Domain
                         }
                     }
                         break;
+                    case CodeElementType.FileDescriptionEntry:
+                    {
+                        var fileDescriptionEntry = (FileDescriptionEntry)dataDef.CodeElement;
+                        if (fileDescriptionEntry.IsExternal)
+                            sym.SetFlag(Symbol.Flags.External, true);
+                        if (fileDescriptionEntry.IsGlobal)
+                            sym.SetFlag(Symbol.Flags.Global, true);
+                    }
+                        break;
                     default:
                         System.Diagnostics.Debug.Fail("Unsupported CodeElement type in DecorateSymbol !");
                         break;
@@ -862,17 +877,17 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Level1 Definition Tracker, This tracker is used to create all DataDefinition symbols.
+        /// Top-level Data Definition Tracker, this tracker is used to create all DataDefinition symbols.
         /// </summary>
-        /// <param name="level1Node">The level 1 definition node</param>
-        public override void OnLevel1Definition(DataDefinition level1Node)
+        /// <param name="topLevelDataDefinition">The top-level data definition node</param>
+        public override void OnTopLevelDataDefinition(DataDefinition topLevelDataDefinition)
         {
             if (CurrentDataDivisionSection != null)
             {
                 var sectionVariables = CurrentDataDivisionSection.Variables;
                 var sectionFlag = CurrentDataDivisionSection.Flag;
 
-                VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, sectionVariables, null);
+                VariableSymbol dataDefSym = DataDefinition2Symbol(topLevelDataDefinition, sectionVariables, null);
                 if (dataDefSym != null)
                 {
                     //TODO SemanticDomain: we must validate all RENAMES at a 01 Level definition

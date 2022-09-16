@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -8,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// program-name must be identical to a program-name declared in a preceding program-ID paragraph.
     /// An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
     /// </summary>
-    public class ProgramEnd : CodeElementEnd
+    public class ProgramEnd : CodeElementEnd, INamedCodeElement
     {
         public ProgramEnd() : base(CodeElementType.ProgramEnd)
         { }
@@ -19,6 +18,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// that identifies your program.
         /// </summary>
         public SymbolReference ProgramName { get; set; }
+
+        public string Name => ProgramName?.Name;
 
         /// <summary>
         /// Debug string

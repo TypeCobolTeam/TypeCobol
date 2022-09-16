@@ -168,11 +168,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.EndFileDescriptionEntry();
         }
 
-        public virtual void EndFileDescriptionEntryIfAny()
-        {
-            foreach (var listener in _listeners) listener.EndFileDescriptionEntryIfAny();
-        }
-
         public virtual void StartDataDescriptionEntry(DataDescriptionEntry entry)
         {
             foreach (var listener in _listeners) listener.StartDataDescriptionEntry(entry);
@@ -843,9 +838,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.Exit(node);
         }
 
-        public virtual void OnLevel1Definition(DataDefinition level1Node)
+        public virtual void OnTopLevelDataDefinition(DataDefinition topLevelDataDefinition)
         {
-            foreach (var listener in _listeners) listener.OnLevel1Definition(level1Node);
+            foreach (var listener in _listeners) listener.OnTopLevelDataDefinition(topLevelDataDefinition);
         }
 
         // FOR SQL

@@ -175,7 +175,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
-                && this.ContinueVisitToChildren(astVisitor, DataItem, CharacterClassNameReference, DataItemContentType, InvertResult);
+                && this.ContinueVisitToChildren(astVisitor, DataItem, InvertResult, CharacterClassNameReference, DataItemContentType);
         }
 
         public override string ToString() {
@@ -385,7 +385,7 @@ namespace TypeCobol.Compiler.CodeElements
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
-                && this.ContinueVisitToChildren(astVisitor, Operand, SignComparison, InvertResult);
+                && this.ContinueVisitToChildren(astVisitor, Operand, InvertResult, SignComparison);
         }
 
         public override string ToString() {

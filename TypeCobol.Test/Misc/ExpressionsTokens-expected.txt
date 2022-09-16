@@ -1,0 +1,48 @@
+Line 24: X =  Z
+Line 28: X equal Z
+Line 32: X not =  Z
+Line 36: X not equal Z
+Line 40: X <  Y
+Line 44: X lessthan Y
+Line 48: X >  Y
+Line 52: X greaterthan Y
+Line 56: X <=  Y
+Line 60: X lessthanorequalto Y
+Line 64: X not greaterthan Y
+Line 68: X >=  Y
+Line 72: X greaterthanorequalto Y
+Line 76: X not lessthan Y
+Line 81: X =  Z AND X =  Y
+Line 85: X =  Z OR X =  Y
+Line 89: NOT X =  Z
+Line 94: Y /  Z
+Line 96: Y -  Z
+Line 98: Y +  Z
+Line 100: Y *  Z
+Line 102: Y **  Z
+Line 104: -  Y
+Line 106: Z
+Line 114: X ZERO
+Line 118: X POSITIVE
+Line 122: X NEGATIVE
+Line 126: X NOT ZERO
+Line 131: Var-txt NUMERIC
+Line 135: Var-txt ALPHABETIC
+Line 139: Var-txt ALPHABETIC-LOWER
+Line 143: Var-txt ALPHABETIC-UPPER
+Line 147: Var-DBCS DBCS
+Line 151: Var-DBCS KANJI
+Line 155: Var-txt MYCLASS
+Line 159: Var-txt NOT NUMERIC
+Line 164: GREEN
+Line 169: MYSWITCH-ON
+Line 174: X >  3 OR 5 <  X AND Y <  4 OR Y +  X not =  3 AND Y -  5 NOT LESS Z +  2 AND Y <=  X AND X not =  Y OR 9 >  Y AND X /  Z EQUAL 2 OR Y +  Y >  50 OR Y <  X -  30
+Line 183: X >  3 OR X >  4
+Line 188: X >  3 AND 5 <  Y OR 5 <  Y AND X >  3
+Line 193: X >  3 OR X >  3
+Line 198: X not =  Y OR Y not =  X
+Line 204: X >  3 OR X >  3
+Line 209: X >  3 OR X >  3
+Line 215: X not =  X
+Line 220: X not =  X
+Line 225: X not =  X
