@@ -18,6 +18,44 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// </summary>
     public class ProgramClassBuilder : IProgramClassBuilder
     {
+        private static bool _SourceCodeDumped;
+
+        private void LogErrorIncludingFullSourceCode(string message)
+        {
+            if (_SourceCodeDumped) return; //Dump only once to avoid huge logs
+
+            var codeElements = new StringBuilder();
+            var sourceCode = new StringBuilder();
+            foreach (var codeElementsLine in _codeElementsLines)
+            {
+                if (!codeElementsLine.HasCodeElements) continue;
+
+                foreach (var codeElement in codeElementsLine.CodeElements)
+                {
+                    codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
+                    string sourceText;
+                    try
+                    {
+                        sourceText = codeElement.SourceText;
+                    }
+                    catch (Exception e)
+                    {
+                        sourceText = $"Could not dump CodeElement: {e.Message}";
+                    }
+                    sourceCode.AppendLine(sourceText);
+                }
+            }
+
+            var contextData = new Dictionary<string, object>()
+                              {
+                                  { "codeElements", codeElements.ToString() },
+                                  { "sourceCode", sourceCode.ToString() }
+                              };
+            LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+
+            _SourceCodeDumped = true;
+        }
+
         public SyntaxTree SyntaxTree { get; set; }
 
         private TypeDefinition _CurrentTypeDefinition
@@ -230,34 +268,16 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             else
             {
-                if (CurrentNode != CurrentProgram)
+                #region Temporary debug code for #2319
+
+                while (CurrentNode != CurrentProgram)
                 {
                     // This is abnormal, re-synchronize builder with CUP parser
-                    while (CurrentNode != CurrentProgram)
-                    {
-                        Exit();
-                    }
-
-                    var codeElements = new StringBuilder();
-                    var sourceCode = new StringBuilder();
-                    foreach (var codeElementsLine in _codeElementsLines)
-                    {
-                        if (!codeElementsLine.HasCodeElements) continue;
-
-                        foreach (var codeElement in codeElementsLine.CodeElements)
-                        {
-                            codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
-                            sourceCode.AppendLine(codeElement.SourceText);
-                        }
-                    }
-
-                    var contextData = new Dictionary<string, object>()
-                                      {
-                                          { "codeElements", codeElements.ToString() },
-                                          { "sourceCode", sourceCode.ToString() }
-                                      };
-                    LoggingSystem.LogMessage(LogLevel.Error, $"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.", contextData);
+                    Exit();
+                    LogErrorIncludingFullSourceCode($"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.");
                 }
+
+                #endregion
 
                 // Nested
                 CurrentProgram = new NestedProgram(CurrentProgram, programIdentification);
@@ -877,6 +897,23 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartParagraph(ParagraphHeader header)
         {
+            #region Temporary debug code for #2185
+
+            while (!IsValidParagraphParent())
+            {
+                // Invalid AST
+                Exit();
+                LogErrorIncludingFullSourceCode($"Invalid parent for paragraph '{header.Name}'.");
+            }
+
+            bool IsValidParagraphParent()
+            {
+                var parentType = CurrentNode.CodeElement?.Type;
+                return parentType == CodeElementType.ProcedureDivisionHeader || parentType == CodeElementType.SectionHeader;
+            }
+
+            #endregion
+
             var paragraph = new Paragraph(header);
             Enter(paragraph, header);
             paragraph.SymbolTable.AddParagraph(paragraph);
@@ -914,7 +951,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         public virtual void CheckStartSentenceLastStatement()
         {
-            if (LastEnteredNode != null)
+            if (LastEnteredNode is Statement)
             {
                 Node parent = LastEnteredNode.Parent;
                 if (parent is Paragraph || parent is ProcedureDivision)
