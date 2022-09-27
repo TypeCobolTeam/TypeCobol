@@ -143,7 +143,7 @@ WORKING-STORAGE SECTION.
 *KO(Rule #10) USE-TYPE-GRP-STRONG-RED redefines a strongly typed variable
 *Little trick here: use a level 11 because we know that items under useTypeGrp2Strong are renumeroted
      11 USE-TYPE-GRP-STRONG-RED-2 redefines TYPE-GRP-STRONG-PART3.
-    15 USE-TYPE-GRP-STRONG-RED-2-PART1 PIC 9 Comp.
+    15 USE-TYPE-GRP-STRONG-RED-2-PART PIC 9 Comp.
 
 *OK
 01 GroupWithLevel77JustAfter typedef.

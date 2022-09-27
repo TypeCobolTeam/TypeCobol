@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Logging
@@ -104,7 +105,7 @@ namespace TypeCobol.Logging
                 string text;
                 if (node.CodeElement != null)
                 {
-                    text = node.CodeElement.SourceText;
+                    text = node.CodeElement.SafeGetSourceText();
                 }
                 else
                 {
@@ -134,5 +135,42 @@ namespace TypeCobol.Logging
                 return index < node.Parent.ChildrenCount - 1 ? node.Parent.Children[index + 1] : null;
             }
         }
+
+        #region Temporary debug code for #2332
+
+        internal static string SafeGetSourceText(this CodeElement codeElement)
+        {
+            if (codeElement == null) return NULL; // Should not happen
+
+            string result;
+            try
+            {
+                result = codeElement.SourceText;
+            }
+            catch (Exception exception)
+            {
+                // Trace exception and attempt to read tokens directly
+                var builder = new StringBuilder();
+                builder.Append($"Could not dump CodeElement: {exception.GetType().FullName} - {exception.Message}");
+                if (exception is ArgumentOutOfRangeException argumentOutOfRangeException)
+                {
+                    builder.Append($" - {argumentOutOfRangeException.ActualValue}");
+                }
+
+                builder.AppendLine();
+                foreach (var token in codeElement.ConsumedTokens)
+                {
+                    builder.Append('<');
+                    builder.Append(token.Text);
+                    builder.Append("> ");
+                }
+
+                result = builder.ToString();
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 }

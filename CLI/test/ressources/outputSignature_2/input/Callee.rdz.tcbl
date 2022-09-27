@@ -10,7 +10,7 @@
             COPY YPRTD20 REPLACING CHARACTERS 
                 BY i CHARACTERS BY j CHARACTERS BY k.
       
-       01 CopyInsideContainerInsideTypeDef TYPEDEF STRICT PUBLIC.
+       01 CopyUnderChildInsideTypeDef TYPEDEF STRICT PUBLIC.
             04 CONTAINER. COPY YCONVEA REPLACING 
             ==:Foo:==
            BY
@@ -22,12 +22,12 @@
                 05 DATA1 PIC X. 
                    COPY YCONVEA. COPY YPRTD20. 05 DATA2 PIC X.
             
-       01 ConventionalTypeDefInDependency TYPEDEF STRICT PRIVATE.
+       01 RegularTypeDefInDependency TYPEDEF STRICT PRIVATE.
             05 firstname PIC X(20).
             05 lastname PIC X(20).
             
-       01 MyCopyInsideContainerInsideTypeDef
-            TYPE CopyInsideContainerInsideTypeDef.
+       01 MyCopyUnderChildInsideTypeDef
+            TYPE CopyUnderChildInsideTypeDef.
        PROCEDURE DIVISION.
            CONTINUE.
        END PROGRAM Callee.

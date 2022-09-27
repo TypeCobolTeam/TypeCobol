@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
-        public virtual void OnLevel1Definition(DataDefinition level1Node)
+        public virtual void OnTopLevelDataDefinition(DataDefinition topLevelDataDefinition)
         {
 
         }
@@ -123,11 +123,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         }
 
         public virtual void EndFileDescriptionEntry()
-        {
-
-        }
-
-        public virtual void EndFileDescriptionEntryIfAny()
         {
 
         }

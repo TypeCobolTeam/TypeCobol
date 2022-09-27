@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.Parser
             CupParser.TypeCobolProgramParser parser = new CupParser.TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
             parser.ErrorReporter = diagReporter;
-            ProgramClassBuilder builder = new ProgramClassBuilder();
+            ProgramClassBuilder builder = new ProgramClassBuilder(codeElementsLines);
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 

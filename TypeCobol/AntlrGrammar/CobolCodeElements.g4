@@ -1744,7 +1744,7 @@ linkageSectionHeader:
 // levelIndicator : (FD | SD);
 
 fileDescriptionEntry: 
-    (FD | SD) fileNameReference 
+    (FD | SD) fileNameReferenceAndDataNameDefinition 
     (externalClause |
      globalClause |
      blockContainsClause |

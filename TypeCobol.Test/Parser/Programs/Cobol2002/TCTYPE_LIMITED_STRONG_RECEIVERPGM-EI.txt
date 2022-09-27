@@ -16,7 +16,9 @@ PROGRAM: StrongReceivers common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
+  FAPPEL:?
   FIC-APPEL:Alphanumeric
+  WorkFile:?
   WorkRec:Alphanumeric
   Temp:Alphanumeric
   myStrongInt:IntegerStrong

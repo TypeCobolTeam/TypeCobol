@@ -176,11 +176,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void EndFileDescriptionEntry();
 
         /// <summary>
-        /// End a File Description Entry if one is pending
-        /// </summary>
-        void EndFileDescriptionEntryIfAny();
-
-        /// <summary>
         /// Start DataDescriptionEntry
         /// </summary>
         /// <param name="entry">The DataDescriptionEntry code element</param>
