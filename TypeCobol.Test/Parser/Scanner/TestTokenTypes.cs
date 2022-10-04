@@ -337,7 +337,7 @@ namespace TypeCobol.Test.Parser.Scanner
                 "   SQL",
                 "  tout un tas de blabla",
                 "     bliblibli",
-                "   c'est la fin.END-EXEC ici.",
+                "   c est la fin.END-EXEC ici.",
                 " EXEC",
                 " SQL",
                 "INCLUDE YPPRCGF ",

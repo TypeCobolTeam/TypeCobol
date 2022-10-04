@@ -592,7 +592,8 @@ tokens
 	SQL_ALL,
 	SQL_ALLOCATE,
 	SQL_ALLOW,
-	SQL_ALTERAND,
+	SQL_ALTER,
+	SQL_AND,
 	SQL_ANY,
 	SQL_AS,
 	SQL_ARRAY,
@@ -792,6 +793,7 @@ tokens
 	SQL_REFERENCES,
 	SQL_REFRESH,
 	SQL_RESIGNAL,
+	SQL_RESTART,
 	SQL_RELEASE,
 	SQL_RENAME,
 	SQL_REPEAT,
@@ -879,7 +881,11 @@ tokens
 	SQL_XMLCAST,
 	SQL_YEAR,
 	SQL_YEARS,
-	SQL_ZONE
+	SQL_ZONE,
+	SQL_CommaSeparator,
+	SQL_DecimalFloatingPointLiteral,
+	SQL_BinaryStringLiteral,
+	SQL_GraphicStringLiteral
 }
 
 
@@ -3623,3 +3629,5 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // SQL-INIT-FLAG.
 
 // SQL_INIT_FLAG : 'SQL-INIT-FLAG';
+star: MultiplyOperator;
+dot: PeriodSeparator;

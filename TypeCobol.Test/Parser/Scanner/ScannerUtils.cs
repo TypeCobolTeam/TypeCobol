@@ -6,6 +6,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Sql.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Parser.Scanner
@@ -111,6 +112,42 @@ namespace TypeCobol.Test.Parser.Scanner
                 expectedResult = reader.ReadToEnd();
             }
             TestUtils.compareLines(testName, result, expectedResult, PlatformUtils.GetPathForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt"));
+        }
+
+        public static string ScanSqlLines(string[] lines, bool decimalPointIsComma)
+        {
+            //Initial scan state, variable is updated for each line to carry state from one line to the next
+            var scanState = new MultilineScanState(TextSourceInfo.EncodingForAlphanumericLiterals, decimalPointIsComma: decimalPointIsComma) { InsideSql = true };
+
+            var result = new StringBuilder();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                result.AppendLine("-- Line " + (i + 1) + " --");
+
+                //Create and initialize TokensLine
+                var line = lines[i];
+                var tokensLine = new TestTokensLine(line);
+                tokensLine.InitializeScanState(scanState);
+
+                //Scanner does not add tokens into TokensLine, so we collect them here
+                var sqlScanner = new SqlScanner(line, 0, line.Length - 1, tokensLine, CompilerOptions);
+                Token token;
+                while ((token = sqlScanner.GetNextToken()) != null)
+                {
+                    result.AppendLine(token.ToString());
+                }
+
+                //Add diagnostics if any
+                foreach (var scannerDiagnostic in tokensLine.ScannerDiagnostics)
+                {
+                    result.AppendLine(scannerDiagnostic.ToString());
+                }
+
+                //Update scan state for next line
+                scanState = tokensLine.ScanState;
+            }
+
+            return result.ToString();
         }
     }
 }
