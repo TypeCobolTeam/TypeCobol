@@ -40,7 +40,7 @@
 [46,47:E2]<UserDefinedWord>
 [49,51:10e]<UserDefinedWord>
 [52,53:+4]<IntegerLiteral>{4}
-[55,63:,55E+9847]<InvalidToken>{55|2>0.55E9847>Infinity}
+[55,63:,55E+9847]<InvalidToken>
 [65,68:,25e]<InvalidToken>
 Line 0[55,63] <18, Error, Tokens> - Invalid floating point numeric literal format : the exponent is represented by an E followed by an optional sign and one or two digits (E+99)
 Line 0[65,68] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03

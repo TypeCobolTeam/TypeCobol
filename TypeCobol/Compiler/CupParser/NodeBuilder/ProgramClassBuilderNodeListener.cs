@@ -837,5 +837,57 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnSelectStatement([NotNull] SelectStatement select)
+        {
+
+        }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+
+        }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+
+        }
+        public void OnSavepointStatement([NotNull] SavepointStatement truncate)
+        {
+
+        }
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
+        {
+
+        }
+        public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
+        {
+
+        }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+
+        }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+
+        }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+
+        }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+
+        }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+
+        }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
+        {
+
+        }
     }
 }

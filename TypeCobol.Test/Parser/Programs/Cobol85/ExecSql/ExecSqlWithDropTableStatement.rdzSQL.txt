@@ -1,0 +1,12 @@
+﻿--- Diagnostics ---
+Line 14[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting user defined word RuleStack=codeElement>dropTableStatement>tableOrAliasName>tableOrViewOrCorrelationName,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
+
+--- Sql Statements ---
+line 7: DropTableStatement
+- TableOrAliasName = r IN h IN nom
+line 10: DropTableStatement
+- TableOrAliasName = myTable
+line 13: DropTableStatement
+- TableOrAliasName = <NULL>
+line 16: DropTableStatement
+- TableOrAliasName = b IN a

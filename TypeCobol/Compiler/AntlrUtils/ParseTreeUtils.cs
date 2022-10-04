@@ -1,8 +1,6 @@
 ﻿using Antlr4.Runtime.Tree;
-using System;
 using TypeCobol.Compiler.Scanner;
 using System.Collections.Generic;
-using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
@@ -98,65 +96,5 @@ namespace TypeCobol.Compiler.AntlrUtils
             }
             return null;
         }
-
-        public static long? GetIntegerLiteral(IParseTree node)
-        {
-            if (node != null)
-            {
-                ITerminalNode terminalNode = GetFirstTerminalNode(node);
-                if (terminalNode != null)
-                {
-                    Token integerLiteralToken = GetTokenFromTerminalNode(terminalNode);
-                    if (integerLiteralToken.TokenType == TokenType.IntegerLiteral)
-                    {
-                        return ((IntegerLiteralTokenValue)integerLiteralToken.LiteralValue).Number;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public static double? GetNumericLiteral(IParseTree node)
-        {
-            if (node != null)
-            {
-                ITerminalNode terminalNode = GetFirstTerminalNode(node);
-                if (terminalNode != null)
-                {
-                    Token numericLiteralToken = GetTokenFromTerminalNode(terminalNode);
-                    if (numericLiteralToken.TokenType == TokenType.IntegerLiteral)
-                    {
-                        return ((IntegerLiteralTokenValue)numericLiteralToken.LiteralValue).Number;
-                    }
-                    else if (numericLiteralToken.TokenType == TokenType.DecimalLiteral)
-                    {
-                        return ((DecimalLiteralTokenValue)numericLiteralToken.LiteralValue).Number;
-                    }
-                    else if (numericLiteralToken.TokenType == TokenType.FloatingPointLiteral)
-                    {
-                        return ((FloatingPointLiteralTokenValue)numericLiteralToken.LiteralValue).Number;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public static string GetAlphanumericLiteral(IParseTree node)
-        {
-            if (node != null)
-            {
-                ITerminalNode terminalNode = GetFirstTerminalNode(node);
-                if (terminalNode != null)
-                {
-                    Token alphaNumericLiteralToken = GetTokenFromTerminalNode(terminalNode);
-                    if (alphaNumericLiteralToken.TokenFamily == TokenFamily.AlphanumericLiteral)
-                    {
-                        return ((AlphanumericLiteralTokenValue)alphaNumericLiteralToken.LiteralValue).Text;
-                    }
-                }
-            }
-            return null;
-        }
-
-	}
+    }
 }

@@ -1,0 +1,66 @@
+﻿--- Diagnostics ---
+Line 19[29,30] <27, Error, Syntax> - Syntax error : extraneous input 'TO' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[29,30:TO]<SQL_TO>
+
+--- Sql Statements ---
+line 7: ConnectStatement
+- Target = <NULL>
+- Authorization = <NULL>
+- Reset = <NULL>
+line 10: ConnectStatement
+- Target = <NULL>
+- Authorization = <NULL>
+- Reset = True
+line 13: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = EASTDB
+  - LocationNameVariable = <NULL>
+- Authorization = <NULL>
+- Reset = <NULL>
+line 16: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = <NULL>
+  - LocationNameVariable = HostVariable
+    - MainReference = LOC
+    - IndicatorReference = <NULL>
+- Authorization = ConnectionAuthorization
+  - UserName = HostVariable
+    - MainReference = AUTHID
+    - IndicatorReference = <NULL>
+  - Password = HostVariable
+    - MainReference = PASSWORD
+    - IndicatorReference = <NULL>
+- Reset = <NULL>
+line 19: ConnectStatement
+- Target = <NULL>
+- Authorization = <NULL>
+- Reset = True
+line 22: ConnectStatement
+- Target = <NULL>
+- Authorization = ConnectionAuthorization
+  - UserName = HostVariable
+    - MainReference = UserName
+    - IndicatorReference = <NULL>
+  - Password = HostVariable
+    - MainReference = UserPassword
+    - IndicatorReference = <NULL>
+- Reset = <NULL>
+line 25: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = <NULL>
+  - LocationNameVariable = HostVariable
+    - MainReference = LOC2
+    - IndicatorReference = <NULL>
+- Authorization = <NULL>
+- Reset = <NULL>
+line 28: ConnectStatement
+- Target = ConnectionTarget
+  - LocationNameLiteral = LOC3
+  - LocationNameVariable = <NULL>
+- Authorization = ConnectionAuthorization
+  - UserName = HostVariable
+    - MainReference = AUTHID3
+    - IndicatorReference = <NULL>
+  - Password = HostVariable
+    - MainReference = PASSWORD3
+    - IndicatorReference = <NULL>
+- Reset = <NULL>

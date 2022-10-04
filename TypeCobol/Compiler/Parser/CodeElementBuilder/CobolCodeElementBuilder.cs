@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Parser
 
         private bool IsDebuggingModeEnabled { get; set; }
         private ParserRuleContext Context;
-		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
+        /// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
 		private readonly CobolWordsBuilder _cobolWordsBuilder;
 		private readonly CobolExpressionsBuilder _cobolExpressionsBuilder;
@@ -2264,6 +2264,94 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateCommitStatement(context);
+        }
+
+        public override void EnterSelectStatement([NotNull] CodeElementsParser.SelectStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateSelectStatement(context);
+        }
+
+        public override void EnterRollbackStatement([NotNull] CodeElementsParser.RollbackStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateRollbackStatement(context);
+        }
+
+        public override void EnterTruncateStatement([NotNull] CodeElementsParser.TruncateStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateTruncateStatement(context);
+        }
+
+        public override void EnterWhenEverStatement([NotNull] CodeElementsParser.WhenEverStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateWhenEverStatement(context);
+        }
+        public override void EnterLockTableStatement([NotNull] CodeElementsParser.LockTableStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateLockTableStatement(context);
+        }
+
+        public override void EnterReleaseSavepointStatement([NotNull] CodeElementsParser.ReleaseSavepointStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateReleaseSavepointStatement(context);
+        }
+
+        public override void EnterSavepointStatement([NotNull] CodeElementsParser.SavepointStatementContext context)
+        {
+            Context = context;
+            var savepointStatement = _sqlCodeElementBuilder.CreateSavepointStatement(context);
+            CodeElement = savepointStatement;
+            SavepointStatementChecker.OnCodeElement(savepointStatement, context);
+        }
+
+        public override void EnterConnectStatement([NotNull] CodeElementsParser.ConnectStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateConnectStatement(context);
+        }
+
+        public override void EnterDropTableStatement([NotNull] CodeElementsParser.DropTableStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateDropTableStatement(context);
+        }
+
+        public override void EnterSetAssignmentStatement(
+            [NotNull] CodeElementsParser.SetAssignmentStatementContext context)
+        {
+            Context = context;
+            var statement = _sqlCodeElementBuilder.CreateSetAssignmentStatement(context);
+            CodeElement = statement;
+            SetAssignmentStatementChecker.OnCodeElement(statement, context);
+        }
+
+        public override void EnterGetDiagnosticsStatement(
+            [NotNull] CodeElementsParser.GetDiagnosticsStatementContext context)
+        {
+            Context = context;
+            var statement = _sqlCodeElementBuilder.CreateGetDiagnosticsStatement(context);
+            CodeElement = statement;
+            GetDiagnosticsStatementChecker.OnCodeElement(statement, context);
+        }
+
+        public override void EnterAlterSequenceStatement(
+            [NotNull] CodeElementsParser.AlterSequenceStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateAlterSequenceStatement(context);
+        }
+
+        public override void EnterExecuteImmediateStatement([NotNull] CodeElementsParser.ExecuteImmediateStatementContext context)
+        {
+            Context = context;
+            var executeImmediateStatement = _sqlCodeElementBuilder.CreateExecuteImmediateStatement(context);
+            CodeElement = executeImmediateStatement;
+            ExecuteImmediateStatementChecker.OnCodeElement(executeImmediateStatement, context);
         }
     }
 }

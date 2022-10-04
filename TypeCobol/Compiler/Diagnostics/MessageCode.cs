@@ -55,6 +55,12 @@ namespace TypeCobol.Compiler.Diagnostics
         Info = 45,
         AnalyzerFailure = 46,
         //MessageCode number 47 is reserved for violations coming from a Quality analyzer, it has no corresponding DiagnosticMessage object.
-        UnsupportedLanguageFeature = 48
+        UnsupportedLanguageFeature = 48,
+        //For SQL
+        InvalidNumberOfCharsInBinaryStringLiteral = 49,
+        InvalidNumberOfCharsInGraphicStringLiteral = 50,
+        InvalidExponentInDecimalFloatingPointLiteral=51,
+        InvalidMantissaInDecimalFloatingPointLiteral=52
+
     }
 }
