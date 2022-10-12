@@ -28,11 +28,9 @@ namespace TypeCobol.Compiler.Scanner
         /// Factory method used by the parser when it inserts a missing token
         /// in the tokens stream to recover from the error and continue
         /// </summary>
-        internal static TokensLine CreateVirtualLineForInsertedToken(int lineIndex, string text)
+        internal static TokensLine CreateVirtualLineForInsertedToken(int lineIndex, string text, ColumnsLayout layout)
         {
-            return new TokensLine(
-                new TextLineSnapshot(lineIndex, text, null),
-                ColumnsLayout.FreeTextFormat);
+            return new TokensLine(new TextLineSnapshot(lineIndex, text, null), layout);
         }
         
         // Cache last index of a source char on this line
