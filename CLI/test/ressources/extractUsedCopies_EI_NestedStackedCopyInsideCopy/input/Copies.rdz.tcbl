@@ -1,0 +1,54 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainPgm.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY YCOPY01.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedInMain.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY YCOPY03.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedInNestedInMain.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY YCOPY05.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM NestedInNestedInMain.
+       END PROGRAM NestedInMain.
+       END PROGRAM MainPgm.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. StackedPgm.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY YCOPY07.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedInStacked.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY YCOPY09.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedInNestedInStacked.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY YCOPY11.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM NestedInNestedInStacked.
+       END PROGRAM NestedInStacked.
+       END PROGRAM StackedPgm.
