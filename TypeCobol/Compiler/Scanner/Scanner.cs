@@ -289,7 +289,7 @@ namespace TypeCobol.Compiler.Scanner
             int firstSourceLineIndex = i;
             TokensLine firstSourceLine = continuationLinesGroup[firstSourceLineIndex];
             string concatenatedLine = firstSourceLine.SourceText;
-            textAreasForOriginalLinesInConcatenatedLine[firstSourceLineIndex] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
+            textAreasForOriginalLinesInConcatenatedLine[firstSourceLineIndex] = new TextArea(0, concatenatedLine.Length -1);
             startIndexForTextAreasInOriginalLines[firstSourceLineIndex] = firstSourceLine.Source.StartIndex;
             offsetForLiteralContinuationInOriginalLines[firstSourceLineIndex] = 0;
 
@@ -494,7 +494,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // => remove the floating comment from the text of the continuation
                         concatenatedLine = concatenatedLine.Substring(0, concatenatedLine.Length - lastTokenOfConcatenatedLineSoFar.Length);
-                        textAreasForOriginalLinesInConcatenatedLine[i - 1] = new TextArea(TextAreaType.Source, textAreasForOriginalLinesInConcatenatedLine[i - 1].StartIndex, textAreasForOriginalLinesInConcatenatedLine[i - 1].EndIndex - lastTokenOfConcatenatedLineSoFar.Length);
+                        textAreasForOriginalLinesInConcatenatedLine[i - 1] = new TextArea(textAreasForOriginalLinesInConcatenatedLine[i - 1].StartIndex, textAreasForOriginalLinesInConcatenatedLine[i - 1].EndIndex - lastTokenOfConcatenatedLineSoFar.Length);
                         TokensLine lineWithFloatingComment = continuationLinesGroup[i - 1];
                         Token floatingCommentToken = new Token(TokenType.FloatingComment, lineWithFloatingComment.Length - lastTokenOfConcatenatedLineSoFar.Length, lineWithFloatingComment.Length - 1, lineWithFloatingComment);
                         lineWithFloatingComment.SourceTokens.Add(floatingCommentToken);
@@ -520,7 +520,7 @@ namespace TypeCobol.Compiler.Scanner
                 int startIndexOfContinuationStringInContinuationLine = startOfContinuationIndex + offsetForLiteralContinuation;
                 int lengthOfContinuationStringInContinuationLine = lastIndex - startIndexOfContinuationStringInContinuationLine + 1;                
                 
-                textAreasForOriginalLinesInConcatenatedLine[i] = new TextArea(TextAreaType.Source, concatenatedLine.Length, concatenatedLine.Length + lengthOfContinuationStringInContinuationLine - 1);
+                textAreasForOriginalLinesInConcatenatedLine[i] = new TextArea(concatenatedLine.Length, concatenatedLine.Length + lengthOfContinuationStringInContinuationLine - 1);
                 startIndexForTextAreasInOriginalLines[i] = startIndexOfContinuationStringInContinuationLine;
                 offsetForLiteralContinuationInOriginalLines[i] = offsetForLiteralContinuation;
 

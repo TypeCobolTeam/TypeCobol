@@ -244,26 +244,26 @@ namespace TypeCobol.Compiler.Text
             if (compilerDirectiveIndex >= 0)
             {
                 // Free text format line embedded in reference format file
-                Indicator = new TextArea(TextAreaType.Indicator, compilerDirectiveIndex, compilerDirectiveIndex - 1);
-                Source = new TextArea(TextAreaType.Source, compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                Indicator = new TextArea(compilerDirectiveIndex, compilerDirectiveIndex - 1);
+                Source = new TextArea(compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
             }
             else
             {
                 // Cobol reference format
                 if (lastIndexOfLine >= 7)
                 {
-                    Indicator = new TextArea(TextAreaType.Indicator, 6, 6);
-                    Source = new TextArea(TextAreaType.Source, 7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                    Indicator = new TextArea(6, 6);
+                    Source = new TextArea(7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
                 }
                 else if (lastIndexOfLine == 6)
                 {
-                    Indicator = new TextArea(TextAreaType.Indicator, 6, 6);
-                    Source = new TextArea(TextAreaType.Source, 7, 6);
+                    Indicator = new TextArea(6, 6);
+                    Source = new TextArea(7, 6);
                 }
                 else
                 {
-                    Indicator = new TextArea(TextAreaType.Indicator, lastIndexOfLine + 1, lastIndexOfLine);
-                    Source = new TextArea(TextAreaType.Source, lastIndexOfLine + 1, lastIndexOfLine);
+                    Indicator = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
+                    Source = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
                 }
             }
         }
@@ -281,13 +281,13 @@ namespace TypeCobol.Compiler.Text
                 if ((line.Length >= 5 && (line.StartsWith("*CBL ") || line.StartsWith("*CBL,"))) ||
                     (line.Length >= 9 && (line.StartsWith("*CONTROL ") || line.StartsWith("*CONTROL,"))))
                 {
-                    Indicator = new TextArea(TextAreaType.Indicator, 0, -1);
-                    Source = new TextArea(TextAreaType.Source, 0, lastIndexOfLine);
+                    Indicator = new TextArea(0, -1);
+                    Source = new TextArea(0, lastIndexOfLine);
                 }
                 else
                 {
-                    Indicator = new TextArea(TextAreaType.Indicator, 0, 0);
-                    Source = new TextArea(TextAreaType.Source, 1, lastIndexOfLine);
+                    Indicator = new TextArea(0, 0);
+                    Source = new TextArea(1, lastIndexOfLine);
                 }
             }
             // - a line starting with char / is a comment line 
@@ -295,19 +295,19 @@ namespace TypeCobol.Compiler.Text
             // => a free format program line cannot start with one of these three chars, insert a space before if needed
             else if (lastIndexOfLine >= 0 && (line[0] == '/' || line[0] == '-'))
             {
-                Indicator = new TextArea(TextAreaType.Indicator, 0, 0);
-                Source = new TextArea(TextAreaType.Source, 1, lastIndexOfLine);
+                Indicator = new TextArea(0, 0);
+                Source = new TextArea(1, lastIndexOfLine);
             }
             // - a line starting with d or D + space char is a debug ligne
             else if (lastIndexOfLine >= 1 && ((line[0] == 'd' || line[0] == 'D') & line[1] == ' '))
             {
-                Indicator = new TextArea(TextAreaType.Indicator, 0, 1);
-                Source = new TextArea(TextAreaType.Source, 2, lastIndexOfLine);
+                Indicator = new TextArea(0, 1);
+                Source = new TextArea(2, lastIndexOfLine);
             }
             else // no indicator
             {
-                Indicator = new TextArea(TextAreaType.Indicator, 0, -1);
-                Source = new TextArea(TextAreaType.Source, 0, lastIndexOfLine);
+                Indicator = new TextArea(0, -1);
+                Source = new TextArea(0, lastIndexOfLine);
             }
         }
 
