@@ -18,11 +18,6 @@ namespace TypeCobol.Compiler.Text
         CobolTextLineType Type { get; }
 
         /// <summary>
-        /// Sequence number area : Columns 1 through 6
-        /// </summary>
-        TextArea SequenceNumber { get; }
-
-        /// <summary>
         /// Sequence number text : Columns 1 through 6
         /// </summary>
         string SequenceNumberText { get; }
@@ -48,11 +43,6 @@ namespace TypeCobol.Compiler.Text
         /// Area B text : Columns 12 through 72 
         /// </summary>
         string SourceText { get; }
-
-        /// <summary>
-        /// Comment area : Columns 73 through 80+
-        /// </summary>
-        TextArea Comment { get; }
 
         /// <summary>
         /// Comment text : Columns 73 through 80+

@@ -244,34 +244,26 @@ namespace TypeCobol.Compiler.Text
             if (compilerDirectiveIndex >= 0)
             {
                 // Free text format line embedded in reference format file
-                SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, compilerDirectiveIndex - 1);
                 Indicator = new TextArea(TextAreaType.Indicator, compilerDirectiveIndex, compilerDirectiveIndex - 1);
                 Source = new TextArea(TextAreaType.Source, compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
-                Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine > 71 ? 72 : lastIndexOfLine + 1, lastIndexOfLine);
             }
             else
             {
                 // Cobol reference format
                 if (lastIndexOfLine >= 7)
                 {
-                    SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, 5);
                     Indicator = new TextArea(TextAreaType.Indicator, 6, 6);
                     Source = new TextArea(TextAreaType.Source, 7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
-                    Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine > 71 ? 72 : lastIndexOfLine + 1, lastIndexOfLine);
                 }
                 else if (lastIndexOfLine == 6)
                 {
-                    SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, 5);
                     Indicator = new TextArea(TextAreaType.Indicator, 6, 6);
                     Source = new TextArea(TextAreaType.Source, 7, 6);
-                    Comment = new TextArea(TextAreaType.Comment, 7, 6);
                 }
                 else
                 {
-                    SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, lastIndexOfLine);
                     Indicator = new TextArea(TextAreaType.Indicator, lastIndexOfLine + 1, lastIndexOfLine);
                     Source = new TextArea(TextAreaType.Source, lastIndexOfLine + 1, lastIndexOfLine);
-                    Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine + 1, lastIndexOfLine);
                 }
             }
         }
@@ -280,9 +272,6 @@ namespace TypeCobol.Compiler.Text
         {
             string line = textLine.Text;
             int lastIndexOfLine = line.Length - 1;
-
-            // No SequenceNumber area in free format text 
-            SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, -1);
 
             // In free format source text :
             // - a line starting with char * is a comment line or a compiler directive            
@@ -320,9 +309,6 @@ namespace TypeCobol.Compiler.Text
                 Indicator = new TextArea(TextAreaType.Indicator, 0, -1);
                 Source = new TextArea(TextAreaType.Source, 0, lastIndexOfLine);
             }
-
-            // No Comment area in free format text
-            Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine + 1, lastIndexOfLine);
         }
 
         // List of compiler directives keywords which can be encountered before column 8
@@ -451,18 +437,20 @@ namespace TypeCobol.Compiler.Text
         public CobolTextLineType Type { get; private set; }
 
         /// <summary>
-        /// Sequence number area : Columns 1 through 6
-        /// </summary>
-        public TextArea SequenceNumber { get; private set; }
-
-        /// <summary>
         /// Sequence number text : Columns 1 through 6
         /// </summary>
         public string SequenceNumberText
         {
             get
             {
-                return SequenceNumber.IsEmpty ? null : textLine.TextSegment(SequenceNumber.StartIndex, SequenceNumber.EndIndex);
+                if (ColumnsLayout == ColumnsLayout.CobolReferenceFormat)
+                {
+                    const int startIndex = (int)CobolFormatAreas.BeginNumber - 1; // 0
+                    int endIndex = Math.Min((int)CobolFormatAreas.EndNumber - 1, Length - 1);
+                    return endIndex < startIndex ? null : TextSegment(startIndex, endIndex);
+                }
+
+                return null;
             }
         }
 
@@ -497,24 +485,26 @@ namespace TypeCobol.Compiler.Text
         }
 
         /// <summary>
-        /// Comment area : Columns 73 through 80+
-        /// </summary>
-        public TextArea Comment { get; private set; }
-
-        /// <summary>
         /// Comment text : Columns 73 through 80+
         /// </summary>
         public string CommentText
         {
             get
             {
-                return Comment.IsEmpty ? null : textLine.TextSegment(Comment.StartIndex, Comment.EndIndex);
+                if (ColumnsLayout == ColumnsLayout.CobolReferenceFormat)
+                {
+                    const int startIndex = (int)CobolFormatAreas.Comment - 1; // 72
+                    int endIndex = Length - 1;
+                    return endIndex < startIndex ? null : TextSegment(startIndex, endIndex);
+                }
+
+                return null;
             }
         }
 
         public override string ToString()
         {
-            return "SequenceNumber" + SequenceNumber + " Indicator" + Indicator + " Source" + Source + " Comment" + Comment;
+            return " Indicator" + Indicator + " Source" + Source;
         }
 
         // --- ITextLine wrapper ---
