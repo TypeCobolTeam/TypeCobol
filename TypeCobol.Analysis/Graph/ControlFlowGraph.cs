@@ -225,22 +225,14 @@ namespace TypeCobol.Analysis.Graph
         /// Register a recursive jump for a perform statement.
         /// </summary>
         /// <param name="perform">Perform node</param>
-        /// <param name="recursiveJump">Recursive jump node</param>
-        internal void AddRecursivePerform(PerformProcedure perform, N recursiveJump)
+        /// <param name="recursiveCallChain">Recursive jump node</param>
+        internal void AddRecursivePerform(PerformProcedure perform, List<N> recursiveCallChain)
         {
             if (RecursivePerforms == null)
             {
                 RecursivePerforms = new Dictionary<PerformProcedure, List<N>>();
             }
-
-            if (RecursivePerforms.TryGetValue(perform, out var nodes))
-            {
-                nodes.Add(recursiveJump);
-            }
-            else
-            {
-                RecursivePerforms.Add(perform, new List<N>() { recursiveJump });
-            }
+            RecursivePerforms.Add(perform, recursiveCallChain);
         }
 
         /// <summary>

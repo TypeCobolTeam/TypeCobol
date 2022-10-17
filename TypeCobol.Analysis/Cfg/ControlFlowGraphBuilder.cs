@@ -628,18 +628,15 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Link this sentence to the current section or paragraph if any.
         /// </summary>
-        /// <param name="sentence">The sentence to link.</param>
+        /// <param name="sentence">The sentence to link.</param>       
         private void LinkBlockSentenceToCurrentSectionParagraph(Sentence sentence)
         {
-            var currentProcedure = (Procedure) this.CurrentProgramCfgBuilder.CurrentParagraph ??
-                                   this.CurrentProgramCfgBuilder.CurrentSection;
-
-            if (currentProcedure != null)
+            if (sentence.Procedure != null)
             {
-                currentProcedure.AddSentence(sentence);
+                sentence.Procedure.AddSentence(sentence);
                 
                 //Give to this block the name of its paragraph/section as tag.
-                sentence.FirstBlock.Tag = currentProcedure.Name;
+                sentence.FirstBlock.Tag = sentence.Procedure.Name;
             }
         }
 
@@ -660,7 +657,11 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(firstBlockIndex.Value);
                 this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(firstBlock);
             }
-            Sentence sentence = new Sentence(number, firstBlock, firstBlockIndex);
+
+            Procedure currentProcedure = (Procedure)this.CurrentProgramCfgBuilder.CurrentParagraph ??
+                                   this.CurrentProgramCfgBuilder.CurrentSection;
+
+            Sentence sentence = new Sentence(number, firstBlock, firstBlockIndex, currentProcedure);
             this.CurrentProgramCfgBuilder.AllSentences.Add(sentence);
 
             this.CurrentProgramCfgBuilder.CurrentSentence = sentence;
@@ -904,9 +905,8 @@ namespace TypeCobol.Analysis.Cfg
                         case StatementType.GotoSimpleStatement:
                             {
                                 GotoSimpleStatement simpleGoto = (GotoSimpleStatement)@goto.CodeElement;
-                                HashSet<SymbolReference> alteredSymbolRefs = null;
                                 //Check if we have altered GOTOs to take in account.
-                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out alteredSymbolRefs))
+                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out HashSet<SymbolReference> alteredSymbolRefs))
                                 {
                                     int i = 0;
                                     target = new SymbolReference[alteredSymbolRefs.Count + 1];
@@ -981,66 +981,82 @@ namespace TypeCobol.Analysis.Cfg
         #endregion
 
         /// <summary>
+        /// Add a Direct Call Perform to the Call Perform Relation. 
+        /// For a PERFORM THRU all intermediate procedures are added to the relation.
+        /// Example of code:
+        ///        main.
+        ///             perform a
+        ///             goback
+        ///             .
+        ///        a.
+        ///             perform b
+        ///        .
+        /// The relation is: a => b
+        /// </summary>
+        /// <param name="performCaller">PERFORM procedure caller, source instruction: in the example (perform a)</param>
+        /// <param name="caller">The Procedure of the performCaller: in the example 'a' </param>
+        /// <param name="performCallee">The PERFORM procedure called, target instruction: in the example (perform b)</param>
+        /// <param name="performCallRelation">Call Perform Relation</param>
+        private void AddDirectCallPerformRelation(PerformProcedure performCaller, Procedure caller, PerformProcedure performCallee, 
+            PerformCallRelation performCallRelation)
+        {
+            var item = PendingPERFORMProcedures.FirstOrDefault(i => i.Item1 == performCallee);
+            if (item == null)
+                return;
+            PerformTarget performTarget = GetPerformTarget(performCallee, item.Item2);
+            if (performTarget == null)
+                return;
+            foreach (Procedure calleeProcedure in performTarget.Procedures)
+            {
+                performCallRelation.AddToRelation(performCaller, caller, performCallee, calleeProcedure);
+            }
+        }
+
+        /// <summary>
+        /// Report Recursive Perform Call diagnostics
+        /// </summary>
+        /// <param name="performCallRelation">Call Perform Relation</param>       
+        private void ReportRecursivePerformCall(PerformCallRelation performCallRelation)
+        {
+            // First Compute the transitive closure of the relation.
+            performCallRelation.TransitiveClosure();
+            // Report all cyclic procedure.
+            foreach (var item in performCallRelation)
+            {
+                if (item.Value.Procedures.Contains(item.Key))
+                {
+                    this.Cfg.AddRecursivePerform(item.Value.PerformCaller, item.Value.PerformCallees);
+                }
+            }
+        }
+
+        /// <summary>
         /// Resolve a pending PERFORM procedure
         /// </summary>
         /// <param name="perform">A Tuple made of the PerformProcedure node, the section in which the PERFORM appears
         /// and the Basic Block Group associated to the Perform Procedure.</param>
         /// <param name="clonedPerforms">List of new PERFORMs cloned during the resolve process.</param>
-        private void ResolvePendingPERFORMProcedure(Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup> perform, List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>> clonedPerforms)
+        /// <param name="performCallRelation">The Perform Call relation.</param>
+        private void ResolvePendingPERFORMProcedure(Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup> perform, List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>> clonedPerforms,
+            PerformCallRelation performCallRelation)
         {
             PerformProcedure p = perform.Item1;
             SectionNode sectionNode = perform.Item2;
             BasicBlockForNodeGroup group = perform.Item3;
 
-            SymbolReference procedureReference = p.CodeElement.Procedure;
-            SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
-
-            Node procedureNode = ResolveProcedure(p, sectionNode, procedureReference);
-            if (procedureNode == null)
+            PerformTarget performTarget = GetPerformTarget(p, sectionNode);
+            if (performTarget == null)
                 return;
-
-            Procedure procedure = _nodeToProcedure[procedureNode];
             var clonedBlocksIndexMap = new Dictionary<int, int>();
-            if (throughProcedureReference != null)
-            {
-                Node throughProcedureNode = ResolveProcedure(p, sectionNode, throughProcedureReference);
-                if (throughProcedureNode == null)
-                    return;
-
-                Procedure throughProcedure = _nodeToProcedure[throughProcedureNode];
-                if (procedure.Number > throughProcedure.Number)
-                {
-                    // the second procedure name is declared before the first one.
-                    this.Cfg.AddWrongOrderPerformThru(p, procedureNode, throughProcedureNode);
-                    return;
-                }
-
-                //Accumulate sentences located between the two procedures
-                List<Sentence> sentences = new List<Sentence>();
-                int currentProcedureNumber = procedure.Number;
-                while (currentProcedureNumber <= throughProcedure.Number)
-                {
-                    var currentProcedure = this.CurrentProgramCfgBuilder.AllProcedures[currentProcedureNumber];
-                    currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
-                    currentProcedureNumber = lastProcedure.Number + 1;
-                }
-
-                //Store sentences into the group
-                StoreSentences(sentences);
-            }
-            else
-            {
-                //Store all sentences from the procedure into the group
-                StoreSentences(procedure);
-            }
-
+            StoreSentences();
             //And finally relocate the Graph.
             RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlocksIndexMap);
 
-            void StoreSentences(IEnumerable<Sentence> sentences)
+            void StoreSentences()
             {
-                foreach (var sentence in sentences)
+                foreach (var sentence in performTarget.Sentences)
                 {
+                    var currentProcedure = sentence.Procedure;
                     foreach (var block in sentence.Blocks)
                     {
                         System.Diagnostics.Debug.Assert(!clonedBlocksIndexMap.ContainsKey(block.Index));
@@ -1050,16 +1066,7 @@ namespace TypeCobol.Analysis.Cfg
                         if (block is BasicBlockForNodeGroup group0)
                         {
                             isPerform = true; //To avoid a second dynamic cast
-
-                            //Is there a recursion in the graph ?
-                            if (group.RecursivityGroupSet.Get(group0.GroupIndex) && !group0.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
-                            {
-                                //Flag group and store recursive perform
-                                group0.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
-                                Node offendingInstruction = group0.Instructions.Last.Value;
-                                System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                                this.Cfg.AddRecursivePerform(p, offendingInstruction);
-                            }
+                            AddDirectCallPerformRelation(p, currentProcedure, (PerformProcedure)group0.Instructions.Last.Value, performCallRelation);
 
                             var clonedGroup0 = clonedPerforms
                                 .Select(t => t.Item3)
@@ -1095,9 +1102,6 @@ namespace TypeCobol.Analysis.Cfg
                             var clonedGroup = (BasicBlockForNodeGroup) clonedBlock;
                             clonedGroup.Group = new LinkedList<BasicBlock<Node, D>>();
                             clonedGroup.TerminalBlocks = null;
-
-                            group.RecursivityGroupSet.Set(clonedGroup.GroupIndex, true);
-                            clonedGroup.RecursivityGroupSet = new BitArray(group.RecursivityGroupSet);
 
                             var originalPerform = this.CurrentProgramCfgBuilder.PendingPERFORMProcedures
                                 .Single(t => t.Item3 == block);
@@ -1168,14 +1172,12 @@ namespace TypeCobol.Analysis.Cfg
         {
             if (this.CurrentProgramCfgBuilder.PendingPERFORMProcedures != null)
             {
+                PerformCallRelation performCallRelation = new PerformCallRelation();
                 var clonedPerforms = new List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>>();
-
                 //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
-                    item.Item3.RecursivityGroupSet = new BitArray(GroupCounter + 1);
-                    item.Item3.RecursivityGroupSet.Set(item.Item3.GroupIndex, true);
-                    ResolvePendingPERFORMProcedure(item, clonedPerforms);
+                    ResolvePendingPERFORMProcedure(item, clonedPerforms, performCallRelation);
                 }
 
                 //Second pass: resolve cloned groups created during first pass
@@ -1183,8 +1185,11 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     //We are using a regular for instead of foreach because new groups may also be created during this second pass.
                     //New groups/performs to resolve are added at tail and all are processed during this second pass
-                    ResolvePendingPERFORMProcedure(clonedPerforms[i], clonedPerforms);
+                    ResolvePendingPERFORMProcedure(clonedPerforms[i], clonedPerforms, performCallRelation);
                 }
+
+                // Report Recursive PERFORM call
+                ReportRecursivePerformCall(performCallRelation);
 
                 //Index groups by their GroupIndex, keep only the final instance of each group after all resolve have been done
                 var groupOrder = new Dictionary<int, BasicBlockForNodeGroup>();
@@ -1192,13 +1197,11 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
                 foreach (var item in clonedPerforms)
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
-                    group.RecursivityGroupSet = null;
                 }
 
                 //Extend groups according to the current building mode
@@ -1273,7 +1276,6 @@ namespace TypeCobol.Analysis.Cfg
             if (group.Group.Count > 0 && group.TerminalBlocks == null)
             {
                 LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                MultiBranchContext ctx = new MultiBranchContext(null);
                 List<BasicBlock<Node, D>> terminals = new List<BasicBlock<Node, D>>();
                 this.CurrentProgramCfgBuilder.Cfg.GetTerminalSuccessorEdges(first.Value, terminals);
                 group.TerminalBlocks = terminals;
@@ -1437,7 +1439,7 @@ namespace TypeCobol.Analysis.Cfg
                         System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
                         string offendingStatement = offendingInstruction.CodeElement.SourceText;
                         Diagnostic d = new Diagnostic(_compilerOptions.CheckRecursivePerforms.GetMessageCode(), perform.CodeElement.Position(),
-                            string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
+                            string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement, offendingInstruction.CodeElement.Line));
                         AddDiagnostic(d);
                     }
                 }
@@ -2177,7 +2179,7 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(nextBlock);
 
 
-            int transBlockIndex = -1;
+            int transBlockIndex;
             if (IsIterative(perform.CodeElement))
             {   //For an Iterative perform, body transition is the perform instruction
                 //the next block is a transition for the perform. 

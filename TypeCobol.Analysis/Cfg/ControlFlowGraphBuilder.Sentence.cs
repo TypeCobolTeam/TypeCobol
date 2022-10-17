@@ -18,18 +18,25 @@ namespace TypeCobol.Analysis.Cfg
             public int? FirstBlockIndex { get; }
 
             /// <summary>
+            /// The associated procedure
+            /// </summary>
+            internal readonly Procedure Procedure;
+
+            /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="number">Order number of appearance of the sentence.</param>
             /// <param name="firstBlock">First block of the sentence.</param>
             /// <param name="firstBlockIndex">Index of the first block the global SuccessorEdges list.
+            /// <param name="procedure">the procedure to which the sentence belongs.</param>
             /// Pass null if the first block is a root block and consequently has no index in successors list.</param>
-            public Sentence(int number, BasicBlockForNode firstBlock, int? firstBlockIndex)
+            public Sentence(int number, BasicBlockForNode firstBlock, int? firstBlockIndex, Procedure procedure)
                 : base(number)
             {
                 _blocks = new LinkedList<BasicBlockForNode>();
                 _blocks.AddLast(firstBlock);
                 FirstBlockIndex = firstBlockIndex;
+                this.Procedure = procedure;
             }
 
             /// <summary>
