@@ -49,7 +49,6 @@
     <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaParamsBuilder.cs" />
-    <Compile Include="TypeCobolCustomLanguageServer\Extract Remarks Data\ExtractRemarksDataError.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Extract Remarks Data\ExtractRemarksDataParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Extract Remarks Data\ExtractRemarksDataRequest.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Extract Remarks Data\RemarksData.cs" />

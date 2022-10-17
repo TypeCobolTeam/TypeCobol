@@ -6,7 +6,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     class ExtractRemarksDataRequest
     {
-        public static readonly RequestType Type = new RequestType("typecobol/euroinformation/ExtractRemarksData", typeof(ExtractRemarksDataParams), typeof(RemarksData), typeof(ExtractRemarksDataError));
+        public static readonly RequestType Type = new RequestType("typecobol/euroinformation/ExtractRemarksData", typeof(ExtractRemarksDataParams), typeof(RemarksData), null);
     }
 }
 
