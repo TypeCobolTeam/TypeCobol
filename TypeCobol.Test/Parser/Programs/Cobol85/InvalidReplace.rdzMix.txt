@@ -11,13 +11,13 @@ Line 8[26,27] <12, Warning, Tokens> - A blank was missing before character "B" i
       *Error
       *The"REPLACE"statement was invalid.  Expected"BY", but found",BY".
       *The statement was discarded.
-Line 13[26,27] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : ","
+Line 13[26,27] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter "==": ","
        REPLACE ==:DVZOSM:==,BY ==ITEM2==.
        01 :DVZOSM: PIC X.
       *Error
       *The"REPLACE"statement was invalid.  Expected"BY", but found";BY".
       *The statement was discarded.
-Line 18[26,27] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : ";"
+Line 18[26,27] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter "==": ";"
 Line 18[28,28] <3, Error, Tokens> - Semicolon separator should be followed by a space
        REPLACE ==:DVZOSM:==;BY ==ITEM3==.
        01 :DVZOSM: PIC X.
@@ -40,14 +40,14 @@ Line 28[31,32] <54, Warning, Tokens> - A blank was missing after character "Y" i
       *Warning
       *A blank was missing before character"="in column 32.
       *A blank was assumed.
-Line 33[32,33] <53, Warning, Tokens> - Invalid character found before pseudo-text delimiter == : ","
+Line 33[32,33] <53, Warning, Tokens> - Invalid character found before pseudo-text delimiter "==": ","
        REPLACE ==:DVZOSM:== BY,==ITEM6==.
        01 :DVZOSM: PIC X.
       *Warning - accepted by IBM compiler but currently not supported
       *A blank was missing before character"="in column 32.
       *A blank was assumed.
 Line 38[31,31] <3, Error, Tokens> - Semicolon separator should be followed by a space
-Line 38[32,33] <53, Warning, Tokens> - Invalid character found before pseudo-text delimiter == : ";"
+Line 38[32,33] <53, Warning, Tokens> - Invalid character found before pseudo-text delimiter "==": ";"
        REPLACE ==:DVZOSM:== BY;==ITEM7==.
        01 :DVZOSM: PIC X.
       *Error and warnings
