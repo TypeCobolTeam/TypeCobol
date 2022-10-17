@@ -377,8 +377,8 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
-			var lineStartIndex = line.SequenceNumberText.Length + 1;// +1 for line.IndicatorChar
-            return new string(' ',  firstTokenStartIndex-lineStartIndex);
+			var lineStartIndex = line.Indicator.StartIndex + 1;
+            return new string(' ',  firstTokenStartIndex - lineStartIndex);
 		}
 
         // --- Antlr4.Runtime.IToken implementation ---
