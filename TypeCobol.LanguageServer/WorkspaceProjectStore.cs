@@ -156,17 +156,19 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="workspaceProject"></param>
         /// <returns>true if the project has been removed, false otherwise</returns>
-        internal bool RemoveProject(WorkspaceProject workspaceProject)
+        internal void RemoveProject(WorkspaceProject workspaceProject)
         {
             if (workspaceProject != this.DefaultWorkspaceProject)
             {
                 bool bRemoved = this._namedProjects.TryRemove(workspaceProject.ProjectKey, out var storedProject);
                 // Assertion: If the project has been removed it must correspond to the one that was stored.
                 System.Diagnostics.Debug.Assert(!bRemoved || (storedProject == workspaceProject));
-                return bRemoved;
             }
-
-            return true;
+            else
+            {
+                // Keep default workspace project alive but clear its corresponding copy cache
+                this.DefaultWorkspaceProject.Project.CopyCache.Clear();
+            }
         }
     }
 }
