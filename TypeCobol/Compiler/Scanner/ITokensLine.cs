@@ -32,9 +32,13 @@ namespace TypeCobol.Compiler.Scanner
         bool HasTokenContinuationFromPreviousLine { get; }
 
         /// <summary>
+        /// Original ScanState before scanning the line
+        /// </summary>
+        MultilineScanState InitialScanState { get; }
+
+        /// <summary>
         /// Internal state used by the Scanner to disambiguate context-sensitive keywords
         /// </summary>
         MultilineScanState ScanState { get; }
-
     }
 }

@@ -106,9 +106,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     }
 
                     var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString());
-                    //TODO accéder à l'InitialScanState
-                    var initialScanState = _currentLine.ScanState;
-                    Scanner.Scanner.ScanTokensLine(virtualLine, initialScanState, _parentIterator.CompilerOptions,
+                    Scanner.Scanner.ScanTokensLine(virtualLine, _currentLine.InitialScanState, _parentIterator.CompilerOptions,
                         new List<RemarksDirective.TextNameVariation>());
                     _scanState = virtualLine.ScanState;
                     _scanStateIndex = _returnedTokensForCurrentLine.Count - 1;
@@ -666,8 +664,7 @@ namespace TypeCobol.Compiler.Preprocessor
         private T[] RescanReplacedTokenTypes<T>(Func<Token, T> creator, Token firstOriginalToken, params Token[] replacementTokens)
             where T : Token
         {
-            MultilineScanState scanState = _scanStateTracker.GetCurrentScanState() ?? firstOriginalToken.ScanStateSnapshot; //TODO initialScanState
-            if (scanState != null && replacementTokens.Any(MultilineScanState.IsScanStateDependent))
+            if (replacementTokens.Any(MultilineScanState.IsScanStateDependent))
             {
                 int i = 0;
                 int[] columns = new int[replacementTokens.Length + 1];                
@@ -683,7 +680,8 @@ namespace TypeCobol.Compiler.Preprocessor
                 int endTokIdx = 0;                
                 List<T> newReplacedTokens = new List<T>(replacementTokens.Length);
                 TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
-                tempTokensLine.InitializeScanState(scanState);
+                var initialScanState = _scanStateTracker.GetCurrentScanState() ?? firstOriginalToken.TokensLine.InitialScanState;
+                tempTokensLine.InitializeScanState(initialScanState);
                 var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, CompilerOptions, true);
                 Token rescannedToken = null;
                 List<Token> tokens = new List<Token>((replacementTokens.Length / 2) + 1);
