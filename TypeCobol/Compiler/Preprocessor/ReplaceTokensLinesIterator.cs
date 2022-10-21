@@ -94,29 +94,47 @@ namespace TypeCobol.Compiler.Preprocessor
 
             public MultilineScanState GetCurrentScanState()
             {
-                if (_currentLine == null) return null;
+                if (_currentLine == null)
+                {
+                    // No token accumulated yet.
+                    return null;
+                }
 
+                int tokenIndex;
+                MultilineScanState initialScanState;
                 if (_scanState == null)
                 {
-                    var line = new StringBuilder();
-                    foreach (var token in _returnedTokensForCurrentLine)
-                    {
-                        line.Append(token.Text);
-                        line.Append(' ');
-                    }
-
-                    var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString());
-                    Scanner.Scanner.ScanTokensLine(virtualLine, _currentLine.InitialScanState, _parentIterator.CompilerOptions,
-                        new List<RemarksDirective.TextNameVariation>());
-                    _scanState = virtualLine.ScanState;
-                    _scanStateIndex = _returnedTokensForCurrentLine.Count - 1;
+                    // Get ScanState by rescanning whole line
+                    tokenIndex = 0;
+                    initialScanState = _currentLine.InitialScanState;
+                }
+                else if (_returnedTokensForCurrentLine.Count - 1 > _scanStateIndex)
+                {
+                    // ScanState has been computed but is outdated, rescan starting from first token after current index
+                    tokenIndex = _scanStateIndex + 1;
+                    initialScanState = _scanState;
                 }
                 else
                 {
-                    //TODO rescan à partir de l'emplacement courant
-                    throw new NotImplementedException("ScanStateTracker - multiple replace same line");
+                    // ScanState is up-to-date
+                    return _scanState;
                 }
 
+                // Build text to scan from accumulated tokens
+                var line = new StringBuilder();
+                for (; tokenIndex < _returnedTokensForCurrentLine.Count; tokenIndex++)
+                {
+                    line.Append(_returnedTokensForCurrentLine[tokenIndex].Text);
+                    line.Append(' ');
+                }
+
+                // Scan
+                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString());
+                Scanner.Scanner.ScanTokensLine(virtualLine, initialScanState, _parentIterator.CompilerOptions, new List<RemarksDirective.TextNameVariation>());
+
+                // Update state variables
+                _scanState = virtualLine.ScanState;
+                _scanStateIndex = tokenIndex - 1;
                 return _scanState;
             }
         }
@@ -531,7 +549,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     foreach (Token comparisonToken in multipleTokensReplaceOperation.FollowingComparisonTokens)
                     {
                         Token nextCandidateToken = sourceIterator.NextToken();
-                        if (!comparisonToken.CompareForReplace(nextCandidateToken))
+                        if (!nextCandidateToken.CompareForReplace(comparisonToken))
                         {
                             comparisonInterrupted = true;
                             break;
