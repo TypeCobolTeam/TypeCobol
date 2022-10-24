@@ -167,10 +167,10 @@ namespace TypeCobol.Compiler.Scanner
         }
 
 #if EUROINFO_RULES
-		private static bool IsInsideRemarks(CobolTextLineType type, string line) {
-			if (type != CobolTextLineType.Comment || line == null) return false;
-			return line.StartsWith("REMARKS.", StringComparison.InvariantCultureIgnoreCase);
-		}
+        private static bool IsInsideRemarks(CobolTextLineType type, string line) {
+            if (type != CobolTextLineType.Comment || line == null) return false;
+            return line.StartsWith("REMARKS.", StringComparison.InvariantCultureIgnoreCase);
+        }
         private static int GetStartIndexOfSignificantPart([NotNull] string line, MultilineScanState state) {
             int start = Math.Max(line.IndexOf(' ') +1, line.IndexOf('=') +1);
             if (!state.InsideRemarksParentheses) {
@@ -1279,6 +1279,23 @@ namespace TypeCobol.Compiler.Scanner
                         if (!tokensLine.ScanState.InsidePseudoText)
                         {
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, tokensLine);
+
+                            // check the preceding char
+                            int sourceStart = tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat ? (int)CobolFormatAreas.Begin_A - 1 : 0;
+                            if (startIndex - 1 >= sourceStart)
+                            {
+                                char precedingChar = line[startIndex - 1];
+                                if (precedingChar == ',' || precedingChar == ';')
+                                {
+                                    // Warning
+                                    tokensLine.AddDiagnostic(MessageCode.InvalidCharBeforePseudoTextDelimiter, delimiterToken, precedingChar);
+                                }
+                                else if (precedingChar != ' ')
+                                {
+                                    // Warning
+                                    tokensLine.AddDiagnostic(MessageCode.ShouldBePrecededBySpace, delimiterToken, precedingChar, startIndex);
+                                }
+                            }
                         }
                         // Case 2. Closing delimiter
                         else
@@ -1286,7 +1303,7 @@ namespace TypeCobol.Compiler.Scanner
                             // get the immediately following char
                             char followingChar;
                             bool usesVirtualSpaceAtEndOfLine = false;
-                            if(currentIndex > lastIndex)
+                            if (currentIndex > lastIndex)
                             {
                                 followingChar = ' ';
                                 usesVirtualSpaceAtEndOfLine = true;
@@ -1297,9 +1314,15 @@ namespace TypeCobol.Compiler.Scanner
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
-                            if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
+                            if (followingChar == ',' || followingChar == ';')
                             {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
+                                // Error
+                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken, followingChar);
+                            }
+                            else if (followingChar != ' ' && followingChar != '.')
+                            {
+                                // Warning
+                                tokensLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace, delimiterToken, followingChar, currentIndex + 1);
                             }
                         }
                         return delimiterToken;
