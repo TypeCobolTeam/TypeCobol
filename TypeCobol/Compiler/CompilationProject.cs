@@ -156,7 +156,7 @@ namespace TypeCobol.Compiler
             CobolFile cobolFile = null;
             if (SourceFileProvider.TryGetFile(cobolProgramName, out cobolFile))
             {
-                CobolTextReferences.Add(cobolProgramName, cobolFile);
+                CobolProgramCalls.Add(cobolProgramName, cobolFile);
             }
             return cobolFile;
         }

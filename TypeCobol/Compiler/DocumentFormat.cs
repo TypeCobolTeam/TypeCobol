@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Text;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.File;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler
@@ -56,20 +54,5 @@ namespace TypeCobol.Compiler
         public static DocumentFormat RDZReferenceFormat = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
         public static DocumentFormat FreeTextFormat = new DocumentFormat(Encoding.GetEncoding(1252), EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
         public static DocumentFormat FreeUTF8Format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-
-        /// <summary>
-        /// Used to retrieve TextArea type in Cobol reference format from token position
-        ///
-        /// </summary>
-        public static TextAreaType GetTextAreaTypeInCobolReferenceFormat([NotNull]Token token)
-        {
-            if (token.Column < 7) return TextAreaType.SequenceNumber;
-            else if (token.Column == 7) return TextAreaType.Indicator;
-            else if (token.Column > 7 && token.Column < 12) return TextAreaType.AreaA;
-            else if (token.Column > 11 && token.Column < 73) return TextAreaType.AreaB;
-            else return TextAreaType.Comment;
-        }
     }
-
-
 }
