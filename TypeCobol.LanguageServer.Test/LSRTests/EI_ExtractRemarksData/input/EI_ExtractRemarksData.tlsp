@@ -1,0 +1,47 @@
+{
+  "name": "EI_ExtractRemarksData.tlsp",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2022_10_21_18_23_49_212\\TestSuite_2022_10_21_18_23_49_212.slsp",
+  "user": "MILLETFL",
+  "date": "2022/10/21 18:23:49 220",
+  "uri": "file:///C:/Users/MILLETFL/Downloads/EI_ExtractRemarksData.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/GitHub/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"didSave\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true}}},\"trace\":\"verbose\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v0.0.0-local\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-e\",\"rdz\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\",\"--autoremarks\",\"-cob\",\"-dol\",\"-td\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Test\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UATL\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UAT\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Production\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"languageId\":\"__lsp4j_Cobol\",\"version\":0,\"text\":\"       IDENTIFICATION division.\\r\\n       PROGRAM-ID. TCOMFL06.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 LSCPYA.\\r\\n       COPY YLSCPYA.\\r\\n       01 LSCPYA1.\\r\\n       COPY YLSCPYA1.\\r\\n       01 LSCPYA2.\\r\\n       COPY YLSCPYA2.\\r\\n       01 LSCPXA.\\r\\n       COPY YLSCPXA.\\r\\n       01 var1 PIC X.\\r\\n       PROCEDURE DIVISION.\\r\\n           MOVE var1 TO LSCPYA-DATA-ITEM\\r\\n           MOVE var1 TO LSCPYA1-DATA-ITEM\\r\\n           MOVE var1 TO LSCPYA2-DATA-ITEM\\r\\n           MOVE var1 TO LSCPXA-DATA-ITEM\\r\\n           GOBACK\\r\\n           .\\r\\n       END PROGRAM TCOMFL06.\\r\\n\"}}}",
+  "messages": [
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"},\"text\":\"       IDENTIFICATION division.\\r\\n       PROGRAM-ID. TCOMFL06.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 LSCPYA.\\r\\n       COPY YLSCPYA.\\r\\n       01 LSCPYA1.\\r\\n       COPY YLSCPYA1.\\r\\n       01 LSCPYA2.\\r\\n       COPY YLSCPYA2.\\r\\n       01 LSCPXA.\\r\\n       COPY YLSCPXA.\\r\\n       01 var1 PIC X.\\r\\n       PROCEDURE DIVISION.\\r\\n           MOVE var1 TO LSCPYA-DATA-ITEM\\r\\n           MOVE var1 TO LSCPYA1-DATA-ITEM\\r\\n           MOVE var1 TO LSCPYA2-DATA-ITEM\\r\\n           MOVE var1 TO LSCPXA-DATA-ITEM\\r\\n           GOBACK\\r\\n           .\\r\\n       END PROGRAM TCOMFL06.\\r\\n\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"},\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":40},\"end\":{\"line\":17,\"character\":40}},\"rangeLength\":0,\"text\":\"\\r\\n           \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"typecobol/euroinformation/ExtractRemarksData\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"usedCPYs\":[\"YLSCPYA\",\"YLSCPYA1\",\"YLSCPYA2\"],\"insertionLine\":3}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"},\"text\":\"       IDENTIFICATION division.\\r\\n       PROGRAM-ID. TCOMFL06.\\r\\n      *REMARKS. COPY\\u003d(\\r\\n      *    YLSCPYA   YLSCPYA1  YLSCPYA2\\r\\n      * ).\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 LSCPYA.\\r\\n       COPY YLSCPYA.\\r\\n       01 LSCPYA1.\\r\\n       COPY YLSCPYA1.\\r\\n       01 LSCPYA2.\\r\\n       COPY YLSCPYA2.\\r\\n       01 LSCPXA.\\r\\n       COPY YLSCPXA.\\r\\n       01 var1 PIC X.\\r\\n       PROCEDURE DIVISION.\\r\\n           MOVE var1 TO LSCPYA-DATA-ITEM\\r\\n           MOVE var1 TO LSCPYA1-DATA-ITEM\\r\\n           MOVE var1 TO LSCPYA2-DATA-ITEM\\r\\n           MOVE var1 TO LSCPXA-DATA-ITEM\\r\\n\\r\\n           GOBACK\\r\\n           .\\r\\n       END PROGRAM TCOMFL06.\\r\\n\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"}}}",
+  "IsValid": true
+}
