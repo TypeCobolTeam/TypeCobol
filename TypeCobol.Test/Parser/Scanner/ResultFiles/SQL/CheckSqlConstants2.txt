@@ -1,0 +1,10 @@
+-- Line 1 --
+[1,6:025,50]<DecimalLiteral>{2550|2>25.5}
+-- Line 2 --
+[1,21:1228512541,34578E0222]<SQL_DecimalFloatingPointLiteral>
+-- Line 3 --
+[1,5:5,5E2]<FloatingPointLiteral>{55|1>5.5E2>550}
+-- Line 4 --
+[1,3:240]<IntegerLiteral>{240}
+[4,4:.]<PeriodSeparator>
+[5,5:1]<IntegerLiteral>{1}

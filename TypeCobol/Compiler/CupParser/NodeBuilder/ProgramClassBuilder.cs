@@ -33,16 +33,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 foreach (var codeElement in codeElementsLine.CodeElements)
                 {
                     codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
-                    string sourceText;
-                    try
-                    {
-                        sourceText = codeElement.SourceText;
-                    }
-                    catch (Exception e)
-                    {
-                        sourceText = $"Could not dump CodeElement: {e.Message}";
-                    }
-                    sourceCode.AppendLine(sourceText);
+                    sourceCode.AppendLine(codeElement.SafeGetSourceText());
                 }
             }
 
@@ -1682,6 +1673,84 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new Commit(commit), commit);
             Exit();
             Dispatcher.OnCommitStatement(commit);
+        }
+        public void OnSelectStatement([NotNull] SelectStatement select)
+        {
+            Enter(new Select(select), select);
+            Exit();
+            Dispatcher.OnSelectStatement(select);
+        }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+            Enter(new Rollback(rollback), rollback);
+            Exit();
+            Dispatcher.OnRollbackStatement(rollback);
+        }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+            Enter(new Truncate(truncate), truncate);
+            Exit();
+            Dispatcher.OnTruncateStatement(truncate);
+        }
+        public void OnSavepointStatement([NotNull] SavepointStatement savepoint)
+        {
+            Enter(new Savepoint(savepoint), savepoint);
+            Exit();
+            Dispatcher.OnSavepointStatement(savepoint);
+        }
+        public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
+        {
+            Enter(new LockTable(lockTable), lockTable);
+            Exit();
+            Dispatcher.OnLockTableStatement(lockTable);
+        }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+            Enter(new ReleaseSavepoint(releaseSavepoint), releaseSavepoint);
+            Exit();
+            Dispatcher.OnReleaseSavepointStatement(releaseSavepoint);
+        }
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
+        {
+            Enter(new WhenEver(whenEver), whenEver);
+            Exit();
+            Dispatcher.OnWhenEverStatement(whenEver);
+        }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+            Enter(new Connect(connect), connect);
+            Exit();
+            Dispatcher.OnConnectStatement(connect);
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+            Enter(new DropTable(dropTable), dropTable);
+            Exit();
+            Dispatcher.OnDropTableStatement(dropTable);
+        }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            Enter(new SetAssignment(setAssignment), setAssignment);
+            Exit();
+            Dispatcher.OnSetAssignmentStatement(setAssignment);
+        }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+            Enter(new GetDiagnostics(getDiagnostics), getDiagnostics);
+            Exit();
+            Dispatcher.OnGetDiagnosticsStatement(getDiagnostics);
+        }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+            Enter(new AlterSequence(alterSequence), alterSequence);
+            Exit();
+            Dispatcher.OnAlterSequenceStatement(alterSequence);
+        }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
+        {
+            Enter(new ExecuteImmediate(executeImmediate), executeImmediate);
+            Exit();
+            Dispatcher.OnExecuteImmediateStatement(executeImmediate);
         }
     }
 }

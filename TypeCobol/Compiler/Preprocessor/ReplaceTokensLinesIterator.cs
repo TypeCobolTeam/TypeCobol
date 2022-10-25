@@ -177,7 +177,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Support for legacy replacing syntax semantics : 
                     // Remove the first 01 level data item found in the COPY text
                     // before copying it into the main program
-                    if (CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level)
+                    // But do not remove data from debug lines
+                    if (CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && nextToken.TokensLine.Type != CobolTextLineType.Debug)
                     {
                         //A Data description entry starts with an integer literal
                         if (nextToken.TokenType == TokenType.LevelNumber)

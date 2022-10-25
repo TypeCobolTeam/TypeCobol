@@ -1,0 +1,62 @@
+﻿--- Diagnostics ---
+Line 14[39,39] <27, Error, Syntax> - Syntax error : missing user defined word at ',' RuleStack=codeElement>selectStatement>fullselect>subselect>from_clause>table_references>table_reference>single_table_or_view_reference>correlation_clause>new_column_names>column_name,  OffendingSymbol=[39,39:,]<SQL_CommaSeparator>
+Line 14[40,40] <27, Error, Syntax> - Syntax error : missing user defined word at ')' RuleStack=codeElement>selectStatement>fullselect>subselect>from_clause>table_references>table_reference>single_table_or_view_reference>correlation_clause>new_column_names>column_name,  OffendingSymbol=[40,40:)]<RightParenthesisSeparator>
+
+--- Sql Statements ---
+line 6: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = d IN i IN i
+      ]
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = rr IN iid
+          - CorrelationClause = CorrelationClause
+            - CorrelationName = new
+            - NewColumnNames = [
+              - NewColumnNames[0] = SqlColumnName
+                - Symbol = h
+              - NewColumnNames[1] = SqlColumnName
+                - Symbol = k
+            ]
+        - TableReferences[1] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = uma
+          - CorrelationClause = CorrelationClause
+            - CorrelationName = ka
+            - NewColumnNames = [
+              - NewColumnNames[0] = SqlColumnName
+                - Symbol = l
+              - NewColumnNames[1] = SqlColumnName
+                - Symbol = u
+            ]
+      ]
+  - SubQuery = <NULL>
+line 12: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = StarSelection
+      ]
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = t_table
+          - CorrelationClause = CorrelationClause
+            - CorrelationName = new_name
+            - NewColumnNames = [
+              - NewColumnNames[0] = SqlColumnName
+                - Symbol = c1
+            ]
+      ]
+  - SubQuery = <NULL>

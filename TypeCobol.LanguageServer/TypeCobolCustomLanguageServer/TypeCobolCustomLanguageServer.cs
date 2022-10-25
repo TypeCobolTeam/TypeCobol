@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if EUROINFO_RULES
+using TypeCobol.CustomExceptions;
+#endif
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
+#if EUROINFO_RULES
+using TypeCobol.Tools.Options_Config;
+#endif
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -18,6 +24,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             rpcServer.RegisterNotificationMethod(ExtractUseCopiesNotification.Type, ReceivedExtractUseCopiesNotification);
             rpcServer.RegisterNotificationMethod(DidOpenProjectTextDocumentNotification.Type, ReceivedDidOpenProjectTextDocument);
             rpcServer.RegisterNotificationMethod(DidChangeProjectConfigurationNotification.Type, ReceivedDidChangeProjectConfiguration);
+#if EUROINFO_RULES
+            rpcServer.RegisterRequestMethod(ExtractRemarksDataRequest.Type, ReceivedExtractRemarksDataRequest);
+#endif
         }
 
         /// <summary>
@@ -112,6 +121,30 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             return resultOrError;
         }
 
+#if EUROINFO_RULES
+        private ResponseResultOrError ReceivedExtractRemarksDataRequest(RequestType requestType, object parameters)
+        {
+            ResponseResultOrError resultOrError;
+            try
+            {
+                var remarksData = OnDidReceiveExtractRemarksData((ExtractRemarksDataParams)parameters);
+                resultOrError = new ResponseResultOrError() { result = remarksData };
+            }
+            catch (MissingCopyException missingCopyException)
+            {
+                //Called while COPYs were not all downloaded
+                resultOrError = new ResponseResultOrError() { code = (int)ReturnCode.MissingCopy, message = missingCopyException.Message };
+            }
+            catch (Exception exception)
+            {
+                //Unexpected
+                NotifyException(exception);
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = exception.Message };
+            }
+            return resultOrError;
+        }
+#endif
+
         private void ReceivedSignatureHelpContext(NotificationType notificationType, object parameters)
         {
             try
@@ -147,6 +180,31 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 this.Workspace.RefreshSyntaxTree(context.FileCompiler, Workspace.SyntaxTreeRefreshLevel.ForceFullRefresh);
             }
         }
+
+#if EUROINFO_RULES
+        protected virtual RemarksData OnDidReceiveExtractRemarksData(ExtractRemarksDataParams parameter)
+        {
+            string uri = parameter.textDocument.uri;
+            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+            if (context != null && context.FileCompiler != null)
+            {
+                var compilationResults = context.FileCompiler.CompilationResultsForProgram;
+                if (compilationResults.MissingCopies.Any())
+                {
+                    throw new MissingCopyException("Cannot find used copy before all copys are resolved", uri, null, false, false);
+                }
+
+                var data = this.Workspace.GetRemarksData(compilationResults);
+                return new RemarksData()
+                       {
+                           usedCPYs = data.Item1,
+                           insertionLine = data.Item2
+                       };
+            }
+
+            throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");
+        }
+#endif
 
         private void ReceivedExtractUseCopiesNotification(NotificationType notificationType, object parameters)
         {

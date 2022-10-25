@@ -137,6 +137,20 @@ terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
 
 // FOR SQL
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SelectStatement SelectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.RollbackStatement RollbackStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.TruncateStatement TruncateStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SavepointStatement SavepointStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.WhenEverStatement WhenEverStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.LockTableStatement LockTableStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ReleaseSavepointStatement ReleaseSavepointStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ConnectStatement ConnectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DropTableStatement DropTableStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SetAssignmentStatement SetAssignmentStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.GetDiagnosticsStatement GetDiagnosticsStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.AlterSequenceStatement AlterSequenceStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ExecuteImmediateStatement ExecuteImmediateStatement;
+
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
@@ -691,6 +705,32 @@ execStatementBody ::= /* empty */
 ;
 
 sqlStatement ::= CommitStatement:stmt
+{: :}
+|	SelectStatement:stmt
+{: :}
+|	RollbackStatement:stmt
+{: :}
+|	TruncateStatement:stmt 
+{: :}
+|	SavepointStatement:stmt 
+{: :}
+|	WhenEverStatement:stmt 
+{: :}
+|	LockTableStatement:stmt 
+{: :}
+|	ReleaseSavepointStatement:stmt 
+{: :}
+|	ConnectStatement:stmt 
+{: :}
+|	DropTableStatement:stmt 
+{: :}
+|	SetAssignmentStatement:stmt 
+{: :}
+|	GetDiagnosticsStatement:stmt 
+{: :}
+|	AlterSequenceStatement:stmt 
+{: :}
+|	ExecuteImmediateStatement:stmt 
 {: :}
 ;
 

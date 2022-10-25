@@ -99,7 +99,7 @@ namespace TypeCobol.Compiler.Symbols
                 PictureValidator.Result NumericValidationResult(int count)
                 {
                     return new PictureValidator.Result(
-                        new[] { new PictureValidator.Character(PictureValidator.SC.NINE, count) },
+                        new[] { new Character(SC.NINE, count) },
                         null,
                         PictureCategory.Numeric,
                         count,
@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Symbols
             PictureType CreateCurrencyComponent()
             {
                 var validationResult = new PictureValidator.Result(
-                    new [] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    new [] { new Character(SC.X, 3) },
                     null,
                     PictureCategory.Alphanumeric,
                     0,

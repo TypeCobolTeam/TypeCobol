@@ -21,7 +21,7 @@
 [10,11:= ]<EqualOperator>
 [12,13:==]<PseudoTextDelimiter>
 [14,15:= ]<EqualOperator>
-Line 0[12,13] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
+Line 0[12,13] <12, Warning, Tokens> - A blank was missing before character "=" in column 14. A blank was assumed.
 
 -- Line 3 --
 [1,2:==]<PseudoTextDelimiter>
@@ -30,7 +30,7 @@ Line 0[12,13] <15, Error, Tokens> - Invalid character found after pseudo-text de
 [7,8:==]<PseudoTextDelimiter>
 [9,10:==]<PseudoTextDelimiter>
 [11,11:a]<UserDefinedWord>
-Line 0[9,10] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
+Line 0[9,10] <12, Warning, Tokens> - A blank was missing before character "a" in column 11. A blank was assumed.
 
 -- Line 4 --
 [2,3:==]<PseudoTextDelimiter>
@@ -47,6 +47,7 @@ Line 0[9,10] <15, Error, Tokens> - Invalid character found after pseudo-text del
 [9,12:fini]<UserDefinedWord>
 [13,14:==]<PseudoTextDelimiter>
 [15,15:a]<UserDefinedWord>
+Line 0[13,14] <54, Warning, Tokens> - A blank was missing after character "i" in column 12. A blank was assumed.
 
 -- Line 6 --
 [1,2+:==]<PseudoTextDelimiter>
