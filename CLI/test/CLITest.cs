@@ -163,10 +163,10 @@ namespace CLI.Test
         {
 #if EUROINFO_RULES
             CLITestHelper.Test("extractUsedCopies_EI", ReturnCode.MissingCopy);
+            CLITestHelper.Test("extractUsedCopies_EI_NestedStackedCopyInsideCopy", ReturnCode.Success);
 #else
             CLITestHelper.Test("extractUsedCopies", ReturnCode.MissingCopy);
 #endif
-
         }
 
         /// <summary>
