@@ -78,11 +78,14 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(data, "Invalid VALUE clause", valueToken);
                     }
                     //In Cobol reference format check that VALUE clause starts in Area B
-                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat
-                             &&
-                             DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB)
+                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat && ValueTokenStartsOutsideAreaB())
                     {
                         DiagnosticUtils.AddError(data, "VALUE clause must start in area B", valueToken);
+                    }
+
+                    bool ValueTokenStartsOutsideAreaB()
+                    {
+                        return valueToken.Column < (int)CobolFormatAreas.Begin_B || valueToken.Column > (int)CobolFormatAreas.End_B;
                     }
                 }
             }

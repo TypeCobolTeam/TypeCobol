@@ -848,5 +848,58 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnCommitStatement(commit);
         }
+        public void OnSelectStatement([NotNull] SelectStatement select)
+        {
+            foreach (var listener in _listeners) listener.OnSelectStatement(select);
+        }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+            foreach (var listener in _listeners) listener.OnRollbackStatement(rollback);
+        }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+            foreach (var listener in _listeners) listener.OnTruncateStatement(truncate);
+        }
+        public void OnSavepointStatement([NotNull] SavepointStatement savepoint)
+        {
+            foreach (var listener in _listeners) listener.OnSavepointStatement(savepoint);
+        }
+
+        public void OnWhenEverStatement(WhenEverStatement whenEver)
+        {
+            foreach (var listener in _listeners) listener.OnWhenEverStatement(whenEver);
+        }
+        public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
+        {
+            foreach (var listener in _listeners) listener.OnLockTableStatement(lockTable);
+        }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+            foreach (var listener in _listeners) listener.OnReleaseSavepointStatement(releaseSavepoint);
+        }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+            foreach (var listener in _listeners) listener.OnConnectStatement(connect);
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+            foreach (var listener in _listeners) listener.OnDropTableStatement(dropTable);
+        }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            foreach (var listener in _listeners) listener.OnSetAssignmentStatement(setAssignment);
+        }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+            foreach (var listener in _listeners) listener.OnGetDiagnosticsStatement(getDiagnostics);
+        }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+            foreach (var listener in _listeners) listener.OnAlterSequenceStatement(alterSequence);
+        }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
+        {
+            foreach (var listener in _listeners) listener.OnExecuteImmediateStatement(executeImmediate);
+        }
     }
 }

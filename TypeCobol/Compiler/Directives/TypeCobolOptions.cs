@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Directives
         public bool UseAntlrProgramParsing { get; set; }
 
         /// <summary>
-        /// Shall we use EUROINFO_LEGACY_REPLACING_SYNTAX snippets for Parsing the Program.
+        /// Shall we use EI legacy replacing mechanism when including copys ?
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax
         {
@@ -63,6 +63,11 @@ namespace TypeCobol.Compiler.Directives
         /// must be disabled when using Codegen.
         /// </summary>
         public bool OptimizeWhitespaceScanning { get; set; } = true;
+
+        /// <summary>
+        /// Enable parsing of SQL code embedded into EXEC SQL [...] END-EXEC blocks.
+        /// </summary>
+        public bool EnableSqlParsing { get; set; } = false;
 
         /// <summary>
         /// Check if a End statement is aligned with the matching opening statement.

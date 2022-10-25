@@ -428,6 +428,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
         }
+
+        [TestMethod]
+        [TestCategory("EI-Specific")]
+        public void EI_ExtractRemarksData()
+        {
+            LSRTestHelper.Test("EI_ExtractRemarksData", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
+        }
 #endif
 
         [TestMethod]

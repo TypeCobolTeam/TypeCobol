@@ -337,7 +337,7 @@ namespace TypeCobol.Compiler.Scanner
 
         internal void DegradePotentialCodeElementStartingKeywordToSyntaxKeyword()
         {
-            if (TokenFamily == TokenFamily.CodeElementStartingKeyword || TokenFamily == TokenFamily.SqlFamily)
+            if (TokenFamily == TokenFamily.CodeElementStartingKeyword || TokenFamily == TokenFamily.SqlKeywords)
             {
                 TokenFamily = TokenFamily.SyntaxKeyword;
             }

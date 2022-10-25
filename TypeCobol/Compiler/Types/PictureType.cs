@@ -10,25 +10,6 @@ namespace TypeCobol.Compiler.Types
     public class PictureType : Type
     {
         /// <summary>
-        /// Indicates whether the usage is compatible with a PictureType.
-        /// </summary>
-        public static bool IsUsageCompatible(UsageFormat usage)
-        {
-            switch (usage)
-            {
-                case UsageFormat.Comp1:
-                case UsageFormat.Comp2:
-                case UsageFormat.ObjectReference:
-                case UsageFormat.Pointer:
-                case UsageFormat.FunctionPointer:
-                case UsageFormat.ProcedurePointer:
-                    return false;
-                default:
-                    return true;
-            }
-        }
-
-        /// <summary>
         /// Validator constructor.
         /// </summary>
         public PictureType(PictureValidator.Result validationResult, bool isSeparateSign)
@@ -114,7 +95,7 @@ namespace TypeCobol.Compiler.Types
         /// The sequence of characters that was calculated by the PictureValidator
         /// to validate this PICTURE string.
         /// </summary>
-        internal PictureValidator.Character[] Sequence { get; }
+        public Character[] Sequence { get; }
 
         /// <summary>
         /// Get this picture Type Length;
@@ -130,7 +111,7 @@ namespace TypeCobol.Compiler.Types
                     int add = 0;
                     if (Category == PictureCategory.DBCS)
                     {
-                        add = Sequence.Sum(c => c.SpecialChar == PictureValidator.SC.B ? c.Count : 0);
+                        add = Sequence.Sum(c => c.SpecialChar == SC.B ? c.Count : 0);
                     }
                     return Size + add;
                 }
@@ -172,22 +153,22 @@ namespace TypeCobol.Compiler.Types
                     case UsageFormat.Display1:
                         {
                             int len = Size;
-                            foreach (PictureValidator.Character c in Sequence)
+                            foreach (Character c in Sequence)
                             {
                                 switch (c.SpecialChar)
                                 {
-                                    case PictureValidator.SC.A:
-                                    case PictureValidator.SC.E:
-                                    case PictureValidator.SC.X:
-                                    case PictureValidator.SC.G:
-                                    case PictureValidator.SC.N:
-                                    case PictureValidator.SC.CR:
-                                    case PictureValidator.SC.DB:
-                                    case PictureValidator.SC.P:
-                                    case PictureValidator.SC.V:
-                                    case PictureValidator.SC.S:
+                                    case SC.A:
+                                    case SC.E:
+                                    case SC.X:
+                                    case SC.G:
+                                    case SC.N:
+                                    case SC.CR:
+                                    case SC.DB:
+                                    case SC.P:
+                                    case SC.V:
+                                    case SC.S:
                                         break;
-                                    case PictureValidator.SC.B:
+                                    case SC.B:
                                         if (Category == PictureCategory.DBCS)
                                         {
                                             len += c.Count;//double the size of B.
@@ -203,22 +184,22 @@ namespace TypeCobol.Compiler.Types
                     case UsageFormat.National:
                         {
                             int len = Size;
-                            foreach (PictureValidator.Character c in Sequence)
+                            foreach (Character c in Sequence)
                             {
                                 switch (c.SpecialChar)
                                 {
-                                    case PictureValidator.SC.S:
+                                    case SC.S:
                                         if (IsSeparateSign)
                                         {
                                             len += c.Count;//double the size of S.
                                         }
                                         break;
-                                    case PictureValidator.SC.A:
-                                    case PictureValidator.SC.B:
-                                    case PictureValidator.SC.Z:
-                                    case PictureValidator.SC.NINE:
-                                    case PictureValidator.SC.DOT:
-                                    case PictureValidator.SC.COMMA:
+                                    case SC.A:
+                                    case SC.B:
+                                    case SC.Z:
+                                    case SC.NINE:
+                                    case SC.DOT:
+                                    case SC.COMMA:
                                         len += c.Count;//double the size.
                                         break;
                                 }

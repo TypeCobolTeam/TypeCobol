@@ -127,7 +127,20 @@
         XmlParseStatement,
 
         //Sql
-        CommitStatement
+        CommitStatement,
+        SelectStatement,
+        RollbackStatement,
+        TruncateStatement,
+        SavepointStatement,
+        WhenEverStatement,
+        LockTableStatement,
+        ReleaseSavepointStatement,
+        ConnectStatement,
+        DropTableStatement,
+        SetAssignmentStatement,
+        GetDiagnosticsStatement,
+        AlterSequenceStatement,
+        ExecuteImmediateStatement
 
     }
 }

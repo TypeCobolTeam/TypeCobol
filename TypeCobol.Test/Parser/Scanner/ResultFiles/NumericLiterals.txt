@@ -35,7 +35,7 @@
 [46,47:E2]<UserDefinedWord>
 [49,51:10e]<UserDefinedWord>
 [52,53:+4]<IntegerLiteral>{4}
-[55,63:.55E+9847]<InvalidToken>{55|2>0.55E9847>Infinity}
+[55,63:.55E+9847]<InvalidToken>
 [65,68:.25e]<InvalidToken>
 Line 0[45,45] <12, Warning, Tokens> - A blank was missing before character "E" in column 46. A blank was assumed.
 Line 0[55,63] <18, Error, Tokens> - Invalid floating point numeric literal format : the exponent is represented by an E followed by an optional sign and one or two digits (E+99)
