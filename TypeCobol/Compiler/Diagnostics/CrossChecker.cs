@@ -649,6 +649,12 @@ namespace TypeCobol.Compiler.Diagnostics
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
             if (dataDefinitionEntry == null) return true;
 
+            if (dataDefinition.SymbolTable.IsMnemonicNameDefined(dataDefinition.Name))
+            {
+                // Data definition name conflicts with mnemonic-name for environment
+                DiagnosticUtils.AddError(dataDefinition, $"The name '{dataDefinition.Name}' was used for an item that was not defined as a data-name. References to this name may be resolved incorrectly.");
+            }
+
             var commonDataDataDefinitionCodeElement = dataDefinitionEntry as CommonDataDescriptionAndDataRedefines;
 
             var levelNumber = dataDefinitionEntry.LevelNumber;
@@ -882,7 +888,119 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
+        public override bool Visit(Accept accept)
+        {
+            if (accept.CodeElement is AcceptFromInputDeviceStatement acceptFromInputDeviceStatement)
+            {
+                CheckEnvironmentNameOrMnemonicForEnvironmentName(accept, acceptFromInputDeviceStatement.InputDevice);
+            }
+
+            return true;
+        }
+
+        public override bool Visit(Display display)
+        {
+            CheckEnvironmentNameOrMnemonicForEnvironmentName(display, display.CodeElement.OutputDeviceName);
+            return true;
+        }
+
+        public override bool Visit(Write write)
+        {
+            var variable = write.CodeElement.ByNumberOfLinesOrByMnemonicForEnvironmentName;
+            var referenceToResolve = variable?.MainSymbolReference;
+            if (referenceToResolve == null)
+            {
+                // Nothing to check
+                return true;
+            }
+
+            if (referenceToResolve.IsAmbiguous)
+            {
+                // Check for mnemonic
+                var mnemonic = CheckMnemonicForEnvironmentName(write, referenceToResolve);
+
+                // Check for variable
+                var ambiguousSymbolReference = (AmbiguousSymbolReference)referenceToResolve;
+                System.Diagnostics.Debug.Assert(!ambiguousSymbolReference.IsQualifiedReference);
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes != null);
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Length == 2);
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Contains(SymbolType.DataName));
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Contains(SymbolType.MnemonicForEnvironmentName));
+                var originalCandidateTypes = ambiguousSymbolReference.CandidateTypes;
+                ambiguousSymbolReference.CandidateTypes = new[] { SymbolType.DataName }; //To call CheckVariable again
+                var dataDefinition = CheckVariable(write, variable.StorageArea, true, true);
+                ambiguousSymbolReference.CandidateTypes = originalCandidateTypes;
+
+                // Add diagnostics
+                if (mnemonic == null)
+                {
+                    if (dataDefinition == null)
+                    {
+                        //Nothing found
+                        DiagnosticUtils.AddError(write, $"Unable to resolve reference to '{referenceToResolve.Name}'.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
+                    }
+                    else
+                    {
+                        //This is a variable, nothing to do.
+                    }
+                }
+                else
+                {
+                    if (dataDefinition == null)
+                    {
+                        //This is a mnemonic, nothing to do.
+                    }
+                    else
+                    {
+                        //This is still ambiguous...
+                        DiagnosticUtils.AddError(write, $"Ambiguous reference to '{referenceToResolve.Name}', the definition to be used could not be determined from the context.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
+                    }
+                }
+            }
+            //else already checked by CheckVariable
+
+            return true;
+        }
+
+        private static void CheckEnvironmentNameOrMnemonicForEnvironmentName(Node node, SymbolReference environmentOrMnemonicReference)
+        {
+            var name = environmentOrMnemonicReference?.Name;
+            if (name == null)
+            {
+                // Nothing to check
+                return;
+            }
+
+            // Check for environment name
+            if (Enum.TryParse<CobolWordsBuilder.EnvironmentName>(name, true, out _))
+            {
+                return;
+            }
+
+            // Check for mnemonic
+            if (CheckMnemonicForEnvironmentName(node, environmentOrMnemonicReference) == null)
+            {
+                DiagnosticUtils.AddError(node, $"Unable to resolve reference to '{environmentOrMnemonicReference.Name}'.", environmentOrMnemonicReference, MessageCode.SemanticTCErrorInParser);
+            }
+        }
+
+        private static SymbolDefinition CheckMnemonicForEnvironmentName(Node node, SymbolReference mnemonicReference)
+        {
+            var candidates = node.SymbolTable.GetEnvironmentMnemonics(mnemonicReference);
+            switch (candidates.Count)
+            {
+                case 0:
+                    // Let caller decide whether it is a problem or not...
+                    return null;
+                case 1:
+                    return candidates[0];
+                default:
+                    DiagnosticUtils.AddError(node, $"Ambiguous reference to '{mnemonicReference.Name}' environment mnemonic.", mnemonicReference, MessageCode.SemanticTCErrorInParser);
+                    return null;
+            }
+        }
+
+        public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea, bool allowNoMatch = false)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)
                 return null;
@@ -891,6 +1009,8 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference == null) return null;
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
+            //Will be handled specifically for each statement that could use mnemonics
+            if (area.SymbolReference.IsOrCanBeOfType(SymbolType.MnemonicForEnvironmentName)) return null;
 
             var parentTypeDefinition = (node as DataDefinition)?.ParentTypeDefinition;
 
@@ -910,9 +1030,8 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. Arithmetic operations require spaces around minus sign: " + string.Join(" - ", area.SymbolReference.Name.Split('-')));
                     }
                 }
-               
 
-                if (node.SymbolTable.GetFunction(area).Count < 1)
+                if (!allowNoMatch && node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
             else if (foundQualified.Count > 1)

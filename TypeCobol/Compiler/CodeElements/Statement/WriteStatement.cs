@@ -1,7 +1,4 @@
-﻿using System;
-using TypeCobol.Compiler.CodeElements.Expressions;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.CodeElements
 {
 	/// <summary>
 	/// p449:
@@ -85,23 +82,18 @@ namespace TypeCobol.Compiler.CodeElements
 		/// 3. If the ADVANCING phrase is omitted, LINAGE-COUNTER is increased by 1.
 		/// 4. When the device is repositioned to the first available line of a new page,
 		/// LINAGE-COUNTER is reset to 1.
-		/// </summary>
-		public IntegerVariable ByNumberOfLines { get; set; }
-
-		/// <summary>
-		/// p451:
-		/// When the ADVANCING phrase is specified, the following rules apply:
+		///
 		/// (...)
-		/// 7. When mnemonic-name is specified, a skip to channels 1 through 12, or space
-		/// suppression, takes place. mnemonic-name must be equated with
-		/// environment-name-1 in the SPECIAL-NAMES paragraph.
-		/// The mnemonic-name phrase can also be specified for stacker selection with a
-		/// card punch file. When using stacker selection, WRITE AFTER ADVANCING
-		/// must be used.
+        /// 7. When mnemonic-name is specified, a skip to channels 1 through 12, or space
+        /// suppression, takes place. mnemonic-name must be equated with
+        /// environment-name-1 in the SPECIAL-NAMES paragraph.
+        /// The mnemonic-name phrase can also be specified for stacker selection with a
+        /// card punch file. When using stacker selection, WRITE AFTER ADVANCING
+        /// must be used.
 		/// </summary>
-		public SymbolReference ByMnemonicForEnvironmentName { get; set; }
+		public IntegerVariable ByNumberOfLinesOrByMnemonicForEnvironmentName { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// p451:
 		/// When the ADVANCING phrase is specified, the following rules apply:
 		/// (...)
@@ -119,7 +111,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, RecordName, FromSendingField,
-                   WriteBeforeAdvancing, WriteAfterAdvancing, ByNumberOfLines, ByMnemonicForEnvironmentName, ByLogicalPage);
+                   WriteBeforeAdvancing, WriteAfterAdvancing, ByNumberOfLinesOrByMnemonicForEnvironmentName, ByLogicalPage);
         }
     }
 }

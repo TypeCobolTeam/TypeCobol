@@ -124,8 +124,7 @@ namespace TypeCobol.Compiler.Parser
 				storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionNameOrIndexName,
 					CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
 			}
-			storageArea.AlternativeSymbolType = SymbolType.IndexName;
-			return storageArea;
+            return storageArea;
 		}
 
 		internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrFileName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrFileNameContext context)
@@ -141,8 +140,7 @@ namespace TypeCobol.Compiler.Parser
 				storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionNameOrFileName,
 					CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
 			}
-			storageArea.AlternativeSymbolType = SymbolType.IndexName;
-			return storageArea;
+            return storageArea;
 		}
 
 		internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrClassName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrClassNameContext context)
@@ -158,9 +156,15 @@ namespace TypeCobol.Compiler.Parser
 				storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionNameOrClassName,
 					CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
 			}
-			storageArea.AlternativeSymbolType = SymbolType.IndexName;
-			return storageArea;
+            return storageArea;
 		}
+
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrMnemonicForEnvironmentName(CodeElementsParser.IntegerVariableIdentifierOrMnemonicForEnvironmentNameReferenceContext context)
+        {
+            AmbiguousSymbolReference symbolReference = CobolWordsBuilder.CreateAmbiguousSymbolReference(
+                context.UserDefinedWord(), new [] { SymbolType.DataName, SymbolType.MnemonicForEnvironmentName });
+            return new DataOrConditionStorageArea(symbolReference, _insideFunctionArgument);
+        }
 
 		internal SubscriptExpression[] CreateSubscriptExpressions(CodeElementsParser.SubscriptContext[] contextArray)
 		{
@@ -1066,6 +1070,23 @@ namespace TypeCobol.Compiler.Parser
 				variable = new IntegerVariable(
 					CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
+
+            // Collect storage area read/writes at the code element level
+            if (variable.StorageArea != null)
+            {
+                this.storageAreaReads.Add(variable.StorageArea);
+            }
+
+            return variable;
+		}
+
+		[CanBeNull]
+        internal IntegerVariable CreateIntegerVariableOrMnemonicForEnvironmentName([CanBeNull] CodeElementsParser.IntegerVariableIdentifierOrMnemonicForEnvironmentNameReferenceContext context)
+        {
+            if (context == null) return null;
+
+            var dataItemReferenceOrMnemonicForEnvironmentName = CreateDataItemReferenceOrMnemonicForEnvironmentName(context);
+            IntegerVariable variable = new IntegerVariable(dataItemReferenceOrMnemonicForEnvironmentName);
 
             // Collect storage area read/writes at the code element level
             if (variable.StorageArea != null)

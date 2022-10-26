@@ -683,5 +683,21 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    static class SpecialNamesParagraphChecker
+    {
+        public static void OnCodeElement(SpecialNamesParagraph paragraph, CodeElementsParser.SpecialNamesParagraphContext context, List<RuleContext> duplicateEnvironments, List<RuleContext> duplicateMnemonicsForEnvironment)
+        {
+            foreach (var environment in duplicateEnvironments)
+            {
+                DiagnosticUtils.AddError(paragraph, $"A duplicate '{environment.GetText()}' clause was found.", environment);
+            }
+
+            foreach (var mnemonic in duplicateMnemonicsForEnvironment)
+            {
+                DiagnosticUtils.AddError(paragraph, $"Mnemonic name '{mnemonic.GetText()}' was previously defined.", mnemonic);
+            }
+        }
+    }
+
     #endregion
 }

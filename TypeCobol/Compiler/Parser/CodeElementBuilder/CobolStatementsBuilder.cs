@@ -1514,11 +1514,11 @@ namespace TypeCobol.Compiler.Parser
             }
             if (context.numberOfLines != null)
             {
-                statement.ByNumberOfLines = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
+                statement.ByNumberOfLinesOrByMnemonicForEnvironmentName = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
             }
-            if (context.mnemonicForEnvironmentNameReference() != null)
+            if (context.integerVariableIdentifierOrMnemonicForEnvironmentNameReference() != null)
             {
-                statement.ByMnemonicForEnvironmentName = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReference(context.mnemonicForEnvironmentNameReference());
+                statement.ByNumberOfLinesOrByMnemonicForEnvironmentName = CobolExpressionsBuilder.CreateIntegerVariableOrMnemonicForEnvironmentName(context.integerVariableIdentifierOrMnemonicForEnvironmentNameReference());
             }
             if (context.PAGE() != null)
             {
