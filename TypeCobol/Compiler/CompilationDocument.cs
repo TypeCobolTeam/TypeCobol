@@ -597,7 +597,9 @@ namespace TypeCobol.Compiler
                 // Create a new snapshot only if things changed since last snapshot
                 if (TokensDocumentSnapshot == null || TokensDocumentSnapshot.CurrentVersion != currentTokensLinesVersion)
                 {
-                    TokensDocumentSnapshot = new TokensDocument(TextSourceInfo, textLinesVersionForCurrentTokensLines, currentTokensLinesVersion, compilationDocumentLines.ToImmutable());
+                    //Copy our compilationDocumentLines into a new List.
+                    //As compilationDocumentLines is an ImmutableList, it's faster in next step to copy the ImmutableList once in a new list and then iterate over it multiples times.
+                    TokensDocumentSnapshot = new TokensDocument(TextSourceInfo, textLinesVersionForCurrentTokensLines, currentTokensLinesVersion, new SearchableReadOnlyList<CodeElementsLine>(compilationDocumentLines));
                 }
             }
         }
