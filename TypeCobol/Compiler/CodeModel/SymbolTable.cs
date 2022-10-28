@@ -1220,6 +1220,11 @@ namespace TypeCobol.Compiler.CodeModel
         private SymbolTable GetRootGlobalTable()
         {
             var globalTable = GetTableFromScope(Scope.Global);
+            if (globalTable == null)
+            {
+                return null;
+            }
+
             while (globalTable.EnclosingScope != null && globalTable.EnclosingScope.CurrentScope == Scope.Global)
             {
                 globalTable = globalTable.EnclosingScope;
@@ -1231,6 +1236,7 @@ namespace TypeCobol.Compiler.CodeModel
         public void RegisterSpecialNames([NotNull] SpecialNamesParagraph specialNamesParagraph)
         {
             var targetTable = GetRootGlobalTable();
+            Debug.Assert(targetTable != null); // Mnemonics can be declared by root level programs which all have a Global SymbolTable
             if (specialNamesParagraph.MnemonicsForEnvironmentNames != null)
             {
                 foreach (var mnemonicForEnvironmentName in specialNamesParagraph.MnemonicsForEnvironmentNames.Keys)
@@ -1245,13 +1251,16 @@ namespace TypeCobol.Compiler.CodeModel
         public IList<SymbolDefinition> GetEnvironmentMnemonics(SymbolReference symbolReference)
         {
             var targetTable = GetRootGlobalTable();
-            return GetFromTable(symbolReference.Name, targetTable.EnvironmentMnemonics);
+            return targetTable != null
+                ? GetFromTable(symbolReference.Name, targetTable.EnvironmentMnemonics)
+                : new List<SymbolDefinition>();
         }
 
         public bool IsMnemonicNameDefined(string mnemonicName)
         {
+            if (mnemonicName == null) return false; // Stay consistent with GetFromTable which allows entries with empty name but exclude nulls
             var targetTable = GetRootGlobalTable();
-            return targetTable.EnvironmentMnemonics.ContainsKey(mnemonicName);
+            return targetTable != null && targetTable.EnvironmentMnemonics.ContainsKey(mnemonicName);
         }
 
         #endregion
@@ -1381,6 +1390,19 @@ namespace TypeCobol.Compiler.CodeModel
                 foreach (var line in Functions)
                 foreach (var item in line.Value)
                     Dump(str, item, new string(' ', 2));
+            }
+            if (EnvironmentMnemonics.Count > 0)
+            {
+                str.AppendLine("-- ENVIRONMENT MNEMONICS ---");
+                foreach (var line in EnvironmentMnemonics)
+                {
+                    foreach (var item in line.Value)
+                    {
+                        str.Append(new string(' ', 2));
+                        str.Append(item.Name);
+                        str.AppendLine();
+                    }
+                }
             }
             if (verbose && EnclosingScope != null)
                 str.Append(EnclosingScope.ToString(verbose));
