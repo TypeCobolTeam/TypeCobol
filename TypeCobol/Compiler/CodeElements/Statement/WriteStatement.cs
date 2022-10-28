@@ -84,16 +84,16 @@
 		/// LINAGE-COUNTER is reset to 1.
 		///
 		/// (...)
-        /// 7. When mnemonic-name is specified, a skip to channels 1 through 12, or space
-        /// suppression, takes place. mnemonic-name must be equated with
-        /// environment-name-1 in the SPECIAL-NAMES paragraph.
-        /// The mnemonic-name phrase can also be specified for stacker selection with a
-        /// card punch file. When using stacker selection, WRITE AFTER ADVANCING
-        /// must be used.
+		/// 7. When mnemonic-name is specified, a skip to channels 1 through 12, or space
+		/// suppression, takes place. mnemonic-name must be equated with
+		/// environment-name-1 in the SPECIAL-NAMES paragraph.
+		/// The mnemonic-name phrase can also be specified for stacker selection with a
+		/// card punch file. When using stacker selection, WRITE AFTER ADVANCING
+		/// must be used.
 		/// </summary>
 		public IntegerVariable ByNumberOfLinesOrByMnemonicForEnvironmentName { get; set; }
 
-        /// <summary>
+		/// <summary>
 		/// p451:
 		/// When the ADVANCING phrase is specified, the following rules apply:
 		/// (...)
