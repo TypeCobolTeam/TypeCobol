@@ -372,7 +372,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             var specialNames = new SpecialNames(paragraph);
             Enter(specialNames);
-            specialNames.SymbolTable.RegisterSpecialNames(paragraph);
+            specialNames.SymbolTable.AddSpecialNames(paragraph);
             Dispatcher.StartSpecialNamesParagraph(paragraph);
         }
 

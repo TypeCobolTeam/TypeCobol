@@ -649,7 +649,7 @@ namespace TypeCobol.Compiler.Diagnostics
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
             if (dataDefinitionEntry == null) return true;
 
-            if (dataDefinition.SymbolTable.IsMnemonicNameDefined(dataDefinition.Name))
+            if (dataDefinition.SymbolTable.IsEnvironmentMnemonicNameDefined(dataDefinition.Name))
             {
                 // Data definition name conflicts with mnemonic-name for environment
                 DiagnosticUtils.AddError(dataDefinition, $"The name '{dataDefinition.Name}' was used for an item that was not defined as a data-name. References to this name may be resolved incorrectly.");
@@ -890,6 +890,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Accept accept)
         {
+            // Resolve input device
             if (accept.CodeElement is AcceptFromInputDeviceStatement acceptFromInputDeviceStatement)
             {
                 CheckEnvironmentNameOrMnemonicForEnvironmentName(accept, acceptFromInputDeviceStatement.InputDevice);
@@ -900,12 +901,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Display display)
         {
+            // Resolve output device
             CheckEnvironmentNameOrMnemonicForEnvironmentName(display, display.CodeElement.OutputDeviceName);
             return true;
         }
 
         public override bool Visit(Write write)
         {
+            // Resolve number of lines of ADVANCING clause
             var variable = write.CodeElement.ByNumberOfLinesOrByMnemonicForEnvironmentName;
             var referenceToResolve = variable?.MainSymbolReference;
             if (referenceToResolve == null)
@@ -931,7 +934,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var dataDefinition = CheckVariable(write, variable.StorageArea, true, true);
                 ambiguousSymbolReference.CandidateTypes = originalCandidateTypes;
 
-                // Add diagnostics
+                // Add diagnostic
                 if (mnemonic == null)
                 {
                     if (dataDefinition == null)
@@ -957,7 +960,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
             }
-            //else already checked by CheckVariable
+            //else already checked by CheckVariable as a regular IntegerVariable with non-ambiguous symbol ref.
 
             return true;
         }

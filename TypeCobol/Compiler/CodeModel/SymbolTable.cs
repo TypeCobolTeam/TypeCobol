@@ -1233,10 +1233,15 @@ namespace TypeCobol.Compiler.CodeModel
             return globalTable;
         }
 
-        public void RegisterSpecialNames([NotNull] SpecialNamesParagraph specialNamesParagraph)
+        /// <summary>
+        /// Add symbols defined by SPECIAL-NAMES paragraph.
+        /// </summary>
+        /// <param name="specialNamesParagraph">Special names code element</param>
+        public void AddSpecialNames([NotNull] SpecialNamesParagraph specialNamesParagraph)
         {
             var targetTable = GetRootGlobalTable();
-            Debug.Assert(targetTable != null); // Mnemonics can be declared by root level programs which all have a Global SymbolTable
+            Debug.Assert(targetTable != null); // Mnemonics can be declared only by root level programs which all have a Global SymbolTable
+            
             if (specialNamesParagraph.MnemonicsForEnvironmentNames != null)
             {
                 foreach (var mnemonicForEnvironmentName in specialNamesParagraph.MnemonicsForEnvironmentNames.Keys)
@@ -1248,6 +1253,12 @@ namespace TypeCobol.Compiler.CodeModel
             //TODO create dedicated dictionaries and add other special names
         }
 
+        /// <summary>
+        /// Retrieve environment mnemonic definitions for given environment mnemonic reference.
+        /// </summary>
+        /// <param name="symbolReference">Reference to resolve.</param>
+        /// <returns>A non-null list of definitions. May be empty when the reference could not be resolved,
+        /// may contain more than one element when the reference is ambiguous.</returns>
         public IList<SymbolDefinition> GetEnvironmentMnemonics(SymbolReference symbolReference)
         {
             var targetTable = GetRootGlobalTable();
@@ -1256,7 +1267,12 @@ namespace TypeCobol.Compiler.CodeModel
                 : new List<SymbolDefinition>();
         }
 
-        public bool IsMnemonicNameDefined(string mnemonicName)
+        /// <summary>
+        /// Return whether a environment mnemonic name has corresponding definition or not.
+        /// </summary>
+        /// <param name="mnemonicName">Name to test.</param>
+        /// <returns>True if definition(s) exist, False otherwise.</returns>
+        public bool IsEnvironmentMnemonicNameDefined(string mnemonicName)
         {
             if (mnemonicName == null) return false; // Stay consistent with GetFromTable which allows entries with empty name but exclude nulls
             var targetTable = GetRootGlobalTable();
