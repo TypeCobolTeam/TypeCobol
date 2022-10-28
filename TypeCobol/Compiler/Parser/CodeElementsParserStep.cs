@@ -107,8 +107,35 @@ namespace TypeCobol.Compiler.Parser
 
             // --- INITIALIZE ANTLR CodeElements parser ---
 
+            //Start line to seek token in the stream of token (stream of token=tokenIterator) 
+            int startLineToSeekToken = 0;
+
+            if (largestRefreshParseSection != null)
+            {
+                //No need to check for ReplacedToken or ImportedToken here, as we directly interact with documentLines
+                //which are the lines of the original document
+
+                //TODO find all ReplaceDirective that can target the current line.
+                //Count the largest number of tokens that a Replace directive can target
+                //Rollback by this number of tokens
+
+                //Temporary: for now rollback X lines as it's unlikely that a Replace target more than that
+                var line = Math.Max(0, largestRefreshParseSection.StartLineIndex - 40);
+
+
+                //Take previous line has long as there are tokens continued on this line
+                var codeElementLine = documentLines[line];
+                while (codeElementLine.LineIndex > 0 && (codeElementLine.HasDirectiveTokenContinuationFromPreviousLine || codeElementLine.HasTokenContinuationFromPreviousLine))
+                {
+                    codeElementLine = documentLines[codeElementLine.LineIndex - 1];
+                }
+
+                startLineToSeekToken = codeElementLine.LineIndex;
+            }
+
+
             // Create a token iterator on top of pre-processed tokens lines
-            ITokensLinesIterator tokensIterator = processedTokensDocument.GetProcessedTokensIterator();
+            ITokensLinesIterator tokensIterator = processedTokensDocument.GetProcessedTokensIterator(startLineToSeekToken);
 
             // Create an Antlr compatible token source on top of the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(

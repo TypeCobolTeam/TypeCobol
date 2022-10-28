@@ -88,6 +88,6 @@ namespace TypeCobol.Compiler.Preprocessor
             _compilerOptions = compilerOptions;
         }
 
-        public override ITokensLinesIterator GetProcessedTokensIterator() => new TokensLinesIterator(base.GetProcessedTokensIterator(), _compilerOptions);
+        public override ITokensLinesIterator GetProcessedTokensIterator(int startLine = 0) => new TokensLinesIterator(base.GetProcessedTokensIterator(startLine), _compilerOptions);
     }
 }

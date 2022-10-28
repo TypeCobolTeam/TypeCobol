@@ -54,26 +54,33 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Set the initial position of the iterator with startToken.
         /// </summary>
-        public CopyTokensLinesIterator(string sourceFileName, IReadOnlyList<IProcessedTokensLine> tokensLines, int channelFilter)
+        public CopyTokensLinesIterator(string sourceFileName, IReadOnlyList<IProcessedTokensLine> tokensLines, int channelFilter, int startLine = 0)
         {
             this.sourceFileName = sourceFileName;
             this.tokensLines = tokensLines;
             this.channelFilter = channelFilter;
 
             // Start just before the first token in the document
-            Reset();
+            Reset(startLine);
         }
 
         /// <summary>
         /// Resets the iterator position : before the first token of the document
         /// </summary>
-        public void Reset()
+        public void Reset(int startLine = 0)
         {
-            currentPosition.LineIndex = 0;
+            if (startLine < 0) {
+                startLine = 0;
+            }
+            if(startLine >= tokensLines.Count)
+            {
+                startLine = tokensLines.Count - 1; //Start on last line
+            }
+            currentPosition.LineIndex = startLine;
             currentPosition.TokenIndexInLine = -1;
             if (tokensLines.Count > 0)
             {
-                currentLine = tokensLines[0];
+                currentLine = tokensLines[startLine];
             }
             else
             {

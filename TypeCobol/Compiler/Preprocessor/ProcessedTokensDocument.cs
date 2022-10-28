@@ -48,9 +48,9 @@ namespace TypeCobol.Compiler.Preprocessor
         /// - COPY directives text imports
         /// - REPLACE directive token replacements
         /// </summary>
-        public virtual ITokensLinesIterator GetProcessedTokensIterator()
+        public virtual ITokensLinesIterator GetProcessedTokensIterator(int startLine = 0)
         {
-            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(TextSourceInfo.Name, Lines, Token.CHANNEL_SourceTokens);
+            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(TextSourceInfo.Name, Lines, Token.CHANNEL_SourceTokens, startLine);
             ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator, _compilerOptions);
             return replaceIterator;
         }
