@@ -15,7 +15,12 @@ namespace TypeCobol.Compiler.Parser
         /// Code elements STARTING on this line 
         /// </summary>
         IList<CodeElement> CodeElements { get; }
-        
+
+        /// <summary>
+        /// True if a code element starts on the current line
+        /// </summary>
+        bool HasCodeElements { get; }
+
         /// <summary>
         /// Error and warning messages produced while parsing the source text line
         /// </summary>

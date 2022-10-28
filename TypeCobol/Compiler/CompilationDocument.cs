@@ -654,7 +654,7 @@ namespace TypeCobol.Compiler
                     if (tokensDocument != null)
                     {
                         // Process all lines of the document for the first time
-                        PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), _documentImporter, perfStatsForParserInvocation, out missingCopies);
+                        PreprocessorStep.ProcessDocument(this, ((ISearchableReadOnlyList<CodeElementsLine>)tokensDocument.Lines), _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
                         ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ISearchableReadOnlyList<CodeElementsLine>) tokensDocument.Lines);
@@ -667,9 +667,8 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>) tokensDocument.Lines).ToBuilder();
                     IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessChanges(this,
-                        processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate,
+                        (ISearchableReadOnlyList<CodeElementsLine>)tokensDocument.Lines, tokensLineChanges, PrepareDocumentLineForUpdate,
                         _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
@@ -682,7 +681,7 @@ namespace TypeCobol.Compiler
                     currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
 
                     // Update the processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
+                    ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(currentProcessedTokensLineVersion, (ISearchableReadOnlyList<CodeElementsLine>)tokensDocument.Lines);
                 }
 
                 ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)

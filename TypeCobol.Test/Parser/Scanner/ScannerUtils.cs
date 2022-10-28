@@ -75,7 +75,7 @@ namespace TypeCobol.Test.Parser.Scanner
             tokensLinesList.AddRange(tokensLines);
 
             var initialScanState = new MultilineScanState(TextSourceInfo.EncodingForAlphanumericLiterals);
-            ScannerStep.ScanDocument(TextSourceInfo, tokensLinesList, CompilerOptions, CopyTextNameVariations, initialScanState);
+            ScannerStep.ScanDocument(TextSourceInfo, tokensLinesList.ToImmutable(), CompilerOptions, CopyTextNameVariations, initialScanState);
 
             StringBuilder sbResult = new StringBuilder();
             for (int i = 0; i < tokensLines.Length; i++)

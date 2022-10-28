@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler
                         CodeElementsParserStep.ParseDocument(processedTokensDocument, CompilerOptions, perfStatsForParserInvocation);
 
                         // Create the first code elements document snapshot
-                        CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
+                        CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ISearchableReadOnlyList<ICodeElementsLine>)processedTokensDocument.Lines));
                     }
                 }
                 else
@@ -115,8 +115,7 @@ namespace TypeCobol.Compiler
                     currentCodeElementsLinesVersion = currentCodeElementsLinesVersion.next;
 
                     // Update the code elements document snapshot
-                    ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
-                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, codeElementsDocumentLines.ToImmutable());
+                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, (ISearchableReadOnlyList<ICodeElementsLine>) processedTokensDocument.Lines);
                 }
 
                 // Stop perf measurement
@@ -253,10 +252,9 @@ namespace TypeCobol.Compiler
                     var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
-                    //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CupParseProgramOrClass(
                         TextSourceInfo,
-                        (ImmutableList<CodeElementsLine>) codeElementsDocument.Lines,
+                        (ISearchableReadOnlyList<CodeElementsLine>) codeElementsDocument.Lines,
                         CompilerOptions,
                         CustomSymbols,
                         perfStatsForParserInvocation,
