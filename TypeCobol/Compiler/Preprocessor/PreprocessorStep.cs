@@ -391,7 +391,7 @@ namespace TypeCobol.Compiler.Preprocessor
             if (lineIndex > 0)
             {
                 int previousLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
+                IEnumerator<ProcessedTokensLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, true);
                 while (reversedEnumerator.MoveNext() && (--previousLineIndex > lastLineIndexReset))
                 {
                     // Get the previous line until a non continued line is encountered
@@ -426,7 +426,7 @@ namespace TypeCobol.Compiler.Preprocessor
             if (lineIndex < (documentLines.Count - 1))
             {
                 int nextLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, true);
+                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, true);
                 while (enumerator.MoveNext())
                 {
                     // Get the next line until non continuation line is encountered

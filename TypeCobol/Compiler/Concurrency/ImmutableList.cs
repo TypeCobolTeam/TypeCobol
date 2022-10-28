@@ -359,23 +359,6 @@ namespace TypeCobol.Compiler.Concurrency
     /*UPDATE to MICROSOFT code ->*/ public interface ISearchableReadOnlyList<out T> : IReadOnlyList<T>
     {
         /// <summary>
-        /// Converts the elements in the current <see cref="ImmutableList{T}"/> to
-        /// another type, and returns a list containing the converted elements.
-        /// </summary>
-        /// <param name="converter">
-        /// A <see cref="Func{T, TResult}"/> delegate that converts each element from
-        /// one type to another type.
-        /// </param>
-        /// <typeparam name="TOutput">
-        /// The type of the elements of the target array.
-        /// </typeparam>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> of the target type containing the converted
-        /// elements from the current <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter);
-
-        /// <summary>
         /// Performs the specified action on each element of the list.
         /// </summary>
         /// <param name="action">The <see cref="Action{T}"/> delegate to perform on each element of the list.</param>
@@ -538,9 +521,8 @@ namespace TypeCobol.Compiler.Concurrency
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <param name="startIndex">The index of the first element to enumerate.</param>
-        /// <param name="count">The number of elements in this collection.</param>
         /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
-        IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed);
+        IEnumerator<T> GetEnumerator(int startIndex, bool reversed);
 
         /// <summary>
         /// Searches for the specified object around the initial index of the object 
@@ -1675,27 +1657,6 @@ namespace TypeCobol.Compiler.Concurrency
         }
 
         /// <summary>
-        /// Converts the elements in the current <see cref="ImmutableList{T}"/> to
-        /// another type, and returns a list containing the converted elements.
-        /// </summary>
-        /// <param name="converter">
-        /// A <see cref="Func{T, TResult}"/> delegate that converts each element from
-        /// one type to another type.
-        /// </param>
-        /// <typeparam name="TOutput">
-        /// The type of the elements of the target array.
-        /// </typeparam>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> of the target type containing the converted
-        /// elements from the current <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        public ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter)
-        {
-            Requires.NotNull(converter, "converter");
-            return ImmutableList<TOutput>.WrapNode(_root.ConvertAll(converter));
-        }
-
-        /// <summary>
         /// Determines whether the <see cref="ImmutableList{T}"/> contains elements
         /// that match the conditions defined by the specified predicate.
         /// </summary>
@@ -2376,11 +2337,10 @@ namespace TypeCobol.Compiler.Concurrency
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <param name="startIndex">The index of the first element to enumerate.</param>
-        /// <param name="count">The number of elements in this collection.</param>
         /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
-        public IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed)
+        public IEnumerator<T> GetEnumerator(int startIndex, bool reversed)
         {
-            return _root.GetEnumerator(startIndex, count, reversed);
+            return _root.GetEnumerator(startIndex, reversed);
         }
 
         /// <summary>
@@ -3064,6 +3024,17 @@ namespace TypeCobol.Compiler.Concurrency
 
             // --- START of EXTENSION to MICROSOFT code ---
             // --- Methods added for TypeCobol ---
+
+            /// <summary>
+            /// Returns an enumerator that iterates through the collection.
+            /// </summary>
+            /// <param name="startIndex">The index of the first element to enumerate.</param>
+            /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
+            internal Enumerator GetEnumerator(int startIndex, bool reversed)
+            {
+                return new Enumerator(this, null, startIndex, -1, reversed);
+            }
+
 
             /// <summary>
             /// Returns an enumerator that iterates through the collection.
@@ -4650,11 +4621,10 @@ namespace TypeCobol.Compiler.Concurrency
             /// Returns an enumerator that iterates through the collection.
             /// </summary>
             /// <param name="startIndex">The index of the first element to enumerate.</param>
-            /// <param name="count">The number of elements in this collection.</param>
             /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
-            public IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed)
+            public IEnumerator<T> GetEnumerator(int startIndex, bool reversed)
             {
-                return this.Root.GetEnumerator(startIndex, count, reversed);
+                return this.Root.GetEnumerator(startIndex, reversed);
             }
 
             /// <summary>
@@ -4775,27 +4745,6 @@ namespace TypeCobol.Compiler.Concurrency
                 Requires.Range(count >= 0, "count");
                 Requires.Range(index + count <= this.Count, "count");
                 return ImmutableList<T>.WrapNode(Node.NodeTreeFromList(this, index, count));
-            }
-
-            /// <summary>
-            /// Converts the elements in the current ImmutableList&lt;T&gt; to
-            /// another type, and returns a list containing the converted elements.
-            /// </summary>
-            /// <param name="converter">
-            /// A System.Converter&lt;TInput,TOutput&gt; delegate that converts each element from
-            /// one type to another type.
-            /// </param>
-            /// <typeparam name="TOutput">
-            /// The type of the elements of the target array.
-            /// </typeparam>
-            /// <returns>
-            /// A ImmutableList&lt;T&gt; of the target type containing the converted
-            /// elements from the current ImmutableList&lt;T&gt;.
-            /// </returns>
-            public ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter)
-            {
-                Requires.NotNull(converter, "converter");
-                return ImmutableList<TOutput>.WrapNode(_root.ConvertAll(converter));
             }
 
             /// <summary>
