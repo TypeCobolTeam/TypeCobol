@@ -432,9 +432,6 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WhenOtherCondition:
                         this.CurrentProgramCfgBuilder.EnterWhenOther((WhenOther)node);
                         break;
-                    case CodeElementType.WhenSearchCondition:
-                        this.CurrentProgramCfgBuilder.EnterWhenSearch((WhenSearch)node);
-                        break;
                     // Statement conditions
                     case CodeElementType.AtEndCondition:
                     case CodeElementType.NotAtEndCondition:
@@ -582,9 +579,6 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     case CodeElementType.WhenOtherCondition:
                         this.CurrentProgramCfgBuilder.LeaveWhenOther((WhenOther)node);
-                        break;
-                    case CodeElementType.WhenSearchCondition:
-                        this.CurrentProgramCfgBuilder.LeaveWhenSearch((WhenSearch)node);
                         break;
                     // Statement conditions
                     case CodeElementType.AtEndCondition:
@@ -1937,7 +1931,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Handle a When Search Condition for a Search instruction.
         /// </summary>
         /// <param name="condition">The condition, if null then this means the AT END condition</param>
-        public override void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenSearchCondition condition)
+        public override void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenCondition condition)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
@@ -2082,30 +2076,6 @@ namespace TypeCobol.Analysis.Cfg
                 ctx.End(this.CurrentProgramCfgBuilder.Cfg, branchToNext, nextBlock);
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
             }
-        }
-
-        /// <summary>
-        /// Enter a When Search condition node
-        /// </summary>
-        /// <param name="node">The when search condition node</param>
-        protected virtual void EnterWhenSearch(WhenSearch node)
-        {
-            System.Diagnostics.Debug.Assert(node != null);
-            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
-            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
-
-            ctx.ConditionNodes.Add(node);
-        }
-
-        /// <summary>
-        /// Leave a When Search condition node
-        /// </summary>
-        /// <param name="node">The when search condition node</param>
-        protected virtual void LeaveWhenSearch(WhenSearch node)
-        {
-
         }
 
         /// <summary>

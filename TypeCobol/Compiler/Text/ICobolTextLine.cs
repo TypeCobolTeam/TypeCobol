@@ -8,14 +8,14 @@ namespace TypeCobol.Compiler.Text
     public interface ICobolTextLine : ITextLine
     {
         /// <summary>
+        /// Columns format
+        /// </summary>
+        ColumnsLayout ColumnsLayout { get; }
+
+        /// <summary>
         /// Cobol text line type : Source, Debug, Comment or Continuation
         /// </summary>
         CobolTextLineType Type { get; }
-
-        /// <summary>
-        /// Sequence number area : Columns 1 through 6
-        /// </summary>
-        TextArea SequenceNumber { get; }
 
         /// <summary>
         /// Sequence number text : Columns 1 through 6
@@ -43,11 +43,6 @@ namespace TypeCobol.Compiler.Text
         /// Area B text : Columns 12 through 72 
         /// </summary>
         string SourceText { get; }
-
-        /// <summary>
-        /// Comment area : Columns 73 through 80+
-        /// </summary>
-        TextArea Comment { get; }
 
         /// <summary>
         /// Comment text : Columns 73 through 80+

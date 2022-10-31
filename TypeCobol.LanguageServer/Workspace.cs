@@ -17,6 +17,10 @@ using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.LanguageServer
 {
@@ -145,6 +149,14 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public string CpyCopyNamesMapFilePath { get; set; }
 #endif
+
+        public static readonly string DefaultCopyFolder;
+
+        static Workspace()
+        {
+            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+            DefaultCopyFolder = folder + @"\DefaultCopies\";
+        }
 
         public Workspace(string rootDirectoryFullName, string workspaceName, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
@@ -615,6 +627,7 @@ namespace TypeCobol.LanguageServer
             return false;
         }
 
+
         /// <summary>
         /// Handle the Configuration change notification.
         /// </summary>
@@ -631,8 +644,7 @@ namespace TypeCobol.LanguageServer
             TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
-            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-            Configuration.CopyFolders.Add(folder + @"\DefaultCopies\");
+            Configuration.CopyFolders.Add(DefaultCopyFolder);
 
             if (Configuration.Telemetry)
                 AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
@@ -935,6 +947,28 @@ namespace TypeCobol.LanguageServer
 
             DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }
+
+#if EUROINFO_RULES
+        public (string[], int) GetRemarksData(CompilationUnit compilationUnit)
+        {
+            // Get used CPYs
+            var usedCPYs = compilationUnit.CopyTextNamesVariations
+                .Where(v => this.Configuration.IsCpyCopy(v.TextName))
+                .Select(v => v.TextNameWithSuffix.ToUpperInvariant())
+                .Distinct()
+                .ToArray();
+
+            // Get expected REMARKS location
+            int insertionLine = 0;
+            var programIdentification = compilationUnit.CodeElementsDocumentSnapshot.CodeElements.FirstOrDefault(ce => ce.Type == CodeElementType.ProgramIdentification);
+            if (programIdentification != null)
+            {
+                insertionLine = programIdentification.LineEnd + 1;
+            }
+
+            return (usedCPYs, insertionLine);
+        }
+#endif
     }
 
     [Flags]

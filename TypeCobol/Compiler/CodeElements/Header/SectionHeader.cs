@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Section
     /// A section-header optionally followed by one or more paragraphs.
     /// </summary>
-    public class SectionHeader : CodeElement
+    public class SectionHeader : CodeElement, INamedCodeElement
     {
         public SectionHeader() : base(CodeElementType.SectionHeader)
         { }
@@ -18,6 +17,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// within the program in which it is defined.
         /// </summary>
         public SymbolDefinition SectionName { get; set; }
+
+        public string Name => SectionName?.Name;
 
         /// <summary>
         /// An integer or a positive signed numeric literal ranging in value

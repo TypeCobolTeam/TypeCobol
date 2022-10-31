@@ -4,9 +4,9 @@
        WORKING-STORAGE SECTION.
       *KO empty group item
        01 group1.
-          EXEC SQL DECLARE Table1 TABLE
-          ( Table1_Field1 CHAR(1) NOT NULL,
-          ) END-EXEC.
+          EXEC SQL
+            SELECT * FROM Table2 
+          END-EXEC.
       *KO same thing but with a copy
        01 group2.
        COPY CopyWithExecSqlOnly.

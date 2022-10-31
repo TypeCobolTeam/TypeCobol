@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -27,14 +29,6 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             // Underlying tokens iterator position
             public object SourceIteratorPosition;
-
-#if EUROINFO_RULES
-
-            // Support for legacy replacing syntax semantics : 
-            // Remove the first 01 level data item found in the COPY text
-            // before copying it into the main program
-            public bool SawFirstIntegerLiteral;
-#endif
 
             // Current REPLACE directive in effect in the file
             // (optional : null if the iterator WAS created in the context of an imported document)
@@ -178,13 +172,13 @@ namespace TypeCobol.Compiler.Preprocessor
                 Token nextToken = sourceIterator.NextToken();
 
 #if EUROINFO_RULES
-
                 if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
                     // Support for legacy replacing syntax semantics : 
                     // Remove the first 01 level data item found in the COPY text
                     // before copying it into the main program
-                    if (CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level)
+                    // But do not remove data from debug lines
+                    if (CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && nextToken.TokensLine.Type != CobolTextLineType.Debug)
                     {
                         //A Data description entry starts with an integer literal
                         if (nextToken.TokenType == TokenType.LevelNumber)
@@ -192,8 +186,6 @@ namespace TypeCobol.Compiler.Preprocessor
                             if (nextToken.Text == "01" && nextToken.Column < 10)
                             {
                                 var firstLevelFound = true;
-                                // Register that we saw the first "01" integer literal in the underlying file
-                                currentPosition.SawFirstIntegerLiteral = true;
                                 // Skip all tokens after 01 until the next period separator 
                                 while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
                                 {
@@ -323,7 +315,6 @@ namespace TypeCobol.Compiler.Preprocessor
             IList<Token> originalMatchingTokens;
 
 #if EUROINFO_RULES
-
             if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
             {
                 // Support for legacy replacing syntax semantics : 
@@ -336,12 +327,16 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         string replacement = CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix);
                         string replacedText = Regex.Replace(originalText, CopyReplacingDirective.PreSuffix, replacement, RegexOptions.IgnoreCase);
-                        TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
-                        Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
-                            virtualTokensLine);
+                        int additionalSpaceRequired = replacedText.Length - originalText.Length;
+                        if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
+                        {
+                            TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
+                            Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
+                                virtualTokensLine);
 
-                        status.replacedToken = new ReplacedToken(replacementToken, nextToken);
-                        currentPosition.CurrentToken = status.replacedToken;
+                            status.replacedToken = new ReplacedToken(replacementToken, nextToken);
+                            currentPosition.CurrentToken = status.replacedToken;
+                        }
                     }
                 }
             }
@@ -363,6 +358,84 @@ namespace TypeCobol.Compiler.Preprocessor
             }
             return status;
         }
+
+#if EUROINFO_RULES
+        private bool CheckTokensLineOverflow(Token token, int additionalSpaceRequired)
+        {
+            var tokensLine = token.TokensLine;
+            if (tokensLine.ColumnsLayout == ColumnsLayout.FreeTextFormat)
+                // No check on free format
+                return true;
+
+            const int MAX_LINE_LENGTH = (int)CobolFormatAreas.End_B;
+            var lastToken = tokensLine.SourceTokens.Last(); //This is safe as the line contains at least one token, the one which is being considered for replacement
+            int endColumn;
+            if (tokensLine.HasTokenContinuedOnNextLine && LastTokenIsLiteralAllowingSpace())
+            {
+                //The literal may be altered by suffixing, check how the line ends
+                endColumn = lastToken.EndColumn;
+                if (endColumn == MAX_LINE_LENGTH)
+                {
+                    //No trailing space, but we can't apply suffix because there is no room left
+                    AddWarningOnToken();
+                }
+                else
+                {
+                    //Suffixing would cause an alteration to the VALUE, add error
+                    AddErrorOnToken();
+                }
+
+                return false;
+            }
+
+            //We cannot use lastToken.EndColumn here because some tokens are 'grabbing' the space following them
+            //Example PeriodSeparator having text '. '
+            endColumn = lastToken.StartIndex + lastToken.Text.TrimEnd().Length;
+            if (endColumn + additionalSpaceRequired > MAX_LINE_LENGTH)
+            {
+                AddWarningOnToken();
+                return false;
+            }
+
+            return true;
+
+            bool LastTokenIsLiteralAllowingSpace()
+            {
+                switch (lastToken.TokenType)
+                {
+                    case TokenType.AlphanumericLiteral:
+                    case TokenType.NullTerminatedAlphanumericLiteral:
+                    case TokenType.DBCSLiteral:
+                    case TokenType.NationalLiteral:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            void AddWarningOnToken()
+            {
+                const string WARNING_MESSAGE_TEMPLATE = "'{0}' could not be suffixed because line ends at column {1}.";
+                string message = string.Format(WARNING_MESSAGE_TEMPLATE, token.Text, endColumn);
+                AddDiagnosticOnToken(MessageCode.Warning, message);
+            }
+
+            void AddErrorOnToken()
+            {
+                const string ERROR_MESSAGE_TEMPLATE = "Suffixing '{0}' will alter VALUE clause, cannot use CPY suffixing here.";
+                string message = string.Format(ERROR_MESSAGE_TEMPLATE, token.Text);
+                AddDiagnosticOnToken(MessageCode.SyntaxErrorInParser, message);
+            }
+
+            void AddDiagnosticOnToken(MessageCode messageCode, string message)
+            {
+                //token is part of a COPY however it has not been wrapped into ImportedToken yet. We have to create Position manually with the proper including directive.
+                var position = new Diagnostic.Position(token.Line, token.Column, token.Line, token.EndColumn, CopyReplacingDirective);
+                var diagnostic = new Diagnostic(messageCode, position, message);
+                CopyReplacingDirective.AddProcessingDiagnostic(diagnostic);
+            }
+        }
+#endif
 
         /// <summary>
         /// Get null (before the first call to NextToken()), current token, or EndOfFile

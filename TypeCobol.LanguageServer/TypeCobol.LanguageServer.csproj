@@ -17,8 +17,8 @@
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,6 +49,9 @@
     <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaParamsBuilder.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Extract Remarks Data\ExtractRemarksDataParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Extract Remarks Data\ExtractRemarksDataRequest.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Extract Remarks Data\RemarksData.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Extract Used Copies\ExtractUseCopiesNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Extract Used Copies\ExtractUseCopiesParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueNotification.cs" />

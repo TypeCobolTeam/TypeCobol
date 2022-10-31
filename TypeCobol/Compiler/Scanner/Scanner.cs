@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
@@ -96,7 +95,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
-            if (textLine.Type == CobolTextLineType.Comment || (tokensLine.Type == CobolTextLineType.Debug && !IsDebugLineActive(tokensLine)))
+            if (textLine.Type == CobolTextLineType.Comment || (tokensLine.Type == CobolTextLineType.Debug && !IsDebuggingModeActive(tokensLine.ScanState, tokensLine.SourceText)))
             {
                 if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
                 {
@@ -168,10 +167,10 @@ namespace TypeCobol.Compiler.Scanner
         }
 
 #if EUROINFO_RULES
-		private static bool IsInsideRemarks(CobolTextLineType type, string line) {
-			if (type != CobolTextLineType.Comment || line == null) return false;
-			return line.StartsWith("REMARKS.", StringComparison.InvariantCultureIgnoreCase);
-		}
+        private static bool IsInsideRemarks(CobolTextLineType type, string line) {
+            if (type != CobolTextLineType.Comment || line == null) return false;
+            return line.StartsWith("REMARKS.", StringComparison.InvariantCultureIgnoreCase);
+        }
         private static int GetStartIndexOfSignificantPart([NotNull] string line, MultilineScanState state) {
             int start = Math.Max(line.IndexOf(' ') +1, line.IndexOf('=') +1);
             if (!state.InsideRemarksParentheses) {
@@ -220,11 +219,12 @@ namespace TypeCobol.Compiler.Scanner
         }
 #endif
 
-        private static bool IsDebugLineActive(ITokensLine tokensLine)
+        private static bool IsDebuggingModeActive(MultilineScanState lineScanState, string lineSourceText)
         {
-            System.Diagnostics.Debug.Assert(tokensLine.Type == CobolTextLineType.Debug);
+            System.Diagnostics.Debug.Assert(lineScanState != null);
+            System.Diagnostics.Debug.Assert(lineSourceText != null);
 
-            if (!tokensLine.ScanState.WithDebuggingMode)
+            if (!lineScanState.WithDebuggingMode)
             {
                 /*
                  * DebuggingMode is inactive but REPLACE directives are a special case.
@@ -234,7 +234,7 @@ namespace TypeCobol.Compiler.Scanner
                  * So an inactive debug line has to be parsed as regular source if it participates
                  * in a REPLACE directive.
                  */
-                return tokensLine.ScanState.InsideReplaceDirective || StartsWithReplace();
+                return lineScanState.InsideReplaceDirective || StartsWithReplace();
             }
 
             //DebuggingMode is active, debug line is considered as regular source line.
@@ -243,7 +243,7 @@ namespace TypeCobol.Compiler.Scanner
             bool StartsWithReplace()
             {
                 string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
-                return tokensLine.SourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
+                return lineSourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -270,7 +270,9 @@ namespace TypeCobol.Compiler.Scanner
             for (; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine line = continuationLinesGroup[i];
-                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && IsDebugLineActive(line)))
+
+                // Line's scan state is set by Scanner.ScanTokensLine, so use local variable scanState instead of line's property
+                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && IsDebuggingModeActive(scanState, line.SourceText)))
                 {
                     hasSource = true;
                     break;
@@ -287,7 +289,7 @@ namespace TypeCobol.Compiler.Scanner
             int firstSourceLineIndex = i;
             TokensLine firstSourceLine = continuationLinesGroup[firstSourceLineIndex];
             string concatenatedLine = firstSourceLine.SourceText;
-            textAreasForOriginalLinesInConcatenatedLine[firstSourceLineIndex] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
+            textAreasForOriginalLinesInConcatenatedLine[firstSourceLineIndex] = new TextArea(0, concatenatedLine.Length -1);
             startIndexForTextAreasInOriginalLines[firstSourceLineIndex] = firstSourceLine.Source.StartIndex;
             offsetForLiteralContinuationInOriginalLines[firstSourceLineIndex] = 0;
 
@@ -492,7 +494,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // => remove the floating comment from the text of the continuation
                         concatenatedLine = concatenatedLine.Substring(0, concatenatedLine.Length - lastTokenOfConcatenatedLineSoFar.Length);
-                        textAreasForOriginalLinesInConcatenatedLine[i - 1] = new TextArea(TextAreaType.Source, textAreasForOriginalLinesInConcatenatedLine[i - 1].StartIndex, textAreasForOriginalLinesInConcatenatedLine[i - 1].EndIndex - lastTokenOfConcatenatedLineSoFar.Length);
+                        textAreasForOriginalLinesInConcatenatedLine[i - 1] = new TextArea(textAreasForOriginalLinesInConcatenatedLine[i - 1].StartIndex, textAreasForOriginalLinesInConcatenatedLine[i - 1].EndIndex - lastTokenOfConcatenatedLineSoFar.Length);
                         TokensLine lineWithFloatingComment = continuationLinesGroup[i - 1];
                         Token floatingCommentToken = new Token(TokenType.FloatingComment, lineWithFloatingComment.Length - lastTokenOfConcatenatedLineSoFar.Length, lineWithFloatingComment.Length - 1, lineWithFloatingComment);
                         lineWithFloatingComment.SourceTokens.Add(floatingCommentToken);
@@ -518,7 +520,7 @@ namespace TypeCobol.Compiler.Scanner
                 int startIndexOfContinuationStringInContinuationLine = startOfContinuationIndex + offsetForLiteralContinuation;
                 int lengthOfContinuationStringInContinuationLine = lastIndex - startIndexOfContinuationStringInContinuationLine + 1;                
                 
-                textAreasForOriginalLinesInConcatenatedLine[i] = new TextArea(TextAreaType.Source, concatenatedLine.Length, concatenatedLine.Length + lengthOfContinuationStringInContinuationLine - 1);
+                textAreasForOriginalLinesInConcatenatedLine[i] = new TextArea(concatenatedLine.Length, concatenatedLine.Length + lengthOfContinuationStringInContinuationLine - 1);
                 startIndexForTextAreasInOriginalLines[i] = startIndexOfContinuationStringInContinuationLine;
                 offsetForLiteralContinuationInOriginalLines[i] = offsetForLiteralContinuation;
 
@@ -1277,6 +1279,23 @@ namespace TypeCobol.Compiler.Scanner
                         if (!tokensLine.ScanState.InsidePseudoText)
                         {
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, tokensLine);
+
+                            // check the preceding char
+                            int sourceStart = tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat ? (int)CobolFormatAreas.Begin_A - 1 : 0;
+                            if (startIndex - 1 >= sourceStart)
+                            {
+                                char precedingChar = line[startIndex - 1];
+                                if (precedingChar == ',' || precedingChar == ';')
+                                {
+                                    // Warning
+                                    tokensLine.AddDiagnostic(MessageCode.InvalidCharBeforePseudoTextDelimiter, delimiterToken, precedingChar);
+                                }
+                                else if (precedingChar != ' ')
+                                {
+                                    // Warning
+                                    tokensLine.AddDiagnostic(MessageCode.ShouldBePrecededBySpace, delimiterToken, precedingChar, startIndex);
+                                }
+                            }
                         }
                         // Case 2. Closing delimiter
                         else
@@ -1284,7 +1303,7 @@ namespace TypeCobol.Compiler.Scanner
                             // get the immediately following char
                             char followingChar;
                             bool usesVirtualSpaceAtEndOfLine = false;
-                            if(currentIndex > lastIndex)
+                            if (currentIndex > lastIndex)
                             {
                                 followingChar = ' ';
                                 usesVirtualSpaceAtEndOfLine = true;
@@ -1295,9 +1314,15 @@ namespace TypeCobol.Compiler.Scanner
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
-                            if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
+                            if (followingChar == ',' || followingChar == ';')
                             {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
+                                // Error
+                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken, followingChar);
+                            }
+                            else if (followingChar != ' ' && followingChar != '.')
+                            {
+                                // Warning
+                                tokensLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace, delimiterToken, followingChar, currentIndex + 1);
                             }
                         }
                         return delimiterToken;
@@ -1311,7 +1336,7 @@ namespace TypeCobol.Compiler.Scanner
                 case '"':
                 case '\'':
                     //AlphanumericLiteral = 21,
-                    return ScanAlphanumericLiteral(startIndex, TokenType.AlphanumericLiteral);
+                    return ScanAlphanumericLiteral(startIndex, TokenType.AlphanumericLiteral, _multiStringConcatBitPosition);
                 case 'X':
                 case 'x':
                     //HexadecimalAlphanumericLiteral = 22,
@@ -1321,7 +1346,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume X char
                         currentIndex++;
-                        return ScanAlphanumericLiteral(startIndex, TokenType.HexadecimalAlphanumericLiteral);
+                        return ScanAlphanumericLiteral(startIndex, TokenType.HexadecimalAlphanumericLiteral, _multiStringConcatBitPosition);
                     }
                     else
                     {
@@ -1335,7 +1360,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume Z char
                         currentIndex++;
-                        return ScanAlphanumericLiteral(startIndex, TokenType.NullTerminatedAlphanumericLiteral);
+                        return ScanAlphanumericLiteral(startIndex, TokenType.NullTerminatedAlphanumericLiteral, _multiStringConcatBitPosition);
                     }
                     else
                     {
@@ -1350,14 +1375,14 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume N char
                         currentIndex++;
-                        return ScanAlphanumericLiteral(startIndex, TokenType.NationalLiteral);
+                        return ScanAlphanumericLiteral(startIndex, TokenType.NationalLiteral, _multiStringConcatBitPosition);
                     }
                     else if (currentIndex < lastIndex     && (line[currentIndex + 1] == 'X' || line[currentIndex + 1] == 'x') &&
                              currentIndex < (lastIndex+1) && (line[currentIndex + 2] == '"' || line[currentIndex + 2] == '\''))
                     {
                         // consume N and X chars
                         currentIndex += 2;
-                        return ScanAlphanumericLiteral(startIndex, TokenType.HexadecimalNationalLiteral);
+                        return ScanAlphanumericLiteral(startIndex, TokenType.HexadecimalNationalLiteral, _multiStringConcatBitPosition);
                     }
                     else
                     {
@@ -1371,13 +1396,12 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume G char
                         currentIndex++;
-                        return ScanAlphanumericLiteral(startIndex, TokenType.DBCSLiteral);
+                        return ScanAlphanumericLiteral(startIndex, TokenType.DBCSLiteral, _multiStringConcatBitPosition);
                     }
                     else
                     {
                         return ScanCharacterString(startIndex);
                     }
-
                 // p9: COBOL words with single-byte characters
                 // A COBOL word is a character-string that forms a user-defined word, a system-name, or a reserved word. 
                 // Each character of a COBOL word is selected from the following set: 
@@ -1390,43 +1414,26 @@ namespace TypeCobol.Compiler.Scanner
 
                 // PROBLEMS : 
                 // 123 is a valid user defined word (for section & paragraph names) AND a valid numeric literal.
-                // 123E-4 is a valid user defined word (for any type of name) AND a valid numeric literal (floating point format).
-                // 123-456 is a valid user defined word (fol section & paragraph names), AND it could be interpreted as two numeric literals,
-                //   NB: it is NOT a valid subtraction (minus must be preceded and followedf by space) but we would like to display a nice error 
-                //   message informing the user that these spaces are mandatory, because a subtraction was most likey intended in this case.
-                // 000010-000050 should be interpreted as a range of numbers (indicated by separating the two bounding numbers of the range 
-                //   by a hyphen) in sequence-number-fields of compiler directive statements (ex: DELETE).
-
+                // 000010-000050 is interpreted as a UserDefinedWord
+                //Depending on the context it could be
+                // - a range of numbers (for DELETE_CD)
+                //     - See sequence-number-fields of compiler directive statements
+                // - a paragraph name
+                //The scanner will then always match 000010-000050 as a UserDefinedWord.
+                //The check to be sure that a variable name contains at least alphabetic char
+                //is done at CodeElement level.
+                
                 // CURRENT behavior of method ScanNumericLiteral :
                 // This method matches chars as long as they are characters allowed in a numeric literal.
                 // Then, it checks the format of the matched string, and returns either a NumericLiteral or Invalid token.
-                // If we write 123ABC, ScanNumericLiteral will match only 123, return a perfectly valid numeric literal,
-                // and place the currentIndex to match the next token on the char A.
+                // If we write 123ABC, ScanNumericLiteral will match 123ABC.
 
-                // PROPOSED SOLUTION :
-                // * in the Scanner :
+                // SOLUTION:
                 // If a token is starting with a digit, we first try to scan it as a numeric literal (most common case).
                 // Then we check if the character directly following the numeric literal is a valid character for a user defined word.
-                // We also check as a special case if this character is not '-', followed by a digit or an invalid char, because we need 
-                // to interpret 123-456 as two numeric literals without separator (notably for range of numbers)and 123- is not valid.
                 // If it is not valid (space, separator ...), we simply return the numeric literal token.
                 // If it is valid, we reset the state of the scanner and try to scan this word as a character string 
                 // (keyword, user defined word ...).
-                // * in the Grammar :
-                // We must allow numeric literal tokens (in addition to user defind words) in section and paragraph name rules.
-
-                // => additional PROBLEM after test : 
-                // 123. is already matched by the grammar in the reference documentation as a valid dataDescriptionEntry.
-                // But according to the same spec, 123. is also a valid paragraphHeader.
-                // TO DO : check which one of the two alternatives must be favored in the real world ?
-                // In the meantime, nothing was changed in the grammar file : purely numeric paragraph identifiers are not supported.
-
-                // LIMITATIONS :
-                // User defined words of the form 123E-4 or 123-4X are valid according to the spec but will not be supported 
-                // by this compiler. 
-                // These cases are considered highly improbable, but we will have to check on a large body of existing programs.
-                // Purely numeric aragraph and section names are not supported.
-
                 case '0':
                 case '1':
                 case '2':
@@ -1443,24 +1450,29 @@ namespace TypeCobol.Compiler.Scanner
                     //DecimalLiteral = 28,
                     //FloatingPointLiteral = 29,
                     int saveCurrentIndex = currentIndex;
-                    Token numericLiteralToken = ScanNumericLiteral(startIndex);
+                    Token numericLiteralToken = ScanCobolNumericLiteral(startIndex);
 
-                    // 2. Then check to see if the next char would be valid inside a CobolWord
-                    bool nextCharIsACobolWordChar = (currentIndex <= lastIndex) && CobolChar.IsCobolWordChar(line[currentIndex]);
-                    if(nextCharIsACobolWordChar && line[currentIndex] == '-')
+
+                    // 2. a FloatingPointLiteral contains a character '.' or ',' which is invalid
+                    // in a UserDefinedWord or a keyword, so we can return this token directly.
+                    if (numericLiteralToken.TokenType == TokenType.FloatingPointLiteral)
                     {
-                        nextCharIsACobolWordChar = nextCharIsACobolWordChar && currentIndex < lastIndex
-                            && CobolChar.IsCobolWordChar(line[currentIndex + 1])
-                            && !Char.IsDigit(line[currentIndex + 1]);
+                        return numericLiteralToken;
                     }
 
-                    // 3.1. Return a numeric literal token
-                    if (!nextCharIsACobolWordChar)
+                    //TODO : Paragraph and section with name like "123" are currently not handled 
+
+                    if (numericLiteralToken.TokenType != TokenType.InvalidToken 
+                        && !((currentIndex <= lastIndex) && CobolChar.IsCobolWordChar(line[currentIndex])))
                     {
+                        // 3. Return a numeric literal token because there is no valid Cobol char that follows this token
                         return numericLiteralToken;
                     }
                     else
                     {
+                        //4. Handle UserDefinedWord like  123-456, 123X or 123-X
+
+                        //ScanNumericLiteral can return InvalidToken, in this case it's better to rescan it as a UserDefinedWord
                         // Reset scanner state
                         currentIndex = saveCurrentIndex;
                         if (numericLiteralToken.TokenType == TokenType.InvalidToken)
@@ -1468,8 +1480,7 @@ namespace TypeCobol.Compiler.Scanner
                             tokensLine.ClearDiagnosticsForToken(numericLiteralToken);
                         }
 
-                        // 3.2 Try to scan a Cobol character string
-                        //UserDefinedWord = 36,
+                        //Try to scan a Cobol character string: UserDefinedWord or PartialCobolWord
                         return ScanCharacterString(startIndex);
                     }
                 default:
@@ -1506,29 +1517,6 @@ namespace TypeCobol.Compiler.Scanner
         // ... -> ALPHABET | CLASS | CURRENCY | DECIMAL_POINT | XML_SCHEMA | PeriodSeparator | REPOSITORY | INPUT_OUTPUT | DATA
         
         // ---
-
-        private Token ScanWhitespace(int startIndex)
-        {
-            // consume all whitespace chars available
-            for (; currentIndex <= lastIndex && line[currentIndex] == ' '; currentIndex++) { }
-            int endIndex = currentIndex - 1;
-
-            if (tokensLine.ScanState.InsidePseudoText || !compilerOptions.OptimizeWhitespaceScanning)
-            {
-                // SpaceSeparator has to be created
-                return new Token(TokenType.SpaceSeparator, startIndex, endIndex, tokensLine);
-            }
-
-            // jump to next token
-            return GetNextToken();
-        }
-
-        private Token ScanOneChar(int startIndex, TokenType tokenType)
-        {
-            // consume one char
-            currentIndex++;
-            return new Token(tokenType, startIndex, startIndex, tokensLine);
-        }
 
         private Token ScanOneCharWithPossibleSpaceAfter(int startIndex, TokenType tokenType) {
             //Use MessageCode.ImplementationError because ScanOneCharFollowedBySpace must not create an error
@@ -1579,12 +1567,12 @@ namespace TypeCobol.Compiler.Scanner
             }
             else if (Char.IsDigit(line[currentIndex + 1]))
             {
-                return ScanNumericLiteral(startIndex);
+                return ScanCobolNumericLiteral(startIndex);
             }
             else if((tokenType == TokenType.PlusOperator || tokenType == TokenType.MinusOperator) && 
                     line[currentIndex + 1] == (tokensLine.ScanState.SpecialNames.DecimalPointIsComma ? ',' : '.'))
             {
-                return ScanNumericLiteral(startIndex);
+                return ScanCobolNumericLiteral(startIndex);
             }
             else
             {
@@ -1624,7 +1612,7 @@ namespace TypeCobol.Compiler.Scanner
             return new Token(TokenType.FloatingComment, startIndex, lastIndex, tokensLine, true, true, ' ');
         }
 
-        private Token ScanNumericLiteral(int startIndex)
+        private Token ScanCobolNumericLiteral(int startIndex)
         {
             // p37: Numeric literals
             // A numeric literal is a character-string whose characters are selected from the digits 0
@@ -1662,338 +1650,114 @@ namespace TypeCobol.Compiler.Scanner
                 decimalPoint = ',';
             }
 
-            //IntegerLiteral = 27,
-            // Fast path for the most common type of numeric literal : simple integer literals like the level numbers (no sign, no decimal point)
-            char firstChar = line[startIndex];
-            if(Char.IsDigit(firstChar))
+            Token token = ScanNumericLiteral(startIndex, decimalPoint);
+            switch (token.TokenType)
             {
-                // consume all the following digits
-                int fstCurrentIndex = startIndex + 1;
-                for (; fstCurrentIndex <= lastIndex && Char.IsDigit(line[fstCurrentIndex]); fstCurrentIndex++) { }
-                // check to see if the following char could be part of a numeric literal
-                if( fstCurrentIndex > lastIndex || 
-                    (line[fstCurrentIndex] != decimalPoint && line[fstCurrentIndex] != 'e' && line[fstCurrentIndex] != 'E') ||
-                    (line[fstCurrentIndex] == decimalPoint && (fstCurrentIndex == lastIndex || line[fstCurrentIndex+1] == ' ')))
-                {
-                    // if it is not the case, assume this is the end of a simple integer literal
-                    currentIndex = fstCurrentIndex;
-                    int endIndex = fstCurrentIndex - 1;
-                    Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
-                    try
-                    {
-                        token.LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
-                    }
-                    catch (Exception)
-                    {
-                        token.LiteralValue = new IntegerLiteralTokenValue(null, long.MaxValue);
-                        this.tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Number is too big : " + line.Substring(startIndex, fstCurrentIndex - startIndex));
-                    }
-
-                    if (BeSmartWithLevelNumber) { 
-                        // Distinguish the special case of a LevelNumber
-                        if (tokensLine.ScanState.InsideDataDivision)
-                        {
-                            if (tokensLine.ScanState.AtBeginningOfSentence || GuessIfCurrentTokenIsLevelNumber())
-                            {
-                                token.CorrectType(TokenType.LevelNumber);
-                            }
-
-                            //This method is here to help recognize LevelNumbers when PeriodSeparator has been forgotten at the end of previous data definition.
-                            bool GuessIfCurrentTokenIsLevelNumber()
-                            {
-                                var lastSignificantToken = tokensLine.ScanState.LastSignificantToken;
-                                var beforeLastSignificantToken = tokensLine.ScanState.BeforeLastSignificantToken;
-
-                                bool currentTokenIsAtBeginningOfNewLine = token.Line > lastSignificantToken.Line;
-                                bool currentTokenIsBeforeAreaB = token.Column < 12;
-
-                                //Either a continuation line or we are still on the same line --> not a LevelNumber
-                                if (!currentTokenIsAtBeginningOfNewLine || tokensLine.HasTokenContinuationFromPreviousLine)
-                                    return false;
-
-                                //Literals can't be written outside of AreaB so it must be a LevelNumber
-                                if (currentTokenIsBeforeAreaB)
-                                    return true;
-
-                                //Try to guess if it is a LevelNumber or Literal depending on previous tokens
-                                bool currentTokenIsExpectedToBeALiteral = false;
-                                switch (lastSignificantToken.TokenType)
-                                {
-                                    case TokenType.OCCURS:
-                                    case TokenType.VALUE:
-                                    case TokenType.VALUES:
-                                    case TokenType.THROUGH:
-                                    case TokenType.THRU:
-                                        currentTokenIsExpectedToBeALiteral = true;
-                                        break;
-                                    case TokenType.IS:
-                                    case TokenType.ARE:
-                                        currentTokenIsExpectedToBeALiteral =
-                                            beforeLastSignificantToken.TokenType == TokenType.VALUE ||
-                                            beforeLastSignificantToken.TokenType == TokenType.VALUES;
-                                        break;
-                                }
-                                if (!currentTokenIsExpectedToBeALiteral)
-                                {
-                                    /*
-                                     * Here we still have an ambiguity between multiple consecutive IntegerLiteral and LevelNumber like in this kind of declarations :
-                                     *    01 integers PIC 99.
-                                     *       88 odd  VALUES 01 03 05
-                                     *                      07 09.
-                                     *       88 even VALUES 02 04 06
-                                     *                      08.
-                                     * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
-                                     * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
-                                     *
-                                     * 'ZERO', 'ZEROS' and 'ZEROES' figurative constants can also be used among values so they are considered too.
-                                     */
-                                    return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral &&
-                                           lastSignificantToken.TokenType != TokenType.ZERO &&
-                                           lastSignificantToken.TokenType != TokenType.ZEROS &&
-                                           lastSignificantToken.TokenType != TokenType.ZEROES;
-                                }
-
-                                return false;
-                            }
-                        }
-                    }
-
-                    return token;
-                }
+                case TokenType.IntegerLiteral:
+                    CheckIntegerLiteral();
+                    break;
+                case TokenType.FloatingPointLiteral:
+                    CheckFloatingPointLiteral();
+                    break;
             }
-            
-            // If the fast path attempt was not successful, try to match each one
-            // of the two other numeric literal formats, with regular expressions 
-
-            int lookupEndIndex = startIndex;
-
-            // consume the first char if it was +/- (to simplify the count of chars below)
-            if(line[startIndex] == '+' || line[startIndex] == '-')
-            {
-                lookupEndIndex++;
-            }
-            // then consume the following chars : digits many times, + -  e E . only once             
-            bool currentCharStillInLiteral = false;
-            bool plusMinusFound = false;
-            bool periodFound = false;
-            bool eEFound = false;
-            do
-            {
-                char c = line[lookupEndIndex];
-                currentCharStillInLiteral = Char.IsDigit(c) || (!periodFound && c == decimalPoint) || (!plusMinusFound && (c == '+' || c == '-')) || (!eEFound && (c == 'e' || c == 'E'));
-                if (currentCharStillInLiteral)
-                {
-                    if (!plusMinusFound && (c == '+' || c == '-')) plusMinusFound = true;
-                    if (!periodFound && c == decimalPoint) periodFound = true;
-                    if (!eEFound && (c == 'e' || c == 'E')) eEFound = true;
-                    lookupEndIndex++;
-                }
-            }
-            while (currentCharStillInLiteral && lookupEndIndex <= lastIndex);
-            lookupEndIndex = (lookupEndIndex > lastIndex) ? lastIndex : lookupEndIndex - 1;
-            // we may have consumed one additonal character after the end of the literal
-            if ((line[lookupEndIndex] == decimalPoint || line[lookupEndIndex] == '+' || line[lookupEndIndex] == '-') && lookupEndIndex > startIndex)
-            {
-                lookupEndIndex--;
-            }
-            // then try to predict the intended the number format
-            string numberString = line.Substring(startIndex, lookupEndIndex - startIndex + 1);
-            if (numberString.Contains('E') || numberString.Contains('e'))
-            {
-                //FloatingPointLiteral = 29,
-                Match fpMatch = _FloatingPointLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
-                if (fpMatch.Success && fpMatch.Index == startIndex)
-                {
-                    currentIndex += fpMatch.Length;
-                    int endIndex = startIndex + fpMatch.Length - 1;
-                    Token token = new Token(TokenType.FloatingPointLiteral, startIndex, endIndex, tokensLine);
-                    string mantissaDecimalPart = fpMatch.Groups[3].Value;
-                    if (string.IsNullOrEmpty(mantissaDecimalPart))
-                    {
-                        tokensLine.AddDiagnostic(MessageCode.InvalidMantissaInFloatingPointLiteral, token);
-                    }
-                    string exponent = fpMatch.Groups[5].Value;
-                    if (exponent.Length > 2)
-                    {
-                        tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
-                    }
-                    token.LiteralValue = new FloatingPointLiteralTokenValue(fpMatch.Groups[1].Value, fpMatch.Groups[2].Value, mantissaDecimalPart, fpMatch.Groups[4].Value, exponent);
-                    return token;
-                }
-                else
-                {
-                    // consume all lookup chars
-                    currentIndex = lookupEndIndex + 1;
-                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, tokensLine);
-                    tokensLine.AddDiagnostic(MessageCode.InvalidNumericLiteralFormat, invalidToken);
-                    return invalidToken;
-                }
-            }
-            else
-            {
-                //DecimalLiteral = 28,
-                Match decMatch = _DecimalLiteralRegex.Match(line, startIndex, lastIndex - startIndex + 1);
-                if (decMatch.Success && decMatch.Index == startIndex)
-                {
-                    currentIndex += decMatch.Length;
-                    int endIndex = startIndex + decMatch.Length - 1;
-                    TokenType type;
-                    LiteralTokenValue value;
-                    if(decMatch.Groups[3].Value.Length > 0) {
-                        type = TokenType.DecimalLiteral;
-                        value = new DecimalLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
-                    } else {
-                        type = TokenType.IntegerLiteral;
-                        value = new IntegerLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value);
-                    }
-                    Token token = new Token(type, startIndex, endIndex, tokensLine);
-                    token.LiteralValue = value;
-                    return token;
-                }
-                else
-                {
-                    // consume all lookup chars
-                    currentIndex = lookupEndIndex + 1;
-                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, tokensLine);
-                    tokensLine.AddDiagnostic(MessageCode.InvalidNumericLiteralFormat, invalidToken);
-                    return invalidToken;
-                }
-            }   
-        }
-
-        private static readonly Regex _DecimalLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?", RegexOptions.Compiled);
-        private static readonly Regex _FloatingPointLiteralRegex = new Regex("([-+]?)([0-9]*)(?:[\\.,]([0-9]+))?[eE]([-+]?)([0-9]+)", RegexOptions.Compiled);
-
-        private Token ScanAlphanumericLiteral(int startIndex, TokenType tokenType)
-        {
-            // p46: Alphanumeric Literals 
-            //   Quotation marks {"} ... {"}
-            //   Apostrophes {’} ... {’}
-            // Delimiters must appear as balanced pairs.
-            // An opening quotation mark must be immediately preceded by a space or a
-            // left parenthesis. A closing quotation mark must be immediately followed
-            // by a separator space, comma, semicolon, period, right parenthesis, or
-            // pseudo-text delimiter.
-
-            // p34: Basic alphanumeric literals
-            // Basic alphanumeric literals can contain any character in a single-byte EBCDIC
-            // character set.
-            // The following format is for a basic alphanumeric literal:
-            // Format 1: Basic alphanumeric literals
-            // "single-byte-characters"
-            //’ single-byte-characters’
-            // The enclosing quotation marks or apostrophes are excluded from the literal when
-            // the program is compiled.
-            // An embedded quotation mark or apostrophe must be represented by a pair of
-            // quotation marks ("") or a pair of apostrophes (’’), respectively, when it is the
-            // character used as the opening delimiter. For example:
-            // "THIS ISN""T WRONG"
-            //’ THIS ISN’’T WRONG’
-            // The delimiter character used as the opening delimiter for a literal must be used as
-            // the closing delimiter for that literal. For example:
-            // ’THIS IS RIGHT’
-            // "THIS IS RIGHT"
-            // ’THIS IS WRONG"
-            // You can use apostrophes or quotation marks as the literal delimiters independent
-            // of the APOST/QUOTE compiler option.
-            // Any punctuation characters included within an alphanumeric literal are part of the
-            // value of the literal.
-            // The maximum length of an alphanumeric literal is 160 bytes. The minimum length
-            // is 1 byte.
-
-            // consume opening delimiter
-            char delimiter = line[currentIndex];
-            currentIndex++;
-            
-            // consume all chars until we encounter one occurence (and only one) of the delimiter 
-            bool closingDelimiterFound = false;
-            bool usingVirtualSpaceAtEndOfLine = false;
-            StringBuilder sbValue = new StringBuilder();
-            do
-            {
-                for (; currentIndex <= lastIndex && line[currentIndex] != delimiter; currentIndex++)
-                {
-                    char currentChar = line[currentIndex];
-                    sbValue.Append(currentChar);
-                }
-                // delimiter found before the last character of the line
-                if (currentIndex < lastIndex)
-                {
-                    // continue in case of a double delimiter
-                    if (line[currentIndex + 1] == delimiter && !(_multiStringConcatBitPosition?.Get(currentIndex + 1)??false))
-                    {
-                        // consume the two delimiters
-                        currentIndex += 2;
-                        // append one delimiter to the literal value
-                        sbValue.Append(delimiter);
-                    }
-                    // stop in case of a simple delimiter
-                    else
-                    {
-                        // consume closing delimiter
-                        currentIndex++;
-                        closingDelimiterFound = true;
-                        usingVirtualSpaceAtEndOfLine = false;
-                    }
-                }
-                // delimiter found on the last character of the line
-                else if (currentIndex == lastIndex)
-                {
-                    // consume closing delimiter
-                    currentIndex++;
-                    closingDelimiterFound = true;
-                    usingVirtualSpaceAtEndOfLine = true;
-                }
-            } while (currentIndex <= lastIndex && !closingDelimiterFound);
-
-            // create an alphanumeric literal token
-            int endIndex = (currentIndex > lastIndex) ? lastIndex : currentIndex - 1;
-            Token token = new Token(tokenType, startIndex, endIndex, usingVirtualSpaceAtEndOfLine, tokensLine, true, closingDelimiterFound, delimiter);
-            
-            // compute the value of the literal, depending on the exact literal type            
-            AlphanumericLiteralTokenValue value = null;
-            if (tokenType != TokenType.HexadecimalAlphanumericLiteral && tokenType != TokenType.HexadecimalNationalLiteral)
-            {
-                value = new AlphanumericLiteralTokenValue(sbValue.ToString());
-            }
-            else if (tokenType == TokenType.HexadecimalAlphanumericLiteral)
-            {
-                // p36: Hexadecimal notation for alphanumeric literals
-                // Hexadecimal digits are characters in the range '0' to '9', 'a' to 'f', and 'A' to 'F',
-                // inclusive. 
-                // An even number of hexadecimal digits must be specified.
-                // Two hexadecimal digits represent one character in a single-byte character
-                // set (EBCDIC or ASCII). Four hexadecimal digits represent one character in a DBCS
-                // character set. A string of EBCDIC DBCS characters represented in hexadecimal
-                // notation must be preceded by the hexadecimal representation of a shift-out control
-                // character (X'0E') and followed by the hexadecimal representation of a shift-in
-                // control character (X'0F'). 
-                // The maximum length of a hexadecimal literal is 320 hexadecimal digits.
-
-                string hexadecimalChars = sbValue.ToString();
-                if (hexadecimalChars.Length % 2 != 0)
-                {
-                    tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
-                }
-                value = new AlphanumericLiteralTokenValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
-            }
-            else if (tokenType == TokenType.HexadecimalNationalLiteral)
-            {
-                // p41: Hexadecimal notation for national literals
-                // The number of hexadecimal digits must be a multiple of four.
-                // Each group of four hexadecimal digits represents a single national
-                // character and must represent a valid code point in UTF-16. 
-
-                string hexadecimalChars = sbValue.ToString();
-                if (hexadecimalChars.Length % 4 != 0)
-                {
-                    tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaNationalLiteral, token);
-                }
-                value = new AlphanumericLiteralTokenValue(hexadecimalChars, Encoding.Unicode);
-            }
-            token.LiteralValue = value;
 
             return token;
+
+            void CheckIntegerLiteral()
+            {
+                Debug.Assert(token.LiteralValue is IntegerLiteralTokenValue);
+                var literalValue = (IntegerLiteralTokenValue)token.LiteralValue;
+
+                //Check IntegerLiteral range
+                if (literalValue.Number < long.MinValue || literalValue.Number > long.MaxValue)
+                {
+                    //Out of range
+                    this.tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Number is too big : " + literalValue.Number);
+                }
+
+                //Disambiguate IntegerLiteral from LevelNumber
+                if (!literalValue.HasSign && BeSmartWithLevelNumber && tokensLine.ScanState.InsideDataDivision)
+                {
+                    if (tokensLine.ScanState.AtBeginningOfSentence || GuessIfCurrentTokenIsLevelNumber())
+                    {
+                        token.CorrectType(TokenType.LevelNumber);
+                    }
+
+                    //This method is here to help recognize LevelNumbers when PeriodSeparator has been forgotten at the end of previous data definition.
+                    bool GuessIfCurrentTokenIsLevelNumber()
+                    {
+                        var lastSignificantToken = tokensLine.ScanState.LastSignificantToken;
+                        var beforeLastSignificantToken = tokensLine.ScanState.BeforeLastSignificantToken;
+
+                        bool currentTokenIsAtBeginningOfNewLine = token.Line > lastSignificantToken.Line;
+                        bool currentTokenIsBeforeAreaB = token.Column < 12;
+
+                        //Either a continuation line or we are still on the same line --> not a LevelNumber
+                        if (!currentTokenIsAtBeginningOfNewLine || tokensLine.HasTokenContinuationFromPreviousLine)
+                            return false;
+
+                        //Literals can't be written outside of AreaB so it must be a LevelNumber
+                        if (currentTokenIsBeforeAreaB)
+                            return true;
+
+                        //Try to guess if it is a LevelNumber or Literal depending on previous tokens
+                        bool currentTokenIsExpectedToBeALiteral = false;
+                        switch (lastSignificantToken.TokenType)
+                        {
+                            case TokenType.OCCURS:
+                            case TokenType.VALUE:
+                            case TokenType.VALUES:
+                            case TokenType.THROUGH:
+                            case TokenType.THRU:
+                                currentTokenIsExpectedToBeALiteral = true;
+                                break;
+                            case TokenType.IS:
+                            case TokenType.ARE:
+                                currentTokenIsExpectedToBeALiteral =
+                                    beforeLastSignificantToken.TokenType == TokenType.VALUE ||
+                                    beforeLastSignificantToken.TokenType == TokenType.VALUES;
+                                break;
+                        }
+
+                        if (!currentTokenIsExpectedToBeALiteral)
+                        {
+                            /*
+                             * Here we still have an ambiguity between multiple consecutive IntegerLiteral and LevelNumber like in this kind of declarations :
+                             *    01 integers PIC 99.
+                             *       88 odd  VALUES 01 03 05
+                             *                      07 09.
+                             *       88 even VALUES 02 04 06
+                             *                      08.
+                             * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
+                             * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
+                             *
+                             * 'ZERO', 'ZEROS' and 'ZEROES' figurative constants can also be used among values so they are considered too.
+                             */
+                            return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral &&
+                                   lastSignificantToken.TokenType != TokenType.ZERO &&
+                                   lastSignificantToken.TokenType != TokenType.ZEROS &&
+                                   lastSignificantToken.TokenType != TokenType.ZEROES;
+                        }
+
+                        return false;
+                    }
+                }
+            }
+
+            void CheckFloatingPointLiteral()
+            {
+                Debug.Assert(token.LiteralValue is FloatingPointLiteralTokenValue);
+                var literalValue = (FloatingPointLiteralTokenValue)token.LiteralValue;
+
+                //Check exponent length
+                var exponent = literalValue.Exponent.Number;
+                int exponentLength = exponent.ToString().Length - (exponent.Sign == -1 ? 1 : 0); //Check digits only, so remove '-' at beginning of negative numbers
+                if (exponentLength > 2)
+                {
+                    tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
+                    token.CorrectType(TokenType.InvalidToken);
+                }
+            }
         }
 
         private Token ScanCharacterString(int startIndex)
@@ -2200,7 +1964,7 @@ namespace TypeCobol.Compiler.Scanner
                 tokensLine.ScanState.InsideSql = true;
             }
 
-            if (tokensLine.ScanState.InsideSql)
+            if (tokensLine.ScanState.InsideSql && compilerOptions.EnableSqlParsing)
             {
                 // Use dedicated SQL scanner
                 if (_sqlScanner == null)

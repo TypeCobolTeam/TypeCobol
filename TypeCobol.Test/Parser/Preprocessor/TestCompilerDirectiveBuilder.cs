@@ -66,7 +66,9 @@ namespace TypeCobol.Test.Parser.Preprocessor
         public static void CheckEXEC_SQL_INCLUDE()
         {
             string testName = "ExecSqlInclude";
+            _DirectiveProject.CompilationOptions.EnableSqlParsing = true;
             string result = PreprocessorUtils.ProcessCompilerDirectives(_DirectiveProject, testName);
+            _DirectiveProject.CompilationOptions.EnableSqlParsing = false;
             PreprocessorUtils.CheckWithDirectiveResultFile(result, testName);
         }
 

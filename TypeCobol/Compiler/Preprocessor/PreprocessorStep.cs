@@ -137,6 +137,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser directivesParser =
                     new TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator);
                 directivesParser.ErrorReporter = cupCobolErrorStrategy;
+                directiveBuilder.ResetCompilerDirective();
                 directivesParser.Builder = directiveBuilder;
                 TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
                 perfStatsForParserInvocation.OnStopParsing(0, 0);
@@ -153,7 +154,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 perfStatsForParserInvocation.OnStartTreeBuilding();
                 // 4. Visit the parse tree to build a first class object representing the compiler directive
                 CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
-                bool errorFoundWhileParsingDirective = compilerDirective == null || compilerDirective.Diagnostics != null || cupCobolErrorStrategy.Diagnostics != null;
+                bool errorFoundWhileParsingDirective = compilerDirective == null || compilerDirective.ParsingDiagnostics != null || cupCobolErrorStrategy.Diagnostics != null;
 
                 // 5. Get all tokens consumed while parsing the compiler directive
                 //    and partition them line by line 
@@ -218,9 +219,9 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (errorFoundWhileParsingDirective)
                 {
                     ProcessedTokensLine compilerDirectiveLine = documentLines[tokensSelection.FirstLineIndex];
-                    if (compilerDirective != null && compilerDirective.Diagnostics != null)
+                    if (compilerDirective != null && compilerDirective.ParsingDiagnostics != null)
                     {
-                        foreach (Diagnostic directiveDiag in compilerDirective.Diagnostics)
+                        foreach (Diagnostic directiveDiag in compilerDirective.ParsingDiagnostics)
                         {
                             compilerDirectiveLine.AddDiagnostic(directiveDiag);
                         }
@@ -231,7 +232,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         {
                             if (compilerDirective != null)
                             {
-                                compilerDirective.AddDiagnostic(directiveDiag);
+                                compilerDirective.AddParsingDiagnostic(directiveDiag);
                             }
                             compilerDirectiveLine.AddDiagnostic(directiveDiag);
                         }

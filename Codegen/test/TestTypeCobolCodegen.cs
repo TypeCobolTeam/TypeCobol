@@ -114,7 +114,6 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclareWithExec") + ".rdz.cbl");
         }
 
-
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]

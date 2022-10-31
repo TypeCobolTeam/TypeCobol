@@ -274,7 +274,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         }
                     }
                 }
-                else if (child is WhenSearch whenSearch)
+                else if (child is When whenSearch)
                 {
                     whenSearchCount++;
                     if (whenSearchCount > 1 && search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
@@ -345,15 +345,14 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         
-        public override bool Visit(WhenSearch whenSearch)
+        public override bool Visit(When whenSearch)
         {
-            System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
-            var search = (Search) whenSearch.Parent;
+            if (!(whenSearch.Parent is Search search)) return true; //EVALUATE statement, not our concern here.
 
             if (whenSearch.ChildrenCount == 0)
             {
                 var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
-                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause", messageCode);
+                DiagnosticUtils.AddError(whenSearch, "Missing statement in \"when\" clause", messageCode);
             }
 
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
@@ -552,7 +551,17 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(If ifNode)
         {
-            if (ifNode?.Children != null && !(ifNode.Children.Last() is End))
+            #region Temporary debug code for #2266
+
+            if (ifNode.Children.Count == 0)
+            {
+                var debugData = Logging.LoggingSystemExtensions.CreateDebugData(ifNode);
+                Logging.LoggingSystem.LogMessage(Logging.LogLevel.Error, "CrossCompleteChecker.Visit, found invalid IF node", debugData);
+            }
+
+            #endregion
+
+            if (!(ifNode.Children.Last() is End))
             {
                 DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
@@ -852,6 +861,27 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Exec exec)
+        {
+            // EXEC SQL and all its children must be in same source file
+            string execTranslatorName = exec.CodeElement.ExecTranslatorName?.Name;
+            if (string.Equals(execTranslatorName, "SQL", StringComparison.OrdinalIgnoreCase) && exec.ChildrenCount > 0)
+            {
+                var referenceCopyDirective = exec.CodeElement.FirstCopyDirective;
+                foreach (var execChild in exec.Children)
+                {
+                    var copyDirective = execChild.CodeElement?.FirstCopyDirective;
+                    if (referenceCopyDirective != copyDirective)
+                    {
+                        DiagnosticUtils.AddError(exec, "Syntax not supported: when embedding SQL statements, EXEC SQL and all its content (including END-EXEC) must be in the same source file.");
+                        break; //Stop on first error, avoid reporting error for every child
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)
@@ -863,21 +893,29 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
 
             var parentTypeDefinition = (node as DataDefinition)?.ParentTypeDefinition;
-            var foundQualified =
-                node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
-                        ? area.SymbolReference.URI
-                        : new URI(area.ToString()),
-                    parentTypeDefinition);
-            var found = foundQualified.Select(v => v.Value);
 
-            var foundCount = found.Count();
+            var uri = area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString());
+            var foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(uri, parentTypeDefinition);
 
-            if (foundCount == 0)
+            if (foundQualified.Count == 0)
             {
+                //Helper diagnostic for subtraction between numeric written without spaces around minus sign.
+                //Only do this diagnostic if :
+                //  - the variable contains no alpha, because otherwise the most standard use case is simply an undefined variable.
+                //  - SymbolReference is NOT qualified (OF, IN, ::), otherwise it's clearly not an arithmetic subtraction.
+                if (area.SymbolReference != null && area.SymbolReference.IsQualifiedReference == false)
+                {
+                    if (area.SymbolReference.Name.All(c => char.IsDigit(c) || c == '-'))
+                    {
+                        DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. Arithmetic operations require spaces around minus sign: " + string.Join(" - ", area.SymbolReference.Name.Split('-')));
+                    }
+                }
+               
+
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
-            else if (foundCount > 1)
+            else if (foundQualified.Count > 1)
             {
                 bool isFirst = true;
                 string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine +
@@ -895,15 +933,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
-            else if (foundCount == 1)
+            else if (foundQualified.Count == 1)
             {
-                var dataDefinitionFound = found.First();
-                var dataDefinitionPath = foundQualified.First().Key;
+                var dataDefinitionFound = foundQualified[0].Value;
+                var dataDefinitionPath = foundQualified[0].Key;
 
-                if (foundQualified.Count == 1)
-                {
-                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
-                }
+                IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
 
                 if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {
@@ -1111,7 +1146,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else if (dataDefinition.DataType == DataType.Boolean)
             {
-                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
+                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                 { 
                     //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                     FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, dataDefinitionPath);

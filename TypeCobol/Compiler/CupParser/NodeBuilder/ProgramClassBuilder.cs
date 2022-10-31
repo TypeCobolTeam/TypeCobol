@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Nodes;
+using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -15,6 +18,35 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// </summary>
     public class ProgramClassBuilder : IProgramClassBuilder
     {
+        private static bool _SourceCodeDumped;
+
+        private void LogErrorIncludingFullSourceCode(string message)
+        {
+            if (_SourceCodeDumped) return; //Dump only once to avoid huge logs
+
+            var codeElements = new StringBuilder();
+            var sourceCode = new StringBuilder();
+            foreach (var codeElementsLine in _codeElementsLines)
+            {
+                if (!codeElementsLine.HasCodeElements) continue;
+
+                foreach (var codeElement in codeElementsLine.CodeElements)
+                {
+                    codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
+                    sourceCode.AppendLine(codeElement.SafeGetSourceText());
+                }
+            }
+
+            var contextData = new Dictionary<string, object>()
+                              {
+                                  { "codeElements", codeElements.ToString() },
+                                  { "sourceCode", sourceCode.ToString() }
+                              };
+            LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+
+            _SourceCodeDumped = true;
+        }
+
         public SyntaxTree SyntaxTree { get; set; }
 
         private TypeDefinition _CurrentTypeDefinition
@@ -55,13 +87,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private readonly SymbolTable TableOfIntrinsics;
         private readonly SymbolTable TableOfNamespaces;
 
-        public ProgramClassBuilder()
+        private readonly IReadOnlyList<CodeElementsLine> _codeElementsLines;
+
+        public ProgramClassBuilder(IReadOnlyList<CodeElementsLine> codeElementsLines)
         {
             // Intrinsics and Namespaces always exist. Intrinsic table has no enclosing scope.
             TableOfIntrinsics = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             TableOfNamespaces = new SymbolTable(TableOfIntrinsics, SymbolTable.Scope.Namespace);
 
             programsStack = new Stack<Program>();
+
+            _codeElementsLines = codeElementsLines;
         }
 
         public SymbolTable CustomSymbols
@@ -181,11 +217,21 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Node lastLevel1Definition = null;
             while (CurrentNode.CodeElement is DataDefinitionEntry)
             {
+                if (CurrentNode.CodeElement.Type == CodeElementType.FileDescriptionEntry)
+                {
+                    // Do not exit FileDescription, only exit true level-numbered DataDefinitions
+                    // Do not call OnTopLevelDataDefinition, it will be done when ending the FileDescription itself
+                    return;
+                }
+
                 lastLevel1Definition = CurrentNode;
                 Exit();
             }
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse (ReSharper bug ?)
             if (lastLevel1Definition != null)
-                Dispatcher.OnLevel1Definition((DataDefinition) lastLevel1Definition);//Call is made also for level-77.
+                // ReSharper disable once HeuristicUnreachableCode (ReSharper bug ?)
+                Dispatcher.OnTopLevelDataDefinition((DataDefinition) lastLevel1Definition);//Call is made also for level-77.
         }
 
         public virtual void StartCobolCompilationUnit()
@@ -213,6 +259,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             else
             {
+                #region Temporary debug code for #2319
+
+                while (CurrentNode != CurrentProgram)
+                {
+                    // This is abnormal, re-synchronize builder with CUP parser
+                    Exit();
+                    LogErrorIncludingFullSourceCode($"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.");
+                }
+
+                #endregion
+
                 // Nested
                 CurrentProgram = new NestedProgram(CurrentProgram, programIdentification);
             }
@@ -404,7 +461,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndFileSection()
         {
-            ExitLastLevel1Definition();
             Exit();
             _IsInsideFileSectionContext = false;
             Dispatcher.EndFileSection();
@@ -428,24 +484,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
-            ExitLastLevel1Definition();
-            Enter(new FileDescriptionEntryNode(entry), entry);
+            var node = new FileDescriptionEntryNode(entry);
+            Enter(node, entry);
+            node.SymbolTable.AddVariable(node);
             Dispatcher.StartFileDescriptionEntry(entry);
         }
 
         public virtual void EndFileDescriptionEntry()
         {
-            Exit();
-            Dispatcher.EndFileDescriptionEntry();
-        }
+            ExitLastLevel1Definition();
 
-        public virtual void EndFileDescriptionEntryIfAny()
-        {
-            if (this.CurrentNode is FileDescriptionEntryNode)
-            {
-                EndFileDescriptionEntry();
-            }
-            Dispatcher.EndFileDescriptionEntryIfAny();
+            // FileDescription works as a top level data definition for ProgramSymbolTableBuilder
+            System.Diagnostics.Debug.Assert(CurrentNode is FileDescriptionEntryNode);
+            Dispatcher.OnTopLevelDataDefinition((FileDescriptionEntryNode)CurrentNode);
+            Exit();
+
+            Dispatcher.EndFileDescriptionEntry();
         }
 
         public virtual void StartDataDescriptionEntry(DataDescriptionEntry entry)
@@ -834,6 +888,23 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartParagraph(ParagraphHeader header)
         {
+            #region Temporary debug code for #2185
+
+            while (!IsValidParagraphParent())
+            {
+                // Invalid AST
+                Exit();
+                LogErrorIncludingFullSourceCode($"Invalid parent for paragraph '{header.Name}'.");
+            }
+
+            bool IsValidParagraphParent()
+            {
+                var parentType = CurrentNode.CodeElement?.Type;
+                return parentType == CodeElementType.ProcedureDivisionHeader || parentType == CodeElementType.SectionHeader;
+            }
+
+            #endregion
+
             var paragraph = new Paragraph(header);
             Enter(paragraph, header);
             paragraph.SymbolTable.AddParagraph(paragraph);
@@ -871,7 +942,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         public virtual void CheckStartSentenceLastStatement()
         {
-            if (LastEnteredNode != null)
+            if (LastEnteredNode is Statement)
             {
                 Node parent = LastEnteredNode.Parent;
                 if (parent is Paragraph || parent is ProcedureDivision)
@@ -1321,22 +1392,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new WhenGroup(), null);// enter WHEN group
             foreach (var cond in conditions)
             {
-                TypeCobol.Compiler.CodeElements.WhenCondition condition = null;
-                if (cond is TypeCobol.Compiler.CodeElements.WhenSearchCondition)
-                {
-                    TypeCobol.Compiler.CodeElements.WhenSearchCondition whensearch =
-                        cond as TypeCobol.Compiler.CodeElements.WhenSearchCondition;
-                    condition = new WhenCondition();
-                    whensearch.ApplyPropertiesToCE(condition);
-
-                    condition.SelectionObjects = new EvaluateSelectionObject[1];
-                    condition.SelectionObjects[0] = new EvaluateSelectionObject();
-                    condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
-                }
-                else
-                {
-                    condition = cond as TypeCobol.Compiler.CodeElements.WhenCondition;
-                }
+                System.Diagnostics.Debug.Assert(cond is WhenCondition);
+                var condition = (WhenCondition)cond;
                 Enter(new When(condition), condition);
                 Exit();
             }
@@ -1468,9 +1525,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.EndSearchStatementWithBody(end);
         }
 
-        public virtual void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenSearchCondition condition)
+        public virtual void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenCondition condition)
         {
-            Enter(new WhenSearch(condition), condition);
+            Enter(new When(condition), condition);
             Dispatcher.StartWhenSearchConditionClause(condition);
         }
 
@@ -1616,6 +1673,84 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new Commit(commit), commit);
             Exit();
             Dispatcher.OnCommitStatement(commit);
+        }
+        public void OnSelectStatement([NotNull] SelectStatement select)
+        {
+            Enter(new Select(select), select);
+            Exit();
+            Dispatcher.OnSelectStatement(select);
+        }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+            Enter(new Rollback(rollback), rollback);
+            Exit();
+            Dispatcher.OnRollbackStatement(rollback);
+        }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+            Enter(new Truncate(truncate), truncate);
+            Exit();
+            Dispatcher.OnTruncateStatement(truncate);
+        }
+        public void OnSavepointStatement([NotNull] SavepointStatement savepoint)
+        {
+            Enter(new Savepoint(savepoint), savepoint);
+            Exit();
+            Dispatcher.OnSavepointStatement(savepoint);
+        }
+        public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
+        {
+            Enter(new LockTable(lockTable), lockTable);
+            Exit();
+            Dispatcher.OnLockTableStatement(lockTable);
+        }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+            Enter(new ReleaseSavepoint(releaseSavepoint), releaseSavepoint);
+            Exit();
+            Dispatcher.OnReleaseSavepointStatement(releaseSavepoint);
+        }
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
+        {
+            Enter(new WhenEver(whenEver), whenEver);
+            Exit();
+            Dispatcher.OnWhenEverStatement(whenEver);
+        }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+            Enter(new Connect(connect), connect);
+            Exit();
+            Dispatcher.OnConnectStatement(connect);
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+            Enter(new DropTable(dropTable), dropTable);
+            Exit();
+            Dispatcher.OnDropTableStatement(dropTable);
+        }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+            Enter(new SetAssignment(setAssignment), setAssignment);
+            Exit();
+            Dispatcher.OnSetAssignmentStatement(setAssignment);
+        }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+            Enter(new GetDiagnostics(getDiagnostics), getDiagnostics);
+            Exit();
+            Dispatcher.OnGetDiagnosticsStatement(getDiagnostics);
+        }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+            Enter(new AlterSequence(alterSequence), alterSequence);
+            Exit();
+            Dispatcher.OnAlterSequenceStatement(alterSequence);
+        }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
+        {
+            Enter(new ExecuteImmediate(executeImmediate), executeImmediate);
+            Exit();
+            Dispatcher.OnExecuteImmediateStatement(executeImmediate);
         }
     }
 }

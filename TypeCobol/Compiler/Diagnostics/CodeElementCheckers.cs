@@ -46,6 +46,12 @@ namespace TypeCobol.Compiler.Diagnostics
                         context?.dataNameDefinition());
                 }
 
+                //Variable name in Cobol must contains at least one alphabetic char.
+                if (!data.DataName.Name.Any(CobolChar.IsCobolAlphabeticChar))
+                {
+                    DiagnosticUtils.AddError(data, "Variable name must contain at least one alphabetic char.", context?.dataNameDefinition());
+                }
+
                 //Retrieve VALUE token through context
                 var valueClauseContexts = context?.children.OfType<CodeElementsParser.ValueClauseContext>();
                 Token valueToken = null;
@@ -72,11 +78,14 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(data, "Invalid VALUE clause", valueToken);
                     }
                     //In Cobol reference format check that VALUE clause starts in Area B
-                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat
-                             &&
-                             DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB)
+                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat && ValueTokenStartsOutsideAreaB())
                     {
                         DiagnosticUtils.AddError(data, "VALUE clause must start in area B", valueToken);
+                    }
+
+                    bool ValueTokenStartsOutsideAreaB()
+                    {
+                        return valueToken.Column < (int)CobolFormatAreas.Begin_B || valueToken.Column > (int)CobolFormatAreas.End_B;
                     }
                 }
             }
@@ -383,6 +392,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class CodeElementChecker
     {
+        private const int MAX_NAME_LENGTH = 30;
+
         public static void OnCodeElement(CodeElement codeElement, bool isDebuggingModeEnabled)
         {
             if (isDebuggingModeEnabled)
@@ -390,6 +401,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (codeElement.DebugMode == CodeElement.DebugType.Mix)
                 {
                     DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
+                }
+            }
+
+            if (codeElement is INamedCodeElement namedCodeElement)
+            {
+                var name = namedCodeElement.Name;
+                if (name != null && name.Length > MAX_NAME_LENGTH)
+                {
+                    DiagnosticUtils.AddError(codeElement, $"The COBOL word '{name}' contains {name.Length} characters which is more than the allowed maximum of {MAX_NAME_LENGTH} characters.");
                 }
             }
         }

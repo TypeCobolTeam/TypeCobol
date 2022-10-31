@@ -1,0 +1,7 @@
+Line 1[12,53] <27, Error, Syntax> - Syntax error : extraneous input 'DISPLAY"This statement comes from a copy"' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+Line 0[0,0] <37, Warning, General> - Warning: This parser does not support COPYs containing COBOL statements.
+--- Nodes ---
+?
+  ContainingCode.rdz
+    data-division
+      working-storage

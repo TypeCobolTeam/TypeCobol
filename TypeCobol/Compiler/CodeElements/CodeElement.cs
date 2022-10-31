@@ -152,7 +152,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// List of errors found on this CodeElement
         /// </summary>
 
-        public IList<Diagnostic> Diagnostics { get; set; }
+        public List<Diagnostic> Diagnostics { get; set; }
 
         /// <summary>
         /// Return true if code element has diagnostics.
@@ -377,8 +377,8 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
-			var lineStartIndex = line.SequenceNumberText.Length + 1;// +1 for line.IndicatorChar
-            return new string(' ',  firstTokenStartIndex-lineStartIndex);
+			var lineStartIndex = line.Indicator.StartIndex + 1;
+            return new string(' ',  firstTokenStartIndex - lineStartIndex);
 		}
 
         // --- Antlr4.Runtime.IToken implementation ---
@@ -493,13 +493,9 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    // --- Temporary base classes for data definition code elements ---
-
-    public abstract class NamedCodeElement : CodeElement
+    public interface INamedCodeElement
     {
-        protected NamedCodeElement(CodeElementType type) : base(type) { }
-
-        public abstract string Name { get; }
+        string Name { get; }
     }
 
     public interface ITypedCodeElement

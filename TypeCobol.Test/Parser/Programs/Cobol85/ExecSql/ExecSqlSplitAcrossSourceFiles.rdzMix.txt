@@ -1,0 +1,9 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOFM117.
+       PROCEDURE DIVISION.
+Line 4[12,32] <27, Error, Syntax> - Error in copy 'StartingExecSql' at line 1 : Syntax error : Syntax not supported: when embedding SQL statements, EXEC SQL and all its content (including END-EXEC) must be in the same source file.
+           COPY StartingExecSql.
+           COPY EndingExecSql.
+           GOBACK
+           .
+       END PROGRAM TCOFM117.

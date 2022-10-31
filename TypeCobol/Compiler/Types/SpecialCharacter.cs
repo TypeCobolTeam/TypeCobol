@@ -5,34 +5,6 @@ namespace TypeCobol.Compiler.Types
     public partial class PictureValidator
     {
         /// <summary>
-        /// Special characters of a picture character string.
-        /// </summary>
-        internal enum SC
-        {
-            B,
-            ZERO, // 0
-            SLASH, // /
-            COMMA, // ,
-            DOT, // .
-            PLUS, // +
-            MINUS, // -
-            CR,
-            DB,
-            CS,
-            E,
-            Z,
-            STAR, // *
-            NINE, // 9                        
-            A,
-            X,
-            S,
-            V,
-            P,
-            G,
-            N
-        }
-
-        /// <summary>
         /// Determines the Special Character for the single character given.
         /// </summary>
         /// <param name="c">Char encountered in the picture string.</param>
@@ -142,5 +114,33 @@ namespace TypeCobol.Compiler.Types
                     throw new NotSupportedException($"Unknown '{sc}' special character.");
             }
         }
+    }
+
+    /// <summary>
+    /// Special characters of a picture character string.
+    /// </summary>
+    public enum SC
+    {
+        B,
+        ZERO, // 0
+        SLASH, // /
+        COMMA, // ,
+        DOT, // .
+        PLUS, // +
+        MINUS, // -
+        CR,
+        DB,
+        CS,
+        E,
+        Z,
+        STAR, // *
+        NINE, // 9
+        A,
+        X,
+        S,
+        V,
+        P,
+        G,
+        N
     }
 }

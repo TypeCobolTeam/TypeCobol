@@ -77,8 +77,17 @@ namespace TypeCobol.Test {
             TestContinuations.CheckKeywordsAndUserDefinedWords();
             TestContinuations.CheckPictureCharacterString();
             TestContinuations.CheckCommentEntry();
+            TestContinuations.CheckContinuationsMixedWithDebug();
 
             TestRealPrograms.CheckAllFilesForExceptions();
+        }
+
+        [TestMethod]
+        [TestProperty("Time", "fast")]
+        public void CheckSqlScanner()
+        {
+            TestSqlScanner.CheckSqlConstants();
+            TestSqlScanner.CheckSqlConstants2();
         }
 
         [TestMethod]
@@ -361,6 +370,35 @@ namespace TypeCobol.Test {
             var folderTester = new FolderTester(directory, directory, directory, extensions);
             folderTester.Test();
             nbOfTests += folderTester.GetTestCount();
+            Console.Write("\n");
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
+
+        /// <summary>
+        /// Specific tests for parser limitations. Tests can be separated between TC and pure cobol using 'NoTC' suffix in directory name.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckParserLimitations()
+        {
+            int nbOfTests = 0;
+
+            string[] extensions = { ".cbl", ".tcbl" };
+            var directory = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Limitations");
+
+            //Tests results may differ between TypeCobol compatibility mode and Cobol strict mode,
+            //so use a dedicated FolderTester for each folder instead of a global one.
+            foreach (var testDirectory in Directory.GetDirectories(directory))
+            {
+                var dirname = Path.GetFileName(testDirectory);
+                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+                var folderTester = new FolderTester(testDirectory, testDirectory, testDirectory, extensions);
+                folderTester.Test(isCobolLanguage: dirname.EndsWith("NoTC"));
+                nbOfTests += folderTester.GetTestCount();
+            }
+
             Console.Write("\n");
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");

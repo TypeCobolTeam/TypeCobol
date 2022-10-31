@@ -10,6 +10,8 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Sql.CodeElements.Statements;
+using TypeCobol.Compiler.Sql.Model;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -128,6 +130,7 @@ namespace TypeCobol.Test.Utils
                 new NYName(),
                 new PGMName(),
                 new SYMName(),
+                new SQLName(),
                 new MixDiagIntoSourceName(),
                 new MemoryName(),
                 new NodeName(),
@@ -146,6 +149,7 @@ namespace TypeCobol.Test.Utils
                 new EIMemoryName(),
                 new EINodeName(),
                 new EITokenName(),
+                
 #endif
         };
 
@@ -194,7 +198,10 @@ namespace TypeCobol.Test.Utils
 		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
-				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
+                // Automatically enable SQL parsing for samples located in a directory containing "SQL" within its path
+                string containingDirectory = Path.GetDirectoryName(samplePath);
+                bool enableSqlParsing = containingDirectory != null && containingDirectory.IndexOf("SQL", StringComparison.InvariantCultureIgnoreCase) >= 0;
+                IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
 				if (comparators.Count < 1) {
 					Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
 					errors.AppendLine("Missing result file \"" + samplePath + "\"");
@@ -204,6 +211,7 @@ namespace TypeCobol.Test.Utils
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
                     var unit = new TestUnit(comparator, _copyExtensions);
                     unit.Compiler.CompilerOptions.IsCobolLanguage = isCobolLanguage;
+                    unit.Compiler.CompilerOptions.EnableSqlParsing = enableSqlParsing;
                     unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
@@ -291,7 +299,7 @@ namespace TypeCobol.Test.Utils
 
 		public virtual void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
             //Warning by default we only want All codeElementDiagnostics (Node Diagnostics and Quality Diagnostics are not compared)
-			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(false, false), reader, expectedResultPath);
+			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(true), reader, expectedResultPath);
 		}
 
 		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath) {
@@ -453,7 +461,179 @@ namespace TypeCobol.Test.Utils
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
         }
     }
+ 
+    internal class SqlComparator : FilesComparator
+    {
+        /// <summary>
+        /// Selects the SQL code elements
+        /// </summary>
+        private class ASTVisitor : AbstractAstVisitor 
+        {
+            private readonly StringWriter _writer;
 
+            public ASTVisitor(StringBuilder builder)
+            {
+                _writer = new StringWriter(builder);
+            }
+
+            private void DumpObject(string name, object value)
+            {
+                SqlObject.DumpProperty(_writer, name, value, 0);
+            }
+
+            public override bool Visit(SelectStatement selectStatement)
+            {
+                _writer.WriteLine($"line {selectStatement.Line}: {nameof(SelectStatement)}");
+                DumpObject(nameof(selectStatement.FullSelect), selectStatement.FullSelect);
+                return true;
+            }
+
+            public override bool Visit(RollbackStatement rollbackStatement)
+            {
+                _writer.WriteLine($"line {rollbackStatement.Line}: {nameof(RollbackStatement)}");
+                DumpObject(nameof(rollbackStatement.SavePointClause), rollbackStatement.SavePointClause);
+                return true;
+            }
+
+            public override bool Visit(CommitStatement commitStatement)
+            {
+                _writer.WriteLine($"line {commitStatement.Line}: {nameof(CommitStatement)}");
+                //No SqlObject in CommitStatement
+                return true;
+            }
+
+            public override bool Visit(TruncateStatement truncateStatement)
+            {
+                _writer.WriteLine($"line {truncateStatement.Line}: {nameof(TruncateStatement)}");
+                DumpObject(nameof(truncateStatement.TableName), truncateStatement.TableName);
+                DumpObject(nameof(truncateStatement.StorageManagement), truncateStatement.StorageManagement);
+                DumpObject(nameof(truncateStatement.DeleteTriggersHandling), truncateStatement.DeleteTriggersHandling);
+                DumpObject(nameof(truncateStatement.IsImmediate),  truncateStatement.IsImmediate);
+
+                return true;
+            }
+
+            public override bool Visit(WhenEverStatement whenEverStatement)
+            {
+                _writer.WriteLine($"line {whenEverStatement.Line}: {nameof(WhenEverStatement)}");
+                DumpObject(nameof(whenEverStatement.ExceptionCondition), whenEverStatement.ExceptionCondition);
+                DumpObject(nameof(whenEverStatement.BranchingType), whenEverStatement.BranchingType);
+                DumpObject(nameof(whenEverStatement.TargetSectionOrParagraph), whenEverStatement.TargetSectionOrParagraph);
+                return true;
+            }
+
+            public override bool Visit(SavepointStatement savepointStatement)
+            {
+                _writer.WriteLine($"line {savepointStatement.Line}: {nameof(SavepointStatement)}");
+                DumpObject(nameof(savepointStatement.Name), savepointStatement.Name);
+                DumpObject(nameof(savepointStatement.IsUnique), savepointStatement.IsUnique);
+                DumpObject(nameof(savepointStatement.RetainLocks), savepointStatement.RetainLocks);
+                return true;
+            }
+
+            public override bool Visit(LockTableStatement lockTableStatement)
+            {
+                _writer.WriteLine($"line {lockTableStatement.Line}: {nameof(LockTableStatement)}");
+                DumpObject(nameof(lockTableStatement.Table), lockTableStatement.Table);
+                DumpObject(nameof(lockTableStatement.PartitionId), lockTableStatement.PartitionId);
+                DumpObject(nameof(lockTableStatement.Mode), lockTableStatement.Mode);
+                return true;
+            }
+
+            public override bool Visit(ReleaseSavepointStatement releaseSavepointStatement)
+            {
+                _writer.WriteLine($"line {releaseSavepointStatement.Line}: {nameof(ReleaseSavepointStatement)}");
+                DumpObject(nameof(releaseSavepointStatement.SavepointName), releaseSavepointStatement.SavepointName);
+                return true;
+            }
+
+            public override bool Visit(ConnectStatement connectStatement)
+            {
+                _writer.WriteLine($"line {connectStatement.Line}: {nameof(ConnectStatement)}");
+                DumpObject(nameof(connectStatement.Target), connectStatement.Target);
+                DumpObject(nameof(connectStatement.Authorization), connectStatement.Authorization);
+                DumpObject(nameof(connectStatement.Reset), connectStatement.Reset);
+                return true;
+            }
+
+            public override bool Visit(DropTableStatement dropTableStatement)
+            {
+                _writer.WriteLine($"line {dropTableStatement.Line}: {nameof(DropTableStatement)}");
+                DumpObject(nameof(dropTableStatement.TableOrAliasName), dropTableStatement.TableOrAliasName);
+                return true;
+            }
+
+            public override bool Visit(SetAssignmentStatement setAssignmentStatement)
+            {
+                _writer.WriteLine($"line {setAssignmentStatement.Line}: {nameof(SetAssignmentStatement)}");
+                DumpObject(nameof(setAssignmentStatement.Assignments), setAssignmentStatement.Assignments);
+                return true;
+            }
+
+            public override bool Visit(GetDiagnosticsStatement getDiagnosticsStatement)
+            {
+                _writer.WriteLine($"line {getDiagnosticsStatement.Line}: {nameof(GetDiagnosticsStatement)}");
+                DumpObject(nameof(getDiagnosticsStatement.IsCurrent), getDiagnosticsStatement.IsCurrent);
+                DumpObject(nameof(getDiagnosticsStatement.IsStacked), getDiagnosticsStatement.IsStacked);
+                DumpObject(nameof(getDiagnosticsStatement.RequestedInformation), getDiagnosticsStatement.RequestedInformation);
+                return true;
+            }
+
+            public override bool Visit(AlterSequenceStatement alterSequenceStatement)
+            {
+                _writer.WriteLine($"line {alterSequenceStatement.Line}: {nameof(AlterSequenceStatement)}");
+                DumpObject(nameof(AlterSequenceStatement.SequenceName), alterSequenceStatement.SequenceName);
+                DumpObject(nameof(AlterSequenceStatement.Restart), alterSequenceStatement.Restart);
+                DumpObject(nameof(AlterSequenceStatement.RestartValue), alterSequenceStatement.RestartValue);
+                DumpObject(nameof(AlterSequenceStatement.IncrementValue), alterSequenceStatement.IncrementValue);
+                DumpObject(nameof(AlterSequenceStatement.HasMinValue), alterSequenceStatement.HasMinValue);
+                DumpObject(nameof(AlterSequenceStatement.MinValue), alterSequenceStatement.MinValue);
+                DumpObject(nameof(AlterSequenceStatement.HasMaxValue), alterSequenceStatement.HasMaxValue);
+                DumpObject(nameof(AlterSequenceStatement.MaxValue), alterSequenceStatement.MaxValue);
+                DumpObject(nameof(AlterSequenceStatement.Cycle), alterSequenceStatement.Cycle);
+                DumpObject(nameof(AlterSequenceStatement.HasCache), alterSequenceStatement.HasCache);
+                DumpObject(nameof(AlterSequenceStatement.CacheSize), alterSequenceStatement.CacheSize);
+                DumpObject(nameof(AlterSequenceStatement.Ordered), alterSequenceStatement.Ordered);
+                return true;
+            }
+            public override bool Visit(ExecuteImmediateStatement executeImmediateStatement)
+            {
+                _writer.WriteLine($"line {executeImmediateStatement.Line}: {nameof(ExecuteImmediateStatement)}");
+                DumpObject(nameof(executeImmediateStatement.StatementVariable), executeImmediateStatement.StatementVariable);
+                DumpObject(nameof(executeImmediateStatement.StatementExpression), executeImmediateStatement.StatementExpression);
+                return true;
+            }
+        }
+
+        public SqlComparator(Paths path, bool debug = false, bool isEI = false)
+            : base(path, debug, isEI)
+        {
+
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        {
+            var diagnostics = compilationUnit.AllDiagnostics();
+            var programs = compilationUnit.ProgramClassDocumentSnapshot.Root.Programs.ToList();
+
+            var builder = new StringBuilder();
+
+            if (diagnostics.Count > 0)
+            {
+                builder.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
+            }
+            builder.AppendLine("--- Sql Statements ---");
+            
+            
+            compilationUnit.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new ASTVisitor(builder) );
+            
+            
+            string result = builder.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
+        }
+    }
+ 
     internal class SymbolComparator : FilesComparator
     {
         public SymbolComparator(Paths path, bool debug = false, bool isEI = false)
@@ -1062,9 +1242,15 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
-#endregion
+    internal class SQLName : AbstractEINames
+    {
+        public override string CreateName(string name) { return name + "SQL" + Rextension; }
+        public override Type GetComparatorType() { return typeof(SqlComparator); }
+    }
+   
+    #endregion
 
-#region EINames
+    #region EINames
 #if EUROINFO_RULES
     internal class EIEmptyName : AbstractEINames
     {
@@ -1125,8 +1311,9 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "MEM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
+    
 #endif
-#endregion
+    #endregion
 
     internal class Paths
     {

@@ -132,7 +132,7 @@ namespace TypeCobol.Compiler
 
 #if DEBUG
             //Update CE diag count for future checks
-            _codeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            _codeElementDiagnosticCount = AllDiagnostics(true).Count;
 #endif
         }
 
@@ -161,7 +161,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         private void CheckCodeElementDiagnostics()
         {
-            var actualCodeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            var actualCodeElementDiagnosticCount = AllDiagnostics(true).Count;
             if (actualCodeElementDiagnosticCount != _codeElementDiagnosticCount)
             {
                 System.Diagnostics.Debug.Fail("CodeElement diagnostics should not be created after CE phase !");
@@ -204,14 +204,13 @@ namespace TypeCobol.Compiler
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root = temporarySnapshot.Root;
-                    List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
                     ProgramClassParserStep.CrossCheckPrograms(root, temporarySnapshot, this.CompilerOptions);
               
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
                         temporarySnapshot, ProgramClassDocumentSnapshot?.CurrentVersion + 1 ?? 0,
-                        root, diagnostics, nodeCodeElementLinkers);
+                        root, nodeCodeElementLinkers);
                     snapshotWasUpdated = true;;
 
                     PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
@@ -293,13 +292,22 @@ namespace TypeCobol.Compiler
                     //Direct copy parsing : remove redundant root 01 level if any.
                     if (UseDirectCopyParsing)
                     {
-                        var firstDataDefinition = root.MainProgram
+                        var workingStorageSection = root.MainProgram
                             .Children[0]  //Data Division
-                            .Children[0]  //Working-Storage Section
-                            .Children[0]; //First data def
-                        if (firstDataDefinition.ChildrenCount == 0)
+                            .Children[0]; //Working-Storage Section
+                        if (workingStorageSection.ChildrenCount > 0)
                         {
-                            firstDataDefinition.Remove();
+                            var firstDataDefinition = workingStorageSection.Children[0];
+                            if (firstDataDefinition.ChildrenCount == 0)
+                            {
+                                firstDataDefinition.Remove();
+                            }
+                        }
+                        else
+                        {
+                            //Copy contains instructions that could not be parsed as a DataDefinition
+                            var diagnostic = new Diagnostic(MessageCode.Warning, Diagnostic.Position.Default, "This parser does not support COPYs containing COBOL statements.");
+                            newDiagnostics.Add(diagnostic);
                         }
                     }
 
@@ -422,90 +430,97 @@ namespace TypeCobol.Compiler
         public InspectedProgramClassDocument CodeAnalysisDocumentSnapshot { get; private set; }
 
         /// <summary>
-        /// Return diagnostics attached directly to a CodeElement or to CodeElementsDocumentSnapshot
-        /// </summary>
-        /// <returns></returns>
-
-        private IList<Diagnostic> OnlyCodeElementDiagnostics() {
-            var codeElementDiagnostics = new List<Diagnostic>();
-
-            if (CodeElementsDocumentSnapshot?.ParserDiagnostics != null)
-            {
-                codeElementDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
-            }
-
-            if (CodeElementsDocumentSnapshot != null)
-            {
-                foreach (var ce in CodeElementsDocumentSnapshot.CodeElements)
-                {
-                    if (ce.Diagnostics != null)
-                    {
-                        codeElementDiagnostics.AddRange(ce.Diagnostics);
-                    }
-                }
-            }
-
-            return codeElementDiagnostics;
-        }
-
-        /// <summary>
         /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibility
-        /// to exclude Node diagnostics and/or Quality diagnostics
-        /// Note that a snapshot only contains diagnostics related to its own phase.
+        /// to get only diagnostics up to CodeElement phase.
         /// </summary>
-        /// <param name="includeNodeDiagnostics">True to include diagnostics produced by Node phase</param>
-        /// <param name="includeQualityDiagnostics">True to include diagnostics produced by QualityCheck</param>
+        /// <param name="onlyCodeElementDiagnostics">True to get diagnostics produced up to CodeElement phase, False to get everything.</param>
         /// <returns>A list of selected diagnostics.</returns>
-        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics, bool includeQualityDiagnostics)
+        public IList<Diagnostic> AllDiagnostics(bool onlyCodeElementDiagnostics)
         {
-            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
-
-            allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
-
-            if (includeNodeDiagnostics)
+            CodeElementsDocument codeElementsDocumentSnapshot;
+            lock (lockObjectForCodeElementsDocumentSnapshot)
             {
-                lock (lockObjectForTemporarySemanticDocument)
+                codeElementsDocumentSnapshot = CodeElementsDocumentSnapshot;
+            }
+
+            //No CodeElements yet, so the base method will return every diagnostics
+            if (codeElementsDocumentSnapshot == null)
+            {
+                return base.AllDiagnostics();
+            }
+
+            var diagnostics = new List<Diagnostic>();
+            foreach (var codeElementsLine in codeElementsDocumentSnapshot.Lines)
+            {
+                AddScannerDiagnostics(codeElementsLine, diagnostics);
+                AddPreprocessorDiagnostics(codeElementsLine, diagnostics);
+
+                //CompilerDirective processing diagnostics (compiler directives are parsed during Preprocessor step and processed during CodeElement step)
+                if (codeElementsLine.HasCompilerDirectives)
                 {
-                    if (TemporaryProgramClassDocumentSnapshot != null)
+                    foreach (var token in codeElementsLine.TokensWithCompilerDirectives)
                     {
-                        allDiagnostics.AddRange(TemporaryProgramClassDocumentSnapshot.Diagnostics);
+                        if (token is CompilerDirectiveToken compilerDirectiveToken && compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics != null)
+                        {
+                            diagnostics.AddRange(compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics);
+                        }
                     }
                 }
 
-                lock (lockObjectForProgramClassDocumentSnapshot)
+                //CodeElement parsing diagnostics
+                if (codeElementsLine.ParserDiagnostics != null)
                 {
-                    if (ProgramClassDocumentSnapshot != null)
-                    {
-                        //Get all nodes diagnostics using visitor. 
-                        ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
+                    diagnostics.AddRange(codeElementsLine.ParserDiagnostics);
+                }
 
-                        if (ProgramClassDocumentSnapshot.Diagnostics != null)
-                            allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                //Diagnostics on CodeElement themselves
+                if (codeElementsLine.CodeElements != null)
+                {
+                    foreach (var codeElement in codeElementsLine.CodeElements)
+                    {
+                        if (codeElement.Diagnostics != null)
+                        {
+                            diagnostics.AddRange(codeElement.Diagnostics);
+                        }
                     }
                 }
             }
 
-            if (includeQualityDiagnostics)
+            if (onlyCodeElementDiagnostics) return diagnostics; //No need to go further
+
+            TemporarySemanticDocument temporarySemanticDocument;
+            lock (lockObjectForTemporarySemanticDocument)
             {
-                lock (lockObjectForCodeAnalysisDocumentSnapshot)
-                {
-                    if (CodeAnalysisDocumentSnapshot != null)
-                    {
-                        allDiagnostics.AddRange(CodeAnalysisDocumentSnapshot.Diagnostics);
-                    }
-                }
+                temporarySemanticDocument = TemporaryProgramClassDocumentSnapshot;
             }
 
-            return allDiagnostics;
+            if (temporarySemanticDocument == null) return diagnostics;
+
+            //Node parsing diagnostics
+            diagnostics.AddRange(temporarySemanticDocument.Diagnostics);
+
+            //Diagnostics on nodes themselves
+            temporarySemanticDocument.Root?.AcceptASTVisitor(new DiagnosticsChecker(diagnostics));
+
+            //Code analysis diagnostics
+            InspectedProgramClassDocument inspectedProgramClassDocument;
+            lock (lockObjectForCodeAnalysisDocumentSnapshot)
+            {
+                inspectedProgramClassDocument = CodeAnalysisDocumentSnapshot;
+            }
+
+            if (inspectedProgramClassDocument == null) return diagnostics;
+
+            diagnostics.AddRange(inspectedProgramClassDocument.Diagnostics);
+
+            return diagnostics;
         }
 
         /// <summary>
-        /// Return all diagnostics from all snaphost
+        /// Return all diagnostics from all snapshots
         /// </summary>
         /// <returns></returns>
-        public override IList<Diagnostic> AllDiagnostics() {
-            return AllDiagnostics(true, true);
-        }
+        public override IList<Diagnostic> AllDiagnostics() => AllDiagnostics(false);
 
         /// <summary>
         /// Subscribe to this event to be notified of all changes in the complete program or class view of the document
