@@ -1,0 +1,1 @@
+         05  YCOPY02 pic X.

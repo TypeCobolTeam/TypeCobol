@@ -1,0 +1,1 @@
+         05 LSCPXA-DATA-ITEM PIC X.

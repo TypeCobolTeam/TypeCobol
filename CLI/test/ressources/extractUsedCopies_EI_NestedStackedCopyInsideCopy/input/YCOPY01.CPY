@@ -1,0 +1,2 @@
+       01 YCOPY01.
+       COPY YCOPY02.
