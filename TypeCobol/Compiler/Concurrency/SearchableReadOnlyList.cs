@@ -21,10 +21,6 @@ namespace TypeCobol.Compiler.Concurrency
         {
 
         }
-        public ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter)
-        {
-            throw new NotImplementedException();
-        }
 
         public IEnumerator<T> GetEnumerator(int startIndex, bool reversed)
         {
@@ -141,13 +137,7 @@ namespace TypeCobol.Compiler.Concurrency
 
             /// <summary>Gets the element at the current position of the enumerator.</summary>
             /// <returns>The element in the <see cref="T:System.Collections.Generic.List`1" /> at the current position of the enumerator.</returns>
-            public T Current
-            {
-                get
-                {
-                    return this._current;
-                }
-            }
+            public T Current => this._current;
 
             object IEnumerator.Current
             {
