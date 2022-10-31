@@ -110,10 +110,11 @@ namespace TypeCobol.Compiler.Parser
             //Start line to seek token in the stream of token (stream of token=tokenIterator) 
             int startLineToSeekToken = 0;
 
+            //For incremental mode, calculate best value for startLineToSeekToken
             if (largestRefreshParseSection != null)
             {
                 //No need to check for ReplacedToken or ImportedToken here, as we directly interact with documentLines
-                //which are the lines of the original document
+                //which are the lines of the original document.
 
                 //TODO find all ReplaceDirective that can target the current line.
                 //Count the largest number of tokens that a Replace directive can target
@@ -147,8 +148,8 @@ namespace TypeCobol.Compiler.Parser
             CodeElementsParser cobolParser = new CodeElementsParser(tokenStream);
             // REVERT TO STD PARSER ==> TracingCobolParser cobolParser = new TracingCobolParser(tokenStream);
 
-            // Optionnaly activate Antlr Parser performance profiling
-            // WARNING : use this in a single-treaded context only (uses static field)     
+            // Optionally activate Antlr Parser performance profiling
+            // WARNING : use this in a single-threaded context only (uses static field)     
             if (perfStatsForParserInvocation.ActivateDetailedAntlrPofiling)
                 AntlrPerformanceProfiler = new AntlrPerformanceProfiler(cobolParser);
             else

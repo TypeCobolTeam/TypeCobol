@@ -65,7 +65,9 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
-        /// Resets the iterator position : before the first token of the document
+        /// Resets the iterator position :
+        /// - Before the first token of the document if startLine = 0
+        /// - To the specified startLine otherwise
         /// </summary>
         public void Reset(int startLine = 0)
         {
