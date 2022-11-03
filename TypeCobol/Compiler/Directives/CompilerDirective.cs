@@ -450,7 +450,7 @@ namespace TypeCobol.Compiler.Directives
         /// If true, insert Suffix before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
-        public bool InsertSuffixChar { get; set; }
+        public bool InsertSuffixChar => Suffix != null;
 
         /// <summary>
         /// Suffix which should be inserted before the first '-' in all user defined words found in the COPY text 
@@ -865,7 +865,7 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// Text name without suffix
             /// </summary>
-            public string TextName { get { return HasSuffix ? TextNameWithSuffix.Substring(0, 7).ToUpper() : TextNameWithSuffix; } }
+            public string TextName { get { return HasSuffix ? TextNameWithSuffix.Substring(0, 7) : TextNameWithSuffix; } }
 
             /// <summary>
             /// Suffix appended to text name
@@ -875,7 +875,7 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// Return the the three letters from index 5 to 7 of the Copy name.
             /// </summary>
-            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4) + "-" : string.Empty; } }
+            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4).ToUpper() + "-" : string.Empty; } }
 
             public override string ToString()
             {
