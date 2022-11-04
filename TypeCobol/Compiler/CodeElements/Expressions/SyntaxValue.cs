@@ -65,7 +65,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class IntegerValue : SyntaxValue<long>
     {
-        public IntegerValue(Token t) : base(t) { }
+        public IntegerValue(Token t) : base(t)
+        {
+            System.Diagnostics.Debug.Assert(t != null || this is GeneratedIntegerValue);
+        }
 
         public override long Value
         {
