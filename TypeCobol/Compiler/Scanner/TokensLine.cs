@@ -108,6 +108,9 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Use this method to attach a diagnostic to this line 
         /// (never call directly Diagnostics.Add)
+        ///
+        /// Diagnostics added using this method cannot be copied onto another line !
+        /// Do not use on temporary/virtual lines otherwise you risk losing diagnostics.
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
