@@ -969,7 +969,9 @@ namespace TypeCobol.Compiler.Parser
 			}
 			if (context.blockContainsClause() != null && context.blockContainsClause().Length > 0) {
 				var blockContainsClauseContext = context.blockContainsClause()[0];
-				entry.MaxBlockSize = CobolWordsBuilder.CreateIntegerValue(blockContainsClauseContext.maxNumberOfBytes);
+				if (blockContainsClauseContext.maxNumberOfBytes != null) {
+					entry.MaxBlockSize = CobolWordsBuilder.CreateIntegerValue(blockContainsClauseContext.maxNumberOfBytes);
+				}
 				if (blockContainsClauseContext.minNumberOfBytes != null) {
 					entry.MinBlockSize = CobolWordsBuilder.CreateIntegerValue(blockContainsClauseContext.minNumberOfBytes);
 				}

@@ -7,7 +7,6 @@ using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Concurrency;
 
@@ -189,7 +188,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="predicate">Predicate to search variable(s)</param>
         /// <param name="maximalScope">The maximal symboltable scope to search in</param>
         /// <returns></returns>
-        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, Scope maximalScope)
+        public IEnumerable<DataDefinition> GetVariables(Func<DataDefinition, bool> predicate, Scope maximalScope)
         {
             var foundedVariables = new List<DataDefinition>();
 
@@ -200,7 +199,7 @@ namespace TypeCobol.Compiler.CodeModel
                     throw new NotSupportedException(); //There is no variable stored in those scopes
              
                 var dataToSeek = currentTable.DataEntries.Values.SelectMany(t => t);
-                var results = dataToSeek.AsQueryable().Where(predicate);
+                var results = dataToSeek.Where(predicate);
                 foundedVariables.AddRange(results);
 
                 currentTable = currentTable.EnclosingScope;
@@ -786,9 +785,9 @@ namespace TypeCobol.Compiler.CodeModel
         /// Get all paragraphs in the current scope.
         /// </summary>
         /// <returns>The collection of paragraph names</returns>
-        public IEnumerable<Paragraph> GetParagraphs(Expression<Func<Paragraph, bool>> predicate)
+        public IEnumerable<Paragraph> GetParagraphs(Func<Paragraph, bool> predicate)
         {
-            return Paragraphs.Values.SelectMany(p => p).AsQueryable().Where(predicate).Distinct();
+            return Paragraphs.Values.SelectMany(p => p).Where(predicate).Distinct();
         }
 
         /// <summary>
@@ -943,7 +942,7 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public IEnumerable<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, Scope maximalScope)
+        public IEnumerable<TypeDefinition> GetTypes(Func<TypeDefinition, bool> predicate, Scope maximalScope)
         {
             var foundedTypes = new List<TypeDefinition>();
 
@@ -966,7 +965,7 @@ namespace TypeCobol.Compiler.CodeModel
                     dataToSeek = dataToSeek.Where(typeDefinition => typeDefinition.CodeElement.Visibility == AccessModifier.Public);
                 }
 
-                var results = dataToSeek.AsQueryable().Where(predicate);
+                var results = dataToSeek.Where(predicate);
 
                 foundedTypes.AddRange(results);
 
@@ -1042,7 +1041,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetFunction(uri, profile);
         }
 
-        public IEnumerable<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, Scope maximalScope)
+        public IEnumerable<FunctionDeclaration> GetFunctions(Func<FunctionDeclaration, bool> predicate, Scope maximalScope)
         {
             var foundedFunctions = new List<FunctionDeclaration>();
 
@@ -1058,7 +1057,7 @@ namespace TypeCobol.Compiler.CodeModel
                             .Functions.Values.SelectMany(t => t));
                 }
 
-                var results = dataToSeek.AsQueryable().Where(predicate);
+                var results = dataToSeek.Where(predicate);
 
                 if (currentTable.CurrentScope == Scope.Intrinsic || currentTable.CurrentScope == Scope.Namespace)
                     results = results.Where(tp =>
