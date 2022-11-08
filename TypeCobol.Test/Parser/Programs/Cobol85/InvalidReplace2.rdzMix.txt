@@ -28,6 +28,33 @@ Line 25[39,40] <53, Warning, Tokens> - Invalid character found before pseudo-tex
        REPLACE ==:item-g:== BY ==G== ;==:item-h:== BY ==H==.
        01 DATA-:item-g: PIC X.
        01 DATA-:item-h: PIC X.
+      
+      *Ok
+       REPLACE ==:item-i:== BY ==I== , ==:item-j:== BY ==J==.
+       01 DATA-:item-i: PIC X.
+       01 DATA-:item-j: PIC X.
+      
+      *Warning
+      *A blank was missing before character"="in column 39.
+      *A blank was assumed.
+Line 37[38,39] <53, Warning, Tokens> - Invalid character found before pseudo-text delimiter "==": ","
+       REPLACE ==:item-k:== BY ==K==,==:item-l:== BY ==L==.
+       01 DATA-:item-k: PIC X.
+       01 DATA-:item-l: PIC X.
+      
+      *Ok
+       REPLACE ==:item-m:== BY ==M== ; ==:item-n:== BY ==N==.
+       01 DATA-:item-m: PIC X.
+       01 DATA-:item-n: PIC X.
+      
+      *Warning - accepted by IBM compiler but currently not supported
+      *A blank was missing before character"="in column 39.
+      *A blank was assumed.
+Line 49[37,37] <3, Error, Tokens> - Semicolon separator should be followed by a space
+Line 49[38,39] <53, Warning, Tokens> - Invalid character found before pseudo-text delimiter "==": ";"
+       REPLACE ==:item-o:== BY ==O==;==:item-p:== BY ==P==.
+       01 DATA-:item-o: PIC X.
+       01 DATA-:item-p: PIC X.
        PROCEDURE DIVISION.
            DISPLAY DATA-A
                    DATA-B
@@ -37,6 +64,14 @@ Line 25[39,40] <53, Warning, Tokens> - Invalid character found before pseudo-tex
                    DATA-F
                    DATA-G
                    DATA-H
+                   DATA-I
+                   DATA-J
+                   DATA-K
+                   DATA-L
+                   DATA-M
+                   DATA-N
+                   DATA-O
+                   DATA-P
            GOBACK
            .
        END PROGRAM TCOMFL06.
