@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
@@ -452,10 +450,10 @@ namespace TypeCobol.Compiler.Directives
         /// If true, insert Suffix before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
-        public bool InsertSuffixChar { get; set; }
+        public bool InsertSuffixChar => Suffix != null;
 
         /// <summary>
-        /// SUffix which should be inserted before the first '-' in all user defined words found in the COPY text 
+        /// Suffix which should be inserted before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
         public string Suffix { get; set; }
@@ -872,12 +870,12 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// Suffix appended to text name
             /// </summary>
-            public string Suffix { get { return HasSuffix ? TextNameWithSuffix.Substring(7, 1) : string.Empty; } }
+            public string Suffix { get { return HasSuffix ? TextNameWithSuffix.Substring(7, 1).ToUpper() : string.Empty; } }
 
             /// <summary>
-            /// Return the the three lettters from index 5 to 7 of the Copy name.
+            /// Return the the three letters from index 5 to 7 of the Copy name.
             /// </summary>
-            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4) + "-" : string.Empty; } }
+            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4).ToUpper() + "-" : string.Empty; } }
 
             public override string ToString()
             {
