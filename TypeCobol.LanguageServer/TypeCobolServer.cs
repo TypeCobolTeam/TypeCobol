@@ -734,14 +734,15 @@ namespace TypeCobol.LanguageServer
                             }
                         case TokenType.DISPLAY:
                             {
-                                System.Linq.Expressions.Expression<Func<DataDefinition, bool>> predicate = dataDefinition =>
+                                Func<DataDefinition, bool> predicate = dataDefinition =>
                                     dataDefinition.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) // keep only variables with matching name
                                     && dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
                                     && dataDefinition.Usage != DataUsage.FunctionPointer
                                     && dataDefinition.Usage != DataUsage.ObjectReference
                                     && dataDefinition.Usage != DataUsage.Index
-                                    && (dataDefinition.CodeElement != null && dataDefinition.CodeElement.LevelNumber.Value < 88);
+                                    && (dataDefinition.CodeElement?.LevelNumber != null && dataDefinition.CodeElement.LevelNumber.Value < 88);
                                 // Ignore level 88. Note that dataDefinition.CodeElement != null condition also filters out IndexDefinition which is invalid in the context of DISPLAY
+                                // Filtering dataDefinition without LevelNumber also excludes FileDescription which are invalid for a DISPLAY
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement, predicate));
                                 break;
                             }
@@ -750,8 +751,7 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     da =>
                                         da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) &&
-                                        ((da.CodeElement != null &&
-                                          da.CodeElement.LevelNumber.Value < 88)
+                                        ((da.CodeElement?.LevelNumber != null && da.CodeElement.LevelNumber.Value < 88)
                                          || (da.CodeElement == null && da is IndexDefinition))));
                                 //Ignore 88 level variable
                                 break;
@@ -778,8 +778,7 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
                                          &&
-                                         ((v.CodeElement != null &&
-                                           v.CodeElement.LevelNumber.Value == 88)
+                                         ((v.CodeElement?.LevelNumber != null && v.CodeElement.LevelNumber.Value == 88)
                                           //Level 88 Variable
                                           || v.DataType == DataType.Numeric //Numeric Integer Variable
                                           || v.Usage == DataUsage.Pointer) //Or usage is pointer 

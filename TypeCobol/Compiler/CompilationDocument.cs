@@ -847,7 +847,7 @@ namespace TypeCobol.Compiler
                 CollectedCopyNames.Add(copy.TextName, suffixedNames);
             }
 
-            if (copy.Suffix != null)
+            if (copy.InsertSuffixChar)
             {
                 suffixedNames.Add(copy.TextName + copy.Suffix);
             }

@@ -111,7 +111,6 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         if (variation.HasSuffix)
                         {
                             copy.TextName = variation.TextName;
-                            copy.InsertSuffixChar = true;
                             copy.Suffix = variation.Suffix;
                             copy.PreSuffix = variation.PreSuffix;
                         }
