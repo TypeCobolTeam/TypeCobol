@@ -309,10 +309,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
                 {
                     string originalText = nextToken.Text;
-                    if (originalText.IndexOf(CopyReplacingDirective.PreSuffix, StringComparison.OrdinalIgnoreCase) > -1)
+                    if (originalText.IndexOf(CopyReplacingDirective.PreSuffix, StringComparison.Ordinal) > -1)
                     {
                         string replacement = CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix);
-                        string replacedText = Regex.Replace(originalText, CopyReplacingDirective.PreSuffix, replacement, RegexOptions.IgnoreCase);
+                        string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix, replacement);
                         int additionalSpaceRequired = replacedText.Length - originalText.Length;
                         if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
                         {
