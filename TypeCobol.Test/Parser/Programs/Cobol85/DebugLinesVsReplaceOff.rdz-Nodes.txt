@@ -1,0 +1,24 @@
+Line 14[38,46] <37, Warning, General> - Warning: Debugging mode is active
+Line 18[17,17] <30, Error, Semantics> - Semantic error: Symbol a is not referenced
+Line 18[22,22] <30, Error, Semantics> - Semantic error: Symbol b is not referenced
+--- Nodes ---
+?
+  MyPGM1
+    procedure-division
+      sentence-0
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
+  MyPGM2
+    environment-division
+      configuration
+        source-computer
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [22,22:b]<UserDefinedWord>
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
