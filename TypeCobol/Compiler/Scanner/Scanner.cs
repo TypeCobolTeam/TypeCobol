@@ -1307,15 +1307,18 @@ namespace TypeCobol.Compiler.Scanner
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
-                            if (followingChar == ',' || followingChar == ';')
+                            if (currentState.BeforeLastSignificantToken?.TokenType != TokenType.BY)
                             {
-                                // Error
-                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken, followingChar);
-                            }
-                            else if (followingChar != ' ' && followingChar != '.')
-                            {
-                                // Warning
-                                tokensLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace, delimiterToken, followingChar, currentIndex + 1);
+                                if (followingChar == ',' || followingChar == ';')
+                                {
+                                    // Error
+                                    tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken, followingChar);
+                                }
+                                else if (followingChar != ' ' && followingChar != '.')
+                                {
+                                    // Warning
+                                    tokensLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace, delimiterToken, followingChar, currentIndex + 1);
+                                }
                             }
                         }
                         return delimiterToken;
