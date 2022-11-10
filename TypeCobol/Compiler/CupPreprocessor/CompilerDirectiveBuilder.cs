@@ -96,13 +96,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
                     // Find the text name variation declared by previous REMARKS compiler directives (if parsed)
-                    var variation = CopyTextNameVariations.Find(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.OrdinalIgnoreCase));
-                    if (variation == null)
-                    {
-                        //If it does not exists, create the text name variation and add it (AutoRemarks mechanism Issue #440)
-                        variation = new RemarksDirective.TextNameVariation(copy.TextName);
-                        CopyTextNameVariations.Add(variation);
-                    }
+                    var variation = RemarksDirective.TextNameVariation.FindOrAdd(CopyTextNameVariations, copy);
 
                     if (this.TypeCobolOptions.IsCpyCopy(variation.TextName))
                     {

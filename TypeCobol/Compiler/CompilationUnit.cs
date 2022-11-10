@@ -26,8 +26,8 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
-            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations)
+        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, IAnalyzerProvider analyzerProvider) :
+            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState)
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);

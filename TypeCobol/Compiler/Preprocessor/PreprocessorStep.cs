@@ -1,6 +1,4 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
@@ -286,7 +284,13 @@ namespace TypeCobol.Compiler.Preprocessor
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
                             CompilationDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
                                     tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
-                                    document.CopyTextNamesVariations, out var perfStats);
+                                    out var perfStats);
+
+                            // A COPY can reference another COPY, we want to have a global vision of which copy are used
+                            foreach (var copyTextNameVariation in importedDocumentSource.CopyTextNamesVariations)
+                            {
+                                RemarksDirective.TextNameVariation.FindOrAdd(document.CopyTextNamesVariations, copyTextNameVariation);
+                            }
 
                             // Copy diagnostics from document
                             foreach (var diagnostic in importedDocumentSource.AllDiagnostics())

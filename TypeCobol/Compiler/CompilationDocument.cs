@@ -178,14 +178,14 @@ namespace TypeCobol.Compiler
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
         public CompilationDocument(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter,
-            [NotNull] MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+            [NotNull] MultilineScanState initialScanState)
         {
             //Cannot import a program
             if (isImported) Debug.Assert(textSourceInfo.IsCopy);
 
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
-            CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
+            CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
             MissingCopies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             this._documentImporter = documentImporter;
