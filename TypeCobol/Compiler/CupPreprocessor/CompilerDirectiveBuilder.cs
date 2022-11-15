@@ -90,14 +90,15 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-#if EUROINFO_RULES
+
             if (copy.TextName != null)
             {
+                // Find the text name variation declared by previous REMARKS compiler directives (if parsed) or add new text name.
+                var variation = RemarksDirective.TextNameVariation.FindOrAdd(CopyTextNameVariations, copy);
+
+#if  EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
-                    // Find the text name variation declared by previous REMARKS compiler directives (if parsed)
-                    var variation = RemarksDirective.TextNameVariation.FindOrAdd(CopyTextNameVariations, copy);
-
                     if (this.TypeCobolOptions.IsCpyCopy(variation.TextName))
                     {
                         // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
@@ -110,9 +111,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         }
                     }
                 }
+
                 _document.CollectUsedCopy(copy);
-            }
 #endif
+            }
+
             copy.LibraryName = GetName(qualifiedTextName.LibraryName);
             copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
 
