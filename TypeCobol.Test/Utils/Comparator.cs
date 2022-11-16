@@ -85,15 +85,15 @@ namespace TypeCobol.Test.Utils
         }
 
         public string ToJSON() {
-			return new TestJSONSerializer().ToJSON(Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
-		}
+            return new TestJSONSerializer().ToJSON(Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
+        }
 
-		public void Compare() {
+        public void Compare() {
             
             using (StreamReader reader = new StreamReader(new FileStream(Comparator.paths.Result, FileMode.Open))) {
-				Comparator.Compare(Compiler.CompilationResultsForProgram, reader, Comparator.paths.Result);
+                Comparator.Compare(Compiler.CompilationResultsForProgram, reader, Comparator.paths.Result);
             }
-		}
+        }
 
         public void Compare(string parsingResult)
         {
@@ -138,6 +138,7 @@ namespace TypeCobol.Test.Utils
                 new AntlrName(),
                 new DocumentationName(),
                 new DocumentationPropName(),
+                new TEXTName(),
 #if EUROINFO_RULES
                 new EIEmptyName(),
                 new EICodeElementName(),
@@ -149,7 +150,6 @@ namespace TypeCobol.Test.Utils
                 new EIMemoryName(),
                 new EINodeName(),
                 new EITokenName(),
-                
 #endif
         };
 
@@ -160,20 +160,20 @@ namespace TypeCobol.Test.Utils
         private int _nbOfTests;
 
         internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] copyExtensions = null, string[] ignored = null, bool deep = true) {
-			_sampleRoot = sampleRoot;
-			_resultsRoot = resultsRoot;
+            _sampleRoot = sampleRoot;
+            _resultsRoot = resultsRoot;
             _copyExtensions = copyExtensions;
-			var option = deep? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-			string[] samples = new string[0];
-			foreach(var ext in fileToTestsExtensions) {
-				string[] paths = Directory.GetFiles(folder, "*" + ext, option);
-				var tmp = new string[samples.Length+paths.Length];
-				samples.CopyTo(tmp, 0);
-				paths.CopyTo(tmp, samples.Length);
-				samples = tmp;
-			}
-			this.samples = Filter(samples, (ignored ?? new string[0]));
-		}
+            var option = deep? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            string[] samples = new string[0];
+            foreach(var ext in fileToTestsExtensions) {
+                string[] paths = Directory.GetFiles(folder, "*" + ext, option);
+                var tmp = new string[samples.Length+paths.Length];
+                samples.CopyTo(tmp, 0);
+                paths.CopyTo(tmp, samples.Length);
+                samples = tmp;
+            }
+            this.samples = Filter(samples, (ignored ?? new string[0]));
+        }
 
         private IList<string> Filter(string[] paths, string[] ignored)
         {
@@ -195,57 +195,57 @@ namespace TypeCobol.Test.Utils
             return _nbOfTests;
         }
 
-		public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
-			var errors = new StringBuilder();
-			foreach (var samplePath in samples) {
+        public void Test(bool debug = false, bool json = false, bool isCobolLanguage = false) {
+            var errors = new StringBuilder();
+            foreach (var samplePath in samples) {
                 // Automatically enable SQL parsing for samples located in a directory containing "SQL" within its path
                 string containingDirectory = Path.GetDirectoryName(samplePath);
                 bool enableSqlParsing = containingDirectory != null && containingDirectory.IndexOf("SQL", StringComparison.InvariantCultureIgnoreCase) >= 0;
                 IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
-				if (comparators.Count < 1) {
-					Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
-					errors.AppendLine("Missing result file \"" + samplePath + "\"");
-					continue;
-				}
+                if (comparators.Count < 1) {
+                    Console.WriteLine(" /!\\ ERROR: Missing result file \"" + samplePath + "\"");
+                    errors.AppendLine("Missing result file \"" + samplePath + "\"");
+                    continue;
+                }
                 foreach (var comparator in comparators) {
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
                     var unit = new TestUnit(comparator, _copyExtensions);
                     unit.Compiler.CompilerOptions.IsCobolLanguage = isCobolLanguage;
                     unit.Compiler.CompilerOptions.EnableSqlParsing = enableSqlParsing;
                     unit.Parse();
-				    if (unit.Observer.HasErrors)
-				    {
-				        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
-				        errors.AppendLine(unit.Observer.DumpErrors());
-				    }
-				    else
-				    {
-				        if (json)
-				        {
-				            string filename = comparator.paths.Result;
-				            //string name = Path.GetFileName(filename);
-				            string extension = Path.GetExtension(filename);
-				            if (extension != null) filename = filename.Substring(0, filename.Length - extension.Length);
-				            string[] lines = {unit.ToJSON()};
-				            System.IO.File.WriteAllLines(filename + ".json", lines);
-				        }
+                    if (unit.Observer.HasErrors)
+                    {
+                        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
+                        errors.AppendLine(unit.Observer.DumpErrors());
+                    }
+                    else
+                    {
+                        if (json)
+                        {
+                            string filename = comparator.paths.Result;
+                            //string name = Path.GetFileName(filename);
+                            string extension = Path.GetExtension(filename);
+                            if (extension != null) filename = filename.Substring(0, filename.Length - extension.Length);
+                            string[] lines = {unit.ToJSON()};
+                            System.IO.File.WriteAllLines(filename + ".json", lines);
+                        }
 
                         _nbOfTests++;
                         try
-				        {
-				            unit.Compare();
-				        }
-				        catch (Exception ex)
-				        {
-				            Console.WriteLine(" /!\\ MISMATCH\n" + ex);
-				            errors.Append("E");
-				        }
-				    }
-				}
-			}
-			if (errors.Length > 0)
+                        {
+                            unit.Compare();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(" /!\\ MISMATCH\n" + ex);
+                            errors.Append("E");
+                        }
+                    }
+                }
+            }
+            if (errors.Length > 0)
                 throw new Exception(errors.ToString());
-		}
+        }
 
         private IList<FilesComparator> GetComparators(string sampleRoot, string resultsRoot, string samplePath, bool debug) {
             IList<FilesComparator> comparators = new List<FilesComparator>();
@@ -281,38 +281,34 @@ namespace TypeCobol.Test.Utils
     }
 
     internal class FilesComparator : Comparator
-	{
-		internal Paths paths;
-		internal bool debug;
+    {
+        internal Paths paths;
+        internal bool debug;
         internal bool IsEI { get; private set; }
 
-        public FilesComparator(string name, bool debug) /*: this(name, null, debug)*/
-	    {
-	        
-	    }
-		public FilesComparator(Paths path, bool debug = false, bool isEI = false)
-		{
-		    paths = path;
-			this.debug = debug;
+        public FilesComparator(Paths path, bool debug = false, bool isEI = false)
+        {
+            paths = path;
+            this.debug = debug;
             IsEI = isEI;
-		}
+        }
 
-		public virtual void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
+        public virtual void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
             //Warning by default we only want All codeElementDiagnostics (Node Diagnostics and Quality Diagnostics are not compared)
-			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(true), reader, expectedResultPath);
-		}
+            Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(true), reader, expectedResultPath);
+        }
 
-		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath) {
-			string result = ParserUtils.DumpResult(elements, codeElementDiagnostics);
-			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
-		}
+        internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath) {
+            string result = ParserUtils.DumpResult(elements, codeElementDiagnostics);
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
+        }
 
-		internal DocumentFormat GetSampleFormat() {
-			if (paths.SamplePath.Contains(".rdz"))
-				return DocumentFormat.RDZReferenceFormat;
-			return DocumentFormat.FreeUTF8Format;
-		}
+        internal DocumentFormat GetSampleFormat() {
+            if (paths.SamplePath.Contains(".rdz"))
+                return DocumentFormat.RDZReferenceFormat;
+            return DocumentFormat.FreeUTF8Format;
+        }
 
 #if EUROINFO_RULES
         /// <summary>
@@ -406,27 +402,6 @@ namespace TypeCobol.Test.Utils
                 errors.Insert(0, paths.SamplePath + ":\n");
                 throw new Exception(errors.ToString());
             }
-        }
-    }
-
-    internal class Outputter : FilesComparator
-    {
-
-        public Outputter(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
-
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath)
-        {
-            foreach (var e in elements)
-            {
-                if (e.GetType() == typeof(SentenceEnd)) continue;
-                string line = expected.ReadLine();
-                TestLine(e, line);
-            }
-        }
-
-        private static void TestLine(CodeElement e, string line)
-        {
-            Console.WriteLine("TODO TestLine( " + e + " , \"" + line + "\")");
         }
     }
 
@@ -613,21 +588,17 @@ namespace TypeCobol.Test.Utils
 
         public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
-            var diagnostics = compilationUnit.AllDiagnostics();
-            var programs = compilationUnit.ProgramClassDocumentSnapshot.Root.Programs.ToList();
-
             var builder = new StringBuilder();
 
+            var diagnostics = compilationUnit.AllDiagnostics();
             if (diagnostics.Count > 0)
             {
                 builder.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
             }
+            
             builder.AppendLine("--- Sql Statements ---");
-            
-            
             compilationUnit.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new ASTVisitor(builder) );
-            
-            
+
             string result = builder.ToString();
             if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
@@ -775,31 +746,31 @@ namespace TypeCobol.Test.Utils
     }
 
     internal class MemoryComparator: FilesComparator
-	{
-	    public MemoryComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+    {
+        public MemoryComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
         public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
         {
-			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
+            ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
             var programs = new List<Program>();
             foreach (var pgm in pcd.Root.Programs)
             {
                 programs.Add(pgm);
             }
             
-			Compare(result, programs, reader, expectedResultPath);
-		}
+            Compare(result, programs, reader, expectedResultPath);
+        }
 
-		internal void Compare(CompilationUnit compUnit, List<Program> programs, StreamReader expected, string expectedResultPath)
-		{
-			string result = Dump(compUnit, programs);
-			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
-		}
+        internal void Compare(CompilationUnit compUnit, List<Program> programs, StreamReader expected, string expectedResultPath)
+        {
+            string result = Dump(compUnit, programs);
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
+        }
 
-		private string Dump(CompilationUnit compUnit, List<Program> programs)
-		{
-			var str = new StringBuilder();
+        private string Dump(CompilationUnit compUnit, List<Program> programs)
+        {
+            var str = new StringBuilder();
             List<DataDefinition> dataDefinitions = new List<DataDefinition>();
             str.AppendLine("Diagnostics");
             str.AppendLine("------------");
@@ -832,9 +803,9 @@ namespace TypeCobol.Test.Utils
                         str.AppendLine(CreateLine(dataDefinition, dataDefinition.SlackBytes == 0));
                 }
             }
-			
-			return str.ToString();
-		}
+            
+            return str.ToString();
+        }
 
         private List<DataDefinition> GetDataDefinitions(Node node)
         {
@@ -854,61 +825,61 @@ namespace TypeCobol.Test.Utils
             return dataDefinitions;
         }
 
-		private string CreateLine(DataDefinition data, bool slackByteIsHandled)
-		{
-		    Node parentData = data.Parent;
-			var res = new StringBuilder();
-		    int indent = 4;
+        private string CreateLine(DataDefinition data, bool slackByteIsHandled)
+        {
+            Node parentData = data.Parent;
+            var res = new StringBuilder();
+            int indent = 4;
 
-		    while (parentData is DataSection == false)
-		    {
-		        parentData = parentData.Parent;
-		        res.Append(new string(' ', indent));
-		    }
+            while (parentData is DataSection == false)
+            {
+                parentData = parentData.Parent;
+                res.Append(new string(' ', indent));
+            }
 
-		    if (!slackByteIsHandled)
-		    {
-		        res.Append("SlackByte");
+            if (!slackByteIsHandled)
+            {
+                res.Append("SlackByte");
 
-		        res.AppendLine(InsertValues(res.Length, (data.StartPosition - data.SlackBytes).ToString(), (data.StartPosition - 1).ToString(),
-		            data.SlackBytes.ToString()));
+                res.AppendLine(InsertValues(res.Length, (data.StartPosition - data.SlackBytes).ToString(), (data.StartPosition - 1).ToString(),
+                    data.SlackBytes.ToString()));
 
-		        res.Append(CreateLine(data, true));
-		    }
-		    else
-		    {
-		        var dataEntry = data.CodeElement as DataDefinitionEntry;
+                res.Append(CreateLine(data, true));
+            }
+            else
+            {
+                var dataEntry = data.CodeElement as DataDefinitionEntry;
 
-		        if (dataEntry != null)
-		        {
-		            if (data.IsTableOccurence)
-		                res.Append($"{dataEntry.LevelNumber} {data.Name} ({data.MaxOccurencesCount})");
-		            else
-		                res.Append($"{dataEntry.LevelNumber} {data.Name}");
+                if (dataEntry != null)
+                {
+                    if (data.IsTableOccurence)
+                        res.Append($"{dataEntry.LevelNumber} {data.Name} ({data.MaxOccurencesCount})");
+                    else
+                        res.Append($"{dataEntry.LevelNumber} {data.Name}");
 
-		            res.Append(InsertValues(res.Length, data.StartPosition.ToString(), data.PhysicalPosition.ToString(),
-		                data.PhysicalLength.ToString()));
-		        }
-		    }
+                    res.Append(InsertValues(res.Length, data.StartPosition.ToString(), data.PhysicalPosition.ToString(),
+                        data.PhysicalLength.ToString()));
+                }
+            }
 
             return res.ToString();
-		}
+        }
 
 
         private string InsertValues(int lineLength, string startPosition, string physicalPosition, string physicalLength)
-	    {
+        {
             StringBuilder str = new StringBuilder();
-	        const int columnStartPosition = 60;
-	        const int offsetBetweenValue = 8;
+            const int columnStartPosition = 60;
+            const int offsetBetweenValue = 8;
 
 
-	        str.Append(new string(' ', Math.Max(columnStartPosition - lineLength - startPosition.Length,0)) + startPosition);
-	        str.Append(new string(' ', offsetBetweenValue - physicalPosition.Length) + physicalPosition);
-	        str.Append(new string(' ', offsetBetweenValue - physicalLength.Length) + physicalLength);
-	        
+            str.Append(new string(' ', Math.Max(columnStartPosition - lineLength - startPosition.Length,0)) + startPosition);
+            str.Append(new string(' ', offsetBetweenValue - physicalPosition.Length) + physicalPosition);
+            str.Append(new string(' ', offsetBetweenValue - physicalLength.Length) + physicalLength);
+            
             return str.ToString();
-	    }
-	}
+        }
+    }
 
     internal class AntlrComparator : FilesComparator
     {
@@ -1136,6 +1107,28 @@ namespace TypeCobol.Test.Utils
         }
     }
 
+    internal class TextComparator : FilesComparator
+    {
+        public TextComparator(Paths path, bool debug = false, bool isEI = false)
+            : base(path, debug, isEI)
+        {
+
+        }
+
+        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        {
+            // Build full source code from lines
+            var actual = new StringBuilder();
+            foreach (var tokensLine in result.TokensDocumentSnapshot.Lines)
+            {
+                actual.AppendLine(tokensLine.Text);
+            }
+
+            // Compare with expected
+            ParserUtils.CheckWithResultReader(paths.SamplePath, actual.ToString(), reader, expectedResultPath);
+        }
+    }
+
 #endregion
 
     internal interface Names
@@ -1242,10 +1235,17 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
-    internal class SQLName : AbstractEINames
+    
+    internal class SQLName : AbstractNames
     {
         public override string CreateName(string name) { return name + "SQL" + Rextension; }
         public override Type GetComparatorType() { return typeof(SqlComparator); }
+    }
+
+    internal class TEXTName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "TEXT" + Rextension; }
+        public override Type GetComparatorType() { return typeof(TextComparator); }
     }
    
     #endregion
