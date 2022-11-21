@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Antlr4.Runtime;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
+using TypeCobol.Compiler.Text;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -139,6 +143,7 @@ namespace TypeCobol.Test.Utils
                 new DocumentationName(),
                 new DocumentationPropName(),
                 new TEXTName(),
+                new IncrementalChangesName(),
 #if EUROINFO_RULES
                 new EIEmptyName(),
                 new EICodeElementName(),
@@ -1129,6 +1134,100 @@ namespace TypeCobol.Test.Utils
         }
     }
 
+    internal class ChangeComparator : FilesComparator
+    {
+        private static void DumpAnyTokens(StringBuilder output, IEnumerable<IToken> tokens)
+        {
+            foreach (var token in tokens)
+            {
+                output.Append(token);
+                output.Append(' ');
+            }
+        }
+
+        private static void DumpCobolTextLine(StringBuilder output, ICobolTextLine cobolTextLine)
+        {
+            output.AppendLine(cobolTextLine.Text);
+        }
+
+        private static void DumpTokensLine(StringBuilder output, ITokensLine tokensLine)
+        {
+            DumpAnyTokens(output, tokensLine.SourceTokens);
+            output.AppendLine();
+        }
+
+        private static void DumpProcessedTokensLine(StringBuilder output, IProcessedTokensLine processedTokensLine)
+        {
+            if (processedTokensLine.HasCompilerDirectives)
+            {
+                DumpAnyTokens(output, processedTokensLine.TokensWithCompilerDirectives);
+            }
+
+            output.AppendLine();
+        }
+
+        private static void DumpCodeElementsLine(StringBuilder output, ICodeElementsLine codeElementsLine)
+        {
+            if (codeElementsLine.CodeElements != null)
+            {
+                DumpAnyTokens(output, codeElementsLine.CodeElements);
+            }
+
+            output.AppendLine();
+        }
+
+        public ChangeComparator(Paths path, bool debug = false, bool isEI = false)
+            : base(path, debug, isEI)
+        {
+
+        }
+
+        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        {
+            // Dump latest incremental changes for the given snapshots
+            var actual = new StringBuilder();
+            DumpChanges(result.CobolTextLinesVersion, DumpCobolTextLine);
+            DumpChanges(result.TokensDocumentSnapshot.CurrentVersion, DumpTokensLine);
+            DumpChanges(result.ProcessedTokensDocumentSnapshot.CurrentVersion, DumpProcessedTokensLine);
+            DumpChanges(result.CodeElementsDocumentSnapshot.CurrentVersion, DumpCodeElementsLine);
+
+            // Compare with expected
+            ParserUtils.CheckWithResultReader(paths.SamplePath, actual.ToString(), reader, expectedResultPath);
+
+            void DumpChanges<TLine>(DocumentVersion<TLine> version, Action<StringBuilder, TLine> dumpLine)
+                where TLine : ICobolTextLine
+            {
+                // Title
+                string lineType = typeof(TLine).Name;
+                int paddingLength = 78 - lineType.Length;
+                string left = new string('=', paddingLength / 2);
+                string right = new string('=', paddingLength / 2 + paddingLength % 2);
+                actual.AppendLine($"{left} {lineType} {right}");
+
+                // Content
+                if (version.changes != null)
+                {
+                    foreach (var documentChange in version.changes)
+                    {
+                        actual.Append($"Line {documentChange.LineIndex}: {documentChange.Type} -> ");
+                        if (documentChange.NewLine != null)
+                        {
+                            dumpLine(actual, documentChange.NewLine);
+                        }
+                        else
+                        {
+                            actual.AppendLine("No new line");
+                        }
+                    }
+                }
+                else
+                {
+                    actual.AppendLine("No change");
+                }
+            }
+        }
+    }
+
 #endregion
 
     internal interface Names
@@ -1247,7 +1346,13 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "TEXT" + Rextension; }
         public override Type GetComparatorType() { return typeof(TextComparator); }
     }
-   
+
+    internal class IncrementalChangesName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "INC" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ChangeComparator); }
+    }
+
     #endregion
 
     #region EINames
