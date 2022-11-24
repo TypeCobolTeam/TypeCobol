@@ -180,7 +180,8 @@ namespace TypeCobol.Test.Parser.Scanner
                 "1234537",
                 "+1234567",
                 ".1234567",
-                " -.321E18."
+                " -.321E18.",
+                "+."
             };
             string result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
