@@ -1216,7 +1216,7 @@ namespace TypeCobol.Compiler.CodeModel
         private readonly IDictionary<string, List<SymbolDefinition>> EnvironmentMnemonics =
             new Dictionary<string, List<SymbolDefinition>>(StringComparer.OrdinalIgnoreCase);
 
-        private SymbolTable GetRootGlobalTable()
+        private SymbolTable GetTopGlobalParentTable()
         {
             var globalTable = GetTableFromScope(Scope.Global);
             if (globalTable == null)
@@ -1238,18 +1238,28 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="specialNamesParagraph">Special names code element</param>
         public void AddSpecialNames([NotNull] SpecialNamesParagraph specialNamesParagraph)
         {
-            var targetTable = GetRootGlobalTable();
+            var targetTable = GetTopGlobalParentTable();
             Debug.Assert(targetTable != null); // Mnemonics can be declared only by root level programs which all have a Global SymbolTable
             
             if (specialNamesParagraph.MnemonicsForEnvironmentNames != null)
             {
                 foreach (var mnemonicForEnvironmentName in specialNamesParagraph.MnemonicsForEnvironmentNames.Keys)
                 {
-                    Add(targetTable.EnvironmentMnemonics, mnemonicForEnvironmentName, s => s.Name);
+                    Add(targetTable.EnvironmentMnemonics, mnemonicForEnvironmentName.Name, mnemonicForEnvironmentName);
                 }
             }
 
             //TODO create dedicated dictionaries and add other special names
+        }
+
+        /// <summary>
+        /// Return all environment mnemonics names.
+        /// </summary>
+        /// <returns>Non-null, maybe empty list of environment mnemonics names.</returns>
+        public IList<string> GetEnvironmentMnemonicsNames()
+        {
+            var targetTable = GetTopGlobalParentTable();
+            return targetTable != null ? targetTable.EnvironmentMnemonics.Keys.ToList() : new List<string>();
         }
 
         /// <summary>
@@ -1260,22 +1270,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// may contain more than one element when the reference is ambiguous.</returns>
         public IList<SymbolDefinition> GetEnvironmentMnemonics(SymbolReference symbolReference)
         {
-            var targetTable = GetRootGlobalTable();
+            var targetTable = GetTopGlobalParentTable();
             return targetTable != null
                 ? GetFromTable(symbolReference.Name, targetTable.EnvironmentMnemonics)
                 : new List<SymbolDefinition>();
-        }
-
-        /// <summary>
-        /// Return whether a environment mnemonic name has corresponding definition or not.
-        /// </summary>
-        /// <param name="mnemonicName">Name to test.</param>
-        /// <returns>True if definition(s) exist, False otherwise.</returns>
-        public bool IsEnvironmentMnemonicNameDefined(string mnemonicName)
-        {
-            if (mnemonicName == null) return false; // Stay consistent with GetFromTable which allows entries with empty name but exclude nulls
-            var targetTable = GetRootGlobalTable();
-            return targetTable != null && targetTable.EnvironmentMnemonics.ContainsKey(mnemonicName);
         }
 
         #endregion
@@ -1287,11 +1285,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
+        /// <param name="key"></param>
         /// <param name="symbol"></param>
-        /// <param name="getName"></param>
-        private static void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol, [NotNull] Func<T, string> getName)
+        private static void Add<T>([NotNull] IDictionary<string, List<T>> table, [CanBeNull] string key, [NotNull] T symbol)
         {
-            string key = getName(symbol);
             //QualifiedName of symbol can be null - if we have a filler in the type definition
             if (key == null)
             {
@@ -1309,7 +1306,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         private static void AddNode<TNode>([NotNull] IDictionary<string, List<TNode>> table, [NotNull] TNode symbol) where TNode : Node
-            => Add(table, symbol, node => node.Name);
+            => Add(table, symbol.Name, symbol);
 
         /// <summary>
         /// Cobol has compile time binding for variables, sometimes called static scope.

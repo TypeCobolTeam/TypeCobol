@@ -428,7 +428,7 @@ namespace TypeCobol.Compiler.Parser
 					var mnemonicForEnvironmentName = _cobolWordsBuilder.CreateMnemonicForEnvironmentNameDefinition(environmentNameContext.mnemonicForEnvironmentNameDefinition());
 					if (paragraph.MnemonicsForEnvironmentNames.ContainsKey(mnemonicForEnvironmentName))
 					{
-						// Duplicate mnemonic, add tu duplicate list and skip definition
+						// Duplicate mnemonic, add to duplicate list and skip definition
 						duplicateMnemonicsForEnvironment.Add(environmentNameContext.mnemonicForEnvironmentNameDefinition());
 						continue;
 					}

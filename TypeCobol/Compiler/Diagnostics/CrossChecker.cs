@@ -649,12 +649,6 @@ namespace TypeCobol.Compiler.Diagnostics
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
             if (dataDefinitionEntry == null) return true;
 
-            if (dataDefinition.SymbolTable.IsEnvironmentMnemonicNameDefined(dataDefinition.Name))
-            {
-                // Data definition name conflicts with mnemonic-name for environment
-                DiagnosticUtils.AddError(dataDefinition, $"The name '{dataDefinition.Name}' was used for an item that was not defined as a data-name. References to this name may be resolved incorrectly.");
-            }
-
             var commonDataDataDefinitionCodeElement = dataDefinitionEntry as CommonDataDescriptionAndDataRedefines;
 
             var levelNumber = dataDefinitionEntry.LevelNumber;
@@ -888,6 +882,22 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(SpecialNames specialNames)
+        {
+            // Check for environment mnemonics that conflict with variables
+            foreach (var environmentMnemonicName in specialNames.SymbolTable.GetEnvironmentMnemonicsNames())
+            {
+                var variables = specialNames.SymbolTable.GetVariables(d => string.Equals(d.Name, environmentMnemonicName, StringComparison.OrdinalIgnoreCase), SymbolTable.Scope.Global);
+                foreach (var dataDefinition in variables)
+                {
+                    // Data definition name conflicts with mnemonic-name for environment
+                    DiagnosticUtils.AddError(dataDefinition, $"The name '{dataDefinition.Name}' was used for an item that was not defined as a data-name. References to this name may be resolved incorrectly.");
+                }
+            }
+
+            return true;
+        }
+
         public override bool Visit(Accept accept)
         {
             // Resolve input device
@@ -935,30 +945,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 ambiguousSymbolReference.CandidateTypes = originalCandidateTypes;
 
                 // Add diagnostic
-                if (mnemonic == null)
+                if (mnemonic == null && dataDefinition == null)
                 {
-                    if (dataDefinition == null)
-                    {
-                        //Nothing found
-                        DiagnosticUtils.AddError(write, $"Unable to resolve reference to '{referenceToResolve.Name}'.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
-                    }
-                    else
-                    {
-                        //This is a variable, nothing to do.
-                    }
+                    //Nothing found
+                    DiagnosticUtils.AddError(write, $"Unable to resolve reference to '{referenceToResolve.Name}'.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
                 }
-                else
+                else if (mnemonic != null && dataDefinition != null)
                 {
-                    if (dataDefinition == null)
-                    {
-                        //This is a mnemonic, nothing to do.
-                    }
-                    else
-                    {
-                        //This is still ambiguous...
-                        DiagnosticUtils.AddError(write, $"Ambiguous reference to '{referenceToResolve.Name}', the definition to be used could not be determined from the context.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
-                    }
+                    //This is still ambiguous...
+                    DiagnosticUtils.AddError(write, $"Ambiguous reference to '{referenceToResolve.Name}', the definition to be used could not be determined from the context.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
                 }
+                //else either a mnemonic or a variable, nothing to do.
             }
             //else already checked by CheckVariable as a regular IntegerVariable with non-ambiguous symbol ref.
 
