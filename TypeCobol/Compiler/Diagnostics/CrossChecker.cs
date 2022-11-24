@@ -977,10 +977,22 @@ namespace TypeCobol.Compiler.Diagnostics
                 return;
             }
 
-            // Check for mnemonic
-            if (CheckMnemonicForEnvironmentName(node, environmentOrMnemonicReference) == null)
+            // Check for mnemonic (check also for conflicting variables)
+            var environmentMnemonicDefinition = CheckMnemonicForEnvironmentName(node, environmentOrMnemonicReference);
+            var dataDefinitionCount = node.SymbolTable.GetVariables(environmentOrMnemonicReference).Count();
+            if (environmentMnemonicDefinition == null)
             {
-                DiagnosticUtils.AddError(node, $"Unable to resolve reference to '{environmentOrMnemonicReference.Name}'.", environmentOrMnemonicReference, MessageCode.SemanticTCErrorInParser);
+                string message = dataDefinitionCount == 0
+                    // Nothing found
+                    ? $"Unable to resolve reference to '{environmentOrMnemonicReference.Name}'."
+                    // Cannot use variable here
+                    : $"Cannot use '{environmentOrMnemonicReference.Name}' here, environment-name or mnemonic for environment-name was expected.";
+                DiagnosticUtils.AddError(node, message, environmentOrMnemonicReference, MessageCode.SemanticTCErrorInParser);
+            }
+            else if (dataDefinitionCount > 0)
+            {
+                // A mnemonic has been found but it conflicts with one or more variables
+                DiagnosticUtils.AddError(node, $"Ambiguous reference to '{environmentOrMnemonicReference.Name}', the definition to be used could not be determined from the context.", environmentOrMnemonicReference, MessageCode.SemanticTCErrorInParser);
             }
         }
 
