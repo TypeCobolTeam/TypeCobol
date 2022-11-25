@@ -1196,19 +1196,24 @@ namespace TypeCobol.Test.Utils
             void DumpChanges<TLine>(DocumentVersion<TLine> previous, DocumentVersion<TLine> current, Action<StringBuilder, TLine> dumpLine)
                 where TLine : ICobolTextLine
             {
+                WriteSeparator(typeof(TLine).Name);
+
                 if (previous == null)
                 {
                     // No incremental change recorded
+                    actual.AppendLine("No change");
                     return;
                 }
 
+                // Latest change
+                System.Diagnostics.Debug.Assert(previous.changes != null);
                 System.Diagnostics.Debug.Assert(current != null);
+                DumpDocumentChanges(previous.changes);
 
-                WriteSeparator(typeof(TLine).Name);
-                DumpDocumentChanges(current.changes, actual, dumpLine);
+                // Reduced changes
                 WriteSeparator(nameof(DocumentVersion<TLine>.GetReducedAndOrderedChangesInNewerVersion));
                 var reducedChanges = previous.GetReducedAndOrderedChangesInNewerVersion(current);
-                DumpDocumentChanges(reducedChanges, actual, dumpLine);
+                DumpDocumentChanges(reducedChanges);
 
                 void WriteSeparator(string title, char separatorChar = '=')
                 {
@@ -1217,30 +1222,22 @@ namespace TypeCobol.Test.Utils
                     string right = new string(separatorChar, paddingLength / 2 + paddingLength % 2);
                     actual.AppendLine($"{left} {title} {right}");
                 }
-            }
-        }
 
-        private static void DumpDocumentChanges<TLine>(IEnumerable<DocumentChange<TLine>> changes, StringBuilder output, Action<StringBuilder, TLine> dumpLine)
-            where TLine : ICobolTextLine
-        {
-            if (changes != null)
-            {
-                foreach (var documentChange in changes)
+                void DumpDocumentChanges(IEnumerable<DocumentChange<TLine>> documentChanges)
                 {
-                    output.Append($"Line {documentChange.LineIndex}: {documentChange.Type} -> ");
-                    if (documentChange.NewLine != null)
+                    foreach (var documentChange in documentChanges)
                     {
-                        dumpLine(output, documentChange.NewLine);
-                    }
-                    else
-                    {
-                        output.AppendLine("No new line");
+                        actual.Append($"Line {documentChange.LineIndex}: {documentChange.Type} -> ");
+                        if (documentChange.NewLine != null)
+                        {
+                            dumpLine(actual, documentChange.NewLine);
+                        }
+                        else
+                        {
+                            actual.AppendLine("No new line");
+                        }
                     }
                 }
-            }
-            else
-            {
-                output.AppendLine("No change");
             }
         }
     }
