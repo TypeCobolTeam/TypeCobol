@@ -201,6 +201,7 @@ namespace TypeCobol.Compiler
             }
 
             // Initialize document views versions
+            previousTextLinesVersion = null;
             currentTextLinesVersion = new DocumentVersion<ICobolTextLine>(this);
             currentTokensLinesVersion = new DocumentVersion<ITokensLine>(this);
 
@@ -405,6 +406,7 @@ namespace TypeCobol.Compiler
 
                 // Prepare an event to signal document change to all listeners
                 documentChangedEvent = new DocumentChangedEvent<ICobolTextLine>(currentTextLinesVersion, currentTextLinesVersion.next);
+                previousTextLinesVersion = currentTextLinesVersion;
                 currentTextLinesVersion = currentTextLinesVersion.next;
 
                 // Stop perf measurement
@@ -421,6 +423,7 @@ namespace TypeCobol.Compiler
 
         // Linked list of changes applied to the document text lines
         private DocumentVersion<ICobolTextLine> currentTextLinesVersion;
+        private DocumentVersion<ICobolTextLine> previousTextLinesVersion;
 
         /// <summary>
         /// Current version of the text lines of the document.
@@ -432,6 +435,19 @@ namespace TypeCobol.Compiler
             {
                 VerifyAccess();
                 return currentTextLinesVersion;
+            }
+        }
+
+        /// <summary>
+        /// Previous version of the text lines of the document.
+        /// NOT thread-safe : this method can only be called from the owner thread.
+        /// </summary>
+        public DocumentVersion<ICobolTextLine> PreviousCobolTextLinesVersion
+        {
+            get
+            {
+                VerifyAccess();
+                return previousTextLinesVersion;
             }
         }
 
@@ -597,7 +613,7 @@ namespace TypeCobol.Compiler
                 // Create a new snapshot only if things changed since last snapshot
                 if (TokensDocumentSnapshot == null || TokensDocumentSnapshot.CurrentVersion != currentTokensLinesVersion)
                 {
-                    TokensDocumentSnapshot = new TokensDocument(TextSourceInfo, textLinesVersionForCurrentTokensLines, currentTokensLinesVersion, compilationDocumentLines.ToImmutable());
+                    TokensDocumentSnapshot = new TokensDocument(TextSourceInfo, textLinesVersionForCurrentTokensLines, currentTokensLinesVersion, TokensDocumentSnapshot?.CurrentVersion, compilationDocumentLines.ToImmutable());
                 }
             }
         }
@@ -687,10 +703,12 @@ namespace TypeCobol.Compiler
 
                 ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)
                 {
+                    var previousVersion = ProcessedTokensDocumentSnapshot?.CurrentVersion;
+
                     //Apply automatic replacing of partial-words for direct copy parsing mode
                     return UseDirectCopyParsing
-                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions)
-                        : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions);
+                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, previousVersion, lines, CompilerOptions)
+                        : new ProcessedTokensDocument(tokensDocument, version, previousVersion, lines, CompilerOptions);
                 }
 
                 // Refresh missing copies

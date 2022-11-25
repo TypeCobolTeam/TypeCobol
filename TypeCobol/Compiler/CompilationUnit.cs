@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler
                         CodeElementsParserStep.ParseDocument(processedTokensDocument, CompilerOptions, perfStatsForParserInvocation);
 
                         // Create the first code elements document snapshot
-                        CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
+                        CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), null, ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
                     }
                 }
                 else
@@ -116,7 +116,7 @@ namespace TypeCobol.Compiler
 
                     // Update the code elements document snapshot
                     ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
-                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, codeElementsDocumentLines.ToImmutable());
+                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, previousCodeElementsDocument.CurrentVersion, codeElementsDocumentLines.ToImmutable());
                 }
 
                 // Stop perf measurement
@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler
                 // Capture previous snapshot at one point in time
                 CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
 
-                if (CodeElementsDocumentSnapshot != null && (TemporaryProgramClassDocumentSnapshot == null || TemporaryProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != CodeElementsDocumentSnapshot.CurrentVersion))
+                if (codeElementsDocument != null && (TemporaryProgramClassDocumentSnapshot == null || TemporaryProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != CodeElementsDocumentSnapshot.CurrentVersion))
                 {
                     // Start perf measurement
                     var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
@@ -286,7 +286,8 @@ namespace TypeCobol.Compiler
                     }
 
                     // Capture the produced results
-                    TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
+                    var previousVersion = TemporaryProgramClassDocumentSnapshot?.PreviousVersion;
+                    TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), previousVersion, codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
                         typedVariablesOutsideTypedef, typeThatNeedTypeLinking, results);
 
                     //Direct copy parsing : remove redundant root 01 level if any.

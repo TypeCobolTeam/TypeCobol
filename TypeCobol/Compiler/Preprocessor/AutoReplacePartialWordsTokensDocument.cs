@@ -82,8 +82,8 @@ namespace TypeCobol.Compiler.Preprocessor
 
         private readonly TypeCobolOptions _compilerOptions;
 
-        public AutoReplacePartialWordsTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<CodeElementsLine> processedTokensLines, TypeCobolOptions compilerOptions)
-            : base(previousStepSnapshot, processedTokensLinesVersion, processedTokensLines, compilerOptions)
+        public AutoReplacePartialWordsTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, DocumentVersion<IProcessedTokensLine> previousVersion, ISearchableReadOnlyList<CodeElementsLine> processedTokensLines, TypeCobolOptions compilerOptions)
+            : base(previousStepSnapshot, processedTokensLinesVersion, previousVersion, processedTokensLines, compilerOptions)
         {
             _compilerOptions = compilerOptions;
         }

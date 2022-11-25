@@ -1168,6 +1168,7 @@ namespace TypeCobol.Test.Utils
         {
             if (codeElementsLine.CodeElements != null)
             {
+                output.AppendLine($"{codeElementsLine.CodeElements.Count} CodeElement(s)");
                 DumpAnyTokens(output, codeElementsLine.CodeElements);
             }
 
@@ -1184,44 +1185,62 @@ namespace TypeCobol.Test.Utils
         {
             // Dump latest incremental changes for the given snapshots
             var actual = new StringBuilder();
-            DumpChanges(result.CobolTextLinesVersion, DumpCobolTextLine);
-            DumpChanges(result.TokensDocumentSnapshot.CurrentVersion, DumpTokensLine);
-            DumpChanges(result.ProcessedTokensDocumentSnapshot.CurrentVersion, DumpProcessedTokensLine);
-            DumpChanges(result.CodeElementsDocumentSnapshot.CurrentVersion, DumpCodeElementsLine);
+            DumpChanges(result.PreviousCobolTextLinesVersion, result.CobolTextLinesVersion, DumpCobolTextLine);
+            DumpChanges(result.TokensDocumentSnapshot.PreviousVersion, result.TokensDocumentSnapshot.CurrentVersion, DumpTokensLine);
+            DumpChanges(result.ProcessedTokensDocumentSnapshot.PreviousVersion, result.ProcessedTokensDocumentSnapshot.CurrentVersion, DumpProcessedTokensLine);
+            DumpChanges(result.CodeElementsDocumentSnapshot.PreviousVersion, result.CodeElementsDocumentSnapshot.CurrentVersion, DumpCodeElementsLine);
 
             // Compare with expected
             ParserUtils.CheckWithResultReader(paths.SamplePath, actual.ToString(), reader, expectedResultPath);
 
-            void DumpChanges<TLine>(DocumentVersion<TLine> version, Action<StringBuilder, TLine> dumpLine)
+            void DumpChanges<TLine>(DocumentVersion<TLine> previous, DocumentVersion<TLine> current, Action<StringBuilder, TLine> dumpLine)
                 where TLine : ICobolTextLine
             {
-                // Title
-                string lineType = typeof(TLine).Name;
-                int paddingLength = 78 - lineType.Length;
-                string left = new string('=', paddingLength / 2);
-                string right = new string('=', paddingLength / 2 + paddingLength % 2);
-                actual.AppendLine($"{left} {lineType} {right}");
-
-                // Content
-                if (version.changes != null)
+                if (previous == null)
                 {
-                    foreach (var documentChange in version.changes)
+                    // No incremental change recorded
+                    return;
+                }
+
+                System.Diagnostics.Debug.Assert(current != null);
+
+                WriteSeparator(typeof(TLine).Name);
+                DumpDocumentChanges(current.changes, actual, dumpLine);
+                WriteSeparator(nameof(DocumentVersion<TLine>.GetReducedAndOrderedChangesInNewerVersion));
+                var reducedChanges = previous.GetReducedAndOrderedChangesInNewerVersion(current);
+                DumpDocumentChanges(reducedChanges, actual, dumpLine);
+
+                void WriteSeparator(string title, char separatorChar = '=')
+                {
+                    int paddingLength = 78 - title.Length;
+                    string left = new string(separatorChar, paddingLength / 2);
+                    string right = new string(separatorChar, paddingLength / 2 + paddingLength % 2);
+                    actual.AppendLine($"{left} {title} {right}");
+                }
+            }
+        }
+
+        private static void DumpDocumentChanges<TLine>(IEnumerable<DocumentChange<TLine>> changes, StringBuilder output, Action<StringBuilder, TLine> dumpLine)
+            where TLine : ICobolTextLine
+        {
+            if (changes != null)
+            {
+                foreach (var documentChange in changes)
+                {
+                    output.Append($"Line {documentChange.LineIndex}: {documentChange.Type} -> ");
+                    if (documentChange.NewLine != null)
                     {
-                        actual.Append($"Line {documentChange.LineIndex}: {documentChange.Type} -> ");
-                        if (documentChange.NewLine != null)
-                        {
-                            dumpLine(actual, documentChange.NewLine);
-                        }
-                        else
-                        {
-                            actual.AppendLine("No new line");
-                        }
+                        dumpLine(output, documentChange.NewLine);
+                    }
+                    else
+                    {
+                        output.AppendLine("No new line");
                     }
                 }
-                else
-                {
-                    actual.AppendLine("No change");
-                }
+            }
+            else
+            {
+                output.AppendLine("No change");
             }
         }
     }

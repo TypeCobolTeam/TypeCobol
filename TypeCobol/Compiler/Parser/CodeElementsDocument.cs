@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
@@ -13,33 +12,39 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     public class CodeElementsDocument : ICompilerStepDocumentSnapshot<IProcessedTokensLine,ICodeElementsLine>
     {
-        public CodeElementsDocument(ProcessedTokensDocument previousStepSnapshot, DocumentVersion<ICodeElementsLine> codeElementsLinesVersion, ISearchableReadOnlyList<ICodeElementsLine> codeElementsLines)
+        public CodeElementsDocument(ProcessedTokensDocument previousStepSnapshot, DocumentVersion<ICodeElementsLine> codeElementsLinesVersion, DocumentVersion<ICodeElementsLine> previousVersion, ISearchableReadOnlyList<ICodeElementsLine> codeElementsLines)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = codeElementsLinesVersion;
+            PreviousVersion = previousVersion;
             Lines = codeElementsLines;
         }
 
         /// <summary>
-        /// Informations on the source file on disk, or the buffer in memory
+        /// Information on the source file on disk, or the buffer in memory
         /// </summary>
-        public TextSourceInfo TextSourceInfo { get; private set; }
+        public TextSourceInfo TextSourceInfo { get; }
 
         /// <summary>
         /// Snapshot of the processed tokens document which was used to compute the current step
         /// </summary>
-        public IDocumentSnapshot<IProcessedTokensLine> PreviousStepSnapshot { get; private set; }
+        public IDocumentSnapshot<IProcessedTokensLine> PreviousStepSnapshot { get; }
 
         /// <summary>
         /// Document version identifier for the current document
         /// </summary>
-        public DocumentVersion<ICodeElementsLine> CurrentVersion { get; private set; }
+        public DocumentVersion<ICodeElementsLine> CurrentVersion { get; }
+
+        /// <summary>
+        /// Previous document version for this snapshot
+        /// </summary>
+        public DocumentVersion<ICodeElementsLine> PreviousVersion { get; }
 
         /// <summary>
         /// Lines of the source text file viewed as lists of tokens and error messages
         /// </summary>
-        public ISearchableReadOnlyList<ICodeElementsLine> Lines { get; private set; }
+        public ISearchableReadOnlyList<ICodeElementsLine> Lines { get; }
 
         /// <summary>
         /// Iterator over all the code elements found in Lines
@@ -83,5 +88,3 @@ namespace TypeCobol.Compiler.Parser
         }
     }
 }
-
- 

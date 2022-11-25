@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using TypeCobol.Compiler.Concurrency;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -11,33 +9,39 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class TokensDocument : IFirstStepDocumentSnapshot<ICobolTextLine,ITokensLine>
     {
-        public TokensDocument(TextSourceInfo textSourceInfo, DocumentVersion<ICobolTextLine> textLinesVersion, DocumentVersion<ITokensLine> tokensLinesVersion, ISearchableReadOnlyList<ITokensLine> tokensLines)
+        public TokensDocument(TextSourceInfo textSourceInfo, DocumentVersion<ICobolTextLine> textLinesVersion, DocumentVersion<ITokensLine> tokensLinesVersion, DocumentVersion<ITokensLine> previousVersion, ISearchableReadOnlyList<ITokensLine> tokensLines)
         {
             TextSourceInfo = textSourceInfo;
             SourceLinesVersion = textLinesVersion;
             CurrentVersion = tokensLinesVersion;
+            PreviousVersion = previousVersion;
             Lines = tokensLines;
         }
 
         /// <summary>
         /// Informations on the source file on disk, or the buffer in memory
         /// </summary>
-        public TextSourceInfo TextSourceInfo { get; private set; }
+        public TextSourceInfo TextSourceInfo { get; }
 
         /// <summary>
         /// Document version identifier for the list of cobol text lines used as a basis to compute the current step
         /// </summary>
-        public DocumentVersion<ICobolTextLine> SourceLinesVersion { get; private set; }
+        public DocumentVersion<ICobolTextLine> SourceLinesVersion { get; }
 
         /// <summary>
         /// Document version identifier for the current document
         /// </summary>
-        public DocumentVersion<ITokensLine> CurrentVersion { get; private set; }
-        
+        public DocumentVersion<ITokensLine> CurrentVersion { get; }
+
+        /// <summary>
+        /// Previous document version for this snapshot
+        /// </summary>
+        public DocumentVersion<ITokensLine> PreviousVersion { get; }
+
         /// <summary>
         /// Lines of the source text file viewed as lists of tokens and error messages
         /// </summary>
-        public ISearchableReadOnlyList<ITokensLine> Lines { get; private set; }
+        public ISearchableReadOnlyList<ITokensLine> Lines { get; }
 
         /// <summary>
         /// Iterator over all the source tokens 
@@ -54,30 +58,6 @@ namespace TypeCobol.Compiler.Scanner
                     yield return token;
                 } while (token.Type != (int)TokenType.EndOfFile);
             }
-        }        
-
-        // --- Debugging tools ---
-
-        public string GetDebugString()
-        {
-            StringBuilder sbResult = new StringBuilder();
-
-            int i = 0;
-            foreach (var line in Lines)
-            {
-                sbResult.AppendLine("-- Line " + (i + 1) + " --");
-                foreach (Token token in line.SourceTokens)
-                {
-                    sbResult.AppendLine(token.ToString());
-                }
-                foreach (Diagnostic diagnostic in line.ScannerDiagnostics)
-                {
-                    sbResult.AppendLine(diagnostic.ToString());
-                }
-                i++;
-            }
-
-            return sbResult.ToString();
         }
     }
 }

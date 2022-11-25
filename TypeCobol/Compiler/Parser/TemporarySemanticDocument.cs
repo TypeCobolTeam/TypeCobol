@@ -12,10 +12,11 @@ namespace TypeCobol.Compiler.Parser
 
     public class TemporarySemanticDocument : ICompilerStepDocumentSnapshot<ICodeElementsLine, ICodeElementsLine>
     {
-        public TemporarySemanticDocument(CodeElementsDocument previousSnapShot, DocumentVersion<ICodeElementsLine> codeElementsLinesVersion, 
-            ISearchableReadOnlyList<ICodeElementsLine> codeElementsLines, SourceFile root, [NotNull] List<Diagnostic> diagnostics, 
-            Dictionary<CodeElement, Node> nodeCodeElementLinkers, 
-            List<DataDefinition> typedVariablesOutsideTypedef, 
+        public TemporarySemanticDocument(CodeElementsDocument previousSnapShot, DocumentVersion<ICodeElementsLine> codeElementsLinesVersion,
+            DocumentVersion<ICodeElementsLine> previousVersion,
+            ISearchableReadOnlyList<ICodeElementsLine> codeElementsLines, SourceFile root, [NotNull] List<Diagnostic> diagnostics,
+            Dictionary<CodeElement, Node> nodeCodeElementLinkers,
+            List<DataDefinition> typedVariablesOutsideTypedef,
             List<TypeDefinition> typeThatNeedTypeLinking,
             [NotNull] Dictionary<string, object> analyzerResults)
         {
@@ -25,15 +26,16 @@ namespace TypeCobol.Compiler.Parser
             NodeCodeElementLinkers = nodeCodeElementLinkers;
             TextSourceInfo = previousSnapShot.TextSourceInfo;
             CurrentVersion = codeElementsLinesVersion;
+            PreviousVersion = previousVersion;
             Lines = codeElementsLines;
             TypedVariablesOutsideTypedef = typedVariablesOutsideTypedef;
             TypeThatNeedTypeLinking = typeThatNeedTypeLinking;
             AnalyzerResults = new AnalyzerResults(analyzerResults);
         }
 
-        public TextSourceInfo TextSourceInfo { get; set; }
-        public SourceFile Root { get; private set; }
-        public Dictionary<CodeElement, Node> NodeCodeElementLinkers { get; private set; }
+        public TextSourceInfo TextSourceInfo { get; }
+        public SourceFile Root { get; }
+        public Dictionary<CodeElement, Node> NodeCodeElementLinkers { get; }
 
         [NotNull]
         public AnalyzerResults AnalyzerResults { get; }
@@ -48,10 +50,11 @@ namespace TypeCobol.Compiler.Parser
         /// Errors found while parsing Program or Class
         /// </summary>
         [NotNull]
-        public List<Diagnostic> Diagnostics { get; private set; }
+        public List<Diagnostic> Diagnostics { get; }
 
         //USeless in this case
         public DocumentVersion<ICodeElementsLine> CurrentVersion { get; }
+        public DocumentVersion<ICodeElementsLine> PreviousVersion { get; }
         public IDocumentSnapshot<ICodeElementsLine> PreviousStepSnapshot { get; }
         public ISearchableReadOnlyList<ICodeElementsLine> Lines { get; }
     }

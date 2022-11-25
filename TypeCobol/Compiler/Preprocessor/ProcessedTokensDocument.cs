@@ -11,11 +11,12 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class ProcessedTokensDocument : ICompilerStepDocumentSnapshot<ITokensLine, IProcessedTokensLine>
     {
-        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines, TypeCobolOptions compilerOptions)
+        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, DocumentVersion<IProcessedTokensLine> previousVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines, TypeCobolOptions compilerOptions)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = processedTokensLinesVersion;
+            PreviousVersion = previousVersion;
             Lines = processedTokensLines;
             _compilerOptions = compilerOptions;
         }
@@ -36,6 +37,11 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Document version identifier for the current document
         /// </summary>
         public DocumentVersion<IProcessedTokensLine> CurrentVersion { get; }
+
+        /// <summary>
+        /// Previous document version for this snapshot
+        /// </summary>
+        public DocumentVersion<IProcessedTokensLine> PreviousVersion { get; }
 
         /// <summary>
         /// Lines of the source text file viewed as lists of tokens and error messages

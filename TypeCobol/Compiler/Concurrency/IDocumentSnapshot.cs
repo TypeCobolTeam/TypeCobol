@@ -1,5 +1,4 @@
-﻿using System;
-namespace TypeCobol.Compiler.Concurrency
+﻿namespace TypeCobol.Compiler.Concurrency
 {
     /// <summary>
     /// Represents an immutable snapshot of a specific version of a document.
@@ -13,6 +12,11 @@ namespace TypeCobol.Compiler.Concurrency
         /// Document version identifier for this snapshot
         /// </summary>
         DocumentVersion<T> CurrentVersion { get; }
+
+        /// <summary>
+        /// Previous document version for this snapshot
+        /// </summary>
+        DocumentVersion<T> PreviousVersion { get; }
 
         /// <summary>
         /// Immutable list of document lines
