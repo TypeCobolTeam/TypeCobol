@@ -704,7 +704,7 @@ namespace TypeCobol.Compiler
                 }
 
                 // Stop perf measurement
-                PerfStatsForPreprocessor.OnStopRefresh();
+                PerfStatsForPreprocessor.OnStopRefreshParsingStep();
 
                 // Send events to all listeners
                 EventHandler<DocumentChangedEvent<IProcessedTokensLine>> processedTokensLinesChangedEventsSource = ProcessedTokensLinesChangedEventsSource; // avoid race condition

@@ -194,14 +194,14 @@ namespace TypeCobol.Compiler
             bool snapshotWasUpdated = false;
             lock (lockObjectForProgramClassDocumentSnapshot)
             {
+                PerfStatsForProgramCrossCheck.OnStartRefreshParsingStep();
+
                 // Capture previous snapshot at one point in time
                 TemporarySemanticDocument temporarySnapshot = TemporaryProgramClassDocumentSnapshot;
 
                 // Check if an update is necessary and compute changes to apply since last version
                 if ((TemporaryProgramClassDocumentSnapshot != null) && (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != temporarySnapshot.CurrentVersion))
                 {
-                    PerfStatsForProgramCrossCheck.OnStartRefreshParsingStep();
-
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root = temporarySnapshot.Root;
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
@@ -211,10 +211,10 @@ namespace TypeCobol.Compiler
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
                         temporarySnapshot, ProgramClassDocumentSnapshot?.CurrentVersion + 1 ?? 0,
                         root, nodeCodeElementLinkers);
-                    snapshotWasUpdated = true;;
-
-                    PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
+                    snapshotWasUpdated = true;
                 }
+
+                PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
             }
 
             // Send events to all listeners
@@ -243,13 +243,14 @@ namespace TypeCobol.Compiler
         {
             lock (lockObjectForTemporarySemanticDocument)
             {
+                // Start perf measurement
+                var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
+
                 // Capture previous snapshot at one point in time
                 CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
 
                 if (CodeElementsDocumentSnapshot != null && (TemporaryProgramClassDocumentSnapshot == null || TemporaryProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != CodeElementsDocumentSnapshot.CurrentVersion))
                 {
-                    // Start perf measurement
-                    var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
                     var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
@@ -310,10 +311,10 @@ namespace TypeCobol.Compiler
                             newDiagnostics.Add(diagnostic);
                         }
                     }
-
-                    // Stop perf measurement
-                    PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
                 }
+
+                // Stop perf measurement
+                PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
             }
 
 #if DEBUG
@@ -330,11 +331,11 @@ namespace TypeCobol.Compiler
             bool documentUpdated = false;
             lock (lockObjectForCodeAnalysisDocumentSnapshot)
             {
+                PerfStatsForCodeQualityCheck.OnStartRefresh();
+
                 var programClassDocument = ProgramClassDocumentSnapshot;
                 if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate(out int version))
                 {
-                    PerfStatsForCodeQualityCheck.OnStartRefresh();
-
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<string, object> results = new Dictionary<string, object>();
                     var analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
@@ -370,9 +371,9 @@ namespace TypeCobol.Compiler
                     //Create updated snapshot
                     CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, version, diagnostics, results);
                     documentUpdated = true;
-
-                    PerfStatsForCodeQualityCheck.OnStopRefresh();
                 }
+
+                PerfStatsForCodeQualityCheck.OnStopRefresh();
 
                 bool CodeAnalysisDocumentNeedsUpdate(out int newVersion)
                 {
