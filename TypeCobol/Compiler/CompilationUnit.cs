@@ -58,6 +58,9 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void RefreshCodeElementsDocumentSnapshot()
         {
+            // Track all changes applied to the document while updating this snapshot
+            DocumentChangedEvent<ICodeElementsLine> documentChangedEvent = null;
+
             // Make sure two threads don't try to update this snapshot at the same time
             lock (lockObjectForCodeElementsDocumentSnapshot)
             {
@@ -85,9 +88,6 @@ namespace TypeCobol.Compiler
 
                 // Start perf measurement
                 var perfStatsForParserInvocation = PerfStatsForCodeElementsParser.OnStartRefreshParsingStep();
-
-                // Track all changes applied to the document while updating this snapshot
-                DocumentChangedEvent<ICodeElementsLine> documentChangedEvent = null;
 
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
@@ -121,13 +121,13 @@ namespace TypeCobol.Compiler
 
                 // Stop perf measurement
                 PerfStatsForCodeElementsParser.OnStopRefreshParsingStep();
+            }
 
-                // Send events to all listeners
-                EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
-                if (documentChangedEvent != null && codeElementsLinesChanged != null)
-                {
-                    codeElementsLinesChanged(this, documentChangedEvent);
-                }
+            // Send events to all listeners
+            EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
+            if (documentChangedEvent != null && codeElementsLinesChanged != null)
+            {
+                codeElementsLinesChanged(this, documentChangedEvent);
             }
 
 #if DEBUG
