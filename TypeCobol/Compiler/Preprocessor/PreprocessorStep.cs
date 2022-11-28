@@ -238,6 +238,8 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
                 }
+
+                perfStatsForParserInvocation.OnStopTreeBuilding();
             }
 
             // 8. Advance the state off all ProcessedTokensLines : 
@@ -261,8 +263,6 @@ namespace TypeCobol.Compiler.Preprocessor
                     parsedLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.Ready;
                 }
             }
-
-            perfStatsForParserInvocation.OnStopTreeBuilding();
 
             // --- COPY IMPORT PHASE : Process COPY (REPLACING) directives ---
             missingCopies = new List<string>();

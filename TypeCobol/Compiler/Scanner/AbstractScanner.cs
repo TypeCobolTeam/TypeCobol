@@ -177,10 +177,15 @@ namespace TypeCobol.Compiler.Scanner
                         type = TokenType.DecimalLiteral;
                         value = new DecimalLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
                     }
-                    else
+                    else if (decMatch.Groups[2].Value.Length > 0)
                     {
                         type = TokenType.IntegerLiteral;
                         value = new IntegerLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value);
+                    }
+                    else
+                    {
+                        type = TokenType.InvalidToken;
+                        value = null;
                     }
                     Token token = new Token(type, startIndex, endIndex, tokensLine)
                     {

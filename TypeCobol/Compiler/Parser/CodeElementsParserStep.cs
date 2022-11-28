@@ -278,6 +278,8 @@ namespace TypeCobol.Compiler.Parser
                             }
                             codeElementsLine.AddParserDiagnostic(new ParserDiagnostic(ex.ToString(), position, null, code, ex));
                         }
+                        perfStatsForParserInvocation.OnStopTreeBuilding();
+
                         CodeElement codeElement = codeElementBuilder.CodeElement;
                         if (codeElement != null)
                         {
@@ -388,9 +390,7 @@ namespace TypeCobol.Compiler.Parser
                         }
                     }
                 }
-                perfStatsForParserInvocation.OnStopTreeBuilding();
             }
-
 
             if (AntlrPerformanceProfiler != null)
                 AntlrPerformanceProfiler.EndParsingFile(cobolParser.ParseInfo.DecisionInfo, (int)(cobolParser.ParseInfo.GetTotalTimeInPrediction() / 1000000));
