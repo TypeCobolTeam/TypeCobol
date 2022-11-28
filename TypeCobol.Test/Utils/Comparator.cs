@@ -58,7 +58,7 @@ namespace TypeCobol.Test.Utils
             string filename = Comparator.paths.SampleName;
             bool isCopy = copyExtensions.Contains(sampleExtension, StringComparer.OrdinalIgnoreCase);
             Compiler = new FileCompiler(null, filename, format.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, null, project);
-            IncrementalChangesHistory = Compiler.CompilationResultsForProgram.TrackChanges();
+            IncrementalChangesHistory = Compiler.CompilationResultsForProgram.TrackChanges(depth: 1);
 
             if (antlrProfiler)
             {

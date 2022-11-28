@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Parser;
@@ -13,17 +15,60 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class IncrementalChangesHistory
     {
-        private readonly List<DocumentChangedEvent<ICobolTextLine>> _textChangedEvents;
-        private readonly List<DocumentChangedEvent<ITokensLine>> _tokensChangedEvents;
-        private readonly List<DocumentChangedEvent<IProcessedTokensLine>> _processedTokensChangedEvents;
-        private readonly List<DocumentChangedEvent<ICodeElementsLine>> _codeElementsChangedEvents;
-
-        public IncrementalChangesHistory()
+        private class EventStore<TLine> : IEnumerable<DocumentChangedEvent<TLine>>
+            where TLine : ICobolTextLine
         {
-            _textChangedEvents = new List<DocumentChangedEvent<ICobolTextLine>>();
-            _tokensChangedEvents = new List<DocumentChangedEvent<ITokensLine>>();
-            _processedTokensChangedEvents = new List<DocumentChangedEvent<IProcessedTokensLine>>();
-            _codeElementsChangedEvents = new List<DocumentChangedEvent<ICodeElementsLine>>();
+            private readonly int _maxCount;
+            private readonly Queue<DocumentChangedEvent<TLine>> _queue;
+            private readonly Action<DocumentChangedEvent<TLine>> _add;
+
+            public EventStore(int maxCount)
+            {
+                _maxCount = maxCount;
+                if (_maxCount > 0)
+                {
+                    // Max depth enabled
+                    _queue = new Queue<DocumentChangedEvent<TLine>>(_maxCount);
+                    _add = CheckCountAndAdd;
+                }
+                else
+                {
+                    // No limit !
+                    _queue = new Queue<DocumentChangedEvent<TLine>>();
+                    _add = AddWithoutCheckingCount;
+                }
+            }
+
+            private void CheckCountAndAdd(DocumentChangedEvent<TLine> documentChangedEvent)
+            {
+                if (_queue.Count == _maxCount)
+                {
+                    _queue.Dequeue();
+                }
+
+                _queue.Enqueue(documentChangedEvent);
+            }
+
+            private void AddWithoutCheckingCount(DocumentChangedEvent<TLine> documentChangedEvent) => _queue.Enqueue(documentChangedEvent);
+
+            public void Add(DocumentChangedEvent<TLine> documentChangedEvent) => _add(documentChangedEvent);
+
+            public IEnumerator<DocumentChangedEvent<TLine>> GetEnumerator() => _queue.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        private readonly EventStore<ICobolTextLine> _textChangedEvents;
+        private readonly EventStore<ITokensLine> _tokensChangedEvents;
+        private readonly EventStore<IProcessedTokensLine> _processedTokensChangedEvents;
+        private readonly EventStore<ICodeElementsLine> _codeElementsChangedEvents;
+
+        public IncrementalChangesHistory(int depth)
+        {
+            _textChangedEvents = new EventStore<ICobolTextLine>(depth);
+            _tokensChangedEvents = new EventStore<ITokensLine>(depth);
+            _processedTokensChangedEvents = new EventStore<IProcessedTokensLine>(depth);
+            _codeElementsChangedEvents = new EventStore<ICodeElementsLine>(depth);
         }
 
         public IEnumerable<DocumentChangedEvent<ICobolTextLine>> TextChangedEvents => _textChangedEvents;
@@ -43,10 +88,11 @@ namespace TypeCobol.Compiler
         /// Create a new instance of incremental changes history and wire CompilationUnit events to it.
         /// </summary>
         /// <param name="compilationUnit">Non-null CompilationUnit to monitor.</param>
+        /// <param name="depth">Max allowed depth of history. Default is 0 meaning no max depth, a negative value is also interpreted as no max depth.</param>
         /// <returns>New instance of IncrementalChangesHistory.</returns>
-        public static IncrementalChangesHistory TrackChanges([NotNull] this CompilationUnit compilationUnit)
+        public static IncrementalChangesHistory TrackChanges([NotNull] this CompilationUnit compilationUnit, int depth = 0)
         {
-            var history = new IncrementalChangesHistory();
+            var history = new IncrementalChangesHistory(depth);
             compilationUnit.TextLinesChanged += (sender, e) => history.AddEvent(e);
             compilationUnit.TokensLinesChanged += (sender, e) => history.AddEvent(e);
             compilationUnit.ProcessedTokensLinesChangedEventsSource += (sender, e) => history.AddEvent(e);
