@@ -54,3 +54,7 @@ Line 0[65,68] <16, Error, Tokens> - Invalid numeric literal format : expecting i
 [2,9:-.321E18]<FloatingPointLiteral>{-321|3>-0.321E18>-3.21E+17}
 [10,10+:.]<PeriodSeparator>
 
+-- Line 8 --
+[1,1:+]<InvalidToken>
+[2,2+:.]<PeriodSeparator>
+

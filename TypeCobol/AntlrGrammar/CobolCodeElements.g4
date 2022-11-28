@@ -7263,8 +7263,8 @@ unstringStatementEnd: END_UNSTRING;
 writeStatement:
 	WRITE recordName (FROM sendingField=variable1)?
 	((BEFORE | AFTER) ADVANCING? (
-		(numberOfLines=integerVariable1 (LINE | LINES)?)  | 
-		 mnemonicForEnvironmentNameReference              | 
+		integerVariableIdentifierOrMnemonicForEnvironmentNameReference | 
+		(numberOfLines=integerVariable1 (LINE | LINES)?)               | 
 		 PAGE                                             )? )?;
 
 writeStatementEnd: END_WRITE;
