@@ -1,7 +1,7 @@
 --- Diagnostics ---
 Line 20[12,16] <27, Error, Syntax> - Syntax error : A duplicate 'SYSIN' clause was found. RuleStack=codeElement>specialNamesParagraph>environmentNameClause>environmentName,  OffendingSymbol=[12,16:SYSIN]<UserDefinedWord>
 Line 61[22,26] <27, Error, Syntax> - Syntax error : Mnemonic name 'S04-M' was previously defined. RuleStack=codeElement>specialNamesParagraph>environmentNameClause>mnemonicForEnvironmentNameDefinition,  OffendingSymbol=[22,26:S04-M]<UserDefinedWord>
-Line 83[8,22] <27, Error, Syntax> - Syntax error : The name 'S03-M' was used for an item that was not defined as a data-name. References to this name may be resolved incorrectly.
+Line 83[8,22] <27, Error, Syntax> - Syntax error : The name 'S03-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
 Line 120[20,24] <30, Error, Semantics> - Semantic error: Symbol SYSIN is not referenced OffendingSymbol=[20,24:SYSIN]<UserDefinedWord>
 Line 121[20,25] <30, Error, Semantics> - Semantic error: Symbol SYSIPT is not referenced OffendingSymbol=[20,25:SYSIPT]<UserDefinedWord>
 Line 122[20,26] <30, Error, Semantics> - Semantic error: Symbol CONSOLE is not referenced OffendingSymbol=[20,26:CONSOLE]<UserDefinedWord>

@@ -891,7 +891,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 foreach (var dataDefinition in variables)
                 {
                     // Data definition name conflicts with mnemonic-name for environment
-                    DiagnosticUtils.AddError(dataDefinition, $"The name '{dataDefinition.Name}' was used for an item that was not defined as a data-name. References to this name may be resolved incorrectly.");
+                    DiagnosticUtils.AddError(dataDefinition, $"The name '{dataDefinition.Name}' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.");
                 }
             }
 
