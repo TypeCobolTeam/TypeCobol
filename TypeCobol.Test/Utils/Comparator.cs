@@ -25,6 +25,7 @@ namespace TypeCobol.Test.Utils
         public FileCompiler Compiler { get; }
         public FilesComparator Comparator { get; }
         public TestObserver Observer { get; }
+        public IncrementalChangesHistory IncrementalChangesHistory { get; }
 
         public TestUnit(FilesComparator comparator1, string[] copyExtensions = null, bool antlrProfiler = false)
         {
@@ -57,6 +58,7 @@ namespace TypeCobol.Test.Utils
             string filename = Comparator.paths.SampleName;
             bool isCopy = copyExtensions.Contains(sampleExtension, StringComparer.OrdinalIgnoreCase);
             Compiler = new FileCompiler(null, filename, format.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, null, project);
+            IncrementalChangesHistory = Compiler.CompilationResultsForProgram.TrackChanges(depth: 1);
 
             if (antlrProfiler)
             {
@@ -93,7 +95,7 @@ namespace TypeCobol.Test.Utils
         public void Compare() {
             
             using (StreamReader reader = new StreamReader(new FileStream(Comparator.paths.Result, FileMode.Open))) {
-                Comparator.Compare(Compiler.CompilationResultsForProgram, reader, Comparator.paths.Result);
+                Comparator.Compare(Compiler.CompilationResultsForProgram, IncrementalChangesHistory, reader, Comparator.paths.Result);
             }
         }
 
@@ -104,8 +106,6 @@ namespace TypeCobol.Test.Utils
                 ParserUtils.CheckWithResultReader(Comparator.paths.SamplePath, parsingResult, reader, Comparator.paths.Result);
             }
         }
-
-       
     }
 
     internal class TestObserver
@@ -278,12 +278,12 @@ namespace TypeCobol.Test.Utils
 
 #region Comparators
     
-    internal interface Comparator
+    internal interface IComparator
     {
-        void Compare(CompilationUnit result, StreamReader expected, string expectedResultPath);
+        void Compare(CompilationUnit result, IncrementalChangesHistory history, StreamReader expected, string expectedResultPath);
     }
 
-    internal class FilesComparator : Comparator
+    internal class FilesComparator : IComparator
     {
         internal Paths paths;
         internal bool debug;
@@ -296,7 +296,7 @@ namespace TypeCobol.Test.Utils
             IsEI = isEI;
         }
 
-        public virtual void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
+        public virtual void Compare(CompilationUnit result, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath) {
             //Warning by default we only want All codeElementDiagnostics (Node Diagnostics and Quality Diagnostics are not compared)
             Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(true), reader, expectedResultPath);
         }
@@ -424,7 +424,7 @@ namespace TypeCobol.Test.Utils
     {
         public ProgramsComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
@@ -589,7 +589,7 @@ namespace TypeCobol.Test.Utils
 
         }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             var builder = new StringBuilder();
 
@@ -616,7 +616,7 @@ namespace TypeCobol.Test.Utils
 
         }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             var diagnostics = compilationUnit.AllDiagnostics();
             var programs = compilationUnit.ProgramClassDocumentSnapshot.Root.Programs.ToList();
@@ -655,7 +655,7 @@ namespace TypeCobol.Test.Utils
     {
         public ProgramsComparator2(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             var sortedDiags = compilationUnit.AllDiagnostics().OrderBy(d => d.LineStart).GetEnumerator();
 
@@ -701,7 +701,7 @@ namespace TypeCobol.Test.Utils
     {
         public NodeComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath) {
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath) {
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
             
@@ -723,7 +723,7 @@ namespace TypeCobol.Test.Utils
     {
         public TokenComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
 
@@ -752,7 +752,7 @@ namespace TypeCobol.Test.Utils
     {
         public MemoryComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit result, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
             var programs = new List<Program>();
@@ -888,7 +888,7 @@ namespace TypeCobol.Test.Utils
     {
         public AntlrComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit result, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             Compare(result.AntlrResult, reader, expectedResultPath);
         }
@@ -905,7 +905,7 @@ namespace TypeCobol.Test.Utils
     {
         public DocumentationComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
@@ -937,7 +937,7 @@ namespace TypeCobol.Test.Utils
     {
         public DocumentationPropertiesComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit compilationUnit, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
@@ -1118,7 +1118,7 @@ namespace TypeCobol.Test.Utils
 
         }
 
-        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit result, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
             // Build full source code from lines
             var actual = new StringBuilder();
@@ -1180,33 +1180,65 @@ namespace TypeCobol.Test.Utils
 
         }
 
-        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        public override void Compare(CompilationUnit result, IncrementalChangesHistory history, StreamReader reader, string expectedResultPath)
         {
-            // Dump latest incremental changes for the given snapshots
+            // Dump full incremental history
             var actual = new StringBuilder();
-            DumpChanges(result.CobolTextLinesVersion, DumpCobolTextLine);
-            DumpChanges(result.TokensDocumentSnapshot.CurrentVersion, DumpTokensLine);
-            DumpChanges(result.ProcessedTokensDocumentSnapshot.CurrentVersion, DumpProcessedTokensLine);
-            DumpChanges(result.CodeElementsDocumentSnapshot.CurrentVersion, DumpCodeElementsLine);
+            DumpEvents(history.TextChangedEvents, DumpCobolTextLine);
+            DumpEvents(history.TokensChangedEvents, DumpTokensLine);
+            DumpEvents(history.ProcessedTokensChangedEvents, DumpProcessedTokensLine);
+            DumpEvents(history.CodeElementsChangedEvents, DumpCodeElementsLine);
 
             // Compare with expected
             ParserUtils.CheckWithResultReader(paths.SamplePath, actual.ToString(), reader, expectedResultPath);
 
-            void DumpChanges<TLine>(DocumentVersion<TLine> version, Action<StringBuilder, TLine> dumpLine)
+            void WriteSeparator(string title, char separatorChar = '=')
+            {
+                int paddingLength = 78 - title.Length;
+                string left = new string(separatorChar, paddingLength / 2);
+                string right = new string(separatorChar, paddingLength / 2 + paddingLength % 2);
+                actual.AppendLine($"{left} {title} {right}");
+            }
+
+            void DumpEvents<TLine>(IEnumerable<DocumentChangedEvent<TLine>> changeEvents, Action<StringBuilder, TLine> dumpLine)
                 where TLine : ICobolTextLine
             {
-                // Title
-                string lineType = typeof(TLine).Name;
-                int paddingLength = 78 - lineType.Length;
-                string left = new string('=', paddingLength / 2);
-                string right = new string('=', paddingLength / 2 + paddingLength % 2);
-                actual.AppendLine($"{left} {lineType} {right}");
+                WriteSeparator(typeof(TLine).Name);
 
-                // Content
-                if (version.changes != null)
+                bool hasChanges = false;
+                DocumentVersion<TLine> first = null;
+                DocumentVersion<TLine> last = null;
+                foreach (var changeEvent in changeEvents)
                 {
-                    foreach (var documentChange in version.changes)
+                    if (first == null)
                     {
+                        first = changeEvent.DocumentVersionBefore;
+                    }
+
+                    last = changeEvent.DocumentVersionAfter;
+
+                    DumpChanges(changeEvent.DocumentChanges);
+                }
+
+                if (hasChanges)
+                {
+                    if (first != null && last != null && first != last)
+                    {
+                        WriteSeparator(nameof(DocumentVersion<TLine>.GetReducedAndOrderedChangesInNewerVersion), '-');
+                        var reducedChanges = first.GetReducedAndOrderedChangesInNewerVersion(last);
+                        DumpChanges(reducedChanges);
+                    }
+                }
+                else
+                {
+                    actual.AppendLine("No change");
+                }
+
+                void DumpChanges(IEnumerable<DocumentChange<TLine>> documentChanges)
+                {
+                    foreach (var documentChange in documentChanges)
+                    {
+                        hasChanges = true;
                         actual.Append($"Line {documentChange.LineIndex}: {documentChange.Type} -> ");
                         if (documentChange.NewLine != null)
                         {
@@ -1217,10 +1249,6 @@ namespace TypeCobol.Test.Utils
                             actual.AppendLine("No new line");
                         }
                     }
-                }
-                else
-                {
-                    actual.AppendLine("No change");
                 }
             }
         }
