@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler
             var history = new IncrementalChangesHistory(depth);
             compilationUnit.TextLinesChanged += (sender, e) => history.AddEvent(e);
             compilationUnit.TokensLinesChanged += (sender, e) => history.AddEvent(e);
-            compilationUnit.ProcessedTokensLinesChangedEventsSource += (sender, e) => history.AddEvent(e);
+            compilationUnit.ProcessedTokensLinesChanged += (sender, e) => history.AddEvent(e);
             compilationUnit.CodeElementsLinesChanged += (sender, e) => history.AddEvent(e);
             return history;
         }
