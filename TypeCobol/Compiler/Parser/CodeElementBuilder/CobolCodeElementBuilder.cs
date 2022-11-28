@@ -366,6 +366,9 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterSpecialNamesParagraph(CodeElementsParser.SpecialNamesParagraphContext context)
 		{
 			var paragraph = new SpecialNamesParagraph();
+			var environments = new HashSet<ExternalName>();
+			var duplicateEnvironments = new List<RuleContext>();
+			var duplicateMnemonicsForEnvironment = new List<RuleContext>();
 			
 			if(context.upsiSwitchNameClause() != null && context.upsiSwitchNameClause().Length > 0)
 			{
@@ -414,10 +417,22 @@ namespace TypeCobol.Compiler.Parser
 				}
 				foreach(var environmentNameContext in context.environmentNameClause())
 				{
-					var environmentName = _cobolWordsBuilder.CreateEnvironmentName(
-						environmentNameContext.environmentName());
-					var mnemonicForEnvironmentName = _cobolWordsBuilder.CreateMnemonicForEnvironmentNameDefinition(
-						environmentNameContext.mnemonicForEnvironmentNameDefinition());
+					var environmentName = _cobolWordsBuilder.CreateEnvironmentName(environmentNameContext.environmentName());
+					if (!environments.Add(environmentName))
+					{
+						// Duplicate environment, add to duplicate list and skip definition
+						duplicateEnvironments.Add(environmentNameContext.environmentName());
+						continue;
+					}
+					
+					var mnemonicForEnvironmentName = _cobolWordsBuilder.CreateMnemonicForEnvironmentNameDefinition(environmentNameContext.mnemonicForEnvironmentNameDefinition());
+					if (paragraph.MnemonicsForEnvironmentNames.ContainsKey(mnemonicForEnvironmentName))
+					{
+						// Duplicate mnemonic, add to duplicate list and skip definition
+						duplicateMnemonicsForEnvironment.Add(environmentNameContext.mnemonicForEnvironmentNameDefinition());
+						continue;
+					}
+					
 					paragraph.MnemonicsForEnvironmentNames.Add(mnemonicForEnvironmentName, environmentName);
 				}
 			}
@@ -569,6 +584,7 @@ namespace TypeCobol.Compiler.Parser
 
 			Context = context;
 			CodeElement = paragraph;
+			SpecialNamesParagraphChecker.OnCodeElement(paragraph, context, duplicateEnvironments, duplicateMnemonicsForEnvironment);
 		}
 
 		private CharactersRangeInCollatingSequence CreateCharactersRange(CodeElementsParser.CharactersRangeContext context) {
