@@ -625,6 +625,9 @@ namespace TypeCobol.Compiler
             // Make sure two threads don't try to update this snapshot at the same time
             lock (lockObjectForProcessedTokensDocumentSnapshot)
             {
+                // Start perf measurement
+                var perfStatsForParserInvocation = PerfStatsForPreprocessor.OnStartRefreshParsingStep();
+
                 // Capture previous snapshots at one point in time
                 TokensDocument tokensDocument = TokensDocumentSnapshot;
                 ProcessedTokensDocument previousProcessedTokensDocument = ProcessedTokensDocumentSnapshot;
@@ -639,6 +642,7 @@ namespace TypeCobol.Compiler
                 else if (tokensDocument.CurrentVersion == previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion)
                 {
                     // Tokens lines did not change since last update => nothing to do
+                    PerfStatsForPreprocessor.OnStopRefreshParsingStep();
                     return;
                 }
                 else
@@ -646,9 +650,6 @@ namespace TypeCobol.Compiler
                     DocumentVersion<ITokensLine> previousTokensDocumentVersion = previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion;
                     tokensLineChanges = previousTokensDocumentVersion.GetReducedAndOrderedChangesInNewerVersion(tokensDocument.CurrentVersion);
                 }
-
-                // Start perf measurement
-                var perfStatsForParserInvocation = PerfStatsForPreprocessor.OnStartRefreshParsingStep();
 
                 // Apply text changes to the compilation document
                 bool refreshMissingCopies = true;
