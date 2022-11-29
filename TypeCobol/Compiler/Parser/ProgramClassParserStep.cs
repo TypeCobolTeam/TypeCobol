@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
+            // Try to parse a Cobol program or class, with cup we are also building the The Syntax Tree Node
             perfStatsForParserInvocation.OnStartParsing();
             try
             {
@@ -108,12 +108,6 @@ namespace TypeCobol.Compiler.Parser
             System.Diagnostics.Debug.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
 #endif
             root = builder.SyntaxTree.Root; //Set output root node
-
-            perfStatsForParserInvocation.OnStartTreeBuilding();
-
-
-            //Stop measuring tree building performance
-            perfStatsForParserInvocation.OnStopTreeBuilding();
 
             // Register compiler results
             diagnostics = diagReporter.Diagnostics ?? new List<Diagnostic>();

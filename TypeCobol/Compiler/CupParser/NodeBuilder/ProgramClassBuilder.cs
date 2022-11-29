@@ -370,7 +370,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartSpecialNamesParagraph(SpecialNamesParagraph paragraph)
         {
-            Enter(new SpecialNames(paragraph));
+            var specialNames = new SpecialNames(paragraph);
+            Enter(specialNames);
+            specialNames.SymbolTable.AddSpecialNames(paragraph);
             Dispatcher.StartSpecialNamesParagraph(paragraph);
         }
 

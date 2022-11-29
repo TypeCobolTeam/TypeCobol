@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if DEBUG
+using System.Linq;
+#endif
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
@@ -159,8 +162,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 if (nextToken.TokenType == TokenType.AlphanumericLiteral && (!nextToken.HasOpeningDelimiter || !nextToken.HasClosingDelimiter))
                 {
-                    tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
-                        tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Literal is not correctly delimited.");
+                    tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, nextToken, "Literal is not correctly delimited.");
                 }
                 tokensLine.AddToken(nextToken);
             }    
@@ -542,6 +544,14 @@ namespace TypeCobol.Compiler.Scanner
             }
             Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations, multiStringConcatBitPosition);
 
+#if DEBUG
+            // WATCH DOG: Only TokenDiagnostics can be copied from a virtual line onto real underlying lines, check that all scanner diags are of type TokenDiagnostic
+            if (virtualContinuationTokensLine.ScannerDiagnostics.Any(d => !(d is TokenDiagnostic)))
+            {
+                Debug.Fail("Cannot copy some diagnostics from virtual line !");
+            }
+#endif
+
             // Then attribute each token and diagnostic to its corresponding tokens line
             i = firstSourceLineIndex;
             TokensLine originalLine = null;
@@ -873,13 +883,13 @@ namespace TypeCobol.Compiler.Scanner
                 // if there is no Multiline Comments end marckup "*>>" then create a new Comment Token until the "*>>"
                 if (line.Length > currentIndex + 2 && line[currentIndex] == '%' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
                 {
-                    // We are in the case of a Formalize Comment stop with the '*' on column other than 7 wich is forbidden
-                    tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
-                        startIndex,
-                        startIndex + 2);
                     // consume the * char and the three < chars
                     currentIndex += 3;
-                    return new Token(TokenType.MULTILINES_COMMENTS_STOP, startIndex, startIndex + 2, tokensLine);
+                    var token = new Token(TokenType.MULTILINES_COMMENTS_STOP, startIndex, startIndex + 2, tokensLine);
+
+                    // We are in the case of a Formalize Comment stop with the '*' on column other than 7 which is forbidden
+                    tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition, token);
+                    return token;
                 }
                 else if (line[currentIndex] == '>' && line[currentIndex - 1] == '%' && line.Length > currentIndex + 1 && line[currentIndex + 1] == '>')
                 {
@@ -915,13 +925,13 @@ namespace TypeCobol.Compiler.Scanner
                     case '%':
                         if ((line.Length > currentIndex + 3) && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>' && line[currentIndex + 3] == '>')
                         {
-                            // We are in the case of a Formalize Comment stop with the '*' on column other than 7 wich is forbidden
-                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
-                                startIndex,
-                                startIndex + 3);
                             // consume the * char and the three < chars
                             currentIndex += 4;
-                            return new Token(TokenType.FORMALIZED_COMMENTS_STOP, startIndex, startIndex + 3, tokensLine);
+                            var token = new Token(TokenType.FORMALIZED_COMMENTS_STOP, startIndex, startIndex + 3, tokensLine);
+
+                            // We are in the case of a Formalize Comment stop with the '*' on column other than 7 which is forbidden
+                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition, token);
+                            return token;
                         }
                         currentIndex++;
                         return new Token(TokenType.InvalidToken, startIndex, currentIndex - 1, tokensLine);
@@ -1050,46 +1060,29 @@ namespace TypeCobol.Compiler.Scanner
                         return new Token(TokenType.MultiplyOperator, startIndex, startIndex, tokensLine);
                     }
                 case '%':
-                    if (line.Length >= currentIndex + 2 && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
-                    {
-                        if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '>')
-                        {
-                            // It is a Formalized Comment start that is not well positionned
-                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
-                                startIndex,
-                                startIndex + 3);
-                        }
-                        else
-                        {
-                            // It is a Multilines Comment start that is not well positionned
-                            tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
-                                startIndex,
-                                startIndex + 2);
-                        }
-                    }
                     // Multiline Comments or Formalized Comments start should begin on column 7
                     if (line.Length > currentIndex + 2 && line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
                     {
                         if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '<')
                         {
-                            // It is a Formalized Comment start that is not well positioned
-                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
-                                startIndex,
-                                startIndex + 3);
                             // consume the * char and the three < chars
                             currentIndex += 4;
-                            return new Token(TokenType.FORMALIZED_COMMENTS_START, startIndex, startIndex + 3, tokensLine);
+                            var token = new Token(TokenType.FORMALIZED_COMMENTS_START, startIndex, startIndex + 3, tokensLine);
+
+                            // It is a Formalized Comment start that is not well positioned
+                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition, token);
+                            return token;
                         }
                         else
                         {
-                            // It is a Multiline Comment start that is not well positioned
-                            tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
-                                startIndex,
-                                startIndex + 2);
                             // We are in the case of a Multiline Comment start
                             // consume the * char and the two < chars
                             currentIndex += 3;
-                            return new Token(TokenType.MULTILINES_COMMENTS_START, startIndex, startIndex + 2, tokensLine);
+                            var token = new Token(TokenType.MULTILINES_COMMENTS_START, startIndex, startIndex + 2, tokensLine);
+
+                            // It is a Multiline Comment start that is not well positioned
+                            tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition, token);
+                            return token;
                         }
                     }
 
@@ -1314,15 +1307,18 @@ namespace TypeCobol.Compiler.Scanner
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
-                            if (followingChar == ',' || followingChar == ';')
+                            if (currentState.BeforeLastSignificantToken?.TokenType != TokenType.BY)
                             {
-                                // Error
-                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken, followingChar);
-                            }
-                            else if (followingChar != ' ' && followingChar != '.')
-                            {
-                                // Warning
-                                tokensLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace, delimiterToken, followingChar, currentIndex + 1);
+                                if (followingChar == ',' || followingChar == ';')
+                                {
+                                    // Error
+                                    tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken, followingChar);
+                                }
+                                else if (followingChar != ' ' && followingChar != '.')
+                                {
+                                    // Warning
+                                    tokensLine.AddDiagnostic(MessageCode.DotShouldBeFollowedBySpace, delimiterToken, followingChar, currentIndex + 1);
+                                }
                             }
                         }
                         return delimiterToken;

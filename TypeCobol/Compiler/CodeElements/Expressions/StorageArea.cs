@@ -137,16 +137,6 @@ namespace TypeCobol.Compiler.CodeElements
         [NotNull]
 		public SubscriptExpression[] Subscripts { get; }
 
-        /// <summary>Ambiguities in the grammar in the first phase of parsing</summary>
-		public SymbolType AlternativeSymbolType {
-			set {
-				if (value == SymbolType.IndexName) Kind = StorageAreaKind.DataOrConditionOrIndex;
-                else Kind = StorageAreaKind.DataOrConditionOrAlternativeSymbolReference;
-				alternativeSymbolType = value;
-			}
-			get { return alternativeSymbolType; }
-		}
-		private SymbolType alternativeSymbolType;
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)

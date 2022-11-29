@@ -1,0 +1,127 @@
+--- Diagnostics ---
+Line 57[8,31] <27, Error, Syntax> - Syntax error : The name 'SYSIN-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 58[8,32] <27, Error, Syntax> - Syntax error : The name 'SYSIPT-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 59[8,32] <27, Error, Syntax> - Syntax error : The name 'SYSOUT-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 60[8,33] <27, Error, Syntax> - Syntax error : The name 'SYSLIST-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 61[8,32] <27, Error, Syntax> - Syntax error : The name 'SYSLST-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 62[8,34] <27, Error, Syntax> - Syntax error : The name 'SYSPUNCH-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 63[8,32] <27, Error, Syntax> - Syntax error : The name 'SYSPCH-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 64[8,33] <27, Error, Syntax> - Syntax error : The name 'CONSOLE-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 65[8,29] <27, Error, Syntax> - Syntax error : The name 'C01-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 66[8,29] <27, Error, Syntax> - Syntax error : The name 'C02-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 67[8,29] <27, Error, Syntax> - Syntax error : The name 'C03-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 68[8,29] <27, Error, Syntax> - Syntax error : The name 'C04-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 69[8,29] <27, Error, Syntax> - Syntax error : The name 'C05-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 70[8,29] <27, Error, Syntax> - Syntax error : The name 'C06-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 71[8,29] <27, Error, Syntax> - Syntax error : The name 'C07-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 72[8,29] <27, Error, Syntax> - Syntax error : The name 'C08-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 73[8,29] <27, Error, Syntax> - Syntax error : The name 'C09-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 74[8,29] <27, Error, Syntax> - Syntax error : The name 'C10-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 75[8,29] <27, Error, Syntax> - Syntax error : The name 'C11-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 76[8,29] <27, Error, Syntax> - Syntax error : The name 'C12-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 77[8,29] <27, Error, Syntax> - Syntax error : The name 'CSP-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 78[8,29] <27, Error, Syntax> - Syntax error : The name 'S01-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 79[8,29] <27, Error, Syntax> - Syntax error : The name 'S02-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 80[8,29] <27, Error, Syntax> - Syntax error : The name 'S03-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 81[8,29] <27, Error, Syntax> - Syntax error : The name 'S04-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 82[8,29] <27, Error, Syntax> - Syntax error : The name 'S05-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 83[8,32] <27, Error, Syntax> - Syntax error : The name 'AFP-5A-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 99[29,35] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'SYSIN-M', the definition to be used could not be determined from the context. OffendingSymbol=[29,35:SYSIN-M]<UserDefinedWord>
+Line 100[29,36] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'SYSIPT-M', the definition to be used could not be determined from the context. OffendingSymbol=[29,36:SYSIPT-M]<UserDefinedWord>
+Line 101[30,37] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'SYSOUT-M', the definition to be used could not be determined from the context. OffendingSymbol=[30,37:SYSOUT-M]<UserDefinedWord>
+Line 102[30,38] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'SYSLIST-M', the definition to be used could not be determined from the context. OffendingSymbol=[30,38:SYSLIST-M]<UserDefinedWord>
+Line 103[30,37] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'SYSLST-M', the definition to be used could not be determined from the context. OffendingSymbol=[30,37:SYSLST-M]<UserDefinedWord>
+Line 104[30,39] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'SYSPUNCH-M', the definition to be used could not be determined from the context. OffendingSymbol=[30,39:SYSPUNCH-M]<UserDefinedWord>
+Line 105[30,37] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'SYSPCH-M', the definition to be used could not be determined from the context. OffendingSymbol=[30,37:SYSPCH-M]<UserDefinedWord>
+Line 106[29,37] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'CONSOLE-M', the definition to be used could not be determined from the context. OffendingSymbol=[29,37:CONSOLE-M]<UserDefinedWord>
+Line 107[30,38] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'CONSOLE-M', the definition to be used could not be determined from the context. OffendingSymbol=[30,38:CONSOLE-M]<UserDefinedWord>
+Line 108[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C01-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C01-M]<UserDefinedWord>
+Line 109[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C02-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C02-M]<UserDefinedWord>
+Line 110[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C03-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C03-M]<UserDefinedWord>
+Line 111[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C04-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C04-M]<UserDefinedWord>
+Line 112[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C05-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C05-M]<UserDefinedWord>
+Line 113[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C06-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C06-M]<UserDefinedWord>
+Line 114[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C07-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C07-M]<UserDefinedWord>
+Line 115[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C08-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C08-M]<UserDefinedWord>
+Line 116[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C09-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C09-M]<UserDefinedWord>
+Line 117[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C10-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C10-M]<UserDefinedWord>
+Line 118[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C11-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C11-M]<UserDefinedWord>
+Line 119[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'C12-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:C12-M]<UserDefinedWord>
+Line 120[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'CSP-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:CSP-M]<UserDefinedWord>
+Line 121[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'S01-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:S01-M]<UserDefinedWord>
+Line 122[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'S02-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:S02-M]<UserDefinedWord>
+Line 123[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'S03-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:S03-M]<UserDefinedWord>
+Line 124[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'S04-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:S04-M]<UserDefinedWord>
+Line 125[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'S05-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:S05-M]<UserDefinedWord>
+Line 126[41,48] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'AFP-5A-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,48:AFP-5A-M]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: TCOFM117 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  FSYS020:?
+--- Intrinsic:Namespace:Program:Global
+-- DATA --------
+  E-EDIT:Alphanumeric
+  SYSIN-M:Alphanumeric
+  SYSIPT-M:Alphanumeric
+  SYSOUT-M:Alphanumeric
+  SYSLIST-M:Alphanumeric
+  SYSLST-M:Alphanumeric
+  SYSPUNCH-M:Alphanumeric
+  SYSPCH-M:Alphanumeric
+  CONSOLE-M:Alphanumeric
+  C01-M:Alphanumeric
+  C02-M:Alphanumeric
+  C03-M:Alphanumeric
+  C04-M:Alphanumeric
+  C05-M:Alphanumeric
+  C06-M:Alphanumeric
+  C07-M:Alphanumeric
+  C08-M:Alphanumeric
+  C09-M:Alphanumeric
+  C10-M:Alphanumeric
+  C11-M:Alphanumeric
+  C12-M:Alphanumeric
+  CSP-M:Alphanumeric
+  S01-M:Alphanumeric
+  S02-M:Alphanumeric
+  S03-M:Alphanumeric
+  S04-M:Alphanumeric
+  S05-M:Alphanumeric
+  AFP-5A-M:Alphanumeric
+-- ENVIRONMENT MNEMONICS ---
+  SYSIN-M
+  SYSIPT-M
+  SYSOUT-M
+  SYSLIST-M
+  SYSLST-M
+  SYSPUNCH-M
+  SYSPCH-M
+  CONSOLE-M
+  C01-M
+  C02-M
+  C03-M
+  C04-M
+  C05-M
+  C06-M
+  C07-M
+  C08-M
+  C09-M
+  C10-M
+  C11-M
+  C12-M
+  CSP-M
+  S01-M
+  S02-M
+  S03-M
+  S04-M
+  S05-M
+  AFP-5A-M
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

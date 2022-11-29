@@ -1,0 +1,43 @@
+--- Program ---
+PROGRAM: TCOFM117 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  FSYS020:?
+--- Intrinsic:Namespace:Program:Global
+-- DATA --------
+  E-EDIT:Alphanumeric
+-- ENVIRONMENT MNEMONICS ---
+  SYSIN-M
+  SYSIPT-M
+  SYSOUT-M
+  SYSLIST-M
+  SYSLST-M
+  SYSPUNCH-M
+  SYSPCH-M
+  CONSOLE-M
+  C01-M
+  C02-M
+  C03-M
+  C04-M
+  C05-M
+  C06-M
+  C07-M
+  C08-M
+  C09-M
+  C10-M
+  C11-M
+  C12-M
+  CSP-M
+  S01-M
+  S02-M
+  S03-M
+  S04-M
+  S05-M
+  AFP-5A-M
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
