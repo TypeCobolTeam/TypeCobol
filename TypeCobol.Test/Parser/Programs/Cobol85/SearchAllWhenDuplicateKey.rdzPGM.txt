@@ -1,0 +1,24 @@
+--- Diagnostics ---
+Line 10[41,51] <27, Error, Syntax> - Syntax error : Sorting key 'DSRCE-KEY-A' is already defined for this table. RuleStack=codeElement>dataDescriptionEntry>occursClause>tableSortingKeys>dataNameReference,  OffendingSymbol=[41,51:DSRCE-KEY-A]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  Idx:Numeric
+  Idx2:Numeric
+  DSRCE-TAB:Array
+  DSRCE-KEY-A:Numeric
+  DSRCE-KEY-D:Numeric
+  DSRCE-SRCE-VAL:Numeric
+  WS-KEY:Numeric
+  WS-KEY2:Numeric
+  WS-SRCE-VAL:Numeric
+  I:Numeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
