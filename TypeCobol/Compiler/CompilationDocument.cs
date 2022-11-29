@@ -504,9 +504,6 @@ namespace TypeCobol.Compiler
                 if (scanAllDocumentLines)
                 {
                     ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, InitialScanState);
-                    // Notify all listeners that the whole document has changed.
-                    EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
-                    wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
@@ -539,6 +536,13 @@ namespace TypeCobol.Compiler
 
                 // Stop perf measurement
                 PerfStatsForScanner.OnStopRefresh();
+            }
+
+            if (scanAllDocumentLines)
+            {
+                // Notify all listeners that the whole document has changed.
+                EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
+                wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
             }
 
             // Send events to all listeners
@@ -615,9 +619,15 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void RefreshProcessedTokensDocumentSnapshot()
         {
+            // Track all changes applied to the document while updating this snapshot
+            DocumentChangedEvent<IProcessedTokensLine> documentChangedEvent = null;
+
             // Make sure two threads don't try to update this snapshot at the same time
             lock (lockObjectForProcessedTokensDocumentSnapshot)
             {
+                // Start perf measurement
+                var perfStatsForParserInvocation = PerfStatsForPreprocessor.OnStartRefreshParsingStep();
+
                 // Capture previous snapshots at one point in time
                 TokensDocument tokensDocument = TokensDocumentSnapshot;
                 ProcessedTokensDocument previousProcessedTokensDocument = ProcessedTokensDocumentSnapshot;
@@ -632,6 +642,7 @@ namespace TypeCobol.Compiler
                 else if (tokensDocument.CurrentVersion == previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion)
                 {
                     // Tokens lines did not change since last update => nothing to do
+                    PerfStatsForPreprocessor.OnStopRefreshParsingStep();
                     return;
                 }
                 else
@@ -639,12 +650,6 @@ namespace TypeCobol.Compiler
                     DocumentVersion<ITokensLine> previousTokensDocumentVersion = previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion;
                     tokensLineChanges = previousTokensDocumentVersion.GetReducedAndOrderedChangesInNewerVersion(tokensDocument.CurrentVersion);
                 }
-
-                // Start perf measurement
-                var perfStatsForParserInvocation = PerfStatsForPreprocessor.OnStartRefreshParsingStep();
-
-                // Track all changes applied to the document while updating this snapshot
-                DocumentChangedEvent<IProcessedTokensLine> documentChangedEvent = null;
 
                 // Apply text changes to the compilation document
                 bool refreshMissingCopies = true;
@@ -704,14 +709,14 @@ namespace TypeCobol.Compiler
                 }
 
                 // Stop perf measurement
-                PerfStatsForPreprocessor.OnStopRefresh();
+                PerfStatsForPreprocessor.OnStopRefreshParsingStep();
+            }
 
-                // Send events to all listeners
-                EventHandler<DocumentChangedEvent<IProcessedTokensLine>> processedTokensLinesChangedEventsSource = ProcessedTokensLinesChangedEventsSource; // avoid race condition
-                if (documentChangedEvent != null && processedTokensLinesChangedEventsSource != null)
-                {
-                    processedTokensLinesChangedEventsSource(this, documentChangedEvent);
-                }
+            // Send events to all listeners
+            var processedTokensLinesChanged = ProcessedTokensLinesChanged; // avoid race condition
+            if (documentChangedEvent != null && processedTokensLinesChanged != null)
+            {
+                processedTokensLinesChanged(this, documentChangedEvent);
             }
         }
 
@@ -724,7 +729,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Subscribe to this event to be notified of all changes in the processed tokens lines of the document
         /// </summary>
-        public event EventHandler<DocumentChangedEvent<IProcessedTokensLine>> ProcessedTokensLinesChangedEventsSource;
+        public event EventHandler<DocumentChangedEvent<IProcessedTokensLine>> ProcessedTokensLinesChanged;
 
         /// <summary>
         /// Performance stats for the RefreshProcessedTokensDocumentSnapshot method
