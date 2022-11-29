@@ -1258,7 +1258,7 @@ namespace TypeCobol.Compiler.Parser
                     entry.OccursDependingOn = _cobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
                 }
                 var duplicateSortingKeysReferences = new List<CodeElementsParser.DataNameReferenceContext>();
-				if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
+                if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
                 {
                     var keyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     var tableSortingKeys = new List<TableSortingKey>();
@@ -1301,7 +1301,7 @@ namespace TypeCobol.Compiler.Parser
                     }
                 }
 
-				DataDescriptionChecker.CheckOccurs(entry, occursClauseContext, duplicateSortingKeysReferences);
+                DataDescriptionChecker.CheckOccurs(entry, occursClauseContext, duplicateSortingKeysReferences);
             }
             if (context.signClause() != null && context.signClause().Length > 0)
             {
