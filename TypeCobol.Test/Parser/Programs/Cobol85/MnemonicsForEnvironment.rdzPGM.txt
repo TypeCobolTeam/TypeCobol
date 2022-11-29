@@ -1,0 +1,58 @@
+--- Diagnostics ---
+Line 20[12,16] <27, Error, Syntax> - Syntax error : A duplicate 'SYSIN' clause was found. RuleStack=codeElement>specialNamesParagraph>environmentNameClause>environmentName,  OffendingSymbol=[12,16:SYSIN]<UserDefinedWord>
+Line 61[22,26] <27, Error, Syntax> - Syntax error : Mnemonic name 'S04-M' was previously defined. RuleStack=codeElement>specialNamesParagraph>environmentNameClause>mnemonicForEnvironmentNameDefinition,  OffendingSymbol=[22,26:S04-M]<UserDefinedWord>
+Line 83[8,22] <27, Error, Syntax> - Syntax error : The name 'S03-M' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.
+Line 120[20,24] <30, Error, Semantics> - Semantic error: Symbol SYSIN is not referenced OffendingSymbol=[20,24:SYSIN]<UserDefinedWord>
+Line 121[20,25] <30, Error, Semantics> - Semantic error: Symbol SYSIPT is not referenced OffendingSymbol=[20,25:SYSIPT]<UserDefinedWord>
+Line 122[20,26] <30, Error, Semantics> - Semantic error: Symbol CONSOLE is not referenced OffendingSymbol=[20,26:CONSOLE]<UserDefinedWord>
+Line 123[20,25] <30, Error, Semantics> - Semantic error: Symbol SYSOUT is not referenced OffendingSymbol=[20,25:SYSOUT]<UserDefinedWord>
+Line 124[20,26] <30, Error, Semantics> - Semantic error: Symbol SYSLIST is not referenced OffendingSymbol=[20,26:SYSLIST]<UserDefinedWord>
+Line 125[20,25] <30, Error, Semantics> - Semantic error: Symbol SYSLST is not referenced OffendingSymbol=[20,25:SYSLST]<UserDefinedWord>
+Line 126[20,27] <30, Error, Semantics> - Semantic error: Symbol SYSPUNCH is not referenced OffendingSymbol=[20,27:SYSPUNCH]<UserDefinedWord>
+Line 127[20,25] <30, Error, Semantics> - Semantic error: Symbol SYSPCH is not referenced OffendingSymbol=[20,25:SYSPCH]<UserDefinedWord>
+Line 128[20,26] <30, Error, Semantics> - Semantic error: Symbol CONSOLE is not referenced OffendingSymbol=[20,26:CONSOLE]<UserDefinedWord>
+Line 133[20,26] <30, Error, Semantics> - Semantic error: Symbol SYSIN-M is not referenced OffendingSymbol=[20,26:SYSIN-M]<UserDefinedWord>
+Line 134[20,27] <30, Error, Semantics> - Semantic error: Symbol SYSIPT-M is not referenced OffendingSymbol=[20,27:SYSIPT-M]<UserDefinedWord>
+Line 135[20,28] <30, Error, Semantics> - Semantic error: Symbol CONSOLE-M is not referenced OffendingSymbol=[20,28:CONSOLE-M]<UserDefinedWord>
+Line 136[20,27] <30, Error, Semantics> - Semantic error: Symbol SYSOUT-M is not referenced OffendingSymbol=[20,27:SYSOUT-M]<UserDefinedWord>
+Line 137[20,28] <30, Error, Semantics> - Semantic error: Symbol SYSLIST-M is not referenced OffendingSymbol=[20,28:SYSLIST-M]<UserDefinedWord>
+Line 138[20,27] <30, Error, Semantics> - Semantic error: Symbol SYSLST-M is not referenced OffendingSymbol=[20,27:SYSLST-M]<UserDefinedWord>
+Line 139[20,29] <30, Error, Semantics> - Semantic error: Symbol SYSPUNCH-M is not referenced OffendingSymbol=[20,29:SYSPUNCH-M]<UserDefinedWord>
+Line 140[20,27] <30, Error, Semantics> - Semantic error: Symbol SYSPCH-M is not referenced OffendingSymbol=[20,27:SYSPCH-M]<UserDefinedWord>
+Line 141[20,28] <30, Error, Semantics> - Semantic error: Symbol CONSOLE-M is not referenced OffendingSymbol=[20,28:CONSOLE-M]<UserDefinedWord>
+Line 156[41,45] <30, Error, Semantics> - Semantic error: Ambiguous reference to 'S03-M', the definition to be used could not be determined from the context. OffendingSymbol=[41,45:S03-M]<UserDefinedWord>
+Line 164[41,45] <30, Error, Semantics> - Semantic error: Unable to resolve reference to 'S05-M'. OffendingSymbol=[41,45:S05-M]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: TCOFM117 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  FSYS020:?
+  E-EDIT:Alphanumeric
+  Var1:Alphanumeric
+  S03-M:Alphanumeric
+-- ENVIRONMENT MNEMONICS ---
+  SYSIN-M
+  SYSIPT-M
+  SYSOUT-M
+  SYSLIST-M
+  SYSLST-M
+  SYSPUNCH-M
+  SYSPCH-M
+  CONSOLE-M
+  C01-M
+  C02-M
+  C03-M
+  CSP-M
+  S01-M
+  S02-M
+  S03-M
+  S04-M
+  AFP-5A-M
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

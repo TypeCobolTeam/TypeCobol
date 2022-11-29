@@ -1355,7 +1355,7 @@ functionNameReference: UserDefinedWord;
 
 mnemonicForEnvironmentNameDefinition: UserDefinedWord;
 
-mnemonicForEnvironmentNameReference: UserDefinedWord;
+integerVariableIdentifierOrMnemonicForEnvironmentNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
 mnemonicForEnvironmentNameReferenceOrEnvironmentName: externalNameOrSymbolReference4;
