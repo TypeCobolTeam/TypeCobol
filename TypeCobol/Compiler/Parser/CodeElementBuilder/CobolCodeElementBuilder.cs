@@ -1278,10 +1278,10 @@ namespace TypeCobol.Compiler.Parser
                         foreach (var dataNameReference in tableSortingKeysContext.dataNameReference())
                         {
                             SymbolReference sortKey = _cobolWordsBuilder.CreateDataNameReference(dataNameReference);
-							System.Diagnostics.Debug.Assert(sortKey != null);
+                            System.Diagnostics.Debug.Assert(sortKey != null);
                             if (keyNames.Add(sortKey.Name))
                             {
-								tableSortingKeys.Add(new TableSortingKey(sortKey, sortDirection));
+                                tableSortingKeys.Add(new TableSortingKey(sortKey, sortDirection));
                             }
                             else
                             {
