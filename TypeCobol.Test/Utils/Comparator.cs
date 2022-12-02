@@ -1239,7 +1239,8 @@ namespace TypeCobol.Test.Utils
                     foreach (var documentChange in documentChanges)
                     {
                         hasChanges = true;
-                        actual.Append($"Line {documentChange.LineIndex}: {documentChange.Type} -> ");
+                        string text = $"Line {documentChange.LineIndex,+4}: {documentChange.Type,-15} -> "; // Line number on 4 columns right align, change type on 15 columns left align
+                        actual.Append(text);
                         if (documentChange.NewLine != null)
                         {
                             dumpLine(actual, documentChange.NewLine);
