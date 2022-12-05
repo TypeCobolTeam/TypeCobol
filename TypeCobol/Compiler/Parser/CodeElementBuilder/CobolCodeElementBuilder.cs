@@ -1257,18 +1257,14 @@ namespace TypeCobol.Compiler.Parser
                 {
                     entry.OccursDependingOn = _cobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
                 }
+                var duplicateSortingKeysReferences = new List<CodeElementsParser.DataNameReferenceContext>();
                 if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
                 {
-                    int keysCount = 0;
+                    var keyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var tableSortingKeys = new List<TableSortingKey>();
                     foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
                     {
-                        keysCount += tableSortingKeysContext.dataNameReference().Length;
-                    }
-                    entry.TableSortingKeys = new TableSortingKey[keysCount];
-                    int keyIndex = 0;
-                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
-                    {
-                        SyntaxProperty<SortDirection> sortDirection = null;
+                        SyntaxProperty<SortDirection> sortDirection;
                         if (tableSortingKeysContext.ASCENDING() != null)
                         {
                             sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Ascending,
@@ -1282,10 +1278,18 @@ namespace TypeCobol.Compiler.Parser
                         foreach (var dataNameReference in tableSortingKeysContext.dataNameReference())
                         {
                             SymbolReference sortKey = _cobolWordsBuilder.CreateDataNameReference(dataNameReference);
-                            entry.TableSortingKeys[keyIndex] = new TableSortingKey(sortKey, sortDirection);
-                            keyIndex++;
+                            System.Diagnostics.Debug.Assert(sortKey != null);
+                            if (keyNames.Add(sortKey.Name))
+                            {
+                                tableSortingKeys.Add(new TableSortingKey(sortKey, sortDirection));
+                            }
+                            else
+                            {
+                                duplicateSortingKeysReferences.Add(dataNameReference);
+                            }
                         }
                     }
+                    entry.TableSortingKeys = tableSortingKeys.ToArray();
                 }
                 if (occursClauseContext.indexNameDefinition() != null && occursClauseContext.indexNameDefinition().Length > 0)
                 {
@@ -1296,6 +1300,8 @@ namespace TypeCobol.Compiler.Parser
                         entry.Indexes[i] = _cobolWordsBuilder.CreateIndexNameDefinition(indexNameDefinition);
                     }
                 }
+
+                DataDescriptionChecker.CheckOccurs(entry, occursClauseContext, duplicateSortingKeysReferences);
             }
             if (context.signClause() != null && context.signClause().Length > 0)
             {
@@ -1357,7 +1363,6 @@ namespace TypeCobol.Compiler.Parser
                     entry.InitialValue = _cobolWordsBuilder.CreateValue(valueClauseContext);
                 }
             }
-
 
             if (entry.DataType == DataType.Unknown)
             {
