@@ -104,9 +104,9 @@ namespace TypeCobol.Test.UtilsNew
         }
 
         private readonly string _rootFolder;
-        private readonly string[] _sourceExtensions;
-        private readonly string[] _changeExtensions;
-        private readonly string[] _resultExtensions;
+        private readonly HashSet<string> _sourceExtensions;
+        private readonly HashSet<string> _changeExtensions;
+        private readonly HashSet<string> _resultExtensions;
         private readonly bool _recursive;
 
         public FolderTester(string rootFolder, string[] sourceExtensions, string[] changeExtensions = null, string[] resultExtensions = null, bool recursive = true)
@@ -122,12 +122,27 @@ namespace TypeCobol.Test.UtilsNew
             }
 
             _rootFolder = rootFolder;
-            _sourceExtensions = sourceExtensions;
-            _changeExtensions = IsNullOrEmpty(changeExtensions) ? _DefaultChangeExtensions : changeExtensions;
-            _resultExtensions = IsNullOrEmpty(resultExtensions) ? _DefaultResultExtensions : resultExtensions;
+            _sourceExtensions = sourceExtensions.ToHashSet(StringComparer.OrdinalIgnoreCase);
+            _changeExtensions = (IsNullOrEmpty(changeExtensions) ? _DefaultChangeExtensions : changeExtensions).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            _resultExtensions = (IsNullOrEmpty(resultExtensions) ? _DefaultResultExtensions : resultExtensions).ToHashSet(StringComparer.OrdinalIgnoreCase);
             _recursive = recursive;
 
+            // Consistency checks, extension categories should not overlap
+            CheckNoOverlap(nameof(sourceExtensions), _sourceExtensions, nameof(changeExtensions), _changeExtensions);
+            CheckNoOverlap(nameof(changeExtensions), _changeExtensions, nameof(resultExtensions), _resultExtensions);
+            CheckNoOverlap(nameof(resultExtensions), _resultExtensions, nameof(sourceExtensions), _sourceExtensions);
+
             bool IsNullOrEmpty(string[] array) => array == null || array.Length == 0;
+
+            void CheckNoOverlap(string first, IEnumerable<string> firstSet, string second, IEnumerable<string> secondSet)
+            {
+                var intersection = firstSet.Intersect(secondSet, StringComparer.OrdinalIgnoreCase).ToList();
+                if (intersection.Count > 0)
+                {
+                    var conflicts = string.Join(",", intersection);
+                    throw new ArgumentException($"Found overlapping extension(s) between {first} and {second}: {conflicts} !");
+                }
+            }
         }
 
         public int Test(bool isCobolLanguage = false)
