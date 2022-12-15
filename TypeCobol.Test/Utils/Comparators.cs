@@ -23,6 +23,7 @@ namespace TypeCobol.Test.UtilsNew
     /// </summary>
     internal class Comparison
     {
+        public string ChangeId { get; }
         private readonly string _expectedResultPath;
         private readonly ICompilationResultFormatter _formatter;
 
@@ -30,12 +31,13 @@ namespace TypeCobol.Test.UtilsNew
         public bool IsEI { get; }
 #endif
 
-        public Comparison(string expectedResultPath, ICompilationResultFormatter formatter
+        public Comparison(string changeId, string expectedResultPath, ICompilationResultFormatter formatter
 #if EUROINFO_RULES
-                , bool isEI
+                , bool isEI = false
 #endif
             )
         {
+            ChangeId = changeId;
             _expectedResultPath = expectedResultPath;
             _formatter = formatter;
 #if EUROINFO_RULES
@@ -45,7 +47,8 @@ namespace TypeCobol.Test.UtilsNew
 
         public void Compare(CompilationUnit compilationResult, IncrementalChangesHistory history)
         {
-            string comparisonName = $"{compilationResult.TextSourceInfo.Name} vs {_formatter.GetType().Name}";
+            string stepDescription = ChangeId != null ? $"after incremental change: {ChangeId}" : "after initial parsing";
+            string comparisonName = $"{compilationResult.TextSourceInfo.Name} vs {_formatter.GetType().Name} ({stepDescription})";
             string actual = _formatter.Format(compilationResult, history);
             using (var expected = new StreamReader(new FileStream(_expectedResultPath, FileMode.Open)))
             {
@@ -93,10 +96,11 @@ namespace TypeCobol.Test.UtilsNew
                           };
         }
 
-        public static Comparison GetComparison(string expectedResultPath, out string changeId)
+        public static Comparison GetComparison(string expectedResultPath)
         {
             string fileName = Path.GetFileName(expectedResultPath);
             string[] parts = fileName.Split('.');
+            string changeId;
             string format;
             switch (parts.Length)
             {
@@ -135,9 +139,9 @@ namespace TypeCobol.Test.UtilsNew
 
             var formatter = activator();
 #if EUROINFO_RULES
-            return new Comparison(expectedResultPath, formatter, isEI);
+            return new Comparison(changeId, expectedResultPath, formatter, isEI);
 #else
-            return new Comparison(expectedResultPath, formatter);
+            return new Comparison(changeId, expectedResultPath, formatter);
 #endif
         }
     }

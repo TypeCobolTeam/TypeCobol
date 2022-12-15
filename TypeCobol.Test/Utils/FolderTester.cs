@@ -70,17 +70,7 @@ namespace TypeCobol.Test.UtilsNew
 
                 foreach (var resultFilePath in ResultFilePaths)
                 {
-                    var comparison = Comparisons.GetComparison(resultFilePath, out var changeId);
-                    if (changeId != null)
-                    {
-                        // This is an intermediate comparison
-                        testUnit.AddIntermediateComparison(changeId, comparison);
-                    }
-                    else
-                    {
-                        // This is a final comparison
-                        testUnit.AddFinalComparison(comparison);
-                    }
+                    testUnit.AddComparison(Comparisons.GetComparison(resultFilePath));
                 }
 
                 return testUnit;
