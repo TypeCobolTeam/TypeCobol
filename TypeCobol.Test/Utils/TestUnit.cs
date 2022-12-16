@@ -62,7 +62,7 @@ namespace TypeCobol.Test.UtilsNew
 
             _inputChanges = new List<InputChange>();
             _initialResultComparisons = new List<Comparison>();
-            _intermediateResultsComparisons = new Dictionary<string, List<Comparison>>();
+            _intermediateResultsComparisons = new Dictionary<string, List<Comparison>>(StringComparer.OrdinalIgnoreCase);
         }
 
         public void AddInputChange(InputChange inputChange)
@@ -92,14 +92,15 @@ namespace TypeCobol.Test.UtilsNew
 
         public void Run()
         {
+            // Pre-conditions
 #if EUROINFO_RULES
-            RemoveNonEIComparisonsWhenNeeded(_initialResultComparisons);
+            RemoveNonEIComparisons(_initialResultComparisons);
             foreach (var intermediateComparisons in _intermediateResultsComparisons.Values)
             {
-                RemoveNonEIComparisonsWhenNeeded(intermediateComparisons);
+                RemoveNonEIComparisons(intermediateComparisons);
             }
 
-            void RemoveNonEIComparisonsWhenNeeded(List<Comparison> comparisons)
+            void RemoveNonEIComparisons(List<Comparison> comparisons)
             {
                 if (comparisons.Any(c => c.IsEI))
                 {
@@ -107,6 +108,15 @@ namespace TypeCobol.Test.UtilsNew
                     // We only want to check EI results files. 
                     comparisons.RemoveAll(c => !c.IsEI);
                 }
+            }
+#endif
+#if DEBUG
+            // Incremental changes must appear in .inc file in same order as result files on disk
+            var changes = _inputChanges.Select(change => change.Id); // Order of changes to be applied
+            var results = _intermediateResultsComparisons.Keys; // Order of intermediate result files on disk
+            if (!changes.SequenceEqual(results, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new Exception("Each incremental change must have at least one comparison and changes must appear in same order as their result files on disk.");
             }
 #endif
 
@@ -132,16 +142,9 @@ namespace TypeCobol.Test.UtilsNew
                 _fileCompiler.CompileOnce();
 
                 // Compare
-                if (_intermediateResultsComparisons.TryGetValue(inputChange.Id, out var comparisons))
+                foreach (var comparison in _intermediateResultsComparisons[inputChange.Id])
                 {
-                    foreach (var comparison in comparisons)
-                    {
-                        comparison.Compare(_fileCompiler.CompilationResultsForProgram, history);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"/!\\ No result file for incremental change '{inputChange.Id}' /!\\");
+                    comparison.Compare(_fileCompiler.CompilationResultsForProgram, history);
                 }
             }
         }
