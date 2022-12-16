@@ -164,30 +164,44 @@ namespace TypeCobol.Test.UtilsNew
             var testUnits = new Dictionary<string, TestUnitData>(StringComparer.OrdinalIgnoreCase);
             foreach (var file in Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly)) //Ignore files without extension, consider only current folder
             {
+                // Extract base name
                 string fileName = Path.GetFileName(file);
                 int cut = fileName.IndexOf('.');
-
                 string testName = fileName.Substring(0, cut);
+
+                // Extract extension
+                cut = fileName.LastIndexOf('.');
+                string extension = fileName.Substring(cut, fileName.Length - cut); //Includes dot
+
+                // Categorize file based on its extension
+                Action<TestUnitData> addFile;
+                if (_sourceExtensions.Contains(extension))
+                {
+                    addFile = t => t.SourceFilePaths.Add(file);
+                }
+                else if (_changeExtensions.Contains(extension))
+                {
+                    addFile = t => t.ChangesFilePaths.Add(file);
+                }
+                else if (_resultExtensions.Contains(extension))
+                {
+                    addFile = t => t.ResultFilePaths.Add(file);
+                }
+                else
+                {
+                    // Copy or resource file => ignore
+                    continue;
+                }
+
+                // Get TestUnitData instance (or create a new one)
                 if (!testUnits.TryGetValue(testName, out var testUnitData))
                 {
                     testUnitData = new TestUnitData(testName);
                     testUnits.Add(testName, testUnitData);
                 }
 
-                cut = fileName.LastIndexOf('.');
-                string extension = fileName.Substring(cut, fileName.Length - cut); //Includes dot
-                if (_sourceExtensions.Contains(extension))
-                {
-                    testUnitData.SourceFilePaths.Add(file);
-                }
-                else if (_changeExtensions.Contains(extension))
-                {
-                    testUnitData.ChangesFilePaths.Add(file);
-                }
-                else if (_resultExtensions.Contains(extension))
-                {
-                    testUnitData.ResultFilePaths.Add(file);
-                }
+                // Add file into testUnitData
+                addFile(testUnitData);
             }
 
             // Auto configure compilation options. These options are valid for current folder only !
