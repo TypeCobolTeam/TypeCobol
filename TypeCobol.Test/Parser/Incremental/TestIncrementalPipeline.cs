@@ -71,7 +71,7 @@ namespace TypeCobol.Test.Parser.Incremental
         public void TestFolder()
         {
             string rootFolder = PlatformUtils.GetPathForProjectFile(@"Parser\Incremental\TextLineChanges");
-            string[] sourceExtensions = { ".tcbl" };
+            string[] sourceExtensions = { ".tcbl", ".cbl" };
             var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(rootFolder, sourceExtensions);
             int testCount = folderTester.Test();
             Console.WriteLine("Number of tests: " + testCount);
