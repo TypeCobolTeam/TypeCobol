@@ -75,7 +75,13 @@ namespace TypeCobol.Compiler.AntlrUtils
             {
                 StopToken = stopToken;
                 stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
-                StreamReachedStopToken = false;
+                if (tokens.Count > 0 && stopToken.Equals(tokens[tokens.Count - 1]))
+                {
+                    // Last fetched token is stopToken
+                    tokens[tokens.Count - 1] = stopTokenReplacedByEOF;
+                    indexOfStopTokenReplacedByEOF = tokens.Count - 1;
+                    fetchedEOF = true;
+                }
             }
         }
 
@@ -92,7 +98,6 @@ namespace TypeCobol.Compiler.AntlrUtils
                     tokens[indexOfStopTokenReplacedByEOF] = stopTokenReplacedByEOF.OriginalToken;
                     fetchedEOF = false;
                 }
-                StreamReachedStopToken = false;
                 indexOfStopTokenReplacedByEOF = -1;
             }
         }
@@ -104,11 +109,6 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         // EOF token which replaces the original StopToken
         private ReplacedToken stopTokenReplacedByEOF;
-        
-        /// <summary>
-        /// True when the token stream has reached StopToken
-        /// </summary>
-        public bool StreamReachedStopToken { get; private set; }
 
         // Index of the replaced stop token in the buffer
         private int indexOfStopTokenReplacedByEOF = -1;
@@ -123,20 +123,23 @@ namespace TypeCobol.Compiler.AntlrUtils
             {
                 return 0;
             }
+
             for (int i = 0; i < n; i++)
             {
                 IToken t = TokenSource.NextToken();
-                if (t is IWritableToken)
+                if (t is IWritableToken writableToken)
                 {
-                    ((IWritableToken)t).TokenIndex = tokens.Count;
+                    writableToken.TokenIndex = tokens.Count;
                 }
+
                 // >>> replacement added
-                if(StopToken != null && StopToken.Equals(t))
+                if (StopToken != null && StopToken.Equals(t))
                 {
                     t = stopTokenReplacedByEOF;
                     indexOfStopTokenReplacedByEOF = tokens.Count;
                 }
                 // <<< end of replacement
+
                 tokens.Add(t);
                 if (t.Type == TokenConstants.Eof)
                 {
@@ -144,19 +147,8 @@ namespace TypeCobol.Compiler.AntlrUtils
                     return i + 1;
                 }
             }
-            return n;
-        }
 
-        public override void Consume()
-        {
-            base.Consume();
-            if(StopToken != null)
-            {
-                if(Lt(1) == stopTokenReplacedByEOF)
-                {
-                    StreamReachedStopToken = true;
-                }
-            }
+            return n;
         }
     }
 }
