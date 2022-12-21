@@ -38,7 +38,9 @@ namespace TypeCobol.Test.UtilsNew
             {
                 if (SourceFilePaths.Count == 0)
                 {
-                    throw new Exception($"Invalid test '{_testName}': found result file(s) but no source.");
+                    // No source file found -> ignore. This can be legit when we test a folder with some extensions and then test it again with others.
+                    Console.WriteLine($"Test '{_testName}' may be incomplete: found result file(s) but no source.");
+                    return null;
                 }
                 
                 if (SourceFilePaths.Count > 1)
@@ -213,7 +215,7 @@ namespace TypeCobol.Test.UtilsNew
             {
                 try
                 {
-                    testUnit.Create(options).Run();
+                    testUnit.Create(options)?.Run();
                 }
                 catch (Exception exception)
                 {

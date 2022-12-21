@@ -118,12 +118,6 @@ namespace TypeCobol.Test.UtilsNew
                     throw new ArgumentException($"Expected result file must have at least 3 parts: name, format identifier and extension. '{expectedResultPath}' is not a valid result file path.", nameof(expectedResultPath));
             }
 
-            //TODO This could be removed since document format from input is useless here. Rename all existing result files ?
-            if (format.StartsWith("rdz", StringComparison.OrdinalIgnoreCase))
-            {
-                format = format.Substring(3);
-            }
-
 #if EUROINFO_RULES
             bool isEI = false;
             if (format.EndsWith("-EI", StringComparison.OrdinalIgnoreCase))
