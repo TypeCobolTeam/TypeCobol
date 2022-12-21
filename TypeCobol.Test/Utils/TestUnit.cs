@@ -136,7 +136,7 @@ namespace TypeCobol.Test.UtilsNew
             foreach (var inputChange in _inputChanges)
             {
                 // Apply change
-                _fileCompiler.CompilationResultsForProgram.UpdateTextLines(inputChange.TextChangedEvent);
+                _fileCompiler.CompilationResultsForProgram.UpdateTextLines(inputChange.Updates);
 
                 // Incremental parsing
                 _fileCompiler.CompileOnce();

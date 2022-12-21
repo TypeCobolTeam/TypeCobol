@@ -1,7 +1,4 @@
 ﻿0:
-LineInserted	6	       01 mytest     TYPE BOOL.
-LineInserted	7	       01 myzef TYPE DATE.
-LineInserted	8	       01 zfzef TYPE BOOL.
-LineInserted	9	
-LineInserted	10	
-LineInserted	11	       01 fzef TYPE CountryISO2.
+(8, 26) -> (8, 26)	\n       01 mytest     TYPE BOOL.\n       01 myzef TYPE DATE.\n       01 zfzef TYPE BOOL.
+(8, 26) -> (8, 26)	\n\n
+(10, 0) -> (10, 0)	\n       01 fzef TYPE CountryISO2.

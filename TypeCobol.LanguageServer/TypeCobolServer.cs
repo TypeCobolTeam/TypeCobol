@@ -375,32 +375,17 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
-
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only a another event that will do it
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only another event that will do it
             if (docContext == null)
                 return;
 
             Uri objUri = new Uri(parameters.uri);
-
-#region Convert text changes format from multiline range replacement to single line updates
-
-            TextChangedEvent textChangedEvent = new TextChangedEvent();
-            foreach (var contentChange in parameters.contentChanges)
+            var updates = new RangeUpdate[parameters.contentChanges.Length];
+            
+            // Convert change events into updates
+            for (int i = 0; i < parameters.contentChanges.Length; i++)
             {
-                // Split the text updated into distinct lines
-                List<string> lineUpdates = null;
-                bool replacementTextStartsWithNewLine = false;
-
-                if (!string.IsNullOrEmpty(contentChange.text))
-                {
-                    replacementTextStartsWithNewLine = contentChange.text[0] == '\r' ||
-                                                       contentChange.text[0] == '\n';
-                    //Allow to know if a new line was added
-                    //Split on \r \n to know the number of lines added
-                    lineUpdates = contentChange.text.Replace("\r", "").Split('\n').ToList();
-                    if (string.IsNullOrEmpty(lineUpdates.FirstOrDefault()) && replacementTextStartsWithNewLine)
-                        lineUpdates.RemoveAt(0);
-                }
+                var contentChange = parameters.contentChanges[i];
 
                 // Document cleared
                 if (contentChange.range == null)
@@ -415,125 +400,25 @@ namespace TypeCobol.LanguageServer
                     }
                     catch (Exception e)
                     {
-                        //Don't rethrow an exception on save.
-                        RemoteConsole.Error(string.Format("Error while handling notification {0} : {1}",
-                            "textDocument/didChange", e.Message));
+                        // Don't rethrow an exception on save.
+                        RemoteConsole.Error($"Error while handling notification textDocument/didChange : {e.Message}");
                         return;
                     }
                 }
-                // Document updated
-                else if (docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count != 0)
-                {
-                    // Get original lines text before change
-                    int lineCount = docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count;
-                    string originalFirstLineText = lineCount <= contentChange.range.start.line ? "" :
-                        docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line]
-                            .Text;
-                    string originalLastLineText = originalFirstLineText;
 
-
-                    // Check if the first line was inserted
-                    int firstLineIndex = contentChange.range.start.line;
-                    int firstLineChar = contentChange.range.start.character;
-                    if (replacementTextStartsWithNewLine &&
-                        !(contentChange.range.start.character < originalLastLineText.Length))
-                    {
-                        // do not increment if line is inserted at the end of global text
-                        if (firstLineIndex < lineCount) firstLineIndex++;
-                        firstLineChar = 0;
-                    }
-                    else if (replacementTextStartsWithNewLine)
-                    //Detected that the add line appeared inside an existing line
-                    {
-                        lineUpdates.Add(lineUpdates.First());
-                        //Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
-                    }
-
-                    // Check if the last line was deleted
-                    int lastLineIndex = contentChange.range.end.line;
-                    if (contentChange.range.end.line > contentChange.range.start.line &&
-                        contentChange.range.end.character == 0)
-                    {
-                        //Allows to detect if the next line was suppressed
-                    }
-                    if (contentChange.text?.Length == 0)
-                    {
-                        lineUpdates = new List<string>();
-                    }
-
-                    if (lastLineIndex > firstLineIndex)
-                    {
-                        originalLastLineText =
-                            docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines[
-                                Math.Min(lastLineIndex,
-                                    docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count - 1)].Text;
-                    }
-
-                    // Text not modified at the beginning of the first replaced line
-                    string startOfFirstLine = null;
-                    if (firstLineChar > 0)
-                    {
-                        if (originalFirstLineText.Length >= contentChange.range.start.character)
-                            startOfFirstLine = originalFirstLineText.Substring(0,
-                                contentChange.range.start.character);
-                        else
-                            startOfFirstLine = originalFirstLineText.Substring(0, originalFirstLineText.Length) +
-                                               new string(' ',
-                                                   contentChange.range.start.character - originalFirstLineText.Length);
-                    }
-
-                    // Text not modified at the end of the last replaced line
-                    string endOfLastLine = null;
-                    if (contentChange.range.end.character < originalLastLineText.Length)
-                    {
-                        endOfLastLine = originalLastLineText.Substring(contentChange.range.end.character);
-                    }
-
-                    // Remove all the old lines
-                    for (int i = firstLineIndex; i <= lastLineIndex; i++)
-                    {
-                        var textChange = new TextChange(TextChangeType.LineRemoved, firstLineIndex, null);
-                        textChangedEvent.TextChanges.Add(textChange);
-                        //Mark the index line to be removed. The index will remains the same for each line delete, because text change are apply one after another
-                    }
-
-                    // Insert the updated lines
-                    if (!(startOfFirstLine == null && lineUpdates == null && endOfLastLine == null))
-                    {
-                        int lineUpdatesCount = (lineUpdates != null && lineUpdates.Count > 0)
-                            ? lineUpdates.Count
-                            : 1;
-                        for (int i = 0; i < lineUpdatesCount; i++)
-                        {
-                            string newLine = (lineUpdates != null && lineUpdates.Count > 0)
-                                ? lineUpdates[i]
-                                : string.Empty;
-                            if (i == 0)
-                            {
-                                newLine = startOfFirstLine + newLine;
-                            }
-                            if (i == lineUpdatesCount - 1)
-                            {
-                                newLine = newLine + endOfLastLine;
-                            }
-                            var textChange = new TextChange(TextChangeType.LineInserted, firstLineIndex + i,
-                                new TextLineSnapshot(firstLineIndex + i, newLine, null));
-                            textChangedEvent.TextChanges.Add(textChange);
-                        }
-                    }
-                }
+                var start = contentChange.range.start;
+                var end = contentChange.range.end;
+                updates[i] = new RangeUpdate(start.line, start.character, end.line, end.character, contentChange.text);
             }
 
-#endregion
-
-            // Update the source file with the computed text changes
-            this.Workspace.UpdateSourceFile(objUri, textChangedEvent);
+            // Update the source file with the text updates
+            this.Workspace.UpdateSourceFile(objUri, updates);
 
             // DEBUG information
-            RemoteConsole.Log("Udpated source file : " + objUri.LocalPath);
-            foreach (var textChange in textChangedEvent.TextChanges)
+            RemoteConsole.Log("Updated source file : " + objUri.LocalPath);
+            foreach (var update in updates)
             {
-                RemoteConsole.Log(" - " + textChange.ToString());
+                RemoteConsole.Log(" - " + update);
             }
         }
 

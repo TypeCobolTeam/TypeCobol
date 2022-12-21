@@ -1,3 +1,2 @@
 ﻿0:
-LineRemoved	3	
-LineInserted	3	       DATA DIVISION
+(3, 20) -> (3, 21)	

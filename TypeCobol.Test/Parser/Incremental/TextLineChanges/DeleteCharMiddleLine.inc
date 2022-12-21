@@ -1,3 +1,2 @@
 ﻿0:
-LineRemoved	3	
-LineInserted	3	       DATA DIISION.
+(3, 14) -> (3, 15)	

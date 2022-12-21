@@ -247,12 +247,9 @@ namespace TypeCobol.Test.Parser.Performance
             for (int i = 0; i < stats.IterationNumber; i++)
             {
                 // Append one line in the middle of the program
-
-                ITextLine newLine = new TextLineSnapshot(newLineIndex, newLineText, null);
-
-                TextChangedEvent textChangedEvent = new TextChangedEvent();
-                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, newLine.LineIndex, newLine));
-                compiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                var lineBefore = compiler.CompilationResultsForProgram.CobolTextLines[newLineIndex - 1];
+                var rangeUpdate = new RangeUpdate(lineBefore.LineIndex, lineBefore.Length, lineBefore.LineIndex, lineBefore.Length, Environment.NewLine + newLineText);
+                compiler.CompilationResultsForProgram.UpdateTextLines(new [] { rangeUpdate });
 
                 // Execute a second (incremental) compilation
                 compiler.CompileOnce();

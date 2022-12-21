@@ -1,5 +1,5 @@
 ﻿--- Code Elements ---
-[[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [19,19+:.]<PeriodSeparator>
+[[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [21,21+:.]<PeriodSeparator>
 - ProgramName = Simple
 - IsInitial = False
 - IsRecursive = False

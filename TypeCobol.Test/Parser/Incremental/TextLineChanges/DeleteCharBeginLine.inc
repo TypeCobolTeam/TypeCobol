@@ -1,3 +1,2 @@
 ﻿0:
-LineRemoved	3	
-LineInserted	3	       ATA DIVISION.
+(3, 7) -> (3, 8)	
