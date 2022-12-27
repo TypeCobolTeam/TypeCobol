@@ -87,12 +87,12 @@ namespace TypeCobol.Test.UtilsNew
                               { "TEXT",         () => new FullText() },
                               { "INC",          () => new IncrementalChanges() },
                               { "MEM",          () => new MemoryMap() },
-                              { "-Nodes",       () => new Nodes() },
+                              { "Nodes",        () => new Nodes() },
                               { "PGM",          () => new ProgramsClassesAndDiagnostics() },
                               { "Mix",          () => new SourceMixedWithDiagnostics() },
                               { "SQL",          () => new SqlStatements() },
                               { "SYM",          () => new Symbols() },
-                              { "-Tokens",      () => new Tokens() }
+                              { "Tokens",       () => new Tokens() }
                           };
         }
 
@@ -104,6 +104,9 @@ namespace TypeCobol.Test.UtilsNew
             string format;
             switch (parts.Length)
             {
+                case 1:
+                case 2:
+                    throw new ArgumentException($"Expected result file must have at least 3 parts: name, format identifier and extension. '{expectedResultPath}' is not a valid result file path.", nameof(expectedResultPath));
                 case 3:
                     // name.format.ext
                     changeId = null;
@@ -115,7 +118,7 @@ namespace TypeCobol.Test.UtilsNew
                     format = parts[2];
                     break;
                 default:
-                    throw new ArgumentException($"Expected result file must have at least 3 parts: name, format identifier and extension. '{expectedResultPath}' is not a valid result file path.", nameof(expectedResultPath));
+                    throw new ArgumentException($"Base name of expected result file cannot contain dot. '{expectedResultPath}' is not a valid result file path.", nameof(expectedResultPath));
             }
 
 #if EUROINFO_RULES

@@ -1248,12 +1248,27 @@ namespace TypeCobol.Test.Utils
     internal interface Names
     {
         string CreateName(string name);
+        string CreateName2(string name);
         Type GetComparatorType();
         bool IsEI();
     }
 
     internal abstract class AbstractNames : Names {
+        public abstract string FormatName { get; }
+
+        public virtual string CreateName2(string name)
+        {
+            string result = name;
+            if (name.Contains(".rdz"))
+            {
+                result = result.Replace(".rdz", string.Empty);
+            }
+
+            return $"{result}.{FormatName}{Rextension}";
+        }
+
         public abstract string CreateName(string name);
+
         public abstract Type GetComparatorType();
 
         public virtual bool IsEI() {
@@ -1272,73 +1287,84 @@ namespace TypeCobol.Test.Utils
 #region DefaultNames
     internal class EmptyName : AbstractNames
     {
-        private Names _namesImplementation;
+        public override string FormatName => "CodeElements";
         public override string CreateName(string name) { return name + Rextension; }
         public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
     internal class CodeElementName : AbstractNames
     {
+        public override string FormatName => "CodeElements";
         public override string CreateName(string name) { return name + "CodeElements" + Rextension; }
         public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
     internal class RPNName : AbstractNames
     {
+        public override string FormatName => "RPN";
         public override string CreateName(string name) { return name + "RPN" + Rextension; }
         public override Type GetComparatorType() { return typeof(ArithmeticComparator); }
     }
 
     internal class NYName : AbstractNames
     {
+        public override string FormatName => "NY";
         public override string CreateName(string name) { return name + "NY" + Rextension; }
         public override Type GetComparatorType() { return typeof(NYComparator); }
     }
 
     internal class PGMName : AbstractNames
     {
+        public override string FormatName => "PGM";
         public override string CreateName(string name) { return name + "PGM" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
 
     internal class SYMName : AbstractNames
     {
+        public override string FormatName => "SYM";
         public override string CreateName(string name) { return name + "SYM" + Rextension; }
         public override Type GetComparatorType() { return typeof(SymbolComparator); }
     }
 
     internal class MixDiagIntoSourceName : AbstractNames
     {
+        public override string FormatName => "Mix";
         public override string CreateName(string name) { return name + "Mix" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
     internal class NodeName : AbstractNames
     {
+        public override string FormatName => "Nodes";
         public override string CreateName(string name) { return name + "-Nodes" + Rextension; }
         public override Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
     internal class TokenName : AbstractNames
     {
+        public override string FormatName => "Tokens";
         public override string CreateName(string name) { return name + "-Tokens" + Rextension; }
         public override Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
     internal class MemoryName : AbstractNames
     {
+        public override string FormatName => "MEM";
         public override string CreateName(string name) { return name + "MEM" + Rextension; }
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 
     internal class AntlrName : AbstractNames
     {
+        public override string FormatName => "ANTLR";
         public override string CreateName(string name) { return name + "ANTLR" + Rextension; }
         public override Type GetComparatorType() { return typeof(AntlrComparator); }
     }
 
     internal class DocumentationName : AbstractNames
     {
+        public override string FormatName => "DocJson";
         public override string CreateName(string name) { return name + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationComparator); }
         public new string Rextension => ".json";
@@ -1346,24 +1372,28 @@ namespace TypeCobol.Test.Utils
 
     internal class DocumentationPropName : AbstractNames
     {
+        public override string FormatName => "Doc";
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
     
     internal class SQLName : AbstractNames
     {
+        public override string FormatName => "SQL";
         public override string CreateName(string name) { return name + "SQL" + Rextension; }
         public override Type GetComparatorType() { return typeof(SqlComparator); }
     }
 
     internal class TEXTName : AbstractNames
     {
+        public override string FormatName => "TEXT";
         public override string CreateName(string name) { return name + "TEXT" + Rextension; }
         public override Type GetComparatorType() { return typeof(TextComparator); }
     }
 
     internal class IncrementalChangesName : AbstractNames
     {
+        public override string FormatName => "INC";
         public override string CreateName(string name) { return name + "INC" + Rextension; }
         public override Type GetComparatorType() { return typeof(ChangeComparator); }
     }
@@ -1374,60 +1404,70 @@ namespace TypeCobol.Test.Utils
 #if EUROINFO_RULES
     internal class EIEmptyName : AbstractEINames
     {
+        public override string FormatName => "CodeElements-EI";
         public override string CreateName(string name) { return name + "-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
     internal class EICodeElementName : AbstractEINames
     {
+        public override string FormatName => "CodeElements-EI";
         public override string CreateName(string name) { return name + "CodeElements-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
     internal class EIRPNName : AbstractEINames
     {
+        public override string FormatName => "RPN-EI";
         public override string CreateName(string name) { return name + "RPN-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(ArithmeticComparator); }
     }
 
     internal class EINYName : AbstractEINames
     {
+        public override string FormatName => "NY-EI";
         public override string CreateName(string name) { return name + "NY-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(NYComparator); }
     }
 
     internal class EIPGMName : AbstractEINames
     {
+        public override string FormatName => "PGM-EI";
         public override string CreateName(string name) { return name + "PGM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
 
     internal class EISYMName : AbstractEINames
     {
+        public override string FormatName => "SYM-EI";
         public override string CreateName(string name) { return name + "SYM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(SymbolComparator); }
     }
 
     internal class EIMixDiagIntoSourceName : AbstractEINames
     {
+        public override string FormatName => "Mix-EI";
         public override string CreateName(string name) { return name + "Mix-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
     internal class EINodeName : AbstractEINames
     {
+        public override string FormatName => "Nodes-EI";
         public override string CreateName(string name) { return name + "-Nodes-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
     internal class EITokenName : AbstractEINames
     {
+        public override string FormatName => "Tokens-EI";
         public override string CreateName(string name) { return name + "-Tokens-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
     internal class EIMemoryName : AbstractEINames
     {
+        public override string FormatName => "MEM-EI";
         public override string CreateName(string name) { return name + "MEM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
@@ -1469,7 +1509,7 @@ namespace TypeCobol.Test.Utils
             {
                 string ResultFilePath = Path.GetDirectoryName(SamplePath)?.Substring(_sampleRoot.Length);
                 string ResultFileName = Path.GetFileNameWithoutExtension(SamplePath);
-                return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName(ResultFileName);
+                return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName2(ResultFileName);
             }
         }
     }
