@@ -70,9 +70,16 @@ namespace TypeCobol.Test.UtilsNew
                     }
                 }
 
-                foreach (var resultFilePath in ResultFilePaths)
+                if (ResultFilePaths.Count > 0)
                 {
-                    testUnit.AddComparison(Comparisons.GetComparison(resultFilePath));
+                    foreach (var resultFilePath in ResultFilePaths)
+                    {
+                        testUnit.AddComparison(Comparisons.GetComparison(resultFilePath));
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Invalid test '{_testName}': no result file found !");
                 }
 
                 return testUnit;
