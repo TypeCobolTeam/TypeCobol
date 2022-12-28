@@ -126,7 +126,6 @@ namespace TypeCobol.Test.Utils
     {
         private static readonly IList<Names> Names = new List<Names>
             {
-                new EmptyName(),
                 new CodeElementName(),
                 new RPNName(),
                 new NYName(),
@@ -143,7 +142,6 @@ namespace TypeCobol.Test.Utils
                 new TEXTName(),
                 new IncrementalChangesName(),
 #if EUROINFO_RULES
-                new EIEmptyName(),
                 new EICodeElementName(),
                 new EIRPNName(),
                 new EINYName(),
@@ -1285,12 +1283,6 @@ namespace TypeCobol.Test.Utils
     }
 
 #region DefaultNames
-    internal class EmptyName : AbstractNames
-    {
-        public override string FormatName => "CodeElements";
-        public override string CreateName(string name) { return name + Rextension; }
-        public override Type GetComparatorType() { return typeof(FilesComparator); }
-    }
 
     internal class CodeElementName : AbstractNames
     {
@@ -1402,12 +1394,6 @@ namespace TypeCobol.Test.Utils
 
     #region EINames
 #if EUROINFO_RULES
-    internal class EIEmptyName : AbstractEINames
-    {
-        public override string FormatName => "CodeElements-EI";
-        public override string CreateName(string name) { return name + "-EI" + Rextension; }
-        public override Type GetComparatorType() { return typeof(FilesComparator); }
-    }
 
     internal class EICodeElementName : AbstractEINames
     {
