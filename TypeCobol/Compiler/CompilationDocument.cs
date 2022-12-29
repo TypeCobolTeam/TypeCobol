@@ -294,23 +294,28 @@ namespace TypeCobol.Compiler
                 var documentChanges = new List<DocumentChange<ICobolTextLine>>(updates.Length);
                 foreach (var update in updates)
                 {
+                    // Get original lines text before change
+                    int lineCount = compilationDocumentLines.Count;
+                    string originalFirstLineText = lineCount <= update.LineStart ? string.Empty : compilationDocumentLines[update.LineStart].Text;
+                    string originalLastLineText = originalFirstLineText;
+
                     // Split the text updated into distinct lines
                     List<string> lineUpdates = null;
                     bool replacementTextStartsWithNewLine = false;
                     if (!string.IsNullOrEmpty(update.Text))
                     {
-                        replacementTextStartsWithNewLine = update.Text[0] == '\r' || update.Text[0] == '\n';
                         //Allow to know if a new line was added
+                        replacementTextStartsWithNewLine = update.Text[0] == '\r' || update.Text[0] == '\n';
+                        
                         //Split on \r \n to know the number of lines added
                         lineUpdates = update.Text.Replace("\r", "").Split('\n').ToList();
-                        if (string.IsNullOrEmpty(lineUpdates.FirstOrDefault()) && replacementTextStartsWithNewLine)
-                            lineUpdates.RemoveAt(0);
-                    }
 
-                    // Get original lines text before change
-                    int lineCount = compilationDocumentLines.Count;
-                    string originalFirstLineText = lineCount <= update.LineStart ? "" : compilationDocumentLines[update.LineStart].Text;
-                    string originalLastLineText = originalFirstLineText;
+                        //When a line break is added at the end of an existing line, do not update existing line, just insert after.
+                        if (lineUpdates[0].Length == 0 && replacementTextStartsWithNewLine && !(update.ColumnStart < originalLastLineText.Length))
+                        {
+                            lineUpdates.RemoveAt(0);
+                        }
+                    }
 
                     // Check if the first line was inserted
                     int firstLineIndex = update.LineStart;
@@ -320,12 +325,6 @@ namespace TypeCobol.Compiler
                         // do not increment if line is inserted at the end of global text
                         if (firstLineIndex < lineCount) firstLineIndex++;
                         firstLineChar = 0;
-                    }
-                    else if (replacementTextStartsWithNewLine)
-                    {
-                        //Detected that the add line appeared inside an existing line
-                        lineUpdates.Add(lineUpdates.First());
-                        //Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
                     }
 
                     // Check if the last line was deleted

@@ -108,8 +108,9 @@ namespace TypeCobol.Test.UtilsNew
         private readonly HashSet<string> _changeExtensions;
         private readonly HashSet<string> _resultExtensions;
         private readonly bool _recursive;
+        private readonly string _filterPrefix;
 
-        public FolderTester(string rootFolder, string[] sourceExtensions, string[] changeExtensions = null, string[] resultExtensions = null, bool recursive = true)
+        public FolderTester(string rootFolder, string[] sourceExtensions, string[] changeExtensions = null, string[] resultExtensions = null, bool recursive = true, string filterPrefix = null)
         {
             if (string.IsNullOrEmpty(rootFolder))
             {
@@ -126,6 +127,7 @@ namespace TypeCobol.Test.UtilsNew
             _changeExtensions = (IsNullOrEmpty(changeExtensions) ? _DefaultChangeExtensions : changeExtensions).ToHashSet(StringComparer.OrdinalIgnoreCase);
             _resultExtensions = (IsNullOrEmpty(resultExtensions) ? _DefaultResultExtensions : resultExtensions).ToHashSet(StringComparer.OrdinalIgnoreCase);
             _recursive = recursive;
+            _filterPrefix = filterPrefix;
 
             // Consistency checks, extension categories should not overlap
             CheckNoOverlap(nameof(sourceExtensions), _sourceExtensions, nameof(changeExtensions), _changeExtensions);
@@ -162,7 +164,8 @@ namespace TypeCobol.Test.UtilsNew
         {
             // First pass: analyze folder and gather data to create test units
             var testUnits = new Dictionary<string, TestUnitData>(StringComparer.OrdinalIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly)) //Ignore files without extension, consider only current folder
+            var searchPattern = $"{_filterPrefix}*.*";
+            foreach (var file in Directory.EnumerateFiles(folder, searchPattern, SearchOption.TopDirectoryOnly)) //Ignore files without extension, consider only current folder
             {
                 // Extract base name
                 string fileName = Path.GetFileName(file);

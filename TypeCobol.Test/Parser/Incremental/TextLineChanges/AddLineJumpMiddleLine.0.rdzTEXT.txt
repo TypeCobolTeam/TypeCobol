@@ -1,7 +1,7 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. ProcCall.
       
-       DATA        
+       DATA 
        DIVISION.
        WORKING-STORAGE SECTION.
        01 W-TechCTX TYPE TechnicalContext.
