@@ -446,6 +446,15 @@ namespace TypeCobol.Compiler
                             encounteredCodeElement = true;
                     }
 
+                    // Recompute the line indexes of all the changes previously applied
+                    foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+                    {
+                        if (documentChangeToAdjust.LineIndex >= textChange.LineIndex)
+                        {
+                            documentChangeToAdjust.LineIndex += 1;
+                        }
+                    }
+
                     appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
                     break;
                 case TextChangeType.LineUpdated:
@@ -488,14 +497,13 @@ namespace TypeCobol.Compiler
                             encounteredCodeElement = true;
                     }
 
-                    appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, null);
-                    // Recompute the line indexes of all the changes prevously applied
+                    // Recompute the line indexes of all the changes previously applied
                     IList<DocumentChange<ICobolTextLine>> documentChangesToRemove = null;
                     foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
                     {
                         if (documentChangeToAdjust.LineIndex > textChange.LineIndex)
                         {
-                            documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex - 1;
+                            documentChangeToAdjust.LineIndex -= 1;
                         }
                         else if (documentChangeToAdjust.LineIndex == textChange.LineIndex)
                         {
@@ -506,6 +514,7 @@ namespace TypeCobol.Compiler
                             documentChangesToRemove.Add(documentChangeToAdjust);
                         }
                     }
+
                     // Ignore all previous changes applied to a line now removed
                     if (documentChangesToRemove != null)
                     {
@@ -514,6 +523,8 @@ namespace TypeCobol.Compiler
                             documentChanges.Remove(documentChangeToRemove);
                         }
                     }
+
+                    appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineRemoved, textChange.LineIndex - 1, null);
                     break;
             }
 
