@@ -1,0 +1,13 @@
+﻿--- Nodes ---
+?
+  Simple
+    environment-division
+      configuration
+        special-names
+    data-division
+    procedure-division
+      sentence-0
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

@@ -87,12 +87,12 @@ namespace TypeCobol.Test.UtilsNew
                               { "TEXT",         () => new FullText() },
                               { "INC",          () => new IncrementalChanges() },
                               { "MEM",          () => new MemoryMap() },
-                              { "-Nodes",       () => new Nodes() },
+                              { "Nodes",        () => new Nodes() },
                               { "PGM",          () => new ProgramsClassesAndDiagnostics() },
                               { "Mix",          () => new SourceMixedWithDiagnostics() },
                               { "SQL",          () => new SqlStatements() },
                               { "SYM",          () => new Symbols() },
-                              { "-Tokens",      () => new Tokens() }
+                              { "Tokens",       () => new Tokens() }
                           };
         }
 
