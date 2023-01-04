@@ -408,18 +408,6 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    internal class Multipass : FilesComparator
-    {
-        public Multipass(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
-
-        internal class IndexNames : AbstractNames
-        {
-            internal int index = 0;
-            public override string CreateName(string name) { return name+'.'+index + Rextension; }
-            public override Type GetComparatorType() { return typeof(Multipass); }
-        }
-    }
-
     internal class ProgramsComparator : FilesComparator
     {
         public ProgramsComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }

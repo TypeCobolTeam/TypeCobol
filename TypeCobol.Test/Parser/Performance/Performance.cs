@@ -7,9 +7,7 @@ using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser.Performance
 {
@@ -116,23 +114,17 @@ namespace TypeCobol.Test.Parser.Performance
         /// </summary>
         private static readonly string DeepTypes = CNAF_TC_FOLDER + "CGMV01-DeepTypes.tcbl";
 
-
-
-
-
-
-
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "fast")]
         //[Ignore]
         public void AntlrPerformanceProfiler()
         {
-            Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.rdz.pgm", new AntlrName());
-            TestUnit unit = new TestUnit(new Multipass(paths), antlrProfiler: true);
-            unit.Parse();
-
-            unit.Compare(unit.Compiler.CompilationResultsForProgram.AntlrResult);
+            var sourceFilePath = Path.Combine(AntlrFolder, "AntlrTest.rdz.pgm");
+            var unitTest = new TypeCobol.Test.UtilsNew.TestUnit(sourceFilePath, antlrProfiling: true);
+            var expectedResultPath = Path.Combine(AntlrFolder, "AntlrTest.rdzANTLR.txt");
+            unitTest.AddComparison(new TypeCobol.Test.UtilsNew.Comparison(null, expectedResultPath, new TypeCobol.Test.UtilsNew.AntlrProfiling()));
+            unitTest.Run();
         }
 
 
