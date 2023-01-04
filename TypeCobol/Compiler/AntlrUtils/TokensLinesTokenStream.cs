@@ -71,51 +71,56 @@ namespace TypeCobol.Compiler.AntlrUtils
         public void StartLookingForStopToken(Token stopToken)
         {
             ResetStopTokenLookup();
-            if (stopToken != null)
+            if (stopToken != null && stopToken.Type != TokenConstants.Eof)
             {
-                StopToken = stopToken;
-                stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
-                if (tokens.Count > 0 && stopToken.Equals(tokens[tokens.Count - 1]))
+                _stopToken = stopToken;
+                _stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
+
+                // Check tokens already fetched
+                for (int index = tokens.Count - 1; index >= 0; index--)
                 {
-                    // Last fetched token is stopToken
-                    tokens[tokens.Count - 1] = stopTokenReplacedByEOF;
-                    indexOfStopTokenReplacedByEOF = tokens.Count - 1;
-                    fetchedEOF = true;
+                    if (stopToken.Equals(tokens[index]))
+                    {
+                        tokens[index] = _stopTokenReplacedByEOF;
+                        _indexOfStopTokenReplacedByEOF = index;
+                        fetchedEOF = true;
+                        break;
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Cancel a previous replacement of StopToken by EOF
+        /// Cancel a previous replacement of stop token by EOF
         /// </summary>
         public void ResetStopTokenLookup()
         {
             // Reset replacement of stop token by EOF
-            if (indexOfStopTokenReplacedByEOF >= 0 && indexOfStopTokenReplacedByEOF < tokens.Count)
+            if (_indexOfStopTokenReplacedByEOF >= 0)
             {
-                if (tokens[indexOfStopTokenReplacedByEOF] == stopTokenReplacedByEOF)
-                {
-                    tokens[indexOfStopTokenReplacedByEOF] = stopTokenReplacedByEOF.OriginalToken;
-                    fetchedEOF = false;
-                }
-                indexOfStopTokenReplacedByEOF = -1;
+                System.Diagnostics.Debug.Assert(_indexOfStopTokenReplacedByEOF < tokens.Count);
+                System.Diagnostics.Debug.Assert(tokens[_indexOfStopTokenReplacedByEOF] != null && tokens[_indexOfStopTokenReplacedByEOF].Equals(_stopTokenReplacedByEOF));
+
+                tokens[_indexOfStopTokenReplacedByEOF] = _stopTokenReplacedByEOF.OriginalToken;
+                fetchedEOF = false;
+                _indexOfStopTokenReplacedByEOF = -1;
             }
         }
 
         /// <summary>
         /// Token which marks the end of an interesting code section
         /// </summary>
-        public IToken StopToken { get; private set; }
+        private IToken _stopToken;
 
-        // EOF token which replaces the original StopToken
-        private ReplacedToken stopTokenReplacedByEOF;
+        // EOF token which replaces the original stop token
+        private ReplacedToken _stopTokenReplacedByEOF;
 
         // Index of the replaced stop token in the buffer
-        private int indexOfStopTokenReplacedByEOF = -1;
+        private int _indexOfStopTokenReplacedByEOF = -1;
 
         /// <summary>
         /// Override the original Fetch method from BufferedTokenStream : same behavior,
-        /// except that StopToken is replaced with EOF on the fly.
+        /// except that stop token is replaced with EOF on the fly.
         /// </summary>
         protected override int Fetch(int n)
         {
@@ -133,10 +138,10 @@ namespace TypeCobol.Compiler.AntlrUtils
                 }
 
                 // >>> replacement added
-                if (StopToken != null && StopToken.Equals(t))
+                if (_stopToken != null && _stopToken.Equals(t))
                 {
-                    t = stopTokenReplacedByEOF;
-                    indexOfStopTokenReplacedByEOF = tokens.Count;
+                    t = _stopTokenReplacedByEOF;
+                    _indexOfStopTokenReplacedByEOF = tokens.Count;
                 }
                 // <<< end of replacement
 
