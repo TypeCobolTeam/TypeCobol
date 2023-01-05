@@ -76,15 +76,19 @@ namespace TypeCobol.Compiler.AntlrUtils
                 _stopToken = stopToken;
                 _stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
 
-                // Check tokens already fetched
-                for (int index = tokens.Count - 1; index >= 0; index--)
+                // Check tokens already fetched and not yet consumed
+                if (Index < 0)
+                {
+                    // Nothing fetched yet
+                    return;
+                }
+
+                for (int index = Index; index < tokens.Count; index++)
                 {
                     if (stopToken.Equals(tokens[index]))
                     {
                         tokens[index] = _stopTokenReplacedByEOF;
-                        _indexOfStopTokenReplacedByEOF = index;
                         fetchedEOF = true;
-                        break;
                     }
                 }
             }
@@ -95,16 +99,33 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         public void ResetStopTokenLookup()
         {
-            // Reset replacement of stop token by EOF
-            if (_indexOfStopTokenReplacedByEOF >= 0)
+            if (_stopToken == null)
             {
-                System.Diagnostics.Debug.Assert(_indexOfStopTokenReplacedByEOF < tokens.Count);
-                System.Diagnostics.Debug.Assert(tokens[_indexOfStopTokenReplacedByEOF] != null && tokens[_indexOfStopTokenReplacedByEOF].Equals(_stopTokenReplacedByEOF));
-
-                tokens[_indexOfStopTokenReplacedByEOF] = _stopTokenReplacedByEOF.OriginalToken;
-                fetchedEOF = false;
-                _indexOfStopTokenReplacedByEOF = -1;
+                // No stop token defined, nothing to do
+                System.Diagnostics.Debug.Assert(_stopTokenReplacedByEOF == null);
+                return;
             }
+
+            System.Diagnostics.Debug.Assert(_stopToken.Type != TokenConstants.Eof);
+
+            // Iterate over fetched tokens to restore previously replaced token
+            fetchedEOF = false;
+            for (int index = 0; index < tokens.Count; index++)
+            {
+                if (ReferenceEquals(tokens[index], _stopTokenReplacedByEOF))
+                {
+                    tokens[index] = _stopTokenReplacedByEOF.OriginalToken;
+                }
+
+                // Restore correct fetchedEOF by checking non-consumed tokens
+                if (index >= Index && tokens[index].Type == TokenConstants.Eof)
+                {
+                    fetchedEOF = true;
+                }
+            }
+
+            _stopToken = null;
+            _stopTokenReplacedByEOF = null;
         }
 
         /// <summary>
@@ -114,9 +135,6 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         // EOF token which replaces the original stop token
         private ReplacedToken _stopTokenReplacedByEOF;
-
-        // Index of the replaced stop token in the buffer
-        private int _indexOfStopTokenReplacedByEOF = -1;
 
         /// <summary>
         /// Override the original Fetch method from BufferedTokenStream : same behavior,
@@ -141,7 +159,6 @@ namespace TypeCobol.Compiler.AntlrUtils
                 if (_stopToken != null && _stopToken.Equals(t))
                 {
                     t = _stopTokenReplacedByEOF;
-                    _indexOfStopTokenReplacedByEOF = tokens.Count;
                 }
                 // <<< end of replacement
 
