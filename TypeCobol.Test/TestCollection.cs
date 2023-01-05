@@ -163,7 +163,7 @@ namespace TypeCobol.Test {
         {
             string[] extensions = { ".cbl", ".pgm" };
             Console.WriteLine("Entering directory \"" + root + "\" [" + string.Join(", ", extensions) + "]:");
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(root, extensions);
+            var folderTester = new FolderTester(root, extensions);
             int nbOfTests = folderTester.Test(isCobolLanguage: cobol);
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
@@ -188,7 +188,7 @@ namespace TypeCobol.Test {
         {
             string[] extensions = { ".tcbl" };
             Console.WriteLine("Entering directory \"" + root + "\" [" + string.Join(", ", extensions) + "]:");
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(root, extensions);
+            var folderTester = new FolderTester(root, extensions);
             int nbOfTests = folderTester.Test();
             Console.Write("\n");
             Console.Write("Number of tests: " + nbOfTests + "\n");
@@ -218,7 +218,7 @@ namespace TypeCobol.Test {
             string[] extensions = {".tcbl", ".cbl"};
 
             //Do not parse unsupported remarks, they are covered in a separate test
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(tempRoot, extensions, recursive: false);
+            var folderTester = new FolderTester(tempRoot, extensions, recursive: false);
             int nbOfTests = folderTester.Test();
             Console.Write("\n");
 
@@ -235,7 +235,7 @@ namespace TypeCobol.Test {
 
             string[] extensions = { ".cbl" };
 
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(tempRoot, extensions, recursive: false);
+            var folderTester = new FolderTester(tempRoot, extensions, recursive: false);
             //In pure cobol mode, REMARKS directive is considered as regular comment so unsupported REMARKS formats won't break the parsing
             int nbOfTests = folderTester.Test(isCobolLanguage: true);
             Console.Write("\n");
@@ -298,7 +298,7 @@ namespace TypeCobol.Test {
         {
             string[] extensions = { ".tcbl" };
             var directory = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Documentation");
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(directory, extensions);
+            var folderTester = new FolderTester(directory, extensions);
             int nbOfTests = folderTester.Test();
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
@@ -316,7 +316,7 @@ namespace TypeCobol.Test {
             string[] extensions = { ".cpy" };
             var directory = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Copies");
             Console.WriteLine("Entering directory \"" + directory + "\" [" + string.Join(", ", extensions) + "]:");
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(directory, extensions);
+            var folderTester = new FolderTester(directory, extensions);
             int nbOfTests = folderTester.Test();
             Console.Write("\n");
             Console.Write("Number of tests: " + nbOfTests + "\n");
@@ -342,7 +342,7 @@ namespace TypeCobol.Test {
             {
                 var dirname = Path.GetFileName(testDirectory);
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(testDirectory, extensions, recursive: false);
+                var folderTester = new FolderTester(testDirectory, extensions, recursive: false);
                 nbOfTests += folderTester.Test(isCobolLanguage: dirname.EndsWith("NoTC"));
             }
 

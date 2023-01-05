@@ -16,7 +16,7 @@ using TypeCobol.Compiler.Sql.Model;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Test.Utils;
 
-namespace TypeCobol.Test.UtilsNew
+namespace TypeCobol.Test.Utils
 {
     /// <summary>
     /// Define a method of comparison between actual compilation results and expected results (formatted in a given text file)

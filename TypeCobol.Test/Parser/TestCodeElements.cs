@@ -17,7 +17,7 @@ namespace TypeCobol.Test.Parser
         {
             string[] extensions = { ".cbl", ".pgm" };
             Console.WriteLine("Entering directory \"" + _Root + "\" [" + string.Join(", ", extensions) + "]:");
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(_Root, extensions);
+            var folderTester = new FolderTester(_Root, extensions);
             int nbOfTests = folderTester.Test();
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser.Incremental
 {
@@ -16,7 +17,7 @@ namespace TypeCobol.Test.Parser.Incremental
         {
             string rootFolder = PlatformUtils.GetPathForProjectFile(@"Parser\Incremental\TextLineChanges");
             string[] sourceExtensions = { ".tcbl", ".cbl" };
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(rootFolder, sourceExtensions);
+            var folderTester = new FolderTester(rootFolder, sourceExtensions);
             int testCount = folderTester.Test();
             Console.WriteLine("Number of tests: " + testCount);
         }

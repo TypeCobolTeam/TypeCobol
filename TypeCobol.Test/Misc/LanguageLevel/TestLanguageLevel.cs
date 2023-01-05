@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Test.UtilsNew;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Misc
 {

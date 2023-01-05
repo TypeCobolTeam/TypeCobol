@@ -8,6 +8,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser.Performance
 {
@@ -121,9 +122,9 @@ namespace TypeCobol.Test.Parser.Performance
         public void AntlrPerformanceProfiler()
         {
             var sourceFilePath = Path.Combine(AntlrFolder, "AntlrTest.rdz.pgm");
-            var unitTest = new TypeCobol.Test.UtilsNew.TestUnit(sourceFilePath, antlrProfiling: true);
+            var unitTest = new TestUnit(sourceFilePath, antlrProfiling: true);
             var expectedResultPath = Path.Combine(AntlrFolder, "AntlrTest.ANTLR.txt");
-            unitTest.AddComparison(TypeCobol.Test.UtilsNew.Comparisons.GetComparison(expectedResultPath));
+            unitTest.AddComparison(Comparisons.GetComparison(expectedResultPath));
             unitTest.Run();
         }
 

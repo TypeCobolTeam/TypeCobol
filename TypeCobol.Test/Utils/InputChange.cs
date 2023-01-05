@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Text;
 
-namespace TypeCobol.Test.UtilsNew
+namespace TypeCobol.Test.Utils
 {
     /// <summary>
     /// Describe one incremental change to be applied to a document during a test.

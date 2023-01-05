@@ -5,7 +5,7 @@ using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 
-namespace TypeCobol.Test.UtilsNew
+namespace TypeCobol.Test.Utils
 {
     /// <summary>
     /// Test one source file against multiple comparators. Supports incremental testing, each incremental
