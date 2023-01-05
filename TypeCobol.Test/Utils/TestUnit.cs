@@ -93,23 +93,22 @@ namespace TypeCobol.Test.UtilsNew
         public void Run()
         {
             // Pre-conditions
-#if EUROINFO_RULES
-            RemoveNonEIComparisons(_initialResultComparisons);
+            RemoveUnwantedComparisons(_initialResultComparisons);
             foreach (var intermediateComparisons in _intermediateResultsComparisons.Values)
             {
-                RemoveNonEIComparisons(intermediateComparisons);
+                RemoveUnwantedComparisons(intermediateComparisons);
             }
 
-            void RemoveNonEIComparisons(List<Comparison> comparisons)
+            void RemoveUnwantedComparisons(List<Comparison> comparisons)
             {
-                if (comparisons.Any(c => c.IsEI))
-                {
-                    // If any -EI result file exists => Remove all comparators without isEI flag to true. 
-                    // We only want to check EI results files. 
-                    comparisons.RemoveAll(c => !c.IsEI);
-                }
-            }
+#if EUROINFO_RULES
+                bool EIModeActive = true;
+#else
+                bool EIModeActive = false;
 #endif
+                comparisons.RemoveAll(c => c.IsEI != EIModeActive);
+            }
+
 #if DEBUG
             // Incremental changes must appear in .inc file in same order as result files on disk
             var changes = _inputChanges.Select(change => change.Id); // Order of changes to be applied

@@ -107,7 +107,7 @@ namespace TypeCobol.Test.Parser.Performance
         /// This is the TypeCobol version of DeppVariables.
         ///
         /// The goal is to see if type linking, type max depth checking and variable resolution is fast.
-        /// All variable resolution are the same that DeppVariables.
+        /// All variable resolution are the same that DeepVariables.
         ///
         /// All variables referenced are from the deepest type.
         /// 
@@ -123,7 +123,7 @@ namespace TypeCobol.Test.Parser.Performance
             var sourceFilePath = Path.Combine(AntlrFolder, "AntlrTest.rdz.pgm");
             var unitTest = new TypeCobol.Test.UtilsNew.TestUnit(sourceFilePath, antlrProfiling: true);
             var expectedResultPath = Path.Combine(AntlrFolder, "AntlrTest.ANTLR.txt");
-            unitTest.AddComparison(new TypeCobol.Test.UtilsNew.Comparison(null, expectedResultPath, new TypeCobol.Test.UtilsNew.AntlrProfiling()));
+            unitTest.AddComparison(TypeCobol.Test.UtilsNew.Comparisons.GetComparison(expectedResultPath));
             unitTest.Run();
         }
 
