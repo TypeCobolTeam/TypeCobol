@@ -102,11 +102,15 @@ namespace TypeCobol.Test.UtilsNew
             void RemoveUnwantedComparisons(List<Comparison> comparisons)
             {
 #if EUROINFO_RULES
-                bool EIModeActive = true;
+                // In EI-mode: remove non-EI comparisons but keep standard comparisons for tests that do not have -EI specific results
+                if (comparisons.Any(c => c.IsEI))
+                {
+                    comparisons.RemoveAll(c => !c.IsEI);
+                }
 #else
-                bool EIModeActive = false;
+                // In standard mode: remove EI comparisons
+                comparisons.RemoveAll(c => c.IsEI);
 #endif
-                comparisons.RemoveAll(c => c.IsEI != EIModeActive);
             }
 
 #if DEBUG
