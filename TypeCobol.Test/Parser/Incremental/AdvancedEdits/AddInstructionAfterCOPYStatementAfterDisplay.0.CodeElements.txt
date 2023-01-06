@@ -1,0 +1,34 @@
+--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [25,25+:.]<PeriodSeparator>
+- ProgramName = MyPgm
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [18,18+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [18,18+:.]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}
+- variables = "aaa"
+
+[[SentenceEnd]] [25,26:. ]<PeriodSeparator> --> [25,26:. ]<PeriodSeparator>
+
+[[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
+- variables = "bbb"
+
+[[MoveStatement]] [12,15:move]<MOVE> --> [22,22:b]<UserDefinedWord>
+
+[[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>
+- ProgramName = MyPgm
+
