@@ -174,8 +174,10 @@ namespace TypeCobol.Compiler.Parser
                             : largestRefreshParseSection.StopLineIndex);
                     for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
                     {
-                        if (documentLines[i].CodeElements != null)
+                        if (documentLines[i].HasCodeElements)
+                        {
                             documentLines[i].ResetCodeElements();
+                        }
                     }
                 }
                 else
@@ -183,8 +185,13 @@ namespace TypeCobol.Compiler.Parser
                     // Fail to find a starting point ==> Reparse all.
                     tokenStream.Seek(0);
                     tokenStream.ResetStopTokenLookup();
-                    largestRefreshParseSection = null;
-                    refreshParseSections = null;
+                    foreach (var documentLine in documentLines)
+                    {
+                        if (documentLine.HasCodeElements)
+                        {
+                            documentLine.ResetCodeElements();
+                        }
+                    }
                 }
             }
           
