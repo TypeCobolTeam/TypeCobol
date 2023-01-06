@@ -1,0 +1,20 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcCall.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 W-TechCTX TYPE TechnicalContext.
+       01 mytest     TYPE BOOL.
+       01 myzef TYPE DATE.
+       01 zfzef TYPE BOOL.
+       01 fzef TYPE CountryISO2.
+       01  L-ERREUR.
+        88 MyBoolTest VALUE '00001'.
+       PROCEDURE DIVISION.
+       DECLARE PROCEDURE MyProc PRIVATE
+           INPUT Param1 TYPE Date.
+       END-DECLARE.
+       MOVE zfzef TO mytest.
+      
+          .
+       END PROGRAM ProcCall.
