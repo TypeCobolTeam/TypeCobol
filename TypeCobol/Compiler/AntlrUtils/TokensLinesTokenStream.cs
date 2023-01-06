@@ -55,10 +55,9 @@ namespace TypeCobol.Compiler.AntlrUtils
                 }
                 if (!currentToken.Equals(searchedToken) && searchedToken.Type != TokenConstants.Eof)
                 {
-                    // See GitHub #2053:
-                    // Assert here the problem in debug mode.
-                    // Avoid to throw an uncaught exception in a bad context, return false.
-                    System.Diagnostics.Debug.Assert(false, "Token not found in this stream");
+                    // See GitHub #2053 and #2388
+                    // We should always be able to locate the searchedToken but the search may fail in some scenarios
+                    // (fail to recognize an identical TokensLine after a REPLACE ?)
                     return false;
                 }
             }
