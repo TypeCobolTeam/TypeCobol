@@ -1,0 +1,38 @@
+================================ ICobolTextLine ================================
+Line   11: LineInserted    ->            END-IF
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   11: LineInserted    ->            END-IF
+================================= ITokensLine ==================================
+Line   11: LineInserted    -> [12,17:END-IF]<END_IF> 
+Line   11: LineUpdated     -> [12,17:END-IF]<END_IF> 
+Line   12: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   11: LineInserted    -> [12,17:END-IF]<END_IF> 
+Line   12: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+============================= IProcessedTokensLine =============================
+Line   11: LineInserted    -> 
+Line   12: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   11: LineInserted    -> 
+Line   12: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line   10: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   12: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line   10: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   11: LineUpdated     -> [[IfStatementEnd]] [12,17:END-IF]<END_IF> --> [12,17:END-IF]<END_IF>
+ 
+Line   12: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   10: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   11: LineUpdated     -> [[IfStatementEnd]] [12,17:END-IF]<END_IF> --> [12,17:END-IF]<END_IF>
+ 
+Line   12: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 

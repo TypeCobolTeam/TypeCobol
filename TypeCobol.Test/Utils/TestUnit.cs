@@ -121,7 +121,7 @@ namespace TypeCobol.Test.UtilsNew
 #endif
 
             // Activate incremental changes tracking
-            var history = _fileCompiler.CompilationResultsForProgram.TrackChanges();
+            var history = _fileCompiler.CompilationResultsForProgram.TrackChanges(1);
 
             // Full parsing
             _fileCompiler.CompileOnce();
