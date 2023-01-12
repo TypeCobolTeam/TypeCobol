@@ -14,7 +14,6 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Utils
 {
@@ -26,6 +25,7 @@ namespace TypeCobol.Test.Utils
         public string ChangeId { get; }
         private readonly string _expectedResultPath;
         private readonly ICompilationResultFormatter _formatter;
+
         public bool IsEI { get; }
 
         public Comparison(string changeId, string expectedResultPath, ICompilationResultFormatter formatter, bool isEI)

@@ -27,7 +27,7 @@ namespace TypeCobol.Test.Utils
                 switch (parts.Length)
                 {
                     case 1:
-                        // This is a change id, flush current change and initialize a new one
+                        // This is a change id, flush current change and initialize a new id
                         FlushCurrentInputChange();
                         Debug.Assert(parts[0].Last() == ':', $"Invalid change id description in '{inputChangesFilePath}'.");
                         currentChangeId = parts[0].Substring(0, parts[0].Length - 1);

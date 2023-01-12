@@ -105,6 +105,8 @@ namespace TypeCobol.Test.Utils
                 // In EI-mode: remove non-EI comparisons but keep standard comparisons for tests that do not have -EI specific results
                 if (comparisons.Any(c => c.IsEI))
                 {
+                    // If any -EI result file exists => Remove all comparators without isEI flag to true. 
+                    // We only want to check EI results files. 
                     comparisons.RemoveAll(c => !c.IsEI);
                 }
 #else
@@ -114,12 +116,20 @@ namespace TypeCobol.Test.Utils
             }
 
 #if DEBUG
-            // Incremental changes must appear in .inc file in same order as result files on disk
-            var changes = _inputChanges.Select(change => change.Id); // Order of changes to be applied
-            var results = _intermediateResultsComparisons.Keys; // Order of intermediate result files on disk
-            if (!changes.SequenceEqual(results, StringComparer.OrdinalIgnoreCase))
+            // Incremental changes must be ordered in .inc file
+            var changes = _inputChanges.Select(change => change.Id).ToList();
+            var sortedChanges = _inputChanges.Select(change => change.Id).OrderBy(id => id).ToList();
+            if (!changes.SequenceEqual(sortedChanges))
             {
-                throw new Exception("Each incremental change must have at least one comparison and changes must appear in same order as their result files on disk.");
+                throw new Exception("Incremental changes must be sorted.");
+            }
+
+            // Each change must have at least one corresponding result file
+            var results = _intermediateResultsComparisons.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+            results.SymmetricExceptWith(changes);
+            if (results.Count > 0)
+            {
+                throw new Exception("Each incremental change must have at least one comparison.");
             }
 #endif
 
