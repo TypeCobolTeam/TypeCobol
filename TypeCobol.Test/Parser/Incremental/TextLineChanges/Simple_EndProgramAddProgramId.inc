@@ -1,4 +1,4 @@
 ﻿0:
-LineInserted	2	END PROGRAM Simple.
+(1, 21) -> (1, 21)	\nEND PROGRAM Simple.
 1:
-LineUpdated	1	PROGRAM-ID. Simpler.
+(1, 20) -> (1, 20)	r

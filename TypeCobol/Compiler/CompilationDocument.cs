@@ -271,7 +271,7 @@ namespace TypeCobol.Compiler
         /// Update the text lines of the document after a text change event.
         /// NOT thread-safe : this method can only be called from the owner thread.
         /// </summary>
-        public void UpdateTextLines(TextChangedEvent textChangedEvent)
+        public void UpdateTextLines(RangeUpdate[] updates)
         {
             // This method can only be called by the document owner thread
             if (documentOwnerThread == null)
@@ -284,118 +284,115 @@ namespace TypeCobol.Compiler
             }
 
             // Make sure we don't update the document while taking a snapshot
-            DocumentChangedEvent<ICobolTextLine> documentChangedEvent = null;
+            DocumentChangedEvent<ICobolTextLine> documentChangedEvent;
             lock (lockObjectForDocumentLines)
             {
                 // Start perf measurement
                 PerfStatsForText.OnStartRefresh();
 
-                // Apply text changes to the compilation document
-                IList<DocumentChange<ICobolTextLine>> documentChanges = new List<DocumentChange<ICobolTextLine>>(textChangedEvent.TextChanges.Count);
-                foreach (TextChange textChange in textChangedEvent.TextChanges)
+                // Apply updates to the compilation document
+                var documentChanges = new List<DocumentChange<ICobolTextLine>>(updates.Length);
+                foreach (var update in updates)
                 {
-                    DocumentChange<ICobolTextLine> appliedChange = null;
-                    CodeElementsLine newLine = null;
-                    bool encounteredCodeElement;
-                    switch (textChange.Type)
+                    // Split the text updated into distinct lines
+                    List<string> lineUpdates = null;
+                    bool replacementTextStartsWithNewLine = false;
+                    if (!string.IsNullOrEmpty(update.Text))
                     {
-                        case TextChangeType.DocumentCleared:
-                            compilationDocumentLines.Clear();
-                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.DocumentCleared, 0, null);
-                            // Ignore all previous document changes : they are meaningless now that the document was completely cleared
-                            documentChanges.Clear();
-                            break;
-                        case TextChangeType.LineInserted:
-                            newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
-                            compilationDocumentLines.Insert(textChange.LineIndex, newLine);
-
-                            encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
-
-                            foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex+1)) //Loop on every line that appears after added line
-                            {
-                                //Remove generated diagnostics for the line below the inserted line.
-                                if (!encounteredCodeElement)
-                                    lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
-
-                                lineToUpdate.ShiftDown();
-                                 
-                                if (lineToUpdate.CodeElements != null)
-                                    encounteredCodeElement = true;
-                            }
-
-                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
-                            break;
-                        case TextChangeType.LineUpdated:
-                            newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
-                            compilationDocumentLines[textChange.LineIndex] = newLine;
-                            // Check to see if this change can be merged with a previous one
-                            bool changeAlreadyApplied = false;
-                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
-                            {
-                                if (documentChangeToAdjust.LineIndex == textChange.LineIndex)
-                                {
-                                    changeAlreadyApplied = true;
-                                    break;
-                                }
-                            }
-                            if (!changeAlreadyApplied)
-                            {
-                                appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineUpdated, textChange.LineIndex, newLine);
-                            }
-                            // Line indexes are not impacted
-                            break;
-                        case TextChangeType.LineRemoved:
-                            if (compilationDocumentLines.LastOrDefault() == null)
-                                continue;
-                            if (compilationDocumentLines.Count <= textChange.LineIndex) //Avoid line remove exception
-                                continue;
-
-                            compilationDocumentLines.RemoveAt(textChange.LineIndex);
-                            encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
-
-                            foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex)) //Loop on every line that appears after deleted line
-                            {
-                                //Remove generated diagnostics for the line below the deleted line.
-                                if (!encounteredCodeElement)
-                                    lineToUpdate.ResetDiagnostics();
-
-                                lineToUpdate.ShiftUp();
-
-                                if (lineToUpdate.CodeElements != null)
-                                    encounteredCodeElement = true; 
-                            }
-
-                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, null);
-                            // Recompute the line indexes of all the changes prevously applied
-                            IList<DocumentChange<ICobolTextLine>> documentChangesToRemove = null;
-                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
-                            {
-                                if (documentChangeToAdjust.LineIndex > textChange.LineIndex)
-                                {
-                                    documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex - 1;
-                                }
-                                else if (documentChangeToAdjust.LineIndex == textChange.LineIndex)
-                                {
-                                    if (documentChangesToRemove == null)
-                                    {
-                                        documentChangesToRemove = new List<DocumentChange<ICobolTextLine>>(1);
-                                    }
-                                    documentChangesToRemove.Add(documentChangeToAdjust);
-                                }
-                            }
-                            // Ignore all previous changes applied to a line now removed
-                            if (documentChangesToRemove != null)
-                            {
-                                foreach (DocumentChange<ICobolTextLine> documentChangeToRemove in documentChangesToRemove)
-                                {
-                                    documentChanges.Remove(documentChangeToRemove);
-                                }
-                            }
-                            break;
+                        replacementTextStartsWithNewLine = update.Text[0] == '\r' || update.Text[0] == '\n';
+                        //Allow to know if a new line was added
+                        //Split on \r \n to know the number of lines added
+                        lineUpdates = update.Text.Replace("\r", "").Split('\n').ToList();
+                        if (string.IsNullOrEmpty(lineUpdates.FirstOrDefault()) && replacementTextStartsWithNewLine)
+                            lineUpdates.RemoveAt(0);
                     }
-                    if (appliedChange != null)
+
+                    // Get original lines text before change
+                    int lineCount = compilationDocumentLines.Count;
+                    string originalFirstLineText = lineCount <= update.LineStart ? "" : compilationDocumentLines[update.LineStart].Text;
+                    string originalLastLineText = originalFirstLineText;
+
+                    // Check if the first line was inserted
+                    int firstLineIndex = update.LineStart;
+                    int firstLineChar = update.ColumnStart;
+                    if (replacementTextStartsWithNewLine && !(update.ColumnStart < originalLastLineText.Length))
                     {
-                        documentChanges.Add(appliedChange);
+                        // do not increment if line is inserted at the end of global text
+                        if (firstLineIndex < lineCount) firstLineIndex++;
+                        firstLineChar = 0;
+                    }
+                    else if (replacementTextStartsWithNewLine)
+                    {
+                        //Detected that the add line appeared inside an existing line
+                        lineUpdates.Add(lineUpdates.First());
+                        //Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
+                    }
+
+                    // Check if the last line was deleted
+                    int lastLineIndex = update.LineEnd;
+                    if (update.LineEnd > update.LineStart && update.ColumnEnd == 0)
+                    {
+                        //Allows to detect if the next line was suppressed
+                    }
+                    if (update.Text?.Length == 0)
+                    {
+                        lineUpdates = new List<string>();
+                    }
+
+                    if (lastLineIndex > firstLineIndex)
+                    {
+                        originalLastLineText = compilationDocumentLines[Math.Min(lastLineIndex, compilationDocumentLines.Count - 1)].Text;
+                    }
+
+                    // Text not modified at the beginning of the first replaced line
+                    string startOfFirstLine = null;
+                    if (firstLineChar > 0)
+                    {
+                        if (originalFirstLineText.Length >= update.ColumnStart)
+                            startOfFirstLine = originalFirstLineText.Substring(0, update.ColumnStart);
+                        else
+                            startOfFirstLine = originalFirstLineText.Substring(0, originalFirstLineText.Length)
+                                             + new string(' ', update.ColumnStart - originalFirstLineText.Length);
+                    }
+
+                    // Text not modified at the end of the last replaced line
+                    string endOfLastLine = null;
+                    if (update.ColumnEnd < originalLastLineText.Length)
+                    {
+                        endOfLastLine = originalLastLineText.Substring(update.ColumnEnd);
+                    }
+
+                    // Remove all the old lines
+                    for (int i = firstLineIndex; i <= lastLineIndex; i++)
+                    {
+                        var textChange = new TextChange(TextChangeType.LineRemoved, firstLineIndex, null);
+                        ApplyTextChange(textChange, documentChanges);
+                        //Mark the index line to be removed. The index will remains the same for each line delete, because text change are applied one after another
+                    }
+
+                    // Insert the updated lines
+                    if (!(startOfFirstLine == null && lineUpdates == null && endOfLastLine == null))
+                    {
+                        int lineUpdatesCount = (lineUpdates != null && lineUpdates.Count > 0)
+                            ? lineUpdates.Count
+                            : 1;
+                        for (int i = 0; i < lineUpdatesCount; i++)
+                        {
+                            string newLine = (lineUpdates != null && lineUpdates.Count > 0)
+                                ? lineUpdates[i]
+                                : string.Empty;
+                            if (i == 0)
+                            {
+                                newLine = startOfFirstLine + newLine;
+                            }
+                            if (i == lineUpdatesCount - 1)
+                            {
+                                newLine += endOfLastLine;
+                            }
+                            var textChange = new TextChange(TextChangeType.LineInserted, firstLineIndex + i,
+                                new TextLineSnapshot(firstLineIndex + i, newLine, null));
+                            ApplyTextChange(textChange, documentChanges);
+                        }
                     }
                 }
 
@@ -416,6 +413,114 @@ namespace TypeCobol.Compiler
             if (textLinesChanged != null)
             {
                 textLinesChanged(this, documentChangedEvent);
+            }
+        }
+
+        private void ApplyTextChange(TextChange textChange, IList<DocumentChange<ICobolTextLine>> documentChanges)
+        {
+            DocumentChange<ICobolTextLine> appliedChange = null;
+            CodeElementsLine newLine;
+            bool encounteredCodeElement;
+            switch (textChange.Type)
+            {
+                case TextChangeType.DocumentCleared:
+                    compilationDocumentLines.Clear();
+                    appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.DocumentCleared, 0, null);
+                    // Ignore all previous document changes : they are meaningless now that the document was completely cleared
+                    documentChanges.Clear();
+                    break;
+                case TextChangeType.LineInserted:
+                    newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
+                    compilationDocumentLines.Insert(textChange.LineIndex, newLine);
+
+                    encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
+
+                    foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex + 1)) //Loop on every line that appears after added line
+                    {
+                        //Remove generated diagnostics for the line below the inserted line.
+                        if (!encounteredCodeElement)
+                            lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
+
+                        lineToUpdate.ShiftDown();
+
+                        if (lineToUpdate.CodeElements != null)
+                            encounteredCodeElement = true;
+                    }
+
+                    appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
+                    break;
+                case TextChangeType.LineUpdated:
+                    newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
+                    compilationDocumentLines[textChange.LineIndex] = newLine;
+                    // Check to see if this change can be merged with a previous one
+                    bool changeAlreadyApplied = false;
+                    foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+                    {
+                        if (documentChangeToAdjust.LineIndex == textChange.LineIndex)
+                        {
+                            changeAlreadyApplied = true;
+                            break;
+                        }
+                    }
+                    if (!changeAlreadyApplied)
+                    {
+                        appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineUpdated, textChange.LineIndex, newLine);
+                    }
+                    // Line indexes are not impacted
+                    break;
+                case TextChangeType.LineRemoved:
+                    if (compilationDocumentLines.LastOrDefault() == null)
+                        return;
+                    if (compilationDocumentLines.Count <= textChange.LineIndex) //Avoid line remove exception
+                        return;
+
+                    compilationDocumentLines.RemoveAt(textChange.LineIndex);
+                    encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
+
+                    foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex)) //Loop on every line that appears after deleted line
+                    {
+                        //Remove generated diagnostics for the line below the deleted line.
+                        if (!encounteredCodeElement)
+                            lineToUpdate.ResetDiagnostics();
+
+                        lineToUpdate.ShiftUp();
+
+                        if (lineToUpdate.CodeElements != null)
+                            encounteredCodeElement = true;
+                    }
+
+                    appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, null);
+                    // Recompute the line indexes of all the changes prevously applied
+                    IList<DocumentChange<ICobolTextLine>> documentChangesToRemove = null;
+                    foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+                    {
+                        if (documentChangeToAdjust.LineIndex > textChange.LineIndex)
+                        {
+                            documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex - 1;
+                        }
+                        else if (documentChangeToAdjust.LineIndex == textChange.LineIndex)
+                        {
+                            if (documentChangesToRemove == null)
+                            {
+                                documentChangesToRemove = new List<DocumentChange<ICobolTextLine>>(1);
+                            }
+                            documentChangesToRemove.Add(documentChangeToAdjust);
+                        }
+                    }
+                    // Ignore all previous changes applied to a line now removed
+                    if (documentChangesToRemove != null)
+                    {
+                        foreach (DocumentChange<ICobolTextLine> documentChangeToRemove in documentChangesToRemove)
+                        {
+                            documentChanges.Remove(documentChangeToRemove);
+                        }
+                    }
+                    break;
+            }
+
+            if (appliedChange != null)
+            {
+                documentChanges.Add(appliedChange);
             }
         }
 

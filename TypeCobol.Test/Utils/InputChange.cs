@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.UtilsNew
@@ -17,7 +18,7 @@ namespace TypeCobol.Test.UtilsNew
             var result = new List<InputChange>();
 
             string currentChangeId = null;
-            TextChangedEvent currentTextChangeEvent = null;
+            var rangeUpdates = new List<RangeUpdate>();
 
             string[] lines = File.ReadAllLines(inputChangesFilePath);
             foreach (var line in lines)
@@ -26,48 +27,59 @@ namespace TypeCobol.Test.UtilsNew
                 switch (parts.Length)
                 {
                     case 1:
-                        // This is a change id, flush current and initialize a new one
-                        FlushCurrentTextChange();
-                        Debug.Assert(parts[0].Last() == ':');
+                        // This is a change id, flush current change and initialize a new id
+                        FlushCurrentInputChange();
+                        Debug.Assert(parts[0].Last() == ':', $"Invalid change id description in '{inputChangesFilePath}'.");
                         currentChangeId = parts[0].Substring(0, parts[0].Length - 1);
-                        currentTextChangeEvent = new TextChangedEvent();
                         break;
                     case 2:
-                    case 3:
-                        // This is a text change, part of a TextChangedEvent
-                        var type = (TextChangeType)Enum.Parse(typeof(TextChangeType), parts[0]);
-                        int lineIndex = int.Parse(parts[1]);
-                        string text = parts.Length == 3 ? parts[2].Replace("\\n", Environment.NewLine) : null;
-                        Debug.Assert(currentTextChangeEvent != null);
-                        var newLine = text != null ? new TextLineSnapshot(lineIndex, text, null) : null;
-                        currentTextChangeEvent.TextChanges.Add(new TextChange(type, lineIndex, newLine));
+                        // This is a range update, part of the current InputChange
+                        Parse(parts[0], out int lineStart, out int columnStart, out int lineEnd, out int columnEnd);
+                        string text = parts[1].Replace("\\n", Environment.NewLine);
+                        var rangeUpdate = new RangeUpdate(lineStart, columnStart, lineEnd, columnEnd, text);
+                        rangeUpdates.Add(rangeUpdate);
+                        break;
+                    default:
+                        // This is not a valid line
+                        Debug.Fail($"Invalid format for input change file '{inputChangesFilePath}' !");
                         break;
                 }
             }
 
-            // Flush remaining text change, if any
-            FlushCurrentTextChange();
+            // Flush remaining input change, if any
+            FlushCurrentInputChange();
 
             return result;
 
-            void FlushCurrentTextChange()
+            void FlushCurrentInputChange()
             {
                 if (currentChangeId != null)
                 {
-                    Debug.Assert(currentTextChangeEvent != null);
-                    result.Add(new InputChange(currentChangeId, currentTextChangeEvent));
+                    var updates = rangeUpdates.ToArray();
+                    result.Add(new InputChange(currentChangeId, updates));
+                    rangeUpdates.Clear();
                 }
+            }
+
+            void Parse(string rangeDescription, out int lineStart, out int columnStart, out int lineEnd, out int columnEnd)
+            {
+                var match = Regex.Match(rangeDescription, @"\(([0-9]+),\s*([0-9]+)\)\s*->\s*\(([0-9]+),\s*([0-9]+)\)");
+                Debug.Assert(match.Success, $"Invalid range description in '{inputChangesFilePath}'.");
+                lineStart = int.Parse(match.Groups[1].Value);
+                columnStart = int.Parse(match.Groups[2].Value);
+                lineEnd = int.Parse(match.Groups[3].Value);
+                columnEnd = int.Parse(match.Groups[4].Value);
             }
         }
 
         public string Id { get; }
 
-        public TextChangedEvent TextChangedEvent { get; }
+        public RangeUpdate[] Updates { get; }
 
-        public InputChange(string id, TextChangedEvent textChangedEvent)
+        public InputChange(string id, RangeUpdate[] updates)
         {
             Id = id;
-            TextChangedEvent = textChangedEvent;
+            Updates = updates;
         }
     }
 }

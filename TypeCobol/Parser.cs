@@ -70,7 +70,7 @@ namespace TypeCobol
 		}
 
 
-		public void Parse(string path, TextChangedEvent e=null)
+		public void Parse(string path)
 		{
             if (!Compilers.TryGetValue(path, out Compiler))
             {
@@ -81,7 +81,6 @@ namespace TypeCobol
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged += OnCodeElementLine;
 
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
-            else if (e != null) Compiler.CompilationResultsForProgram.UpdateTextLines(e);
 
             try { Compiler.CompileOnce(); }
 			catch(Exception ex) {

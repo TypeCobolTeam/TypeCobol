@@ -1,2 +1,2 @@
 ﻿0:
-LineUpdated	0	      * Comment 1
+(0, 15) -> (0, 15)	 1
