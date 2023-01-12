@@ -29,7 +29,7 @@ namespace TypeCobol.Test.Parser
                 var dirname = Path.GetFileName(directory);
 
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(Root, Root, directory, extensions);
+                var folderTester = new FolderTester(Root, Root, directory, extensions, deep: false);
                 try { folderTester.Test(); }
                 catch (Exception ex) { errors.Add(ex); }
                 nbOfTests += folderTester.GetTestCount();

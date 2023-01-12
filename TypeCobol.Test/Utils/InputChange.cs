@@ -27,7 +27,7 @@ namespace TypeCobol.Test.UtilsNew
                 switch (parts.Length)
                 {
                     case 1:
-                        // This is a change id, flush current change and initialize a new one
+                        // This is a change id, flush current change and initialize a new id
                         FlushCurrentInputChange();
                         Debug.Assert(parts[0].Last() == ':', $"Invalid change id description in '{inputChangesFilePath}'.");
                         currentChangeId = parts[0].Substring(0, parts[0].Length - 1);
@@ -63,6 +63,7 @@ namespace TypeCobol.Test.UtilsNew
 
             void Parse(string rangeDescription, out int lineStart, out int columnStart, out int lineEnd, out int columnEnd)
             {
+                // Match (<int>, <int>) -> (<int>, <int>) with regex to capture lineStart/End and columnStart/end
                 var match = Regex.Match(rangeDescription, @"\(([0-9]+),\s*([0-9]+)\)\s*->\s*\(([0-9]+),\s*([0-9]+)\)");
                 Debug.Assert(match.Success, $"Invalid range description in '{inputChangesFilePath}'.");
                 lineStart = int.Parse(match.Groups[1].Value);

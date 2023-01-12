@@ -38,7 +38,9 @@ namespace TypeCobol.Test.UtilsNew
             {
                 if (SourceFilePaths.Count == 0)
                 {
-                    throw new Exception($"Invalid test '{_testName}': found result file(s) but no source.");
+                    // No source file found -> ignore. This can be legit when we test a folder with some extensions and then test it again with others.
+                    Console.WriteLine($"Test '{_testName}' may be incomplete: found result file(s) but no source.");
+                    return null;
                 }
                 
                 if (SourceFilePaths.Count > 1)
@@ -68,9 +70,16 @@ namespace TypeCobol.Test.UtilsNew
                     }
                 }
 
-                foreach (var resultFilePath in ResultFilePaths)
+                if (ResultFilePaths.Count > 0)
                 {
-                    testUnit.AddComparison(Comparisons.GetComparison(resultFilePath));
+                    foreach (var resultFilePath in ResultFilePaths)
+                    {
+                        testUnit.AddComparison(Comparisons.GetComparison(resultFilePath));
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Invalid test '{_testName}': no result file found !");
                 }
 
                 return testUnit;
@@ -167,14 +176,11 @@ namespace TypeCobol.Test.UtilsNew
             var searchPattern = $"{_filterPrefix}*.*";
             foreach (var file in Directory.EnumerateFiles(folder, searchPattern, SearchOption.TopDirectoryOnly)) //Ignore files without extension, consider only current folder
             {
-                // Extract base name
+                // Extract base name and extension
                 string fileName = Path.GetFileName(file);
                 int cut = fileName.IndexOf('.');
                 string testName = fileName.Substring(0, cut);
-
-                // Extract extension
-                cut = fileName.LastIndexOf('.');
-                string extension = fileName.Substring(cut, fileName.Length - cut); //Includes dot
+                string extension = Path.GetExtension(fileName); // Includes dot
 
                 // Categorize file based on its extension
                 Action<TestUnitData> addFile;
@@ -216,7 +222,7 @@ namespace TypeCobol.Test.UtilsNew
             {
                 try
                 {
-                    testUnit.Create(options).Run();
+                    testUnit.Create(options)?.Run();
                 }
                 catch (Exception exception)
                 {
