@@ -1,0 +1,9 @@
+﻿      * Comment
+      * Comment 2
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL00.
+       DATA DIVISION.
+       working-storage  SECTION.
+       COPY YDVZOSM REPLACING ==:DVZOSM:== BY ==DVZOSM==.
+
+       END PROGRAM TCOMFL00.

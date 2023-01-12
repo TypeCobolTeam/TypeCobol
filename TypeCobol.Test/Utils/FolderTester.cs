@@ -173,14 +173,11 @@ namespace TypeCobol.Test.UtilsNew
             var testUnits = new Dictionary<string, TestUnitData>(StringComparer.OrdinalIgnoreCase);
             foreach (var file in Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly)) //Ignore files without extension, consider only current folder
             {
-                // Extract base name
+                // Extract base name and extension
                 string fileName = Path.GetFileName(file);
                 int cut = fileName.IndexOf('.');
                 string testName = fileName.Substring(0, cut);
-
-                // Extract extension
-                cut = fileName.LastIndexOf('.');
-                string extension = fileName.Substring(cut, fileName.Length - cut); //Includes dot
+                string extension = Path.GetExtension(fileName); // Includes dot
 
                 // Categorize file based on its extension
                 Action<TestUnitData> addFile;

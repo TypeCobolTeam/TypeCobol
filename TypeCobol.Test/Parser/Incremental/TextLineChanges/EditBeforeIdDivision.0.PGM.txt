@@ -1,0 +1,13 @@
+﻿--- Program ---
+PROGRAM: TCOMFL00 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  DVZOSM:Alphanumeric
+  DVZOSM-Var1:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
