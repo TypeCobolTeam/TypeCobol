@@ -5,6 +5,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Preprocessor;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Parser
@@ -110,6 +111,54 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
+        public override IEnumerable<Diagnostic> AllDiagnostics()
+        {
+            // Start with diagnostic from ProcessedTokensLine
+            foreach (var diagnostic in base.AllDiagnostics())
+            {
+                yield return diagnostic;
+            }
+
+            // Add processing diagnostics (compiler directives are parsed during Preprocessor step and processed during CodeElement step)
+            if (HasCompilerDirectives)
+            {
+                foreach (var token in TokensWithCompilerDirectives)
+                {
+                    if (token is CompilerDirectiveToken compilerDirectiveToken && compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics != null)
+                    {
+                        foreach (var processingDiagnostic in compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics)
+                        {
+                            yield return processingDiagnostic;
+                        }
+                    }
+                }
+            }
+
+            // CodeElement parsing diagnostics
+            if (ParserDiagnostics != null)
+            {
+                foreach (var parserDiagnostic in ParserDiagnostics)
+                {
+                    yield return parserDiagnostic;
+                }
+            }
+
+            // Diagnostics on CodeElement themselves
+            if (HasCodeElements)
+            {
+                foreach (var codeElement in CodeElements)
+                {
+                    if (codeElement.Diagnostics != null)
+                    {
+                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
+                        {
+                            yield return codeElementDiagnostic;
+                        }
+                    }
+                }
+            }
+        }
+
         internal void ShiftUp() => Shift(-1);
 
         internal void ShiftDown() => Shift(+1);
@@ -119,28 +168,10 @@ namespace TypeCobol.Compiler.Parser
             //Update line index
             LineIndex += offset;
 
-            //Update ParserDiag lines index
-            if (_ParserDiagnostics != null)
+            //Shift diagnostics
+            foreach (var diagnostic in AllDiagnostics())
             {
-                foreach (var parserDiagnostic in _ParserDiagnostics)
-                {
-                    parserDiagnostic.Shift(offset);
-                }
-            }
-
-            //Update CodeElements Diags lines index
-            if (CodeElements != null)
-            {
-                foreach (var codeElement in CodeElements)
-                {
-                    if (codeElement.Diagnostics != null)
-                    {
-                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
-                        {
-                            codeElementDiagnostic.Shift(offset);
-                        }
-                    }
-                }
+                diagnostic.Shift(offset);
             }
         }
     }
