@@ -17,10 +17,8 @@ namespace TypeCobol.Test.Parser.Performance
     {
         static readonly string AntlrFolder = PlatformUtils.GetPathForProjectFile("Parser") + Path.DirectorySeparatorChar + "Performance";
 
-
         private static readonly string CNAF_FOLDER = "TypeCobol.Test" + Path.DirectorySeparatorChar + "ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch" + Path.DirectorySeparatorChar;
         private static readonly string CNAF_TC_FOLDER = "TypeCobol.Test" + Path.DirectorySeparatorChar + "ThirdParty" + Path.DirectorySeparatorChar + "CNAF_TypeCobol" + Path.DirectorySeparatorChar;
-
 
         /// <summary>
         /// It's under CNAF_TC_FOLDER because the file was modified for the performance test.
@@ -86,12 +84,10 @@ namespace TypeCobol.Test.Parser.Performance
 
         /// <summary>
         /// Same as UseALotOfTypes_100Times but the type are used as parameter of a procedure.
-
+        /// 
         /// Performance should be similar to UseALotOfTypes_1Times_Reference
         /// </summary>
         private static readonly string UseALotOfTypes_WithProc_100Times = CNAF_TC_FOLDER + "CGMV01-UseAlotOfTypes-WithProc-100Times.tcbl";
-
-
 
         /// <summary>
         /// Cobol85 with deep variables declaration
@@ -102,6 +98,7 @@ namespace TypeCobol.Test.Parser.Performance
         /// 
         /// </summary>
         private static readonly string DeepVariables = CNAF_TC_FOLDER + "CGMV01-DeepVariables.cbl";
+
         /// <summary>
         /// TypeCobol with deep types linked between each other.
         /// This is the TypeCobol version of DeppVariables.
@@ -127,14 +124,15 @@ namespace TypeCobol.Test.Parser.Performance
             unitTest.Run();
         }
 
-
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
         //[Ignore]
         public void Part1_Incremental_Cobol85_NoRedefines()
         {
-            IncrementalPerformance2(Cobol85_NoRedefines, 65809, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM       ");
+            // Duplicate a MOVE near the end of source
+            var rangeUpdate = new RangeUpdate(65808, 80, 65808, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM       ");
+            IncrementalPerformance2(Cobol85_NoRedefines, rangeUpdate);
         }
 
         [TestMethod]
@@ -143,7 +141,9 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part1_Incremental_TC_BigTypesNoProcedure()
         {
-            IncrementalPerformance2(BigTypes_NoProcedure, 65897, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            // Duplicate a MOVE near the end of source
+            var rangeUpdate = new RangeUpdate(65896, 80, 65896, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            IncrementalPerformance2(BigTypes_NoProcedure, rangeUpdate);
         }
 
         [TestMethod]
@@ -152,7 +152,9 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part1_Incremental_TC_BigTypesWithProcedure()
         {
-            IncrementalPerformance2(BigTypes_1Procedure, 65899, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            // Duplicate a MOVE near the end of source
+            var rangeUpdate = new RangeUpdate(65899, 80, 65899, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            IncrementalPerformance2(BigTypes_1Procedure, rangeUpdate);
         }
 
         [TestMethod]
@@ -161,7 +163,9 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part1_Incremental_TC_GlobalStorage()
         {
-            IncrementalPerformance2(GlobalStorage, 65805, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            // Duplicate a MOVE near the end of source
+            var rangeUpdate = new RangeUpdate(65804, 80, 65804, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            IncrementalPerformance2(GlobalStorage, rangeUpdate);
         }
 
         [TestMethod]
@@ -170,7 +174,9 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part2_Incremental_TC_UseALotOfTypes_001Time()
         {
-            IncrementalPerformance2(UseALotOfTypes_1Times_Reference, 50, "                                                                                ");
+            // Insert a blank line at the beginning of the file
+            var rangeUpdate = new RangeUpdate(50, 0, 50, 0, Environment.NewLine + "                                                                                ");
+            IncrementalPerformance2(UseALotOfTypes_1Times_Reference, rangeUpdate);
         }
 
         [TestMethod]
@@ -179,15 +185,20 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part2_Incremental_TC_UseALotOfTypes_100Times()
         {
-            IncrementalPerformance2(UseALotOfTypes_100Times, 50, "                                                                                ");
+            // Insert a blank line at the beginning of the file
+            var rangeUpdate = new RangeUpdate(50, 0, 50, 0, Environment.NewLine + "                                                                                ");
+            IncrementalPerformance2(UseALotOfTypes_100Times, rangeUpdate);
         }
+
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
         //[Ignore]
         public void Part2_Incremental_TC_UseALotOfTypes_WithProc_100Times()
         {
-            IncrementalPerformance2(UseALotOfTypes_WithProc_100Times, 50, "                                                                                ");
+            // Insert a blank line at the beginning of the file
+            var rangeUpdate = new RangeUpdate(50, 0, 50, 0, Environment.NewLine + "                                                                                ");
+            IncrementalPerformance2(UseALotOfTypes_WithProc_100Times, rangeUpdate);
         }
 
         [TestMethod]
@@ -196,7 +207,9 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part3_Incremental_Cobol85_DeepVariables()
         {
-            IncrementalPerformance2(DeepVariables, 20535, "                                                                                ");
+            // Insert blank line right before PROCEDURE DIVISION
+            var rangeUpdate = new RangeUpdate(20534, 0, 20534, 0, Environment.NewLine + "                                                                                ");
+            IncrementalPerformance2(DeepVariables, rangeUpdate);
         }
 
         [TestMethod]
@@ -205,7 +218,9 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void Part3_Incremental_TC_DeepTypes()
         {
-            IncrementalPerformance2(DeepTypes, 20692, "                                                                                ");
+            // Insert blank line right before PROCEDURE DIVISION
+            var rangeUpdate = new RangeUpdate(20692, 0, 20692, 0, Environment.NewLine + "                                                                                ");
+            IncrementalPerformance2(DeepTypes, rangeUpdate);
         }
 
         /// <summary>
@@ -217,7 +232,7 @@ namespace TypeCobol.Test.Parser.Performance
             return null;
         }
 
-        private void IncrementalPerformance2(string relativePath, int newLineIndex, string newLineText)
+        private void IncrementalPerformance2(string relativePath, params RangeUpdate[] updates)
         {
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
             string fullPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName + "\\" + relativePath;
@@ -232,13 +247,13 @@ namespace TypeCobol.Test.Parser.Performance
             FileCompiler compiler = new FileCompiler(null, filename, documentFormat.ColumnsLayout, false, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
             //Make an incremental change to the source code
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
-            ExecuteIncremental(compiler, stats, newLineIndex, newLineText);
+            ExecuteIncremental(compiler, stats, updates);
 
             // Display a performance report
             TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), filename, stats, compiler.CompilationResultsForProgram);
         }
 
-        private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText)
+        private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, RangeUpdate[] updates)
         {
             // Execute a first (complete) compilation
             compiler.CompileOnce();
@@ -246,10 +261,8 @@ namespace TypeCobol.Test.Parser.Performance
             stats.IterationNumber = 40;
             for (int i = 0; i < stats.IterationNumber; i++)
             {
-                // Append one line in the middle of the program
-                var lineBefore = compiler.CompilationResultsForProgram.CobolTextLines[newLineIndex - 1];
-                var rangeUpdate = new RangeUpdate(lineBefore.LineIndex, lineBefore.Length, lineBefore.LineIndex, lineBefore.Length, Environment.NewLine + newLineText);
-                compiler.CompilationResultsForProgram.UpdateTextLines(new [] { rangeUpdate });
+                // Apply range updates
+                compiler.CompilationResultsForProgram.UpdateTextLines(updates);
 
                 // Execute a second (incremental) compilation
                 compiler.CompileOnce();
@@ -285,7 +298,6 @@ namespace TypeCobol.Test.Parser.Performance
                                                stats.AverageDiagnosticCollectionTime;
         }
 
-
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
@@ -303,6 +315,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             FullParsing(BigTypes_NoProcedure);
         }
+
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
@@ -365,9 +378,6 @@ namespace TypeCobol.Test.Parser.Performance
         {
             FullParsing(DeepTypes);
         }
-
-
-
 
         /// <summary>
         /// Method for parsinga document.
