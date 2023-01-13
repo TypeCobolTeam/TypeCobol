@@ -111,6 +111,11 @@ namespace TypeCobol.Test.Parser.Performance
         /// </summary>
         private static readonly string DeepTypes = CNAF_TC_FOLDER + "CGMV01-DeepTypes.tcbl";
 
+        /// <summary>
+        /// Large Cobol 85 file (more than 200k lines)
+        /// </summary>
+        private static readonly string LargeFile = CNAF_FOLDER + "CGMX02.COB";
+
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "fast")]
@@ -223,6 +228,62 @@ namespace TypeCobol.Test.Parser.Performance
             IncrementalPerformance2(DeepTypes, rangeUpdate);
         }
 
+        [TestMethod]
+        [TestCategory("Performance")]
+        [TestProperty("Time", "long")]
+        //[Ignore]
+        public void Part4_Incremental_LargeFile_LineUpdateAtBeginning()
+        {
+            /*
+             * Line 352, we are renaming 88-level 'CEA-TP-RETURN-DUPKEY' to 'CEA-TP-RETURN-DUPLICATE-KEY'
+             * and then readjust the end of the line to match 80 chars.
+             */
+            var rename = new RangeUpdate(351, 34, 351, 34, "LICATE-");
+            var adjust = new RangeUpdate(351, 49, 351, 56, string.Empty);
+            IncrementalPerformance2(LargeFile, rename, adjust);
+        }
+
+        [TestMethod]
+        [TestCategory("Performance")]
+        [TestProperty("Time", "long")]
+        //[Ignore]
+        public void Part4_Incremental_LargeFile_LineUpdateAtEnd()
+        {
+            /*
+             * Line 211758, we are changing the sending value of MOVE instruction
+             * from '0000' to '1234'.
+             */
+            var update = new RangeUpdate(211757, 17, 211757, 21, "1234");
+            IncrementalPerformance2(LargeFile, update);
+        }
+
+        [TestMethod]
+        [TestCategory("Performance")]
+        [TestProperty("Time", "long")]
+        //[Ignore]
+        public void Part4_Incremental_LargeFile_LineInsertAtBeginning()
+        {
+            /*
+             * Line 352, we are adding a new 88-level definition 'CEA-TP-RETURN-DUPLABEL'
+             * right after 'CEA-TP-RETURN-DUPKEY'
+             */
+            string text = "              88 CEA-TP-RETURN-DUPLABEL          VALUE +145.            WSHWZ007";
+            var insert = new RangeUpdate(351, 80, 351, 80, Environment.NewLine + text);
+            IncrementalPerformance2(LargeFile, insert);
+        }
+
+        [TestMethod]
+        [TestCategory("Performance")]
+        [TestProperty("Time", "long")]
+        //[Ignore]
+        public void Part4_Incremental_LargeFile_LineInsertAtEnd()
+        {
+            // Line 211758, we are adding a dummy DISPLAY right after the MOVE instruction.
+            string text = "           DISPLAY DTOT-PCDRET                                          CMM010AK";
+            var insert = new RangeUpdate(211757, 80, 211757, 80, Environment.NewLine + text);
+            IncrementalPerformance2(LargeFile, insert);
+        }
+
         /// <summary>
         /// Creates the AnalyzerProvider to be used.
         /// </summary>
@@ -257,6 +318,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Execute a first (complete) compilation
             compiler.CompileOnce();
+
             //Iterate multiple times over an incremental change
             stats.IterationNumber = 40;
             for (int i = 0; i < stats.IterationNumber; i++)
@@ -402,12 +464,10 @@ namespace TypeCobol.Test.Parser.Performance
 
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
             stats.IterationNumber = 20;
-            //Warmup before measurement
-            var documentWarmup = new TypeCobol.Parser();
-            var options = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
 
-            //Warmup
-            documentWarmup = ParseDocument(fullPath, options, format, copiesFolder);
+            //Warmup before measurement
+            var options = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
+            var documentWarmup = ParseDocument(fullPath, options, format, copiesFolder);
             //Be sure that there is no error, otherwise parsing can be incomplete
             CheckThatThereIsNoError(documentWarmup.Results); //Discard diagnostics collection time for this warmup run
 
