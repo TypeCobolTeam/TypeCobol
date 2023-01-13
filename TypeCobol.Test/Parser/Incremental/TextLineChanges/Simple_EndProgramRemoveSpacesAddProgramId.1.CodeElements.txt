@@ -1,0 +1,10 @@
+﻿--- Code Elements ---
+[[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [20,20+:.]<PeriodSeparator>
+- ProgramName = Simpler
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[ProgramEnd]] [1,3:END]<END> --> [19,19+:.]<PeriodSeparator>
+- ProgramName = Simple
+
