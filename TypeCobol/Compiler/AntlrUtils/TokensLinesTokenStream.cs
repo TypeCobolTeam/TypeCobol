@@ -55,10 +55,9 @@ namespace TypeCobol.Compiler.AntlrUtils
                 }
                 if (!currentToken.Equals(searchedToken) && searchedToken.Type != TokenConstants.Eof)
                 {
-                    // See GitHub #2053:
-                    // Assert here the problem in debug mode.
-                    // Avoid to throw an uncaught exception in a bad context, return false.
-                    System.Diagnostics.Debug.Assert(false, "Token not found in this stream");
+                    // See GitHub #2053 and #2388
+                    // We should always be able to locate the searchedToken but the search may fail in some scenarios
+                    // (fail to recognize an identical TokensLine after a REPLACE ?)
                     return false;
                 }
             }
@@ -71,51 +70,74 @@ namespace TypeCobol.Compiler.AntlrUtils
         public void StartLookingForStopToken(Token stopToken)
         {
             ResetStopTokenLookup();
-            if (stopToken != null)
+            if (stopToken != null && stopToken.Type != TokenConstants.Eof)
             {
-                StopToken = stopToken;
-                stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
-                StreamReachedStopToken = false;
+                _stopToken = stopToken;
+                _stopTokenReplacedByEOF = new ReplacedToken(Token.EndOfFile(), stopToken);
+
+                // Check tokens already fetched and not yet consumed
+                if (Index < 0)
+                {
+                    // Nothing fetched yet
+                    return;
+                }
+
+                for (int index = Index; index < tokens.Count; index++)
+                {
+                    if (stopToken.Equals(tokens[index]))
+                    {
+                        tokens[index] = _stopTokenReplacedByEOF;
+                        fetchedEOF = true;
+                    }
+                }
             }
         }
 
         /// <summary>
-        /// Cancel a previous replacement of StopToken by EOF
+        /// Cancel a previous replacement of stop token by EOF
         /// </summary>
         public void ResetStopTokenLookup()
         {
-            // Reset replacement of stop token by EOF
-            if (indexOfStopTokenReplacedByEOF >= 0 && indexOfStopTokenReplacedByEOF < tokens.Count)
+            if (_stopToken == null)
             {
-                if (tokens[indexOfStopTokenReplacedByEOF] == stopTokenReplacedByEOF)
-                {
-                    tokens[indexOfStopTokenReplacedByEOF] = stopTokenReplacedByEOF.OriginalToken;
-                    fetchedEOF = false;
-                }
-                StreamReachedStopToken = false;
-                indexOfStopTokenReplacedByEOF = -1;
+                // No stop token defined, nothing to do
+                System.Diagnostics.Debug.Assert(_stopTokenReplacedByEOF == null);
+                return;
             }
+
+            System.Diagnostics.Debug.Assert(_stopToken.Type != TokenConstants.Eof);
+
+            // Iterate over fetched tokens to restore previously replaced token
+            fetchedEOF = false;
+            for (int index = 0; index < tokens.Count; index++)
+            {
+                if (ReferenceEquals(tokens[index], _stopTokenReplacedByEOF))
+                {
+                    tokens[index] = _stopTokenReplacedByEOF.OriginalToken;
+                }
+
+                // Restore correct fetchedEOF by checking non-consumed tokens
+                if (index >= Index && tokens[index].Type == TokenConstants.Eof)
+                {
+                    fetchedEOF = true;
+                }
+            }
+
+            _stopToken = null;
+            _stopTokenReplacedByEOF = null;
         }
 
         /// <summary>
         /// Token which marks the end of an interesting code section
         /// </summary>
-        public IToken StopToken { get; private set; }
+        private IToken _stopToken;
 
-        // EOF token which replaces the original StopToken
-        private ReplacedToken stopTokenReplacedByEOF;
-        
-        /// <summary>
-        /// True when the token stream has reached StopToken
-        /// </summary>
-        public bool StreamReachedStopToken { get; private set; }
-
-        // Index of the replaced stop token in the buffer
-        private int indexOfStopTokenReplacedByEOF = -1;
+        // EOF token which replaces the original stop token
+        private ReplacedToken _stopTokenReplacedByEOF;
 
         /// <summary>
         /// Override the original Fetch method from BufferedTokenStream : same behavior,
-        /// except that StopToken is replaced with EOF on the fly.
+        /// except that stop token is replaced with EOF on the fly.
         /// </summary>
         protected override int Fetch(int n)
         {
@@ -123,20 +145,22 @@ namespace TypeCobol.Compiler.AntlrUtils
             {
                 return 0;
             }
+
             for (int i = 0; i < n; i++)
             {
                 IToken t = TokenSource.NextToken();
-                if (t is IWritableToken)
+                if (t is IWritableToken writableToken)
                 {
-                    ((IWritableToken)t).TokenIndex = tokens.Count;
+                    writableToken.TokenIndex = tokens.Count;
                 }
+
                 // >>> replacement added
-                if(StopToken != null && StopToken.Equals(t))
+                if (_stopToken != null && _stopToken.Equals(t))
                 {
-                    t = stopTokenReplacedByEOF;
-                    indexOfStopTokenReplacedByEOF = tokens.Count;
+                    t = _stopTokenReplacedByEOF;
                 }
                 // <<< end of replacement
+
                 tokens.Add(t);
                 if (t.Type == TokenConstants.Eof)
                 {
@@ -144,19 +168,8 @@ namespace TypeCobol.Compiler.AntlrUtils
                     return i + 1;
                 }
             }
-            return n;
-        }
 
-        public override void Consume()
-        {
-            base.Consume();
-            if(StopToken != null)
-            {
-                if(Lt(1) == stopTokenReplacedByEOF)
-                {
-                    StreamReachedStopToken = true;
-                }
-            }
+            return n;
         }
     }
 }
