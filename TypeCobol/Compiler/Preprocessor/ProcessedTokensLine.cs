@@ -250,15 +250,6 @@ namespace TypeCobol.Compiler.Preprocessor
                 yield return diagnostic;
             }
 
-            // Add diagnostic from CompilerDirective if any
-            if (CompilerListingControlDirective?.ParsingDiagnostics != null)
-            {
-                foreach (var parsingDiagnostic in CompilerListingControlDirective.ParsingDiagnostics)
-                {
-                    yield return parsingDiagnostic;
-                }
-            }
-
             // Add preprocessor diagnostics
             if (PreprocessorDiagnostics != null)
             {
@@ -272,7 +263,6 @@ namespace TypeCobol.Compiler.Preprocessor
         internal override void ResetDiagnostics()
         {
             base.ResetDiagnostics();
-            // TODO ParsingDiagnostics from CompilerListingControlDirective ?
             PreprocessorDiagnostics = null;
         }
 
