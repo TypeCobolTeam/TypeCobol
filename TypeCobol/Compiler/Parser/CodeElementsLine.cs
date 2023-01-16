@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Preprocessor;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Parser
@@ -102,7 +99,6 @@ namespace TypeCobol.Compiler.Parser
         internal override void ResetDiagnostics()
         {
             base.ResetDiagnostics();
-            //TODO ProcessingDiagnostics from compiler directives ?
             _ParserDiagnostics = null;
             if (HasCodeElements)
             {
@@ -121,22 +117,7 @@ namespace TypeCobol.Compiler.Parser
                 yield return diagnostic;
             }
 
-            // Add processing diagnostics (compiler directives are parsed during Preprocessor step and processed during CodeElement step)
-            if (HasCompilerDirectives)
-            {
-                foreach (var token in TokensWithCompilerDirectives)
-                {
-                    if (token is CompilerDirectiveToken compilerDirectiveToken && compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics != null)
-                    {
-                        foreach (var processingDiagnostic in compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics)
-                        {
-                            yield return processingDiagnostic;
-                        }
-                    }
-                }
-            }
-
-            // CodeElement parsing diagnostics
+            // CodeElement parsing diagnostics and COPY directive processing diagnostics in EI-mode
             if (ParserDiagnostics != null)
             {
                 foreach (var parserDiagnostic in ParserDiagnostics)
