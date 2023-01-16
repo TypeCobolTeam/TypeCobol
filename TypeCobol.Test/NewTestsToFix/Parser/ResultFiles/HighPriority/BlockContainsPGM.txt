@@ -1,5 +1,0 @@
-﻿Don't except any errors
-
---- Program ---
-PROGRAM: MYPGM common:False initial:False recursive:False
- author: ? written: ? compiled: ? installation: ? security: ?
