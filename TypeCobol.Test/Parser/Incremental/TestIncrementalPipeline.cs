@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Test.Utils;
 
@@ -10,16 +13,31 @@ namespace TypeCobol.Test.Parser.Incremental
     [TestClass]
     public class IncrementalTextLineChanges
     {
-        [TestMethod]
-        [TestCategory("Incremental")]
-        [TestProperty("Time", "fast")]
-        public void TestFolder()
+        private static readonly string _Root = PlatformUtils.GetPathForProjectFile(@"Parser\Incremental");
+
+        private static void TestFolder([CallerMemberName] string folder = null)
         {
-            string rootFolder = PlatformUtils.GetPathForProjectFile(@"Parser\Incremental\TextLineChanges");
+            Debug.Assert(folder != null);
+            string path = Path.Combine(_Root, folder);
             string[] sourceExtensions = { ".tcbl", ".cbl" };
-            var folderTester = new FolderTester(rootFolder, sourceExtensions);
+            var folderTester = new FolderTester(path, sourceExtensions);
             int testCount = folderTester.Test();
             Console.WriteLine("Number of tests: " + testCount);
         }
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        [TestProperty("Time", "fast")]
+        public void TextLineChanges() => TestFolder();
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        [TestProperty("Time", "fast")]
+        public void BasicEdits() => TestFolder();
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        [TestProperty("Time", "fast")]
+        public void Structural() => TestFolder();
     }
 }

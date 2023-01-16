@@ -1,0 +1,18 @@
+--- Nodes ---
+?
+  Simple
+    procedure-division
+      main
+        sentence-0
+          [[PerformProcedureStatement]] [12,18:PERFORM]<PERFORM> --> [20,20:a]<UserDefinedWord>
+
+          [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+          end
+      a
+        sentence-0
+          [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,22+:"a"]<AlphanumericLiteral>(",Y,Y){a}
+- variables = "a"
+
+          end
+    end

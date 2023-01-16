@@ -1,0 +1,37 @@
+================================ ICobolTextLine ================================
+Line   10: LineInserted    ->               DISPLAY var2
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   10: LineInserted    ->               DISPLAY var2
+================================= ITokensLine ==================================
+Line   10: LineInserted    -> [15,21:DISPLAY]<DISPLAY> [23,26:var2]<UserDefinedWord> 
+Line   10: LineUpdated     -> [15,21:DISPLAY]<DISPLAY> [23,26:var2]<UserDefinedWord> 
+Line   11: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   10: LineInserted    -> [15,21:DISPLAY]<DISPLAY> [23,26:var2]<UserDefinedWord> 
+Line   11: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+============================= IProcessedTokensLine =============================
+Line   10: LineInserted    -> 
+Line   11: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   10: LineInserted    -> 
+Line   11: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line    9: LineUpdated     -> [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
+ 
+Line   11: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line    9: LineUpdated     -> [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
+ 
+Line   10: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   11: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineUpdated     -> [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
+ 
+Line   10: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   11: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
