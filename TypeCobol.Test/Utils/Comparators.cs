@@ -14,9 +14,8 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Utils;
 
-namespace TypeCobol.Test.UtilsNew
+namespace TypeCobol.Test.Utils
 {
     /// <summary>
     /// Define a method of comparison between actual compilation results and expected results (formatted in a given text file)
@@ -27,22 +26,14 @@ namespace TypeCobol.Test.UtilsNew
         private readonly string _expectedResultPath;
         private readonly ICompilationResultFormatter _formatter;
 
-#if EUROINFO_RULES
         public bool IsEI { get; }
-#endif
 
-        public Comparison(string changeId, string expectedResultPath, ICompilationResultFormatter formatter
-#if EUROINFO_RULES
-                , bool isEI = false
-#endif
-            )
+        public Comparison(string changeId, string expectedResultPath, ICompilationResultFormatter formatter, bool isEI)
         {
             ChangeId = changeId;
             _expectedResultPath = expectedResultPath;
             _formatter = formatter;
-#if EUROINFO_RULES
             IsEI = isEI;
-#endif
         }
 
         public void Compare(CompilationUnit compilationResult, IncrementalChangesHistory history)
@@ -121,25 +112,21 @@ namespace TypeCobol.Test.UtilsNew
                     throw new ArgumentException($"Base name of expected result file cannot contain dot. '{expectedResultPath}' is not a valid result file path.", nameof(expectedResultPath));
             }
 
-#if EUROINFO_RULES
             bool isEI = false;
             if (format.EndsWith("-EI", StringComparison.OrdinalIgnoreCase))
             {
                 format = format.Substring(0, format.Length - 3);
                 isEI = true;
             }
-#endif
+
             if (!_Activators.TryGetValue(format, out var activator))
             {
                 throw new ArgumentException($"Could not find compilation result formatter for identifier '{format}'.", nameof(expectedResultPath));
             }
 
             var formatter = activator();
-#if EUROINFO_RULES
+
             return new Comparison(changeId, expectedResultPath, formatter, isEI);
-#else
-            return new Comparison(changeId, expectedResultPath, formatter);
-#endif
         }
     }
 

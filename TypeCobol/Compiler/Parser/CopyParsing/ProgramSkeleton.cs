@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Parser.CopyParsing
         private readonly SymbolDefinition _programName;
 
         public ProgramSkeleton([NotNull] TextSourceInfo textSourceInfo)
-            : this(Path.GetFileNameWithoutExtension(textSourceInfo.Name))
+            : this(textSourceInfo.Name)
         {
 
         }
