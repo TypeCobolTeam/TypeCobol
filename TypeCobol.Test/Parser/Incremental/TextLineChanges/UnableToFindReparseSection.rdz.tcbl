@@ -1,0 +1,10 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPGM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 Var1 pic X.
+       REPLACE ==:move:== BY ==move==.
+       PROCEDURE DIVISION.
+           :move: Var1 to
+           .
+       END PROGRAM MyPGM.
