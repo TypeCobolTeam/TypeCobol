@@ -2,9 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser.Incremental
 {
@@ -21,7 +20,7 @@ namespace TypeCobol.Test.Parser.Incremental
             Debug.Assert(folder != null);
             string path = Path.Combine(_Root, folder);
             string[] sourceExtensions = { ".tcbl", ".cbl" };
-            var folderTester = new TypeCobol.Test.UtilsNew.FolderTester(path, sourceExtensions);
+            var folderTester = new FolderTester(path, sourceExtensions);
             int testCount = folderTester.Test();
             Console.WriteLine("Number of tests: " + testCount);
         }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser.Memory
@@ -14,7 +8,14 @@ namespace TypeCobol.Test.Parser.Memory
     [TestClass]
     public class Memory
     {
-        static readonly string MemoryFolder = PlatformUtils.GetPathForProjectFile("Parser") + Path.DirectorySeparatorChar + "Memory";
+        static readonly string _MemoryFolder = PlatformUtils.GetPathForProjectFile("Parser") + Path.DirectorySeparatorChar + "Memory";
+
+        private void CheckOneFile(string input, DocumentFormat format, string output)
+        {
+            var testUnit = new TestUnit(input, format, antlrProfiling: true);
+            testUnit.AddComparison(Comparisons.GetComparison(output));
+            testUnit.Run();
+        }
 
         /// <summary>
         /// Check variable size and position in memory
@@ -23,11 +24,9 @@ namespace TypeCobol.Test.Parser.Memory
         [TestMethod]
         public void CheckMemoryOccursRedefines()
         {
-            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryOccursRedefines.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
-            unit.Parse();
-
-            unit.Compare();
+            string input = Path.Combine(_MemoryFolder, "MemoryOccursRedefines.pgm");
+            string output = Path.Combine(_MemoryFolder, "MemoryOccursRedefines.MEM.txt");
+            CheckOneFile(input, DocumentFormat.FreeTextFormat, output);
         }
 
         /// <summary>
@@ -37,11 +36,9 @@ namespace TypeCobol.Test.Parser.Memory
         [TestMethod]
         public void CheckMemoryTypeUsage()
         {
-            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryTypeUsage.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
-            unit.Parse();
-
-            unit.Compare();
+            string input = Path.Combine(_MemoryFolder, "MemoryTypeUsage.pgm");
+            string output = Path.Combine(_MemoryFolder, "MemoryTypeUsage.MEM.txt");
+            CheckOneFile(input, DocumentFormat.FreeTextFormat, output);
         }
 
         /// <summary>
@@ -51,13 +48,10 @@ namespace TypeCobol.Test.Parser.Memory
         [TestMethod]
         public void CheckMemoryNational()
         {
-            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryNational.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
-            unit.Parse();
-
-            unit.Compare();
+            string input = Path.Combine(_MemoryFolder, "MemoryNational.pgm");
+            string output = Path.Combine(_MemoryFolder, "MemoryNational.MEM.txt");
+            CheckOneFile(input, DocumentFormat.FreeTextFormat, output);
         }
-
 
         /// <summary>
         /// Check variable size and position in memory
@@ -66,11 +60,9 @@ namespace TypeCobol.Test.Parser.Memory
         [TestMethod]
         public void CheckCGM110_DFHCOMMAREA()
         {
-            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "CGM110-DFHCOMMAREA.rdz.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
-            unit.Parse();
-
-            unit.Compare();
+            string input = Path.Combine(_MemoryFolder, "CGM110-DFHCOMMAREA.rdz.pgm");
+            string output = Path.Combine(_MemoryFolder, "CGM110-DFHCOMMAREA.MEM.txt");
+            CheckOneFile(input, DocumentFormat.RDZReferenceFormat, output);
         }
     }
 }

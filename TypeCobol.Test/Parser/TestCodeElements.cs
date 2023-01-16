@@ -5,55 +5,30 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser
 {
     internal static class TestCodeElements
     {
+        static readonly string _Root = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "CodeElements");
 
-        static readonly string Root = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "CodeElements");
-
-
-        public static void CheckCodeElements() {
-            var errors = new System.Collections.Generic.List<Exception>();
-            int nbOfTests = 0;
+        public static void CheckCodeElements()
+        {
             string[] extensions = { ".cbl", ".pgm" };
-
-
-            var directories = Directory.GetDirectories(Root).ToList();
-            directories.Add(Root);
-            foreach (string directory in directories)
-            {
-                var dirname = Path.GetFileName(directory);
-
-                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(Root, Root, directory, extensions, deep: false);
-                try { folderTester.Test(); }
-                catch (Exception ex) { errors.Add(ex); }
-                nbOfTests += folderTester.GetTestCount();
-                Console.WriteLine();
-            }
-
+            Console.WriteLine("Entering directory \"" + _Root + "\" [" + string.Join(", ", extensions) + "]:");
+            var folderTester = new FolderTester(_Root, extensions);
+            int nbOfTests = folderTester.Test();
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
-
-            if (errors.Count > 0)
-            {
-                var str = new System.Text.StringBuilder();
-                foreach (var ex in errors) str.Append(ex.Message);
-                throw new Exception(str.ToString());
-            }
         }
-        
 
         /// <summary>
         /// 
         /// </summary>
         public static void Check_DISPLAYCodeElements()
         {
-			
+            
             Tuple<CodeElementsDocument, DisplayStatement> tuple;
 
             //Test using the generic method which parse a single CodeElement
