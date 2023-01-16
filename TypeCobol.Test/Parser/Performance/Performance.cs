@@ -124,7 +124,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             var sourceFilePath = Path.Combine(AntlrFolder, "AntlrTest.rdz.pgm");
             var unitTest = new TypeCobol.Test.UtilsNew.TestUnit(sourceFilePath, antlrProfiling: true);
-            var expectedResultPath = Path.Combine(AntlrFolder, "AntlrTest.rdzANTLR.txt");
+            var expectedResultPath = Path.Combine(AntlrFolder, "AntlrTest.ANTLR.txt");
             unitTest.AddComparison(new TypeCobol.Test.UtilsNew.Comparison(null, expectedResultPath, new TypeCobol.Test.UtilsNew.AntlrProfiling()));
             unitTest.Run();
         }

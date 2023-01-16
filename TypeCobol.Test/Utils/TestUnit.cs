@@ -111,12 +111,20 @@ namespace TypeCobol.Test.UtilsNew
             }
 #endif
 #if DEBUG
-            // Incremental changes must appear in .inc file in same order as result files on disk
-            var changes = _inputChanges.Select(change => change.Id); // Order of changes to be applied
-            var results = _intermediateResultsComparisons.Keys; // Order of intermediate result files on disk
-            if (!changes.SequenceEqual(results, StringComparer.OrdinalIgnoreCase))
+            // Incremental changes must be ordered in .inc file
+            var changes = _inputChanges.Select(change => change.Id).ToList();
+            var sortedChanges = _inputChanges.Select(change => change.Id).OrderBy(id => id).ToList();
+            if (!changes.SequenceEqual(sortedChanges))
             {
-                throw new Exception("Each incremental change must have at least one comparison and changes must appear in same order as their result files on disk.");
+                throw new Exception("Incremental changes must be sorted.");
+            }
+
+            // Each change must have at least one corresponding result file
+            var results = _intermediateResultsComparisons.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+            results.SymmetricExceptWith(changes);
+            if (results.Count > 0)
+            {
+                throw new Exception("Each incremental change must have at least one comparison.");
             }
 #endif
 
