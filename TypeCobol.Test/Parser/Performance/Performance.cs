@@ -235,12 +235,11 @@ namespace TypeCobol.Test.Parser.Performance
         public void Part4_Incremental_LargeFile_LineUpdateAtBeginning()
         {
             /*
-             * Line 352, we are renaming 88-level 'CEA-TP-RETURN-DUPKEY' to 'CEA-TP-RETURN-DUPLICATE-KEY'
+             * Line 352, we are renaming 88-level 'CEA-TP-RETURN-DUPKEY' to 'CEA-TP-RETURN-DUP-EY'
              * and then readjust the end of the line to match 80 chars.
              */
-            var rename = new RangeUpdate(351, 34, 351, 34, "LICATE-");
-            var adjust = new RangeUpdate(351, 49, 351, 56, string.Empty);
-            IncrementalPerformance2(LargeFile, rename, adjust);
+            var rename = new RangeUpdate(351, 34, 351, 35, "-");
+            IncrementalPerformance2(LargeFile, rename);
         }
 
         [TestMethod]
