@@ -99,10 +99,12 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Reset all diagnostics for the current line
         /// </summary>
-        internal void ResetDiagnostics()
+        internal override void ResetDiagnostics()
         {
+            base.ResetDiagnostics();
+            //TODO ProcessingDiagnostics from compiler directives ?
             _ParserDiagnostics = null;
-            if (CodeElements != null)
+            if (HasCodeElements)
             {
                 foreach (var codeElement in CodeElements)
                 {

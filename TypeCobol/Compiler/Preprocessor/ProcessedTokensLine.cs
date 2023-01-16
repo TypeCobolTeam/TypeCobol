@@ -269,6 +269,13 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
+        internal override void ResetDiagnostics()
+        {
+            base.ResetDiagnostics();
+            // TODO ParsingDiagnostics from CompilerListingControlDirective ?
+            PreprocessorDiagnostics = null;
+        }
+
         /// <summary>
         /// Lazy initialization of diagnostics list
         /// </summary>
