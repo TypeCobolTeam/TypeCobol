@@ -1,0 +1,35 @@
+﻿--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [26,26+:.]<PeriodSeparator>
+- ProgramName = Simple
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+
+[[DataConditionEntry]] [11,12:88]<LevelNumber>{88} --> [29,29+:.]<PeriodSeparator>
+
+[[DataConditionEntry]] [11,12:88]<LevelNumber>{88} --> [29,29+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [25,25+:.]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [12,19:EVALUATE]<EVALUATE> --> [21,24:TRUE]<TRUE>
+
+[[WhenCondition]] [12,15:WHEN]<WHEN> --> [17,21:cond1]<UserDefinedWord>
+
+[[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+
+[[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [26,26+:.]<PeriodSeparator>
+- ProgramName = Simple
+
