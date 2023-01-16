@@ -6,7 +6,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 
-namespace TypeCobol.Test.UtilsNew
+namespace TypeCobol.Test.Utils
 {
     /// <summary>
     /// Allow to test an entire folder automatically. Source files and result files are discovered
