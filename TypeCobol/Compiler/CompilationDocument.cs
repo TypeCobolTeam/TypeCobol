@@ -434,16 +434,21 @@ namespace TypeCobol.Compiler
 
                     encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
 
-                    foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex + 1)) //Loop on every line that appears after added line
+                    using (var enumerator = compilationDocumentLines.GetEnumerator(textChange.LineIndex + 1, -1, false))
                     {
-                        //Remove generated diagnostics for the line below the inserted line.
-                        if (!encounteredCodeElement)
-                            lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
+                        //Loop on every line that appears after added line
+                        CodeElementsLine lineToUpdate;
+                        while (enumerator.MoveNext() && (lineToUpdate = enumerator.Current) != null)
+                        {
+                            //Remove generated diagnostics for the line below the inserted line.
+                            if (!encounteredCodeElement)
+                                lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
 
-                        lineToUpdate.ShiftDown();
+                            lineToUpdate.ShiftDown();
 
-                        if (lineToUpdate.CodeElements != null)
-                            encounteredCodeElement = true;
+                            if (lineToUpdate.CodeElements != null)
+                                encounteredCodeElement = true;
+                        }
                     }
 
                     // Recompute the line indexes of all the changes previously applied
@@ -485,16 +490,21 @@ namespace TypeCobol.Compiler
                     compilationDocumentLines.RemoveAt(textChange.LineIndex);
                     encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
 
-                    foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex)) //Loop on every line that appears after deleted line
+                    using (var enumerator = compilationDocumentLines.GetEnumerator(textChange.LineIndex, -1, false))
                     {
-                        //Remove generated diagnostics for the line below the deleted line.
-                        if (!encounteredCodeElement)
-                            lineToUpdate.ResetDiagnostics();
+                        //Loop on every line that appears after deleted line
+                        CodeElementsLine lineToUpdate;
+                        while (enumerator.MoveNext() && (lineToUpdate = enumerator.Current) != null)
+                        {
+                            //Remove generated diagnostics for the line below the deleted line.
+                            if (!encounteredCodeElement)
+                                lineToUpdate.ResetDiagnostics();
 
-                        lineToUpdate.ShiftUp();
+                            lineToUpdate.ShiftUp();
 
-                        if (lineToUpdate.CodeElements != null)
-                            encounteredCodeElement = true;
+                            if (lineToUpdate.CodeElements != null)
+                                encounteredCodeElement = true;
+                        }
                     }
 
                     // Recompute the line indexes of all the changes previously applied
