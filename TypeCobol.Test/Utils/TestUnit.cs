@@ -133,7 +133,7 @@ namespace TypeCobol.Test.Utils
             }
 #endif
 
-            // Activate incremental changes tracking
+            // Activate incremental changes tracking, limit depth to 1 as we are always able to compare change at each step
             var history = _fileCompiler.CompilationResultsForProgram.TrackChanges(1);
 
             // Full parsing
