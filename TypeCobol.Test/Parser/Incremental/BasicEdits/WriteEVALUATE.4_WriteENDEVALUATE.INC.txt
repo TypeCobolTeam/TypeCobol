@@ -1,0 +1,35 @@
+================================ ICobolTextLine ================================
+Line   14: LineInserted    ->            END-EVALUATE
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   14: LineInserted    ->            END-EVALUATE
+================================= ITokensLine ==================================
+Line   14: LineInserted    -> [12,23:END-EVALUATE]<END_EVALUATE> 
+Line   14: LineUpdated     -> [12,23:END-EVALUATE]<END_EVALUATE> 
+Line   15: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   14: LineInserted    -> [12,23:END-EVALUATE]<END_EVALUATE> 
+Line   15: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+============================= IProcessedTokensLine =============================
+Line   14: LineInserted    -> 
+Line   15: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   14: LineInserted    -> 
+Line   15: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
+ 
+Line   15: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
+ 
+Line   14: LineUpdated     -> [[EvaluateStatementEnd]] [12,23:END-EVALUATE]<END_EVALUATE> --> [12,23:END-EVALUATE]<END_EVALUATE>
+ 
+Line   15: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
+ 
+Line   14: LineUpdated     -> [[EvaluateStatementEnd]] [12,23:END-EVALUATE]<END_EVALUATE> --> [12,23:END-EVALUATE]<END_EVALUATE>
+ 
+Line   15: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 

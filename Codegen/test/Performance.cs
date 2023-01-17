@@ -83,11 +83,10 @@ namespace TypeCobol.Codegen
                 }
                 else
                 {
-                    // Incremental compile.
-                    ITextLine newLine = new TextLineSnapshot(fileCompiler.CompilationResultsForProgram.CobolTextLines.Count, string.Empty, null);
-                    TextChangedEvent textChangedEvent = new TextChangedEvent();
-                    textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, newLine.LineIndex, newLine));
-                    fileCompiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                    // Incremental compile, add an empty line at the end of the document
+                    var lastLine = fileCompiler.CompilationResultsForProgram.CobolTextLines.Last();
+                    var update = new RangeUpdate(lastLine.LineIndex, lastLine.Length, lastLine.LineIndex, lastLine.Length, Environment.NewLine);
+                    fileCompiler.CompilationResultsForProgram.UpdateTextLines(new [] { update });
                     fileCompiler.CompileOnce();
                 }
 

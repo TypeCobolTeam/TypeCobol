@@ -7,7 +7,6 @@ using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Test.Utils;
 
@@ -109,18 +108,12 @@ namespace TypeCobol.Test.Parser.Performance
         /// This is the TypeCobol version of DeppVariables.
         ///
         /// The goal is to see if type linking, type max depth checking and variable resolution is fast.
-        /// All variable resolution are the same that DeppVariables.
+        /// All variable resolution are the same that DeepVariables.
         ///
         /// All variables referenced are from the deepest type.
         /// 
         /// </summary>
         private static readonly string DeepTypes = CNAF_TC_FOLDER + "CGMV01-DeepTypes.tcbl";
-
-
-
-
-
-
 
         [TestMethod]
         [TestCategory("Performance")]
@@ -128,11 +121,11 @@ namespace TypeCobol.Test.Parser.Performance
         //[Ignore]
         public void AntlrPerformanceProfiler()
         {
-            Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.rdz.pgm", new AntlrName());
-            TestUnit unit = new TestUnit(new Multipass(paths), antlrProfiler: true);
-            unit.Parse();
-
-            unit.Compare(unit.Compiler.CompilationResultsForProgram.AntlrResult);
+            var sourceFilePath = Path.Combine(AntlrFolder, "AntlrTest.rdz.pgm");
+            var unitTest = new TestUnit(sourceFilePath, antlrProfiling: true);
+            var expectedResultPath = Path.Combine(AntlrFolder, "AntlrTest.ANTLR.txt");
+            unitTest.AddComparison(Comparisons.GetComparison(expectedResultPath));
+            unitTest.Run();
         }
 
 
@@ -255,12 +248,9 @@ namespace TypeCobol.Test.Parser.Performance
             for (int i = 0; i < stats.IterationNumber; i++)
             {
                 // Append one line in the middle of the program
-
-                ITextLine newLine = new TextLineSnapshot(newLineIndex, newLineText, null);
-
-                TextChangedEvent textChangedEvent = new TextChangedEvent();
-                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, newLine.LineIndex, newLine));
-                compiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                var lineBefore = compiler.CompilationResultsForProgram.CobolTextLines[newLineIndex - 1];
+                var rangeUpdate = new RangeUpdate(lineBefore.LineIndex, lineBefore.Length, lineBefore.LineIndex, lineBefore.Length, Environment.NewLine + newLineText);
+                compiler.CompilationResultsForProgram.UpdateTextLines(new [] { rangeUpdate });
 
                 // Execute a second (incremental) compilation
                 compiler.CompileOnce();

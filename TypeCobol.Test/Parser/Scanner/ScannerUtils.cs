@@ -25,14 +25,19 @@ namespace TypeCobol.Test.Parser.Scanner
         { }
     }
 
-    internal class TextChangeMap : TextChange
+    internal class TextChangeMap
     {
-        public CobolTextLine NewLineMap { get; private set; }
+        private readonly TextChange _change;
 
-        public TextChangeMap(TextChange change, ColumnsLayout columnsLayout) :
-            base(change.Type, change.LineIndex, change.NewLine)
+        public CobolTextLine NewLineMap { get; }
+        
+        public int LineIndex => _change.LineIndex;
+        public TextChangeType Type => _change.Type;
+
+        public TextChangeMap(TextChange change, ColumnsLayout columnsLayout)
         {
-            NewLineMap = new CobolTextLine(NewLine, columnsLayout);
+            _change = change;
+            NewLineMap = new CobolTextLine(change.NewLine, columnsLayout);
         }
     }
 

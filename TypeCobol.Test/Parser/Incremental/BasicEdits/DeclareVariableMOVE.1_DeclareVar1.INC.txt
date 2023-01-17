@@ -1,0 +1,35 @@
+================================ ICobolTextLine ================================
+Line    4: LineInserted    ->        01 var1 PIC X.
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineInserted    ->        01 var1 PIC X.
+================================= ITokensLine ==================================
+Line    4: LineInserted    -> [8,9:01]<LevelNumber>{1} [11,14:var1]<UserDefinedWord> [16,18:PIC]<PIC> [20,20:X]<PictureCharacterString> [21,21+:.]<PeriodSeparator> 
+Line    4: LineUpdated     -> [8,9:01]<LevelNumber>{1} [11,14:var1]<UserDefinedWord> [16,18:PIC]<PIC> [20,20:X]<PictureCharacterString> [21,21+:.]<PeriodSeparator> 
+Line    5: LineUpdated     -> [8,16:PROCEDURE]<PROCEDURE> [18,25:DIVISION]<DIVISION> [26,26+:.]<PeriodSeparator> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineInserted    -> [8,9:01]<LevelNumber>{1} [11,14:var1]<UserDefinedWord> [16,18:PIC]<PIC> [20,20:X]<PictureCharacterString> [21,21+:.]<PeriodSeparator> 
+Line    5: LineUpdated     -> [8,16:PROCEDURE]<PROCEDURE> [18,25:DIVISION]<DIVISION> [26,26+:.]<PeriodSeparator> 
+============================= IProcessedTokensLine =============================
+Line    4: LineInserted    -> 
+Line    5: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineInserted    -> 
+Line    5: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
