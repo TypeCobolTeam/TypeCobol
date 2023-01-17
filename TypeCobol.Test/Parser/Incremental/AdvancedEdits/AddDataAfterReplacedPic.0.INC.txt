@@ -1,0 +1,35 @@
+================================ ICobolTextLine ================================
+Line    6: LineInserted    ->        01 var2 pic X.
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    6: LineInserted    ->        01 var2 pic X.
+================================= ITokensLine ==================================
+Line    6: LineInserted    -> [8,9:01]<LevelNumber>{1} [11,14:var2]<UserDefinedWord> [16,18:pic]<PIC> [20,20:X]<PictureCharacterString> [21,21+:.]<PeriodSeparator> 
+Line    6: LineUpdated     -> [8,9:01]<LevelNumber>{1} [11,14:var2]<UserDefinedWord> [16,18:pic]<PIC> [20,20:X]<PictureCharacterString> [21,21+:.]<PeriodSeparator> 
+Line    7: LineUpdated     -> [8,16:PROCEDURE]<PROCEDURE> [18,25:DIVISION]<DIVISION> [26,26+:.]<PeriodSeparator> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    6: LineInserted    -> [8,9:01]<LevelNumber>{1} [11,14:var2]<UserDefinedWord> [16,18:pic]<PIC> [20,20:X]<PictureCharacterString> [21,21+:.]<PeriodSeparator> 
+Line    7: LineUpdated     -> [8,16:PROCEDURE]<PROCEDURE> [18,25:DIVISION]<DIVISION> [26,26+:.]<PeriodSeparator> 
+============================= IProcessedTokensLine =============================
+Line    6: LineInserted    -> 
+Line    7: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    6: LineInserted    -> 
+Line    7: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [26,26+:.]<PeriodSeparator>
+ 
+Line    7: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [26,26+:.]<PeriodSeparator>
+ 
+Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    7: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [26,26+:.]<PeriodSeparator>
+ 
+Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    7: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
