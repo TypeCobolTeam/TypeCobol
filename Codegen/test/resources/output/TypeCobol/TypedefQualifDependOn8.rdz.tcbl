@@ -30,6 +30,7 @@
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.
        END PROGRAM DVZF0OS3.
+
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.

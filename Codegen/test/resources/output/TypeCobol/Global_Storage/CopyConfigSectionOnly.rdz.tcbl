@@ -48,6 +48,7 @@
            goback
            .
        end program BSATEST6.
+
       *
       * Global Storage Section variables
       *_________________________________________________________________

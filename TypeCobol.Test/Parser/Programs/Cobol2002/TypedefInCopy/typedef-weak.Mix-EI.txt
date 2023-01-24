@@ -9,3 +9,4 @@ Line 5[10,26] <30, Error, Semantics> - Error in copy 'TypedefWeak' at line 5 : S
          01 var1 type TypedefWeak1.
          01 var2 type TypedefWeak2.
        END PROGRAM MainProgram.
+

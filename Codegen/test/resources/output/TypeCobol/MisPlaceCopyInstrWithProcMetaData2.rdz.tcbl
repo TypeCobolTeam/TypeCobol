@@ -124,6 +124,7 @@
                           
       *declare procedure Foo public.
        END PROGRAM DVZF0OS2.
+
       *
       *declare procedure Foo public.
       *_________________________________________________________________

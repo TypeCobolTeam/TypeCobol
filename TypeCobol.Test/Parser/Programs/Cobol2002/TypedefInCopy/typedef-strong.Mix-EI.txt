@@ -9,3 +9,4 @@ Line 5[10,28] <30, Error, Semantics> - Error in copy 'TypedefStrong' at line 5 :
          01 var1 type TypedefStrong1.
          01 var2 type TypedefStrong2.
        END PROGRAM MainProgram.
+

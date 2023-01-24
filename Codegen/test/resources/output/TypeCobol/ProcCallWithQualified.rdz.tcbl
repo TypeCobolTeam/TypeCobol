@@ -30,6 +30,7 @@
       *declare procedure DisplayCounter private
       *         input LineDetail pic X(50).
        END PROGRAM DVZZOSM5.
+
       *
       *declare procedure DisplayCounter private
       *         input LineDetail pic X(50).

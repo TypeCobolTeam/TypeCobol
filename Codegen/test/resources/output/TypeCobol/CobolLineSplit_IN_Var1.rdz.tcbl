@@ -57,6 +57,7 @@
                                                          .
 
        END PROGRAM CobolLineSplitINVar.
+
       *
       *declare procedure check private
       *   output mydate        PIC X(30)
