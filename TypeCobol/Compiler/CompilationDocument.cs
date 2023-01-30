@@ -241,6 +241,10 @@ namespace TypeCobol.Compiler
             // If the compilation step was not yet applied to this line, we don't need a new version of the line
             if (originalLine.CanStillBeUpdatedBy(compilationStep))
             {
+                if (compilationStep <= CompilationStep.Preprocessor)
+                {
+                    originalLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing;
+                }
                 return originalLine;
             }
             // If the compilation step was previously applied to this line, we need to create a new version of the line
