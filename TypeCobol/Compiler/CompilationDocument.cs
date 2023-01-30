@@ -243,7 +243,7 @@ namespace TypeCobol.Compiler
             {
                 if (compilationStep <= CompilationStep.Preprocessor)
                 {
-                    originalLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing;
+                    originalLine.NeedsCompilerDirectiveParsing = true;
                 }
                 return originalLine;
             }
