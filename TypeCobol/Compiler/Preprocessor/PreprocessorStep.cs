@@ -419,7 +419,7 @@ namespace TypeCobol.Compiler.Preprocessor
             if (lineIndex < (documentLines.Count - 1))
             {
                 int nextLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
+                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, true);
                 while (enumerator.MoveNext())
                 {
                     // Get the next line until non continuation line is encountered
