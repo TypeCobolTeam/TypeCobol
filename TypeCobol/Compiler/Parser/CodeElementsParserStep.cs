@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Parser
                     {
                         if (lastParseSection == null || tokensChange.LineIndex > lastParseSection.StopLineIndex)
                         {
-                            lastParseSection = CheckIfAdjacentLinesNeedRefresh(tokensChange.LineIndex, documentLines, prepareDocumentLineForUpdate, codeElementsLinesChanges, lastParseSection);
+                            lastParseSection = CheckIfAdjacentLinesNeedRefresh(tokensChange, documentLines, prepareDocumentLineForUpdate, codeElementsLinesChanges, lastParseSection);
                             refreshParseSections.Add(lastParseSection);
                         }
                     }
@@ -452,11 +452,19 @@ namespace TypeCobol.Compiler.Parser
         /// 1. List all the starting and stop tokens of sections to parse with the rules above
         /// 2. Parse code elements beginning with starting token and until we reach stop token
         /// </summary>
-        private static ParseSection CheckIfAdjacentLinesNeedRefresh(int lineIndex, ISearchableReadOnlyList<CodeElementsLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges, ParseSection lastParseSection)
+        private static ParseSection CheckIfAdjacentLinesNeedRefresh(DocumentChange<IProcessedTokensLine> change, ISearchableReadOnlyList<CodeElementsLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges, ParseSection lastParseSection)
         {
             ParseSection currentParseSection = new ParseSection();
 
+            // Special case for REPLACE: if a REPLACE directive has been updated, we have to go over all tokens up to next REPLACE directive (or end of file if none found)
+            bool lookForNextReplaceDirective = false;
+            if (change.NewLine is ProcessedTokensLine changedProcessedTokensLine)
+            {
+                lookForNextReplaceDirective = changedProcessedTokensLine.ReplaceDirective != null;
+            }
+
             // Navigate backwards to the start of the multiline code element
+            int lineIndex = change.LineIndex;
             if (lineIndex > 0)
             {
                 int previousLineIndex = lineIndex;
@@ -505,7 +513,7 @@ namespace TypeCobol.Compiler.Parser
                 currentParseSection.StartToken = null;
             }
 
-            // Navigate forwards to the end of the multiline code element
+            // Navigate forwards to the end of the multiline code element or to the next REPLACE directive
             if (lineIndex < (documentLines.Count - 1))
             {
                 int nextLineIndex = lineIndex;
@@ -527,6 +535,22 @@ namespace TypeCobol.Compiler.Parser
                     // Check if the next CodeElement found starts at the beginning of the line   
                     if (nextLine != null)
                     {
+                        if (lookForNextReplaceDirective)
+                        {
+                            if (nextLine.ReplaceDirective != null)
+                            {
+                                // next line is a new REPLACE directive, stop looking for REPLACE and look for next CodeElement
+                                lookForNextReplaceDirective = false;
+                            }
+                            else
+                            {
+                                // Line could have been updated through the effect of the modified REPLACE
+                                nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
+                                codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
+                                continue;
+                            }
+                        }
+
                         nextLineHasCodeElements = nextLine.HasCodeElements;
                         bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
                         if (nextLineHasCodeElements)

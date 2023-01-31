@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
 
             // Register REPLACE compiler directive
-            if(compilerDirective.Type == CompilerDirectiveType.REPLACE)
+            if(compilerDirective.Type == CompilerDirectiveType.REPLACE || compilerDirective.Type == CompilerDirectiveType.REPLACE_OFF)
             {
                 ReplaceDirective = (ReplaceDirective)compilerDirective;
             }
