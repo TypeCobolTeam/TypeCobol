@@ -36,20 +36,18 @@ namespace TypeCobol.Compiler.Parser
             public ParseSection()
             { }
 
-            public ParseSection(int startLineIndex, Token startToken, int stopLineIndex, Token stopToken, bool stopTokenIsLastTokenOfTheLine)
+            public ParseSection(int startLineIndex, Token startToken, int stopLineIndex, Token stopToken)
             {
                 StartLineIndex = startLineIndex;
                 StartToken = startToken;
                 StopLineIndex = stopLineIndex;
                 StopToken = stopToken;
-                StopTokenIsFirstTokenOfTheLine = stopTokenIsLastTokenOfTheLine;
             }
 
             public int StartLineIndex { get; set; }
             public Token StartToken { get; set; }
             public int StopLineIndex { get; set; }
             public Token StopToken { get; set; }
-            public bool StopTokenIsFirstTokenOfTheLine { get; set; }
         }
 
         // When not null, optionnaly used to gather Antlr performance profiling information
@@ -99,9 +97,7 @@ namespace TypeCobol.Compiler.Parser
                 //After getting all the parts refreshed, get the largest part that has been refreshed
                 var minParseSection = refreshParseSections.OrderBy(p => p.StartLineIndex).First();
                 var maxParseSection = refreshParseSections.OrderByDescending(p => p.StopLineIndex).First();
-                largestRefreshParseSection = new ParseSection(minParseSection.StartLineIndex,
-                    minParseSection.StartToken, maxParseSection.StopLineIndex, maxParseSection.StopToken,
-                    maxParseSection.StopTokenIsFirstTokenOfTheLine);
+                largestRefreshParseSection = new ParseSection(minParseSection.StartLineIndex, minParseSection.StartToken, maxParseSection.StopLineIndex, maxParseSection.StopToken);
             }
 
 
@@ -583,7 +579,6 @@ namespace TypeCobol.Compiler.Parser
                             {
                                 currentParseSection.StopLineIndex = nextLineIndex;
                                 currentParseSection.StopToken = nextLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
-                                currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
                                 break;
                             }
                             else
@@ -598,7 +593,6 @@ namespace TypeCobol.Compiler.Parser
                 {
                     currentParseSection.StopLineIndex = nextLineIndex;
                     currentParseSection.StopToken = null;
-                    currentParseSection.StopTokenIsFirstTokenOfTheLine = false;
                 }
             }
             // If last line was updated, or if no CodeElement was found after the updated line, current parse section ends at the end of the file
@@ -606,7 +600,6 @@ namespace TypeCobol.Compiler.Parser
             {
                 currentParseSection.StopLineIndex = documentLines.Count - 1;
                 currentParseSection.StopToken = null;
-                currentParseSection.StopTokenIsFirstTokenOfTheLine = false;
             }
 
             return currentParseSection;
