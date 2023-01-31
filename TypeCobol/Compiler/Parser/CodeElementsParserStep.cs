@@ -453,11 +453,8 @@ namespace TypeCobol.Compiler.Parser
             ParseSection currentParseSection = new ParseSection();
 
             // Special case for REPLACE: if a REPLACE directive has been updated, we have to go over all tokens up to next REPLACE directive (or end of file if none found)
-            bool lookForNextReplaceDirective = false;
-            if (change.NewLine is ProcessedTokensLine changedProcessedTokensLine)
-            {
-                lookForNextReplaceDirective = changedProcessedTokensLine.ReplaceDirective != null;
-            }
+            var changedProcessedTokensLine = (ProcessedTokensLine)change.NewLine;
+            bool lookForNextReplaceDirective = changedProcessedTokensLine?.ReplaceDirective != null;
 
             // Navigate backwards to the start of the multiline code element
             int lineIndex = change.LineIndex;
