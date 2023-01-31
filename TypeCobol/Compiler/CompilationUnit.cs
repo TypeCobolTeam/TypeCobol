@@ -49,6 +49,7 @@ namespace TypeCobol.Compiler
                 _analyzerProvider = null;
             }
 
+            _history = this.TrackChanges(5);
         }
 
         /// <summary>
@@ -235,6 +236,8 @@ namespace TypeCobol.Compiler
 #endif
         }
 
+        private readonly IncrementalChangesHistory _history;
+
         /// <summary>
         /// Creates a temporary snapshot which contains element before the cross check phase
         /// Usefull to create a program symboltable without checking nodes.
@@ -263,6 +266,7 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
+                        _history,
                         out var root,
                         out var newDiagnostics,
                         out var nodeCodeElementLinkers,
