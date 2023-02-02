@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TypeCobol.Compiler.Scanner
+﻿namespace TypeCobol.Compiler.Scanner
 {
     /// <summary>
     /// Common interface to iterate over tokens stored in TokensLines
@@ -69,6 +67,13 @@ namespace TypeCobol.Compiler.Scanner
         /// After a call to this method, GetNextToken returns the token FOLLOWING the current position.
         /// </summary>
         void SeekToPosition(object iteratorPosition);
+
+        /// <summary>
+        /// Sets the current iterator position to the beginning of the given line in the main document (zero-based index).
+        /// After a call to this method, GetNextToken returns the first token of the given line.
+        /// </summary>
+        /// <param name="line"></param>
+        void SeekToLine(int line);
 
         /// <summary>
         /// Saves the current position of the iterator, to be able to restore it later

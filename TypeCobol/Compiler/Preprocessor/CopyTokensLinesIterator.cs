@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -61,24 +56,27 @@ namespace TypeCobol.Compiler.Preprocessor
             this.channelFilter = channelFilter;
 
             // Start just before the first token in the document
-            Reset();
+            Reset(0);
         }
 
         /// <summary>
         /// Resets the iterator position : before the first token of the document
         /// </summary>
-        public void Reset()
+        /// <param name="startLine">Zero-based index of the start line to be enumerated after reset.</param>
+        private void Reset(int startLine)
         {
-            currentPosition.LineIndex = 0;
+            if (startLine < 0)
+            {
+                startLine = 0; // Start on first line
+            }
+            else if (startLine >= tokensLines.Count)
+            {
+                startLine = tokensLines.Count - 1; // Start on last line
+            }
+
+            currentPosition.LineIndex = startLine;
             currentPosition.TokenIndexInLine = -1;
-            if (tokensLines.Count > 0)
-            {
-                currentLine = tokensLines[0];
-            }
-            else
-            {
-                currentLine = null;
-            }
+            currentLine = tokensLines.Count > 0 ? tokensLines[startLine] : null;
             currentTokenInMainDocument = null;
         }
 
@@ -245,6 +243,8 @@ namespace TypeCobol.Compiler.Preprocessor
                 currentTokenInMainDocument = null;
             }
         }
+
+        public void SeekToLine(int line) => Reset(line);
 
         /// <summary>
         /// Get next token or EndOfFile

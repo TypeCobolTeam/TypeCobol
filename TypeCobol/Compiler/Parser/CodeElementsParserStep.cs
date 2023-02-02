@@ -103,8 +103,43 @@ namespace TypeCobol.Compiler.Parser
 
             // --- INITIALIZE ANTLR CodeElements parser ---
 
-            // Create a token iterator on top of pre-processed tokens lines
+            // Create a token iterator on top of pre-processed tokens lines and position on start line
             ITokensLinesIterator tokensIterator = processedTokensDocument.GetProcessedTokensIterator();
+
+            //For incremental mode, calculate best value for start line of the iterator
+            if (largestRefreshParseSection != null)
+            {
+                //No need to check for ReplacedToken or ImportedToken here, as we directly interact with documentLines
+                //which are the lines of the original document.
+
+                //TODO find all ReplaceDirective that can target the current line.
+                //Count the largest number of tokens that a Replace directive can target
+                //Rollback by this number of tokens
+
+                //Temporary: for now rollback X lines as it's unlikely that a Replace target more than that
+                int startLine = Math.Max(0, largestRefreshParseSection.StartLineIndex - 40);
+                if (startLine > 0)
+                {
+                    //Take previous line has long as there are tokens continued on this line
+                    using (var iterator = documentLines.GetEnumerator(startLine, -1, true))
+                    {
+                        while (iterator.MoveNext())
+                        {
+                            var current = iterator.Current;
+                            System.Diagnostics.Debug.Assert(current != null);
+                            if (!current.HasTokenContinuationFromPreviousLine)
+                            {
+                                break;
+                            }
+
+                            startLine--;
+                        }
+                    }
+
+                    //Position iterator at start line
+                    tokensIterator.SeekToLine(startLine);
+                }
+            }
 
             // Create an Antlr compatible token source on top of the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(

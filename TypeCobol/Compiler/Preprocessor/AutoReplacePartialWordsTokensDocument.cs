@@ -69,6 +69,11 @@ namespace TypeCobol.Compiler.Preprocessor
                 _sourceIterator.SeekToPosition(iteratorPosition);
             }
 
+            public void SeekToLine(int line)
+            {
+                _sourceIterator.SeekToLine(line);
+            }
+
             public void SaveCurrentPositionSnapshot()
             {
                 _sourceIterator.SaveCurrentPositionSnapshot();
