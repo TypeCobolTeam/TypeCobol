@@ -47,6 +47,7 @@ namespace TypeCobol.Compiler.Parser
             SymbolTable customSymbols,
             PerfStatsForParserInvocation perfStatsForParserInvocation,
             ISyntaxDrivenAnalyzer[] customAnalyzers,
+            IncrementalChangesHistory history,
             out SourceFile root,
             out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
@@ -69,7 +70,7 @@ namespace TypeCobol.Compiler.Parser
             CupParser.TypeCobolProgramParser parser = new CupParser.TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
             parser.ErrorReporter = diagReporter;
-            ProgramClassBuilder builder = new ProgramClassBuilder(codeElementsLines);
+            ProgramClassBuilder builder = new ProgramClassBuilder(codeElementsLines, history);
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 

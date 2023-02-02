@@ -242,6 +242,30 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         public IList<Diagnostic> PreprocessorDiagnostics { get; private set; }
 
+        public override IEnumerable<Diagnostic> AllDiagnostics()
+        {
+            // Start with diagnostic from TokensLine
+            foreach (var diagnostic in base.AllDiagnostics())
+            {
+                yield return diagnostic;
+            }
+
+            // Add preprocessor diagnostics
+            if (PreprocessorDiagnostics != null)
+            {
+                foreach (var preprocessorDiagnostic in PreprocessorDiagnostics)
+                {
+                    yield return preprocessorDiagnostic;
+                }
+            }
+        }
+
+        internal override void ResetDiagnostics()
+        {
+            base.ResetDiagnostics();
+            PreprocessorDiagnostics = null;
+        }
+
         /// <summary>
         /// Lazy initialization of diagnostics list
         /// </summary>
