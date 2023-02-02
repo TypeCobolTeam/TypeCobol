@@ -36,5 +36,10 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         MultilineScanState ScanState { get; }
 
+        /// <summary>
+        /// Enumerate all diagnostic for this line.
+        /// </summary>
+        /// <returns>A (potentially deferred) enumeration of all diagnostics attached to this line.</returns>
+        IEnumerable<Diagnostic> AllDiagnostics();
     }
 }

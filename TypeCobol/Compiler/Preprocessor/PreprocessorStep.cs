@@ -226,7 +226,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             compilerDirectiveLine.AddDiagnostic(directiveDiag);
                         }
                     }
-                    else if (cupCobolErrorStrategy.Diagnostics != null)
+                    if (cupCobolErrorStrategy.Diagnostics != null)
                     {
                         foreach (Diagnostic directiveDiag in cupCobolErrorStrategy.Diagnostics)
                         {

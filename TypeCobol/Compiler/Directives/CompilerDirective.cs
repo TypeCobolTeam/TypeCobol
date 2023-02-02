@@ -82,11 +82,6 @@ namespace TypeCobol.Compiler.Directives
         public IList<Diagnostic> ParsingDiagnostics { get; private set; }
 
         /// <summary>
-        /// List of errors found when processing this CompilerDirective during CodeElement step.
-        /// </summary>
-        public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
-
-        /// <summary>
         /// Consumed tokens of the COPY. This property is set by the PreprocessorStep
         /// after creating the new CompilerDirective instance.
         /// </summary>
@@ -96,12 +91,6 @@ namespace TypeCobol.Compiler.Directives
         {
             if (ParsingDiagnostics == null) ParsingDiagnostics = new List<Diagnostic>();
             ParsingDiagnostics.Add(diagnostic);
-        }
-
-        public void AddProcessingDiagnostic(Diagnostic diagnostic)
-        {
-            if (ProcessingDiagnostics == null) ProcessingDiagnostics = new List<Diagnostic>();
-            ProcessingDiagnostics.Add(diagnostic);
         }
 
         public override string ToString()
@@ -439,6 +428,16 @@ namespace TypeCobol.Compiler.Directives
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
 
 #if EUROINFO_RULES
+        /// <summary>
+        /// List of errors found when processing this CopyDirective during CodeElement step.
+        /// </summary>
+        public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
+
+        public void AddProcessingDiagnostic(Diagnostic diagnostic)
+        {
+            if (ProcessingDiagnostics == null) ProcessingDiagnostics = new List<Diagnostic>();
+            ProcessingDiagnostics.Add(diagnostic);
+        }
 
         /// <summary>
         /// If true, remove the first 01 level data item found in the COPY text 
