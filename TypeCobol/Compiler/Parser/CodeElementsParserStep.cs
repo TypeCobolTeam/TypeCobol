@@ -232,7 +232,8 @@ namespace TypeCobol.Compiler.Parser
                 // If the parse tree is not empty
                 if (codeElementsParseTree.codeElement() != null && codeElementsParseTree.codeElement().Length > 0)
                 {
-                    List<Diagnostic> diagnosticsToReport = new List<Diagnostic>();
+                    var diagnosticsToReport = new List<Diagnostic>();
+                    var codeElementsLineSet = new HashSet<CodeElementsLine>();
 
                     // Analyze the parse tree for each code element
                     foreach (var codeElementParseTree in codeElementsParseTree.codeElement())
@@ -244,6 +245,25 @@ namespace TypeCobol.Compiler.Parser
                         {
                             continue;
                         }
+
+#if EUROINFO_RULES
+                        // Now that the tokens for this line have been enumerated, we can access the ProcessingDiagnostics of the COPY directives (if any)
+                        // Copy these diagnostics into ParserDiagnostics but do it only once for each line !
+                        if (codeElementsLineSet.Add(codeElementsLine) && codeElementsLine.ImportedDocuments != null)
+                        {
+                            foreach (var copyDirective in codeElementsLine.ImportedDocuments.Keys)
+                            {
+                                if (copyDirective.ProcessingDiagnostics != null)
+                                {
+                                    foreach (var copyDirectiveProcessingDiagnostic in copyDirective.ProcessingDiagnostics)
+                                    {
+                                        codeElementsLine.AddParserDiagnostic(copyDirectiveProcessingDiagnostic);
+                                    }
+                                }
+                            }
+                        }
+#endif
+
                         if (IncrementalLineLimit >= 0 && tokenStart.Line >= IncrementalLineLimit)
                         {
                             bool tokenStartIsImported = tokenStart is TypeCobol.Compiler.Preprocessor.ImportedToken;
