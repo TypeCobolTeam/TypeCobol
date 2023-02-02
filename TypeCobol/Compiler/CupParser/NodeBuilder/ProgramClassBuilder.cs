@@ -22,45 +22,68 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         private void LogErrorIncludingFullSourceCode(string message)
         {
-            if (_SourceCodeDumped) return; //Dump only once to avoid huge logs
+            if (_SourceCodeDumped) return; // Dump only once to avoid huge logs
 
-            var codeElements = new StringBuilder();
-            var sourceCode = new StringBuilder();
-            foreach (var codeElementsLine in _codeElementsLines)
-            {
-                if (!codeElementsLine.HasCodeElements) continue;
+            // Build a correlation id to group traces
+            string correlationId = DateTime.Now.ToString("s") + "@" + Environment.MachineName;
 
-                foreach (var codeElement in codeElementsLine.CodeElements)
-                {
-                    codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
-                    sourceCode.AppendLine(codeElement.SafeGetSourceText());
-                }
-            }
+            const int MAX_LINES_PER_LOG = 5000;
+            int traceId = 0;
+            var currentTrace = new StringBuilder();
 
-            var changes = new StringBuilder();
-            int i = -4; //Number last 5 changes from -4 to 0
+            // Dump file structure
+            IterateCodeElementsLines(DumpCodeElementTypes);
+
+            // Dump source code
+            IterateCodeElementsLines(codeElementsLine => currentTrace.AppendLine(codeElementsLine.Text));
+
+            // Dump last 5 incremental changes
+            int changeId = -4; //Number last 5 changes from -4 to 0
             foreach (var textChangedEvent in _history.TextChangedEvents)
             {
-                changes.AppendLine($"change {i}:");
+                currentTrace.AppendLine($"change {changeId}:");
                 foreach (var documentChange in textChangedEvent.DocumentChanges)
                 {
                     string text = documentChange.NewLine == null
                         ? string.Empty
                         : '"' + documentChange.NewLine.Text + '"';
-                    changes.AppendLine($"{documentChange.Type}@{documentChange.LineIndex} {text}");
+                    currentTrace.AppendLine($"{documentChange.Type}@{documentChange.LineIndex} {text}");
                 }
-                i++;
-            }
 
-            var contextData = new Dictionary<string, object>()
-                              {
-                                  { "codeElements", codeElements.ToString() },
-                                  { "sourceCode", sourceCode.ToString() },
-                                  { "changes", changes.ToString() }
-                              };
-            LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+                changeId++;
+            }
+            LoggingSystem.LogMessage(LogLevel.Error, message, new Dictionary<string, object>() { { $"{correlationId} - changes", currentTrace.ToString() } });
 
             _SourceCodeDumped = true;
+
+            void IterateCodeElementsLines(Action<CodeElementsLine> appendLine)
+            {
+                for (int i = 0; i < _codeElementsLines.Count; i++)
+                {
+                    appendLine(_codeElementsLines[i]);
+
+                    if ((i + 1) % MAX_LINES_PER_LOG == 0 || i == _codeElementsLines.Count - 1)
+                    {
+                        var contextData = new Dictionary<string, object>()
+                                          {
+                                              { $"{correlationId} - part {traceId}", currentTrace.ToString() }
+                                          };
+                        LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+                        currentTrace.Clear();
+                        traceId++;
+                    }
+                }
+            }
+
+            void DumpCodeElementTypes(CodeElementsLine codeElementsLine)
+            {
+                if (!codeElementsLine.HasCodeElements) return;
+
+                foreach (var codeElement in codeElementsLine.CodeElements)
+                {
+                    currentTrace.AppendLine($"{codeElement.Line}: {codeElement.Type}");
+                }
+            }
         }
 
         public SyntaxTree SyntaxTree { get; set; }
