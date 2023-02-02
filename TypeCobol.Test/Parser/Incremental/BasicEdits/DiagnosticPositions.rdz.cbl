@@ -1,0 +1,8 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       
+       01 var1 PIC X(20) VALUE X'A0B1C'.
+       COPY someCopyThatDontExist.
+       END PROGRAM TCOMFL06.

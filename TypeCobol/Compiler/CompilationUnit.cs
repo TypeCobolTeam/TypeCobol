@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
@@ -49,6 +50,7 @@ namespace TypeCobol.Compiler
                 _analyzerProvider = null;
             }
 
+            _history = this.TrackChanges(5);
         }
 
         /// <summary>
@@ -235,6 +237,8 @@ namespace TypeCobol.Compiler
 #endif
         }
 
+        private readonly IncrementalChangesHistory _history;
+
         /// <summary>
         /// Creates a temporary snapshot which contains element before the cross check phase
         /// Usefull to create a program symboltable without checking nodes.
@@ -263,6 +267,7 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
+                        _history,
                         out var root,
                         out var newDiagnostics,
                         out var nodeCodeElementLinkers,
@@ -451,43 +456,7 @@ namespace TypeCobol.Compiler
                 return base.AllDiagnostics();
             }
 
-            var diagnostics = new List<Diagnostic>();
-            foreach (var codeElementsLine in codeElementsDocumentSnapshot.Lines)
-            {
-                AddScannerDiagnostics(codeElementsLine, diagnostics);
-                AddPreprocessorDiagnostics(codeElementsLine, diagnostics);
-
-                //CompilerDirective processing diagnostics (compiler directives are parsed during Preprocessor step and processed during CodeElement step)
-                if (codeElementsLine.HasCompilerDirectives)
-                {
-                    foreach (var token in codeElementsLine.TokensWithCompilerDirectives)
-                    {
-                        if (token is CompilerDirectiveToken compilerDirectiveToken && compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics != null)
-                        {
-                            diagnostics.AddRange(compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics);
-                        }
-                    }
-                }
-
-                //CodeElement parsing diagnostics
-                if (codeElementsLine.ParserDiagnostics != null)
-                {
-                    diagnostics.AddRange(codeElementsLine.ParserDiagnostics);
-                }
-
-                //Diagnostics on CodeElement themselves
-                if (codeElementsLine.CodeElements != null)
-                {
-                    foreach (var codeElement in codeElementsLine.CodeElements)
-                    {
-                        if (codeElement.Diagnostics != null)
-                        {
-                            diagnostics.AddRange(codeElement.Diagnostics);
-                        }
-                    }
-                }
-            }
-
+            var diagnostics = codeElementsDocumentSnapshot.Lines.SelectMany(line => line.AllDiagnostics()).ToList();
             if (onlyCodeElementDiagnostics) return diagnostics; //No need to go further
 
             TemporarySemanticDocument temporarySemanticDocument;

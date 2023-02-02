@@ -20,27 +20,6 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class CompilationDocument
     {
-        protected static void AddScannerDiagnostics(ITokensLine tokensLine, List<Diagnostic> diagnostics)
-        {
-            if (tokensLine.ScannerDiagnostics != null)
-            {
-                diagnostics.AddRange(tokensLine.ScannerDiagnostics);
-            }
-        }
-
-        protected static void AddPreprocessorDiagnostics(IProcessedTokensLine processedTokensLine, List<Diagnostic> diagnostics)
-        {
-            if (processedTokensLine.CompilerListingControlDirective?.ParsingDiagnostics != null)
-            {
-                diagnostics.AddRange(processedTokensLine.CompilerListingControlDirective.ParsingDiagnostics);
-            }
-
-            if (processedTokensLine.PreprocessorDiagnostics != null)
-            {
-                diagnostics.AddRange(processedTokensLine.PreprocessorDiagnostics);
-            }
-        }
-
         /// <summary>
         /// Text source name and format
         /// </summary>
@@ -941,8 +920,7 @@ namespace TypeCobol.Compiler
                 //We got a ProcessedTokensDocument, iterate over its lines
                 foreach (var processedTokensLine in processedTokensDocument.Lines)
                 {
-                    AddScannerDiagnostics(processedTokensLine, diagnostics);
-                    AddPreprocessorDiagnostics(processedTokensLine, diagnostics);
+                    diagnostics.AddRange(processedTokensLine.AllDiagnostics());
                 }
             }
             else
@@ -959,7 +937,7 @@ namespace TypeCobol.Compiler
                     //Iterate over TokensLines
                     foreach (var tokensLine in tokensDocument.Lines)
                     {
-                        AddScannerDiagnostics(tokensLine, diagnostics);
+                        diagnostics.AddRange(tokensLine.AllDiagnostics());
                     }
                 }
                 //else no snapshot available yet
