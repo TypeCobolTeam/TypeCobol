@@ -37,10 +37,26 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
             }
 
+            var changes = new StringBuilder();
+            int i = -4; //Number last 5 changes from -4 to 0
+            foreach (var textChangedEvent in _history.TextChangedEvents)
+            {
+                changes.AppendLine($"change {i}:");
+                foreach (var documentChange in textChangedEvent.DocumentChanges)
+                {
+                    string text = documentChange.NewLine == null
+                        ? string.Empty
+                        : '"' + documentChange.NewLine.Text + '"';
+                    changes.AppendLine($"{documentChange.Type}@{documentChange.LineIndex} {text}");
+                }
+                i++;
+            }
+
             var contextData = new Dictionary<string, object>()
                               {
                                   { "codeElements", codeElements.ToString() },
-                                  { "sourceCode", sourceCode.ToString() }
+                                  { "sourceCode", sourceCode.ToString() },
+                                  { "changes", changes.ToString() }
                               };
             LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
 
@@ -88,8 +104,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private readonly SymbolTable TableOfNamespaces;
 
         private readonly IReadOnlyList<CodeElementsLine> _codeElementsLines;
+        private readonly IncrementalChangesHistory _history;
 
-        public ProgramClassBuilder(IReadOnlyList<CodeElementsLine> codeElementsLines)
+        public ProgramClassBuilder(IReadOnlyList<CodeElementsLine> codeElementsLines, IncrementalChangesHistory history)
         {
             // Intrinsics and Namespaces always exist. Intrinsic table has no enclosing scope.
             TableOfIntrinsics = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
@@ -98,6 +115,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             programsStack = new Stack<Program>();
 
             _codeElementsLines = codeElementsLines;
+            _history = history;
         }
 
         public SymbolTable CustomSymbols
