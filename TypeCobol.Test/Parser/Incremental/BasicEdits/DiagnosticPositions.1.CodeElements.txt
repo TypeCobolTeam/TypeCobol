@@ -1,0 +1,19 @@
+﻿--- Diagnostics ---
+Line 5[32,39] <19, Warning, Tokens> - The number of characters in an hexadecimal alphanumeric literal should be a multiple of 2
+Line 6[8,34] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: someCopyThatDontExist
+--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = TCOMFL06
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [40,40+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = TCOMFL06
+

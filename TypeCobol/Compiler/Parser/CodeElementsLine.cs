@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
@@ -98,14 +96,48 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Reset all diagnostics for the current line
         /// </summary>
-        internal void ResetDiagnostics()
+        internal override void ResetDiagnostics()
         {
+            base.ResetDiagnostics();
             _ParserDiagnostics = null;
-            if (CodeElements != null)
+            if (HasCodeElements)
             {
                 foreach (var codeElement in CodeElements)
                 {
                     codeElement.Diagnostics = null; //Delete all diagnostics on every codeelement of this line
+                }
+            }
+        }
+
+        public override IEnumerable<Diagnostic> AllDiagnostics()
+        {
+            // Start with diagnostic from ProcessedTokensLine
+            foreach (var diagnostic in base.AllDiagnostics())
+            {
+                yield return diagnostic;
+            }
+
+            // CodeElement parsing diagnostics and COPY directive processing diagnostics in EI-mode
+            if (ParserDiagnostics != null)
+            {
+                foreach (var parserDiagnostic in ParserDiagnostics)
+                {
+                    yield return parserDiagnostic;
+                }
+            }
+
+            // Diagnostics on CodeElement themselves
+            if (HasCodeElements)
+            {
+                foreach (var codeElement in CodeElements)
+                {
+                    if (codeElement.Diagnostics != null)
+                    {
+                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
+                        {
+                            yield return codeElementDiagnostic;
+                        }
+                    }
                 }
             }
         }
@@ -119,28 +151,10 @@ namespace TypeCobol.Compiler.Parser
             //Update line index
             LineIndex += offset;
 
-            //Update ParserDiag lines index
-            if (_ParserDiagnostics != null)
+            //Shift diagnostics
+            foreach (var diagnostic in AllDiagnostics())
             {
-                foreach (var parserDiagnostic in _ParserDiagnostics)
-                {
-                    parserDiagnostic.Shift(offset);
-                }
-            }
-
-            //Update CodeElements Diags lines index
-            if (CodeElements != null)
-            {
-                foreach (var codeElement in CodeElements)
-                {
-                    if (codeElement.Diagnostics != null)
-                    {
-                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
-                        {
-                            codeElementDiagnostic.Shift(offset);
-                        }
-                    }
-                }
+                diagnostic.Shift(offset);
             }
         }
     }
