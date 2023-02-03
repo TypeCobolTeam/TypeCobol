@@ -20,6 +20,8 @@ namespace TypeCobol.Test.Utils
         private readonly List<Comparison> _initialResultComparisons;
         private readonly Dictionary<string, List<Comparison>> _intermediateResultsComparisons;
 
+        public IIncrementalChangesGenerator ChangesGenerator { get; set; } = null;
+
         public TestUnit(string sourceFilePath, DocumentFormat documentFormat = null, TypeCobolOptions compilationOptions = null, bool antlrProfiling = false)
             : this(sourceFilePath, _DefaultCopyExtensions, documentFormat ?? DocumentFormat.RDZReferenceFormat, compilationOptions ?? new TypeCobolOptions(), Array.Empty<string>(), antlrProfiling)
         {
@@ -134,7 +136,8 @@ namespace TypeCobol.Test.Utils
 #endif
 
             // Activate incremental changes tracking, limit depth to 1 as we are always able to compare change at each step
-            var history = _fileCompiler.CompilationResultsForProgram.TrackChanges(1);
+            var compilationResults = _fileCompiler.CompilationResultsForProgram;
+            var history = compilationResults.TrackChanges(1);
 
             // Full parsing
             _fileCompiler.CompileOnce();
@@ -142,14 +145,31 @@ namespace TypeCobol.Test.Utils
             // Compare initial result
             foreach (var comparison in _initialResultComparisons)
             {
-                comparison.Compare(_fileCompiler.CompilationResultsForProgram, history);
+                comparison.Compare(compilationResults, history);
             }
 
-            // Apply change, perform incremental parsing and compare results
+            // Automatic incremental changes, based on optional change generator
+            if (ChangesGenerator != null)
+            {
+                // Apply generated changes in sequence, incremental parse after each
+                foreach (var updates in ChangesGenerator.GetUpdatesSequence(compilationResults))
+                {
+                    compilationResults.UpdateTextLines(updates);
+                    _fileCompiler.CompileOnce();
+                }
+
+                // Validate against initial parsing result
+                foreach (var comparison in _initialResultComparisons)
+                {
+                    comparison.Compare(compilationResults, history);
+                }
+            }
+
+            // Incremental changes, defined by .inc file
             foreach (var inputChange in _inputChanges)
             {
                 // Apply change
-                _fileCompiler.CompilationResultsForProgram.UpdateTextLines(inputChange.Updates);
+                compilationResults.UpdateTextLines(inputChange.Updates);
 
                 // Incremental parsing
                 _fileCompiler.CompileOnce();
@@ -157,7 +177,7 @@ namespace TypeCobol.Test.Utils
                 // Compare
                 foreach (var comparison in _intermediateResultsComparisons[inputChange.Id])
                 {
-                    comparison.Compare(_fileCompiler.CompilationResultsForProgram, history);
+                    comparison.Compare(compilationResults, history);
                 }
             }
         }
