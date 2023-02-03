@@ -138,7 +138,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Duplicate a MOVE near the end of source
             var rangeUpdate = new RangeUpdate(65808, 80, 65808, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM       ");
-            IncrementalPerformance2(Cobol85_NoRedefines, rangeUpdate);
+            IncrementalPerformance2(Cobol85_NoRedefines, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -149,7 +149,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Duplicate a MOVE near the end of source
             var rangeUpdate = new RangeUpdate(65896, 80, 65896, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
-            IncrementalPerformance2(BigTypes_NoProcedure, rangeUpdate);
+            IncrementalPerformance2(BigTypes_NoProcedure, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -160,7 +160,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Duplicate a MOVE near the end of source
             var rangeUpdate = new RangeUpdate(65899, 80, 65899, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
-            IncrementalPerformance2(BigTypes_1Procedure, rangeUpdate);
+            IncrementalPerformance2(BigTypes_1Procedure, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -171,7 +171,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Duplicate a MOVE near the end of source
             var rangeUpdate = new RangeUpdate(65804, 80, 65804, 80, Environment.NewLine + "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
-            IncrementalPerformance2(GlobalStorage, rangeUpdate);
+            IncrementalPerformance2(GlobalStorage, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -182,7 +182,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Insert a blank line at the beginning of the file
             var rangeUpdate = new RangeUpdate(50, 0, 50, 0, Environment.NewLine + "                                                                                ");
-            IncrementalPerformance2(UseALotOfTypes_1Times_Reference, rangeUpdate);
+            IncrementalPerformance2(UseALotOfTypes_1Times_Reference, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -193,7 +193,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Insert a blank line at the beginning of the file
             var rangeUpdate = new RangeUpdate(50, 0, 50, 0, Environment.NewLine + "                                                                                ");
-            IncrementalPerformance2(UseALotOfTypes_100Times, rangeUpdate);
+            IncrementalPerformance2(UseALotOfTypes_100Times, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -204,7 +204,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Insert a blank line at the beginning of the file
             var rangeUpdate = new RangeUpdate(50, 0, 50, 0, Environment.NewLine + "                                                                                ");
-            IncrementalPerformance2(UseALotOfTypes_WithProc_100Times, rangeUpdate);
+            IncrementalPerformance2(UseALotOfTypes_WithProc_100Times, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -215,7 +215,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Insert blank line right before PROCEDURE DIVISION
             var rangeUpdate = new RangeUpdate(20534, 0, 20534, 0, Environment.NewLine + "                                                                                ");
-            IncrementalPerformance2(DeepVariables, rangeUpdate);
+            IncrementalPerformance2(DeepVariables, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -226,7 +226,7 @@ namespace TypeCobol.Test.Parser.Performance
         {
             // Insert blank line right before PROCEDURE DIVISION
             var rangeUpdate = new RangeUpdate(20692, 0, 20692, 0, Environment.NewLine + "                                                                                ");
-            IncrementalPerformance2(DeepTypes, rangeUpdate);
+            IncrementalPerformance2(DeepTypes, null, rangeUpdate);
         }
 
         [TestMethod]
@@ -240,7 +240,7 @@ namespace TypeCobol.Test.Parser.Performance
              * and then readjust the end of the line to match 80 chars.
              */
             var rename = new RangeUpdate(351, 34, 351, 35, "-");
-            IncrementalPerformance2(LargeFile, rename);
+            IncrementalPerformance2(LargeFile, "LineUpdateAtBeginning", rename);
         }
 
         [TestMethod]
@@ -254,7 +254,7 @@ namespace TypeCobol.Test.Parser.Performance
              * from '0000' to '1234'.
              */
             var update = new RangeUpdate(211757, 17, 211757, 21, "1234");
-            IncrementalPerformance2(LargeFile, update);
+            IncrementalPerformance2(LargeFile, "LineUpdateAtEnd", update);
         }
 
         [TestMethod]
@@ -269,7 +269,7 @@ namespace TypeCobol.Test.Parser.Performance
              */
             string text = "              88 CEA-TP-RETURN-DUPLABEL          VALUE +145.            WSHWZ007";
             var insert = new RangeUpdate(351, 80, 351, 80, Environment.NewLine + text);
-            IncrementalPerformance2(LargeFile, insert);
+            IncrementalPerformance2(LargeFile, "LineInsertAtBeginning", insert);
         }
 
         [TestMethod]
@@ -281,7 +281,7 @@ namespace TypeCobol.Test.Parser.Performance
             // Line 211758, we are adding a dummy DISPLAY right after the MOVE instruction.
             string text = "           DISPLAY DTOT-PCDRET                                          CMM010AK";
             var insert = new RangeUpdate(211757, 80, 211757, 80, Environment.NewLine + text);
-            IncrementalPerformance2(LargeFile, insert);
+            IncrementalPerformance2(LargeFile, "LineInsertAtEnd", insert);
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace TypeCobol.Test.Parser.Performance
             return null;
         }
 
-        private void IncrementalPerformance2(string relativePath, params RangeUpdate[] updates)
+        private void IncrementalPerformance2(string relativePath, string suffix, params RangeUpdate[] updates)
         {
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
             string fullPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName + "\\" + relativePath;
@@ -311,7 +311,9 @@ namespace TypeCobol.Test.Parser.Performance
             ExecuteIncremental(compiler, stats, updates);
 
             // Display a performance report
-            TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), filename, stats, compiler.CompilationResultsForProgram);
+            string reportName = "Incremental";
+            if (suffix != null) reportName += '_' + suffix;
+            TestUtils.CreateRunReport(reportName, TestUtils.GetReportDirectoryPath(), filename, stats, compiler.CompilationResultsForProgram);
         }
 
         private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, RangeUpdate[] updates)
