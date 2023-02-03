@@ -674,11 +674,11 @@ namespace TypeCobol.Compiler.Preprocessor
             sourceIterator.SeekToPosition(currentPosition.SourceIteratorPosition);
         }
 
-        public void SeekToLine(int line)
+        public void SeekToLineInMainDocument(int line)
         {
             // TODO actual REPLACE directive/operations in effect are lost here, this is equivalent to a reset of this ReplaceIterator
             currentPosition = new ReplaceTokensLinesIteratorPosition();
-            sourceIterator.SeekToLine(line);
+            sourceIterator.SeekToLineInMainDocument(line);
         }
 
         /// <summary>

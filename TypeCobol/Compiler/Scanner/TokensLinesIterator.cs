@@ -355,7 +355,7 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        public void SeekToLine(int line) => Reset(line);
+        public void SeekToLineInMainDocument(int line) => Reset(line);
 
         /// <summary>
         /// Saves the current position of the iterator, to be able to restore it later

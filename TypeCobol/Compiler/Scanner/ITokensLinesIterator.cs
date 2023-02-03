@@ -73,7 +73,7 @@
         /// After a call to this method, GetNextToken returns the first token of the given line.
         /// </summary>
         /// <param name="line"></param>
-        void SeekToLine(int line);
+        void SeekToLineInMainDocument(int line);
 
         /// <summary>
         /// Saves the current position of the iterator, to be able to restore it later

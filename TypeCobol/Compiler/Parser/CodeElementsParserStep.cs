@@ -137,7 +137,7 @@ namespace TypeCobol.Compiler.Parser
                     }
 
                     //Position iterator at start line
-                    tokensIterator.SeekToLine(startLine);
+                    tokensIterator.SeekToLineInMainDocument(startLine);
                 }
             }
 

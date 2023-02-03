@@ -244,7 +244,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        public void SeekToLine(int line) => Reset(line);
+        public void SeekToLineInMainDocument(int line) => Reset(line);
 
         /// <summary>
         /// Get next token or EndOfFile
