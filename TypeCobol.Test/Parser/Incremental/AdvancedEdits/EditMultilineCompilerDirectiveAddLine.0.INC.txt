@@ -1,0 +1,57 @@
+================================ ICobolTextLine ================================
+Line    7: LineInserted    ->            DISPLAY var2
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    7: LineInserted    ->            DISPLAY var2
+================================= ITokensLine ==================================
+Line    7: LineInserted    -> [8,11:    ]<SpaceSeparator> [12,18:DISPLAY]<DISPLAY> [19,19: ]<SpaceSeparator> [20,23:var2]<UserDefinedWord> 
+Line    7: LineUpdated     -> [8,11:    ]<SpaceSeparator> [12,18:DISPLAY]<DISPLAY> [19,19: ]<SpaceSeparator> [20,23:var2]<UserDefinedWord> 
+Line    8: LineUpdated     -> [8,11:    ]<SpaceSeparator> [12,13:==]<PseudoTextDelimiter> [14,14+:.]<PeriodSeparator> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    7: LineInserted    -> [8,11:    ]<SpaceSeparator> [12,18:DISPLAY]<DISPLAY> [19,19: ]<SpaceSeparator> [20,23:var2]<UserDefinedWord> 
+Line    8: LineUpdated     -> [8,11:    ]<SpaceSeparator> [12,13:==]<PseudoTextDelimiter> [14,14+:.]<PeriodSeparator> 
+============================= IProcessedTokensLine =============================
+Line    7: LineInserted    -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var2]<UserDefinedWord>) +++ 
+Line    6: LineUpdated     -> +++ CONTINUATION OF REPLACE_DIRECTIVE ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var1]<UserDefinedWord>) +++ 
+Line    5: LineUpdated     -> *** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] :debug-code: BY DISPLAY, ,var1>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,29::debug-code:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[33,34:BY]<BY>[36,37:==]<PseudoTextDelimiter>) *** *** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] :debug-code: BY DISPLAY, ,var1,    ,DISPLAY, ,var2>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,29::debug-code:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[33,34:BY]<BY>[36,37:==]<PseudoTextDelimiter>) *** 
+Line    8: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,13:==]<PseudoTextDelimiter>[14,14+:.]<PeriodSeparator>) +++ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineUpdated     -> *** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] :debug-code: BY DISPLAY, ,var1>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,29::debug-code:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[33,34:BY]<BY>[36,37:==]<PseudoTextDelimiter>) *** *** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] :debug-code: BY DISPLAY, ,var1,    ,DISPLAY, ,var2>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,29::debug-code:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[33,34:BY]<BY>[36,37:==]<PseudoTextDelimiter>) *** 
+Line    6: LineUpdated     -> +++ CONTINUATION OF REPLACE_DIRECTIVE ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var1]<UserDefinedWord>) +++ 
+Line    7: LineInserted    -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var2]<UserDefinedWord>) +++ 
+Line    8: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,13:==]<PseudoTextDelimiter>[14,14+:.]<PeriodSeparator>) +++ 
+============================== ICodeElementsLine ===============================
+Line    4: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    6: LineUpdated     -> 
+Line    7: LineUpdated     -> 
+Line    8: LineUpdated     -> 
+Line    9: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   10: LineUpdated     -> 
+Line    4: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line    9: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var2]<UserDefinedWord>
+- variables = var2
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    6: LineUpdated     -> 
+Line    7: LineUpdated     -> 
+Line    8: LineUpdated     -> 
+Line    9: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   10: LineUpdated     -> 
