@@ -22,6 +22,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         private void LogErrorIncludingFullSourceCode(string message)
         {
+            // Fail immediately in debug. There is no point in dumping source code and this allows to see the error.
+            System.Diagnostics.Debug.Fail(message);
+
             if (_SourceCodeDumped) return; // Dump only once to avoid huge logs
 
             // Build a correlation id to group traces
