@@ -1,5 +1,4 @@
 ================================ ICobolTextLine ================================
-Line    6: LineRemoved     -> No new line
 Line    7: LineInserted    ->            MOVE var1 TO var2
 ------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
 Line    7: LineInserted    ->            MOVE var1 TO var2
