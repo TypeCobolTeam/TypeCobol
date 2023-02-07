@@ -1511,22 +1511,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartJsonGenerateStatementConditional(stmt);
         }
 
-        public virtual void EndJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
-        {
-            AttachEndIfExists(end);
-            Exit();
-            Dispatcher.EndJsonGenerateStatementConditional(end);
-        }
-
         public virtual void StartJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonParseStatement stmt)
         {
             Enter(new JsonParse(stmt), stmt);
+            Dispatcher.StartJsonParseStatementConditional(stmt);
         }
 
-        public virtual void EndJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
+        public virtual void EndJsonStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndJsonStatementConditional(end);
         }
 
         public virtual void StartMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatement stmt)
@@ -1690,24 +1685,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartXmlGenerateStatementConditional(stmt);
         }
 
-        public virtual void EndXmlGenerateStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
-        {
-            AttachEndIfExists(end);
-            Exit();
-            Dispatcher.EndXmlGenerateStatementConditional(end);
-        }
-
         public virtual void StartXmlParseStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.XmlParseStatement stmt)
         {
             Enter(new XmlParse(stmt), stmt);
             Dispatcher.StartXmlParseStatementConditional(stmt);
         }
 
-        public virtual void EndXmlParseStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
+        public virtual void EndXmlStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
-            Dispatcher.EndXmlParseStatementConditional(end);
+            Dispatcher.EndXmlStatementConditional(end);
         }
 
         // FOR SQL

@@ -1053,7 +1053,7 @@ statementClosing ::= StatementClosingPoint AddStatementEnd:end
 	| StatementClosingPoint InvokeStatementEnd:end
 	{: my_parser.Builder.EndInvokeStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
 	| StatementClosingPoint JsonStatementEnd:end
-	{: /* my_parser.Builder.TODO; my_parser.Builder.CheckStartSentenceLastStatement(); */ :}
+	{: my_parser.Builder.EndJsonStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
 	| StatementClosingPoint MultiplyStatementEnd:end
 	{: my_parser.Builder.EndMultiplyStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
 	| StatementClosingPoint PerformStatementEnd:end
@@ -1077,7 +1077,7 @@ statementClosing ::= StatementClosingPoint AddStatementEnd:end
 	| StatementClosingPoint WriteStatementEnd:end
 	{: my_parser.Builder.EndWriteStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
 	| StatementClosingPoint XmlStatementEnd:end
-	{: /* my_parser.Builder.TODO; my_parser.Builder.CheckStartSentenceLastStatement(); */ :}
+	{: my_parser.Builder.EndXmlStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
 	;
 
 statements ::= statement
@@ -1425,13 +1425,13 @@ invokeStatement ::= InvokeStatement:stmt
 
 jsonGenerateStatementConditional ::=
 		jsonGenerateStatement
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonGenerateStatement JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	|	jsonGenerateStatement exceptionConditions
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonGenerateStatement exceptionConditions JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	;
 
 jsonGenerateStatement ::= JsonGenerateStatement:stmt
@@ -1440,13 +1440,13 @@ jsonGenerateStatement ::= JsonGenerateStatement:stmt
 
 jsonParseStatementConditional ::=
 		jsonParseStatement
-		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonParseStatement JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	|	jsonParseStatement exceptionConditions
-		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonParseStatement exceptionConditions JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	;
 
 jsonParseStatement ::= JsonParseStatement:stmt
@@ -1661,13 +1661,13 @@ writeStatement ::= WriteStatement:stmt
 
 xmlGenerateStatementConditional ::=
 		xmlGenerateStatement
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlGenerateStatement XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	|	xmlGenerateStatement exceptionConditions
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlGenerateStatement exceptionConditions XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	;
 
 xmlGenerateStatement ::= XmlGenerateStatement:stmt
@@ -1676,13 +1676,13 @@ xmlGenerateStatement ::= XmlGenerateStatement:stmt
 
 xmlParseStatementConditional ::=
 		xmlParseStatement
-		{: my_parser.Builder.EndXmlParseStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlParseStatement XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlParseStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	|	xmlParseStatement exceptionConditions
-		{: my_parser.Builder.EndXmlParseStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlParseStatement exceptionConditions XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlParseStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	;
 
 xmlParseStatement ::= XmlParseStatement:stmt

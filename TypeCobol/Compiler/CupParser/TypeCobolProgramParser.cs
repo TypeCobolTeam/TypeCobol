@@ -2076,7 +2076,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndXmlParseStatementConditional(end); 
+		 my_parser.Builder.EndXmlStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(133/*xmlParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2085,7 +2085,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 428: // xmlParseStatementConditional ::= xmlParseStatement exceptionConditions 
             {
               object RESULT = null;
-		 my_parser.Builder.EndXmlParseStatementConditional(); 
+		 my_parser.Builder.EndXmlStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(133/*xmlParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2095,7 +2095,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndXmlParseStatementConditional(end); 
+		 my_parser.Builder.EndXmlStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(133/*xmlParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2104,7 +2104,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 426: // xmlParseStatementConditional ::= xmlParseStatement 
             {
               object RESULT = null;
-		 my_parser.Builder.EndXmlParseStatementConditional(); 
+		 my_parser.Builder.EndXmlStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(133/*xmlParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2124,7 +2124,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndXmlGenerateStatementConditional(end); 
+		 my_parser.Builder.EndXmlStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(132/*xmlGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2133,7 +2133,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 423: // xmlGenerateStatementConditional ::= xmlGenerateStatement exceptionConditions 
             {
               object RESULT = null;
-		 my_parser.Builder.EndXmlGenerateStatementConditional(); 
+		 my_parser.Builder.EndXmlStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(132/*xmlGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2143,7 +2143,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndXmlGenerateStatementConditional(end); 
+		 my_parser.Builder.EndXmlStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(132/*xmlGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2152,7 +2152,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 421: // xmlGenerateStatementConditional ::= xmlGenerateStatement 
             {
               object RESULT = null;
-		 my_parser.Builder.EndXmlGenerateStatementConditional(); 
+		 my_parser.Builder.EndXmlStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(132/*xmlGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2829,7 +2829,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.JsonStatementEnd end = (TypeCobol.Compiler.CodeElements.JsonStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndJsonParseStatementConditional(end); 
+		 my_parser.Builder.EndJsonStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(118/*jsonParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2838,7 +2838,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 349: // jsonParseStatementConditional ::= jsonParseStatement exceptionConditions 
             {
               object RESULT = null;
-		 my_parser.Builder.EndJsonParseStatementConditional(); 
+		 my_parser.Builder.EndJsonStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(118/*jsonParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2848,7 +2848,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.JsonStatementEnd end = (TypeCobol.Compiler.CodeElements.JsonStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndJsonParseStatementConditional(end); 
+		 my_parser.Builder.EndJsonStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(118/*jsonParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2857,7 +2857,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 347: // jsonParseStatementConditional ::= jsonParseStatement 
             {
               object RESULT = null;
-		 my_parser.Builder.EndJsonParseStatementConditional(); 
+		 my_parser.Builder.EndJsonStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(118/*jsonParseStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2877,7 +2877,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.JsonStatementEnd end = (TypeCobol.Compiler.CodeElements.JsonStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndJsonGenerateStatementConditional(end); 
+		 my_parser.Builder.EndJsonStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(117/*jsonGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2886,7 +2886,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 344: // jsonGenerateStatementConditional ::= jsonGenerateStatement exceptionConditions 
             {
               object RESULT = null;
-		 my_parser.Builder.EndJsonGenerateStatementConditional(); 
+		 my_parser.Builder.EndJsonStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(117/*jsonGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2896,7 +2896,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.JsonStatementEnd end = (TypeCobol.Compiler.CodeElements.JsonStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 my_parser.Builder.EndJsonGenerateStatementConditional(end); 
+		 my_parser.Builder.EndJsonStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(117/*jsonGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -2905,7 +2905,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 342: // jsonGenerateStatementConditional ::= jsonGenerateStatement 
             {
               object RESULT = null;
-		 my_parser.Builder.EndJsonGenerateStatementConditional(); 
+		 my_parser.Builder.EndJsonStatementConditional(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(117/*jsonGenerateStatementConditional*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -4145,7 +4145,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 /* my_parser.Builder.TODO; my_parser.Builder.CheckStartSentenceLastStatement(); */ 
+		 my_parser.Builder.EndXmlStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*statementClosing*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -4265,7 +4265,7 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
 		TypeCobol.Compiler.CodeElements.JsonStatementEnd end = (TypeCobol.Compiler.CodeElements.JsonStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
-		 /* my_parser.Builder.TODO; my_parser.Builder.CheckStartSentenceLastStatement(); */ 
+		 my_parser.Builder.EndJsonStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*statementClosing*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
