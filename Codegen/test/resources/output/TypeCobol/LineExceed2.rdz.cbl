@@ -23,3 +23,4 @@
                        to maDateFormatInconnu(5:2)
            .
        END PROGRAM DVZF0OSM.
+

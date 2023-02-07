@@ -14,3 +14,4 @@
        PROCEDURE DIVISION.
 
        END PROGRAM SplitDirective.
+
