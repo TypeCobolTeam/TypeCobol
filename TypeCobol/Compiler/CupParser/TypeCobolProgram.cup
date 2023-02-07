@@ -101,6 +101,7 @@ parser code {:
 	number (count) of start terminal symbols.
 */
 terminal StatementEntryPoint;
+terminal StatementClosingPoint;
 
 /* Terminals (tokens returned by the scanner). */
 terminal TypeCobol.Compiler.CodeElements.ProgramIdentification ProgramIdentification;
@@ -254,7 +255,7 @@ terminal TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader GlobalStorag
 terminal TypeCobol.Compiler.CodeElements.Program Program;
 
 /* Non terminals */
-non terminal starts, statementEntry;
+non terminal starts, statementEntry, statementClosing;
 non terminal compilationUnit, cobolCompilationUnit;
 non terminal cobolProgram, cobolClass, cobolProgramBase, nestedProgram;
 non terminal classEndOpt;
@@ -419,8 +420,9 @@ non terminal execStatementEnd;
 
 start with starts;
 
-starts ::= compilationUnit		/* rule for starting analyzing a compilation unit */
-	| StatementEntryPoint statementEntry /* rule for starting analyzing a TypeCobol statement */
+starts ::= compilationUnit	/* rule for starting analyzing a compilation unit */
+	| statementEntry		/* rule for starting analyzing a TypeCobol statement */
+	| statementClosing		/* rule for starting analyzing an open TypeCobol statement and try to close it */
 	;
 
 compilationUnit ::= {: my_parser.Builder.StartCobolCompilationUnit(); :} cobolCompilationUnit
@@ -1028,11 +1030,54 @@ sentence ::= SentenceEnd:send
 	{: my_parser.Builder.EndSentence(send, true); :}
 	;
 
-statementEntry ::= statement
-	| StatementEntryPoint ifstatement
-	{: my_parser.Builder.EndIfStatementWithBody(); :}
-	| StatementEntryPoint searchStatement
-	{: my_parser.Builder.EndSearchStatementWithBody(); :}
+statementEntry ::= StatementEntryPoint statement
+	{:  :}
+	;
+
+statementClosing ::= StatementClosingPoint AddStatementEnd:end
+	{: my_parser.Builder.EndAddStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint CallStatementEnd:end
+	{: my_parser.Builder.EndCallStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ComputeStatementEnd:end
+	{: my_parser.Builder.EndComputeStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint DeleteStatementEnd:end
+	{: my_parser.Builder.EndDeleteStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint DivideStatementEnd:end
+	{: my_parser.Builder.EndDivideStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint EvaluateStatementEnd:end
+	{: my_parser.Builder.EndEvaluateStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ExecStatementEnd:end
+	{: my_parser.Builder.EndExecStatement(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint InvokeStatementEnd:end
+	{: my_parser.Builder.EndInvokeStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint JsonStatementEnd:end
+	{: /* my_parser.Builder.TODO; my_parser.Builder.CheckStartSentenceLastStatement(); */ :}
+	| StatementClosingPoint MultiplyStatementEnd:end
+	{: my_parser.Builder.EndMultiplyStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint PerformStatementEnd:end
+	{: my_parser.Builder.EndPerformStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ReadStatementEnd:end
+	{: my_parser.Builder.EndReadStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ReturnStatementEnd:end
+	{: my_parser.Builder.EndReturnStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint RewriteStatementEnd:end
+	{: my_parser.Builder.EndRewriteStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint SearchStatementEnd:end
+	{: my_parser.Builder.EndSearchStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint StartStatementEnd:end
+	{: my_parser.Builder.EndStartStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint StringStatementEnd:end
+	{: my_parser.Builder.EndStringStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint SubtractStatementEnd:end
+	{: my_parser.Builder.EndSubtractStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint UnstringStatementEnd:end
+	{: my_parser.Builder.EndUnstringStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint WriteStatementEnd:end
+	{: my_parser.Builder.EndWriteStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint XmlStatementEnd:end
+	{: /* my_parser.Builder.TODO; my_parser.Builder.CheckStartSentenceLastStatement(); */ :}
 	;
 
 statements ::= statement
