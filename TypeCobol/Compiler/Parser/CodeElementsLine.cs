@@ -142,11 +142,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal void ShiftUp() => Shift(-1);
-
-        internal void ShiftDown() => Shift(+1);
-
-        private void Shift(int offset)
+        internal void Shift(int offset)
         {
             //Update line index
             LineIndex += offset;
