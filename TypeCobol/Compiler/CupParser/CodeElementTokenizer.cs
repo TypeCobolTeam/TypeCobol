@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CupParser
         /// With CS CUP real tokens start at 3, 0 is for EOF, 1 is for error,
         /// and 2 is for the StatementStart terminal symbol.
         /// </summary>
-        private const int CUP_TOKEN_OFFSET = 2;
+        private const int CUP_TOKEN_OFFSET = 3;
 
         private static Symbol ToSymbol(CodeElement codeElement) => new Symbol((int)codeElement.Type + CUP_TOKEN_OFFSET, codeElement);
 
