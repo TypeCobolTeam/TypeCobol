@@ -99,6 +99,7 @@
        PROCEDURE DIVISION.      
       *declare procedure testos private.
        END PROGRAM MyPGM.
+
       *
       *declare procedure StartCheckpoint public
       *        input param1 pic X.

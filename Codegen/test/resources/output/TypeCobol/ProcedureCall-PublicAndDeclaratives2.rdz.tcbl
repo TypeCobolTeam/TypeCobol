@@ -152,6 +152,7 @@
 
        END PROGRAM PGM1.
 
+
       *
       *declare procedure check public
       *   input mydate        TYPE Date

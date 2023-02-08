@@ -51,3 +51,4 @@
       *    SET var1::MyGroup::INX-R TO 05.
            SET f243f155INX-R TO 05.
        END PROGRAM TYPDEFQU.
+

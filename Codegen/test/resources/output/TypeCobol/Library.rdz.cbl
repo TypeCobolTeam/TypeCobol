@@ -123,6 +123,7 @@
       *    RETURNING Result TYPE dateString.
 
        END PROGRAM DVZZDATE.
+
       *
       *DECLARE FUNCTION currentDate PUBLIC
       *Description of currentDate
