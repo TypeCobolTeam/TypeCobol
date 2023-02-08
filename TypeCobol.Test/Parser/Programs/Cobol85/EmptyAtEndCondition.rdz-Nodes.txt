@@ -1,0 +1,24 @@
+Line 15[12,21] <27, Error, Syntax> - Syntax error : extraneous input 'END-SEARCH' expecting {AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}
+Line 11[12,40] <27, Error, Syntax> - Syntax error : Search statement must have at least one when element.
+--- Nodes ---
+?
+  MyPGM
+    data-division
+      working-storage
+        Group1
+          Array1
+            MyIndex
+            Array1-Elt1
+    procedure-division
+      sentence-0
+        [[SearchStatement]] [12,17:SEARCH]<SEARCH> --> [34,40:MyIndex]<UserDefinedWord>
+
+          end
+        end
+      MyParagraph
+        sentence-0
+          [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24+:"Foo"]<AlphanumericLiteral>(",Y,Y){Foo}
+- variables = "Foo"
+
+          end
+    end
