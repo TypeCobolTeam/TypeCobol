@@ -573,19 +573,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.StartJsonGenerateStatementConditional(stmt);
         }
 
-        public virtual void EndJsonGenerateStatementConditional(JsonStatementEnd end = null)
-        {
-            foreach (var listener in _listeners) listener.EndJsonGenerateStatementConditional(end);
-        }
-
         public virtual void StartJsonParseStatementConditional(JsonParseStatement stmt)
         {
             foreach (var listener in _listeners) listener.StartJsonParseStatementConditional(stmt);
         }
 
-        public virtual void EndJsonParseStatementConditional(JsonStatementEnd end = null)
+        public virtual void EndJsonStatementConditional(JsonStatementEnd end = null)
         {
-            foreach (var listener in _listeners) listener.EndJsonParseStatementConditional(end);
+            foreach (var listener in _listeners) listener.EndJsonStatementConditional(end);
         }
 
         public virtual void StartMultiplyStatementConditional(MultiplyStatement stmt)
@@ -713,19 +708,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.StartXmlGenerateStatementConditional(stmt);
         }
 
-        public virtual void EndXmlGenerateStatementConditional(XmlStatementEnd end = null)
-        {
-            foreach (var listener in _listeners) listener.EndXmlGenerateStatementConditional(end);
-        }
-
         public virtual void StartXmlParseStatementConditional(XmlParseStatement stmt)
         {
             foreach (var listener in _listeners) listener.StartXmlParseStatementConditional(stmt);
         }
 
-        public virtual void EndXmlParseStatementConditional(XmlStatementEnd end = null)
+        public virtual void EndXmlStatementConditional(XmlStatementEnd end = null)
         {
-            foreach (var listener in _listeners) listener.EndXmlParseStatementConditional(end);
+            foreach (var listener in _listeners) listener.EndXmlStatementConditional(end);
         }
 
         public virtual void StartOnSizeError(OnSizeErrorCondition cond)

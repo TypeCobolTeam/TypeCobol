@@ -858,95 +858,77 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
-                System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
-
-                if (docContext.FileCompiler.CompilationResultsForProgram != null &&
-                    docContext.FileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
+                var codeElementToNode = docContext.FileCompiler?.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
+                if (codeElementToNode != null)
                 {
-                    var matchingCodeElement =
-                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot
-                            .NodeCodeElementLinkers
-                            .Keys.FirstOrDefault(c => c.ConsumedTokens.Any(
-                                                          t => t.Line == parameters.position.line + 1 &&
-                                                               parameters.position.character >= t.StartIndex &&
-                                                               parameters.position.character <= t.StopIndex + 1) &&
-                                                      !c.IsInsideCopy());
-                    if (matchingCodeElement == null)
-                        return defaultDefinition;
+                    Token matchingToken = null;
+                    var matchingCodeElement = codeElementToNode.Keys.FirstOrDefault(MatchPosition);
+                    if (matchingCodeElement == null) return defaultDefinition;
 
-                    var matchingNode =
-                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot
-                            .NodeCodeElementLinkers[matchingCodeElement];
-                    if (matchingNode == null)
-                        return defaultDefinition;
+                    var matchingNode = codeElementToNode[matchingCodeElement];
+                    if (matchingNode == null) return defaultDefinition;
 
-                    var matchingToken = matchingCodeElement.ConsumedTokens.FirstOrDefault(t =>
-                        t.Line == parameters.position.line + 1 &&
-                        parameters.position.character >= t.StartIndex &&
-                        parameters.position.character <= t.StopIndex + 1 &&
-                        t.TokenType != TokenType.QualifiedNameSeparator);
-                    if (matchingToken == null)
-                        return defaultDefinition;
+                    bool MatchPosition(CodeElement codeElement)
+                    {
+                        foreach (var token in codeElement.ConsumedTokens)
+                        {
+                            if (token.Line == parameters.position.line + 1 &&
+                                parameters.position.character >= token.StartIndex &&
+                                parameters.position.character <= token.StopIndex + 1 &&
+                                token.TokenType != TokenType.QualifiedNameSeparator)
+                            {
+                                matchingToken = token;
+                                return !codeElement.IsInsideCopy();
+                            }
+                        }
 
-                    Token userFilterToken = null;
-                    Token lastSignificantToken = null;
+                        return false;
+                    }
+
+                    CodeElementMatcher.MatchCompletionCodeElement(parameters.position, new List<CodeElementWrapper>()
+                        {
+                            new CodeElementWrapper(matchingCodeElement)
+                        }, out _, out var lastSignificantToken); //Magic happens here
                     var potentialDefinitionNodes = new List<Node>();
 
-                    CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
-                        new List<CodeElementWrapper>() {new CodeElementWrapper(matchingCodeElement)},
-                        out userFilterToken, out lastSignificantToken); //Magic happens here
                     if (lastSignificantToken != null)
                     {
                         switch (lastSignificantToken.TokenType)
                         {
                             case TokenType.PERFORM:
                             {
-                                potentialDefinitionNodes.AddRange(
-                                    matchingNode.SymbolTable.GetParagraphs(
-                                        p => p.Name.Equals(matchingToken.Text,
-                                            StringComparison.OrdinalIgnoreCase)));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetParagraphs(MatchName));
                                 break;
                             }
 
                             case TokenType.CALL:
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
-                                    f => f.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
-                                    SymbolTable.Scope.Program
-                                ));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(MatchName, SymbolTable.Scope.Program));
                                 break;
                             }
 
                             case TokenType.TYPE:
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
-                                    t => t.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
-                                    SymbolTable.Scope.Program
-                                ));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(MatchName, SymbolTable.Scope.Program));
                                 break;
                             }
 
-                            case TokenType.INPUT:
-                            case TokenType.OUTPUT:
-                            case TokenType.IN_OUT:
-                            case TokenType.MOVE:
-                            case TokenType.TO:
-                            default:
+                            default: //INPUT, OUTPUT, IN_OUT, MOVE, TO, etc
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
-                                    v => v.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
-                                    SymbolTable.Scope.Program));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(MatchName, SymbolTable.Scope.Program));
                                 break;
                             }
                         }
+
+                        bool MatchName(Node node) => string.Equals(node.Name, matchingToken.Text, StringComparison.OrdinalIgnoreCase);
                     }
 
                     if (potentialDefinitionNodes.Count > 0)
                     {
-                        var nodeDefinition = potentialDefinitionNodes.FirstOrDefault();
-                        if (nodeDefinition != null)
+                        var nodeDefinition = potentialDefinitionNodes[0];
+                        if (nodeDefinition.CodeElement != null)
                             return new Definition(parameters.uri,
-                                new Range() {start = new Position(nodeDefinition.CodeElement.Line - 1, 0)});
+                                new Range() { start = new Position(nodeDefinition.CodeElement.Line - 1, 0) });
                     }
                 }
             }
