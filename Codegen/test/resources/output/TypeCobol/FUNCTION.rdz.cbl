@@ -31,6 +31,7 @@
            .
 
        END PROGRAM Functions.
+
       *
       *DECLARE function POW PRIVATE
       *      INPUT x PIC 9(05)

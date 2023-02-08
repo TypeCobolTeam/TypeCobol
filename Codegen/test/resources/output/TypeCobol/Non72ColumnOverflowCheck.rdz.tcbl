@@ -42,3 +42,4 @@
        move LastName OF W-Person2  to LastName OF W-Person1.             
 
        END PROGRAM No72ColOverflowCheck.
+

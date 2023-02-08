@@ -6,3 +6,4 @@ Line 5[10,28] <30, Error, Semantics> - Error in copy 'TypedefStrict' at line 1 :
          COPY TypedefStrict.
          01 var1 type TypedefStrict1.
        END PROGRAM MainProgram.
+

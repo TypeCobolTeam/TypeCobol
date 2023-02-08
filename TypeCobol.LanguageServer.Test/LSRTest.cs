@@ -51,7 +51,6 @@ namespace TypeCobol.LanguageServer.Test
         
         [TestMethod]
         [TestCategory("Incremental")]
-        [Ignore] // Temporary
         public void AddMultipleLinesWithEmptyLineInside()
         {
             LSRTestHelper.Test("AddMultipleLinesWithEmptyLineInside", LsrTestingOptions.LsrParsingPhaseTesting);
