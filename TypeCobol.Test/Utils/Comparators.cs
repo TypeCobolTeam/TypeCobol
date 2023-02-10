@@ -862,6 +862,12 @@ namespace TypeCobol.Test.Utils
 
         public string Format(CompilationUnit compilationResult, IncrementalChangesHistory history)
         {
+            if (history == null)
+            {
+                // This comparator cannot be used during an initial comparison.
+                throw new ArgumentNullException(nameof(history), "Cannot use incremental changes formatter without change history !");
+            }
+
             // Dump full incremental history
             var actual = new StringBuilder();
             DumpEvents(history.TextChangedEvents, DumpCobolTextLine);

@@ -135,17 +135,14 @@ namespace TypeCobol.Test.Utils
             }
 #endif
 
-            // Activate incremental changes tracking, limit depth to 1 as we are always able to compare change at each step
-            var compilationResults = _fileCompiler.CompilationResultsForProgram;
-            var history = compilationResults.TrackChanges(1);
-
-            // Full parsing
+            // Initial (full) parsing
             _fileCompiler.CompileOnce();
+            var compilationResults = _fileCompiler.CompilationResultsForProgram;
 
             // Compare initial result
             foreach (var comparison in _initialResultComparisons)
             {
-                comparison.Compare(compilationResults, history);
+                comparison.Compare(compilationResults, null);
             }
 
             // Automatic incremental changes, based on optional change generator
@@ -161,9 +158,12 @@ namespace TypeCobol.Test.Utils
                 // Validate against initial parsing result
                 foreach (var comparison in _initialResultComparisons)
                 {
-                    comparison.Compare(compilationResults, history);
+                    comparison.Compare(compilationResults, null);
                 }
             }
+
+            // Activate incremental changes tracking, limit depth to 1 as we are always able to compare change at each step
+            var history = compilationResults.TrackChanges(1);
 
             // Incremental changes, defined by .inc file
             foreach (var inputChange in _inputChanges)
