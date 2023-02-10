@@ -20,6 +20,21 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     {
         private static bool _SourceCodeDumped;
 
+        internal void LogAnomalousLineIndex()
+        {
+            const string message = "Anomalous line index found !";
+            if (_SourceCodeDumped)
+            {
+                // Full source with changes has already been dumped, just add a simple trace to help notice the line index problem
+                LoggingSystem.LogMessage(LogLevel.Error, message);
+            }
+            else
+            {
+                // No problem on AST but still the line indices are wrong, dump full source.
+                LogErrorIncludingFullSourceCode(message);
+            }
+        }
+
         private void LogErrorIncludingFullSourceCode(string message)
         {
             // Fail immediately in debug. There is no point in dumping source code and this allows to see the error.
