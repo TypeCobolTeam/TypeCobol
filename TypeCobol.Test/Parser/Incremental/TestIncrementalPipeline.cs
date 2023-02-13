@@ -44,5 +44,11 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestCategory("Incremental")]
         [TestProperty("Time", "fast")]
         public void AdvancedEdits() => TestFolder();
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        [TestProperty("Time", "fast")]
+        [Ignore] // Only test 3 is Ok for now...
+        public void ContinuationLines() => TestFolder();
     }
 }
