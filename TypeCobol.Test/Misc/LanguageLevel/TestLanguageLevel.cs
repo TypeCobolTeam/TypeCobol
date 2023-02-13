@@ -21,8 +21,8 @@ namespace TypeCobol.Test.Misc
             var dirname = Path.GetFileName(_Folder);
 
             Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-            var folderTester = new FolderTester(_Folder, extensions);
-            nbOfTests += folderTester.Test(isCobolLanguage: true);
+            var folderTester = new FolderTester(_Folder, extensions) { IsCobolLanguage = true };
+            nbOfTests += folderTester.Test();
             Console.Write("\n");
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
