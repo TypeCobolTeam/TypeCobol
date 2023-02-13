@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Antlr4.Runtime;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
@@ -465,7 +461,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// Reset the Tokenizer
         /// </summary>
 
-        public override void Reset()
+        public void Reset()
         {
             Reset(true);
         }
@@ -477,7 +473,7 @@ namespace TypeCobol.Compiler.CupCommon
         public void Reset(bool bBaseAlso)
         {
             if (bBaseAlso)
-                base.Reset();
+                base.Reset(0);
             CheckLiteralOrUserDefinedWordOReservedWordExceptCopy = false;
             LeaveAnyTokenMode(true);
             _symbolYielder = GetEnumerator();
