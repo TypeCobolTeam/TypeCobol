@@ -119,6 +119,9 @@ namespace TypeCobol.Test.Utils
         private readonly bool _recursive;
         private readonly string _filterPrefix;
 
+        public bool IsCobolLanguage { get; set; } = false;
+        public IIncrementalChangesGenerator ChangesGenerator { get; set; } = null;
+
         public FolderTester(string rootFolder, string[] sourceExtensions, string[] changeExtensions = null, string[] resultExtensions = null, bool recursive = true, string filterPrefix = null)
         {
             if (string.IsNullOrEmpty(rootFolder))
@@ -156,10 +159,10 @@ namespace TypeCobol.Test.Utils
             }
         }
 
-        public int Test(bool isCobolLanguage = false)
+        public int Test()
         {
             var exceptions = new List<Exception>();
-            int count = Test(_rootFolder, exceptions, isCobolLanguage);
+            int count = Test(_rootFolder, exceptions);
 
             if (exceptions.Count > 0)
             {
@@ -169,7 +172,7 @@ namespace TypeCobol.Test.Utils
             return count;
         }
 
-        private int Test(string folder, List<Exception> exceptions, bool isCobolLanguage)
+        private int Test(string folder, List<Exception> exceptions)
         {
             // First pass: analyze folder and gather data to create test units
             var testUnits = new Dictionary<string, TestUnitData>(StringComparer.OrdinalIgnoreCase);
@@ -214,15 +217,20 @@ namespace TypeCobol.Test.Utils
             }
 
             // Auto configure compilation options. These options are valid for current folder only !
-            var options = AutoConfigure(folder, isCobolLanguage);
+            var options = AutoConfigure(folder, IsCobolLanguage);
 
             // Second pass: create and run each test unit
             int count = 0;
-            foreach (var testUnit in testUnits.Values)
+            foreach (var testUnitData in testUnits.Values)
             {
                 try
                 {
-                    testUnit.Create(options)?.Run();
+                    var testUnit = testUnitData.Create(options);
+                    if (testUnit != null)
+                    {
+                        testUnit.ChangesGenerator = ChangesGenerator;
+                        testUnit.Run();
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -236,7 +244,7 @@ namespace TypeCobol.Test.Utils
             {
                 foreach (var childFolder in Directory.GetDirectories(folder, "*", SearchOption.TopDirectoryOnly))
                 {
-                    count += Test(childFolder, exceptions, isCobolLanguage);
+                    count += Test(childFolder, exceptions);
                 }
             }
 
