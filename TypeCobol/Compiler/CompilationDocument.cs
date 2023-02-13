@@ -277,10 +277,9 @@ namespace TypeCobol.Compiler
                 var documentChanges = new List<DocumentChange<ICobolTextLine>>(updates.Length);
                 foreach (var update in updates)
                 {
-                    // Get original lines text before change
+                    // Get original text line before change
                     int lineCount = compilationDocumentLines.Count;
                     string originalFirstLineText = lineCount <= update.LineStart ? string.Empty : compilationDocumentLines[update.LineStart].Text;
-                    string originalLastLineText = originalFirstLineText;
 
                     // Split the text updated into distinct lines
                     List<string> lineUpdates = null;
@@ -294,7 +293,7 @@ namespace TypeCobol.Compiler
                         lineUpdates = update.Text.Replace("\r", "").Split('\n').ToList();
 
                         //When a line break is added at the end of an existing line, do not update existing line, just insert after.
-                        if (lineUpdates[0].Length == 0 && replacementTextStartsWithNewLine && !(update.ColumnStart < originalLastLineText.Length))
+                        if (lineUpdates[0].Length == 0 && replacementTextStartsWithNewLine && update.ColumnStart >= originalFirstLineText.Length)
                         {
                             lineUpdates.RemoveAt(0);
                         }
@@ -303,7 +302,7 @@ namespace TypeCobol.Compiler
                     // Check if the first line was inserted
                     int firstLineIndex = update.LineStart;
                     int firstLineChar = update.ColumnStart;
-                    if (replacementTextStartsWithNewLine && !(update.ColumnStart < originalLastLineText.Length))
+                    if (replacementTextStartsWithNewLine && update.ColumnStart >= originalFirstLineText.Length)
                     {
                         // do not increment if line is inserted at the end of global text
                         if (firstLineIndex < lineCount) firstLineIndex++;
@@ -317,9 +316,16 @@ namespace TypeCobol.Compiler
                         lineUpdates = new List<string>();
                     }
 
+                    string originalLastLineText;
                     if (lastLineIndex > firstLineIndex)
                     {
-                        originalLastLineText = compilationDocumentLines[Math.Min(lastLineIndex, compilationDocumentLines.Count - 1)].Text;
+                        // If lastLineIndex is "after" the end of compilationDocumentLines, then use an empty line as originalLastLineText
+                        originalLastLineText = lastLineIndex < compilationDocumentLines.Count ? compilationDocumentLines[lastLineIndex].Text : string.Empty;
+                    }
+                    else
+                    {
+                        // Update takes place on a single line
+                        originalLastLineText = originalFirstLineText;
                     }
 
                     // Text not modified at the beginning of the first replaced line
@@ -343,9 +349,7 @@ namespace TypeCobol.Compiler
                     // Update/Remove or Insert the updated lines
                     if (!(startOfFirstLine == null && lineUpdates == null && endOfLastLine == null))
                     {
-                        int lineUpdatesCount = (lineUpdates != null && lineUpdates.Count > 0)
-                            ? lineUpdates.Count
-                            : 1;
+                        int lineUpdatesCount = lineUpdates?.Count > 0 ? lineUpdates.Count : 1;
                         int nbOfLinesToRemove = lastLineIndex - firstLineIndex + 1;
 
                         int targetLineIndex = firstLineIndex;
@@ -374,9 +378,7 @@ namespace TypeCobol.Compiler
 
                             void InsertOrUpdate(TextChangeType type)
                             {
-                                string newLine = (lineUpdates != null && lineUpdates.Count > 0)
-                                    ? lineUpdates[i]
-                                    : string.Empty;
+                                string newLine = lineUpdates?.Count > 0 ? lineUpdates[i] : string.Empty;
                                 if (i == 0)
                                 {
                                     newLine = startOfFirstLine + newLine;
@@ -523,11 +525,13 @@ namespace TypeCobol.Compiler
                     if (!encounteredCodeElement)
                         lineToUpdate.ResetDiagnostics(); //Reset diags when on the same zone
 
-                    if (offset != 0)
-                        lineToUpdate.Shift(offset);
-
                     if (lineToUpdate.CodeElements != null)
                         encounteredCodeElement = true;
+
+                    if (offset != 0)
+                        lineToUpdate.Shift(offset);
+                    else if (encounteredCodeElement)
+                        break; // Nothing else to do
                 }
             }
         }
