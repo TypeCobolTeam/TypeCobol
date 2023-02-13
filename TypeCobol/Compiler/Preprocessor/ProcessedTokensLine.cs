@@ -14,23 +14,16 @@ namespace TypeCobol.Compiler.Preprocessor
     {
         internal ProcessedTokensLine(ITextLine textLine, ColumnsLayout columnsLayout) : base(textLine, columnsLayout)
         {
-            PreprocessingState = PreprocessorState.NeedsCompilerDirectiveParsing;
+            NeedsCompilerDirectiveParsing = true;
         }
 
         // --- Computed line properties after preprocessor execution ---
-
-        internal enum PreprocessorState
-        {
-            NeedsCompilerDirectiveParsing,
-            NeedsCopyDirectiveProcessing,
-            Ready
-        }
 
         /// <summary>
         /// True if the preprocessor has not treated this line yet
         /// and all the following properties have not been set
         /// </summary>
-        internal PreprocessorState PreprocessingState { get; set; }
+        internal bool NeedsCompilerDirectiveParsing { get; set; }
 
         /// <summary>
         /// Tokens produced after parsing the compiler directives.
@@ -40,7 +33,7 @@ namespace TypeCobol.Compiler.Preprocessor
         public IList<Token> TokensWithCompilerDirectives { 
             get 
             {
-                if (PreprocessingState <= PreprocessorState.NeedsCompilerDirectiveParsing)
+                if (NeedsCompilerDirectiveParsing)
                 {
                     throw new InvalidOperationException("Compiler directives on this line have not been parsed yet");
                 }
@@ -108,7 +101,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
 
             // Register REPLACE compiler directive
-            if(compilerDirective.Type == CompilerDirectiveType.REPLACE)
+            if(compilerDirective.Type == CompilerDirectiveType.REPLACE || compilerDirective.Type == CompilerDirectiveType.REPLACE_OFF)
             {
                 ReplaceDirective = (ReplaceDirective)compilerDirective;
             }
@@ -287,7 +280,7 @@ namespace TypeCobol.Compiler.Preprocessor
             this.HasDirectiveTokenContinuationFromPreviousLine = previousLineVersion.HasDirectiveTokenContinuationFromPreviousLine;
             this.HasDirectiveTokenContinuedOnNextLine = previousLineVersion.HasDirectiveTokenContinuedOnNextLine;
             this.PreprocessorDiagnostics = previousLineVersion.PreprocessorDiagnostics;
-            this.PreprocessingState = previousLineVersion.PreprocessingState;
+            this.NeedsCompilerDirectiveParsing = previousLineVersion.NeedsCompilerDirectiveParsing;
             this.ReplaceDirective = previousLineVersion.ReplaceDirective;
             this.tokensWithCompilerDirectives = previousLineVersion.tokensWithCompilerDirectives;
 
