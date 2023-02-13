@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Concurrency;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
 {    
@@ -54,7 +50,7 @@ namespace TypeCobol.Compiler.Scanner
             // Start just before the first token in the document
             if (startToken == null)
             {
-                Reset();
+                Reset(0);
             }
             // Start iterating just before start token, in the middle of the document
             else
@@ -150,14 +146,21 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Resets the iterator position : before the first token of the document
         /// </summary>
-        public virtual void Reset()
+        /// <param name="startLine">Zero-based index of the start line to be enumerated after reset.</param>
+        protected void Reset(int startLine)
         {
-            currentPosition.LineIndex = 0;
-            if (tokensLines.Count > 0)
+            if (startLine < 0)
             {
-                currentLine = tokensLines[currentPosition.LineIndex];
+                startLine = 0; // Start on first line
             }
+            else if (startLine >= tokensLines.Count)
+            {
+                startLine = tokensLines.Count - 1; // Start on last line
+            }
+
+            currentPosition.LineIndex = startLine;
             currentPosition.TokenIndexInLine = -1;
+            currentLine = tokensLines.Count > 0 ? tokensLines[startLine] : null;
             currentToken = null;
         }
 
@@ -351,6 +354,8 @@ namespace TypeCobol.Compiler.Scanner
                 currentToken = null;
             }
         }
+
+        public void SeekToLineInMainDocument(int line) => Reset(line);
 
         /// <summary>
         /// Saves the current position of the iterator, to be able to restore it later
