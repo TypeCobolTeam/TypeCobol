@@ -1,0 +1,20 @@
+--- Nodes ---
+?
+  TCOMFL06
+    data-division
+      working-storage
+        var1
+        var2
+        var3
+    procedure-division
+      sentence-0
+        [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+
+        [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var3]<UserDefinedWord>
+- variables = var3
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
