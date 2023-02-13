@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
             foreach (Token compilerDirectiveStartingToken in documentLines
-                .Where(line => line.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                .Where(line => line.NeedsCompilerDirectiveParsing)
                 .SelectMany(line => line.SourceTokens)
                 .Where(token => token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword))
             {
@@ -240,25 +240,18 @@ namespace TypeCobol.Compiler.Preprocessor
                 perfStatsForParserInvocation.OnStopTreeBuilding();
             }
 
-            // 8. Advance the state off all ProcessedTokensLines : 
-            // NeedsCompilerDirectiveParsing => NeedsCopyDirectiveProcessing if it contains a COPY directive
+            // 8. Set the state of all ProcessedTokensLines : 
             IList<ProcessedTokensLine> parsedLinesWithCopyDirectives = null;
-            // NeedsCompilerDirectiveParsing => Ready otherwise
-            foreach (ProcessedTokensLine parsedLine in documentLines
-                .Where(line => line.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing))
+            foreach (ProcessedTokensLine parsedLine in documentLines.Where(line => line.NeedsCompilerDirectiveParsing))
             {
+                parsedLine.NeedsCompilerDirectiveParsing = false;
                 if (parsedLine.ImportedDocuments != null)
                 {
                     if (parsedLinesWithCopyDirectives == null)
                     {
                         parsedLinesWithCopyDirectives = new List<ProcessedTokensLine>();
                     }
-                    parsedLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.NeedsCopyDirectiveProcessing;
                     parsedLinesWithCopyDirectives.Add(parsedLine);
-                }
-                else
-                {
-                    parsedLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.Ready;
                 }
             }
 
@@ -321,8 +314,8 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
 
-                    // Advance processing status of the line
-                    tokensLineWithCopyDirective.PreprocessingState = ProcessedTokensLine.PreprocessorState.Ready;
+                    // Set processing status of the line
+                    tokensLineWithCopyDirective.NeedsCompilerDirectiveParsing = false;
                 }
             }
 
@@ -402,13 +395,13 @@ namespace TypeCobol.Compiler.Preprocessor
                     ProcessedTokensLine previousLine = reversedEnumerator.Current;
 
                     // A reset line was already treated by the previous call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (previousLine?.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                    if (previousLine == null || previousLine.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
                     // Previous line is a continuation : reset this line and continue navigating backwards
                     // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
-                    else if (previousLine != null && (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine))
+                    if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
                     {
                         lineIndex = previousLineIndex;
                         previousLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.Preprocessor);
@@ -430,7 +423,7 @@ namespace TypeCobol.Compiler.Preprocessor
             if (lineIndex < (documentLines.Count - 1))
             {
                 int nextLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, true);
+                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
                 while (enumerator.MoveNext())
                 {
                     // Get the next line until non continuation line is encountered
@@ -438,13 +431,13 @@ namespace TypeCobol.Compiler.Preprocessor
                     ProcessedTokensLine nextLine = enumerator.Current;
 
                     // A reset line will be treated by the next call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (nextLine?.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                    if (nextLine == null || nextLine.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
                     // Next line is a continuation and is continued: reset this line and continue navigating forwards
                     // Next line is a continuation but is not continued : reset this line and stop navigating forwards
-                    else if (nextLine != null && nextLine.HasDirectiveTokenContinuationFromPreviousLine)
+                    if (nextLine.HasDirectiveTokenContinuationFromPreviousLine)
                     {
                         nextLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.Preprocessor);
                         processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
