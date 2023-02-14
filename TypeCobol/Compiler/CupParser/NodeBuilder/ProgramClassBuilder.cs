@@ -19,14 +19,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     public class ProgramClassBuilder : IProgramClassBuilder
     {
         private static bool _SourceCodeDumped;
+        private static bool _AnomalousLineIndexTraced;
 
         internal void LogAnomalousLineIndex()
         {
             const string message = "Anomalous line index found !";
             if (_SourceCodeDumped)
             {
-                // Full source with changes has already been dumped, just add a simple trace to help notice the line index problem
-                LoggingSystem.LogMessage(LogLevel.Error, message);
+                // Full source with changes has already been dumped, just add a trace (once) to help notice the line index problem
+                if (!_AnomalousLineIndexTraced)
+                {
+                    LoggingSystem.LogMessage(LogLevel.Error, message);
+                    _AnomalousLineIndexTraced = true;
+                }
             }
             else
             {
