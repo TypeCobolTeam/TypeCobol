@@ -48,7 +48,6 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestMethod]
         [TestCategory("Incremental")]
         [TestProperty("Time", "fast")]
-        [Ignore] // Only RemoveContinuationLineAfterRegularLine test is Ok for now...
         public void ContinuationLines() => TestFolder();
     }
 }
