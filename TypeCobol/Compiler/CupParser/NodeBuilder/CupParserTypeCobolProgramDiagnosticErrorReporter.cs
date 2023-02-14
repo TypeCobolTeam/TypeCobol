@@ -4,6 +4,7 @@ using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -112,10 +113,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
             }
 
-            // Try to close current statement if current token is an END-Statement
-            if (ce is CodeElementEnd codeElementEnd)
+            // Try to close current statement if current token is a matching END-Statement
+            if (((ProgramClassBuilder)tcpParser.Builder).CurrentNode is StatementWithBody currentStatement && ce?.Type == currentStatement.EndType)
             {
-                lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementClosingPoint, codeElementEnd, true);
+                lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementClosingPoint, ce, true);
                 stmtParser.parse();
             }
 
