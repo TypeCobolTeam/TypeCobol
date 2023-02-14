@@ -1,0 +1,19 @@
+Line 14[21,24] <27, Error, Syntax> - Syntax error : extraneous input 'TODO' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 15[26,26] <27, Error, Syntax> - Syntax error : no viable alternative at input 'TODO ... :'
+Line 16[12,22] <27, Error, Syntax> - Syntax error : extraneous input 'end-perform' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, MethodEnd, DeclarativesEnd, SectionHeader, ParagraphHeader, SentenceEnd, AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, FunctionDeclarationHeader, FunctionDeclarationEnd, ProcedureStyleCall}
+--- Nodes ---
+?
+  MyPGM
+    data-division
+      working-storage
+        MyArray
+          TAB-EXC-ELE
+            TAB-EXC-IDX
+            TAB-EXC-CLE
+    procedure-division
+      sentence-0
+        [[PerformStatement]] [12,18:perform]<PERFORM> --> [42,43:50]<IntegerLiteral>{50}
+
+        end
+      end
+    end
