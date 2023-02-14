@@ -163,8 +163,8 @@ namespace TypeCobol.Test {
         {
             string[] extensions = { ".cbl", ".pgm" };
             Console.WriteLine("Entering directory \"" + root + "\" [" + string.Join(", ", extensions) + "]:");
-            var folderTester = new FolderTester(root, extensions);
-            int nbOfTests = folderTester.Test(isCobolLanguage: cobol);
+            var folderTester = new FolderTester(root, extensions) { IsCobolLanguage = cobol };
+            int nbOfTests = folderTester.Test();
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
@@ -235,9 +235,9 @@ namespace TypeCobol.Test {
 
             string[] extensions = { ".cbl" };
 
-            var folderTester = new FolderTester(tempRoot, extensions, recursive: false);
             //In pure cobol mode, REMARKS directive is considered as regular comment so unsupported REMARKS formats won't break the parsing
-            int nbOfTests = folderTester.Test(isCobolLanguage: true);
+            var folderTester = new FolderTester(tempRoot, extensions, recursive: false) { IsCobolLanguage = true };
+            int nbOfTests = folderTester.Test();
             Console.Write("\n");
 
             Console.Write("Number of tests: " + nbOfTests + "\n");
@@ -342,8 +342,8 @@ namespace TypeCobol.Test {
             {
                 var dirname = Path.GetFileName(testDirectory);
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(testDirectory, extensions, recursive: false);
-                nbOfTests += folderTester.Test(isCobolLanguage: dirname.EndsWith("NoTC"));
+                var folderTester = new FolderTester(testDirectory, extensions, recursive: false) { IsCobolLanguage = dirname.EndsWith("NoTC") };
+                nbOfTests += folderTester.Test();
             }
 
             Console.Write("\n");

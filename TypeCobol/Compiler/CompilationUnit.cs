@@ -50,7 +50,7 @@ namespace TypeCobol.Compiler
                 _analyzerProvider = null;
             }
 
-            _history = this.TrackChanges(5);
+            _history = this.TrackChanges(20);
         }
 
         /// <summary>
