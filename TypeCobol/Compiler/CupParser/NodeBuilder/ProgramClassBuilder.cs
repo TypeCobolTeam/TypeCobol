@@ -18,14 +18,18 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// </summary>
     public class ProgramClassBuilder : IProgramClassBuilder
     {
-        private static bool _SourceCodeDumped;
+        private static readonly HashSet<string> _SourceCodeDumpReasons = new HashSet<string>();
 
-        private void LogErrorIncludingFullSourceCode(string message)
+        internal void LogAnomalousLineIndex() => LogErrorIncludingFullSourceCode(nameof(LogAnomalousLineIndex), "Anomalous line index found !");
+
+        private void LogInvalidAst(string message) => LogErrorIncludingFullSourceCode(nameof(LogInvalidAst), message);
+
+        private void LogErrorIncludingFullSourceCode(string reason, string message)
         {
             // Fail immediately in debug. There is no point in dumping source code and this allows to see the error.
             System.Diagnostics.Debug.Fail(message);
 
-            if (_SourceCodeDumped) return; // Dump only once to avoid huge logs
+            if (!_SourceCodeDumpReasons.Add(reason)) return; // Dump only once for this reason to avoid huge logs
 
             // Build a correlation id to group traces
             string correlationId = DateTime.Now.ToString("s") + "@" + Environment.MachineName;
@@ -56,8 +60,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 changeId++;
             }
             LoggingSystem.LogMessage(LogLevel.Error, message, new Dictionary<string, object>() { { $"{correlationId} - changes", currentTrace.ToString() } });
-
-            _SourceCodeDumped = true;
 
             void IterateCodeElementsLines(Action<CodeElementsLine> appendLine)
             {
@@ -309,7 +311,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 {
                     // This is abnormal, re-synchronize builder with CUP parser
                     Exit();
-                    LogErrorIncludingFullSourceCode($"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.");
+                    LogInvalidAst($"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.");
                 }
 
                 #endregion
@@ -940,7 +942,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 // Invalid AST
                 Exit();
-                LogErrorIncludingFullSourceCode($"Invalid parent for paragraph '{header.Name}'.");
+                LogInvalidAst($"Invalid parent for paragraph '{header.Name}'.");
             }
 
             bool IsValidParagraphParent()
