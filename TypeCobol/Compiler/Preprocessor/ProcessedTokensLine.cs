@@ -235,21 +235,15 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         public IList<Diagnostic> PreprocessorDiagnostics { get; private set; }
 
-        public override IEnumerable<Diagnostic> AllDiagnostics()
+        public override void CollectDiagnostics(List<Diagnostic> diagnostics)
         {
             // Start with diagnostic from TokensLine
-            foreach (var diagnostic in base.AllDiagnostics())
-            {
-                yield return diagnostic;
-            }
+            base.CollectDiagnostics(diagnostics);
 
             // Add preprocessor diagnostics
             if (PreprocessorDiagnostics != null)
             {
-                foreach (var preprocessorDiagnostic in PreprocessorDiagnostics)
-                {
-                    yield return preprocessorDiagnostic;
-                }
+                diagnostics.AddRange(PreprocessorDiagnostics);
             }
         }
 

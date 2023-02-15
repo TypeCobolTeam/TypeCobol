@@ -109,21 +109,15 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public override IEnumerable<Diagnostic> AllDiagnostics()
+        public override void CollectDiagnostics(List<Diagnostic> diagnostics)
         {
-            // Start with diagnostic from ProcessedTokensLine
-            foreach (var diagnostic in base.AllDiagnostics())
-            {
-                yield return diagnostic;
-            }
+            // Start with diagnostics from ProcessedTokensLine
+            base.CollectDiagnostics(diagnostics);
 
             // CodeElement parsing diagnostics and COPY directive processing diagnostics in EI-mode
             if (ParserDiagnostics != null)
             {
-                foreach (var parserDiagnostic in ParserDiagnostics)
-                {
-                    yield return parserDiagnostic;
-                }
+                diagnostics.AddRange(ParserDiagnostics);
             }
 
             // Diagnostics on CodeElement themselves
@@ -133,10 +127,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     if (codeElement.Diagnostics != null)
                     {
-                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
-                        {
-                            yield return codeElementDiagnostic;
-                        }
+                        diagnostics.AddRange(codeElement.Diagnostics);
                     }
                 }
             }
@@ -148,7 +139,9 @@ namespace TypeCobol.Compiler.Parser
             LineIndex += offset;
 
             //Shift diagnostics
-            foreach (var diagnostic in AllDiagnostics())
+            var diagnostics = new List<Diagnostic>();
+            CollectDiagnostics(diagnostics);
+            foreach (var diagnostic in diagnostics)
             {
                 diagnostic.Shift(offset);
             }
