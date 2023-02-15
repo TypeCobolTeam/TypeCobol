@@ -1,0 +1,47 @@
+{
+  "name": "EI_ExtractRemarksData_CPYInsideCPX.tlsp",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2022_11_10_11_11_37_072\\TestSuite_2022_11_10_11_11_37_072.slsp",
+  "user": "MILLETFL",
+  "date": "2022/11/10 11:11:37 083",
+  "uri": "file:///C:/Users/MILLETFL/Downloads/test lsr/EI_ExtractRemarksData_CPYInsideCPX.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/GitHub/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"didSave\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true}}},\"trace\":\"verbose\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v0.0.0-local\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-e\",\"rdz\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\",\"--autoremarks\",\"-cob\",\"-dol\",\"-td\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Test\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UATL\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UAT\",\"-c\",\"C:\\\\Users\\\\MILLETFL\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Production\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\",\"languageId\":\"__lsp4j_Cobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. TCOFM117.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 IMPORTED-DATA.\\r\\n       COPY YLSCPXA.\\r\\n       PROCEDURE DIVISION.\\r\\n           DISPLAY LSCPXA-DATA-ITEM1\\r\\n                   LSCPYA-DATA-ITEM2\\r\\n                   LSCPXA-DATA-ITEM3\\r\\n           GOBACK\\r\\n\\r\\n           .\\r\\n       END PROGRAM TCOFM117.\"}}}",
+  "messages": [
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. TCOFM117.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 IMPORTED-DATA.\\r\\n       COPY YLSCPXA.\\r\\n       PROCEDURE DIVISION.\\r\\n           DISPLAY LSCPXA-DATA-ITEM1\\r\\n                   LSCPYA-DATA-ITEM2\\r\\n                   LSCPXA-DATA-ITEM3\\r\\n           GOBACK\\r\\n\\r\\n           .\\r\\n       END PROGRAM TCOFM117.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\"},\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":10,\"character\":17},\"end\":{\"line\":11,\"character\":0}},\"rangeLength\":2,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/euroinformation/ExtractRemarksData\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\"}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"usedCPYs\":[\"YLSCPYA\"],\"insertionLine\":3}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. TCOFM117.\\r\\n      *REMARKS. COPY\\u003d(\\r\\n      *    YLSCPYA\\r\\n      * ).\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 IMPORTED-DATA.\\r\\n       COPY YLSCPXA.\\r\\n       PROCEDURE DIVISION.\\r\\n           DISPLAY LSCPXA-DATA-ITEM1\\r\\n                   LSCPYA-DATA-ITEM2\\r\\n                   LSCPXA-DATA-ITEM3\\r\\n           GOBACK\\r\\n           .\\r\\n       END PROGRAM TCOFM117.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\",\"diagnostics\":[]}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOFM117.cbl\"}}}",
+  "IsValid": true
+}

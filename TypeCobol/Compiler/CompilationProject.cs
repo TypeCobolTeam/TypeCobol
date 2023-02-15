@@ -176,8 +176,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Returns a CompilationDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
-        public virtual CompilationDocument Import(string libraryName, string textName,
-            MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
+        public virtual CompilationDocument Import(string libraryName, string textName, MultilineScanState scanState, out PerfStatsForImportedDocument perfStats)
         {
             var stats = new PerfStatsForImportedDocument { WasRetrievedFromCache = true };
             var result = CopyCache.GetOrAddDocument(libraryName, textName, scanState, CompileCopy);
@@ -186,13 +185,9 @@ namespace TypeCobol.Compiler
 
             CompilationDocument CompileCopy()
             {
-#if !EUROINFO_RULES
-                if (copyTextNameVariations != null)
-                    copyTextNameVariations.Add(new RemarksDirective.TextNameVariation(textName));
-#endif
                 bool wasAlreadyInsideCopy = scanState.InsideCopy;
                 scanState.InsideCopy = true;
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, Format.ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this, copyTextNameVariations);
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, Format.ColumnsLayout, true, SourceFileProvider, this, CompilationOptions, null, scanState, this);
                 fileCompiler.CompileOnce();
                 scanState.InsideCopy = wasAlreadyInsideCopy;
 

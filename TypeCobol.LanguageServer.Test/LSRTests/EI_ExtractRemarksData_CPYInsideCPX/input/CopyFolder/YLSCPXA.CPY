@@ -1,0 +1,3 @@
+         05 LSCPXA-DATA-ITEM1 PIC X.
+         COPY YLSCPYA.
+         05 LSCPXA-DATA-ITEM3 PIC X.
