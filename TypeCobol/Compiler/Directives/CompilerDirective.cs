@@ -846,6 +846,30 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public class TextNameVariation
         {
+            public static TextNameVariation FindOrAdd(List<TextNameVariation> variations, CopyDirective copyDirective)
+            {
+                return FindOrAdd(variations, copyDirective.TextName, () => new TextNameVariation(copyDirective.TextName));
+            }
+
+            public static TextNameVariation FindOrAdd(List<TextNameVariation> variations, TextNameVariation variation)
+            {
+                return FindOrAdd(variations, variation.TextNameWithSuffix, () => variation);
+            }
+
+            private static TextNameVariation FindOrAdd(List<TextNameVariation> variations, string textNameWithSuffix, Func<TextNameVariation> getNewValue)
+            {
+                // Find the existing text name variation (if any)
+                var variation = variations.Find(v => string.Equals(v.TextNameWithSuffix, textNameWithSuffix, StringComparison.OrdinalIgnoreCase));
+                if (variation == null)
+                {
+                    //If it does not exists, create the text name variation and add it
+                    variation = getNewValue();
+                    variations.Add(variation);
+                }
+
+                return variation;
+            }
+
             public TextNameVariation(string textNameWithSuffix)
             {
                 TextNameWithSuffix = textNameWithSuffix;
