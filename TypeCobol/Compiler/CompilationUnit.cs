@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
@@ -456,7 +455,13 @@ namespace TypeCobol.Compiler
                 return base.AllDiagnostics();
             }
 
-            var diagnostics = codeElementsDocumentSnapshot.Lines.SelectMany(line => line.AllDiagnostics()).ToList();
+            //CodeElements parsing diagnostics
+            var diagnostics = new List<Diagnostic>();
+            foreach (var codeElementsLine in codeElementsDocumentSnapshot.Lines)
+            {
+                codeElementsLine.CollectDiagnostics(diagnostics);
+            }
+
             if (onlyCodeElementDiagnostics) return diagnostics; //No need to go further
 
             TemporarySemanticDocument temporarySemanticDocument;
