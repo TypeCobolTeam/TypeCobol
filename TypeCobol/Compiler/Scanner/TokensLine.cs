@@ -105,7 +105,11 @@ namespace TypeCobol.Compiler.Scanner
 
         private IList<Diagnostic> _ScannerDiagnostics;
 
-        public virtual IEnumerable<Diagnostic> AllDiagnostics() => _ScannerDiagnostics; // For TokensLine all diagnostics are collected in ScannerDiagnostics
+        public virtual void CollectDiagnostics(List<Diagnostic> diagnostics)
+        {
+            // For TokensLine all diagnostics are collected in ScannerDiagnostics
+            diagnostics.AddRange(_ScannerDiagnostics);
+        }
 
         internal virtual void ResetDiagnostics() => _ScannerDiagnostics.Clear();
 
