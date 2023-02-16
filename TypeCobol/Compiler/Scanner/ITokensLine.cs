@@ -37,9 +37,9 @@ namespace TypeCobol.Compiler.Scanner
         MultilineScanState ScanState { get; }
 
         /// <summary>
-        /// Enumerate all diagnostic for this line.
+        /// Collect all diagnostics attached to this line into the given list.
         /// </summary>
-        /// <returns>A (potentially deferred) enumeration of all diagnostics attached to this line.</returns>
-        IEnumerable<Diagnostic> AllDiagnostics();
+        /// <param name="diagnostics">A non-null list of diagnostics to accumulate results</param>
+        void CollectDiagnostics(List<Diagnostic> diagnostics);
     }
 }

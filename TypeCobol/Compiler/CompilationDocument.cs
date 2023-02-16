@@ -928,7 +928,7 @@ namespace TypeCobol.Compiler
                 //We got a ProcessedTokensDocument, iterate over its lines
                 foreach (var processedTokensLine in processedTokensDocument.Lines)
                 {
-                    diagnostics.AddRange(processedTokensLine.AllDiagnostics());
+                    processedTokensLine.CollectDiagnostics(diagnostics);
                 }
             }
             else
@@ -945,7 +945,7 @@ namespace TypeCobol.Compiler
                     //Iterate over TokensLines
                     foreach (var tokensLine in tokensDocument.Lines)
                     {
-                        diagnostics.AddRange(tokensLine.AllDiagnostics());
+                        tokensLine.CollectDiagnostics(diagnostics);
                     }
                 }
                 //else no snapshot available yet
