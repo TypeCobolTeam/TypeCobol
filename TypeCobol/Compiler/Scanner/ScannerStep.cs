@@ -270,28 +270,26 @@ namespace TypeCobol.Compiler.Scanner
                 IList<TokensLine> continuationLinesGroup = new List<TokensLine>();
                 int firstLineIndex = lineToScanIndex;
                 lineToScan.SourceTokens.Clear();
-                continuationLinesGroup.Insert(0, (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
+                continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
 
-                // Navigate backwards to the start of the multiline continuation 
+                // Navigate backwards to the start of the multiline continuation
                 if (lineToScan.Type == CobolTextLineType.Continuation && lineToScanIndex > 0)
                 {
-                    int revLineToScanIndex = lineToScanIndex;
                     using (var reversedEnumerator = documentLines.GetEnumerator(lineToScanIndex - 1, -1, true))
                     {
                         while (reversedEnumerator.MoveNext())
                         {
-                            // Get the previous line until a non continuation and non comment line is encountered
-                            revLineToScanIndex--;
+                            firstLineIndex--;
                             lineToScan = reversedEnumerator.Current;
+                            System.Diagnostics.Debug.Assert(lineToScan != null);
 
-                            if (lineToScan?.Type == CobolTextLineType.Continuation /*&&  <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
-                           lineToScan.Type != CobolTextLineType.Comment && lineToScan.Type != CobolTextLineType.Blank*/) // see p54 : for continuation, blank lines are treated like comment lines
+                            // Add into group
+                            lineToScan.SourceTokens.Clear();
+                            lineToScan.ScannerDiagnostics.Clear(); // TODO Move diagnostic clear operations into prepareDocumentLineForUpdate ?
+                            continuationLinesGroup.Insert(0, (TokensLine)prepareDocumentLineForUpdate(firstLineIndex, lineToScan, CompilationStep.Scanner));
+                            if (lineToScan.Type == CobolTextLineType.Source)
                             {
-                                firstLineIndex = revLineToScanIndex;
-                                continuationLinesGroup.Insert(0, (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
-                            }
-                            else
-                            {
+                                // Found continuation group start -> break
                                 break;
                             }
                         }
