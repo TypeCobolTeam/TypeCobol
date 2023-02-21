@@ -111,11 +111,6 @@ namespace TypeCobol.Compiler.Scanner
             diagnostics.AddRange(_ScannerDiagnostics);
         }
 
-        internal virtual void ResetDiagnostics()
-        {
-
-        }
-
         /// <summary>
         /// Use this method to attach a diagnostic to this line 
         /// (never call directly Diagnostics.Add)

@@ -93,14 +93,6 @@ namespace TypeCobol.Compiler.Parser
             _ParserDiagnostics.Add(diag);
         }
 
-        /// <summary>
-        /// Reset all diagnostics for the current line
-        /// </summary>
-        internal override void ResetDiagnostics()
-        {
-
-        }
-
         public override void CollectDiagnostics(List<Diagnostic> diagnostics)
         {
             // Start with diagnostics from ProcessedTokensLine
