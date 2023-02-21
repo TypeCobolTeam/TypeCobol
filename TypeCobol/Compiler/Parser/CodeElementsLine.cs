@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.Parser
         internal void AddCodeElement(CodeElement codeElement)
         {
             // Lazy list instantiation
-            if(CodeElements == null)
+            if (CodeElements == null)
             {
                 // In most cases, there will be no more than a single code element per line
                 CodeElements = new List<CodeElement>(1);
@@ -98,15 +98,7 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         internal override void ResetDiagnostics()
         {
-            base.ResetDiagnostics();
-            _ParserDiagnostics = null;
-            if (HasCodeElements)
-            {
-                foreach (var codeElement in CodeElements)
-                {
-                    codeElement.Diagnostics = null; //Delete all diagnostics on every codeelement of this line
-                }
-            }
+
         }
 
         public override void CollectDiagnostics(List<Diagnostic> diagnostics)

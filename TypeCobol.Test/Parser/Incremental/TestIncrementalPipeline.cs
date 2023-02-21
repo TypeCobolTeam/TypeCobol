@@ -14,6 +14,7 @@ namespace TypeCobol.Test.Parser.Incremental
     public class IncrementalTextLineChanges
     {
         private static readonly string _Root = PlatformUtils.GetPathForProjectFile(@"Parser\Incremental");
+        private static readonly string _RootPrograms = PlatformUtils.GetPathForProjectFile(@"Parser\Programs");
 
         private static void TestFolder([CallerMemberName] string folder = null)
         {
@@ -49,5 +50,36 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestCategory("Incremental")]
         [TestProperty("Time", "fast")]
         public void ContinuationLines() => TestFolder();
+
+        private static void TestProgramsWithChangesGenerator<TChangesGenerator>()
+            where TChangesGenerator : IIncrementalChangesGenerator, new()
+        {
+            string[] extensions = { ".cbl", ".pgm", ".tcbl" };
+            Console.WriteLine("Entering directory \"" + _RootPrograms + "\" [" + string.Join(", ", extensions) + "]:");
+            var folderTester = new FolderTester(_RootPrograms, extensions) { ChangesGenerator = new TChangesGenerator() };
+            int nbOfTests = folderTester.Test();
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
+
+        [Ignore]
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void AddEmptyLineAtBeginningThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtBeginningThenRemove>();
+
+        [Ignore]
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void AddEmptyLineAtEndThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtEndThenRemove>();
+
+        [Ignore]
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void AddEmptyLineInTheMiddleThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineInTheMiddleThenRemove>();
+
+        [Ignore]
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void ClearDocumentThenRewriteLineByLine() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLine>();
     }
 }

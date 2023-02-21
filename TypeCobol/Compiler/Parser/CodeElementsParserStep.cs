@@ -205,10 +205,7 @@ namespace TypeCobol.Compiler.Parser
                             : largestRefreshParseSection.StopLineIndex);
                     for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
                     {
-                        if (documentLines[i].HasCodeElements)
-                        {
-                            documentLines[i].ResetCodeElements();
-                        }
+                        documentLines[i].ResetCodeElements();
                     }
                 }
                 else
@@ -218,10 +215,7 @@ namespace TypeCobol.Compiler.Parser
                     tokenStream.ResetStopTokenLookup();
                     foreach (var documentLine in documentLines)
                     {
-                        if (documentLine.HasCodeElements)
-                        {
-                            documentLine.ResetCodeElements();
-                        }
+                        documentLine.ResetCodeElements();
                     }
                 }
             }
@@ -536,7 +530,6 @@ namespace TypeCobol.Compiler.Parser
 
                         // All lines contained in the parse section could be modified, and should be reset
                         previousLine = (CodeElementsLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.CodeElementsParser);
-                        previousLine.ResetCodeElements();
                         codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
                     }
 
@@ -566,84 +559,74 @@ namespace TypeCobol.Compiler.Parser
             {
                 int nextLineIndex = lineIndex;
                 IEnumerator<CodeElementsLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
-                bool nextLineHasCodeElements = false;
-                //----------------------------------------------------------------------------
-                // Because we use multi line comments once we have figure out
-                // the last line for stopping reparsing, we must consider the next for that,
-                // So that if figured out line is candidate for formalized comments, it will
-                // be entirely reparsed along with its formalized comment.
-                //----------------------------------------------------------------------------
-                bool oneMoreLine = false;
+                bool stopOnNextCodeElement = false;
+                bool foundStopCodeElement = false;
                 while (enumerator.MoveNext())
                 {
-                    // Get the next line until non continuation line is encountered
+                    // Get the next line until new CodeElement is encountered
                     nextLineIndex++;
                     CodeElementsLine nextLine = enumerator.Current;
+                    System.Diagnostics.Debug.Assert(nextLine != null);
 
-                    // Check if the next CodeElement found starts at the beginning of the line   
-                    if (nextLine != null)
+                    // Check REPLACE directive
+                    if (lookForNextReplaceDirective)
                     {
-                        if (lookForNextReplaceDirective)
+                        if (nextLine.ReplaceDirective != null)
                         {
-                            if (nextLine.ReplaceDirective != null)
-                            {
-                                // next line is a new REPLACE directive, stop looking for REPLACE and look for next CodeElement
-                                lookForNextReplaceDirective = false;
-                            }
-                            else
-                            {
-                                // Line could have been updated through the effect of the modified REPLACE
-                                nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
-                                codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                                continue;
-                            }
+                            // next line is a new REPLACE directive, stop looking for REPLACE and look for next CodeElement
+                            lookForNextReplaceDirective = false;
                         }
-
-                        nextLineHasCodeElements = nextLine.HasCodeElements;
-                        bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
-                        if (nextLineHasCodeElements)
+                        else
                         {
-                            try
-                            {
-                                Token startTokenForNextParseSection = nextLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
-                                Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
-                                nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
-                            }
-                            catch (System.InvalidOperationException /*e*/)
-                            {//JCM: 28/08/2017: I noticed that this Exception can occur if: it doesn't exists a token which verifies the predicate: token.Channel == Token.CHANNEL_SourceToken
-                                nextCodeElementStartsAtTheBeginningOfTheLine = false;
-                            }
-                        }
-
-                        // All lines contained in the parse section could be modified
-                        if (!nextCodeElementStartsAtTheBeginningOfTheLine)
-                        {
-                            // TO DO : ERROR below, will not work if we have source tokens from previous CodeElement + one other CodeElement on the same line
-                            // => the other CodeElement will be deleted by prepareDocumentLineForUpdate and not parsed again
+                            // Line could have been updated through the effect of the modified REPLACE
                             nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
                             codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                        }
-
-                        // Stop iterating forwards as soon as the start of an old CodeElement is found                   
-                        if (nextLineHasCodeElements)
-                        {
-                            if (oneMoreLine || !(nextLine.CodeElements.Any(ce => ce is IFormalizedCommentable)))
-                            {
-                                currentParseSection.StopLineIndex = nextLineIndex;
-                                currentParseSection.StopToken = nextLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
-                                break;
-                            }
-                            else
-                            {   //Ok next line will be the last one.
-                                oneMoreLine = true;
-                            }
+                            continue;
                         }
                     }
+
+                    // Check if the next CodeElement starts at the beginning of the line
+                    var nextLineHasCodeElements = nextLine.HasCodeElements;
+                    bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
+                    Token nextLineCodeElementFirstToken = null;
+                    if (nextLineHasCodeElements)
+                    {
+                        nextLineCodeElementFirstToken = nextLine.CodeElements[0].ConsumedTokens.First();
+                        Token nextLineFirstSourceToken = nextLine.SourceTokens.FirstOrDefault();
+                        nextCodeElementStartsAtTheBeginningOfTheLine = nextLineCodeElementFirstToken == nextLineFirstSourceToken;
+                    }
+
+                    // All lines contained in the parse section could be modified
+                    if (!nextCodeElementStartsAtTheBeginningOfTheLine)
+                    {
+                        // TO DO : ERROR below, will not work if we have source tokens from previous CodeElement + one other CodeElement on the same line
+                        // => the other CodeElement will be deleted by prepareDocumentLineForUpdate and not parsed again
+                        nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
+                        codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
+                        stopOnNextCodeElement = false;
+                    }
+
+                    // Stop iterating forwards as soon as the start of a previously parsed CodeElement is found                   
+                    if (nextLineHasCodeElements)
+                    {
+                        // Take one more CodeElement to refresh diagnostics related to one CE but located after it
+                        if (stopOnNextCodeElement)
+                        {
+                            currentParseSection.StopLineIndex = nextLineIndex;
+                            currentParseSection.StopToken = nextLineCodeElementFirstToken;
+                            foundStopCodeElement = true;
+                            break;
+                        }
+
+                        // Ok next line will be the last one.
+                        stopOnNextCodeElement = true;
+                    }
                 }
+
                 // If no CodeElement was found on the next lines, current parse section current parse section ends at the end of the file
-                if (!nextLineHasCodeElements)
+                if (!foundStopCodeElement)
                 {
-                    currentParseSection.StopLineIndex = nextLineIndex;
+                    currentParseSection.StopLineIndex = documentLines.Count - 1;
                     currentParseSection.StopToken = null;
                 }
             }

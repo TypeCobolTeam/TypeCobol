@@ -240,8 +240,10 @@ namespace TypeCobol.Compiler.Scanner
             if (!partOfMultilineContinuation)
             {
                 // Create a new copy of the line before the update if necessary
-                lineToScan = (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner);
                 lineToScan.SourceTokens.Clear(); //Erase previous SourceTokens to let the scanner creates the new tokens
+                lineToScan.ResetScannerDiagnostics(); //Erase previous Scanner diagnostics
+                lineToScan = (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner);
+                
                 if (lineToScanIndex == 0)
                 {
                     // Use start ScanState
@@ -270,6 +272,7 @@ namespace TypeCobol.Compiler.Scanner
                 IList<TokensLine> continuationLinesGroup = new List<TokensLine>();
                 int firstLineIndex = lineToScanIndex;
                 lineToScan.SourceTokens.Clear();
+                lineToScan.ResetScannerDiagnostics();
                 continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
 
                 // Navigate backwards to the start of the multiline continuation
@@ -285,7 +288,7 @@ namespace TypeCobol.Compiler.Scanner
 
                             // Add into group
                             lineToScan.SourceTokens.Clear();
-                            lineToScan.ScannerDiagnostics.Clear(); // TODO Move diagnostic clear operations into prepareDocumentLineForUpdate ?
+                            lineToScan.ResetScannerDiagnostics();
                             continuationLinesGroup.Insert(0, (TokensLine)prepareDocumentLineForUpdate(firstLineIndex, lineToScan, CompilationStep.Scanner));
                             if (lineToScan.Type == CobolTextLineType.Source)
                             {
@@ -302,6 +305,7 @@ namespace TypeCobol.Compiler.Scanner
                     lineToScanIndex++;
                     lineToScan = nextLineToScan;
                     lineToScan.SourceTokens.Clear();
+                    lineToScan.ResetScannerDiagnostics();
                     continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
 
                     nextLineToScanIndex = -1;
@@ -323,6 +327,7 @@ namespace TypeCobol.Compiler.Scanner
                            lineToScan.Type == CobolTextLineType.Comment || lineToScan.Type == CobolTextLineType.Blank*/) // see p54 : for continuation, blank lines are treated like comment lines
                             {
                                 lineToScan.SourceTokens.Clear();
+                                lineToScan.ResetScannerDiagnostics();
                                 // Add this line at the end of the list of continuation lines
                                 continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
                             }
