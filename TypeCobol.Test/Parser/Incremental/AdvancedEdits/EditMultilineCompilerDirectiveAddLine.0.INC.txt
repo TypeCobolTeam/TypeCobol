@@ -43,6 +43,8 @@ Line    9: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> 
  [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var2]<UserDefinedWord>
 - variables = var2
  
+Line   11: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
 ------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
 Line    4: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
  
@@ -55,3 +57,5 @@ Line    9: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> 
 - variables = var2
  
 Line   10: LineUpdated     -> 
+Line   11: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 

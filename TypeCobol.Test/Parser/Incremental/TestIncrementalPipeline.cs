@@ -62,7 +62,6 @@ namespace TypeCobol.Test.Parser.Incremental
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
 
-        [Ignore]
         [TestMethod]
         [TestCategory("Incremental")]
         public void AddEmptyLineAtBeginningThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtBeginningThenRemove>();
