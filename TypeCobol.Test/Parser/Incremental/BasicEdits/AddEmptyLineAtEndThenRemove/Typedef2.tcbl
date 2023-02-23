@@ -1,0 +1,18 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. TypeCobol.
+
+DATA DIVISION.
+
+
+WORKING-STORAGE SECTION.
+
+01 MyType TYPEDEF.
+  02 MyType-var1 PIC X.
+
+*KO: a var can only have one type.
+01 MyVar TYPE MyType TYPE Bool.
+
+PROCEDURE DIVISION.
+*KO: (Rule: #5) -  TYPEDEF  clause can only be specified in the  WORKING-STORAGE ,  LOCAL-STORAGE ,  LINKAGE , or  FILE  sections of a program.
+01 OutOfPerimeter2 TYPEDEF.
+  02 OutOfPerimeter2-var1 PIC X.

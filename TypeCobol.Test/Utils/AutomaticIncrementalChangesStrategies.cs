@@ -42,8 +42,9 @@ namespace TypeCobol.Test.Utils
             if (afterInitialParsing.CobolTextLines.Count < 1) yield break;
 
             int lineIndex = afterInitialParsing.CobolTextLines.Count - 1;
-            yield return new[] { new RangeUpdate(lineIndex, 0, lineIndex, 0, Environment.NewLine) };
-            yield return new[] { new RangeUpdate(lineIndex, 0, lineIndex + 1, 0, string.Empty) };
+            int column = afterInitialParsing.CobolTextLines[afterInitialParsing.CobolTextLines.Count - 1].Length;
+            yield return new[] { new RangeUpdate(lineIndex, column, lineIndex, column, Environment.NewLine) };
+            yield return new[] { new RangeUpdate(lineIndex, column, lineIndex + 1, 0, string.Empty) };
         }
     }
 

@@ -18,7 +18,11 @@ Line    8: LineUpdated     ->
 ============================== ICodeElementsLine ===============================
 Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,8:01]<LevelNumber>{1} --> [16,16+:.]<PeriodSeparator>
  
+Line    5: LineUpdated     -> 
+Line    4: LineUpdated     -> 
 Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
  
 Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,8:01]<LevelNumber>{1} --> [16,16+:.]<PeriodSeparator>
  
@@ -27,6 +31,10 @@ Line    7: LineUpdated     -> [[DataDescriptionEntry]] [11,12:05]<LevelNumber>{5
 Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
  
 ------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    4: LineUpdated     -> 
+Line    5: LineUpdated     -> 
 Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,8:01]<LevelNumber>{1} --> [16,16+:.]<PeriodSeparator>
  
 Line    7: LineUpdated     -> [[DataDescriptionEntry]] [11,12:05]<LevelNumber>{5} --> [24,24+:.]<PeriodSeparator>

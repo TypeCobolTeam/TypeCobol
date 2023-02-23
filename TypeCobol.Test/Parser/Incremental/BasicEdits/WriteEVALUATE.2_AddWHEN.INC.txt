@@ -23,8 +23,6 @@ Line   10: LineInserted    ->
 Line   11: LineInserted    -> 
 Line   12: LineUpdated     -> 
 ============================== ICodeElementsLine ===============================
-Line    9: LineUpdated     -> [[EvaluateStatement]] [12,19:EVALUATE]<EVALUATE> --> [21,24:TRUE]<TRUE>
- 
 Line   11: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
 - variables = var2
  

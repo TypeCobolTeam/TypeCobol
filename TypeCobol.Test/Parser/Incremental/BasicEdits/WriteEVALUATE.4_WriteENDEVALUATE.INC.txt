@@ -16,8 +16,6 @@ Line   15: LineUpdated     ->
 Line   14: LineInserted    -> 
 Line   15: LineUpdated     -> 
 ============================== ICodeElementsLine ===============================
-Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
- 
 Line   15: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
  
 Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>

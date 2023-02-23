@@ -16,9 +16,6 @@ Line   12: LineUpdated     ->
 Line   11: LineInserted    -> 
 Line   12: LineUpdated     -> 
 ============================== ICodeElementsLine ===============================
-Line   10: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
-- variables = var2
- 
 Line   12: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
  
 Line   10: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>

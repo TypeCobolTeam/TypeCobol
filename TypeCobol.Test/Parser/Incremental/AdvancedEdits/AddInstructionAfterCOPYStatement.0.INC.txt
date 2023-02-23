@@ -21,6 +21,8 @@ Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> 
  
 Line    9: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
  
+Line    6: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
 Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
 - variables = "bbb"
  
@@ -29,6 +31,8 @@ Line    8: LineUpdated     -> [[MoveStatement]] [12,15:move]<MOVE> --> [22,22:b]
 Line    9: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
  
 ------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    6: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
 Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
 - variables = "bbb"
  

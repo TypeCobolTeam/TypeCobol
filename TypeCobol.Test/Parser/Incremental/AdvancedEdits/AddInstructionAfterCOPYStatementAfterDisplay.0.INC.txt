@@ -16,12 +16,6 @@ Line    9: LineUpdated     ->
 Line    8: LineInserted    -> 
 Line    9: LineUpdated     -> 
 ============================== ICodeElementsLine ===============================
-Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}
-- variables = "aaa"
- [[SentenceEnd]] [25,26:. ]<PeriodSeparator> --> [25,26:. ]<PeriodSeparator>
- [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
-- variables = "bbb"
- 
 Line    9: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
  
 Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}

@@ -20,8 +20,6 @@ Line    6: LineUpdated     -> +++ CONTINUATION OF REPLACE_DIRECTIVE ([8,11:    ]
 Line    7: LineInserted    -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var2]<UserDefinedWord>) +++ 
 Line    8: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,13:==]<PseudoTextDelimiter>[14,14+:.]<PeriodSeparator>) +++ 
 ============================== ICodeElementsLine ===============================
-Line    4: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
- 
 Line    6: LineUpdated     -> 
 Line    7: LineUpdated     -> 
 Line    8: LineUpdated     -> 

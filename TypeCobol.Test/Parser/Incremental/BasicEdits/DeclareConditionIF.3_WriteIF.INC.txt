@@ -16,8 +16,6 @@ Line   10: LineUpdated     ->
 Line    9: LineInserted    -> 
 Line   10: LineUpdated     -> 
 ============================== ICodeElementsLine ===============================
-Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
- 
 Line   10: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
  
 Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>

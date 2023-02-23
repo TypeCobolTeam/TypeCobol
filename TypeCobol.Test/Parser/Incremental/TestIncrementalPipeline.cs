@@ -66,7 +66,6 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestCategory("Incremental")]
         public void AddEmptyLineAtBeginningThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtBeginningThenRemove>();
 
-        [Ignore]
         [TestMethod]
         [TestCategory("Incremental")]
         public void AddEmptyLineAtEndThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtEndThenRemove>();
