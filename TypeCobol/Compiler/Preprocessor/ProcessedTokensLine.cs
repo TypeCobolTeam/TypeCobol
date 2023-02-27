@@ -247,7 +247,16 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        internal void ResetPreprocessorDiagnostics() => PreprocessorDiagnostics = null;
+        internal void ResetPreprocessorResults()
+        {
+            CompilerListingControlDirective = null;
+            HasDirectiveTokenContinuationFromPreviousLine = false;
+            HasDirectiveTokenContinuedOnNextLine = false;
+            ImportedDocuments = null;
+            ReplaceDirective = null;
+            tokensWithCompilerDirectives = null;
+            PreprocessorDiagnostics = null;
+        }
 
         /// <summary>
         /// Lazy initialization of diagnostics list

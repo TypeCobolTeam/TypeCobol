@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(tokensChange.Type, tokensChange.LineIndex, (IProcessedTokensLine)tokensChange.NewLine));
                     if (tokensChange.LineIndex < minLineIndex || tokensChange.LineIndex > maxLineIndex)
                     {
-                        ((ProcessedTokensLine)tokensChange.NewLine)?.ResetPreprocessorDiagnostics();
+                        ((ProcessedTokensLine)tokensChange.NewLine)?.ResetPreprocessorResults();
                         CheckIfAdjacentLinesNeedRefresh(tokensChange.LineIndex, documentLines, prepareDocumentLineForUpdate, processedTokensLinesChanges, ref minLineIndex, ref maxLineIndex);
                     }
                 }
