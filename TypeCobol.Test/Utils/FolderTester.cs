@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
@@ -166,7 +167,15 @@ namespace TypeCobol.Test.Utils
 
             if (exceptions.Count > 0)
             {
-                throw new AggregateException("Folder test failed !", exceptions);
+                var aggregatedMessage = new StringBuilder();
+                aggregatedMessage.AppendLine($"{exceptions.Count} test(s) failed !");
+                foreach (var exception in exceptions)
+                {
+                    aggregatedMessage.AppendLine(exception.Message);
+                    aggregatedMessage.AppendLine();
+                }
+
+                throw new Exception(aggregatedMessage.ToString());
             }
 
             return count;

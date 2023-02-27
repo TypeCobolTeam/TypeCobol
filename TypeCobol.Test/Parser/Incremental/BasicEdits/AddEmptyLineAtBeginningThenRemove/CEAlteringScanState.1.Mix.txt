@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm1.
+      *KO copy alters scan state by including DATA DIVISION
+Line 4[8,25] <27, Error, Syntax> - Error in copy 'DataDivision' at line 1 : Syntax error : Syntax not supported: 'DATA DIVISION' has been found inside COPY.
+       COPY DataDivision.
+Line 5[8,9] <27, Error, Syntax> - Syntax error : extraneous input '01' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 5[21,21] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+       01 var2 PIC X.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM Pgm1.

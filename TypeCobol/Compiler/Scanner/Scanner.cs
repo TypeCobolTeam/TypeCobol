@@ -124,7 +124,7 @@ namespace TypeCobol.Compiler.Scanner
                 else
                 {
                     if (tokensLine.ScannerDiagnostics.Count > 0)
-                        tokensLine.ClearAllDiagnostics();
+                        tokensLine.ResetScannerDiagnostics();
                 }
 
             }

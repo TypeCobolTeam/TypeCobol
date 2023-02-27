@@ -26,14 +26,10 @@ Line    5: LineUpdated     -> [[DataConditionEntry]] [11,12:88]<LevelNumber>{88}
  
 Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [25,25+:.]<PeriodSeparator>
  
-Line    7: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
- 
 ------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
 Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
  
 Line    5: LineUpdated     -> [[DataConditionEntry]] [11,12:88]<LevelNumber>{88} --> [29,29+:.]<PeriodSeparator>
  
 Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [25,25+:.]<PeriodSeparator>
- 
-Line    7: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
  

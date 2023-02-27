@@ -432,7 +432,7 @@ namespace TypeCobol.Compiler
                 case TextChangeType.LineInserted:
                     newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
                     compilationDocumentLines.Insert(textChange.LineIndex, newLine);
-                    AdjustLines(textChange.LineIndex + 1, +1); //Clear diags and shift down following lines
+                    ShiftLines(textChange.LineIndex + 1, +1); //Shift down following lines
 
                     // Recompute the line indexes of all the changes previously applied
                     foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
@@ -448,7 +448,6 @@ namespace TypeCobol.Compiler
                 case TextChangeType.LineUpdated:
                     newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
                     compilationDocumentLines[textChange.LineIndex] = newLine;
-                    AdjustLines(textChange.LineIndex, 0); //Clear diags, line indexes are not impacted
 
                     // Check to see if this change can be merged with a previous one
                     bool changeAlreadyApplied = false;
@@ -473,7 +472,7 @@ namespace TypeCobol.Compiler
                         return;
 
                     compilationDocumentLines.RemoveAt(textChange.LineIndex);
-                    AdjustLines(textChange.LineIndex, -1); //Clear diags and shift up following lines
+                    ShiftLines(textChange.LineIndex, -1); //Shift up following lines
 
                     // Recompute the line indexes of all the changes previously applied
                     IList<DocumentChange<ICobolTextLine>> documentChangesToRemove = null;
@@ -512,26 +511,17 @@ namespace TypeCobol.Compiler
             }
         }
 
-        private void AdjustLines(int startIndex, int offset)
+        private void ShiftLines(int startIndex, int offset)
         {
-            bool encounteredCodeElement = false; //Will allow to update line index without erasing all diagnostics after the first encountered line with CodeElements
+            Debug.Assert(offset != 0);
             using (var enumerator = compilationDocumentLines.GetEnumerator(startIndex, -1, false))
             {
-                //Loop on every line that appears after target line
-                CodeElementsLine lineToUpdate;
-                while (enumerator.MoveNext() && (lineToUpdate = enumerator.Current) != null)
+                //Loop on every line that appear after target line and shift them according to given offset
+                while (enumerator.MoveNext())
                 {
-                    //Remove generated diagnostics for the target line and below.
-                    if (!encounteredCodeElement)
-                        lineToUpdate.ResetDiagnostics(); //Reset diags when on the same zone
-
-                    if (lineToUpdate.CodeElements != null)
-                        encounteredCodeElement = true;
-
-                    if (offset != 0)
-                        lineToUpdate.Shift(offset);
-                    else if (encounteredCodeElement)
-                        break; // Nothing else to do
+                    var line = enumerator.Current;
+                    Debug.Assert(line != null);
+                    line.Shift(offset);
                 }
             }
         }
@@ -635,17 +625,6 @@ namespace TypeCobol.Compiler
                     currentTokensLinesVersion = currentTokensLinesVersion.next;
                     if (onVersion != null)
                         onVersion();
-
-                    //So all lines changing incrementally must have their code element reset to NULL to make Code Element Incremental Parsing reparse them.
-                    foreach (var change in documentChanges)
-                    {
-                        if (change.NewLine is TypeCobol.Compiler.Parser.CodeElementsLine)
-                        {
-                            TypeCobol.Compiler.Parser.CodeElementsLine ceLine =
-                                (TypeCobol.Compiler.Parser.CodeElementsLine) change.NewLine;
-                            ceLine.ResetCodeElements();
-                        }
-                    }
                 }
 
                 // Register that the tokens lines were synchronized with the current text lines version

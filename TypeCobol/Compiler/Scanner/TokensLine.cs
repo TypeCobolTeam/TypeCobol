@@ -111,8 +111,6 @@ namespace TypeCobol.Compiler.Scanner
             diagnostics.AddRange(_ScannerDiagnostics);
         }
 
-        internal virtual void ResetDiagnostics() => _ScannerDiagnostics.Clear();
-
         /// <summary>
         /// Use this method to attach a diagnostic to this line 
         /// (never call directly Diagnostics.Add)
@@ -172,11 +170,7 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        internal void ClearAllDiagnostics()
-        {
-            System.Diagnostics.Debug.Assert(SourceTokens.Count == 0, "The diagnostics are on the tokens");
-            _ScannerDiagnostics.Clear();
-        }
+        internal void ResetScannerDiagnostics() => _ScannerDiagnostics.Clear();
 
         // --- State for context-sensitive tokens ---
 

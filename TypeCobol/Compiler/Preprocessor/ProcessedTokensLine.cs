@@ -247,11 +247,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        internal override void ResetDiagnostics()
-        {
-            base.ResetDiagnostics();
-            PreprocessorDiagnostics = null;
-        }
+        internal void ResetPreprocessorDiagnostics() => PreprocessorDiagnostics = null;
 
         /// <summary>
         /// Lazy initialization of diagnostics list
