@@ -20,6 +20,8 @@ Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} 
  
 Line    6: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
  
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
 Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
  
 Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
@@ -27,6 +29,8 @@ Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} 
 Line    6: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
  
 ------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
 Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
  
 Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>

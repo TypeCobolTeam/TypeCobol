@@ -1,0 +1,14 @@
+--- Diagnostics ---
+Line 4[8,9] <27, Error, Syntax> - Syntax error : extraneous input '01' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[8,9:01]<IntegerLiteral>{1}
+Line 5[11,12] <27, Error, Syntax> - Syntax error : extraneous input '02' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[11,12:02]<IntegerLiteral>{2}
+Line 6[11,12] <27, Error, Syntax> - Syntax error : extraneous input '02' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[11,12:02]<IntegerLiteral>{2}
+
+--- Program ---
+PROGRAM: MyPgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

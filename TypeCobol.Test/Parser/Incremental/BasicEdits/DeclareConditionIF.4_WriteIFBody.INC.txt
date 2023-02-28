@@ -16,8 +16,6 @@ Line   11: LineUpdated     ->
 Line   10: LineInserted    -> 
 Line   11: LineUpdated     -> 
 ============================== ICodeElementsLine ===============================
-Line    9: LineUpdated     -> [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
- 
 Line   11: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
  
 Line    9: LineUpdated     -> [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
