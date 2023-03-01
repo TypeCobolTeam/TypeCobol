@@ -768,33 +768,39 @@ namespace TypeCobol.LanguageServer
         /// <param name="changedCopies">List of modified copies.</param>
         internal void AcknowledgeCopyChanges(List<ChangedCopy> changedCopies)
         {
-            //Remove obsolete data from copy caches
-            var copies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            // Group changed copies by target copy cache
+            var evictions = WorkspaceProjectStore.AllProjects.ToDictionary(wp => wp.Project.CopyCache, wp => new List<string>());
             foreach (var changedCopy in changedCopies)
             {
-                copies.Add(changedCopy.CopyName);
                 if (changedCopy.ClearAllCaches)
                 {
-                    //Evict from all caches
-                    foreach (var workspaceProject in WorkspaceProjectStore.AllProjects)
+                    // Evict from all caches
+                    foreach (var toEvict in evictions.Values)
                     {
-                        workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
+                        toEvict.Add(changedCopy.CopyName);
                     }
                 }
                 else if (WorkspaceProjectStore.TryGetProject(changedCopy.OwnerProject, out var workspaceProject))
                 {
-                    //Evict from target project cache only
-                    workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
+                    // Evict from target project cache only
+                    evictions[workspaceProject.Project.CopyCache].Add(changedCopy.CopyName);
                 }
                 else
                 {
-                    //Inconsistent notification from client, the target project could not be found
+                    // Inconsistent notification from client, the target project could not be found
                     LoggingSystem.LogMessage(LogLevel.Warning, $"Copy to WorkspaceProject mismatch: could not find project '{changedCopy.OwnerProject}'.");
                 }
             }
 
-            //Find programs depending on the obsolete copies
-            var dependentPrograms = new HashSet<DocumentContext>();
+            // Remove obsolete data from caches
+            var evicted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var eviction in evictions)
+            {
+                eviction.Key.RecursiveEvict(eviction.Value, evicted);
+            }
+
+            // Find programs depending on the obsolete copies
+            var dependentPrograms = new List<DocumentContext>();
             foreach (var openedDocument in _allOpenedDocuments.Values)
             {
                 var usedCopies = openedDocument.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations;
@@ -802,9 +808,10 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var usedCopy in usedCopies)
                 {
-                    if (copies.Contains(usedCopy.TextName))
+                    if (evicted.Contains(usedCopy.TextName))
                     {
                         dependentPrograms.Add(openedDocument);
+                        break;
                     }
                 }
             }
