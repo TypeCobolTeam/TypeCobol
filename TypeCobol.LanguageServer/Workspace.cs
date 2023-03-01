@@ -195,7 +195,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">Project's Key</param>
         /// <param name="copyFolders">List of copy folders associated to the project</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, string projectKey, List<string> copyFolders) => OpenTextDocument(docContext, sourceText, projectKey, copyFolders, LsrTestOptions);
+        public void OpenTextDocument(DocumentContext docContext, string sourceText, string projectKey, List<string> copyFolders) => OpenTextDocument(docContext, sourceText, projectKey, copyFolders, LsrTestOptions);
 
         /// <summary>
         /// Bind a document to a FileCompiler instance and update its content for a parsing..
@@ -204,7 +204,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="sourceText">The source text of the document</param>
         /// <param name="lsrOptions">LSR options</param>
         /// <returns>The FileCompiler instance associated to the document context</returns>
-        internal FileCompiler BindFileCompilerSourceTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
+        internal void BindFileCompilerSourceTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
             System.Diagnostics.Debug.Assert(docContext.Project != null);
             //The document was already there ==> Stop any pending background compilation
@@ -258,8 +258,6 @@ namespace TypeCobol.LanguageServer
             {
                 fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
             }
-
-            return fileCompiler;
         }
 
         /// <summary>
@@ -270,7 +268,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">Project's Key</param>        
         /// <param name="lsrOptions">LSR testing options</param>
         /// <returns></returns>
-        private FileCompiler OpenTextDocument(DocumentContext docContext, 
+        private void OpenTextDocument(DocumentContext docContext, 
             string sourceText, string projectKey,
             List<string> copyFolders, LsrTestingOptions lsrOptions)
         {
@@ -280,7 +278,7 @@ namespace TypeCobol.LanguageServer
             workspaceProject.AddDocument(docContext);
             this._allOpenedDocuments.TryAdd(docContext.Uri, docContext);
             docContext.Project = workspaceProject;
-            return BindFileCompilerSourceTextDocument(docContext, sourceText, lsrOptions);
+            BindFileCompilerSourceTextDocument(docContext, sourceText, lsrOptions);
         }
 
         /// <summary>
