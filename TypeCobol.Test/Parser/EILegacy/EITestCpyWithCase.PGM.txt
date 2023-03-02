@@ -1,0 +1,43 @@
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  AllUpper:Alphanumeric
+  AAAS-var1:Alphanumeric
+  aaa-var2:Alphanumeric
+  aaa-var2:Alphanumeric
+  aaa-var2:Alphanumeric
+  aaa-var2:Alphanumeric
+  AAAvar3:Alphanumeric
+  AAAvar3:Alphanumeric
+  AAAvar3:Alphanumeric
+  AAAvar3:Alphanumeric
+  aaavar4:Alphanumeric
+  aaavar4:Alphanumeric
+  aaavar4:Alphanumeric
+  aaavar4:Alphanumeric
+  AAA:Alphanumeric
+  aaa:Alphanumeric
+  AAA:Alphanumeric
+  aaa:Alphanumeric
+  AAA:Alphanumeric
+  aaa:Alphanumeric
+  AAA:Alphanumeric
+  aaa:Alphanumeric
+  AAAS-AAA:Alphanumeric
+  Mix1:Alphanumeric
+  AAAT-var1:Alphanumeric
+  AAAT-AAA:Alphanumeric
+  Mix2:Alphanumeric
+  AAAU-var1:Alphanumeric
+  AAAU-AAA:Alphanumeric
+  AllLower:Alphanumeric
+  AAAV-var1:Alphanumeric
+  AAAV-AAA:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

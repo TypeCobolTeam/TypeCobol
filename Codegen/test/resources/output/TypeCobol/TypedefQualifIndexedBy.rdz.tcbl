@@ -43,3 +43,4 @@
       *    SET var1::INX-A DOWN BY 1.
            SET a00d0571INX-A DOWN BY 1.
        END PROGRAM TYPDEFQU.
+

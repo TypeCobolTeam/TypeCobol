@@ -130,6 +130,17 @@ namespace TypeCobol.Compiler.Diagnostics
             CheckPicture(redefines, context);
         }
 
+        public static void CheckOccurs([NotNull] CommonDataDescriptionAndDataRedefines codeElement,
+            [NotNull] CodeElementsParser.OccursClauseContext context,
+            [NotNull] List<CodeElementsParser.DataNameReferenceContext> duplicateSortingKeysReferences)
+        {
+            // Create diagnostic for duplicate keys found by builder
+            foreach (var duplicateSortingKeyReference in duplicateSortingKeysReferences)
+            {
+                DiagnosticUtils.AddError(codeElement, $"Sorting key '{duplicateSortingKeyReference.GetText()}' is already defined for this table.", duplicateSortingKeyReference);
+            }
+        }
+
         /// <summary>
         /// Return the first ParserRuleContext in a list.
         /// If there is more than one context in the parameter list, a diagnostic error is added to the CodeElement parameter.
@@ -138,7 +149,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <param name="e">CodeElement in error if there is more than one context in contexts</param>
         /// <param name="contexts">List of ParserRuleContexts</param>
         /// <returns>First element of contexts if contexts is not null and of size > 0, null otherwise</returns>
-        public static T GetContext<T>(CodeElement e, T[] contexts, bool checkErrors = true)
+        private static T GetContext<T>(CodeElement e, T[] contexts, bool checkErrors = true)
             where T : Antlr4.Runtime.ParserRuleContext
         {
             if (contexts == null) return null;
@@ -680,6 +691,22 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
             if (statement.ProcedureNames.Length > 255)
                 DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
+        }
+    }
+
+    static class SpecialNamesParagraphChecker
+    {
+        public static void OnCodeElement(SpecialNamesParagraph paragraph, CodeElementsParser.SpecialNamesParagraphContext context, List<RuleContext> duplicateEnvironments, List<RuleContext> duplicateMnemonicsForEnvironment)
+        {
+            foreach (var environment in duplicateEnvironments)
+            {
+                DiagnosticUtils.AddError(paragraph, $"A duplicate '{environment.GetText()}' clause was found.", environment);
+            }
+
+            foreach (var mnemonic in duplicateMnemonicsForEnvironment)
+            {
+                DiagnosticUtils.AddError(paragraph, $"Mnemonic name '{mnemonic.GetText()}' was previously defined.", mnemonic);
+            }
         }
     }
 

@@ -1,0 +1,33 @@
+================================ ICobolTextLine ================================
+Line    5: LineInserted    ->           88 cond1 VALUE 'A'.
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineInserted    ->           88 cond1 VALUE 'A'.
+================================= ITokensLine ==================================
+Line    5: LineInserted    -> [11,12:88]<LevelNumber>{88} [14,18:cond1]<UserDefinedWord> [20,24:VALUE]<VALUE> [26,28:'A']<AlphanumericLiteral>(',Y,Y){A} [29,29+:.]<PeriodSeparator> 
+Line    5: LineUpdated     -> [11,12:88]<LevelNumber>{88} [14,18:cond1]<UserDefinedWord> [20,24:VALUE]<VALUE> [26,28:'A']<AlphanumericLiteral>(',Y,Y){A} [29,29+:.]<PeriodSeparator> 
+Line    6: LineUpdated     -> [8,9:01]<LevelNumber>{1} [11,14:var2]<UserDefinedWord> [16,18:PIC]<PIC> [20,24:X(20)]<PictureCharacterString> [25,25+:.]<PeriodSeparator> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineInserted    -> [11,12:88]<LevelNumber>{88} [14,18:cond1]<UserDefinedWord> [20,24:VALUE]<VALUE> [26,28:'A']<AlphanumericLiteral>(',Y,Y){A} [29,29+:.]<PeriodSeparator> 
+Line    6: LineUpdated     -> [8,9:01]<LevelNumber>{1} [11,14:var2]<UserDefinedWord> [16,18:PIC]<PIC> [20,24:X(20)]<PictureCharacterString> [25,25+:.]<PeriodSeparator> 
+============================= IProcessedTokensLine =============================
+Line    5: LineInserted    -> 
+Line    6: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineInserted    -> 
+Line    6: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [25,25+:.]<PeriodSeparator>
+ 
+Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataConditionEntry]] [11,12:88]<LevelNumber>{88} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [25,25+:.]<PeriodSeparator>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataConditionEntry]] [11,12:88]<LevelNumber>{88} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    6: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [25,25+:.]<PeriodSeparator>
+ 

@@ -42,3 +42,5 @@ Line 8[26,26] <27, Error, Syntax> - Syntax error : mismatched input '.' expectin
 *** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD  ([8,14:service]<SERVICE_CD>[16,21:reload]<RELOAD>) ***
 Line 12[16,21] <27, Error, Syntax> - Syntax error : missing user defined word at 'reload'
 
+-- Line 13 --
+

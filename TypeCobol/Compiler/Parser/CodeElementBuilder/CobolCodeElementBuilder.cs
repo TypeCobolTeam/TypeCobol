@@ -71,13 +71,8 @@ namespace TypeCobol.Compiler.Parser
                     CodeElement.CallSites = _cobolExpressionsBuilder.callSites;
                 }
                 // Attach all tokens consumed by the parser for this code element
-                // Collect all error messages encoutered while parsing this code element
-                List<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
-                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
-                if (diagnostics.Count > 0)
-                {
-                    CodeElement.Diagnostics = diagnostics;
-                }
+                // Collect all error messages encountered while parsing this code element
+                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement, Context);
                 CodeElementChecker.OnCodeElement(CodeElement, IsDebuggingModeEnabled);
             }
             // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
@@ -91,28 +86,39 @@ namespace TypeCobol.Compiler.Parser
             }
 		}
 
-        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, List<Diagnostic> diagnostics, ParserRuleContext context)
+        private static void AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement codeElement, ParserRuleContext context)
         {
-            var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
-            if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
+            var consumedTokens = codeElement.ConsumedTokens;
+            var diagnostics = codeElement.Diagnostics ?? new List<Diagnostic>();
+			AttachDiagnosticsAndTokens(context);
+            if (diagnostics.Count > 0)
             {
-				diagnostics.AddRange(ruleNodeWithDiagnostics.Diagnostics);
+                codeElement.Diagnostics = diagnostics;
             }
-            if (context.children != null)
+
+            void AttachDiagnosticsAndTokens(ParserRuleContext currentContext)
             {
-                foreach(var childNode in context.children)
+                var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)currentContext;
+                if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
                 {
-                    if (childNode is IRuleNode)
-                    {                        
-                        AddTokensConsumedAndDiagnosticsAttachedInContext(consumedTokens, diagnostics, (ParserRuleContext)((IRuleNode)childNode).RuleContext);
-                    }
-                    else if(childNode is ITerminalNode)
+                    diagnostics.AddRange(ruleNodeWithDiagnostics.Diagnostics);
+                }
+                if (currentContext.children != null)
+                {
+                    foreach (var childNode in currentContext.children)
                     {
-                        Token token = (Token)((ITerminalNode)childNode).Symbol;
-                        consumedTokens.Add(token);
+                        if (childNode is IRuleNode)
+                        {
+                            AttachDiagnosticsAndTokens((ParserRuleContext)((IRuleNode)childNode).RuleContext);
+                        }
+                        else if (childNode is ITerminalNode)
+                        {
+                            Token token = (Token)((ITerminalNode)childNode).Symbol;
+                            consumedTokens.Add(token);
+                        }
                     }
                 }
-            }
+			}
         }
 
         // Code structure
@@ -366,6 +372,9 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterSpecialNamesParagraph(CodeElementsParser.SpecialNamesParagraphContext context)
 		{
 			var paragraph = new SpecialNamesParagraph();
+			var environments = new HashSet<ExternalName>();
+			var duplicateEnvironments = new List<RuleContext>();
+			var duplicateMnemonicsForEnvironment = new List<RuleContext>();
 			
 			if(context.upsiSwitchNameClause() != null && context.upsiSwitchNameClause().Length > 0)
 			{
@@ -414,10 +423,22 @@ namespace TypeCobol.Compiler.Parser
 				}
 				foreach(var environmentNameContext in context.environmentNameClause())
 				{
-					var environmentName = _cobolWordsBuilder.CreateEnvironmentName(
-						environmentNameContext.environmentName());
-					var mnemonicForEnvironmentName = _cobolWordsBuilder.CreateMnemonicForEnvironmentNameDefinition(
-						environmentNameContext.mnemonicForEnvironmentNameDefinition());
+					var environmentName = _cobolWordsBuilder.CreateEnvironmentName(environmentNameContext.environmentName());
+					if (!environments.Add(environmentName))
+					{
+						// Duplicate environment, add to duplicate list and skip definition
+						duplicateEnvironments.Add(environmentNameContext.environmentName());
+						continue;
+					}
+					
+					var mnemonicForEnvironmentName = _cobolWordsBuilder.CreateMnemonicForEnvironmentNameDefinition(environmentNameContext.mnemonicForEnvironmentNameDefinition());
+					if (paragraph.MnemonicsForEnvironmentNames.ContainsKey(mnemonicForEnvironmentName))
+					{
+						// Duplicate mnemonic, add to duplicate list and skip definition
+						duplicateMnemonicsForEnvironment.Add(environmentNameContext.mnemonicForEnvironmentNameDefinition());
+						continue;
+					}
+					
 					paragraph.MnemonicsForEnvironmentNames.Add(mnemonicForEnvironmentName, environmentName);
 				}
 			}
@@ -569,6 +590,7 @@ namespace TypeCobol.Compiler.Parser
 
 			Context = context;
 			CodeElement = paragraph;
+			SpecialNamesParagraphChecker.OnCodeElement(paragraph, context, duplicateEnvironments, duplicateMnemonicsForEnvironment);
 		}
 
 		private CharactersRangeInCollatingSequence CreateCharactersRange(CodeElementsParser.CharactersRangeContext context) {
@@ -953,7 +975,9 @@ namespace TypeCobol.Compiler.Parser
 			}
 			if (context.blockContainsClause() != null && context.blockContainsClause().Length > 0) {
 				var blockContainsClauseContext = context.blockContainsClause()[0];
-				entry.MaxBlockSize = CobolWordsBuilder.CreateIntegerValue(blockContainsClauseContext.maxNumberOfBytes);
+				if (blockContainsClauseContext.maxNumberOfBytes != null) {
+					entry.MaxBlockSize = CobolWordsBuilder.CreateIntegerValue(blockContainsClauseContext.maxNumberOfBytes);
+				}
 				if (blockContainsClauseContext.minNumberOfBytes != null) {
 					entry.MinBlockSize = CobolWordsBuilder.CreateIntegerValue(blockContainsClauseContext.minNumberOfBytes);
 				}
@@ -1239,18 +1263,14 @@ namespace TypeCobol.Compiler.Parser
                 {
                     entry.OccursDependingOn = _cobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
                 }
+                var duplicateSortingKeysReferences = new List<CodeElementsParser.DataNameReferenceContext>();
                 if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
                 {
-                    int keysCount = 0;
+                    var keyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var tableSortingKeys = new List<TableSortingKey>();
                     foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
                     {
-                        keysCount += tableSortingKeysContext.dataNameReference().Length;
-                    }
-                    entry.TableSortingKeys = new TableSortingKey[keysCount];
-                    int keyIndex = 0;
-                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
-                    {
-                        SyntaxProperty<SortDirection> sortDirection = null;
+                        SyntaxProperty<SortDirection> sortDirection;
                         if (tableSortingKeysContext.ASCENDING() != null)
                         {
                             sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Ascending,
@@ -1264,10 +1284,18 @@ namespace TypeCobol.Compiler.Parser
                         foreach (var dataNameReference in tableSortingKeysContext.dataNameReference())
                         {
                             SymbolReference sortKey = _cobolWordsBuilder.CreateDataNameReference(dataNameReference);
-                            entry.TableSortingKeys[keyIndex] = new TableSortingKey(sortKey, sortDirection);
-                            keyIndex++;
+                            System.Diagnostics.Debug.Assert(sortKey != null);
+                            if (keyNames.Add(sortKey.Name))
+                            {
+                                tableSortingKeys.Add(new TableSortingKey(sortKey, sortDirection));
+                            }
+                            else
+                            {
+                                duplicateSortingKeysReferences.Add(dataNameReference);
+                            }
                         }
                     }
+                    entry.TableSortingKeys = tableSortingKeys.ToArray();
                 }
                 if (occursClauseContext.indexNameDefinition() != null && occursClauseContext.indexNameDefinition().Length > 0)
                 {
@@ -1278,6 +1306,8 @@ namespace TypeCobol.Compiler.Parser
                         entry.Indexes[i] = _cobolWordsBuilder.CreateIndexNameDefinition(indexNameDefinition);
                     }
                 }
+
+                DataDescriptionChecker.CheckOccurs(entry, occursClauseContext, duplicateSortingKeysReferences);
             }
             if (context.signClause() != null && context.signClause().Length > 0)
             {
@@ -1339,7 +1369,6 @@ namespace TypeCobol.Compiler.Parser
                     entry.InitialValue = _cobolWordsBuilder.CreateValue(valueClauseContext);
                 }
             }
-
 
             if (entry.DataType == DataType.Unknown)
             {

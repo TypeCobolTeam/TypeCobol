@@ -17,6 +17,10 @@ using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.LanguageServer
 {
@@ -323,14 +327,14 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
+        public void UpdateSourceFile(Uri fileUri, RangeUpdate[] updates)
         {
             if (TryGetOpenedDocument(fileUri, out var contextToUpdate))
             {
                 FileCompiler fileCompilerToUpdate = contextToUpdate.FileCompiler;
                 _semanticUpdaterTimer?.Stop();
 
-                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(updates);
                 if (IsLsrSourceTesting)
                 {
                     //Log text lines string 
@@ -943,6 +947,28 @@ namespace TypeCobol.LanguageServer
 
             DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }
+
+#if EUROINFO_RULES
+        public (string[], int) GetRemarksData(CompilationUnit compilationUnit)
+        {
+            // Get used CPYs
+            var usedCPYs = compilationUnit.CopyTextNamesVariations
+                .Where(v => this.Configuration.IsCpyCopy(v.TextName))
+                .Select(v => v.TextNameWithSuffix.ToUpperInvariant())
+                .Distinct()
+                .ToArray();
+
+            // Get expected REMARKS location
+            int insertionLine = 0;
+            var programIdentification = compilationUnit.CodeElementsDocumentSnapshot.CodeElements.FirstOrDefault(ce => ce.Type == CodeElementType.ProgramIdentification);
+            if (programIdentification != null)
+            {
+                insertionLine = programIdentification.LineEnd + 1;
+            }
+
+            return (usedCPYs, insertionLine);
+        }
+#endif
     }
 
     [Flags]

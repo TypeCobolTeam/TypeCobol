@@ -116,6 +116,7 @@
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
        END PROGRAM PGM1.
 
+
       *
       *DECLARE PROCEDURE MyProcedureUsingNothing.
       *_________________________________________________________________

@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"window/logMessage\",\"params\":{\"type\":4,\"message\":\"IDENTIFICATION DIVISION.\\r\\nPROGRAM-ID. TestingPgm.\\r\\n\\r\\nDATA DIVISION.\\r\\nWORKING-STORAGE SECTION.\\r\\n01 W-Date TYPE Date.\\r\\n01 W-Bool TYPE Bool.\\r\\n01 MyText PIC X(1).\\r\\n01 W-OutDate TYPE Date.\\r\\n\\r\\nPROCEDURE DIVISION.\\r\\n\\r\\nEND PROGRAM TestingPgm.\\r\\n\\r\\n\\r\\n\",\"textDocument\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL5999350929558672564.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"window/logMessage\",\"params\":{\"type\":4,\"message\":\"IDENTIFICATION DIVISION.\\r\\nPROGRAM-ID. TestingPgm.\\r\\n\\r\\nDATA DIVISION.\\r\\nWORKING-STORAGE SECTION.\\r\\n01 W-Date TYPE Date.\\r\\n01 W-Bool TYPE Bool.\\r\\n01 MyText PIC X(1).\\r\\n01 W-OutDate TYPE Date.\\r\\n\\r\\nPROCEDURE DIVISION.\\r\\n\\r\\nEND PROGRAM TestingPgm.\\r\\n\\r\\n\\r\\n\\r\\n\",\"textDocument\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL5999350929558672564.cee\"}}}"
     },
     {
       "category": 1,

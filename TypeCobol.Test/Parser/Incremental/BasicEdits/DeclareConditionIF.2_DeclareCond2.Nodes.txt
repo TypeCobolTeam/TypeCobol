@@ -1,0 +1,15 @@
+--- Nodes ---
+?
+  Simple
+    data-division
+      working-storage
+        var1
+          cond1
+          cond2
+        var2
+    procedure-division
+      sentence-0
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

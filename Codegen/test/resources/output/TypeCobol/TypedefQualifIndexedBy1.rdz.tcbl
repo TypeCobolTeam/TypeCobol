@@ -27,3 +27,4 @@
       *    SET INX-A TO 10.
            SET a00d0571INX-A TO 10.
        END PROGRAM TYPDEFQU.
+

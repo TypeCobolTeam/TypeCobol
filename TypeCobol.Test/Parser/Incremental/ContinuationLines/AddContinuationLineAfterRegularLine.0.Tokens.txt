@@ -1,0 +1,38 @@
+﻿Line 5[32,33] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 6[8,10] <27, Error, Syntax> - Syntax error : extraneous input 'END' expecting {separator, statement starting keyword, keyword}
+--- Tokens ---
+---------------------------------
+_IDENTIFICATION DIVISION._
+    _IDENTIFICATION_    [8,21:IDENTIFICATION]<IDENTIFICATION>
+    _DIVISION_    [23,30:DIVISION]<DIVISION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_PROGRAM-ID. MyPGM._
+    _PROGRAM-ID_    [8,17:PROGRAM-ID]<PROGRAM_ID>
+    _. _    [18,19:. ]<PeriodSeparator>
+    _MyPGM_    [20,24:MyPGM]<UserDefinedWord>
+    _._    [25,25+:.]<PeriodSeparator>
+---------------------------------
+_DATA DIVISION._
+    _DATA_    [8,11:DATA]<DATA>
+    _DIVISION_    [13,20:DIVISION]<DIVISION>
+    _._    [21,21+:.]<PeriodSeparator>
+---------------------------------
+_WORKING-STORAGE SECTION._
+    _WORKING-STORAGE_    [8,22:WORKING-STORAGE]<WORKING_STORAGE>
+    _SECTION_    [24,30:SECTION]<SECTION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_01 Var1 pic X(80) value 'a_
+    _01_    [8,9:01]<LevelNumber>{1}
+    _Var1_    [11,14:Var1]<UserDefinedWord>
+    _pic_    [16,18:pic]<PIC>
+    _X(80)_    [20,24:X(80)]<PictureCharacterString>
+    _value_    [26,30:value]<VALUE>
+    _'a_    [32,33:'a]<AlphanumericLiteral>(',Y,N){a}
+---------------------------------
+_END PROGRAM MyPGM._
+    _END_    [8,10:END]<END>
+    _PROGRAM_    [12,18:PROGRAM]<PROGRAM>
+    _MyPGM_    [20,24:MyPGM]<UserDefinedWord>
+    _._    [25,25+:.]<PeriodSeparator>

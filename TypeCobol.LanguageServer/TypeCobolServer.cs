@@ -375,32 +375,17 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
-
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only a another event that will do it
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only another event that will do it
             if (docContext == null)
                 return;
 
             Uri objUri = new Uri(parameters.uri);
-
-#region Convert text changes format from multiline range replacement to single line updates
-
-            TextChangedEvent textChangedEvent = new TextChangedEvent();
-            foreach (var contentChange in parameters.contentChanges)
+            var updates = new RangeUpdate[parameters.contentChanges.Length];
+            
+            // Convert change events into updates
+            for (int i = 0; i < parameters.contentChanges.Length; i++)
             {
-                // Split the text updated into distinct lines
-                List<string> lineUpdates = null;
-                bool replacementTextStartsWithNewLine = false;
-
-                if (!string.IsNullOrEmpty(contentChange.text))
-                {
-                    replacementTextStartsWithNewLine = contentChange.text[0] == '\r' ||
-                                                       contentChange.text[0] == '\n';
-                    //Allow to know if a new line was added
-                    //Split on \r \n to know the number of lines added
-                    lineUpdates = contentChange.text.Replace("\r", "").Split('\n').ToList();
-                    if (string.IsNullOrEmpty(lineUpdates.FirstOrDefault()) && replacementTextStartsWithNewLine)
-                        lineUpdates.RemoveAt(0);
-                }
+                var contentChange = parameters.contentChanges[i];
 
                 // Document cleared
                 if (contentChange.range == null)
@@ -415,125 +400,25 @@ namespace TypeCobol.LanguageServer
                     }
                     catch (Exception e)
                     {
-                        //Don't rethrow an exception on save.
-                        RemoteConsole.Error(string.Format("Error while handling notification {0} : {1}",
-                            "textDocument/didChange", e.Message));
+                        // Don't rethrow an exception on save.
+                        RemoteConsole.Error($"Error while handling notification textDocument/didChange : {e.Message}");
                         return;
                     }
                 }
-                // Document updated
-                else if (docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count != 0)
-                {
-                    // Get original lines text before change
-                    int lineCount = docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count;
-                    string originalFirstLineText = lineCount <= contentChange.range.start.line ? "" :
-                        docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line]
-                            .Text;
-                    string originalLastLineText = originalFirstLineText;
 
-
-                    // Check if the first line was inserted
-                    int firstLineIndex = contentChange.range.start.line;
-                    int firstLineChar = contentChange.range.start.character;
-                    if (replacementTextStartsWithNewLine &&
-                        !(contentChange.range.start.character < originalLastLineText.Length))
-                    {
-                        // do not increment if line is inserted at the end of global text
-                        if (firstLineIndex < lineCount) firstLineIndex++;
-                        firstLineChar = 0;
-                    }
-                    else if (replacementTextStartsWithNewLine)
-                    //Detected that the add line appeared inside an existing line
-                    {
-                        lineUpdates.Add(lineUpdates.First());
-                        //Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
-                    }
-
-                    // Check if the last line was deleted
-                    int lastLineIndex = contentChange.range.end.line;
-                    if (contentChange.range.end.line > contentChange.range.start.line &&
-                        contentChange.range.end.character == 0)
-                    {
-                        //Allows to detect if the next line was suppressed
-                    }
-                    if (contentChange.text?.Length == 0)
-                    {
-                        lineUpdates = new List<string>();
-                    }
-
-                    if (lastLineIndex > firstLineIndex)
-                    {
-                        originalLastLineText =
-                            docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines[
-                                Math.Min(lastLineIndex,
-                                    docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count - 1)].Text;
-                    }
-
-                    // Text not modified at the beginning of the first replaced line
-                    string startOfFirstLine = null;
-                    if (firstLineChar > 0)
-                    {
-                        if (originalFirstLineText.Length >= contentChange.range.start.character)
-                            startOfFirstLine = originalFirstLineText.Substring(0,
-                                contentChange.range.start.character);
-                        else
-                            startOfFirstLine = originalFirstLineText.Substring(0, originalFirstLineText.Length) +
-                                               new string(' ',
-                                                   contentChange.range.start.character - originalFirstLineText.Length);
-                    }
-
-                    // Text not modified at the end of the last replaced line
-                    string endOfLastLine = null;
-                    if (contentChange.range.end.character < originalLastLineText.Length)
-                    {
-                        endOfLastLine = originalLastLineText.Substring(contentChange.range.end.character);
-                    }
-
-                    // Remove all the old lines
-                    for (int i = firstLineIndex; i <= lastLineIndex; i++)
-                    {
-                        var textChange = new TextChange(TextChangeType.LineRemoved, firstLineIndex, null);
-                        textChangedEvent.TextChanges.Add(textChange);
-                        //Mark the index line to be removed. The index will remains the same for each line delete, because text change are apply one after another
-                    }
-
-                    // Insert the updated lines
-                    if (!(startOfFirstLine == null && lineUpdates == null && endOfLastLine == null))
-                    {
-                        int lineUpdatesCount = (lineUpdates != null && lineUpdates.Count > 0)
-                            ? lineUpdates.Count
-                            : 1;
-                        for (int i = 0; i < lineUpdatesCount; i++)
-                        {
-                            string newLine = (lineUpdates != null && lineUpdates.Count > 0)
-                                ? lineUpdates[i]
-                                : string.Empty;
-                            if (i == 0)
-                            {
-                                newLine = startOfFirstLine + newLine;
-                            }
-                            if (i == lineUpdatesCount - 1)
-                            {
-                                newLine = newLine + endOfLastLine;
-                            }
-                            var textChange = new TextChange(TextChangeType.LineInserted, firstLineIndex + i,
-                                new TextLineSnapshot(firstLineIndex + i, newLine, null));
-                            textChangedEvent.TextChanges.Add(textChange);
-                        }
-                    }
-                }
+                var start = contentChange.range.start;
+                var end = contentChange.range.end;
+                updates[i] = new RangeUpdate(start.line, start.character, end.line, end.character, contentChange.text);
             }
 
-#endregion
-
-            // Update the source file with the computed text changes
-            this.Workspace.UpdateSourceFile(objUri, textChangedEvent);
+            // Update the source file with the text updates
+            this.Workspace.UpdateSourceFile(objUri, updates);
 
             // DEBUG information
-            RemoteConsole.Log("Udpated source file : " + objUri.LocalPath);
-            foreach (var textChange in textChangedEvent.TextChanges)
+            RemoteConsole.Log("Updated source file : " + objUri.LocalPath);
+            foreach (var update in updates)
             {
-                RemoteConsole.Log(" - " + textChange.ToString());
+                RemoteConsole.Log(" - " + update);
             }
         }
 
@@ -734,14 +619,15 @@ namespace TypeCobol.LanguageServer
                             }
                         case TokenType.DISPLAY:
                             {
-                                System.Linq.Expressions.Expression<Func<DataDefinition, bool>> predicate = dataDefinition =>
+                                Func<DataDefinition, bool> predicate = dataDefinition =>
                                     dataDefinition.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) // keep only variables with matching name
                                     && dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
                                     && dataDefinition.Usage != DataUsage.FunctionPointer
                                     && dataDefinition.Usage != DataUsage.ObjectReference
                                     && dataDefinition.Usage != DataUsage.Index
-                                    && (dataDefinition.CodeElement != null && dataDefinition.CodeElement.LevelNumber.Value < 88);
+                                    && (dataDefinition.CodeElement?.LevelNumber != null && dataDefinition.CodeElement.LevelNumber.Value < 88);
                                 // Ignore level 88. Note that dataDefinition.CodeElement != null condition also filters out IndexDefinition which is invalid in the context of DISPLAY
+                                // Filtering dataDefinition without LevelNumber also excludes FileDescription which are invalid for a DISPLAY
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement, predicate));
                                 break;
                             }
@@ -750,8 +636,7 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     da =>
                                         da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) &&
-                                        ((da.CodeElement != null &&
-                                          da.CodeElement.LevelNumber.Value < 88)
+                                        ((da.CodeElement?.LevelNumber != null && da.CodeElement.LevelNumber.Value < 88)
                                          || (da.CodeElement == null && da is IndexDefinition))));
                                 //Ignore 88 level variable
                                 break;
@@ -778,8 +663,7 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
                                          &&
-                                         ((v.CodeElement != null &&
-                                           v.CodeElement.LevelNumber.Value == 88)
+                                         ((v.CodeElement?.LevelNumber != null && v.CodeElement.LevelNumber.Value == 88)
                                           //Level 88 Variable
                                           || v.DataType == DataType.Numeric //Numeric Integer Variable
                                           || v.Usage == DataUsage.Pointer) //Or usage is pointer 
@@ -974,95 +858,77 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
-                System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
-
-                if (docContext.FileCompiler.CompilationResultsForProgram != null &&
-                    docContext.FileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
+                var codeElementToNode = docContext.FileCompiler?.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
+                if (codeElementToNode != null)
                 {
-                    var matchingCodeElement =
-                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot
-                            .NodeCodeElementLinkers
-                            .Keys.FirstOrDefault(c => c.ConsumedTokens.Any(
-                                                          t => t.Line == parameters.position.line + 1 &&
-                                                               parameters.position.character >= t.StartIndex &&
-                                                               parameters.position.character <= t.StopIndex + 1) &&
-                                                      !c.IsInsideCopy());
-                    if (matchingCodeElement == null)
-                        return defaultDefinition;
+                    Token matchingToken = null;
+                    var matchingCodeElement = codeElementToNode.Keys.FirstOrDefault(MatchPosition);
+                    if (matchingCodeElement == null) return defaultDefinition;
 
-                    var matchingNode =
-                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot
-                            .NodeCodeElementLinkers[matchingCodeElement];
-                    if (matchingNode == null)
-                        return defaultDefinition;
+                    var matchingNode = codeElementToNode[matchingCodeElement];
+                    if (matchingNode == null) return defaultDefinition;
 
-                    var matchingToken = matchingCodeElement.ConsumedTokens.FirstOrDefault(t =>
-                        t.Line == parameters.position.line + 1 &&
-                        parameters.position.character >= t.StartIndex &&
-                        parameters.position.character <= t.StopIndex + 1 &&
-                        t.TokenType != TokenType.QualifiedNameSeparator);
-                    if (matchingToken == null)
-                        return defaultDefinition;
+                    bool MatchPosition(CodeElement codeElement)
+                    {
+                        foreach (var token in codeElement.ConsumedTokens)
+                        {
+                            if (token.Line == parameters.position.line + 1 &&
+                                parameters.position.character >= token.StartIndex &&
+                                parameters.position.character <= token.StopIndex + 1 &&
+                                token.TokenType != TokenType.QualifiedNameSeparator)
+                            {
+                                matchingToken = token;
+                                return !codeElement.IsInsideCopy();
+                            }
+                        }
 
-                    Token userFilterToken = null;
-                    Token lastSignificantToken = null;
+                        return false;
+                    }
+
+                    CodeElementMatcher.MatchCompletionCodeElement(parameters.position, new List<CodeElementWrapper>()
+                        {
+                            new CodeElementWrapper(matchingCodeElement)
+                        }, out _, out var lastSignificantToken); //Magic happens here
                     var potentialDefinitionNodes = new List<Node>();
 
-                    CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
-                        new List<CodeElementWrapper>() {new CodeElementWrapper(matchingCodeElement)},
-                        out userFilterToken, out lastSignificantToken); //Magic happens here
                     if (lastSignificantToken != null)
                     {
                         switch (lastSignificantToken.TokenType)
                         {
                             case TokenType.PERFORM:
                             {
-                                potentialDefinitionNodes.AddRange(
-                                    matchingNode.SymbolTable.GetParagraphs(
-                                        p => p.Name.Equals(matchingToken.Text,
-                                            StringComparison.OrdinalIgnoreCase)));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetParagraphs(MatchName));
                                 break;
                             }
 
                             case TokenType.CALL:
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
-                                    f => f.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
-                                    SymbolTable.Scope.Program
-                                ));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(MatchName, SymbolTable.Scope.Program));
                                 break;
                             }
 
                             case TokenType.TYPE:
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
-                                    t => t.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
-                                    SymbolTable.Scope.Program
-                                ));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(MatchName, SymbolTable.Scope.Program));
                                 break;
                             }
 
-                            case TokenType.INPUT:
-                            case TokenType.OUTPUT:
-                            case TokenType.IN_OUT:
-                            case TokenType.MOVE:
-                            case TokenType.TO:
-                            default:
+                            default: //INPUT, OUTPUT, IN_OUT, MOVE, TO, etc
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
-                                    v => v.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
-                                    SymbolTable.Scope.Program));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(MatchName, SymbolTable.Scope.Program));
                                 break;
                             }
                         }
+
+                        bool MatchName(Node node) => string.Equals(node.Name, matchingToken.Text, StringComparison.OrdinalIgnoreCase);
                     }
 
                     if (potentialDefinitionNodes.Count > 0)
                     {
-                        var nodeDefinition = potentialDefinitionNodes.FirstOrDefault();
-                        if (nodeDefinition != null)
+                        var nodeDefinition = potentialDefinitionNodes[0];
+                        if (nodeDefinition.CodeElement != null)
                             return new Definition(parameters.uri,
-                                new Range() {start = new Position(nodeDefinition.CodeElement.Line - 1, 0)});
+                                new Range() { start = new Position(nodeDefinition.CodeElement.Line - 1, 0) });
                     }
                 }
             }

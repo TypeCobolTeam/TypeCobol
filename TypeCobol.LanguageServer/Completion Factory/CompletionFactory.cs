@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -72,28 +71,25 @@ namespace TypeCobol.LanguageServer
             IEnumerable<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
             var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
-            if(node == null)
+            if (node == null)
                 return completionItems;
 
-            if (node != null)
+            if (node.SymbolTable != null)
             {
-                if (node.SymbolTable != null)
-                {
-                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    procedures =
-                        node.SymbolTable.GetFunctions(
-                            f =>
-                                f.VisualQualifiedName.ToString()
-                                    .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
-                                || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                SymbolTable.Scope.Intrinsic
-);
-                    variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
-                                                                    da.DataType ==
-                                                                    Compiler.CodeElements.DataType.Alphanumeric &&
-                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase), 
-                                                                    SymbolTable.Scope.Program );
-                }
+                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                procedures = node.SymbolTable.GetFunctions(
+                    f => f.VisualQualifiedName.ToString()
+                             .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) ||
+                         f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                    SymbolTable.Scope.Intrinsic);
+                variables = node.SymbolTable.GetVariables(
+                    da => da.Picture != null && da.DataType == DataType.Alphanumeric &&
+                          da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                    SymbolTable.Scope.Program);
+            }
+            else
+            {
+                variables = Enumerable.Empty<DataDefinition>();
             }
 
             completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, functionDeclarationSignatureDictionary));
@@ -105,7 +101,6 @@ namespace TypeCobol.LanguageServer
                 completionItem.kind = CompletionItemKind.Variable;
                 completionItems.Add(completionItem);
             }
-
 
             return completionItems;
         }
@@ -546,7 +541,7 @@ namespace TypeCobol.LanguageServer
         #endregion
 
         #region Variable Completion
-        public static IEnumerable<CompletionItem> GetCompletionForVariable(FileCompiler fileCompiler, CodeElement codeElement, Expression<Func<DataDefinition, bool>> predicate)
+        public static IEnumerable<CompletionItem> GetCompletionForVariable(FileCompiler fileCompiler, CodeElement codeElement, Func<DataDefinition, bool> predicate)
         {
             var completionItems = new List<CompletionItem>();
             var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
@@ -573,10 +568,10 @@ namespace TypeCobol.LanguageServer
                 return completionItems;
 
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-            Expression<Func<DataDefinition, bool>> variablePredicate =
+            Func<DataDefinition, bool> variablePredicate =
                 da =>
-                    (da.CodeElement != null && (da.CodeElement).LevelNumber.Value < 88) ||
-                    (da.CodeElement == null && da is IndexDefinition); //Ignore variable of level 88.
+                    (da.CodeElement?.LevelNumber != null && da.CodeElement.LevelNumber.Value < 88) ||
+                    (da.CodeElement == null && da is IndexDefinition); //Ignore variable of level 88 and file descriptions.
 
             //Look if the sending variable is compatible with Alpha / Numeric
             if (node.CodeElement is MoveSimpleStatement moveSimpleStatement)
@@ -665,7 +660,7 @@ namespace TypeCobol.LanguageServer
                     potentialVariables = node.SymbolTable.GetVariablesByType(compatibleDataType, potentialVariables, SymbolTable.Scope.Program);
                 }
 
-                potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
+                potentialVariables = potentialVariables.Where(variablePredicate);
             }
             else //Either the statement is marked unsafe or we failed to find any compatible DataType, return all variables...
             {
@@ -747,8 +742,7 @@ namespace TypeCobol.LanguageServer
                 //Get all the variables in Linkage section with Level 01 or 77 and starting by userFilterText. 
                 potentialVariables = node.SymbolTable.GetVariables(v => v != null
                                                 && v.IsFlagSet(Node.Flag.LinkageSectionNode)
-                                                && v.CodeElement is DataDefinitionEntry
-                                                && ((v.CodeElement).LevelNumber.Value == 1 || (v.CodeElement).LevelNumber.Value == 77)
+                                                && IsRootDataItem(v)
                                                 && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                                                 SymbolTable.Scope.Program);
             }
@@ -757,15 +751,19 @@ namespace TypeCobol.LanguageServer
                 //Get all the variables from any section with level 01 or 77 and starting by userFilterText.
                 potentialVariables = node.SymbolTable.GetVariables(
                     v => v != null
-                         && v.CodeElement is DataDefinitionEntry
-                         && ((v.CodeElement).LevelNumber.Value == 1 ||
-                             (v.CodeElement).LevelNumber.Value == 77)
+                         && IsRootDataItem(v)
                          && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                         SymbolTable.Scope.Program);
             }
 
             var variables = potentialVariables.Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
             return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, options);
+
+            bool IsRootDataItem(DataDefinition dataDef)
+            {
+                var levelNumber = dataDef.CodeElement?.LevelNumber;
+                return levelNumber != null && (levelNumber.Value == 1 || levelNumber.Value == 77);
+            }
         }
 
 

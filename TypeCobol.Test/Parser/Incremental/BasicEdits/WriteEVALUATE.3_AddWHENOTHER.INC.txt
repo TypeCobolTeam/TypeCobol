@@ -1,0 +1,48 @@
+================================ ICobolTextLine ================================
+Line   12: LineInserted    ->            WHEN OTHER
+Line   13: LineInserted    ->               CONTINUE
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   12: LineInserted    ->            WHEN OTHER
+Line   13: LineInserted    ->               CONTINUE
+================================= ITokensLine ==================================
+Line   12: LineInserted    -> [12,15:WHEN]<WHEN> [17,21:OTHER]<OTHER> 
+Line   12: LineUpdated     -> [12,15:WHEN]<WHEN> [17,21:OTHER]<OTHER> 
+Line   13: LineInserted    -> [15,22:CONTINUE]<CONTINUE> 
+Line   13: LineUpdated     -> [15,22:CONTINUE]<CONTINUE> 
+Line   14: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   12: LineInserted    -> [12,15:WHEN]<WHEN> [17,21:OTHER]<OTHER> 
+Line   13: LineInserted    -> [15,22:CONTINUE]<CONTINUE> 
+Line   14: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+============================= IProcessedTokensLine =============================
+Line   12: LineInserted    -> 
+Line   13: LineInserted    -> 
+Line   14: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   12: LineInserted    -> 
+Line   13: LineInserted    -> 
+Line   14: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
+ 
+Line   14: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line   11: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   12: LineUpdated     -> [[WhenOtherCondition]] [12,15:WHEN]<WHEN> --> [17,21:OTHER]<OTHER>
+ 
+Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
+ 
+Line   14: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line   11: LineUpdated     -> [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+ 
+Line   12: LineUpdated     -> [[WhenOtherCondition]] [12,15:WHEN]<WHEN> --> [17,21:OTHER]<OTHER>
+ 
+Line   13: LineUpdated     -> [[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
+ 
+Line   14: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 

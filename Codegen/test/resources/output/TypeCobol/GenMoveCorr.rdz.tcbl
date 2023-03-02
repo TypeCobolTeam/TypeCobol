@@ -40,3 +40,4 @@
            MOVE CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
                                                                groupB-1.
        END PROGRAM MOVECORR.
+
