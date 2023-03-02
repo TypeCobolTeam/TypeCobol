@@ -1,0 +1,10 @@
+﻿       IDENTIFICATION division.
+       PROGRAM-ID. MyPGM8.
+       procedure division.
+      * KO
+Line 5[18,73] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+                display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 6[18,19] <27, Error, Syntax> - Syntax error : Starting delimiter of the continuation line is missing.
+      -           er zer "
+           .
+       END PROGRAM MyPGM8.

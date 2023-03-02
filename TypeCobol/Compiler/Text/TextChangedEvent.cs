@@ -9,15 +9,14 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public class TextChangedEvent : EventArgs
     {
-        public TextChangedEvent()
+        internal TextChangedEvent()
         {
             TextChanges = new List<TextChange>();
         }
 
         /// <summary>
-        /// List of text lines which were simultaneoulsy changed in the document
+        /// List of text lines which were simultaneously changed in the document
         /// </summary>
-        public IList<TextChange> TextChanges { get; private set; }
-
+        public IList<TextChange> TextChanges { get; }
     }
 }

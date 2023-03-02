@@ -72,7 +72,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":8},\"end\":{\"line\":35,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":8},\"end\":{\"line\":35,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,
@@ -104,7 +104,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":8},\"end\":{\"line\":35,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":8},\"end\":{\"line\":35,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,
@@ -140,7 +140,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":36,\"character\":8},\"end\":{\"line\":36,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":36,\"character\":8},\"end\":{\"line\":36,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,
@@ -204,7 +204,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'MOVE ... '\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'MOVE ... .'\"}]}}"
     },
     {
       "category": 2,
@@ -244,7 +244,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
       "category": 2,
@@ -316,7 +316,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,
@@ -356,7 +356,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,
@@ -460,7 +460,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":38,\"character\":8},\"end\":{\"line\":38,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":38,\"character\":8},\"end\":{\"line\":38,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"}]}}"
     },
     {
       "category": 2,
@@ -492,7 +492,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"}]}}"
     },
     {
       "category": 2,
@@ -616,7 +616,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... '\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
       "category": 2,
@@ -848,7 +848,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... '\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
       "category": 2,
@@ -888,7 +888,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... '\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
       "category": 2,
@@ -928,7 +928,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... '\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
       "category": 2,
@@ -960,7 +960,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 2,

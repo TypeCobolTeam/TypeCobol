@@ -3,7 +3,7 @@
 
 -- Line 2 --
 [6,66:'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB]<AlphanumericLiteral>(',Y,N){BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB}
-Line 0[0,0] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 0[6,66] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
 
 -- Line 3 --
 [3,66:   'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC]<CommentLine>

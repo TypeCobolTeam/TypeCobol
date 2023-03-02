@@ -43,3 +43,4 @@
            set Registered-false OF W-Person2 OF W-Person3 to TRUE.
 
        END PROGRAM TypDefQualBoolSet.
+

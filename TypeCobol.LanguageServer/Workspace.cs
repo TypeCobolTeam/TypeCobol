@@ -327,14 +327,14 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
+        public void UpdateSourceFile(Uri fileUri, RangeUpdate[] updates)
         {
             if (TryGetOpenedDocument(fileUri, out var contextToUpdate))
             {
                 FileCompiler fileCompilerToUpdate = contextToUpdate.FileCompiler;
                 _semanticUpdaterTimer?.Stop();
 
-                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(updates);
                 if (IsLsrSourceTesting)
                 {
                     //Log text lines string 

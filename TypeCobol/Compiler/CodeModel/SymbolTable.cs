@@ -7,7 +7,6 @@ using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Concurrency;
 
@@ -90,7 +89,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         [NotNull]
-        private static List<T> GetFromTable<T>(string head, IDictionary<string, List<T>> table) where T : Node
+        private static List<T> GetFromTable<T>(string head, IDictionary<string, List<T>> table)
         {
             if (head != null)
             {
@@ -157,7 +156,7 @@ namespace TypeCobol.Compiler.CodeModel
             }
             if (!symbol.IsPartOfATypeDef)
             {
-                Add(DataEntries, symbol);
+                AddNode(DataEntries, symbol);
             }
             else
             {
@@ -175,7 +174,7 @@ namespace TypeCobol.Compiler.CodeModel
             Debug.Assert(!(data is TypeDefinition)); 
 
             //Add symbol to the dictionary
-            Add(this.DataTypeEntries, data);
+            AddNode(this.DataTypeEntries, data);
         }
 
         public IEnumerable<DataDefinition> GetVariables(SymbolReference symbolReference)
@@ -189,7 +188,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="predicate">Predicate to search variable(s)</param>
         /// <param name="maximalScope">The maximal symboltable scope to search in</param>
         /// <returns></returns>
-        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, Scope maximalScope)
+        public IEnumerable<DataDefinition> GetVariables(Func<DataDefinition, bool> predicate, Scope maximalScope)
         {
             var foundedVariables = new List<DataDefinition>();
 
@@ -200,7 +199,7 @@ namespace TypeCobol.Compiler.CodeModel
                     throw new NotSupportedException(); //There is no variable stored in those scopes
              
                 var dataToSeek = currentTable.DataEntries.Values.SelectMany(t => t);
-                var results = dataToSeek.AsQueryable().Where(predicate);
+                var results = dataToSeek.Where(predicate);
                 foundedVariables.AddRange(results);
 
                 currentTable = currentTable.EnclosingScope;
@@ -711,7 +710,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         internal void AddSection(Section section)
         {
-            Add(Sections, section);
+            AddNode(Sections, section);
         }
 
         public IList<Section> GetSection(string name)
@@ -731,7 +730,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         internal void AddParagraph(Paragraph paragraph)
         {
-            Add(Paragraphs, paragraph);
+            AddNode(Paragraphs, paragraph);
         }
 
         public IList<Paragraph> GetParagraph(SymbolReference symbolRef, Section sectionNode)
@@ -786,9 +785,9 @@ namespace TypeCobol.Compiler.CodeModel
         /// Get all paragraphs in the current scope.
         /// </summary>
         /// <returns>The collection of paragraph names</returns>
-        public IEnumerable<Paragraph> GetParagraphs(Expression<Func<Paragraph, bool>> predicate)
+        public IEnumerable<Paragraph> GetParagraphs(Func<Paragraph, bool> predicate)
         {
-            return Paragraphs.Values.SelectMany(p => p).AsQueryable().Where(predicate).Distinct();
+            return Paragraphs.Values.SelectMany(p => p).Where(predicate).Distinct();
         }
 
         /// <summary>
@@ -869,7 +868,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public void AddType(TypeDefinition type)
         {
-            Add(Types, type);
+            AddNode(Types, type);
         }
 
         /// <summary>
@@ -893,7 +892,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 var childDataDefinition = (DataDefinition) dataChild;
 
-                Add(DataTypeEntries, childDataDefinition);
+                AddNode(DataTypeEntries, childDataDefinition);
 
                 //add child data definition
                 AddDataDefinitionsUnderType(childDataDefinition);
@@ -943,7 +942,7 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public IEnumerable<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, Scope maximalScope)
+        public IEnumerable<TypeDefinition> GetTypes(Func<TypeDefinition, bool> predicate, Scope maximalScope)
         {
             var foundedTypes = new List<TypeDefinition>();
 
@@ -966,7 +965,7 @@ namespace TypeCobol.Compiler.CodeModel
                     dataToSeek = dataToSeek.Where(typeDefinition => typeDefinition.CodeElement.Visibility == AccessModifier.Public);
                 }
 
-                var results = dataToSeek.AsQueryable().Where(predicate);
+                var results = dataToSeek.Where(predicate);
 
                 foundedTypes.AddRange(results);
 
@@ -1028,7 +1027,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public void AddFunction(FunctionDeclaration function)
         {
-            Add(Functions, function);
+            AddNode(Functions, function);
         }
 
         public List<FunctionDeclaration> GetFunction(StorageArea storageArea, IProfile profile = null)
@@ -1042,7 +1041,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetFunction(uri, profile);
         }
 
-        public IEnumerable<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, Scope maximalScope)
+        public IEnumerable<FunctionDeclaration> GetFunctions(Func<FunctionDeclaration, bool> predicate, Scope maximalScope)
         {
             var foundedFunctions = new List<FunctionDeclaration>();
 
@@ -1058,7 +1057,7 @@ namespace TypeCobol.Compiler.CodeModel
                             .Functions.Values.SelectMany(t => t));
                 }
 
-                var results = dataToSeek.AsQueryable().Where(predicate);
+                var results = dataToSeek.Where(predicate);
 
                 if (currentTable.CurrentScope == Scope.Intrinsic || currentTable.CurrentScope == Scope.Namespace)
                     results = results.Where(tp =>
@@ -1179,7 +1178,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="program"></param>
         public void AddProgram(Program program)
         {
-            Add(Programs, program);
+            AddNode(Programs, program);
         }
 
         [NotNull]
@@ -1212,6 +1211,73 @@ namespace TypeCobol.Compiler.CodeModel
 
         #endregion
 
+        #region SPECIAL NAMES
+
+        private readonly IDictionary<string, List<SymbolDefinition>> EnvironmentMnemonics =
+            new Dictionary<string, List<SymbolDefinition>>(StringComparer.OrdinalIgnoreCase);
+
+        private SymbolTable GetTopGlobalParentTable()
+        {
+            var globalTable = GetTableFromScope(Scope.Global);
+            if (globalTable == null)
+            {
+                return null;
+            }
+
+            while (globalTable.EnclosingScope != null && globalTable.EnclosingScope.CurrentScope == Scope.Global)
+            {
+                globalTable = globalTable.EnclosingScope;
+            }
+
+            return globalTable;
+        }
+
+        /// <summary>
+        /// Add symbols defined by SPECIAL-NAMES paragraph.
+        /// </summary>
+        /// <param name="specialNamesParagraph">Special names code element</param>
+        public void AddSpecialNames([NotNull] SpecialNamesParagraph specialNamesParagraph)
+        {
+            var targetTable = GetTopGlobalParentTable();
+            Debug.Assert(targetTable != null); // Mnemonics can be declared only by root level programs which all have a Global SymbolTable
+            
+            if (specialNamesParagraph.MnemonicsForEnvironmentNames != null)
+            {
+                foreach (var mnemonicForEnvironmentName in specialNamesParagraph.MnemonicsForEnvironmentNames.Keys)
+                {
+                    Add(targetTable.EnvironmentMnemonics, mnemonicForEnvironmentName.Name, mnemonicForEnvironmentName);
+                }
+            }
+
+            //TODO create dedicated dictionaries and add other special names
+        }
+
+        /// <summary>
+        /// Return all environment mnemonics names.
+        /// </summary>
+        /// <returns>Non-null, maybe empty list of environment mnemonics names.</returns>
+        public IList<string> GetEnvironmentMnemonicsNames()
+        {
+            var targetTable = GetTopGlobalParentTable();
+            return targetTable != null ? targetTable.EnvironmentMnemonics.Keys.ToList() : new List<string>();
+        }
+
+        /// <summary>
+        /// Retrieve environment mnemonic definitions for given environment mnemonic reference.
+        /// </summary>
+        /// <param name="symbolReference">Reference to resolve.</param>
+        /// <returns>A non-null list of definitions. May be empty when the reference could not be resolved,
+        /// may contain more than one element when the reference is ambiguous.</returns>
+        public IList<SymbolDefinition> GetEnvironmentMnemonics(SymbolReference symbolReference)
+        {
+            var targetTable = GetTopGlobalParentTable();
+            return targetTable != null
+                ? GetFromTable(symbolReference.Name, targetTable.EnvironmentMnemonics)
+                : new List<SymbolDefinition>();
+        }
+
+        #endregion
+
         #region Helpers
 
         /// <summary>
@@ -1219,10 +1285,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
+        /// <param name="key"></param>
         /// <param name="symbol"></param>
-        private static void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node
+        private static void Add<T>([NotNull] IDictionary<string, List<T>> table, [CanBeNull] string key, [NotNull] T symbol)
         {
-            string key = symbol.Name;
             //QualifiedName of symbol can be null - if we have a filler in the type definition
             if (key == null)
             {
@@ -1238,6 +1304,9 @@ namespace TypeCobol.Compiler.CodeModel
             }
             found.Add(symbol);
         }
+
+        private static void AddNode<TNode>([NotNull] IDictionary<string, List<TNode>> table, [NotNull] TNode symbol) where TNode : Node
+            => Add(table, symbol.Name, symbol);
 
         /// <summary>
         /// Cobol has compile time binding for variables, sometimes called static scope.
@@ -1333,6 +1402,19 @@ namespace TypeCobol.Compiler.CodeModel
                 foreach (var line in Functions)
                 foreach (var item in line.Value)
                     Dump(str, item, new string(' ', 2));
+            }
+            if (EnvironmentMnemonics.Count > 0)
+            {
+                str.AppendLine("-- ENVIRONMENT MNEMONICS ---");
+                foreach (var line in EnvironmentMnemonics)
+                {
+                    foreach (var item in line.Value)
+                    {
+                        str.Append(new string(' ', 2));
+                        str.Append(item.Name);
+                        str.AppendLine();
+                    }
+                }
             }
             if (verbose && EnclosingScope != null)
                 str.Append(EnclosingScope.ToString(verbose));

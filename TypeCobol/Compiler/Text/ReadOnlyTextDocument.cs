@@ -47,6 +47,7 @@ namespace TypeCobol.Compiler.Text
             int lineIndex = 0;
             StringBuilder currentLineText = new StringBuilder();
             bool previousCharWasCr = false;
+            bool previousCharWasLf = false;
             foreach (char chr in textSource)
             {
                 if (chr == '\r')
@@ -58,9 +59,10 @@ namespace TypeCobol.Compiler.Text
                     charsCount += line.Length + 1; //+1 to add the \r char
 
                     // Reset StringBuilder contents for next line
-                    currentLineText = new StringBuilder();
+                    currentLineText.Clear();
 
                     previousCharWasCr = true;
+                    previousCharWasLf = false;
                 }
                 else if (chr == '\n')
                 {
@@ -73,22 +75,28 @@ namespace TypeCobol.Compiler.Text
                         charsCount += line.Length + 1; //+1 to add the \n char
 
                         // Reset StringBuilder contents for next line
-                        currentLineText = new StringBuilder();
+                        currentLineText.Clear();
+                    }
+                    else
+                    {
+                        // Consume the \n char
+                        charsCount++;
                     }
 
-                    charsCount++;
                     previousCharWasCr = false;
+                    previousCharWasLf = true;
                 }
                 else
                 {
                     // Append the current char to the text of the current line
                     currentLineText.Append(chr);
-
                     previousCharWasCr = false;
+                    previousCharWasLf = false;
                 }
             }
-            // If the last line was not terminated with end of line chars
-            if (currentLineText.Length > 0)
+
+            // If the last line was not terminated with end of line chars or if we ended on a blank line
+            if (currentLineText.Length > 0 || previousCharWasCr || previousCharWasLf)
             {
                 ReadOnlyTextLine line = new ReadOnlyTextLine(lineIndex, charsCount, currentLineText.ToString(), null);
                 lines.Add(line);

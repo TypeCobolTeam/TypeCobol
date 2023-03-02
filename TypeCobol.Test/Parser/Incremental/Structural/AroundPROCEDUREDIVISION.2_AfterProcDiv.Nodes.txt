@@ -1,0 +1,15 @@
+﻿--- Nodes ---
+?
+  Simple
+    data-division
+      working-storage
+        var1
+    procedure-division
+      sentence-0
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,23:var1]<UserDefinedWord>
+- variables = var1
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

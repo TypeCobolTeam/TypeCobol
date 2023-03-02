@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test {
@@ -12,30 +8,19 @@ namespace TypeCobol.Test {
     [TestClass]
     public class NewTestsToFix
     {
-        static string root = PlatformUtils.GetPathForProjectFile("NewTestsToFix" + Path.DirectorySeparatorChar + "Parser");
-        static string sampleRoot = root + Path.DirectorySeparatorChar + "Samples";
-        static string resultRoot = root + Path.DirectorySeparatorChar + "ResultFiles";
+        static string _Root = PlatformUtils.GetPathForProjectFile("NewTestsToFix" + Path.DirectorySeparatorChar + "Parser");
 
         [TestMethod]
         [TestCategory("NewTestsToFix-Parsing")]
         [TestProperty("Time", "fast")]
-		[Ignore]
+        [Ignore]
         public void NewCobol85TestsToFix()
         {
-            int nbOfTests = 0;
-
             string[] extensions = { ".cbl", ".pgm" };
-            foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
-            {
-                var dirname = Path.GetFileName(directory);
-
-                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) +
-                                         "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
-                folderTester.Test();
-                nbOfTests += folderTester.GetTestCount();
-                Console.Write("\n");
-            }
+            Console.WriteLine("Entering directory \"" + _Root + "\" [" + string.Join(", ", extensions) + "]:");
+            var folderTester = new FolderTester(_Root, extensions);
+            int nbOfTests = folderTester.Test();
+            Console.Write("\n");
 
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
@@ -51,34 +36,17 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("NewTestsToFix-Parsing")]
         [TestProperty("Time", "fast")]
-		[Ignore]
+        [Ignore]
         public void NewTcblTestsToFix()
         {
-            int nbOfTests = 0;
             string[] extensions = { ".tcbl" };
+            Console.WriteLine("Entering directory \"" + _Root + "\" [" + string.Join(", ", extensions) + "]:");
+            var folderTester = new FolderTester(_Root, extensions);
+            int nbOfTests = folderTester.Test();
+            Console.Write("\n");
 
-            foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
-            {
-                var dirname = Path.GetFileName(directory);
-                
-                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
-                folderTester.Test();
-                nbOfTests += folderTester.GetTestCount();
-                Console.Write("\n");
-            }
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
-        }
-
-        public static IEnumerable<String> GetCurrentAndSubDirectories(string root)
-        {
-            yield return root;
-            var directories =  Directory.GetDirectories(root);
-            foreach (var dir in directories)
-            {
-                yield return dir;
-            }
         }
     }
 }

@@ -90,20 +90,15 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-#if EUROINFO_RULES
+
             if (copy.TextName != null)
             {
+                // Find the text name variation declared by previous REMARKS compiler directives (if parsed) or add new text name.
+                var variation = RemarksDirective.TextNameVariation.FindOrAdd(CopyTextNameVariations, copy);
+
+#if  EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
-                    // Find the text name variation declared by previous REMARKS compiler directives (if parsed)
-                    var variation = CopyTextNameVariations.Find(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.OrdinalIgnoreCase));
-                    if (variation == null)
-                    {
-                        //If it does not exists, create the text name variation and add it (AutoRemarks mechanism Issue #440)
-                        variation = new RemarksDirective.TextNameVariation(copy.TextName);
-                        CopyTextNameVariations.Add(variation);
-                    }
-
                     if (this.TypeCobolOptions.IsCpyCopy(variation.TextName))
                     {
                         // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
@@ -111,15 +106,16 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         if (variation.HasSuffix)
                         {
                             copy.TextName = variation.TextName;
-                            copy.InsertSuffixChar = true;
                             copy.Suffix = variation.Suffix;
                             copy.PreSuffix = variation.PreSuffix;
                         }
                     }
                 }
+
                 _document.CollectUsedCopy(copy);
-            }
 #endif
+            }
+
             copy.LibraryName = GetName(qualifiedTextName.LibraryName);
             copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
 
