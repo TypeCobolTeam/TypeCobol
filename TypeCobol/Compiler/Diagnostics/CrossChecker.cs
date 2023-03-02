@@ -274,7 +274,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         }
                     }
                 }
-                else if (child is WhenSearch whenSearch)
+                else if (child is When whenSearch)
                 {
                     whenSearchCount++;
                     if (whenSearchCount > 1 && search.CodeElement.StatementType == StatementType.SearchBinaryStatement)
@@ -345,15 +345,14 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         
-        public override bool Visit(WhenSearch whenSearch)
+        public override bool Visit(When whenSearch)
         {
-            System.Diagnostics.Debug.Assert(whenSearch.Parent is Search);
-            var search = (Search) whenSearch.Parent;
+            if (!(whenSearch.Parent is Search search)) return true; //EVALUATE statement, not our concern here.
 
             if (whenSearch.ChildrenCount == 0)
             {
                 var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
-                DiagnosticUtils.AddError(whenSearch, "Missing statement in when clause", messageCode);
+                DiagnosticUtils.AddError(whenSearch, "Missing statement in \"when\" clause", messageCode);
             }
 
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
@@ -552,7 +551,17 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(If ifNode)
         {
-            if (ifNode?.Children != null && !(ifNode.Children.Last() is End))
+            #region Temporary debug code for #2266
+
+            if (ifNode.Children.Count == 0)
+            {
+                var debugData = Logging.LoggingSystemExtensions.CreateDebugData(ifNode);
+                Logging.LoggingSystem.LogMessage(Logging.LogLevel.Error, "CrossCompleteChecker.Visit, found invalid IF node", debugData);
+            }
+
+            #endregion
+
+            if (!(ifNode.Children.Last() is End))
             {
                 DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
@@ -852,7 +861,158 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
+        public override bool Visit(Exec exec)
+        {
+            // EXEC SQL and all its children must be in same source file
+            string execTranslatorName = exec.CodeElement.ExecTranslatorName?.Name;
+            if (string.Equals(execTranslatorName, "SQL", StringComparison.OrdinalIgnoreCase) && exec.ChildrenCount > 0)
+            {
+                var referenceCopyDirective = exec.CodeElement.FirstCopyDirective;
+                foreach (var execChild in exec.Children)
+                {
+                    var copyDirective = execChild.CodeElement?.FirstCopyDirective;
+                    if (referenceCopyDirective != copyDirective)
+                    {
+                        DiagnosticUtils.AddError(exec, "Syntax not supported: when embedding SQL statements, EXEC SQL and all its content (including END-EXEC) must be in the same source file.");
+                        break; //Stop on first error, avoid reporting error for every child
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public override bool Visit(SpecialNames specialNames)
+        {
+            // Check for environment mnemonics that conflict with variables
+            foreach (var environmentMnemonicName in specialNames.SymbolTable.GetEnvironmentMnemonicsNames())
+            {
+                var variables = specialNames.SymbolTable.GetVariables(d => string.Equals(d.Name, environmentMnemonicName, StringComparison.OrdinalIgnoreCase), SymbolTable.Scope.Global);
+                foreach (var dataDefinition in variables)
+                {
+                    // Data definition name conflicts with mnemonic-name for environment
+                    DiagnosticUtils.AddError(dataDefinition, $"The name '{dataDefinition.Name}' is already used to define a mnemonic for environment name. Rename this variable or the mnemonic to avoid ambiguous references.");
+                }
+            }
+
+            return true;
+        }
+
+        public override bool Visit(Accept accept)
+        {
+            // Resolve input device
+            if (accept.CodeElement is AcceptFromInputDeviceStatement acceptFromInputDeviceStatement)
+            {
+                CheckEnvironmentNameOrMnemonicForEnvironmentName(accept, acceptFromInputDeviceStatement.InputDevice);
+            }
+
+            return true;
+        }
+
+        public override bool Visit(Display display)
+        {
+            // Resolve output device
+            CheckEnvironmentNameOrMnemonicForEnvironmentName(display, display.CodeElement.OutputDeviceName);
+            return true;
+        }
+
+        public override bool Visit(Write write)
+        {
+            // Resolve number of lines of ADVANCING clause
+            var variable = write.CodeElement.ByNumberOfLinesOrByMnemonicForEnvironmentName;
+            var referenceToResolve = variable?.MainSymbolReference;
+            if (referenceToResolve == null)
+            {
+                // Nothing to check
+                return true;
+            }
+
+            if (referenceToResolve.IsAmbiguous)
+            {
+                // Check for mnemonic
+                var mnemonic = CheckMnemonicForEnvironmentName(write, referenceToResolve);
+
+                // Check for variable
+                var ambiguousSymbolReference = (AmbiguousSymbolReference)referenceToResolve;
+                System.Diagnostics.Debug.Assert(!ambiguousSymbolReference.IsQualifiedReference);
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes != null);
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Length == 2);
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Contains(SymbolType.DataName));
+                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Contains(SymbolType.MnemonicForEnvironmentName));
+                var originalCandidateTypes = ambiguousSymbolReference.CandidateTypes;
+                ambiguousSymbolReference.CandidateTypes = new[] { SymbolType.DataName }; //To call CheckVariable again
+                var dataDefinition = CheckVariable(write, variable.StorageArea, true, true);
+                ambiguousSymbolReference.CandidateTypes = originalCandidateTypes;
+
+                // Add diagnostic
+                if (mnemonic == null && dataDefinition == null)
+                {
+                    //Nothing found
+                    DiagnosticUtils.AddError(write, $"Unable to resolve reference to '{referenceToResolve.Name}'.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
+                }
+                else if (mnemonic != null && dataDefinition != null)
+                {
+                    //This is still ambiguous...
+                    DiagnosticUtils.AddError(write, $"Ambiguous reference to '{referenceToResolve.Name}', the definition to be used could not be determined from the context.", referenceToResolve, MessageCode.SemanticTCErrorInParser);
+                }
+                //else either a mnemonic or a variable, nothing to do.
+            }
+            //else already checked by CheckVariable as a regular IntegerVariable with non-ambiguous symbol ref.
+
+            return true;
+        }
+
+        private static void CheckEnvironmentNameOrMnemonicForEnvironmentName(Node node, SymbolReference environmentOrMnemonicReference)
+        {
+            var name = environmentOrMnemonicReference?.Name;
+            if (name == null)
+            {
+                // Nothing to check
+                return;
+            }
+
+            // Check for environment name
+            if (Enum.TryParse<CobolWordsBuilder.EnvironmentName>(name, true, out _))
+            {
+                return;
+            }
+
+            // Check for mnemonic (check also for conflicting variables)
+            var environmentMnemonicDefinition = CheckMnemonicForEnvironmentName(node, environmentOrMnemonicReference);
+            var dataDefinitionCount = node.SymbolTable.GetVariables(environmentOrMnemonicReference).Count();
+            if (environmentMnemonicDefinition == null)
+            {
+                string message = dataDefinitionCount == 0
+                    // Nothing found
+                    ? $"Unable to resolve reference to '{environmentOrMnemonicReference.Name}'."
+                    // Cannot use variable here
+                    : $"Cannot use '{environmentOrMnemonicReference.Name}' here, environment-name or mnemonic for environment-name was expected.";
+                DiagnosticUtils.AddError(node, message, environmentOrMnemonicReference, MessageCode.SemanticTCErrorInParser);
+            }
+            else if (dataDefinitionCount > 0)
+            {
+                // A mnemonic has been found but it conflicts with one or more variables
+                DiagnosticUtils.AddError(node, $"Ambiguous reference to '{environmentOrMnemonicReference.Name}', the definition to be used could not be determined from the context.", environmentOrMnemonicReference, MessageCode.SemanticTCErrorInParser);
+            }
+        }
+
+        private static SymbolDefinition CheckMnemonicForEnvironmentName(Node node, SymbolReference mnemonicReference)
+        {
+            var candidates = node.SymbolTable.GetEnvironmentMnemonics(mnemonicReference);
+            switch (candidates.Count)
+            {
+                case 0:
+                    // Let caller decide whether it is a problem or not...
+                    return null;
+                case 1:
+                    return candidates[0];
+                default:
+                    DiagnosticUtils.AddError(node, $"Ambiguous reference to '{mnemonicReference.Name}' environment mnemonic.", mnemonicReference, MessageCode.SemanticTCErrorInParser);
+                    return null;
+            }
+        }
+
+        public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea, bool allowNoMatch = false)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)
                 return null;
@@ -861,23 +1021,32 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference == null) return null;
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
+            //Will be handled specifically for each statement that could use mnemonics
+            if (area.SymbolReference.IsOrCanBeOfType(SymbolType.MnemonicForEnvironmentName)) return null;
 
             var parentTypeDefinition = (node as DataDefinition)?.ParentTypeDefinition;
-            var foundQualified =
-                node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
-                        ? area.SymbolReference.URI
-                        : new URI(area.ToString()),
-                    parentTypeDefinition);
-            var found = foundQualified.Select(v => v.Value);
 
-            var foundCount = found.Count();
+            var uri = area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString());
+            var foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(uri, parentTypeDefinition);
 
-            if (foundCount == 0)
+            if (foundQualified.Count == 0)
             {
-                if (node.SymbolTable.GetFunction(area).Count < 1)
+                //Helper diagnostic for subtraction between numeric written without spaces around minus sign.
+                //Only do this diagnostic if :
+                //  - the variable contains no alpha, because otherwise the most standard use case is simply an undefined variable.
+                //  - SymbolReference is NOT qualified (OF, IN, ::), otherwise it's clearly not an arithmetic subtraction.
+                if (area.SymbolReference != null && area.SymbolReference.IsQualifiedReference == false)
+                {
+                    if (area.SymbolReference.Name.All(c => char.IsDigit(c) || c == '-'))
+                    {
+                        DiagnosticUtils.AddError(node, "Variable must contains at least one alphabetic char. Arithmetic operations require spaces around minus sign: " + string.Join(" - ", area.SymbolReference.Name.Split('-')));
+                    }
+                }
+
+                if (!allowNoMatch && node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
-            else if (foundCount > 1)
+            else if (foundQualified.Count > 1)
             {
                 bool isFirst = true;
                 string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine +
@@ -895,15 +1064,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
-            else if (foundCount == 1)
+            else if (foundQualified.Count == 1)
             {
-                var dataDefinitionFound = found.First();
-                var dataDefinitionPath = foundQualified.First().Key;
+                var dataDefinitionFound = foundQualified[0].Value;
+                var dataDefinitionPath = foundQualified[0].Key;
 
-                if (foundQualified.Count == 1)
-                {
-                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
-                }
+                IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
 
                 if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {
@@ -1111,7 +1277,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else if (dataDefinition.DataType == DataType.Boolean)
             {
-                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
+                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                 { 
                     //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                     FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, dataDefinitionPath);

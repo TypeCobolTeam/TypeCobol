@@ -1,9 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -80,7 +78,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         /// <param name="usage"></param>
         /// <returns></returns>
-	    public static DataType Create(DataUsage usage)
+        public static DataType Create(DataUsage usage)
         {
             if (usage == DataUsage.Binary || usage == DataUsage.NativeBinary || usage == DataUsage.FloatingPoint ||
                 usage == DataUsage.LongFloatingPoint || usage == DataUsage.PackedDecimal)
@@ -195,7 +193,7 @@ namespace TypeCobol.Compiler.CodeElements
             {
                 dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue("X(03)");
                 dataTypeDescriptionEntry.PictureValidationResult = new PictureValidator.Result(
-                    new[] { new PictureValidator.Character(PictureValidator.SC.X, 3) },
+                    new[] { new Character(SC.X, 3) },
                     null,
                     PictureCategory.Alphanumeric,
                     0,
@@ -252,7 +250,7 @@ namespace TypeCobol.Compiler.CodeElements
             string pictureCharacterString = $"9({length})";
             data.Picture = new GeneratedAlphanumericValue(pictureCharacterString);
             data.PictureValidationResult = new PictureValidator.Result(
-                new[] { new PictureValidator.Character(PictureValidator.SC.NINE, length) },
+                new[] { new Character(SC.NINE, length) },
                 null,
                 PictureCategory.Numeric,
                 length,

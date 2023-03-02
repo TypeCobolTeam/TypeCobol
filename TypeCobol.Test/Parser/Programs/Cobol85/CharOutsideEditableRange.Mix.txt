@@ -1,0 +1,23 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 pic x(100) value "hi".
+       PROCEDURE DIVISION.
+           display "max-ok_max-ok_max-ok_max-ok_max-ok_max-ok_max-ok_ma"
+
+Line 9[20,72] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+           display "3333333333333333333333333333222222222222222222222222
+
+           move var1 to var1
+
+Line 13[20,59] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+           display "endxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1234
+Line 14[20,72] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+           display "3333333333333333333333333333222222222222222222222222
+
+Line 16[17,72] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+           move "gggggggggggggggggggggggggggggggggggggggggggggssssssssss
+                    to var1
+           GOBACK.
+       END PROGRAM Pgm.

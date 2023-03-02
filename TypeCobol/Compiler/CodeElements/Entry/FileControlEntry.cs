@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// The FILE-CONTROL paragraph associates each file in the COBOL program with
     /// an external data set, specifies its access mode.
     /// </summary>
-    public class FileControlEntry : CodeElement
+    public class FileControlEntry : CodeElement, INamedCodeElement
     {
         public FileControlEntry() : base(CodeElementType.FileControlEntry)
         { }
@@ -18,6 +17,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         [CanBeNull]
         public SymbolDefinition FileName { get; set; }
+
+        public string Name => FileName?.Name;
 
         /// <summary>
         /// The ASSIGN clause associates the name of a file in a program with the actual external name of the data file.

@@ -28,6 +28,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
         /// </summary>
         public CompilerDirective CompilerDirective { get; private set; }
 
+        public void ResetCompilerDirective()
+        {
+            CompilerDirective = null;
+        }
+
         private string GetName(TypeCobol.Compiler.Scanner.Token name)
         {
             return name?.Text.Trim('\'').Trim('\"');
@@ -61,7 +66,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             {
                 Token errorToken = optionToken;
                 Diagnostic diag = new Diagnostic(MessageCode.InvalidControlCblCompilerStatementOption, errorToken.Position(), option);
-                CompilerDirective.AddDiagnostic(diag);
+                CompilerDirective.AddParsingDiagnostic(diag);
             }
         }
 
@@ -85,20 +90,15 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-#if EUROINFO_RULES
+
             if (copy.TextName != null)
             {
+                // Find the text name variation declared by previous REMARKS compiler directives (if parsed) or add new text name.
+                var variation = RemarksDirective.TextNameVariation.FindOrAdd(CopyTextNameVariations, copy);
+
+#if  EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
-                    // Find the text name variation declared by previous REMARKS compiler directives (if parsed)
-                    var variation = CopyTextNameVariations.Find(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.OrdinalIgnoreCase));
-                    if (variation == null)
-                    {
-                        //If it does not exists, create the text name variation and add it (AutoRemarks mechanism Issue #440)
-                        variation = new RemarksDirective.TextNameVariation(copy.TextName);
-                        CopyTextNameVariations.Add(variation);
-                    }
-
                     if (this.TypeCobolOptions.IsCpyCopy(variation.TextName))
                     {
                         // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
@@ -106,15 +106,16 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         if (variation.HasSuffix)
                         {
                             copy.TextName = variation.TextName;
-                            copy.InsertSuffixChar = true;
                             copy.Suffix = variation.Suffix;
                             copy.PreSuffix = variation.PreSuffix;
                         }
                     }
                 }
+
                 _document.CollectUsedCopy(copy);
-            }
 #endif
+            }
+
             copy.LibraryName = GetName(qualifiedTextName.LibraryName);
             copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
 
@@ -122,7 +123,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             if (suppress != null)
             {
                 Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Position(), "\"COPY SUPPRESS\" should not be used");
-                CompilerDirective.AddDiagnostic(error);
+                CompilerDirective.AddParsingDiagnostic(error);
             }
 
             // REPLACING
@@ -146,7 +147,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         if (!bReported)
                         {
                             Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Position(), "\"REPLACE\" Empty Comparison Pseudo Text.");
-                            CompilerDirective.AddDiagnostic(error);
+                            CompilerDirective.AddParsingDiagnostic(error);
                             bReported = true;
                         }
                     }
@@ -241,41 +242,82 @@ namespace TypeCobol.Compiler.CupPreprocessor
         {
             DeleteDirective deleteDirective = (DeleteDirective)CompilerDirective;
 
-            bool isFirst = true;
-            int previous = -42;
-            foreach(Token integerLiteralToken in seqNumField)
-            {
-                System.Diagnostics.Debug.Assert(integerLiteralToken.TokenType == TokenType.IntegerLiteral);
-                int current = (int)((IntegerLiteralTokenValue)integerLiteralToken.LiteralValue).Number;
 
-                if (isFirst)
+            foreach (Token token in seqNumField)
+            {
+                if (token.TokenType == TokenType.IntegerLiteral)
                 {
-                    previous = current;
-                    isFirst = false;
-                }
-                else
-                {
-                    DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
-                    range.From = previous;
+                    int current = (int)((IntegerLiteralTokenValue)token.LiteralValue).Number;
+
+                    //Report error for negative number and ignore them
                     if (current < 0)
                     {
-                        range.To = -current;
-                        isFirst = true;
+                        AddInvalidIntegerDiagnostic(current.ToString());
                     }
                     else
                     {
-                        range.To = previous;
-                        previous = current;
+                        DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                        range.From = current;
+                        range.To = current;
+                        deleteDirective.SequenceNumberRangesList.Add(range);
                     }
-                    deleteDirective.SequenceNumberRangesList.Add(range);
                 }
-            }
-            if (!isFirst && previous >= 0)
-            {
-                DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
-                range.From = previous;
-                range.To = previous;
-                deleteDirective.SequenceNumberRangesList.Add(range);
+                else if (token.TokenType == TokenType.UserDefinedWord)
+                {
+                    var numbers = token.Text.Split('-');
+
+                    if (numbers.Length != 2)
+                    {
+                        Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                            "Invalid range format");
+                        CompilerDirective.AddParsingDiagnostic(error);
+                    }
+                    else
+                    {
+                        DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                        if (TryParseIntOrAddDiagnostic(numbers[0], out var temp))
+                        {
+                            range.From = temp;
+                            if (TryParseIntOrAddDiagnostic(numbers[1], out temp))
+                            {
+                                range.To = temp;
+                                deleteDirective.SequenceNumberRangesList.Add(range);
+                            }
+                        } //else ignore values
+
+                        bool TryParseIntOrAddDiagnostic(string integerText, out int result)
+                        {
+                            if (!int.TryParse(integerText, out result))
+                            {
+                                AddInvalidIntegerDiagnostic(integerText);
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                        $"Unexpected token: ${token} of type ${token.TokenType}");
+                    CompilerDirective.AddParsingDiagnostic(error);
+                }
+
+                void AddInvalidIntegerDiagnostic(string invalidInteger)
+                {
+                    string errorMessage;
+                    if (string.IsNullOrWhiteSpace(invalidInteger))
+                    {
+                        errorMessage = "No value provided. Expected a positive integer.";
+                    }
+                    else
+                    {
+                        errorMessage = "Invalid value: " + invalidInteger + ". Expected a positive integer.";
+                    }
+
+                    Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(), errorMessage);
+                    CompilerDirective.AddParsingDiagnostic(error);
+                }
             }
         }
 
@@ -324,7 +366,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             {
                 Token errorToken = sequenceNumber;
                 Diagnostic error = new Diagnostic(MessageCode.InvalidNumericLiteralFormat, errorToken.Position());
-                CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
+                CompilerDirective.AddParsingDiagnostic(error);//TODO proper diagnostic error
             }
         }
 

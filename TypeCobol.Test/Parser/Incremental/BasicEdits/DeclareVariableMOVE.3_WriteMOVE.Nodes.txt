@@ -1,0 +1,15 @@
+--- Nodes ---
+?
+  Simple
+    data-division
+      working-storage
+        var1
+        var2
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [25,28:var2]<UserDefinedWord>
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

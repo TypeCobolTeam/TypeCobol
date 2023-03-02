@@ -46,6 +46,12 @@ namespace TypeCobol.Compiler.Diagnostics
                         context?.dataNameDefinition());
                 }
 
+                //Variable name in Cobol must contains at least one alphabetic char.
+                if (!data.DataName.Name.Any(CobolChar.IsCobolAlphabeticChar))
+                {
+                    DiagnosticUtils.AddError(data, "Variable name must contain at least one alphabetic char.", context?.dataNameDefinition());
+                }
+
                 //Retrieve VALUE token through context
                 var valueClauseContexts = context?.children.OfType<CodeElementsParser.ValueClauseContext>();
                 Token valueToken = null;
@@ -72,11 +78,14 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(data, "Invalid VALUE clause", valueToken);
                     }
                     //In Cobol reference format check that VALUE clause starts in Area B
-                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat
-                             &&
-                             DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB)
+                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat && ValueTokenStartsOutsideAreaB())
                     {
                         DiagnosticUtils.AddError(data, "VALUE clause must start in area B", valueToken);
+                    }
+
+                    bool ValueTokenStartsOutsideAreaB()
+                    {
+                        return valueToken.Column < (int)CobolFormatAreas.Begin_B || valueToken.Column > (int)CobolFormatAreas.End_B;
                     }
                 }
             }
@@ -121,6 +130,17 @@ namespace TypeCobol.Compiler.Diagnostics
             CheckPicture(redefines, context);
         }
 
+        public static void CheckOccurs([NotNull] CommonDataDescriptionAndDataRedefines codeElement,
+            [NotNull] CodeElementsParser.OccursClauseContext context,
+            [NotNull] List<CodeElementsParser.DataNameReferenceContext> duplicateSortingKeysReferences)
+        {
+            // Create diagnostic for duplicate keys found by builder
+            foreach (var duplicateSortingKeyReference in duplicateSortingKeysReferences)
+            {
+                DiagnosticUtils.AddError(codeElement, $"Sorting key '{duplicateSortingKeyReference.GetText()}' is already defined for this table.", duplicateSortingKeyReference);
+            }
+        }
+
         /// <summary>
         /// Return the first ParserRuleContext in a list.
         /// If there is more than one context in the parameter list, a diagnostic error is added to the CodeElement parameter.
@@ -129,7 +149,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <param name="e">CodeElement in error if there is more than one context in contexts</param>
         /// <param name="contexts">List of ParserRuleContexts</param>
         /// <returns>First element of contexts if contexts is not null and of size > 0, null otherwise</returns>
-        public static T GetContext<T>(CodeElement e, T[] contexts, bool checkErrors = true)
+        private static T GetContext<T>(CodeElement e, T[] contexts, bool checkErrors = true)
             where T : Antlr4.Runtime.ParserRuleContext
         {
             if (contexts == null) return null;
@@ -383,6 +403,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class CodeElementChecker
     {
+        private const int MAX_NAME_LENGTH = 30;
+
         public static void OnCodeElement(CodeElement codeElement, bool isDebuggingModeEnabled)
         {
             if (isDebuggingModeEnabled)
@@ -390,6 +412,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (codeElement.DebugMode == CodeElement.DebugType.Mix)
                 {
                     DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
+                }
+            }
+
+            if (codeElement is INamedCodeElement namedCodeElement)
+            {
+                var name = namedCodeElement.Name;
+                if (name != null && name.Length > MAX_NAME_LENGTH)
+                {
+                    DiagnosticUtils.AddError(codeElement, $"The COBOL word '{name}' contains {name.Length} characters which is more than the allowed maximum of {MAX_NAME_LENGTH} characters.");
                 }
             }
         }
@@ -660,6 +691,22 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
             if (statement.ProcedureNames.Length > 255)
                 DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
+        }
+    }
+
+    static class SpecialNamesParagraphChecker
+    {
+        public static void OnCodeElement(SpecialNamesParagraph paragraph, CodeElementsParser.SpecialNamesParagraphContext context, List<RuleContext> duplicateEnvironments, List<RuleContext> duplicateMnemonicsForEnvironment)
+        {
+            foreach (var environment in duplicateEnvironments)
+            {
+                DiagnosticUtils.AddError(paragraph, $"A duplicate '{environment.GetText()}' clause was found.", environment);
+            }
+
+            foreach (var mnemonic in duplicateMnemonicsForEnvironment)
+            {
+                DiagnosticUtils.AddError(paragraph, $"Mnemonic name '{mnemonic.GetText()}' was previously defined.", mnemonic);
+            }
         }
     }
 

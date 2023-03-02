@@ -252,3 +252,10 @@ Line 58[17,24] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be u
 -- Line 69 --
 +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:. ]<PeriodSeparator>) +++
 
+-- Line 70 --
+
+-- Line 71 --
+*** DIRECTIVE COPY TEXTNAME1 ([8,11:COPY]<COPY>[13,21:TEXTNAME1]<UserDefinedWord>[22,23:. ]<PeriodSeparator>) ***
+[24,27:COPY]<COPY>
+Line 71[24,27] <27, Error, Syntax> - Syntax error : missing  {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word} at 'COPY'
+

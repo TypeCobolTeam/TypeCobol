@@ -101,6 +101,7 @@ parser code {:
 	number (count) of start terminal symbols.
 */
 terminal StatementEntryPoint;
+terminal StatementClosingPoint;
 
 /* Terminals (tokens returned by the scanner). */
 terminal TypeCobol.Compiler.CodeElements.ProgramIdentification ProgramIdentification;
@@ -206,7 +207,6 @@ terminal TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition NotOnSizeErrorC
 terminal TypeCobol.Compiler.CodeElements.ElseCondition ElseCondition;
 terminal TypeCobol.Compiler.CodeElements.WhenCondition WhenCondition;
 terminal TypeCobol.Compiler.CodeElements.WhenOtherCondition WhenOtherCondition;
-terminal TypeCobol.Compiler.CodeElements.WhenSearchCondition WhenSearchCondition;
 terminal TypeCobol.Compiler.CodeElements.AddStatementEnd AddStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.CallStatementEnd CallStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.ComputeStatementEnd ComputeStatementEnd;
@@ -232,6 +232,20 @@ terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
 
 // FOR SQL
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CommitStatement CommitStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SelectStatement SelectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.RollbackStatement RollbackStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.TruncateStatement TruncateStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SavepointStatement SavepointStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.WhenEverStatement WhenEverStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.LockTableStatement LockTableStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ReleaseSavepointStatement ReleaseSavepointStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ConnectStatement ConnectStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DropTableStatement DropTableStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SetAssignmentStatement SetAssignmentStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.GetDiagnosticsStatement GetDiagnosticsStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.AlterSequenceStatement AlterSequenceStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ExecuteImmediateStatement ExecuteImmediateStatement;
+
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
@@ -241,7 +255,7 @@ terminal TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader GlobalStorag
 terminal TypeCobol.Compiler.CodeElements.Program Program;
 
 /* Non terminals */
-non terminal starts, statementEntry;
+non terminal starts, statementEntry, statementClosing;
 non terminal compilationUnit, cobolCompilationUnit;
 non terminal cobolProgram, cobolClass, cobolProgramBase, nestedProgram;
 non terminal classEndOpt;
@@ -406,8 +420,9 @@ non terminal execStatementEnd;
 
 start with starts;
 
-starts ::= compilationUnit		/* rule for starting analyzing a compilation unit */
-	| StatementEntryPoint statementEntry /* rule for starting analyzing a TypeCobol statement */
+starts ::= compilationUnit	/* rule for starting analyzing a compilation unit */
+	| statementEntry		/* rule for starting analyzing a TypeCobol statement */
+	| statementClosing		/* rule for starting analyzing an open TypeCobol statement and try to close it */
 	;
 
 compilationUnit ::= {: my_parser.Builder.StartCobolCompilationUnit(); :} cobolCompilationUnit
@@ -735,9 +750,9 @@ fileDescriptionEntries ::=
 
 fileDescriptionEntry ::= 
 	FileDescriptionEntry:fde 
-	{: my_parser.Builder.StartFileDescriptionEntry(fde); my_parser.Builder.EndFileDescriptionEntry(); :}
+	{: my_parser.Builder.StartFileDescriptionEntry(fde); :}
 	dataDefinitionEntries
-	{:  :}
+	{: my_parser.Builder.EndFileDescriptionEntry(); :}
 	;
 
 workingStorageSection ::= /*empty*/
@@ -787,6 +802,32 @@ execStatementBody ::= /* empty */
 
 sqlStatement ::= CommitStatement:stmt
 {: my_parser.Builder.OnCommitStatement(stmt); :}
+|	SelectStatement:stmt
+{: my_parser.Builder.OnSelectStatement(stmt); :}
+|	RollbackStatement:stmt
+{: my_parser.Builder.OnRollbackStatement(stmt); :}
+|	TruncateStatement:stmt
+{: my_parser.Builder.OnTruncateStatement(stmt); :}
+|	WhenEverStatement:stmt
+{: my_parser.Builder.OnWhenEverStatement(stmt); :}
+|	LockTableStatement:stmt
+{: my_parser.Builder.OnLockTableStatement(stmt); :}
+|	ReleaseSavepointStatement:stmt
+{: my_parser.Builder.OnReleaseSavepointStatement(stmt); :}
+|	SavepointStatement:stmt
+{: my_parser.Builder.OnSavepointStatement(stmt); :}
+|	ConnectStatement:stmt
+{: my_parser.Builder.OnConnectStatement(stmt); :}
+|	DropTableStatement:stmt
+{: my_parser.Builder.OnDropTableStatement(stmt); :}
+|	SetAssignmentStatement:stmt
+{: my_parser.Builder.OnSetAssignmentStatement(stmt); :}
+|	GetDiagnosticsStatement:stmt
+{: my_parser.Builder.OnGetDiagnosticsStatement(stmt); :}
+|	AlterSequenceStatement:stmt
+{: my_parser.Builder.OnAlterSequenceStatement(stmt); :}
+|	ExecuteImmediateStatement:stmt
+{: my_parser.Builder.OnExecuteImmediateStatement(stmt); :}
 ;
 
 execStatementEnd ::= ExecStatementEnd:stmt
@@ -989,11 +1030,54 @@ sentence ::= SentenceEnd:send
 	{: my_parser.Builder.EndSentence(send, true); :}
 	;
 
-statementEntry ::= statement
-	| StatementEntryPoint ifstatement
-	{: my_parser.Builder.EndIfStatementWithBody(); :}
-	| StatementEntryPoint searchStatement
-	{: my_parser.Builder.EndSearchStatementWithBody(); :}
+statementEntry ::= StatementEntryPoint statement
+	{:  :}
+	;
+
+statementClosing ::= StatementClosingPoint AddStatementEnd:end
+	{: my_parser.Builder.EndAddStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint CallStatementEnd:end
+	{: my_parser.Builder.EndCallStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ComputeStatementEnd:end
+	{: my_parser.Builder.EndComputeStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint DeleteStatementEnd:end
+	{: my_parser.Builder.EndDeleteStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint DivideStatementEnd:end
+	{: my_parser.Builder.EndDivideStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint EvaluateStatementEnd:end
+	{: my_parser.Builder.EndEvaluateStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ExecStatementEnd:end
+	{: my_parser.Builder.EndExecStatement(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint InvokeStatementEnd:end
+	{: my_parser.Builder.EndInvokeStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint JsonStatementEnd:end
+	{: my_parser.Builder.EndJsonStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint MultiplyStatementEnd:end
+	{: my_parser.Builder.EndMultiplyStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint PerformStatementEnd:end
+	{: my_parser.Builder.EndPerformStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ReadStatementEnd:end
+	{: my_parser.Builder.EndReadStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint ReturnStatementEnd:end
+	{: my_parser.Builder.EndReturnStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint RewriteStatementEnd:end
+	{: my_parser.Builder.EndRewriteStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint SearchStatementEnd:end
+	{: my_parser.Builder.EndSearchStatementWithBody(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint StartStatementEnd:end
+	{: my_parser.Builder.EndStartStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint StringStatementEnd:end
+	{: my_parser.Builder.EndStringStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint SubtractStatementEnd:end
+	{: my_parser.Builder.EndSubtractStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint UnstringStatementEnd:end
+	{: my_parser.Builder.EndUnstringStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint WriteStatementEnd:end
+	{: my_parser.Builder.EndWriteStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| StatementClosingPoint XmlStatementEnd:end
+	{: my_parser.Builder.EndXmlStatementConditional(end); my_parser.Builder.CheckStartSentenceLastStatement(); :}
 	;
 
 statements ::= statement
@@ -1254,9 +1338,7 @@ whenConditionClause ::=  whenEvaluateConditionsStart
 	{: my_parser.Builder.EndWhenConditionClause(); :}
 	;
 
-whenEvaluateCondition ::= WhenSearchCondition:wec
-	{: RESULT = wec; :}
-	| WhenCondition:wec
+whenEvaluateCondition ::= WhenCondition:wec
 	{: RESULT = wec; :}
 	;
 
@@ -1343,13 +1425,13 @@ invokeStatement ::= InvokeStatement:stmt
 
 jsonGenerateStatementConditional ::=
 		jsonGenerateStatement
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonGenerateStatement JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	|	jsonGenerateStatement exceptionConditions
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonGenerateStatement exceptionConditions JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	;
 
 jsonGenerateStatement ::= JsonGenerateStatement:stmt
@@ -1358,13 +1440,13 @@ jsonGenerateStatement ::= JsonGenerateStatement:stmt
 
 jsonParseStatementConditional ::=
 		jsonParseStatement
-		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonParseStatement JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	|	jsonParseStatement exceptionConditions
-		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+		{: my_parser.Builder.EndJsonStatementConditional(); :}
 	|	jsonParseStatement exceptionConditions JsonStatementEnd:end
-		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+		{: my_parser.Builder.EndJsonStatementConditional(end); :}
 	;
 
 jsonParseStatement ::= JsonParseStatement:stmt
@@ -1492,7 +1574,7 @@ whenSearchConditionClause ::=
 		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
 	;
 
-whenSearchCondition ::= WhenSearchCondition:wsc 
+whenSearchCondition ::= WhenCondition:wsc 
 	{: my_parser.Builder.StartWhenSearchConditionClause(wsc); :}
 	;
 
@@ -1579,13 +1661,13 @@ writeStatement ::= WriteStatement:stmt
 
 xmlGenerateStatementConditional ::=
 		xmlGenerateStatement
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlGenerateStatement XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	|	xmlGenerateStatement exceptionConditions
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlGenerateStatement exceptionConditions XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlGenerateStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	;
 
 xmlGenerateStatement ::= XmlGenerateStatement:stmt
@@ -1594,13 +1676,13 @@ xmlGenerateStatement ::= XmlGenerateStatement:stmt
 
 xmlParseStatementConditional ::=
 		xmlParseStatement
-		{: my_parser.Builder.EndXmlParseStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlParseStatement XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlParseStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	|	xmlParseStatement exceptionConditions
-		{: my_parser.Builder.EndXmlParseStatementConditional(); :}
+		{: my_parser.Builder.EndXmlStatementConditional(); :}
 	|	xmlParseStatement exceptionConditions XmlStatementEnd:end
-		{: my_parser.Builder.EndXmlParseStatementConditional(end); :}
+		{: my_parser.Builder.EndXmlStatementConditional(end); :}
 	;
 
 xmlParseStatement ::= XmlParseStatement:stmt

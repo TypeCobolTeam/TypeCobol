@@ -1,0 +1,27 @@
+﻿Line 19[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+--- Nodes ---
+?
+  VARTYPEXT
+    data-division
+      file
+        PRINT-FILE
+          PRINT-REC
+          DUMMY-RECORD
+        TEST-FILE
+          TEST-REC
+      working-storage
+        sqlcode
+        [[ExecStatement]] [10,13:EXEC]<EXEC> --> [15,17:SQL]<ExecTranslatorName>
+
+          [[ExecStatementText]] [19,41:DECLARE tablename TABLE]<ExecStatementText> --> [19,41:DECLARE tablename TABLE]<ExecStatementText>
+
+          [[ExecStatementText]] [8,10:  (]<ExecStatementText> --> [8,10:  (]<ExecStatementText>
+
+          [[ExecStatementText]] [8,37:    num  DECIMAL(45) NOT NULL,]<ExecStatementText> --> [8,37:    num  DECIMAL(45) NOT NULL,]<ExecStatementText>
+
+          [[ExecStatementText]] [8,37:    str  VARCHAR(256) NOT NULL]<ExecStatementText> --> [8,37:    str  VARCHAR(256) NOT NULL]<ExecStatementText>
+
+          [[ExecStatementText]] [8,10:  )]<ExecStatementText> --> [8,10:  )]<ExecStatementText>
+
+          end
+    end

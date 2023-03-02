@@ -57,6 +57,7 @@
       *               .
 
        END PROGRAM MOVECORR.
+
       *
       *DECLARE PROCEDURE rechercheListeElements PRIVATE
       *        INPUT

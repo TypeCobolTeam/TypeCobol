@@ -1,0 +1,98 @@
+Line 5[19,24] <27, Error, Syntax> - Syntax error : extraneous input 'DELETE' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 16[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input 'a'
+Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+--- Tokens ---
+---------------------------------
+_IDENTIFICATION DIVISION._
+    _IDENTIFICATION_    [8,21:IDENTIFICATION]<IDENTIFICATION>
+    _DIVISION_    [23,30:DIVISION]<DIVISION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_PROGRAM-ID. DVZZMFT3._
+    _PROGRAM-ID_    [8,17:PROGRAM-ID]<PROGRAM_ID>
+    _. _    [18,19:. ]<PeriodSeparator>
+    _DVZZMFT3_    [20,27:DVZZMFT3]<UserDefinedWord>
+    _._    [28,28+:.]<PeriodSeparator>
+---------------------------------
+_DATA DIVISION._
+    _DATA_    [8,11:DATA]<DATA>
+    _DIVISION_    [13,20:DIVISION]<DIVISION>
+    _._    [21,21+:.]<PeriodSeparator>
+---------------------------------
+_WORKING-STORAGE SECTION._
+    _WORKING-STORAGE_    [8,22:WORKING-STORAGE]<WORKING_STORAGE>
+    _SECTION_    [24,30:SECTION]<SECTION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_  EXEC SQL DELETE FROM CUSTOMERS_
+    _EXEC_    [10,13:EXEC]<EXEC>
+    _SQL_    [15,17:SQL]<ExecTranslatorName>
+    _DELETE_    [19,24:DELETE]<SQL_DELETE>
+    _FROM_    [26,29:FROM]<SQL_FROM>
+    _CUSTOMERS_    [31,39:CUSTOMERS]<UserDefinedWord>
+---------------------------------
+_  COMMIT_
+    _COMMIT_    [10,15:COMMIT]<SQL_COMMIT>
+---------------------------------
+_  END-EXEC._
+    _END-EXEC_    [10,17:END-EXEC]<END_EXEC>
+    _._    [18,18+:.]<PeriodSeparator>
+---------------------------------
+_PROCEDURE DIVISION._
+    _PROCEDURE_    [8,16:PROCEDURE]<PROCEDURE>
+    _DIVISION_    [18,25:DIVISION]<DIVISION>
+    _._    [26,26+:.]<PeriodSeparator>
+---------------------------------
+_    EXEC SQL COMMIT END-EXEC display "hello" EXEC SQL COMMIT_
+    _EXEC_    [12,15:EXEC]<EXEC>
+    _SQL_    [17,19:SQL]<ExecTranslatorName>
+    _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
+    _END-EXEC_    [28,35:END-EXEC]<END_EXEC>
+    _display_    [37,43:display]<DISPLAY>
+    _"hello"_    [45,51:"hello"]<AlphanumericLiteral>(",Y,Y){hello}
+    _EXEC_    [53,56:EXEC]<EXEC>
+    _SQL_    [58,60:SQL]<ExecTranslatorName>
+    _COMMIT_    [62,67:COMMIT]<SQL_COMMIT>
+---------------------------------
+_    END-EXEC_
+    _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
+---------------------------------
+_    EXEC SQL COMMIT_
+    _EXEC_    [12,15:EXEC]<EXEC>
+    _SQL_    [17,19:SQL]<ExecTranslatorName>
+    _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
+---------------------------------
+_    END-EXEC_
+    _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
+---------------------------------
+_    EXEC SQL COMMIT WORK_
+    _EXEC_    [12,15:EXEC]<EXEC>
+    _SQL_    [17,19:SQL]<ExecTranslatorName>
+    _COMMIT_    [21,26:COMMIT]<SQL_COMMIT>
+    _WORK_    [28,31:WORK]<UserDefinedWord>
+---------------------------------
+_    END-EXEC_
+    _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
+---------------------------------
+_    EXEC SQL_
+    _EXEC_    [12,15:EXEC]<EXEC>
+    _SQL_    [17,19:SQL]<ExecTranslatorName>
+---------------------------------
+_    COMMIT a_
+    _COMMIT_    [12,17:COMMIT]<SQL_COMMIT>
+    _a_    [19,19:a]<UserDefinedWord>
+---------------------------------
+_    END-EXEC_
+    _END-EXEC_    [12,19:END-EXEC]<END_EXEC>
+---------------------------------
+_    GOBACK_
+    _GOBACK_    [12,17:GOBACK]<GOBACK>
+---------------------------------
+_    ._
+    _._    [12,12+:.]<PeriodSeparator>
+---------------------------------
+_END PROGRAM DVZZMFT3._
+    _END_    [8,10:END]<END>
+    _PROGRAM_    [12,18:PROGRAM]<PROGRAM>
+    _DVZZMFT3_    [20,27:DVZZMFT3]<UserDefinedWord>
+    _._    [28,28+:.]<PeriodSeparator>

@@ -1,0 +1,147 @@
+﻿--- Code Elements ---
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [30,33:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [40,49:condition3]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition2]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[WhenOtherCondition]] [3,6:WHEN]<WHEN> --> [8,12:OTHER]<OTHER>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [30,33:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [24,33:condition2]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [40,49:condition5]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition6]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [24,33:condition8]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition9]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[WhenOtherCondition]] [3,6:WHEN]<WHEN> --> [8,12:OTHER]<OTHER>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,21:conditionname1]<UserDefinedWord>
+
+[[IfStatement]] [5,6:IF]<IF> --> [8,21:conditionname2]<UserDefinedWord>
+
+[[DisplayStatement]] [7,13:DISPLAY]<DISPLAY> --> [15,18+:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
+- variables = "OK"
+
+[[IfStatementEnd]] [5,10:END-IF]<END_IF> --> [5,10:END-IF]<END_IF>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,21:conditionname3]<UserDefinedWord>
+
+[[DisplayStatement]] [5,11:DISPLAY]<DISPLAY> --> [13,16+:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
+- variables = "KO"
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,25:procedureName]<UserDefinedWord>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,13:TRUE]<TRUE>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,19:identifier]<UserDefinedWord>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
+
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname1]<UserDefinedWord>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [19,19:)]<RightParenthesisSeparator>
+
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname2]<UserDefinedWord>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+

@@ -566,13 +566,6 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.MnemonicForEnvironmentName);
         }
 
-        [CanBeNull]
-        internal SymbolReference CreateMnemonicForEnvironmentNameReference([CanBeNull] CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.MnemonicForEnvironmentName);
-        }
-
         internal ExternalNameOrSymbolReference CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
         {
             return CreateExternalNameOrSymbolReference(context.externalNameOrSymbolReference4(), new SymbolType[] { SymbolType.EnvironmentName, SymbolType.MnemonicForEnvironmentName });
@@ -821,6 +814,20 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return CreateSymbolReference(context.UserDefinedWord(), SymbolType.FileName);
+        }
+
+        [CanBeNull]
+        internal SymbolReference CreateFileNameReference([CanBeNull] CodeElementsParser.FileNameReferenceAndDataNameDefinitionContext context)
+        {
+            if (context == null) return null;
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.FileName);
+        }
+
+        [CanBeNull]
+        internal SymbolDefinition CreateDataNameDefinition([CanBeNull] CodeElementsParser.FileNameReferenceAndDataNameDefinitionContext context)
+        {
+            if (context == null) return null;
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.DataName);
         }
 
         internal SymbolDefinition CreateXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)

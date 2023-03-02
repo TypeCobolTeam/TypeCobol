@@ -1,0 +1,118 @@
+--- Diagnostics ---
+Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Feature' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
+Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Vect2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[10,16:TYPEDEF]<TYPEDEF>
+Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
+Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TypeDefinedAfter' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[21,27:TYPEDEF]<TYPEDEF>
+Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
+Line 45[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'LevelKO' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
+Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>
+Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
+Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'ClausesOrderOK' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
+Line 57[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'NoDescription' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
+Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
+Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
+Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
+Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
+Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
+Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
+Line 73[27,40] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced OffendingSymbol=[27,40:TypeNotDefined]<UserDefinedWord>
+Line 75[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
+Line 80[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'varNoRedefines4' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
+Line 82[5,57] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
+Line 84[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'varNoRedefines5' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
+Line 90[39,55] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced OffendingSymbol=[39,55:varNoRedefines5-a]<UserDefinedWord>
+Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL>
+Line 93[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'ExternalType1' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
+Line 96[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'ExternalType2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
+Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL>
+Line 101[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'CannotBeStrong' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
+Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE_ELT' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
+Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
+Line 114[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP' OffendingSymbol=[9,18:TYPE-GRP-1]<UserDefinedWord>
+Line 115[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP' OffendingSymbol=[9,18:TYPE-GRP-2]<UserDefinedWord>
+Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-STRONG' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[21,27:TYPEDEF]<TYPEDEF>
+Line 132[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed OffendingSymbol=[43,61:USE-TYPE-GRP-STRONG]<UserDefinedWord>
+Line 142[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE" OffendingSymbol=[9,25:useTypeGrp2Strong]<UserDefinedWord>
+Line 145[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced OffendingSymbol=[45,65:TYPE-GRP-STRONG-PART3]<UserDefinedWord>
+Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[30,36:typedef]<TYPEDEF>
+Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[17,23:TYPEDEF]<TYPEDEF>
+Line 160[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART1]<UserDefinedWord>
+Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART2]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: TypeCobol common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  Equipment:Alphanumeric
+  Equipment-id:Array
+  Feature-list:Feature
+  Point2:Alphanumeric
+  Position2d:Vect2
+  Movment2d:Alphanumeric
+  Accel2d:Vect2
+  Speed2d:Vect2
+  Point:VECT2
+  Point:VeCt2
+  Point:VECT2
+  Point:VECT2
+  Point:VEcT2
+  Point:vECT2
+  unknown:TypeNotDefined
+  unknown:TypeDefinedAfter
+  LevelKOGroup:Alphanumeric
+  varLevelKO:LevelKO
+  ClausesOrderKO:Alphanumeric
+  varClausesOrderKO:ClausesOrderKO
+  varClausesOrderOK:ClausesOrderOK
+  varNoDescription:NoDescription
+  BufferTobeRedefined:Alphanumeric
+  NoRedefines1:Alphanumeric
+  varNoRedefines1:NoRedefines1
+  BufferTobeRedefined2:Alphanumeric
+  NoRedefines2:Alphanumeric
+  NoRedefines1Item:Alphanumeric
+  NoRedefines1Item:Alphanumeric
+  varNoRedefines2:NoRedefines2
+  NoRedefines3:Alphanumeric
+  varNoRedefines3:NoRedefines3
+  varNoRedefines5bis:Alphanumeric
+  varNoRedefines5bis-a:Numeric
+  varCannotBeStrong:CannotBeStrong
+  USE-TYPE-GRP:Alphanumeric
+  USE-TYPE-GRP-STRONG:TYPE-GRP-STRONG
+  USE-TYPE-GRP-STRONG-RED:Alphanumeric
+  USE-TYPE-GRP-STRONG-RED-PART1:Numeric
+  MyWeakGroup:Alphanumeric
+  MyWeakVar1:Feature
+  MyWeakVar2:Alphanumeric
+  useTypeGrp2:Alphanumeric
+  useTypeGrp2Strong:TYPE-GRP-STRONG
+  USE-TYPE-GRP-STRONG-RED-2:Alphanumeric
+  USE-TYPE-GRP-STRONG-RED-2-PART:Numeric
+  MyVariable:Alphanumeric
+  useStrongType1:strongType1
+  TYPE-GRP-STRONG-REN:?
+-- TYPES -------
+  Feature:Feature
+  Vect2:Vect2
+  TypeDefinedAfter:TypeDefinedAfter
+  LevelKO:LevelKO
+  ClausesOrderOK:ClausesOrderOK
+  NoDescription:NoDescription
+  varNoRedefines4:varNoRedefines4
+  varNoRedefines5:varNoRedefines5
+  ExternalType1:ExternalType1
+  ExternalType2:ExternalType2
+  CannotBeStrong:CannotBeStrong
+  TYPE_ELT:TYPE_ELT
+  TYPE-GRP:TYPE-GRP
+  TYPE-GRP-STRONG:TYPE-GRP-STRONG
+  GroupWithLevel77JustAfter:GroupWithLevel77JustAfter
+  strongType1:strongType1
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

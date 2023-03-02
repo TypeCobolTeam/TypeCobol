@@ -1,0 +1,16 @@
+﻿--- Diagnostics ---
+Line 13[12,12] <37, Warning, General> - Warning: A Cobol statement should not be across 2 sources files (eg. Main program and a COPY)
+
+--- Program ---
+PROGRAM: SourceAcrossFiles2 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  a:Alphanumeric
+  b:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

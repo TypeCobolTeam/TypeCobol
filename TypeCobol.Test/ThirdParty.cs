@@ -12,7 +12,7 @@ namespace TypeCobol.Test {
 		public void CNAF() {
 			string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch";
 			string root = PlatformUtils.GetPathForProjectFile(samples);
-            GrammarTest.CheckTests(root, @"CNAFTest", @"CNAF.txt", ignoreWarningDiag: true, regex: "*");
+            GrammarTest.CheckTests(root, @"CNAFTest", @"CNAF.txt", codegen: false, ignoreWarningDiag: true, regex: "*");
 
         }
 
@@ -23,7 +23,7 @@ namespace TypeCobol.Test {
         {
             string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
             string root = PlatformUtils.GetPathForProjectFile(samples);
-            GrammarTest.CheckTests(root, @"NistTest", @"CheckNistResults.txt", ignoreWarningDiag: true);
+            GrammarTest.CheckTests(root, @"NistTest", @"CheckNistResults.txt", codegen: false, ignoreWarningDiag: true);
 
         }
     }

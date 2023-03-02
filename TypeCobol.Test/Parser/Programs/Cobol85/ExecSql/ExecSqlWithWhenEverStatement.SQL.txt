@@ -1,0 +1,30 @@
+﻿--- Diagnostics ---
+Line 17[12,19] <27, Error, Syntax> - Syntax error : mismatched input 'END-EXEC' expecting {':', user defined word} RuleStack=codeElement>whenEverStatement>sqlGotoHostLabel,  OffendingSymbol=[12,19:END-EXEC]<END_EXEC>
+Line 19[24,31] <27, Error, Syntax> - Syntax error : mismatched input 'CONTINUE' expecting {user defined word, NOT} RuleStack=codeElement>whenEverStatement,  OffendingSymbol=[24,31:CONTINUE]<SQL_CONTINUE>
+Line 22[24,27] <27, Error, Syntax> - Syntax error : mismatched input 'GOTO' expecting {user defined word, NOT} RuleStack=codeElement>whenEverStatement,  OffendingSymbol=[24,27:GOTO]<SQL_GOTO>
+
+--- Sql Statements ---
+line 7: WhenEverStatement
+- ExceptionCondition = SqlError
+- BranchingType = Goto
+- TargetSectionOrParagraph = ENDDATA
+line 10: WhenEverStatement
+- ExceptionCondition = SqlWarning
+- BranchingType = Continue
+- TargetSectionOrParagraph = <NULL>
+line 13: WhenEverStatement
+- ExceptionCondition = NotFound
+- BranchingType = Goto
+- TargetSectionOrParagraph = LabelName
+line 16: WhenEverStatement
+- ExceptionCondition = NotFound
+- BranchingType = Goto
+- TargetSectionOrParagraph = <NULL>
+line 19: WhenEverStatement
+- ExceptionCondition = <NULL>
+- BranchingType = Continue
+- TargetSectionOrParagraph = <NULL>
+line 22: WhenEverStatement
+- ExceptionCondition = <NULL>
+- BranchingType = <NULL>
+- TargetSectionOrParagraph = <NULL>

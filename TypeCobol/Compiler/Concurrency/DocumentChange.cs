@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// <summary>
         /// New line content after the update (null in case of a LineRemoved event, or when computing an inverted change)
         /// </summary>
-        public T NewLine { get; private set; }
+        public T NewLine { get; internal set; }
 
         /// <summary>
         /// Reverts the change, useful when computing the sequence of changes

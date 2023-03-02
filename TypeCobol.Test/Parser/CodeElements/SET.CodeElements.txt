@@ -1,0 +1,32 @@
+--- Diagnostics ---
+Line 7[24,27] <27, Error, Syntax> - Syntax error : mismatched input 'null' expecting {symbol, special register, keyword} RuleStack=codeElement>setStatement>setStatementForAssignment>setSendingField>integerVariableOrIndex1>identifierOrIndexName>storageAreaReferenceOrConditionReferenceOrIndexName>otherStorageAreaReference>autoAllocatedDataItemReference>addressOfSpecialRegister>storageAreaReference,  OffendingSymbol=[24,27:null]<NULL>
+Line 14[1,3] <27, Error, Syntax> - Syntax error : no viable alternative at input 'set ... set' RuleStack=codeElement>setStatement,  OffendingSymbol=[1,3:set]<SET>
+--- Code Elements ---
+SET  var1 TO var2
+
+SET  var1 TO ADDRESS(var2)
+
+SET  ADDRESS(var1) TO var2
+
+SET  ADDRESS(var1) TO ADDRESS(var2)
+
+SET  var1 TO null
+
+SET  ADDRESS(var1) TO null
+
+SET  var1 TO ADDRESS()
+
+SET  var1 TO nulls
+
+SET  ADDRESS(var1) TO nulls
+
+SET  var1 var2 TO ADDRESS(var3)
+
+SET  var1 var2 TO var3
+
+SET  var1 ADDRESS(var2) var3 TO var4
+
+[[SetStatement]] [1,3:set]<SET> --> [10,11:to]<TO>
+
+SET  var1 ADDRESS(var2) var3 TO ADDRESS(var4)
+

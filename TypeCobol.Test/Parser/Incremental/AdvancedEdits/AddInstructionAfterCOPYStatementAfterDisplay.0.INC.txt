@@ -1,0 +1,53 @@
+================================ ICobolTextLine ================================
+Line    8: LineInserted    ->            move a to b
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    8: LineInserted    ->            move a to b
+================================= ITokensLine ==================================
+Line    8: LineInserted    -> [12,15:move]<MOVE> [17,17:a]<UserDefinedWord> [19,20:to]<TO> [22,22:b]<UserDefinedWord> 
+Line    8: LineUpdated     -> [12,15:move]<MOVE> [17,17:a]<UserDefinedWord> [19,20:to]<TO> [22,22:b]<UserDefinedWord> 
+Line    9: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    8: LineInserted    -> [12,15:move]<MOVE> [17,17:a]<UserDefinedWord> [19,20:to]<TO> [22,22:b]<UserDefinedWord> 
+Line    9: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+============================= IProcessedTokensLine =============================
+Line    8: LineInserted    -> 
+Line    9: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    8: LineInserted    -> 
+Line    9: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line    9: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}
+- variables = "aaa"
+ [[SentenceEnd]] [25,26:. ]<PeriodSeparator> --> [25,26:. ]<PeriodSeparator>
+ [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
+- variables = "bbb"
+ 
+Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}
+- variables = "aaa"
+ [[SentenceEnd]] [25,26:. ]<PeriodSeparator> --> [25,26:. ]<PeriodSeparator>
+ [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
+- variables = "bbb"
+ 
+Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}
+- variables = "aaa"
+ [[SentenceEnd]] [25,26:. ]<PeriodSeparator> --> [25,26:. ]<PeriodSeparator>
+ [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
+- variables = "bbb"
+ 
+Line    8: LineUpdated     -> [[MoveStatement]] [12,15:move]<MOVE> --> [22,22:b]<UserDefinedWord>
+ 
+Line    9: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    7: LineUpdated     -> [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}
+- variables = "aaa"
+ [[SentenceEnd]] [25,26:. ]<PeriodSeparator> --> [25,26:. ]<PeriodSeparator>
+ [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
+- variables = "bbb"
+ 
+Line    8: LineUpdated     -> [[MoveStatement]] [12,15:move]<MOVE> --> [22,22:b]<UserDefinedWord>
+ 
+Line    9: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 

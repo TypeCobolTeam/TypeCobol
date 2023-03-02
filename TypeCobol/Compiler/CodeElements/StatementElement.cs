@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// Base class for all statement CodeElements
@@ -110,7 +108,6 @@ namespace TypeCobol.Compiler.CodeElements
         RewriteStatement,
         SearchSerialStatement,
         SearchBinaryStatement,
-        WhenSearchCondition,
         SetStatementForAssignment,
         SetStatementForIndexes,
         SetStatementForSwitches,
@@ -130,7 +127,20 @@ namespace TypeCobol.Compiler.CodeElements
         XmlParseStatement,
 
         //Sql
-        CommitStatement
+        CommitStatement,
+        SelectStatement,
+        RollbackStatement,
+        TruncateStatement,
+        SavepointStatement,
+        WhenEverStatement,
+        LockTableStatement,
+        ReleaseSavepointStatement,
+        ConnectStatement,
+        DropTableStatement,
+        SetAssignmentStatement,
+        GetDiagnosticsStatement,
+        AlterSequenceStatement,
+        ExecuteImmediateStatement
 
     }
 }

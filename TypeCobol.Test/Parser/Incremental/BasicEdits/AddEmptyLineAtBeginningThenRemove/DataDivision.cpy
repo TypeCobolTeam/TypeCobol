@@ -1,0 +1,3 @@
+﻿       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X.

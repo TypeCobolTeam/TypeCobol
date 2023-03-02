@@ -915,7 +915,7 @@ namespace TypeCobol.Codegen.Generators
                         {
                             TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue intValue =
                                 (TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue)t.LiteralValue;
-                            long level = intValue.Number + 1;
+                            long level = (long)intValue.Number + 1;
                             if (level <= 49)
                             {
                                 sw.Write(level.ToString("00"));

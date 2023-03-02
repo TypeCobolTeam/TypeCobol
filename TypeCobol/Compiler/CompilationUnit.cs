@@ -26,8 +26,8 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
-            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations)
+        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, IAnalyzerProvider analyzerProvider) :
+            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState)
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
@@ -49,6 +49,7 @@ namespace TypeCobol.Compiler
                 _analyzerProvider = null;
             }
 
+            _history = this.TrackChanges(20);
         }
 
         /// <summary>
@@ -58,9 +59,15 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void RefreshCodeElementsDocumentSnapshot()
         {
+            // Track all changes applied to the document while updating this snapshot
+            DocumentChangedEvent<ICodeElementsLine> documentChangedEvent = null;
+
             // Make sure two threads don't try to update this snapshot at the same time
             lock (lockObjectForCodeElementsDocumentSnapshot)
             {
+                // Start perf measurement
+                var perfStatsForParserInvocation = PerfStatsForCodeElementsParser.OnStartRefreshParsingStep();
+
                 // Capture previous snapshots at one point in time
                 ProcessedTokensDocument processedTokensDocument = ProcessedTokensDocumentSnapshot;
                 CodeElementsDocument previousCodeElementsDocument = CodeElementsDocumentSnapshot;
@@ -75,6 +82,7 @@ namespace TypeCobol.Compiler
                 else if (processedTokensDocument.CurrentVersion == previousCodeElementsDocument.PreviousStepSnapshot.CurrentVersion)
                 {
                     // Processed tokens lines did not change since last update => nothing to do
+                    PerfStatsForCodeElementsParser.OnStopRefreshParsingStep();
                     return;
                 }
                 else
@@ -82,12 +90,6 @@ namespace TypeCobol.Compiler
                     DocumentVersion<IProcessedTokensLine> previousProcessedTokensDocumentVersion = previousCodeElementsDocument.PreviousStepSnapshot.CurrentVersion;
                     processedTokensLineChanges = previousProcessedTokensDocumentVersion.GetReducedAndOrderedChangesInNewerVersion(processedTokensDocument.CurrentVersion);
                 }
-
-                // Start perf measurement
-                var perfStatsForParserInvocation = PerfStatsForCodeElementsParser.OnStartRefreshParsingStep();
-
-                // Track all changes applied to the document while updating this snapshot
-                DocumentChangedEvent<ICodeElementsLine> documentChangedEvent = null;
 
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
@@ -121,18 +123,18 @@ namespace TypeCobol.Compiler
 
                 // Stop perf measurement
                 PerfStatsForCodeElementsParser.OnStopRefreshParsingStep();
+            }
 
-                // Send events to all listeners
-                EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
-                if (documentChangedEvent != null && codeElementsLinesChanged != null)
-                {
-                    codeElementsLinesChanged(this, documentChangedEvent);
-                }
+            // Send events to all listeners
+            EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
+            if (documentChangedEvent != null && codeElementsLinesChanged != null)
+            {
+                codeElementsLinesChanged(this, documentChangedEvent);
             }
 
 #if DEBUG
             //Update CE diag count for future checks
-            _codeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            _codeElementDiagnosticCount = AllDiagnostics(true).Count;
 #endif
         }
 
@@ -161,7 +163,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         private void CheckCodeElementDiagnostics()
         {
-            var actualCodeElementDiagnosticCount = OnlyCodeElementDiagnostics().Count;
+            var actualCodeElementDiagnosticCount = AllDiagnostics(true).Count;
             if (actualCodeElementDiagnosticCount != _codeElementDiagnosticCount)
             {
                 System.Diagnostics.Debug.Fail("CodeElement diagnostics should not be created after CE phase !");
@@ -194,28 +196,27 @@ namespace TypeCobol.Compiler
             bool snapshotWasUpdated = false;
             lock (lockObjectForProgramClassDocumentSnapshot)
             {
+                PerfStatsForProgramCrossCheck.OnStartRefreshParsingStep();
+
                 // Capture previous snapshot at one point in time
                 TemporarySemanticDocument temporarySnapshot = TemporaryProgramClassDocumentSnapshot;
 
                 // Check if an update is necessary and compute changes to apply since last version
                 if ((TemporaryProgramClassDocumentSnapshot != null) && (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != temporarySnapshot.CurrentVersion))
                 {
-                    PerfStatsForProgramCrossCheck.OnStartRefreshParsingStep();
-
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root = temporarySnapshot.Root;
-                    List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
                     ProgramClassParserStep.CrossCheckPrograms(root, temporarySnapshot, this.CompilerOptions);
               
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
                         temporarySnapshot, ProgramClassDocumentSnapshot?.CurrentVersion + 1 ?? 0,
-                        root, diagnostics, nodeCodeElementLinkers);
-                    snapshotWasUpdated = true;;
-
-                    PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
+                        root, nodeCodeElementLinkers);
+                    snapshotWasUpdated = true;
                 }
+
+                PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
             }
 
             // Send events to all listeners
@@ -235,6 +236,8 @@ namespace TypeCobol.Compiler
 #endif
         }
 
+        private readonly IncrementalChangesHistory _history;
+
         /// <summary>
         /// Creates a temporary snapshot which contains element before the cross check phase
         /// Usefull to create a program symboltable without checking nodes.
@@ -244,13 +247,14 @@ namespace TypeCobol.Compiler
         {
             lock (lockObjectForTemporarySemanticDocument)
             {
+                // Start perf measurement
+                var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
+
                 // Capture previous snapshot at one point in time
                 CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
 
                 if (CodeElementsDocumentSnapshot != null && (TemporaryProgramClassDocumentSnapshot == null || TemporaryProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != CodeElementsDocumentSnapshot.CurrentVersion))
                 {
-                    // Start perf measurement
-                    var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
                     var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
@@ -262,6 +266,7 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
+                        _history,
                         out var root,
                         out var newDiagnostics,
                         out var nodeCodeElementLinkers,
@@ -293,19 +298,28 @@ namespace TypeCobol.Compiler
                     //Direct copy parsing : remove redundant root 01 level if any.
                     if (UseDirectCopyParsing)
                     {
-                        var firstDataDefinition = root.MainProgram
+                        var workingStorageSection = root.MainProgram
                             .Children[0]  //Data Division
-                            .Children[0]  //Working-Storage Section
-                            .Children[0]; //First data def
-                        if (firstDataDefinition.ChildrenCount == 0)
+                            .Children[0]; //Working-Storage Section
+                        if (workingStorageSection.ChildrenCount > 0)
                         {
-                            firstDataDefinition.Remove();
+                            var firstDataDefinition = workingStorageSection.Children[0];
+                            if (firstDataDefinition.ChildrenCount == 0)
+                            {
+                                firstDataDefinition.Remove();
+                            }
+                        }
+                        else
+                        {
+                            //Copy contains instructions that could not be parsed as a DataDefinition
+                            var diagnostic = new Diagnostic(MessageCode.Warning, Diagnostic.Position.Default, "This parser does not support COPYs containing COBOL statements.");
+                            newDiagnostics.Add(diagnostic);
                         }
                     }
-
-                    // Stop perf measurement
-                    PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
                 }
+
+                // Stop perf measurement
+                PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
             }
 
 #if DEBUG
@@ -322,11 +336,11 @@ namespace TypeCobol.Compiler
             bool documentUpdated = false;
             lock (lockObjectForCodeAnalysisDocumentSnapshot)
             {
+                PerfStatsForCodeQualityCheck.OnStartRefresh();
+
                 var programClassDocument = ProgramClassDocumentSnapshot;
                 if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate(out int version))
                 {
-                    PerfStatsForCodeQualityCheck.OnStartRefresh();
-
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<string, object> results = new Dictionary<string, object>();
                     var analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
@@ -362,9 +376,9 @@ namespace TypeCobol.Compiler
                     //Create updated snapshot
                     CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, version, diagnostics, results);
                     documentUpdated = true;
-
-                    PerfStatsForCodeQualityCheck.OnStopRefresh();
                 }
+
+                PerfStatsForCodeQualityCheck.OnStopRefresh();
 
                 bool CodeAnalysisDocumentNeedsUpdate(out int newVersion)
                 {
@@ -422,90 +436,67 @@ namespace TypeCobol.Compiler
         public InspectedProgramClassDocument CodeAnalysisDocumentSnapshot { get; private set; }
 
         /// <summary>
-        /// Return diagnostics attached directly to a CodeElement or to CodeElementsDocumentSnapshot
-        /// </summary>
-        /// <returns></returns>
-
-        private IList<Diagnostic> OnlyCodeElementDiagnostics() {
-            var codeElementDiagnostics = new List<Diagnostic>();
-
-            if (CodeElementsDocumentSnapshot?.ParserDiagnostics != null)
-            {
-                codeElementDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
-            }
-
-            if (CodeElementsDocumentSnapshot != null)
-            {
-                foreach (var ce in CodeElementsDocumentSnapshot.CodeElements)
-                {
-                    if (ce.Diagnostics != null)
-                    {
-                        codeElementDiagnostics.AddRange(ce.Diagnostics);
-                    }
-                }
-            }
-
-            return codeElementDiagnostics;
-        }
-
-        /// <summary>
         /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibility
-        /// to exclude Node diagnostics and/or Quality diagnostics
-        /// Note that a snapshot only contains diagnostics related to its own phase.
+        /// to get only diagnostics up to CodeElement phase.
         /// </summary>
-        /// <param name="includeNodeDiagnostics">True to include diagnostics produced by Node phase</param>
-        /// <param name="includeQualityDiagnostics">True to include diagnostics produced by QualityCheck</param>
+        /// <param name="onlyCodeElementDiagnostics">True to get diagnostics produced up to CodeElement phase, False to get everything.</param>
         /// <returns>A list of selected diagnostics.</returns>
-        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics, bool includeQualityDiagnostics)
+        public IList<Diagnostic> AllDiagnostics(bool onlyCodeElementDiagnostics)
         {
-            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
-
-            allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
-
-            if (includeNodeDiagnostics)
+            CodeElementsDocument codeElementsDocumentSnapshot;
+            lock (lockObjectForCodeElementsDocumentSnapshot)
             {
-                lock (lockObjectForTemporarySemanticDocument)
-                {
-                    if (TemporaryProgramClassDocumentSnapshot != null)
-                    {
-                        allDiagnostics.AddRange(TemporaryProgramClassDocumentSnapshot.Diagnostics);
-                    }
-                }
-
-                lock (lockObjectForProgramClassDocumentSnapshot)
-                {
-                    if (ProgramClassDocumentSnapshot != null)
-                    {
-                        //Get all nodes diagnostics using visitor. 
-                        ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
-
-                        if (ProgramClassDocumentSnapshot.Diagnostics != null)
-                            allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
-                    }
-                }
+                codeElementsDocumentSnapshot = CodeElementsDocumentSnapshot;
             }
 
-            if (includeQualityDiagnostics)
+            //No CodeElements yet, so the base method will return every diagnostics
+            if (codeElementsDocumentSnapshot == null)
             {
-                lock (lockObjectForCodeAnalysisDocumentSnapshot)
-                {
-                    if (CodeAnalysisDocumentSnapshot != null)
-                    {
-                        allDiagnostics.AddRange(CodeAnalysisDocumentSnapshot.Diagnostics);
-                    }
-                }
+                return base.AllDiagnostics();
             }
 
-            return allDiagnostics;
+            //CodeElements parsing diagnostics
+            var diagnostics = new List<Diagnostic>();
+            foreach (var codeElementsLine in codeElementsDocumentSnapshot.Lines)
+            {
+                codeElementsLine.CollectDiagnostics(diagnostics);
+            }
+
+            if (onlyCodeElementDiagnostics) return diagnostics; //No need to go further
+
+            TemporarySemanticDocument temporarySemanticDocument;
+            lock (lockObjectForTemporarySemanticDocument)
+            {
+                temporarySemanticDocument = TemporaryProgramClassDocumentSnapshot;
+            }
+
+            if (temporarySemanticDocument == null) return diagnostics;
+
+            //Node parsing diagnostics
+            diagnostics.AddRange(temporarySemanticDocument.Diagnostics);
+
+            //Diagnostics on nodes themselves
+            temporarySemanticDocument.Root?.AcceptASTVisitor(new DiagnosticsChecker(diagnostics));
+
+            //Code analysis diagnostics
+            InspectedProgramClassDocument inspectedProgramClassDocument;
+            lock (lockObjectForCodeAnalysisDocumentSnapshot)
+            {
+                inspectedProgramClassDocument = CodeAnalysisDocumentSnapshot;
+            }
+
+            if (inspectedProgramClassDocument == null) return diagnostics;
+
+            diagnostics.AddRange(inspectedProgramClassDocument.Diagnostics);
+
+            return diagnostics;
         }
 
         /// <summary>
-        /// Return all diagnostics from all snaphost
+        /// Return all diagnostics from all snapshots
         /// </summary>
         /// <returns></returns>
-        public override IList<Diagnostic> AllDiagnostics() {
-            return AllDiagnostics(true, true);
-        }
+        public override IList<Diagnostic> AllDiagnostics() => AllDiagnostics(false);
 
         /// <summary>
         /// Subscribe to this event to be notified of all changes in the complete program or class view of the document

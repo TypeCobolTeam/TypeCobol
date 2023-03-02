@@ -212,6 +212,19 @@ codeElement:
 
 // FOR SQL	
 	| commitStatement
+	| selectStatement
+	| rollbackStatement
+	| truncateStatement
+	| whenEverStatement
+	| lockTableStatement
+	| releaseSavepointStatement
+	| savepointStatement
+	| connectStatement
+	| dropTableStatement
+	| setAssignmentStatement
+	| getDiagnosticsStatement
+	| alterSequenceStatement
+	| executeImmediateStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -1731,7 +1744,7 @@ linkageSectionHeader:
 // levelIndicator : (FD | SD);
 
 fileDescriptionEntry: 
-    (FD | SD) fileNameReference 
+    (FD | SD) fileNameReferenceAndDataNameDefinition 
     (externalClause |
      globalClause |
      blockContainsClause |
@@ -7250,8 +7263,8 @@ unstringStatementEnd: END_UNSTRING;
 writeStatement:
 	WRITE recordName (FROM sendingField=variable1)?
 	((BEFORE | AFTER) ADVANCING? (
-		(numberOfLines=integerVariable1 (LINE | LINES)?)  | 
-		 mnemonicForEnvironmentNameReference              | 
+		integerVariableIdentifierOrMnemonicForEnvironmentNameReference | 
+		(numberOfLines=integerVariable1 (LINE | LINES)?)               | 
 		 PAGE                                             )? )?;
 
 writeStatementEnd: END_WRITE;
@@ -8259,8 +8272,134 @@ execStatementText: ExecStatementText;
 execStatementEnd: END_EXEC;
 
 //FOR SQL
-commitStatement: SQL_COMMIT;
+commitStatement: SQL_COMMIT work?;
 
+rollbackStatement: SQL_ROLLBACK work? savePointClause?;
+savePointClause: SQL_TO SQL_SAVEPOINT (savePoint_name=UserDefinedWord)?;
+
+// Defining 'WORK' as contextual keyword here since it is not part of reserved words
+work: { string.Equals(CurrentToken.Text, "WORK", System.StringComparison.OrdinalIgnoreCase) }? KeywordWORK=UserDefinedWord;
+
+// Contextual keywords used in TRUNCATE statement
+reuse: ({ string.Equals(CurrentToken.Text, "REUSE", System.StringComparison.OrdinalIgnoreCase) }? KeywordREUSE=UserDefinedWord);
+triggers: ({ string.Equals(CurrentToken.Text, "TRIGGERS", System.StringComparison.OrdinalIgnoreCase) }? KeywordTRIGGERS=UserDefinedWord);
+ignore: ({ string.Equals(CurrentToken.Text, "IGNORE", System.StringComparison.OrdinalIgnoreCase) }? KeywordIGNORE=UserDefinedWord);
+storage: ({ string.Equals(CurrentToken.Text, "STORAGE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTORAGE=UserDefinedWord);
+truncateStatement: SQL_TRUNCATE SQL_TABLE? (tableName=tableOrViewOrCorrelationName) storageManagementClause? deleteTriggersHandlingClause? SQL_IMMEDIATE?;
+storageManagementClause: (SQL_DROP | reuse) storage;
+deleteTriggersHandlingClause: (ignore | SQL_RESTRICT SQL_WHEN) SQL_DELETE triggers;
+
+selectStatement: fullselect;
+fullselect: subselect;
+subselect: sql_selectClause from_clause;
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=subselect-select-clause]
+sql_selectClause: 
+  SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections);
+
+selections: selection (SQL_CommaSeparator selection)*;
+selection: tableOrViewAllColumnsSelection;
+tableOrViewAllColumnsSelection: tableOrViewOrCorrelationName  dot star; 
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=clause-table-reference]
+tableOrViewOrCorrelationName : ((DBMS=UserDefinedWord dot)? (SchemaName=UserDefinedWord dot))? (Name=UserDefinedWord); 
+from_clause: SQL_FROM table_references;
+table_references: table_reference (SQL_CommaSeparator table_reference)*;
+table_reference: single_table_or_view_reference;
+//TODO Add period-specification syntax
+single_table_or_view_reference: tableOrViewOrCorrelationName correlation_clause?;
+correlation_clause: SQL_AS? (correlation_name=UserDefinedWord) new_column_names?;
+new_column_names: LeftParenthesisSeparator column_name (SQL_CommaSeparator column_name)* RightParenthesisSeparator;
+column_name:UserDefinedWord;
+releaseSavepointStatement: SQL_RELEASE SQL_TO? SQL_SAVEPOINT (savepoint_name=UserDefinedWord);
+
+sqlError: ({ string.Equals(CurrentToken.Text, "SQLERROR", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLERROR=UserDefinedWord);
+sqlWarning: ({ string.Equals(CurrentToken.Text, "SQLWARNING", System.StringComparison.OrdinalIgnoreCase) }? KeywordSQLWARNING=UserDefinedWord);
+sqlFound: ({ string.Equals(CurrentToken.Text, "FOUND", System.StringComparison.OrdinalIgnoreCase) }? KeywordFOUND=UserDefinedWord);
+whenEverStatement: SQL_WHENEVER (sqlNotFound | sqlError | sqlWarning) (SQL_CONTINUE | sqlGotoHostLabel);
+sqlNotFound: SQL_NOT sqlFound;
+sqlGotoHostLabel: (SQL_GOTO | SQL_GO SQL_TO) ColonSeparator? hostLabel=UserDefinedWord;
+
+hostVariable: ColonSeparator mainVariable=UserDefinedWord ((indicator)? ColonSeparator indicatorVariable=UserDefinedWord)?;
+indicator: ({string.Equals(CurrentToken.Text, "INDICATOR", System.StringComparison.OrdinalIgnoreCase) }? KeywordINDICATOR=UserDefinedWord);
+
+sqlReset: ({ string.Equals(CurrentToken.Text, "RESET", System.StringComparison.OrdinalIgnoreCase) }? KeywordRESET=UserDefinedWord);
+authorizationClause:  SQL_USER (userName = hostVariable) SQL_USING (password = hostVariable);
+connectStatement: SQL_CONNECT (connectionTarget | sqlReset | authorizationClause)?;
+connectionTarget: SQL_TO ((locationName = UserDefinedWord) | hostVariable) authorizationClause?;
+
+sqlIncrement: ({ string.Equals(CurrentToken.Text, "INCREMENT", System.StringComparison.OrdinalIgnoreCase) }? KeywordINCREMENT=UserDefinedWord);
+minvalue: ({ string.Equals(CurrentToken.Text, "MINVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMINVALUE=UserDefinedWord);
+maxvalue: ({ string.Equals(CurrentToken.Text, "MAXVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMAXVALUE=UserDefinedWord);
+cycle: ({ string.Equals(CurrentToken.Text, "CYCLE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCYCLE=UserDefinedWord);
+cache: ({ string.Equals(CurrentToken.Text, "CACHE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCACHE=UserDefinedWord);
+
+alterSequenceStatement: SQL_ALTER SQL_SEQUENCE (sequence_name=tableOrViewOrCorrelationName) alterSequenceClause alterSequenceClause*;
+alterSequenceClause: restartClause | incrementClause | minValueClause | maxValueClause | cacheClause | cycle | SQL_ORDER | noClauses;
+restartClause: SQL_RESTART (SQL_WITH numericConstant)? ;
+incrementClause: sqlIncrement SQL_BY numericConstant;
+minValueClause: minvalue numericConstant;
+maxValueClause: maxvalue numericConstant;
+cacheClause: cache IntegerLiteral;
+noClauses: SQL_NO (minvalue | maxvalue | SQL_ORDER | cycle | cache);
+numericConstant: IntegerLiteral | DecimalLiteral;
+
+lockTableStatement: SQL_LOCK SQL_TABLE tableOrViewOrCorrelationName (SQL_PARTITION IntegerLiteral)? SQL_IN (share | exclusive) sql_mode;
+share: ({ string.Equals(CurrentToken.Text, "SHARE", System.StringComparison.OrdinalIgnoreCase) }? KeywordSHARE=UserDefinedWord);
+exclusive: ({ string.Equals(CurrentToken.Text, "EXCLUSIVE", System.StringComparison.OrdinalIgnoreCase) }? KeywordEXCLUSIVE=UserDefinedWord);
+sql_mode: ({ string.Equals(CurrentToken.Text, "MODE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMODE=UserDefinedWord);
+sqlRetain: ({ string.Equals(CurrentToken.Text, "RETAIN", System.StringComparison.OrdinalIgnoreCase) }? KeywordRETAIN=UserDefinedWord);
+sqlCursors: ({ string.Equals(CurrentToken.Text, "CURSORS", System.StringComparison.OrdinalIgnoreCase) }? KeywordCURSORS=UserDefinedWord);
+sqlLocks: ({ string.Equals(CurrentToken.Text, "LOCKS", System.StringComparison.OrdinalIgnoreCase) }? KeywordLOCKS=UserDefinedWord);
+onRollbackRetain: SQL_ON SQL_ROLLBACK sqlRetain;
+savepointStatement : SQL_SAVEPOINT (savepoint_name=UserDefinedWord) SQL_UNIQUE? onRollbackRetain sqlCursors (onRollbackRetain sqlLocks)?;
+
+dropTableStatement: SQL_DROP SQL_TABLE tableOrAliasName;
+tableOrAliasName: tableOrViewOrCorrelationName;
+
+//TODO Complete TargetVariable , sqlVariable and sqlExpression
+//Regroup all variables used in a SQL context
+//See https://www.ibm.com/docs/en/db2-for-zos/12?topic=elements-variables
+//Parameter markers variables are out of scope here, because it seems related only to PREPARE statement
+sqlVariable: hostVariable; //TODO global-variable-name | session-variable-name | SQL-parameter-name | SQL-variable-name | transition-variable-name
+
+sqlConstant: SQL_NULL | IntegerLiteral | FloatingPointLiteral | DecimalLiteral | SQL_DecimalFloatingPointLiteral | AlphanumericLiteral | HexadecimalAlphanumericLiteral | SQL_BinaryStringLiteral | SQL_GraphicStringLiteral | datetime_constant;
+sqlExpression: sqlVariable | column_name | sqlConstant;
+
+stacked: ({ string.Equals(CurrentToken.Text, "STACKED", System.StringComparison.OrdinalIgnoreCase) }? KeywordSTACKED=UserDefinedWord);
+diagnostics: ({ string.Equals(CurrentToken.Text, "DIAGNOSTICS", System.StringComparison.OrdinalIgnoreCase) }? KeywordDIAGNOSTICS=UserDefinedWord);
+getDiagnosticsStatement: SQL_GET (SQL_CURRENT | stacked)?  diagnostics (statementInformationClauses | conditionInformationClause | combinedInformationClause);
+statementInformationClauses: statementInformationClause (SQL_CommaSeparator statementInformationClause)*;
+statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemName=UserDefinedWord;
+//According to specification, we should have:
+//statementInformationClause: (variable_1=sqlVariable) EqualOperator statementInformationItemNameClause;
+//statementInformationItemNameClause: statementInformationItemName (SQL_CommaSeparator statementInformationItemName)*;
+//statementInformationItemName: UserDefinedWord;
+//But it doesn't work
+
+conditionInformationClause: SQL_CONDITION ((variable_2=sqlVariable) | IntegerLiteral) repeatedConnectionOrConditionInformation (SQL_CommaSeparator repeatedConnectionOrConditionInformation)*;
+repeatedConnectionOrConditionInformation: (variable_3=sqlVariable) EqualOperator UserDefinedWord; 
+
+combinedInformationClause: (variable_4=sqlVariable) EqualOperator SQL_ALL repeatedCombinedInformation (SQL_CommaSeparator repeatedCombinedInformation)*;
+repeatedCombinedInformation: SQL_STATEMENT | ((SQL_CONNECTION | SQL_CONDITION) ((variable_5=sqlVariable) | IntegerLiteral)?);
+
+date: ({ string.Equals(CurrentToken.Text, "DATE", System.StringComparison.OrdinalIgnoreCase) }? KeywordDATE=UserDefinedWord);
+time: ({ string.Equals(CurrentToken.Text, "TIME", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIME=UserDefinedWord);
+timestamp: ({ string.Equals(CurrentToken.Text, "TIMESTAMP", System.StringComparison.OrdinalIgnoreCase) }? KeywordTIMESTAMP=UserDefinedWord);
+datetime_constant: (date | time | timestamp) AlphanumericLiteral;
+
+sqlSetTargetVariable: sqlVariable; //TODO can session-variable-name be used in SET statement ?
+sourceValue: sqlExpression | SQL_DEFAULT;
+setAssignmentStatement: SQL_SET assignmentClause (SQL_CommaSeparator assignmentClause)*;
+assignmentClause: simpleAssignmentClause | multipleAssignmentClause;   //TODO arrayAssignment
+simpleAssignmentClause: sqlSetTargetVariable EqualOperator sourceValue;
+multipleAssignmentClause: LeftParenthesisSeparator sqlSetTargetVariable (SQL_CommaSeparator sqlSetTargetVariable)* RightParenthesisSeparator EqualOperator sourceValueClause;
+sourceValueClause: LeftParenthesisSeparator sourceValueClauses RightParenthesisSeparator;
+sourceValueClauses: repeatedSourceValue | (SQL_VALUES  ( sourceValue | (LeftParenthesisSeparator repeatedSourceValue RightParenthesisSeparator)));  //TODO row-subselect
+repeatedSourceValue: sourceValue (SQL_CommaSeparator sourceValue)*;
+//TODO Add arrays and row-subselect
+
+executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE (sqlVariable | stringExpression);
+//TODO extend stringExpression to support all expressions that yield a string (i.e string concat, function calls returning text,...)
+stringExpression: AlphanumericLiteral;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------

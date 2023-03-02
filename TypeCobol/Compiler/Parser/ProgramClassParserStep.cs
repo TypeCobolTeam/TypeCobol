@@ -47,6 +47,7 @@ namespace TypeCobol.Compiler.Parser
             SymbolTable customSymbols,
             PerfStatsForParserInvocation perfStatsForParserInvocation,
             ISyntaxDrivenAnalyzer[] customAnalyzers,
+            IncrementalChangesHistory history,
             out SourceFile root,
             out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
@@ -69,7 +70,7 @@ namespace TypeCobol.Compiler.Parser
             CupParser.TypeCobolProgramParser parser = new CupParser.TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
             parser.ErrorReporter = diagReporter;
-            ProgramClassBuilder builder = new ProgramClassBuilder();
+            ProgramClassBuilder builder = new ProgramClassBuilder(codeElementsLines, history);
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 
@@ -88,11 +89,15 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
+            // Try to parse a Cobol program or class, with cup we are also building the The Syntax Tree Node
             perfStatsForParserInvocation.OnStartParsing();
             try
             {
                 TUVienna.CS_CUP.Runtime.Symbol symbol = parser.parse();
+                if (scanner.AnomalousLineIndexFound)
+                {
+                    builder.LogAnomalousLineIndex();
+                }
             }
             catch (Exception ex)
             {
@@ -108,12 +113,6 @@ namespace TypeCobol.Compiler.Parser
             System.Diagnostics.Debug.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
 #endif
             root = builder.SyntaxTree.Root; //Set output root node
-
-            perfStatsForParserInvocation.OnStartTreeBuilding();
-
-
-            //Stop measuring tree building performance
-            perfStatsForParserInvocation.OnStopTreeBuilding();
 
             // Register compiler results
             diagnostics = diagReporter.Diagnostics ?? new List<Diagnostic>();

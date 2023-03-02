@@ -1,0 +1,37 @@
+--- Diagnostics ---
+Line 5[14,20] <27, Error, Syntax> - Syntax error : extraneous input 'VARYING' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[14,20:VARYING]<VARYING>
+Line 7[8,18] <27, Error, Syntax> - Syntax error : SEARCH: Illegal subscripted identifier RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier,  OffendingSymbol=[8,18:identifier1]<UserDefinedWord>
+Line 8[8,18] <27, Error, Syntax> - Syntax error : SEARCH: Illegal reference-modified identifier RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier,  OffendingSymbol=[8,18:identifier1]<UserDefinedWord>
+Line 9[8,18] <27, Error, Syntax> - Syntax error : SEARCH: Illegal subscripted identifier RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier,  OffendingSymbol=[8,18:identifier1]<UserDefinedWord>
+Line 9[8,18] <27, Error, Syntax> - Syntax error : SEARCH: Illegal reference-modified identifier RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier,  OffendingSymbol=[8,18:identifier1]<UserDefinedWord>
+--- Code Elements ---
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [8,8:x]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [12,12:x]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [18,18:y]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [12,12:x]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [24,24:)]<RightParenthesisSeparator>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [24,24:)]<RightParenthesisSeparator>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [29,29:)]<RightParenthesisSeparator>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [12,25:someIdentifier]<UserDefinedWord>
+
+[[AtEndCondition]] [3,4:AT]<AT> --> [6,8:END]<END>
+
+SET fatalError TO True
+
+SET otherVariable TO True
+
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,26:errorProcedure]<UserDefinedWord>
+
+[[WhenCondition]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
+
+[[MoveStatement]] [5,8:MOVE]<MOVE> --> [15,15:y]<UserDefinedWord>
+
+[[SearchStatementEnd]] [1,10:END-SEARCH]<END_SEARCH> --> [1,10:END-SEARCH]<END_SEARCH>
+

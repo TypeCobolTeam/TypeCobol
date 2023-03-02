@@ -3,7 +3,6 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
-using System.Diagnostics;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
@@ -125,7 +124,6 @@ namespace TypeCobol.Compiler.Parser
 				storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionNameOrIndexName,
 					CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
 			}
-			storageArea.AlternativeSymbolType = SymbolType.IndexName;
 			return storageArea;
 		}
 
@@ -142,7 +140,6 @@ namespace TypeCobol.Compiler.Parser
 				storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionNameOrFileName,
 					CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
 			}
-			storageArea.AlternativeSymbolType = SymbolType.IndexName;
 			return storageArea;
 		}
 
@@ -159,8 +156,14 @@ namespace TypeCobol.Compiler.Parser
 				storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionNameOrClassName,
 					CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
 			}
-			storageArea.AlternativeSymbolType = SymbolType.IndexName;
 			return storageArea;
+		}
+
+		internal DataOrConditionStorageArea CreateDataItemReferenceOrMnemonicForEnvironmentName(CodeElementsParser.IntegerVariableIdentifierOrMnemonicForEnvironmentNameReferenceContext context)
+		{
+			AmbiguousSymbolReference symbolReference = CobolWordsBuilder.CreateAmbiguousSymbolReference(
+				context.UserDefinedWord(), new [] { SymbolType.DataName, SymbolType.MnemonicForEnvironmentName });
+			return new DataOrConditionStorageArea(symbolReference, _insideFunctionArgument);
 		}
 
 		internal SubscriptExpression[] CreateSubscriptExpressions(CodeElementsParser.SubscriptContext[] contextArray)
@@ -839,49 +842,52 @@ namespace TypeCobol.Compiler.Parser
 		internal RelationalOperator CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
         {
             var notToken = context.NOT() == null ? null : ParseTreeUtils.GetFirstToken(context.NOT());
+            IList<Token> operatorTokens;
 
             if (context.strictRelation() != null)
 			{
                 CodeElementsParser.StrictRelationContext strictContext = context.strictRelation();
+                operatorTokens = ParseTreeUtils.GetTokensList(strictContext);
+
 				if(strictContext.GREATER() != null)
 				{
-					return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, ParseTreeUtils.GetFirstToken(strictContext.GREATER())),
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, new TokensGroup(TokenType.GREATER, operatorTokens)),
                         notToken
                         );
 				}
 				else if (strictContext.GreaterThanOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, ParseTreeUtils.GetFirstToken(strictContext.GreaterThanOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, new TokensGroup(TokenType.GreaterThanOperator, operatorTokens)),
                         notToken
                     );
                 }
 				else if (strictContext.LESS() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, ParseTreeUtils.GetFirstToken(strictContext.LESS())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, new TokensGroup(TokenType.LESS, operatorTokens)),
                         notToken
                     );
                 }
 				else if (strictContext.LessThanOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, ParseTreeUtils.GetFirstToken(strictContext.LessThanOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, new TokensGroup(TokenType.LessThanOperator, operatorTokens)),
                         notToken
                     );
                 }
 				else if (strictContext.EQUAL() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, ParseTreeUtils.GetFirstToken(strictContext.EQUAL())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, new TokensGroup(TokenType.EQUAL, operatorTokens)),
                         notToken
                     );
                 }
 				else // if (strictContext.EqualOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, ParseTreeUtils.GetFirstToken(strictContext.EqualOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, new TokensGroup(TokenType.EqualOperator, operatorTokens)),
                         notToken
                     );
                 }
@@ -889,31 +895,33 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				CodeElementsParser.SimpleRelationContext simpleContext = context.simpleRelation();
+                operatorTokens = ParseTreeUtils.GetTokensList(simpleContext);
+
 				if (simpleContext.GREATER() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.GREATER())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, new TokensGroup(TokenType.GREATER, operatorTokens)),
                         notToken
                     );
                 }
 				else if (simpleContext.GreaterThanOrEqualOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.GreaterThanOrEqualOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, new TokensGroup(TokenType.GreaterThanOrEqualOperator, operatorTokens)),
                         notToken
                     );
                 }
 				if (simpleContext.LESS() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.LESS())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, new TokensGroup(TokenType.LESS, operatorTokens)),
                         notToken
                     );
                 }
 				else // if (simpleContext.LessThanOrEqualOperator() != null)
 				{
                     return new RelationalOperator(
-                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.LessThanOrEqualOperator())),
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, new TokensGroup(TokenType.LessThanOrEqualOperator, operatorTokens)),
                         notToken
                     );
                 }
@@ -1070,6 +1078,23 @@ namespace TypeCobol.Compiler.Parser
             }
 
             return variable;
+		}
+
+		[CanBeNull]
+		internal IntegerVariable CreateIntegerVariableOrMnemonicForEnvironmentName([CanBeNull] CodeElementsParser.IntegerVariableIdentifierOrMnemonicForEnvironmentNameReferenceContext context)
+		{
+			if (context == null) return null;
+		
+			var dataItemReferenceOrMnemonicForEnvironmentName = CreateDataItemReferenceOrMnemonicForEnvironmentName(context);
+			IntegerVariable variable = new IntegerVariable(dataItemReferenceOrMnemonicForEnvironmentName);
+		
+			// Collect storage area read/writes at the code element level
+			if (variable.StorageArea != null)
+			{
+				this.storageAreaReads.Add(variable.StorageArea);
+			}
+		
+			return variable;
 		}
 
 		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable1Context context)

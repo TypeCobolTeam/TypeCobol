@@ -1,0 +1,128 @@
+--- Diagnostics ---
+Line 10[8,40] <30, Error, Semantics> - Semantic error: TYPE 'bool' has already been declared
+Line 13[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared
+Line 14[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared
+Line 17[8,41] <27, Error, Syntax> - Syntax error : Cannot declare Type definition MySyncType with Sync clause because it is Strict.
+Line 18[11,31] <27, Error, Syntax> - Syntax error : SyncVar is part of a declaration using Sync clause in Strict Type definition MySyncType.
+Line 50[20,26] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
+Line 56[36,42] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[36,42:TYPEDEF]<TYPEDEF>
+Line 57[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
+Line 63[8,39] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
+Line 69[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
+Line 71[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
+Line 75[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
+Line 77[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
+Line 80[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
+Line 80[34,47] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced OffendingSymbol=[34,47:TypeNotDefined]<UserDefinedWord>
+Line 82[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
+Line 91[11,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
+Line 91[41,56] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'varNoRedefines4A' is strictly-typed OffendingSymbol=[41,56:varNoRedefines4A]<UserDefinedWord>
+Line 93[27,33] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'varNoRedefines5' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[27,33:TYPEDEF]<TYPEDEF>
+Line 100[45,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced OffendingSymbol=[45,61:varNoRedefines5-a]<UserDefinedWord>
+Line 104[40,47] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[40,47:EXTERNAL]<EXTERNAL>
+Line 110[39,46] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[39,46:EXTERNAL]<EXTERNAL>
+Line 145[49,67] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRICT' is strictly-typed OffendingSymbol=[49,67:USE-TYPE-GRP-STRICT]<UserDefinedWord>
+Line 150[15,32] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Stricly cannot have a "TYPE" OffendingSymbol=[15,32:useTypeGrp2Stricly]<UserDefinedWord>
+Line 156[41,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRICT-PART3' is not referenced OffendingSymbol=[41,61:TYPE-GRP-STRICT-PART3]<UserDefinedWord>
+Line 160[37,43] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[37,43:typedef]<TYPEDEF>
+Line 174[40,56] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART1 IN usestrictType1' is strictly-typed OffendingSymbol=[40,56:strictType1-PART1]<UserDefinedWord>
+Line 176[39,55] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART2 IN usestrictType1' is strictly-typed OffendingSymbol=[39,55:strictType1-PART2]<UserDefinedWord>
+Line 183[8,39] <27, Error, Syntax> - Syntax error : Cannot declare Type definition SyncType with Sync clause because it is Strict.
+Line 184[8,34] <27, Error, Syntax> - Syntax error : MyVar is part of a declaration using Sync clause in Strict Type definition SyncType.
+Line 186[11,42] <27, Error, Syntax> - Syntax error : SyncVar1 is part of a declaration using Sync clause in Strict Type definition SyncType.
+Line 191[11,42] <27, Error, Syntax> - Syntax error : SyncVar2 is part of a declaration using Sync clause in Strict Type definition MyType.
+Line 194[8,44] <27, Error, Syntax> - Syntax error : MyTypeVar cannot be declared or have a parent declared with Sync clause because its Type definition MyType is Strict.
+Line 201[12,40] <27, Error, Syntax> - Syntax error : MyTypeVar2 cannot be declared or have a parent declared with Sync clause because its Type definition MyType is Strict.
+Line 205[11,35] <27, Error, Syntax> - Syntax error : MyGroupInTypeDef is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 207[13,43] <27, Error, Syntax> - Syntax error : MyTypeVar3 is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 208[13,41] <27, Error, Syntax> - Syntax error : MyVar4 is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 210[11,48] <27, Error, Syntax> - Syntax error : MyTypeVar4 is part of a declaration using Sync clause in Strict Type definition MyType2.
+Line 228[30,43] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable varCanBeStrict:canBeStrict. OffendingSymbol=[30,43:varCanBeStrict]<UserDefinedWord>
+Line 230[35,40] <30, Error, Semantics> - Semantic error: Cannot write canBeStrict to strictly typed variable Point2:Vect2. OffendingSymbol=[35,40:Point2]<UserDefinedWord>
+Line 232[27,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to strictly typed variable varCanBeStrict:canBeStrict. OffendingSymbol=[27,40:varCanBeStrict]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: TypeCobol common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  PointA:Alphanumeric
+  Position2d:Vect2
+  Movment2d:Alphanumeric
+  Accel2d:Vect2
+  Speed2d:Vect2
+  Point:VECT2
+  Point:VeCt2
+  Point:VECT2
+  Point:VECT2
+  Point:VEcT2
+  Point:vECT2
+  Point2:vect2
+  Point3:vect2
+  unknown:TypeDefinedAfter
+  LevelKOGroup:Alphanumeric
+  varLevelKO:LevelKO
+  ClausesOrderKO:Alphanumeric
+  varClausesOrderKO:ClausesOrderKO
+  varClausesOrderOK:ClausesOrderOK
+  varNoDescription:NoDescription
+  BufferTobeRedefined:Alphanumeric
+  NoRedefines1:Alphanumeric
+  varNoRedefines1:NoRedefines1
+  BufferTobeRedefined2:Alphanumeric
+  NoRedefines2:Alphanumeric
+  NoRedefines1Item:Alphanumeric
+  NoRedefines1Item:Alphanumeric
+  varNoRedefines2:NoRedefines2
+  NoRedefines3:Alphanumeric
+  varNoRedefines3:NoRedefines3
+  varNoRedefines5bis:Alphanumeric
+  varNoRedefines5bis-a:Numeric
+  varCanBeStrict:canBeStrict
+  USE-TYPE-GRP:Alphanumeric
+  USE-TYPE-GRP-STRICT:TYPE-GRP-STRICT
+  USE-TYPE-GRP-STRICT-RED:Alphanumeric
+  USE-TYPE-GRP-STRICT-RED-PART1:Numeric
+  useTypeGrp2:Alphanumeric
+  useTypeGrp2Stricly:TYPE-GRP-STRICT
+  USE-TYPE-GRP-STRICT-RED-2:Alphanumeric
+  USE-TYPE-GRP-STRICT-RED-2-PART:Numeric
+  MyVariable:Alphanumeric
+  usestrictType1:strictType1
+  TYPE-GRP-STRICT-REN:?
+  SyncVar:Alphanumeric
+  MyTypeVar:MyType
+  MyGroup:Alphanumeric
+  MySubGroup2:Alphanumeric
+  MySubGroup3:Alphanumeric
+  MySubGroup4:Alphanumeric
+  MyTypeVar2:MyType
+  MyVar3:Alphanumeric
+-- TYPES -------
+  bool:bool
+  DuplicatedType:DuplicatedType
+  DuplicatedType:DuplicatedType
+  MySyncType:MySyncType
+  Vect2:Vect2
+  TypeDefinedAfter:TypeDefinedAfter
+  LevelKO:LevelKO
+  ClausesOrderOK:ClausesOrderOK
+  NoDescription:NoDescription
+  varNoRedefines4:varNoRedefines4
+  varNoRedefines5:varNoRedefines5
+  ExternalType1:ExternalType1
+  ExternalType2:ExternalType2
+  canBeStrict:canBeStrict
+  TYPE-GRP:TYPE-GRP
+  TYPE-GRP-STRICT:TYPE-GRP-STRICT
+  GroupWithLevel77JustAfter:GroupWithLevel77JustAfter
+  strictType1:strictType1
+  SyncType:SyncType
+  MyType:MyType
+  MyType2:MyType2
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

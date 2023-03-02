@@ -36,5 +36,10 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         MultilineScanState ScanState { get; }
 
+        /// <summary>
+        /// Collect all diagnostics attached to this line into the given list.
+        /// </summary>
+        /// <param name="diagnostics">A non-null list of diagnostics to accumulate results</param>
+        void CollectDiagnostics(List<Diagnostic> diagnostics);
     }
 }

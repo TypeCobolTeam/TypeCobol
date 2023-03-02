@@ -5,7 +5,7 @@
        DATA DIVISION.
        Working-STORAGE SECTION.
       
-      *01 ConventionalTypeDefInMainProgram TYPEDEF STRICT PUBLIC.
+      *01 RegularTypeDefInMainProgram TYPEDEF STRICT PUBLIC.
       *    05 DATA1 PIC X.
       *    05 DATA2 PIC X.
       
@@ -21,20 +21,20 @@
             COPY YPRTD20 REPLACING CHARACTERS
                 BY i CHARACTERS BY j CHARACTERS BY k.
                                                                   
-      *01 MyCopyInsideContainerInsideTypeDef
-      *    TYPE DVZDEP1::CopyInsideContainerInsideTypeDef.
-       01 MyCopyInsideContainerInsideTypeDef.
+      *01 MyCopyUnderChildInsideTypeDef
+      *    TYPE DVZDEP1::CopyUnderChildInsideTypeDef.
+       01 MyCopyUnderChildInsideTypeDef.
            02 CONTAINER.
             COPY YCONVEA REPLACING
             ==:Foo:==
            BY
                 ==Too
                ==.
-                                                          
+                                                     
       
-      *01 MyTypeDefUsingCopyInsideTypeDef
+      *01 MyDataUsingCopyInsideTypeDef
       *    TYPE DVZDEP2::TypeDefUsingCopyInsideTypeDef.
-       01 MyTypeDefUsingCopyInsideTypeDef.
+       01 MyDataUsingCopyInsideTypeDef.
            02 MyCopyInsideTypeDef.
             COPY YCONVEA.
              03 MyVar1 PIC X.
@@ -50,11 +50,11 @@
             ==Soo==.
       
       *01 MyConventionalTypeDef
-      *    TYPE DVZDEP1::ConventionalTypeDefInDependency.
+      *    TYPE DVZDEP1::RegularTypeDefInDependency.
        01 MyConventionalTypeDef.
            02 firstname PIC X(20).
            02 lastname PIC X(20).
-                                                         
+                                                    
 
       *01 myVar2 TYPE DVZDEP1::Type2.
        01 myVar2.
@@ -65,10 +65,9 @@
       *     MOVE 'X' TO MyCopiesInsideTypeDef::CONVEA
             MOVE 'X' TO CONVEA OF MyCopiesInsideTypeDef
       *     MOVE 'X' TO
-      *         MyCopyInsideContainerInsideTypeDef::CONTAINER::CONVEA
+      *         MyCopyUnderChildInsideTypeDef::CONTAINER::CONVEA
             MOVE 'X' TO
-                CONVEA OF CONTAINER OF 
-                                      MyCopyInsideContainerInsideTypeDef
+                CONVEA OF CONTAINER OF MyCopyUnderChildInsideTypeDef
       *     MOVE 'X' TO
       *      myVar2::varA-2::varB-22::CONVEA::CONVEA-SUB::CONVEA-SUB-1
             MOVE 'X' TO
@@ -80,7 +79,7 @@
       *     input myType1 type DVZDEP1::Type1.
 
       *declare procedure MyProc2
-      *    input myType2 type DVZDEP1::Type2.
+      *     input myType2 type DVZDEP1::Type2.
 
        END PROGRAM PGM1.
       
@@ -90,11 +89,11 @@
        DATA DIVISION.
        Working-STORAGE SECTION.
       *01 MyCopyInsideTypeDef
-      *    TYPE PGM1::ConventionalTypeDefInMainProgram.
+      *    TYPE PGM1::RegularTypeDefInMainProgram.
        01 MyCopyInsideTypeDef.
            02 DATA1 PIC X.
            02 DATA2 PIC X.
-                                                       
+                                                  
       
       *01 MyCopyTypeDefInMainProgram
       *    TYPE PGM1::CopyTypeDefInMainProgram.
@@ -134,7 +133,7 @@
        END PROGRAM cd31ff38.
       *
       *declare procedure MyProc2
-      *    input myType2 type DVZDEP1::Type2.
+      *     input myType2 type DVZDEP1::Type2.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a82f46f0.

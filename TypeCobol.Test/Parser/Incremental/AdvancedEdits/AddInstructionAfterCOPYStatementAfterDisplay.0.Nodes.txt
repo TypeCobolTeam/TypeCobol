@@ -1,0 +1,23 @@
+--- Nodes ---
+?
+  MyPgm
+    data-division
+      working-storage
+        a
+        b
+    procedure-division
+      sentence-0
+        [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,24:"aaa"]<AlphanumericLiteral>(",Y,Y){aaa}
+- variables = "aaa"
+
+        end
+      sentence-1
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24+:"bbb"]<AlphanumericLiteral>(",Y,Y){bbb}
+- variables = "bbb"
+
+        [[MoveStatement]] [12,15:move]<MOVE> --> [22,22:b]<UserDefinedWord>
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

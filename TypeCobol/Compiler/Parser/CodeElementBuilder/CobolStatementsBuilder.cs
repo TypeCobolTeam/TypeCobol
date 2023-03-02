@@ -386,8 +386,8 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		private EvaluateSelectionSubject CreateEvaluateSelectionSubject(CodeElementsParser.ComparisonLHSExpressionContext context) {
-			var selectionSubject = new EvaluateSelectionSubject();
+		private SelectionSubject CreateEvaluateSelectionSubject(CodeElementsParser.ComparisonLHSExpressionContext context) {
+			var selectionSubject = new SelectionSubject();
 			if (context.variableOrExpression2() != null) {
 				selectionSubject.AlphanumericComparisonVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
 			} else
@@ -1438,10 +1438,10 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-        private EvaluateSelectionObject CreateEvaluateSelectionObject(
+        private SelectionObject CreateEvaluateSelectionObject(
             CodeElementsParser.ComparisonRHSExpressionContext context)
         {
-            var selectionObject = new EvaluateSelectionObject();
+            var selectionObject = new SelectionObject();
             if (context.ANY() != null)
             {
                 selectionObject.IsAny = CreateSyntaxProperty(true, context.ANY());
@@ -1486,10 +1486,11 @@ namespace TypeCobol.Compiler.Parser
 		 // WHEN SEARCH CONDITION //
 		///////////////////////////
 
-		internal CodeElement CreateWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context) {
-			var condition = new WhenSearchCondition();
-			condition.Condition = CobolExpressionsBuilder.CreateConditionalExpression(context.conditionalExpression());
-			return condition;
+		internal CodeElement CreateWhenCondition(CodeElementsParser.WhenSearchConditionContext context) {
+			var conditionalExpression = CobolExpressionsBuilder.CreateConditionalExpression(context.conditionalExpression());
+			var selectionObjects = new SelectionObject[1];
+			selectionObjects[0] = new SelectionObject() { BooleanComparisonVariable = new BooleanValueOrExpression(conditionalExpression) };
+			return new WhenCondition() { SelectionObjects = selectionObjects };
 		}
 
 		  /////////////////////
@@ -1513,11 +1514,11 @@ namespace TypeCobol.Compiler.Parser
             }
             if (context.numberOfLines != null)
             {
-                statement.ByNumberOfLines = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
+                statement.ByNumberOfLinesOrByMnemonicForEnvironmentName = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
             }
-            if (context.mnemonicForEnvironmentNameReference() != null)
+            if (context.integerVariableIdentifierOrMnemonicForEnvironmentNameReference() != null)
             {
-                statement.ByMnemonicForEnvironmentName = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReference(context.mnemonicForEnvironmentNameReference());
+                statement.ByNumberOfLinesOrByMnemonicForEnvironmentName = CobolExpressionsBuilder.CreateIntegerVariableOrMnemonicForEnvironmentName(context.integerVariableIdentifierOrMnemonicForEnvironmentNameReference());
             }
             if (context.PAGE() != null)
             {

@@ -1,0 +1,35 @@
+﻿--- Diagnostics ---
+Line 11[9,9] <27, Error, Syntax> - Syntax error : no viable alternative at input 'MULTIPLY ... .' RuleStack=codeElement>multiplyStatement,  OffendingSymbol=[9,9+:.]<PeriodSeparator>
+Line 12[15,18] <27, Error, Syntax> - Syntax error : no viable alternative at input 'MULTIPLY ... INTO' RuleStack=codeElement>multiplyStatement,  OffendingSymbol=[15,18:INTO]<INTO>
+Line 13[15,18] <27, Error, Syntax> - Syntax error : no viable alternative at input 'MULTIPLY ... WITH' RuleStack=codeElement>multiplyStatement,  OffendingSymbol=[15,18:WITH]<WITH>
+--- Code Elements ---
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [15,15:b]<UserDefinedWord>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [17,23:ROUNDED]<ROUNDED>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [17,17:c]<UserDefinedWord>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [25,25:c]<UserDefinedWord>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [16,16:b]<UserDefinedWord>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [18,24:ROUNDED]<ROUNDED>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [18,18:c]<UserDefinedWord>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [25,25:c]<UserDefinedWord>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [34,40:ROUNDED]<ROUNDED>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [1,8:MULTIPLY]<MULTIPLY>
+
+[[SentenceEnd]] [9,9+:.]<PeriodSeparator> --> [9,9+:.]<PeriodSeparator>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [20,23:var2]<UserDefinedWord>
+
+[[SentenceEnd]] [24,24+:.]<PeriodSeparator> --> [24,24+:.]<PeriodSeparator>
+
+[[MultiplyStatement]] [1,8:MULTIPLY]<MULTIPLY> --> [20,23:var2]<UserDefinedWord>
+
+[[SentenceEnd]] [24,24+:.]<PeriodSeparator> --> [24,24+:.]<PeriodSeparator>
+

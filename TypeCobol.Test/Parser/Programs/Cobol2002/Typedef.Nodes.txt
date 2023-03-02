@@ -1,0 +1,126 @@
+Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries
+Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
+Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause
+Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01
+Line 101[27,32] <27, Error, Syntax> - Syntax error : Elementary TYPEDEF cannot be STRONG
+Line 113[29,33] <27, Error, Syntax> - Syntax error : STRONG TYPEDEF cannot contain VALUE clause:
+Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
+Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
+Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
+Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
+Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
+Line 73[27,40] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
+Line 75[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
+Line 82[5,57] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
+Line 90[39,55] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
+Line 114[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP'
+Line 115[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP'
+Line 132[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
+Line 142[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE"
+Line 145[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
+Line 160[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
+Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
+--- Nodes ---
+?
+  TypeCobol
+    data-division
+      working-storage
+        Feature
+          Feature-name
+        Equipment
+          Equipment-id
+            Feature-list
+        Vect2
+          Coord2d
+            X
+            Y
+          Coord3d
+            Z
+        Point2
+          Position2d
+          Movment2d
+            Accel2d
+            Speed2d
+        Point
+        Point
+        Point
+        Point
+        Point
+        Point
+        unknown
+        unknown
+        TypeDefinedAfter
+        LevelKOGroup
+          LevelKO
+            LevelKOItem
+        varLevelKO
+        ClausesOrderKO
+        varClausesOrderKO
+        ClausesOrderOK
+        varClausesOrderOK
+        NoDescription
+        varNoDescription
+        BufferTobeRedefined
+        NoRedefines1
+        varNoRedefines1
+        BufferTobeRedefined2
+        NoRedefines2
+          NoRedefines1Item
+        varNoRedefines2
+        NoRedefines3
+          NoRedefines1Item
+        varNoRedefines3
+        varNoRedefines4
+          varNoRedefines4A
+          varNoRedefines4B
+        varNoRedefines5
+          varNoRedefines5-a
+        varNoRedefines5bis
+          varNoRedefines5bis-a
+        ExternalType1
+          varExternalType1
+        ExternalType2
+          varExternalType2
+        CannotBeStrong
+        varCannotBeStrong
+        TYPE_ELT
+          TYPE-ELT-VALB
+          TYPE-ELT-VALC
+        TYPE-GRP
+          TYPE-GRP-1
+          TYPE-GRP-2
+        TYPE-GRP-STRONG
+          TYPE-GRP-STRONG-PART1
+          TYPE-GRP-STRONG-PART2
+          TYPE-GRP-STRONG-PART3
+        USE-TYPE-GRP
+          USE-TYPE-GRP-STRONG
+          USE-TYPE-GRP-STRONG-RED
+            USE-TYPE-GRP-STRONG-RED-PART1
+        MyWeakGroup
+          MyWeakVar1
+          MyWeakVar2
+        useTypeGrp2
+          useTypeGrp2Strong
+            USE-TYPE-GRP-STRONG-RED-2
+              USE-TYPE-GRP-STRONG-RED-2-PART
+        GroupWithLevel77JustAfter
+          a
+        MyVariable
+        strongType1
+          strongType1-PART1
+          strongType1-PART2
+        useStrongType1
+          TYPE-GRP-STRONG-REN
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [46,51:Point2]<UserDefinedWord>
+
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [60,65:Point2]<UserDefinedWord>
+
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [57,62:Point2]<UserDefinedWord>
+
+        end

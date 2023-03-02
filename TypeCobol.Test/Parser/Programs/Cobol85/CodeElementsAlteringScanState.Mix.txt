@@ -1,0 +1,36 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm1.
+      *KO copy alters scan state by including DATA DIVISION
+Line 4[8,25] <27, Error, Syntax> - Error in copy 'DataDivision' at line 1 : Syntax error : Syntax not supported: 'DATA DIVISION' has been found inside COPY.
+       COPY DataDivision.
+Line 5[8,9] <27, Error, Syntax> - Syntax error : extraneous input '01' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 5[21,21] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+       01 var2 PIC X.
+       PROCEDURE DIVISION.
+           DISPLAY var1
+           DISPLAY var2
+           GOBACK
+           .
+       END PROGRAM Pgm1.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm2.
+      *KO copy alters scan state by including PROCEDURE DIVISION
+Line 16[8,30] <27, Error, Syntax> - Error in copy 'ProcedureDivision' at line 1 : Syntax error : Syntax not supported: 'PROCEDURE DIVISION' has been found inside COPY.
+       COPY ProcedureDivision.
+           DISPLAY 'This statement comes from main source file'
+           GOBACK
+           .
+       END PROGRAM Pgm2.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm3.
+      *KO copy alters scan state by enabling DEBUGGING MODE
+Line 25[8,34] <37, Warning, General> - Error in copy 'EnablingDebuggingMode' at line 3 : Warning: Debugging mode is active
+Line 25[8,34] <27, Error, Syntax> - Error in copy 'EnablingDebuggingMode' at line 3 : Syntax error : Syntax not supported: 'WITH DEBUGGING MODE' has been found inside COPY.
+       COPY EnablingDebuggingMode.
+       PROCEDURE DIVISION.
+      D    DISPLAY 'This is a debug statement'
+           GOBACK
+           .
+       END PROGRAM Pgm3.

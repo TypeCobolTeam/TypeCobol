@@ -1,0 +1,16 @@
+﻿b = b a ÷
+b = b a ÷, c = c a ÷
+b = b 42 ÷ °, c = c 42 ÷, d = d 42 ÷ °
+c = b a ÷
+c = b 42 ÷, d = b 42 ÷
+c = b a ÷ °, d = b a ÷, e = b a ÷ °
+c = 42 b ÷
+c = a b ÷, d = a b ÷
+c = a 42 ÷ °, d = a 42 ÷, e = a 42 ÷ °
+c = 42 a ÷, d = 42 a /
+c = b 42 ÷ °, d = b 42 /
+c = 42 42 ÷, d = 42 42 /
+c = a b ÷ °, d = a b /
+
+
+

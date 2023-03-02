@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -264,7 +265,7 @@ namespace TypeCobol.Compiler.Scanner
                     InsideMultilineComments = false;
                     return;
                 case TokenType.CURRENCY:
-                    // CURRENCY token is used either to satrt a CURRENCY SIGN clause or as an intrinsic type name in tC
+                    // CURRENCY token is used either to start a CURRENCY SIGN clause or as an intrinsic type name in TC
                     if (LastSignificantToken?.TokenType != TokenType.TYPE)
                     {
                         SpecialNames.BeginCurrencySignClause();
@@ -289,6 +290,12 @@ namespace TypeCobol.Compiler.Scanner
                     if (_afterReplacementPseudoText)
                     {
                         _afterReplacementPseudoText = false;
+                        InsideReplaceDirective = false;
+                    }
+                    break;
+                case TokenType.OFF:
+                    if (LastSignificantToken?.TokenType == TokenType.REPLACE)
+                    {
                         InsideReplaceDirective = false;
                     }
                     break;
@@ -371,8 +378,19 @@ namespace TypeCobol.Compiler.Scanner
                             LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
                         }
                         break;
+
+
+                    //DELETE_CD is the DELETE for Preprocessor
+                    //DELETE is for Cobol statement
+                    //Scanner cannot differentiate these 2 DELETE keywords 
+
+                    //DELETE_CD is valid only if followed by an integer or a range of number.
+                    //A range of number is scanned as an UserDefinedWord
+                    //A range of number contains only numeric character or char '-'
                     case TokenType.DELETE:
-                        if (newToken.TokenType == TokenType.IntegerLiteral)
+                        if (newToken.TokenType == TokenType.IntegerLiteral
+                            || (newToken.TokenType == TokenType.UserDefinedWord &&
+                                newToken.Text.All(c => char.IsDigit(c) || c == '-')))
                         {
                             LastSignificantToken.CorrectType(TokenType.DELETE_CD);
                         }

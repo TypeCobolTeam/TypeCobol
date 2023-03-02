@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
@@ -69,9 +68,8 @@ namespace TypeCobol.Test
                         .AppendLine(" at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
                     errors.AppendLine("See TestUtils.cs compareLines method to autoreplace ExpectedResult");
                     errors.Append("=== RESULT ==========\n" + result + "====================");
+                    throw new Exception(errors.ToString());
                 }
-                throw new Exception(errors.ToString());
-
             }
         }
 
@@ -137,6 +135,7 @@ namespace TypeCobol.Test
             FormatLine(stats.AverateTemporarySemanticsParserTime, stats.AverageTotalProcessingTime, "temporary semantic class parser");
             FormatLine(stats.AverageCrossCheckerParserTime, stats.AverageTotalProcessingTime, "cross check class parser");
             FormatLine(stats.AverageQualityCheckerParserTime, stats.AverageTotalProcessingTime, "quality check class parser");
+            FormatLine(stats.AverageDiagnosticCollectionTime, stats.AverageTotalProcessingTime, "diagnostics collection time");
 
             report.AppendLine("Total average time: " + stats.AverageTotalProcessingTime.ToString("##0.00") + " ms");
 
@@ -173,6 +172,7 @@ namespace TypeCobol.Test
                 AverateTemporarySemanticsParserTime = 0;
                 AverageCrossCheckerParserTime = 0;
                 AverageQualityCheckerParserTime = 0;
+                AverageDiagnosticCollectionTime = 0;
                 AverageTotalProcessingTime = 0;
                 Line = 0;
                 TotalCodeElements = 0;
@@ -185,6 +185,7 @@ namespace TypeCobol.Test
             public float AverateTemporarySemanticsParserTime { get; set; }
             public float AverageCrossCheckerParserTime { get; set; }
             public float AverageQualityCheckerParserTime { get; set; }
+            public float AverageDiagnosticCollectionTime { get; set; }
             public float AverageTotalProcessingTime { get; set; }
             //Number of lines in Cobol file
             public int Line { get; set; }

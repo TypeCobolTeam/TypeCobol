@@ -60,11 +60,11 @@ namespace TypeCobol.Test.Parser.Scanner
                 "1 + 2 - 3 * 4 / 5 ** 6",
                 " -1 + +2 - -6 - 6 +",
                 "1+2 +0 ++",
-                "3-2 -1 --",
+                "3 - 2 -1 --",
                 "4*5 *6 ***",
                 "7/8 /9 //",
                 "1**3 **5 **",
-                "1+2*4/6-2"
+                "1+2*4/(6 - 2)"
             };
             string result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
@@ -180,7 +180,8 @@ namespace TypeCobol.Test.Parser.Scanner
                 "1234537",
                 "+1234567",
                 ".1234567",
-                " -.321E18."
+                " -.321E18.",
+                "+."
             };
             string result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
@@ -191,6 +192,10 @@ namespace TypeCobol.Test.Parser.Scanner
                 "01 50 00 17870154 +197 -254 -0 +0 - 0 0+ A10",
                 "1,23 +0,47 -9,38 ,2 +,45 -,4 15, 10,",
                 "2,3e8 -,35e-17 -50,7851E+20 +,45486756E+1 10,E2 10e+4 ,55E+9847 ,25e",
+                //FloatingPoint followed by IntegerLiteral
+                " ,25e-24-1  ,25e-24-100 ,25e-24-100-123",
+                //FloatingPoint followed by UserDefinedWord
+                ",25e-24X ,25e-24X-1 ,25e-24X-1X",
                 "1234537",
                 "+1234567",
                 ",1234567",
@@ -218,7 +223,7 @@ namespace TypeCobol.Test.Parser.Scanner
                 "laurent_prud-on10",
                 "!super-_@#1254540.10azfdaedf99*8:tshg; prud'hon'==",
                 "123ABC-01 123 123a 123-abc",
-                " -123ABC-01 _123ABC-01_ 123ABC- 123- 123-456 123E-06 123-4X"
+                " -123ABC-01 _123ABC-01_ 123ABC- 123- 123-456 123E-06 123-4X -123X -123-"
             };
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
@@ -333,7 +338,7 @@ namespace TypeCobol.Test.Parser.Scanner
                 "   SQL",
                 "  tout un tas de blabla",
                 "     bliblibli",
-                "   c'est la fin.END-EXEC ici.",
+                "   c est la fin.END-EXEC ici.",
                 " EXEC",
                 " SQL",
                 "INCLUDE YPPRCGF ",

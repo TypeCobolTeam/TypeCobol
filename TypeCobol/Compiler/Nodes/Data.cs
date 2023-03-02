@@ -78,7 +78,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class FileDescriptionEntryNode : GenericNode<FileDescriptionEntry> {
+    public class FileDescriptionEntryNode : DataDefinition {
         public FileDescriptionEntryNode(FileDescriptionEntry entry): base(entry) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -209,6 +209,7 @@ namespace TypeCobol.Compiler.Nodes {
     ///   DataRedefines                 ->          DataRedefinesEntry
     ///   DataCondition   88            ->      DataConditionEntry
     ///   DataRenames     66            ->      DataRenamesEntry
+    ///   FileDescriptionEntryNode      ->      FileDescriptionEntry
     ///     
     /// 
     /// Implementation note:

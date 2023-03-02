@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,17:laurent_prud-on10]<UserDefinedWord>
 
 -- Line 2 --
@@ -13,6 +13,7 @@
 [40,43:prud]<UserDefinedWord>
 [44,48:'hon']<AlphanumericLiteral>(',Y,Y){hon}
 [49,50:==]<PseudoTextDelimiter>
+Line 0[49,50] <54, Warning, Tokens> - A blank was missing after character "'" in column 48. A blank was assumed.
 
 -- Line 3 --
 [1,9:123ABC-01]<UserDefinedWord>
@@ -32,15 +33,17 @@
 [24,24: ]<SpaceSeparator>
 [25,31:123ABC-]<UserDefinedWord>
 [32,32: ]<SpaceSeparator>
-[33,35:123]<IntegerLiteral>{123}
-[36,37:- ]<MinusOperator>
-[38,40:123]<IntegerLiteral>{123}
-[41,44:-456]<IntegerLiteral>{-456}
+[33,36:123-]<UserDefinedWord>
+[37,37: ]<SpaceSeparator>
+[38,44:123-456]<UserDefinedWord>
 [45,45: ]<SpaceSeparator>
-[46,52:123E-06]<FloatingPointLiteral>{123|0>123E-6>0.000123}
+[46,52:123E-06]<UserDefinedWord>
 [53,53: ]<SpaceSeparator>
-[54,56:123]<IntegerLiteral>{123}
-[57,58:-4]<IntegerLiteral>{-4}
-[59,59:X]<UserDefinedWord>
-Line 0[46,52] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
+[54,59:123-4X]<UserDefinedWord>
+[60,60: ]<SpaceSeparator>
+[61,64:-123]<IntegerLiteral>{-123}
+[65,65:X]<UserDefinedWord>
+[66,66: ]<SpaceSeparator>
+[67,70:-123]<IntegerLiteral>{-123}
+[71,71+:-]<MinusOperator>
 

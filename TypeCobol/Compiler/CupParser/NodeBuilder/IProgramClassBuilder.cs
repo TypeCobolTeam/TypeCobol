@@ -176,11 +176,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void EndFileDescriptionEntry();
 
         /// <summary>
-        /// End a File Description Entry if one is pending
-        /// </summary>
-        void EndFileDescriptionEntryIfAny();
-
-        /// <summary>
         /// Start DataDescriptionEntry
         /// </summary>
         /// <param name="entry">The DataDescriptionEntry code element</param>
@@ -515,63 +510,63 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         #region CompoundStatements
         /// <summary>
-        /// Start a Conditional ADD Statemenent 
+        /// Start a Conditional ADD Statement 
         /// </summary>
         /// <param name="stmt">The Conditional ADD Statement code element</param>
         void StartAddStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.AddStatement stmt);
         /// <summary>
-        /// End a Conditional ADD Statemenent 
+        /// End a Conditional ADD Statement 
         /// </summary>
         /// <param name="end">The Optional END-ADD Statement code element</param>
         void EndAddStatementConditional(TypeCobol.Compiler.CodeElements.AddStatementEnd end = null);
 
         /// <summary>
-        /// Start a Conditional CALL Statemenent 
+        /// Start a Conditional CALL Statement 
         /// </summary>
         /// <param name="stmt">The Conditional CALL Statement code element</param>
         void StartCallStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.CallStatement stmt);
         /// <summary>
-        /// End a Conditional CALL Statemenent 
+        /// End a Conditional CALL Statement 
         /// </summary>
         /// <param name="end">The Optional END-CALL Statement code element</param>
         void EndCallStatementConditional(TypeCobol.Compiler.CodeElements.CallStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional COMPUTE Statemenent 
+        /// Start a Conditional COMPUTE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional COMPUTE Statement code element</param>
         void StartComputeStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.ComputeStatement stmt);
         /// <summary>
-        /// End a Conditional COMPUTE Statemenent 
+        /// End a Conditional COMPUTE Statement 
         /// </summary>
         /// <param name="end">The Optional END-COMPUTE Statement code element</param>
         void EndComputeStatementConditional(TypeCobol.Compiler.CodeElements.ComputeStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional DELETE Statemenent 
+        /// Start a Conditional DELETE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional DELETE Statement code element</param>
         void StartDeleteStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.DeleteStatement stmt);
         /// <summary>
-        /// End a Conditional DELETE Statemenent 
+        /// End a Conditional DELETE Statement 
         /// </summary>
         /// <param name="end">The Optional END-DELETE Statement code element</param>
         void EndDeleteStatementConditional(TypeCobol.Compiler.CodeElements.DeleteStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional DIVIDE Statemenent 
+        /// Start a Conditional DIVIDE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional DIVIDE Statement code element</param>
         void StartDivideStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.DivideStatement stmt);
         /// <summary>
-        /// End a Conditional DIVIDE Statemenent 
+        /// End a Conditional DIVIDE Statement 
         /// </summary>
         /// <param name="end">The Optional END-DIVIDE Statement code element</param>
         void EndDivideStatementConditional(TypeCobol.Compiler.CodeElements.DivideStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional EVALUATE Statemenent 
+        /// Start a Conditional EVALUATE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional EVALUATE Statement code element</param>
         void StartEvaluateStatementWithBody([NotNull] TypeCobol.Compiler.CodeElements.EvaluateStatement stmt);
         /// <summary>
-        /// End a Conditional EVALUATE Statemenent 
+        /// End a Conditional EVALUATE Statement 
         /// </summary>
         /// <param name="end">The Optional END-EVALUATE Statement code element</param>
         void EndEvaluateStatementWithBody(TypeCobol.Compiler.CodeElements.EvaluateStatementEnd end = null);
@@ -594,7 +589,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         void EndWhenOtherClause();
         /// <summary>
-        /// Start a IF Statemenent 
+        /// Start a IF Statement 
         /// </summary>
         /// <param name="stmt">The IF Statement code element</param>
         void StartIfStatementWithBody([NotNull] TypeCobol.Compiler.CodeElements.IfStatement stmt);
@@ -604,7 +599,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="clause">The ELSE clause code element</param>
         void EnterElseClause(TypeCobol.Compiler.CodeElements.ElseCondition clause);
         /// <summary>
-        /// End an IF Statemenent 
+        /// End an IF Statement 
         /// </summary>
         /// <param name="end">The Optional IF-END Statement code element</param>
         void EndIfStatementWithBody(TypeCobol.Compiler.CodeElements.IfStatementEnd end = null);
@@ -614,12 +609,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="stmt">The NEXT sentence code elemnt</param>
         void AddNextSentenceStatement([NotNull] TypeCobol.Compiler.CodeElements.NextSentenceStatement stmt);
         /// <summary>
-        /// Start a Conditional INVOKE Statemenent 
+        /// Start a Conditional INVOKE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional INVOKE Statement code element</param>
         void StartInvokeStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.InvokeStatement stmt);
         /// <summary>
-        /// End a Conditional INVOKE Statemenent 
+        /// End a Conditional INVOKE Statement 
         /// </summary>
         /// <param name="end">The Optional END-INVOKE Statement code element</param>
         void EndInvokeStatementConditional(TypeCobol.Compiler.CodeElements.InvokeStatementEnd end = null);
@@ -629,46 +624,42 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="stmt">The JSON GENERATE statement code element</param>
         void StartJsonGenerateStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.JsonGenerateStatement stmt);
         /// <summary>
-        /// End a Conditional JSON GENERATE Statement
-        /// </summary>
-        /// <param name="end">The optional END-JSON code element</param>
-        void EndJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end = null);
         /// Start a Conditional JSON PARSE Statement
         /// </summary>
         /// <param name="stmt">The JSON PARSE statement code element</param>
         void StartJsonParseStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.JsonParseStatement stmt);
         /// <summary>
-        /// End a Conditional JSON PARSE Statement
+        /// End either a Conditional JSON PARSE Statement or JSON GENERATE Statement
         /// </summary>
         /// <param name="end">The optional END-JSON code element</param>
-        void EndJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end = null);
+        void EndJsonStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional MULTIPLY Statemenent 
+        /// Start a Conditional MULTIPLY Statement 
         /// </summary>
         /// <param name="stmt">The Conditional MULTIPLY Statement code element</param>
         void StartMultiplyStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.MultiplyStatement stmt);
         /// <summary>
-        /// End a Conditional MULTIPLY Statemenent 
+        /// End a Conditional MULTIPLY Statement 
         /// </summary>
         /// <param name="end">The Optional END-MULTIPLY Statement code element</param>
         void EndMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional PERFORM Statemenent 
+        /// Start a Conditional PERFORM Statement 
         /// </summary>
         /// <param name="stmt">The Conditional PERFORM Statement code element</param>
         void StartPerformStatementWithBody([NotNull] TypeCobol.Compiler.CodeElements.PerformStatement stmt);
         /// <summary>
-        /// End a Conditional PERFORM Statemenent 
+        /// End a Conditional PERFORM Statement 
         /// </summary>
         /// <param name="end">The Optional END-PERFORM Statement code element</param>
         void EndPerformStatementWithBody(TypeCobol.Compiler.CodeElements.PerformStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional SEARCH Statemenent 
+        /// Start a Conditional SEARCH Statement 
         /// </summary>
         /// <param name="stmt">The Conditional SEARCH Statement code element</param>
         void StartSearchStatementWithBody([NotNull] TypeCobol.Compiler.CodeElements.SearchStatement stmt);
         /// <summary>
-        /// End a Conditional SEARCH Statemenent 
+        /// End a Conditional SEARCH Statement 
         /// </summary>
         /// <param name="end">The Optional END-SEARCH Statement code element</param>
         void EndSearchStatementWithBody(TypeCobol.Compiler.CodeElements.SearchStatementEnd end = null);
@@ -676,111 +667,106 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// Start a WHEN SEARCH condition
         /// </summary>
         /// <param name="condition">The WHEN Search condition code element</param>
-        void StartWhenSearchConditionClause([NotNull] TypeCobol.Compiler.CodeElements.WhenSearchCondition condition);
+        void StartWhenSearchConditionClause([NotNull] TypeCobol.Compiler.CodeElements.WhenCondition condition);
         /// <summary>
         /// End the When search condition.
         /// </summary>
         void EndWhenSearchConditionClause();
         /// <summary>
-        /// Start a Conditional READ Statemenent 
+        /// Start a Conditional READ Statement 
         /// </summary>
         /// <param name="stmt">The Conditional SEARCH Statement code element</param>
         void EnterReadStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.ReadStatement stmt);
         /// <summary>
-        /// End a Conditional READ Statemenent 
+        /// End a Conditional READ Statement 
         /// </summary>
         /// <param name="end">The Optional END-READ Statement code element</param>
         void EndReadStatementConditional(TypeCobol.Compiler.CodeElements.ReadStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional RETURN Statemenent 
+        /// Start a Conditional RETURN Statement 
         /// </summary>
         /// <param name="stmt">The Conditional RETURN Statement code element</param>
         void EnterReturnStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.ReturnStatement stmt);
         /// <summary>
-        /// End a Conditional RETURN Statemenent 
+        /// End a Conditional RETURN Statement 
         /// </summary>
         /// <param name="end">The Optional END-RETURN Statement code element</param>
         void EndReturnStatementConditional(TypeCobol.Compiler.CodeElements.ReturnStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional REWRITE Statemenent 
+        /// Start a Conditional REWRITE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional REWRITE Statement code element</param>
         void StartRewriteStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.RewriteStatement stmt);
         /// <summary>
-        /// End a Conditional REWRITE Statemenent 
+        /// End a Conditional REWRITE Statement 
         /// </summary>
         /// <param name="end">The Optional END-REWRITE Statement code element</param>
         void EndRewriteStatementConditional(TypeCobol.Compiler.CodeElements.RewriteStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional START Statemenent 
+        /// Start a Conditional START Statement 
         /// </summary>
         /// <param name="stmt">The Conditional START Statement code element</param>
         void StartStartStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.StartStatement stmt);
         /// <summary>
-        /// End a Conditional START Statemenent 
+        /// End a Conditional START Statement 
         /// </summary>
         /// <param name="end">The Optional END-START Statement code element</param>
         void EndStartStatementConditional(TypeCobol.Compiler.CodeElements.StartStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional STRING Statemenent 
+        /// Start a Conditional STRING Statement 
         /// </summary>
         /// <param name="stmt">The Conditional STRING Statement code element</param>
         void StartStringStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.StringStatement stmt);
         /// <summary>
-        /// End a Conditional STRING Statemenent 
+        /// End a Conditional STRING Statement 
         /// </summary>
         /// <param name="end">The Optional END-STRING Statement code element</param>
         void EndStringStatementConditional(TypeCobol.Compiler.CodeElements.StringStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional SUBTRACT Statemenent 
+        /// Start a Conditional SUBTRACT Statement 
         /// </summary>
         /// <param name="stmt">The Conditional SUBTRACT Statement code element</param>
         void StartSubtractStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.SubtractStatement stmt);
         /// <summary>
-        /// End a Conditional SUBTRACT Statemenent 
+        /// End a Conditional SUBTRACT Statement 
         /// </summary>
         /// <param name="end">The Optional END-SUBTRACT Statement code element</param>
         void EndSubtractStatementConditional(TypeCobol.Compiler.CodeElements.SubtractStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional UNSTRING Statemenent 
+        /// Start a Conditional UNSTRING Statement 
         /// </summary>
         /// <param name="stmt">The Conditional UNSTRING Statement code element</param>
         void StartUnstringStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.UnstringStatement stmt);
         /// <summary>
-        /// End a Conditional UNSTRING Statemenent 
+        /// End a Conditional UNSTRING Statement 
         /// </summary>
         /// <param name="end">The Optional END-UNSTRING Statement code element</param>
         void EndUnstringStatementConditional(TypeCobol.Compiler.CodeElements.UnstringStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional WRITE Statemenent 
+        /// Start a Conditional WRITE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional UNSTRING Statement code element</param>
         void StartWriteStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.WriteStatement stmt);
         /// <summary>
-        /// End a Conditional WRITE Statemenent 
+        /// End a Conditional WRITE Statement 
         /// </summary>
         /// <param name="end">The Optional END-WRITE Statement code element</param>
         void EndWriteStatementConditional(TypeCobol.Compiler.CodeElements.WriteStatementEnd end = null);
         /// <summary>
-        /// Start a Conditional XML GENERATE Statemenent 
+        /// Start a Conditional XML GENERATE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional XML GENERATE Statement code element</param>
         void StartXmlGenerateStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.XmlGenerateStatement stmt);
         /// <summary>
-        /// End a Conditional XML GENERATE Statemenent 
-        /// </summary>
-        /// <param name="end">The Optional END-XML Statement code element</param>
-        void EndXmlGenerateStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end = null);
-        /// <summary>
-        /// Start a Conditional XML PARSE Statemenent 
+        /// Start a Conditional XML PARSE Statement 
         /// </summary>
         /// <param name="stmt">The Conditional XML PARSE Statement code element</param>
         void StartXmlParseStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.XmlParseStatement stmt);
         /// <summary>
-        /// End a Conditional XML PARSE Statemenent 
+        /// End either a Conditional XML PARSE or XML GENERATE Statement 
         /// </summary>
         /// <param name="end">The Optional END-XML Statement code element</param>
-        void EndXmlParseStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end = null);
+        void EndXmlStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end = null);
         #endregion
 
         #region conditions
@@ -814,8 +800,73 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <summary>
         /// Enter a Commit Statement Node
         /// </summary>
-        /// <param name="commit">The correponding Commit Statement Code Element</param>
+        /// <param name="commit">The corresponding Commit Statement Code Element</param>
         void OnCommitStatement([NotNull] CommitStatement commit);
+        /// <summary>
+        /// Enter a Select Statement Node
+        /// </summary>
+        /// <param name="select">The corresponding  Select Statement Code Element</param>
+        void OnSelectStatement([NotNull] SelectStatement select);
+        /// <summary>
+        /// Enter a Rollback Statement Node
+        /// </summary>
+        /// <param name="rollback">The corresponding  Rollback Statement Code Element</param>
+        void OnRollbackStatement([NotNull] RollbackStatement rollback);
+        /// <summary>
+        /// Enter a Truncate Statement Node
+        /// </summary>
+        /// <param name="truncate">The corresponding  Truncate Statement Code Element</param>
+        void OnTruncateStatement([NotNull] TruncateStatement truncate);
+        /// <summary>
+        /// Enter a Savepoint Statement Node
+        /// </summary>
+        /// <param name="savepoint">The corresponding  Savepoint Statement Code Element</param>
+        void OnSavepointStatement([NotNull] SavepointStatement savepoint);
+        /// <summary>
+        /// Enter a WhenEver Statement Node
+        /// </summary>
+        /// <param name="whenEver">The corresponding WhenEver Statement Code Element</param>
+        void OnWhenEverStatement([NotNull] WhenEverStatement whenEver);
+        /// <summary>
+        /// Enter a LockTable Statement Node
+        /// </summary>
+        /// <param name="lockTable">The corresponding  LockTable Statement Code Element</param>
+        void OnLockTableStatement([NotNull] LockTableStatement lockTable);
+        /// <summary>
+        /// Enter a ReleaseSavepoint Statement Node
+        /// </summary>
+        /// <param name="releaseSavepoint">The corresponding  ReleaseSavepoint Statement Code Element</param>
+        void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint);
+        /// <summary>
+        /// Enter a Connect Statement Node
+        /// </summary>
+        /// <param name="connect">The corresponding  Connect Statement Code Element</param>
+        void OnConnectStatement([NotNull] ConnectStatement connect);
+        /// <summary>
+        /// Enter a DropTable Statement Node
+        /// </summary>
+        /// <param name="dropTable">The corresponding  DropTable Statement Code Element</param>
+        void OnDropTableStatement([NotNull] DropTableStatement dropTable);
+        /// <summary>
+        /// Enter a Set Assignment Statement Node
+        /// </summary>
+        /// <param name="setAssignment">The corresponding  SetAssignment Statement Code Element</param>
+        void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment);
+        /// <summary>
+        /// Enter a GetDiagnostics Statement Node
+        /// </summary>
+        /// <param name="getDiagnostics">The corresponding  GetDiagnostics Statement Code Element</param>
+        void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics);
+        /// <summary>
+        /// Enter a AlterSequence Statement Node
+        /// </summary>
+        /// <param name="alterSequence">The corresponding  AlterSequence Statement Code Element</param>
+        void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence);
+        /// <summary>
+        /// Enter a ExecuteImmediate Statement Node
+        /// </summary>
+        /// <param name="executeImmediate">The corresponding  ExecuteImmediate Statement Code Element</param>
+        void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate);
         #endregion
     }
 }

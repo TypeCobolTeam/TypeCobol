@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
-        public virtual void OnLevel1Definition(DataDefinition level1Node)
+        public virtual void OnTopLevelDataDefinition(DataDefinition topLevelDataDefinition)
         {
 
         }
@@ -127,11 +127,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
-        public virtual void EndFileDescriptionEntryIfAny()
-        {
-
-        }
-
         public virtual void EndFileSection()
         {
 
@@ -167,12 +162,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
-        public virtual void EndJsonGenerateStatementConditional(JsonStatementEnd end = null)
-        {
-
-        }
-
-        public virtual void EndJsonParseStatementConditional(JsonStatementEnd end = null)
+        public virtual void EndJsonStatementConditional(JsonStatementEnd end = null)
         {
 
         }
@@ -352,12 +342,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
-        public virtual void EndXmlGenerateStatementConditional(XmlStatementEnd end = null)
-        {
-
-        }
-
-        public virtual void EndXmlParseStatementConditional(XmlStatementEnd end = null)
+        public virtual void EndXmlStatementConditional(XmlStatementEnd end = null)
         {
 
         }
@@ -812,7 +797,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
-        public virtual void StartWhenSearchConditionClause(WhenSearchCondition condition)
+        public virtual void StartWhenSearchConditionClause(WhenCondition condition)
         {
 
         }
@@ -839,6 +824,58 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         // FOR SQL
         public void OnCommitStatement([NotNull] CommitStatement commit)
+        {
+
+        }
+        public void OnSelectStatement([NotNull] SelectStatement select)
+        {
+
+        }
+        public void OnRollbackStatement([NotNull] RollbackStatement rollback)
+        {
+
+        }
+        public void OnTruncateStatement([NotNull] TruncateStatement truncate)
+        {
+
+        }
+        public void OnSavepointStatement([NotNull] SavepointStatement truncate)
+        {
+
+        }
+        public void OnWhenEverStatement([NotNull] WhenEverStatement whenEver)
+        {
+
+        }
+        public void OnLockTableStatement([NotNull] LockTableStatement lockTable)
+        {
+
+        }
+        public void OnReleaseSavepointStatement([NotNull] ReleaseSavepointStatement releaseSavepoint)
+        {
+
+        }
+        public void OnConnectStatement([NotNull] ConnectStatement connect)
+        {
+
+        }
+        public void OnDropTableStatement([NotNull] DropTableStatement dropTable)
+        {
+
+        }
+        public void OnSetAssignmentStatement([NotNull] SetAssignmentStatement setAssignment)
+        {
+
+        }
+        public void OnGetDiagnosticsStatement([NotNull] GetDiagnosticsStatement getDiagnostics)
+        {
+
+        }
+        public void OnAlterSequenceStatement([NotNull] AlterSequenceStatement alterSequence)
+        {
+
+        }
+        public void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate)
         {
 
         }

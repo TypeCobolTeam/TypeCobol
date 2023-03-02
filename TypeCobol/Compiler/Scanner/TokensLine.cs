@@ -105,9 +105,18 @@ namespace TypeCobol.Compiler.Scanner
 
         private IList<Diagnostic> _ScannerDiagnostics;
 
+        public virtual void CollectDiagnostics(List<Diagnostic> diagnostics)
+        {
+            // For TokensLine all diagnostics are collected in ScannerDiagnostics
+            diagnostics.AddRange(_ScannerDiagnostics);
+        }
+
         /// <summary>
         /// Use this method to attach a diagnostic to this line 
         /// (never call directly Diagnostics.Add)
+        ///
+        /// WARNING: diagnostics added using this method cannot be copied onto another line !
+        /// Do not use on temporary/virtual lines otherwise you risk losing diagnostics.
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
@@ -161,11 +170,7 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        internal void ClearAllDiagnostics()
-        {
-            System.Diagnostics.Debug.Assert(SourceTokens.Count == 0, "The diagnostics are on the tokens");
-            _ScannerDiagnostics.Clear();
-        }
+        internal void ResetScannerDiagnostics() => _ScannerDiagnostics.Clear();
 
         // --- State for context-sensitive tokens ---
 

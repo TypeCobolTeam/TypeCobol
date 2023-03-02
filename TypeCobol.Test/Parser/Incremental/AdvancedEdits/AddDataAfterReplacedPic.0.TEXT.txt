@@ -1,0 +1,11 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPgm.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       replace ==:A:== by ==01==.
+       01 var1 pic X(:A:).
+       01 var2 pic X.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM MyPgm.
