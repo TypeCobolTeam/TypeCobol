@@ -99,7 +99,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":8},\"end\":{\"line\":30,\"character\":9}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {user defined word, CURRENCY, DATE}\"},{\"range\":{\"start\":{\"line\":28,\"character\":11},\"end\":{\"line\":28,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : A group item cannot be empty.\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":8},\"end\":{\"line\":30,\"character\":9}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '01' expecting {user defined word, CURRENCY, DATE}\"},{\"range\":{\"start\":{\"line\":28,\"character\":11},\"end\":{\"line\":28,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : A group item cannot be empty.\"}]}}"
     },
     {
       "category": 2,
@@ -143,7 +143,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
       "category": 2,
@@ -215,7 +215,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,
@@ -247,7 +247,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,

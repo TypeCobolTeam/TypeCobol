@@ -1,4 +1,3 @@
-using System;
 using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
@@ -6,10 +5,8 @@ namespace TypeCobol.Compiler.Parser
     using System.Collections.Generic;
     using TypeCobol.Compiler.AntlrUtils;
     using TypeCobol.Compiler.CodeElements;
-    using TypeCobol.Compiler.CodeElements.Expressions;
     using TypeCobol.Compiler.Parser.Generated;
     using TypeCobol.Compiler.Scanner;
-    using System.Linq;
 
 
     internal partial class CodeElementBuilder : CodeElementsBaseListener
@@ -108,7 +105,7 @@ namespace TypeCobol.Compiler.Parser
                 if (context.functionDataParameter() != null)
                 {
                     var data = CreateFunctionDataParameter(context.functionDataParameter());
-                    AddTokensConsumedAndDiagnosticsAttachedInContext(data.ConsumedTokens, data.Diagnostics ?? new List<Diagnostic>(), context);
+                    AddTokensConsumedAndDiagnosticsAttachedInContext(data, context);
                     parameters.Add(data);
                 }
             }
@@ -621,20 +618,19 @@ namespace TypeCobol.Compiler.Parser
                         new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
                             null, null, null))
                         {
-                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction =
-                                ambiguousSymbolReference.MainSymbolReference,
+                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference,
+                            Diagnostics = new List<Diagnostic>
+                                          {
+                                              new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Position(), "Error in detecting Procedure Call type")
+                                          }
                         };
-                    statement.Diagnostics.Add(new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Position(), "Error in detecting Procedure Call type"));
                     callSite = new CallSite();
                     callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction;
                 }
             }
 
-
-            if (callSite != null) {
-                if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
-                statement.CallSites.Add(callSite);
-            }
+            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+            statement.CallSites.Add(callSite);
 
             _languageLevelChecker.Check(statement, context);
 

@@ -100,3 +100,4 @@
              MOVE TAB-ITM OF MyGroup OF var1(ee6396edINX-T) TO
                TAB-ITM OF MyGroup OF var2(add97314INX-R).
        END PROGRAM TYPDEFQU.
+

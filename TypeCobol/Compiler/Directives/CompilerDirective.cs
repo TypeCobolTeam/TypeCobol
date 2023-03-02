@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
@@ -84,11 +82,6 @@ namespace TypeCobol.Compiler.Directives
         public IList<Diagnostic> ParsingDiagnostics { get; private set; }
 
         /// <summary>
-        /// List of errors found when processing this CompilerDirective during CodeElement step.
-        /// </summary>
-        public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
-
-        /// <summary>
         /// Consumed tokens of the COPY. This property is set by the PreprocessorStep
         /// after creating the new CompilerDirective instance.
         /// </summary>
@@ -98,12 +91,6 @@ namespace TypeCobol.Compiler.Directives
         {
             if (ParsingDiagnostics == null) ParsingDiagnostics = new List<Diagnostic>();
             ParsingDiagnostics.Add(diagnostic);
-        }
-
-        public void AddProcessingDiagnostic(Diagnostic diagnostic)
-        {
-            if (ProcessingDiagnostics == null) ProcessingDiagnostics = new List<Diagnostic>();
-            ProcessingDiagnostics.Add(diagnostic);
         }
 
         public override string ToString()
@@ -441,6 +428,16 @@ namespace TypeCobol.Compiler.Directives
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
 
 #if EUROINFO_RULES
+        /// <summary>
+        /// List of errors found when processing this CopyDirective during CodeElement step.
+        /// </summary>
+        public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
+
+        public void AddProcessingDiagnostic(Diagnostic diagnostic)
+        {
+            if (ProcessingDiagnostics == null) ProcessingDiagnostics = new List<Diagnostic>();
+            ProcessingDiagnostics.Add(diagnostic);
+        }
 
         /// <summary>
         /// If true, remove the first 01 level data item found in the COPY text 
@@ -452,10 +449,10 @@ namespace TypeCobol.Compiler.Directives
         /// If true, insert Suffix before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
-        public bool InsertSuffixChar { get; set; }
+        public bool InsertSuffixChar => Suffix != null;
 
         /// <summary>
-        /// SUffix which should be inserted before the first '-' in all user defined words found in the COPY text 
+        /// Suffix which should be inserted before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
         public string Suffix { get; set; }
@@ -849,6 +846,30 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public class TextNameVariation
         {
+            public static TextNameVariation FindOrAdd(List<TextNameVariation> variations, CopyDirective copyDirective)
+            {
+                return FindOrAdd(variations, copyDirective.TextName, () => new TextNameVariation(copyDirective.TextName));
+            }
+
+            public static TextNameVariation FindOrAdd(List<TextNameVariation> variations, TextNameVariation variation)
+            {
+                return FindOrAdd(variations, variation.TextNameWithSuffix, () => variation);
+            }
+
+            private static TextNameVariation FindOrAdd(List<TextNameVariation> variations, string textNameWithSuffix, Func<TextNameVariation> getNewValue)
+            {
+                // Find the existing text name variation (if any)
+                var variation = variations.Find(v => string.Equals(v.TextNameWithSuffix, textNameWithSuffix, StringComparison.OrdinalIgnoreCase));
+                if (variation == null)
+                {
+                    //If it does not exists, create the text name variation and add it
+                    variation = getNewValue();
+                    variations.Add(variation);
+                }
+
+                return variation;
+            }
+
             public TextNameVariation(string textNameWithSuffix)
             {
                 TextNameWithSuffix = textNameWithSuffix;
@@ -872,12 +893,12 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// Suffix appended to text name
             /// </summary>
-            public string Suffix { get { return HasSuffix ? TextNameWithSuffix.Substring(7, 1) : string.Empty; } }
+            public string Suffix { get { return HasSuffix ? TextNameWithSuffix.Substring(7, 1).ToUpper() : string.Empty; } }
 
             /// <summary>
-            /// Return the the three lettters from index 5 to 7 of the Copy name.
+            /// Return the the three letters from index 5 to 7 of the Copy name.
             /// </summary>
-            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4) + "-" : string.Empty; } }
+            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4).ToUpper() + "-" : string.Empty; } }
 
             public override string ToString()
             {

@@ -57,7 +57,7 @@ namespace TypeCobol.Test.Parser.FileFormat
                 throw new Exception("Error reading line 32 of the EBCDIC text source");
             }
 
-            TextChangeMap tce4 = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges.Last<TextChange>(), docFormat.ColumnsLayout);
+            TextChangeMap tce4 = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges[223], docFormat.ColumnsLayout);
             if (tce4.LineIndex != 223 || tce4.Type != TextChangeType.LineInserted ||
                tce4.NewLineMap.SequenceNumberText != "002340" || tce4.NewLineMap.IndicatorChar != '*' ||
                tce4.NewLineMap.SourceText != "    CALL 'ILBOABN0' USING LCP-ABND-CODE.                         " || tce4.NewLineMap.CommentText != "02740000")
@@ -202,7 +202,7 @@ namespace TypeCobol.Test.Parser.FileFormat
                 throw new Exception("Error reading line 8 of the ASCII Linux text source (reference format)");
             }
 
-            TextChangeMap tce4 = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges.Last<TextChange>(), docFormat.ColumnsLayout);
+            TextChangeMap tce4 = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges[13], docFormat.ColumnsLayout);
             if (tce4.LineIndex != 13 || tce4.Type != TextChangeType.LineInserted ||
                 tce4.NewLineMap.SequenceNumberText != "      " || tce4.NewLineMap.IndicatorChar != ' ' ||
                 tce4.NewLineMap.SourceText != "    STOP RUN." || tce4.NewLineMap.CommentText != null)

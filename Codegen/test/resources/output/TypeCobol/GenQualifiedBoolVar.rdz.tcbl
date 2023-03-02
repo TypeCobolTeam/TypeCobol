@@ -41,6 +41,7 @@
       *MOVE false TO local::overflw
            .
        END PROGRAM MyPgm.
+
       *
       *declare procedure check private
       *   output mydate  type bool

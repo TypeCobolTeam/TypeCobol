@@ -209,6 +209,7 @@ namespace TypeCobol.Compiler.Nodes {
     ///   DataRedefines                 ->          DataRedefinesEntry
     ///   DataCondition   88            ->      DataConditionEntry
     ///   DataRenames     66            ->      DataRenamesEntry
+    ///   FileDescriptionEntryNode      ->      FileDescriptionEntry
     ///     
     /// 
     /// Implementation note:

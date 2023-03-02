@@ -210,6 +210,7 @@
 
        END PROGRAM PGM2.
 
+
       *
       *declare procedure check private
       *   input mydate        TYPE Date.

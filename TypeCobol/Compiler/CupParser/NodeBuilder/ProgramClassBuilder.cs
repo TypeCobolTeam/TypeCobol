@@ -18,33 +18,77 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// </summary>
     public class ProgramClassBuilder : IProgramClassBuilder
     {
-        private static bool _SourceCodeDumped;
+        private static readonly HashSet<string> _SourceCodeDumpReasons = new HashSet<string>();
 
-        private void LogErrorIncludingFullSourceCode(string message)
+        internal void LogAnomalousLineIndex() => LogErrorIncludingFullSourceCode(nameof(LogAnomalousLineIndex), "Anomalous line index found !");
+
+        private void LogInvalidAst(string message) => LogErrorIncludingFullSourceCode(nameof(LogInvalidAst), message);
+
+        private void LogErrorIncludingFullSourceCode(string reason, string message)
         {
-            if (_SourceCodeDumped) return; //Dump only once to avoid huge logs
+            // Fail immediately in debug. There is no point in dumping source code and this allows to see the error.
+            System.Diagnostics.Debug.Fail(message);
 
-            var codeElements = new StringBuilder();
-            var sourceCode = new StringBuilder();
-            foreach (var codeElementsLine in _codeElementsLines)
+            if (!_SourceCodeDumpReasons.Add(reason)) return; // Dump only once for this reason to avoid huge logs
+
+            // Build a correlation id to group traces
+            string correlationId = DateTime.Now.ToString("s") + "@" + Environment.MachineName;
+
+            const int MAX_LINES_PER_LOG = 5000;
+            int traceId = 0;
+            var currentTrace = new StringBuilder();
+
+            // Dump file structure
+            IterateCodeElementsLines(DumpCodeElementTypes);
+
+            // Dump source code
+            IterateCodeElementsLines(codeElementsLine => currentTrace.AppendLine(codeElementsLine.Text));
+
+            // Dump last 5 incremental changes
+            int changeId = -4; //Number last 5 changes from -4 to 0
+            foreach (var textChangedEvent in _history.TextChangedEvents)
             {
-                if (!codeElementsLine.HasCodeElements) continue;
-
-                foreach (var codeElement in codeElementsLine.CodeElements)
+                currentTrace.AppendLine($"change {changeId}:");
+                foreach (var documentChange in textChangedEvent.DocumentChanges)
                 {
-                    codeElements.AppendLine($"{codeElement.Line}: {codeElement.Type}");
-                    sourceCode.AppendLine(codeElement.SafeGetSourceText());
+                    string text = documentChange.NewLine == null
+                        ? string.Empty
+                        : '"' + documentChange.NewLine.Text + '"';
+                    currentTrace.AppendLine($"{documentChange.Type}@{documentChange.LineIndex} {text}");
+                }
+
+                changeId++;
+            }
+            LoggingSystem.LogMessage(LogLevel.Error, message, new Dictionary<string, object>() { { $"{correlationId} - changes", currentTrace.ToString() } });
+
+            void IterateCodeElementsLines(Action<CodeElementsLine> appendLine)
+            {
+                for (int i = 0; i < _codeElementsLines.Count; i++)
+                {
+                    appendLine(_codeElementsLines[i]);
+
+                    if ((i + 1) % MAX_LINES_PER_LOG == 0 || i == _codeElementsLines.Count - 1)
+                    {
+                        var contextData = new Dictionary<string, object>()
+                                          {
+                                              { $"{correlationId} - part {traceId}", currentTrace.ToString() }
+                                          };
+                        LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+                        currentTrace.Clear();
+                        traceId++;
+                    }
                 }
             }
 
-            var contextData = new Dictionary<string, object>()
-                              {
-                                  { "codeElements", codeElements.ToString() },
-                                  { "sourceCode", sourceCode.ToString() }
-                              };
-            LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+            void DumpCodeElementTypes(CodeElementsLine codeElementsLine)
+            {
+                if (!codeElementsLine.HasCodeElements) return;
 
-            _SourceCodeDumped = true;
+                foreach (var codeElement in codeElementsLine.CodeElements)
+                {
+                    currentTrace.AppendLine($"{codeElement.Line}: {codeElement.Type}");
+                }
+            }
         }
 
         public SyntaxTree SyntaxTree { get; set; }
@@ -88,8 +132,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private readonly SymbolTable TableOfNamespaces;
 
         private readonly IReadOnlyList<CodeElementsLine> _codeElementsLines;
+        private readonly IncrementalChangesHistory _history;
 
-        public ProgramClassBuilder(IReadOnlyList<CodeElementsLine> codeElementsLines)
+        public ProgramClassBuilder(IReadOnlyList<CodeElementsLine> codeElementsLines, IncrementalChangesHistory history)
         {
             // Intrinsics and Namespaces always exist. Intrinsic table has no enclosing scope.
             TableOfIntrinsics = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
@@ -98,6 +143,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             programsStack = new Stack<Program>();
 
             _codeElementsLines = codeElementsLines;
+            _history = history;
         }
 
         public SymbolTable CustomSymbols
@@ -265,7 +311,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 {
                     // This is abnormal, re-synchronize builder with CUP parser
                     Exit();
-                    LogErrorIncludingFullSourceCode($"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.");
+                    LogInvalidAst($"Syntax tree fixed for nested pgm '{programIdentification.ProgramName?.Name}'.");
                 }
 
                 #endregion
@@ -370,7 +416,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartSpecialNamesParagraph(SpecialNamesParagraph paragraph)
         {
-            Enter(new SpecialNames(paragraph));
+            var specialNames = new SpecialNames(paragraph);
+            Enter(specialNames);
+            specialNames.SymbolTable.AddSpecialNames(paragraph);
             Dispatcher.StartSpecialNamesParagraph(paragraph);
         }
 
@@ -894,7 +942,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 // Invalid AST
                 Exit();
-                LogErrorIncludingFullSourceCode($"Invalid parent for paragraph '{header.Name}'.");
+                LogInvalidAst($"Invalid parent for paragraph '{header.Name}'.");
             }
 
             bool IsValidParagraphParent()
@@ -1468,22 +1516,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartJsonGenerateStatementConditional(stmt);
         }
 
-        public virtual void EndJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
-        {
-            AttachEndIfExists(end);
-            Exit();
-            Dispatcher.EndJsonGenerateStatementConditional(end);
-        }
-
         public virtual void StartJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonParseStatement stmt)
         {
             Enter(new JsonParse(stmt), stmt);
+            Dispatcher.StartJsonParseStatementConditional(stmt);
         }
 
-        public virtual void EndJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
+        public virtual void EndJsonStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndJsonStatementConditional(end);
         }
 
         public virtual void StartMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatement stmt)
@@ -1647,24 +1690,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartXmlGenerateStatementConditional(stmt);
         }
 
-        public virtual void EndXmlGenerateStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
-        {
-            AttachEndIfExists(end);
-            Exit();
-            Dispatcher.EndXmlGenerateStatementConditional(end);
-        }
-
         public virtual void StartXmlParseStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.XmlParseStatement stmt)
         {
             Enter(new XmlParse(stmt), stmt);
             Dispatcher.StartXmlParseStatementConditional(stmt);
         }
 
-        public virtual void EndXmlParseStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
+        public virtual void EndXmlStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
-            Dispatcher.EndXmlParseStatementConditional(end);
+            Dispatcher.EndXmlStatementConditional(end);
         }
 
         // FOR SQL

@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
         // Current COPY REPLACING directive in effect for a file import
         // (optional : null if the iterator was NOT created in the context of an imported document)
-        public CopyDirective CopyReplacingDirective { get; private set; }
+        public CopyDirective CopyReplacingDirective { get; }
 
         // Iterator position
         private struct ReplaceTokensLinesIteratorPosition
@@ -323,10 +323,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
                 {
                     string originalText = nextToken.Text;
-                    if (originalText.IndexOf(CopyReplacingDirective.PreSuffix, StringComparison.OrdinalIgnoreCase) > -1)
+                    if (originalText.IndexOf(CopyReplacingDirective.PreSuffix, StringComparison.Ordinal) > -1)
                     {
                         string replacement = CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix);
-                        string replacedText = Regex.Replace(originalText, CopyReplacingDirective.PreSuffix, replacement, RegexOptions.IgnoreCase);
+                        string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix, replacement);
                         int additionalSpaceRequired = replacedText.Length - originalText.Length;
                         if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
                         {
@@ -688,7 +688,14 @@ namespace TypeCobol.Compiler.Preprocessor
             sourceIterator.SeekToPosition(currentPosition.SourceIteratorPosition);
         }
 
-         /// <summary>
+        public void SeekToLineInMainDocument(int line)
+        {
+            // TODO actual REPLACE directive/operations in effect are lost here, this is equivalent to a reset of this ReplaceIterator
+            currentPosition = new ReplaceTokensLinesIteratorPosition();
+            sourceIterator.SeekToLineInMainDocument(line);
+        }
+
+        /// <summary>
         /// Saves the current position of the iterator, to be able to restore it later
         /// </summary>
         public void SaveCurrentPositionSnapshot()

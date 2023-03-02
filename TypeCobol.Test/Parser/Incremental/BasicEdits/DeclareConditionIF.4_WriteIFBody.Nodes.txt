@@ -1,0 +1,22 @@
+Line 10[12,21] <37, Warning, General> - Warning: "end-if" is missing
+--- Nodes ---
+?
+  Simple
+    data-division
+      working-storage
+        var1
+          cond1
+          cond2
+        var2
+    procedure-division
+      sentence-0
+        [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
+
+          ?
+            [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+
+            [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

@@ -206,6 +206,7 @@
            .
 
        END PROGRAM ProcedureCall.
+
       *
       *DECLARE PROCEDURE GetPtrFn
       *    INPUT  ptrFn function-pointer

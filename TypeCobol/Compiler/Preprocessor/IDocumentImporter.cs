@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
-using TypeCobol.Compiler.Directives;
+﻿using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Preprocessor
@@ -19,10 +17,9 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <param name="textName">Name of the file to import.</param>
         /// <param name="scanState">Non-null initial MultilineScanState from the enclosing document.
         /// Allows to reuse information about special names paragraph or enclosing context (such as: is the copy inside a data division ?)</param>
-        /// <param name="copyTextNameVariations">Text names variations from REMARKS directive.</param>
         /// <param name="perfStats">out variable containing performance info.</param>
         /// <returns>Instance of CompilationDocument for the imported file.</returns>
-        CompilationDocument Import(string libraryName, [NotNull] string textName, [NotNull] MultilineScanState scanState, [CanBeNull] List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats);
+        CompilationDocument Import(string libraryName, [NotNull] string textName, [NotNull] MultilineScanState scanState, out PerfStatsForImportedDocument perfStats);
     }
 
     /// <summary>
