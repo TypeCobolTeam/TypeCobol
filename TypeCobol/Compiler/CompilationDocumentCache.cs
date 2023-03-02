@@ -55,13 +55,13 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <param name="textNames">List of copies to remove, each identified by its textName.</param>
         /// <param name="evicted">Non-null set of evicted copies, to be populated by the method.</param>
-        public void RecursiveEvict([NotNull] List<string> textNames, [NotNull] HashSet<string> evicted)
+        public void Evict([NotNull] List<string> textNames, [NotNull] HashSet<string> evicted)
         {
             /*
              * TODO This method does not support qualified names for copies !
              */
 
-            // Create a map of dependent copies: each entry gives the list of copies that include it
+            // Create a map of dependent copies: each entry gives the list of copies that include it (directly and indirectly)
             var importedBy = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
             foreach (var document in _documents)
             {
@@ -82,32 +82,32 @@ namespace TypeCobol.Compiler
             // Evict from this cache
             foreach (var textName in textNames)
             {
-                Evict(textName);
-            }
-
-            void Evict(string textName)
-            {
                 if (!evicted.Add(textName))
                 {
                     // Already done
-                    return;
+                    continue;
                 }
 
-                // Remove all variants of this document
-                string fullName = GetFullName(null, textName);
-                var keysToRemove = _documents.Keys.Where(key => key.StartsWith(fullName, StringComparison.OrdinalIgnoreCase)).ToArray();
-                foreach (var keyToRemove in keysToRemove)
-                {
-                    _documents.Remove(keyToRemove);
-                }
+                Evict(textName);
 
-                // Recursive remove
+                // Evict dependent copies if any (no need to recurse as the list of dependent copies is already flattened)
                 if (importedBy.TryGetValue(textName, out var dependentCopies))
                 {
                     foreach (var dependentCopy in dependentCopies)
                     {
                         Evict(dependentCopy);
                     }
+                }
+            }
+
+            void Evict(string textName)
+            {
+                // Remove all variants of this document
+                string fullName = GetFullName(null, textName);
+                var keysToRemove = _documents.Keys.Where(key => key.StartsWith(fullName, StringComparison.OrdinalIgnoreCase)).ToArray();
+                foreach (var keyToRemove in keysToRemove)
+                {
+                    _documents.Remove(keyToRemove);
                 }
             }
         }

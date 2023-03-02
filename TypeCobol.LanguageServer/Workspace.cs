@@ -794,7 +794,7 @@ namespace TypeCobol.LanguageServer
             var evicted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var eviction in evictions)
             {
-                eviction.Key.RecursiveEvict(eviction.Value, evicted);
+                eviction.Key.Evict(eviction.Value, evicted);
             }
 
             // Find programs depending on the obsolete copies
