@@ -1,0 +1,14 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       REPLACE ==/CST-MAX-DEV/== BY ==100==.
+       01  MAX-DEV PIC 9(4) COMP VALUE /CST-MAX-DEV/.
+       01  TAB-DEV.
+           05  POS-DEV OCCURS 1 TO /CST-MAX-DEV/ TIMES
+                       DEPENDING ON MAX-DEV.
+               10  POS-DEV-C PIC X.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.
