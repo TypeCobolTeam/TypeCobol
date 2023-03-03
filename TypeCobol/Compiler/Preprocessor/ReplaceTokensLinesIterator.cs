@@ -602,6 +602,13 @@ namespace TypeCobol.Compiler.Preprocessor
                     SingleTokenReplaceOperation singleTokenReplaceOperation = (SingleTokenReplaceOperation)replaceOperation;
                     if (singleTokenReplaceOperation.ReplacementToken != null)
                     {
+                        // Special case for PictureCharacterString, handle as PartialWord
+                        if (originalToken.TokenType == TokenType.PictureCharacterString)
+                        {
+                            var generatedTokenForSingleToken = RegexReplace(singleTokenReplaceOperation.ComparisonToken, singleTokenReplaceOperation.ReplacementToken);
+                            return new ReplacedToken(generatedTokenForSingleToken, originalToken);
+                        }
+
                         var replacedTokens = RescanReplacedTokenTypes<ReplacedToken>(t => new ReplacedToken(t, originalToken), originalToken, singleTokenReplaceOperation.ReplacementToken);
                         return replacedTokens[0];
                     }
@@ -612,13 +619,8 @@ namespace TypeCobol.Compiler.Preprocessor
                 // One pure partial word => one replacement token
                 case ReplaceOperationType.PartialWord:
                     PartialWordReplaceOperation partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
-                    string normalizedTokenText = originalToken.NormalizedText;
-                    string normalizedPartToReplace = partialWordReplaceOperation.ComparisonToken.NormalizedText;
-                    //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
-                    var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
-                    string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
-                    var generatedToken = GenerateReplacementToken(originalToken, replacedTokenText, CompilerOptions);
-                    return new ReplacedPartialCobolWord(generatedToken, partialWordReplaceOperation.PartialReplacementToken, originalToken);
+                    var generatedTokenForPartialCobolWord = RegexReplace(partialWordReplaceOperation.ComparisonToken, partialWordReplaceOperation.PartialReplacementToken);
+                    return new ReplacedPartialCobolWord(generatedTokenForPartialCobolWord, partialWordReplaceOperation.PartialReplacementToken, originalToken);
 
                 // One comparison token => more than one replacement tokens
                 case ReplaceOperationType.SingleToMultipleTokens:
@@ -653,6 +655,17 @@ namespace TypeCobol.Compiler.Preprocessor
                             return null;
                         }
                     }
+            }
+
+            // Performs a Regex Replace on original token using one comparison token and one replacement token
+            Token RegexReplace(Token comparisonToken, Token replacementToken)
+            {
+                string normalizedTokenText = originalToken.NormalizedText;
+                string normalizedPartToReplace = comparisonToken.NormalizedText;
+                //#258 - ReplacementToken can be null. In this case, we consider that it's an empty replacement
+                var replacementPart = replacementToken != null ? replacementToken.Text : string.Empty;
+                string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
+                return GenerateReplacementToken(originalToken, replacedTokenText, CompilerOptions);
             }
         }
 
