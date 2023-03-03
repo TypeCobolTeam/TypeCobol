@@ -256,6 +256,7 @@ namespace TypeCobol.Compiler.Preprocessor
             ReplaceDirective = null;
             tokensWithCompilerDirectives = null;
             PreprocessorDiagnostics = null;
+            NeedsCompilerDirectiveParsing = true;
         }
 
         /// <summary>
