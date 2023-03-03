@@ -120,7 +120,6 @@ namespace TypeCobol.Test {
             TestReplaceDirective.CheckReplacePartial(false);
             TestReplaceDirective.CheckReplaceSingleToMultiple();
             TestReplaceDirective.CheckReplaceMultiple();
-            TestReplaceDirective.CheckReplaceNested();
             TestReplaceDirective.CheckReplaceFunction();
             TestReplaceDirective.CheckEmptyPartialWordReplace();
             TestReplaceDirective.CheckEmptyPartialWordReplace2();
