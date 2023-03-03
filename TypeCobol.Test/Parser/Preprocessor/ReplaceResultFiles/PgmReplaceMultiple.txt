@@ -19,3 +19,83 @@
 [14,24:TOTO2]<UserDefinedWord>
 [14,24:TOTO3]<UserDefinedWord>
 [25,25+:.]<PeriodSeparator>
+-- Line 14 --
+[12,14:SUBTRACT]<SUBTRACT>
+[16,16:1]<IntegerLiteral>{1}
+[18,21:FROM]<FROM>
+[23,26:var1]<UserDefinedWord>
+[27,27+:.]<PeriodSeparator>
+-- Line 20 --
+[12,25:DISPLAY]<DISPLAY>
+[27,30:var1]<UserDefinedWord>
+[31,31+:.]<PeriodSeparator>
+-- Line 26 --
+[12,14:MOVE]<MOVE>
+[12,14:1]<IntegerLiteral>{1}
+[12,14:TO]<TO>
+[16,19:var1]<UserDefinedWord>
+[20,20+:.]<PeriodSeparator>
+-- Line 32 --
+[12,22:DISPLAY]<DISPLAY>
+[24,27:var1]<UserDefinedWord>
+[28,28+:.]<PeriodSeparator>
+-- Line 38 --
+[12,14::partial-word:]<PartialCobolWord>
+[16,19:var1]<UserDefinedWord>
+[20,20+:.]<PeriodSeparator>
+-- Line 44 --
+[12,26::partial-word2:]<PartialCobolWord>
+[28,31:var1]<UserDefinedWord>
+[32,32+:.]<PeriodSeparator>
+-- Line 50 --
+[12,14::partial-word:]<PartialCobolWord>
+[12,14:1]<IntegerLiteral>{1}
+[12,14:TO]<TO>
+[16,19:var1]<UserDefinedWord>
+[20,20+:.]<PeriodSeparator>
+-- Line 56 --
+[12,22::partial-word:]<PartialCobolWord>
+[24,27:var1]<UserDefinedWord>
+[28,28+:.]<PeriodSeparator>
+-- Line 62 --
+[12,14:DISPLAY]<DISPLAY>
+[16,19:var1]<UserDefinedWord>
+[20,20+:.]<PeriodSeparator>
+-- Line 68 --
+[12,25:DISPLAY]<DISPLAY>
+[27,30:var1]<UserDefinedWord>
+[31,31+:.]<PeriodSeparator>
+-- Line 74 --
+[12,14:MOVE]<MOVE>
+[12,14:1]<IntegerLiteral>{1}
+[12,14:TO]<TO>
+[16,19:var1]<UserDefinedWord>
+[20,20+:.]<PeriodSeparator>
+-- Line 80 --
+[12,22:DISPLAY]<DISPLAY>
+[24,27:var1]<UserDefinedWord>
+[28,28+:.]<PeriodSeparator>
+-- Line 86 --
+[12,19:MOVE]<MOVE>
+[21,21:1]<IntegerLiteral>{1}
+[23,24:TO]<TO>
+[26,29:var1]<UserDefinedWord>
+[30,30+:.]<PeriodSeparator>
+-- Line 92 --
+[12,25:SUBTRACT]<SUBTRACT>
+[27,27:1]<IntegerLiteral>{1}
+[29,32:FROM]<FROM>
+[34,37:var1]<UserDefinedWord>
+[38,38+:.]<PeriodSeparator>
+-- Line 98 --
+[12,14:MOVE]<MOVE>
+[12,14:1]<IntegerLiteral>{1}
+[12,14:TO]<TO>
+[16,19:var1]<UserDefinedWord>
+[20,20+:.]<PeriodSeparator>
+-- Line 104 --
+[12,21:MOVE]<MOVE>
+[12,21:9]<IntegerLiteral>{9}
+[23,24:TO]<TO>
+[26,29:var1]<UserDefinedWord>
+[30,30+:.]<PeriodSeparator>
