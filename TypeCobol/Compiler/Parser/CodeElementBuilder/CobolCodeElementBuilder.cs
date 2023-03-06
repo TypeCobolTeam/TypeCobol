@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Parser
 		private readonly SqlCodeElementBuilder _sqlCodeElementBuilder;
 		private readonly UnsupportedLanguageLevelFeaturesChecker _languageLevelChecker;
 
-		public CodeElementBuilder(TypeCobolOptions compilerOptions)
+		public CodeElementBuilder(TypeCobolOptions compilerOptions, bool isDebuggingModeEnabled)
 		{
 			var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
 			_languageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
@@ -35,7 +35,8 @@ namespace TypeCobol.Compiler.Parser
             _cobolExpressionsBuilder = new CobolExpressionsBuilder(_cobolWordsBuilder, _languageLevelChecker);
 			_cobolStatementsBuilder = new CobolStatementsBuilder(_cobolWordsBuilder, _cobolExpressionsBuilder, _languageLevelChecker);
 			_sqlCodeElementBuilder = new SqlCodeElementBuilder();
-		}
+            IsDebuggingModeEnabled = isDebuggingModeEnabled;
+        }
 
         /// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
         public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
