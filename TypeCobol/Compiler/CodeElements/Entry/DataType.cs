@@ -201,6 +201,15 @@ namespace TypeCobol.Compiler.CodeElements
                     false,
                     0,
                     3);
+                var tokenLine = TokensLine.CreateVirtualLineForInsertedToken(dataTypeDescriptionEntry.Line, "01 CURRENCY TYPEDEF STRICT PUBLIC PIC X(03).", Text.ColumnsLayout.FreeTextFormat);
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.LevelNumber, 0, 1, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.UserDefinedWord, 3, 10, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.TYPEDEF, 12, 18, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.STRICT, 20, 25, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PUBLIC, 27, 32, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PIC, 34, 36, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PictureCharacterString, 38, 42, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
                 typeDefinition.SemanticData = Compiler.Symbols.Builtins.Currency;
             }
