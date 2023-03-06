@@ -8,6 +8,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -424,7 +425,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
                     // Previous line is a continuation : reset this line and continue navigating backwards
                     // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
-                    if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
+                    if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine || previousLine.PreprocessorDiagnostics != null)
                     {
                         bool previousLineHasDirectiveTokenContinuationFromPreviousLine = previousLine.HasDirectiveTokenContinuationFromPreviousLine;
                         lastLineIndexReset = previousLineIndex;
@@ -435,8 +436,8 @@ namespace TypeCobol.Compiler.Preprocessor
                             break;
                         }
                     }
-                    // Previous line not involved in a multiline compiler directive : stop searching
-                    else
+                    // Previous line not involved in a multiline compiler directive : stop searching.
+                    else if (previousLine.Type != CobolTextLineType.Comment)
                     {
                         break;
                     }
@@ -478,7 +479,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
                     // Next line not involved in a multiline compiler directive : stop searching
-                    else
+                    else if (nextLine.Type != CobolTextLineType.Comment)
                     {
                         break;
                     }
