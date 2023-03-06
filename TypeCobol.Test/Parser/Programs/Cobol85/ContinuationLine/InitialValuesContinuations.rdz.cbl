@@ -22,6 +22,25 @@
            display var3
            display var4
            display var5
+      *
+      *
+      *
+      *
+      *
+      *
+      * These comment lines allow the AddEmptyLineInTheMiddleThenRemove
+      * test to pass on this file.
+      *
+      * Initially, the added blank line would trigger a reparse
+      * of the 'var4' continued data definition which is not currently
+      * supported.
+      *
+      *
+      *
+      *
+      *
+      *
+      *
            goback
            .
        end program TCOMFL01.
