@@ -129,7 +129,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
 
                 // Scan
-                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString());
+                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString(), ColumnsLayout.FreeTextFormat);
                 Scanner.Scanner.ScanTokensLine(virtualLine, initialScanState, _parentIterator.CompilerOptions, new List<RemarksDirective.TextNameVariation>());
 
                 // Update state variables
