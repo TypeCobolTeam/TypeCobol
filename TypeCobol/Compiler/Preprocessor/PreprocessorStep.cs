@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(tokensChange.Type, tokensChange.LineIndex, (IProcessedTokensLine)tokensChange.NewLine));
                     if (tokensChange.LineIndex < minLineIndex || tokensChange.LineIndex > maxLineIndex)
                     {
-                        ((ProcessedTokensLine)tokensChange.NewLine)?.ResetPreprocessorDiagnostics();
+                        ((ProcessedTokensLine)tokensChange.NewLine)?.ResetPreprocessorResults();
                         CheckIfAdjacentLinesNeedRefresh(tokensChange.LineIndex, documentLines, prepareDocumentLineForUpdate, processedTokensLinesChanges, ref minLineIndex, ref maxLineIndex);
                     }
                 }
@@ -426,10 +426,11 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
                     if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
                     {
+                        bool previousLineHasDirectiveTokenContinuationFromPreviousLine = previousLine.HasDirectiveTokenContinuationFromPreviousLine;
                         lastLineIndexReset = previousLineIndex;
                         previousLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.Preprocessor);
                         processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
-                        if (!previousLine.HasDirectiveTokenContinuationFromPreviousLine)
+                        if (!previousLineHasDirectiveTokenContinuationFromPreviousLine)
                         {
                             break;
                         }
@@ -467,10 +468,11 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Next line is a continuation but is not continued : reset this line and stop navigating forwards
                     if (nextLine.HasDirectiveTokenContinuationFromPreviousLine)
                     {
+                        bool nextLineHasDirectiveTokenContinuedOnNextLine = nextLine.HasDirectiveTokenContinuedOnNextLine;
                         lastLineIndexReset = nextLineIndex;
                         nextLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.Preprocessor);
                         processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                        if (!nextLine.HasDirectiveTokenContinuedOnNextLine)
+                        if (!nextLineHasDirectiveTokenContinuedOnNextLine)
                         {
                             break;
                         }

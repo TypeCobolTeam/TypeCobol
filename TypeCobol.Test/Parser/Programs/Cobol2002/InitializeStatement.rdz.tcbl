@@ -12,6 +12,12 @@
        INITIALIZE var1 ALL VALUE
        INITIALIZE var1 ALPHANUMERIC TO VALUE
        INITIALIZE var1 DEFAULT
+      *Required for AddEmptyLineInTheMiddleThenRemove test:
+      *Adding an empty line at the original position would force
+      *parser to reparse all KO statements below and this alter
+      *residual diagnostics. By adding comment lines and a valid
+      *statement, we ensure the reparse section ends earlier.
+       DISPLAY 'No one will ever understand why this statement is here'
        INITIALIZE var1 WITH FILLER THEN TO DEFAULT
 
       *KO duplicate keyword FILLER

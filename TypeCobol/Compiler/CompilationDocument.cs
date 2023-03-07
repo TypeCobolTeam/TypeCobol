@@ -220,9 +220,9 @@ namespace TypeCobol.Compiler
             // If the compilation step was not yet applied to this line, we don't need a new version of the line
             if (originalLine.CanStillBeUpdatedBy(compilationStep))
             {
-                if (compilationStep <= CompilationStep.Preprocessor)
+                if (compilationStep == CompilationStep.Preprocessor)
                 {
-                    originalLine.NeedsCompilerDirectiveParsing = true;
+                    originalLine.ResetPreprocessorResults();
                 }
                 return originalLine;
             }

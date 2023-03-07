@@ -1,0 +1,73 @@
+Line 5[38,46] <37, Warning, General> - Warning: Debugging mode is active
+Range (14, 12) -> (15, 20) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (22, 12) -> (24, 19) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (27, 12) -> (29, 19) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (33, 12) -> (36, 19) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (39, 12) -> (41, 18) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (44, 12) -> (47, 17) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (54, 12) -> (55, 25) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Range (59, 12) -> (60, 20) <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+--- Nodes ---
+?
+  Pgm
+    environment-division
+      configuration
+        source-computer
+    data-division
+      working-storage
+        xxxx
+        yyyy
+        x
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [25,28:yyyy]<UserDefinedWord>
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [17,20:yyyy]<UserDefinedWord>
+- variables = 'name = ' yyyy
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [27,30:yyyy]<UserDefinedWord>
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,26:"I'm A"]<AlphanumericLiteral>(",Y,Y){I'm A}
+- variables = "I'm A"
+
+        end
+      sentence-1
+        [[DisplayStatement]] [29,35:DISPLAY]<DISPLAY> --> [37,43:"I'm B"]<AlphanumericLiteral>(",Y,Y){I'm B}
+- variables = "I'm B"
+
+        end
+      sentence-2
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [16,19+:'_1']<AlphanumericLiteral>(',Y,Y){_1}
+- variables = 'name = ' yyyy '_1'
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [16,19+:'_2']<AlphanumericLiteral>(',Y,Y){_2}
+- variables = 'name = ' yyyy '_2'
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [16,19+:'_3']<AlphanumericLiteral>(',Y,Y){_3}
+- variables = 'name = ' yyyy '_3'
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [15,18:yyyy]<UserDefinedWord>
+- variables = 'name = ' yyyy
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [14,17+:'_4']<AlphanumericLiteral>(',Y,Y){_4}
+- variables = 'name = ' yyyy '_4'
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [30,33:yyyy]<UserDefinedWord>
+- variables = 'name = ' yyyy
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [27,30:yyyy]<UserDefinedWord>
+
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [22,25:yyyy]<UserDefinedWord>
+- variables = 'name = ' yyyy
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [25,28:yyyy]<UserDefinedWord>
+
+        end
+      sentence-3
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [17,20:yyyy]<UserDefinedWord>
+- variables = 'name = ' yyyy
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
