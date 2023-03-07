@@ -1,0 +1,44 @@
+--- Program ---
+TCOMFL06 (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  MAX-DEV (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TCOMFL06
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Usage: Comp
+    Picture: 9(4)
+  Level: 1
+  IsFiller: False
+  TAB-DEV (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TCOMFL06
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      POS-DEV (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TCOMFL06::TAB-DEV
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 100
+        ElementType:
+          (.NET Type=GroupType, Tag=Group)
+          Fields:
+            POS-DEV-C (.NET Type=VariableSymbol, Kind=Variable)
+            Flags: [WORKING_STORAGE]
+            Owner: TCOMFL06::TAB-DEV::POS-DEV
+            Type:
+              (.NET Type=PictureType, Tag=Picture)
+              Picture: X(1)
+            Level: 10
+            IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

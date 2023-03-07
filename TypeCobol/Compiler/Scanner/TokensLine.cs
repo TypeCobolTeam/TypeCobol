@@ -176,7 +176,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Internal state that was used to start scanning this line
         /// (we need to remember this to avoid a full rescan when previous lines are update in a compatible way)
         /// </summary>
-        internal MultilineScanState InitialScanState { get; private set; }
+        public MultilineScanState InitialScanState { get; private set; }
 
         /// <summary>
         /// The preprocessor needs to know the exact ScanState just before each COPY token is encountered
