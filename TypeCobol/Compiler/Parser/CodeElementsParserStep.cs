@@ -556,10 +556,16 @@ namespace TypeCobol.Compiler.Parser
                     }
                     else
                     {
-                        foundStopCodeElement = true;
                         currentParseSection.StartLineIndex = previousLineIndex;
                         currentParseSection.StartToken = previousCodeElementFirstToken;
-                        break;
+
+                        // Some ANTLR diagnostics are created on the next token after the actual error
+                        // If the previous line has such diags, we must continue and try again
+                        if (previousLine.ParserDiagnostics == null)
+                        {
+                            foundStopCodeElement = true;
+                            break;
+                        }
                     }
                 }
 
@@ -591,6 +597,16 @@ namespace TypeCobol.Compiler.Parser
                     nextLineIndex++;
                     CodeElementsLine nextLine = enumerator.Current;
                     System.Diagnostics.Debug.Assert(nextLine != null);
+
+                    // We have found a stop point but next line may have ANTLR diags related to current line...
+                    if (stopOnNextCodeElement && nextLine.ParserDiagnostics == null)
+                    {
+                        // Ok
+                        foundStopCodeElement = true;
+                        break;
+                    }
+
+                    stopOnNextCodeElement = false;
 
                     // Skip Comments and Blanks
                     if (nextLine.Type == CobolTextLineType.Blank || nextLine.Type == CobolTextLineType.Comment || nextLine.Type == CobolTextLineType.MultiFormalizedComment)
@@ -633,22 +649,12 @@ namespace TypeCobol.Compiler.Parser
                         // => the other CodeElement will be deleted by prepareDocumentLineForUpdate and not parsed again
                         nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
                         codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                        stopOnNextCodeElement = false;
                     }
-
-                    // Stop iterating forwards as soon as the start of a previously parsed CodeElement is found                   
-                    if (nextLineHasCodeElements)
+                    else
                     {
-                        // Take one more CodeElement to refresh diagnostics related to one CE but located after it
-                        if (stopOnNextCodeElement)
-                        {
-                            currentParseSection.StopLineIndex = nextLineIndex;
-                            currentParseSection.StopToken = nextLineCodeElementFirstToken;
-                            foundStopCodeElement = true;
-                            break;
-                        }
-
-                        // Ok next line will be the last one.
+                        // Found stop point
+                        currentParseSection.StopLineIndex = nextLineIndex;
+                        currentParseSection.StopToken = nextLineCodeElementFirstToken;
                         stopOnNextCodeElement = true;
                     }
                 }
