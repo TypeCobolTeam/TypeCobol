@@ -416,9 +416,16 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Get the previous line until a non continued line is encountered
                     previousLineIndex--;
                     ProcessedTokensLine previousLine = reversedEnumerator.Current;
+                    System.Diagnostics.Debug.Assert(previousLine != null);
+
+                    // Skip Comments and Blanks
+                    if (previousLine.Type == CobolTextLineType.Blank || previousLine.Type == CobolTextLineType.Comment || previousLine.Type == CobolTextLineType.MultiFormalizedComment)
+                    {
+                        continue;
+                    }
 
                     // A reset line was already treated by the previous call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (previousLine == null || previousLine.NeedsCompilerDirectiveParsing)
+                    if (previousLine.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
@@ -437,7 +444,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
                     // Previous line not involved in a multiline compiler directive : stop searching.
-                    else if (previousLine.Type != CobolTextLineType.Comment)
+                    else
                     {
                         break;
                     }
@@ -458,9 +465,16 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Get the next line until non continuation line is encountered
                     nextLineIndex++;
                     ProcessedTokensLine nextLine = enumerator.Current;
+                    System.Diagnostics.Debug.Assert(nextLine != null);
+
+                    // Skip Comments and Blanks
+                    if (nextLine.Type == CobolTextLineType.Blank || nextLine.Type == CobolTextLineType.Comment || nextLine.Type == CobolTextLineType.MultiFormalizedComment)
+                    {
+                        continue;
+                    }
 
                     // A reset line will be treated by the next call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (nextLine == null || nextLine.NeedsCompilerDirectiveParsing)
+                    if (nextLine.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
@@ -479,7 +493,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
                     // Next line not involved in a multiline compiler directive : stop searching
-                    else if (nextLine.Type != CobolTextLineType.Comment)
+                    else
                     {
                         break;
                     }
