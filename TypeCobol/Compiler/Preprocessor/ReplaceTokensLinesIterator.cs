@@ -129,7 +129,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
 
                 // Scan
-                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString());
+                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString(), ColumnsLayout.FreeTextFormat);
                 Scanner.Scanner.ScanTokensLine(virtualLine, initialScanState, _parentIterator.CompilerOptions, new List<RemarksDirective.TextNameVariation>());
 
                 // Update state variables
@@ -429,7 +429,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         int additionalSpaceRequired = replacedText.Length - originalText.Length;
                         if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
                         {
-                            TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
+                            TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText, nextToken.TokensLine.ColumnsLayout);
                             Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
                                 virtualTokensLine);
 
@@ -689,7 +689,7 @@ namespace TypeCobol.Compiler.Preprocessor
             MultilineScanState scanState = originalToken.ScanStateSnapshot;
             System.Diagnostics.Debug.Assert(scanState != null);
 
-            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, out _);
+            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, originalToken.TokensLine.ColumnsLayout, out _);
             // TODO : find a way to report the error above ...
 
             if (originalToken.PreviousTokenType != null)
@@ -724,7 +724,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 int startTokIdx = 0;
                 int endTokIdx = 0;                
                 List<T> newReplacedTokens = new List<T>(replacementTokens.Length);
-                TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
+                TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText, firstOriginalToken.TokensLine.ColumnsLayout);
                 var initialScanState = _scanStateTracker.GetCurrentScanState() ?? firstOriginalToken.TokensLine.InitialScanState;
                 tempTokensLine.InitializeScanState(initialScanState);
                 var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, CompilerOptions, true);

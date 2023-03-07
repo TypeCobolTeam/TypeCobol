@@ -177,8 +177,14 @@ namespace TypeCobol.Compiler.Parser
             cobolParser.AddErrorListener(errorListener);
 
             // Prepare to analyze the parse tree
+            // Restore debugging mode flag using StartToken of the reparse section
+            bool isDebuggingModeEnabled = false;
+            if (largestRefreshParseSection?.StartToken != null)
+            {
+                isDebuggingModeEnabled = largestRefreshParseSection.StartToken.ScanStateSnapshot.WithDebuggingMode;
+            }
             ParseTreeWalker walker = new ParseTreeWalker();
-            CodeElementBuilder codeElementBuilder = new CodeElementBuilder(compilerOptions);
+            CodeElementBuilder codeElementBuilder = new CodeElementBuilder(compilerOptions, isDebuggingModeEnabled);
 
             // --- INCREMENTAL PARSING ---
 

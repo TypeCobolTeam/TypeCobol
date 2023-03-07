@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -419,7 +420,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <returns>New Token instance with EndOfFile TokenType</returns>
         public static Token EndOfFile()
         {
-            return new Token(TokenType.EndOfFile, 0, -1, Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, string.Empty));
+            return new Token(TokenType.EndOfFile, 0, -1, Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, string.Empty, ColumnsLayout.FreeTextFormat));
         }
 
         // --- Token comparison for REPLACE directive ---
