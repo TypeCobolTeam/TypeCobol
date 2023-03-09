@@ -48,6 +48,97 @@ namespace TypeCobol.Compiler.Preprocessor
             public Token CurrentToken;
         }
 
+        /// <summary>
+        /// Save and update the relevant ScanState used when rescanning tokens during a REPLACE operation.
+        /// </summary>
+        private class ScanStateTracker
+        {
+            private readonly ReplaceTokensLinesIterator _parentIterator;
+            private readonly List<Token> _returnedTokensForCurrentLine;
+            private MultilineScanState _scanState;
+            private ITokensLine _currentLine;
+            private int _scanStateIndex;
+
+            public ScanStateTracker(ReplaceTokensLinesIterator parentIterator)
+            {
+                _parentIterator = parentIterator;
+                _returnedTokensForCurrentLine = new List<Token>();
+                _scanState = null;
+                _currentLine = null;
+                _scanStateIndex = -1;
+            }
+
+            public void AccumulateToken(Token returnedToken)
+            {
+                //Detect new line
+                if (_currentLine != returnedToken.TokensLine)
+                {
+                    //Reset if it's not a continuation line
+                    if (_returnedTokensForCurrentLine.Count > 0 && !returnedToken.IsContinuationToken)
+                    {
+                        Reset();
+                    }
+
+                    _currentLine = returnedToken.TokensLine;
+                }
+
+                _returnedTokensForCurrentLine.Add(returnedToken);
+            }
+
+            private void Reset()
+            {
+                _returnedTokensForCurrentLine.Clear();
+                _scanState = null;
+                _scanStateIndex = -1;
+            }
+
+            public MultilineScanState GetCurrentScanState()
+            {
+                if (_currentLine == null)
+                {
+                    // No token accumulated yet.
+                    return null;
+                }
+
+                int tokenIndex;
+                MultilineScanState initialScanState;
+                if (_scanState == null)
+                {
+                    // Get ScanState by rescanning whole line
+                    tokenIndex = 0;
+                    initialScanState = _currentLine.InitialScanState;
+                }
+                else if (_returnedTokensForCurrentLine.Count - 1 > _scanStateIndex)
+                {
+                    // ScanState has been computed but is outdated, rescan starting from first token after current index
+                    tokenIndex = _scanStateIndex + 1;
+                    initialScanState = _scanState;
+                }
+                else
+                {
+                    // ScanState is up-to-date
+                    return _scanState;
+                }
+
+                // Build text to scan from accumulated tokens
+                var line = new StringBuilder();
+                for (; tokenIndex < _returnedTokensForCurrentLine.Count; tokenIndex++)
+                {
+                    line.Append(_returnedTokensForCurrentLine[tokenIndex].Text);
+                    line.Append(' ');
+                }
+
+                // Scan
+                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString(), ColumnsLayout.FreeTextFormat);
+                Scanner.Scanner.ScanTokensLine(virtualLine, initialScanState, _parentIterator.CompilerOptions, new List<RemarksDirective.TextNameVariation>());
+
+                // Update state variables
+                _scanState = virtualLine.ScanState;
+                _scanStateIndex = tokenIndex - 1;
+                return _scanState;
+            }
+        }
+
         // Current iterator position
         private ReplaceTokensLinesIteratorPosition currentPosition;
 
@@ -57,24 +148,25 @@ namespace TypeCobol.Compiler.Preprocessor
         // Options entered in CLI
         private TypeCobolOptions CompilerOptions;
 
+        private readonly ScanStateTracker _scanStateTracker;
+
         /// <summary>
         /// Implement REPLACE directives on top of a CopyTokensLinesIterator
         /// </summary>
         public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, TypeCobolOptions compilerOptions)
         {
             this.sourceIterator = sourceIterator;
-            CompilerOptions = compilerOptions;
+            this.CompilerOptions = compilerOptions;
+            this._scanStateTracker = new ScanStateTracker(this);
         }
 
         /// <summary>
         /// Implement COPY REPLACING on top of an underlying tokens line iterator
         /// </summary>
         public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, CopyDirective copyReplacingDirective, TypeCobolOptions compilerOptions)
+            : this(sourceIterator, compilerOptions)
         {
-            this.sourceIterator = sourceIterator;
             this.CopyReplacingDirective = copyReplacingDirective;
-            CompilerOptions = compilerOptions;
-
             if (copyReplacingDirective.ReplaceOperations.Count > 0)
             {
                 if (copyReplacingDirective.ReplaceOperations.Count == 1)
@@ -164,6 +256,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
 
                 currentPosition.CurrentToken = nextToken;
+                _scanStateTracker.AccumulateToken(nextToken);
                 return nextToken;
             }
             // Analyze the next token returned by the underlying iterator
@@ -246,7 +339,11 @@ namespace TypeCobol.Compiler.Preprocessor
                 do
                 {
                     status = TryAndReplace(nextToken, currentPosition.ReplaceOperation);
-                    if (status.replacedToken != null) return status.replacedToken;
+                    if (status.replacedToken != null)
+                    {
+                        _scanStateTracker.AccumulateToken(status.replacedToken);
+                        return status.replacedToken;
+                    }
                     if (status.tryAgain)
                     {
                         nextToken = sourceIterator.NextToken();
@@ -277,6 +374,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             }
                             if (matchingMode)
                             {
+                                _scanStateTracker.AccumulateToken(lastReplacedToken);
                                 return lastReplacedToken;
                             }
                         }
@@ -285,6 +383,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 // If no replacement took place, simply return the next token of the underlying iterator
                 currentPosition.CurrentToken = nextToken;
+                _scanStateTracker.AccumulateToken(nextToken);
                 return nextToken;
             }
         }
@@ -316,7 +415,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         int additionalSpaceRequired = replacedText.Length - originalText.Length;
                         if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
                         {
-                            TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
+                            TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText, nextToken.TokensLine.ColumnsLayout);
                             Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
                                 virtualTokensLine);
 
@@ -450,7 +549,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     foreach (Token comparisonToken in multipleTokensReplaceOperation.FollowingComparisonTokens)
                     {
                         Token nextCandidateToken = sourceIterator.NextToken();
-                        if (!comparisonToken.CompareForReplace(nextCandidateToken))
+                        if (!nextCandidateToken.CompareForReplace(comparisonToken))
                         {
                             comparisonInterrupted = true;
                             break;
@@ -563,7 +662,7 @@ namespace TypeCobol.Compiler.Preprocessor
             MultilineScanState scanState = originalToken.ScanStateSnapshot;
             System.Diagnostics.Debug.Assert(scanState != null);
 
-            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, out _);
+            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, originalToken.TokensLine.ColumnsLayout, out _);
             // TODO : find a way to report the error above ...
 
             if (originalToken.PreviousTokenType != null)
@@ -583,8 +682,7 @@ namespace TypeCobol.Compiler.Preprocessor
         private T[] RescanReplacedTokenTypes<T>(Func<Token, T> creator, Token firstOriginalToken, params Token[] replacementTokens)
             where T : Token
         {
-            MultilineScanState scanState = firstOriginalToken?.ScanStateSnapshot;
-            if (scanState != null && replacementTokens.Any(MultilineScanState.IsScanStateDependent))
+            if (replacementTokens.Any(MultilineScanState.IsScanStateDependent))
             {
                 int i = 0;
                 int[] columns = new int[replacementTokens.Length + 1];                
@@ -599,8 +697,9 @@ namespace TypeCobol.Compiler.Preprocessor
                 int startTokIdx = 0;
                 int endTokIdx = 0;                
                 List<T> newReplacedTokens = new List<T>(replacementTokens.Length);
-                TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
-                tempTokensLine.InitializeScanState(scanState);
+                TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText, firstOriginalToken.TokensLine.ColumnsLayout);
+                var initialScanState = _scanStateTracker.GetCurrentScanState() ?? firstOriginalToken.TokensLine.InitialScanState;
+                tempTokensLine.InitializeScanState(initialScanState);
                 var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, CompilerOptions, true);
                 Token rescannedToken = null;
                 List<Token> tokens = new List<Token>((replacementTokens.Length / 2) + 1);
