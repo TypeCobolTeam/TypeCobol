@@ -83,7 +83,8 @@ namespace TypeCobol.Test.Utils
                               { "Mix",          () => new SourceMixedWithDiagnostics() },
                               { "SQL",          () => new SqlStatements() },
                               { "SYM",          () => new Symbols() },
-                              { "Tokens",       () => new Tokens() }
+                              { "Tokens",       () => new Tokens() },
+                              { "Copies",       () => new Copies() }
                           };
         }
 
@@ -936,6 +937,30 @@ namespace TypeCobol.Test.Utils
                     }
                 }
             }
+        }
+    }
+
+    internal class Copies : ICompilationResultFormatter
+    {
+        public string Format(CompilationUnit compilationResult, IncrementalChangesHistory history)
+        {
+            var result = new StringBuilder();
+
+            // Diagnostics
+            var diagnostics = compilationResult.AllDiagnostics();
+            if (diagnostics.Count > 0)
+            {
+                result.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
+            }
+
+            // Dump CopyTextNamesVariations
+            result.AppendLine("--- CopyTextNamesVariations ---");
+            foreach (var textNameVariation in compilationResult.CopyTextNamesVariations)
+            {
+                result.AppendLine(textNameVariation.ToString());
+            }
+
+            return result.ToString();
         }
     }
 }

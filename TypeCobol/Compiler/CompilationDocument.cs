@@ -446,6 +446,7 @@ namespace TypeCobol.Compiler
                     appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
                     break;
                 case TextChangeType.LineUpdated:
+                    RemoveCopyTextNamesVariationsForLine(compilationDocumentLines[textChange.LineIndex]);
                     newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
                     compilationDocumentLines[textChange.LineIndex] = newLine;
 
@@ -471,6 +472,7 @@ namespace TypeCobol.Compiler
                     if (compilationDocumentLines.Count <= textChange.LineIndex) //Avoid line remove exception
                         return;
 
+                    RemoveCopyTextNamesVariationsForLine(compilationDocumentLines[textChange.LineIndex]);
                     compilationDocumentLines.RemoveAt(textChange.LineIndex);
                     ShiftLines(textChange.LineIndex, -1); //Shift up following lines
 
@@ -508,6 +510,22 @@ namespace TypeCobol.Compiler
             if (appliedChange != null)
             {
                 documentChanges.Add(appliedChange);
+            }
+
+            // Remove all COPYs imported by the given line from CopyTextNamesVariations collection of this document
+            void RemoveCopyTextNamesVariationsForLine(CodeElementsLine line)
+            {
+                if (line.ImportedDocuments != null)
+                {
+                    foreach (var copyDirective in line.ImportedDocuments.Keys)
+                    {
+                        string textNameWithSuffix = copyDirective.TextName;
+#if EUROINFO_RULES
+                        textNameWithSuffix += copyDirective.Suffix;
+#endif
+                        CopyTextNamesVariations.RemoveAll(variation => string.Equals(variation.TextNameWithSuffix, textNameWithSuffix, StringComparison.OrdinalIgnoreCase));
+                    }
+                }
             }
         }
 

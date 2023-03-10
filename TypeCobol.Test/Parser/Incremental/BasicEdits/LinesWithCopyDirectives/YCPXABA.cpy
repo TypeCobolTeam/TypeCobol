@@ -1,0 +1,1 @@
+       01 CPXABA PIC X.
