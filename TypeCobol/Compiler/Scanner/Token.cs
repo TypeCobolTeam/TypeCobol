@@ -75,12 +75,6 @@ namespace TypeCobol.Compiler.Scanner
             HasClosingDelimiter = false;
 
             UsesVirtualSpaceAtEndOfLine = usesVirtualSpaceAtEndOfLine;
-
-            //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
-            if (tokensLine.ScanState != null && (tokenType == TokenType.PartialCobolWord
-                                                 || tokenType == TokenType.PictureCharacterString
-                                                 || tokensLine.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
-                scanStateSnapshot = tokensLine.ScanState.Clone();
         }
 
         /// <summary>
@@ -125,11 +119,6 @@ namespace TypeCobol.Compiler.Scanner
         /// Type from the TokenType enumeration
         /// </summary>
         public TokenType TokenType { get; internal set; }
-
-        /// <summary>
-        /// Previous potential tokentype, used for instance when token is changed to a PartialCobolWord.
-        /// </summary>
-        public TokenType? PreviousTokenType { get; set; } 
 
         /// <summary>
         /// Family from the TokenFamily Enumeration
@@ -303,19 +292,6 @@ namespace TypeCobol.Compiler.Scanner
         /// Enables the lexer to attach a strongly typed value for literals
         /// </summary>
         public LiteralTokenValue LiteralValue { get; set; }
-
-        private readonly MultilineScanState scanStateSnapshot;
-        /// <summary>
-        /// ScanState associated to this token if any, null otherwise.
-        /// This property is used to allow PartialCobolWords proper reconstruction.
-        /// </summary>
-        public MultilineScanState ScanStateSnapshot
-        {
-            get
-            {
-                return scanStateSnapshot ?? tokensLine.ScanState;
-            }
-        }
 
         // --- Ambiguous tokens resolved after having been created ---
 

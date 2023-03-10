@@ -1819,11 +1819,10 @@ namespace TypeCobol.Compiler.Scanner
                 var replaceStartIndex = line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex;
                 if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && 
                     ScannerUtils.CheckForPartialCobolWordPattern(line, replaceStartIndex, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex)) 
-                { //Check if there is cobol partial word inside the picture declaration. 
-                    //Match the whole PictureCharecterString token as a partial cobol word. 
-                    var picToken = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
-                    picToken.PreviousTokenType = TokenType.PictureCharacterString; //Save that the token was previously a picture character string token
-                    return picToken;
+                {
+                    //Check if there is cobol partial word inside the picture declaration. 
+                    //Match the whole PictureCharacterString token as a partial cobol word. 
+                    return new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
                 }
                 else
                 {

@@ -689,10 +689,6 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // TODO scanning may have produced errors, they are lost here.
 
-            if (originalToken.PreviousTokenType != null)
-                //In case original token was previously an other type of token reset it back to it's original type. 
-                generatedToken.TokenType = originalToken.PreviousTokenType.Value;
-
             return generatedToken;
         }
 
