@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.Parser
@@ -526,6 +527,12 @@ namespace TypeCobol.Compiler.Parser
                     CodeElementsLine previousLine = reversedEnumerator.Current;
                     System.Diagnostics.Debug.Assert(previousLine != null);
 
+                    // Skip Comments and Blanks
+                    if (previousLine.Type == CobolTextLineType.Blank || previousLine.Type == CobolTextLineType.Comment || previousLine.Type == CobolTextLineType.MultiFormalizedComment)
+                    {
+                        continue;
+                    }
+
                     // The start of the parse section is delimited by the previous CodeElement
                     bool previousCodeElementStartsAtBeginningOfTheLine = false;
                     Token previousCodeElementFirstToken = null;
@@ -584,6 +591,12 @@ namespace TypeCobol.Compiler.Parser
                     nextLineIndex++;
                     CodeElementsLine nextLine = enumerator.Current;
                     System.Diagnostics.Debug.Assert(nextLine != null);
+
+                    // Skip Comments and Blanks
+                    if (nextLine.Type == CobolTextLineType.Blank || nextLine.Type == CobolTextLineType.Comment || nextLine.Type == CobolTextLineType.MultiFormalizedComment)
+                    {
+                        continue;
+                    }
 
                     // Check REPLACE directive
                     if (lookForNextReplaceDirective)
