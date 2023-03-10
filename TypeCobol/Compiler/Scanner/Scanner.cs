@@ -681,37 +681,6 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        /// <summary>
-        /// Scan an isolated token in the given context.
-        /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, TypeCobolOptions scanOptions, ColumnsLayout layout, out Diagnostic error)
-        {
-            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText, layout);
-            tempTokensLine.InitializeScanState(scanContext);
-
-            Token candidateToken;
-            if (tokenText.Length > 0)
-            {
-                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, scanOptions, false);
-                candidateToken = tempScanner.GetNextToken();
-            }
-            else
-            {
-                //Create an empty SpaceSeparator token.
-                candidateToken = new Token(TokenType.SpaceSeparator, 0, -1, tempTokensLine);
-            }
-
-            if(tempTokensLine.ScannerDiagnostics.Count > 0)
-            {
-                error = tempTokensLine.ScannerDiagnostics[0];
-            }
-            else
-            {
-                error = null;
-            }
-            return candidateToken;
-        }
-
         private readonly CobolLanguageLevel _targetLanguageLevel;
         
         /// <summary>

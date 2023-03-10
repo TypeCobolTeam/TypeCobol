@@ -31,11 +31,12 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (nextToken.TokenType == TokenType.PartialCobolWord)
                 {
                     //basic replacement mechanic, remove the ':' from the tag.
-                    //NOTE: PartialCobolWord have their ScanStateSnapshot embedded so we can use it to replace with number literal after OCCURS if need be...
+                    //NOTE: Altered token is scanned as if it was located at the beginning of the line because we only have InitialScanState here.
                     //NOTE: Does not handle '::-item' or 'item-::' partial names as '::' will turn into empty string and will produce invalid data names.
                     var originalToken = nextToken;
                     string replacedTokenText = originalToken.NormalizedText.Replace(":", string.Empty);
-                    var generatedReplacementToken = ReplaceTokensLinesIterator.GenerateReplacementToken(originalToken, replacedTokenText, _compilerOptions);
+                    var scanState = originalToken.TokensLine.InitialScanState;
+                    var generatedReplacementToken = ReplaceTokensLinesIterator.GenerateReplacementToken(originalToken, replacedTokenText, scanState, _compilerOptions);
 
                     nextToken = new ReplacedPartialCobolWord(generatedReplacementToken, null, originalToken);
                 }
