@@ -8,6 +8,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -415,16 +416,23 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Get the previous line until a non continued line is encountered
                     previousLineIndex--;
                     ProcessedTokensLine previousLine = reversedEnumerator.Current;
+                    System.Diagnostics.Debug.Assert(previousLine != null);
+
+                    // Skip Comments and Blanks
+                    if (previousLine.Type == CobolTextLineType.Blank || previousLine.Type == CobolTextLineType.Comment || previousLine.Type == CobolTextLineType.MultiFormalizedComment)
+                    {
+                        continue;
+                    }
 
                     // A reset line was already treated by the previous call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (previousLine == null || previousLine.NeedsCompilerDirectiveParsing)
+                    if (previousLine.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
 
                     // Previous line is a continuation : reset this line and continue navigating backwards
                     // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
-                    if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
+                    if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine || previousLine.PreprocessorDiagnostics != null)
                     {
                         bool previousLineHasDirectiveTokenContinuationFromPreviousLine = previousLine.HasDirectiveTokenContinuationFromPreviousLine;
                         lastLineIndexReset = previousLineIndex;
@@ -435,7 +443,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             break;
                         }
                     }
-                    // Previous line not involved in a multiline compiler directive : stop searching
+                    // Previous line not involved in a multiline compiler directive : stop searching.
                     else
                     {
                         break;
@@ -457,9 +465,16 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Get the next line until non continuation line is encountered
                     nextLineIndex++;
                     ProcessedTokensLine nextLine = enumerator.Current;
+                    System.Diagnostics.Debug.Assert(nextLine != null);
+
+                    // Skip Comments and Blanks
+                    if (nextLine.Type == CobolTextLineType.Blank || nextLine.Type == CobolTextLineType.Comment || nextLine.Type == CobolTextLineType.MultiFormalizedComment)
+                    {
+                        continue;
+                    }
 
                     // A reset line will be treated by the next call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (nextLine == null || nextLine.NeedsCompilerDirectiveParsing)
+                    if (nextLine.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
