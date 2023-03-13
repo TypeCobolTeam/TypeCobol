@@ -182,7 +182,7 @@ namespace TypeCobol.Compiler.Parser
             bool isDebuggingModeEnabled = false;
             if (largestRefreshParseSection?.StartToken != null)
             {
-                isDebuggingModeEnabled = largestRefreshParseSection.StartToken.ScanStateSnapshot.WithDebuggingMode;
+                isDebuggingModeEnabled = largestRefreshParseSection.StartToken.TokensLine.ScanState.WithDebuggingMode;
             }
             ParseTreeWalker walker = new ParseTreeWalker();
             CodeElementBuilder codeElementBuilder = new CodeElementBuilder(compilerOptions, isDebuggingModeEnabled);

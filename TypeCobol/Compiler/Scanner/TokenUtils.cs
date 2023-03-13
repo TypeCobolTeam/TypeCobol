@@ -325,52 +325,6 @@ namespace TypeCobol.Compiler.Scanner
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.AppendLine($"TextLine={token.TokensLine.Text}");
             sb.AppendLine($"TokenText={token.Text}, TokenType={token.TokenType}, TokenFamily={token.TokenFamily}, Line={token.Line}, Column={token.Column}");
-            if (token.ScanStateSnapshot != null)
-            {
-                sb.AppendLine($"AfterCommentEntry:{token.ScanStateSnapshot.AfterCommentEntry}");
-                sb.AppendLine($"AfterCommentEntryKeyword:{token.ScanStateSnapshot.AfterCommentEntryKeyword}");
-                sb.AppendLine($"AfterCommentEntryKeywordPeriod:{token.ScanStateSnapshot.AfterCommentEntryKeywordPeriod}");
-                sb.AppendLine($"AfterExec:{token.ScanStateSnapshot.AfterExec}");
-                sb.AppendLine($"AfterExecSql:{token.ScanStateSnapshot.AfterExecSql}");
-                sb.AppendLine($"AfterExecStatementText:{token.ScanStateSnapshot.AfterExecStatementText}");
-                sb.AppendLine($"AfterExecTranslatorName:{token.ScanStateSnapshot.AfterExecTranslatorName}");
-                sb.AppendLine($"AfterFUNCTION:{token.ScanStateSnapshot.AfterFUNCTION}");
-                sb.AppendLine($"AfterPicture:{token.ScanStateSnapshot.AfterPicture}");
-                sb.AppendLine($"AfterPicture:{token.ScanStateSnapshot.AfterPicture}");
-                sb.AppendLine($"AtBeginningOfSentence:{token.ScanStateSnapshot.AtBeginningOfSentence}");
-                sb.AppendLine($"BeforeLastSignificantToken:{token.ScanStateSnapshot?.BeforeLastSignificantToken.ToString()}");
-                sb.AppendLine($"InsideCopy:{token.ScanStateSnapshot.InsideCopy}");
-                sb.AppendLine($"InsideDataDivision:{token.ScanStateSnapshot.InsideDataDivision}");
-                sb.AppendLine($"InsideFormalizedComment:{token.ScanStateSnapshot.InsideFormalizedComment}");
-                sb.AppendLine($"InsideMultilineComments:{token.ScanStateSnapshot.InsideMultilineComments}");
-                sb.AppendLine($"InsideParamsField:{token.ScanStateSnapshot.InsideParamsField}");
-                sb.AppendLine($"InsideProcedureDivision:{token.ScanStateSnapshot.InsideProcedureDivision}");
-                sb.AppendLine($"InsidePseudoText:{token.ScanStateSnapshot.InsidePseudoText}");
-                sb.AppendLine($"InsideReplaceDirective:{token.ScanStateSnapshot.InsideReplaceDirective}");
-                sb.AppendLine($"InsideSql:{token.ScanStateSnapshot.InsideSql}");
-                sb.AppendLine($"LastSignificantToken:{token.ScanStateSnapshot?.LastSignificantToken.ToString()}");
-                sb.AppendLine($"WithDebuggingMode:{token.ScanStateSnapshot.WithDebuggingMode}");
-                if (token.ScanStateSnapshot.SpecialNames != null)
-                {
-                    sb.AppendLine($"SpecialNames.InsideCurrencySignDefinitions:{token.ScanStateSnapshot.SpecialNames.InsideCurrencySignDefinitions}");
-                    sb.AppendLine($"SpecialNames.InsideSymbolicCharacterDefinitions:{token.ScanStateSnapshot.SpecialNames.InsideSymbolicCharacterDefinitions}");
-                    if (token.ScanStateSnapshot.SpecialNames.CustomCurrencyDescriptors != null)
-                    {
-                        sb.Append("SpecialNames.CustomCurrencyDescriptors{");
-                        foreach(var ccd in token.ScanStateSnapshot.SpecialNames.CustomCurrencyDescriptors)
-                        {
-                            sb.Append($"({ccd.Key},{ccd.Value})");
-                        }
-                        sb.AppendLine("}");
-                    }
-                    if (token.ScanStateSnapshot.SpecialNames.SymbolicCharacters != null)
-                    {
-                        sb.Append("SpecialNames.InsideSymbolicCharacterDefinitions{");
-                        token.ScanStateSnapshot.SpecialNames.SymbolicCharacters.ToList().ForEach(t => sb.Append(t.ToString() + ","));
-                        sb.AppendLine("}");
-                    }
-                }
-            }                        
             return sb.ToString();
         }
     }

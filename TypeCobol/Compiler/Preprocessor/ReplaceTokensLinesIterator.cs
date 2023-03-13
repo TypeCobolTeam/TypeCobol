@@ -602,6 +602,13 @@ namespace TypeCobol.Compiler.Preprocessor
                     SingleTokenReplaceOperation singleTokenReplaceOperation = (SingleTokenReplaceOperation)replaceOperation;
                     if (singleTokenReplaceOperation.ReplacementToken != null)
                     {
+                        // Special case for PictureCharacterString, handle as PartialWord
+                        if (originalToken.TokenType == TokenType.PictureCharacterString)
+                        {
+                            var generatedTokenForSingleToken = RegexReplace(singleTokenReplaceOperation.ComparisonToken, singleTokenReplaceOperation.ReplacementToken);
+                            return new ReplacedToken(generatedTokenForSingleToken, originalToken);
+                        }
+
                         var replacedTokens = RescanReplacedTokenTypes<ReplacedToken>(t => new ReplacedToken(t, originalToken), originalToken, singleTokenReplaceOperation.ReplacementToken);
                         return replacedTokens[0];
                     }
@@ -612,13 +619,8 @@ namespace TypeCobol.Compiler.Preprocessor
                 // One pure partial word => one replacement token
                 case ReplaceOperationType.PartialWord:
                     PartialWordReplaceOperation partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
-                    string normalizedTokenText = originalToken.NormalizedText;
-                    string normalizedPartToReplace = partialWordReplaceOperation.ComparisonToken.NormalizedText;
-                    //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
-                    var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
-                    string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
-                    var generatedToken = GenerateReplacementToken(originalToken, replacedTokenText, CompilerOptions);
-                    return new ReplacedPartialCobolWord(generatedToken, partialWordReplaceOperation.PartialReplacementToken, originalToken);
+                    var generatedTokenForPartialCobolWord = RegexReplace(partialWordReplaceOperation.ComparisonToken, partialWordReplaceOperation.PartialReplacementToken);
+                    return new ReplacedPartialCobolWord(generatedTokenForPartialCobolWord, partialWordReplaceOperation.PartialReplacementToken, originalToken);
 
                 // One comparison token => more than one replacement tokens
                 case ReplaceOperationType.SingleToMultipleTokens:
@@ -654,20 +656,38 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
             }
+
+            // Performs a Regex Replace on original token using one comparison token and one replacement token
+            Token RegexReplace(Token comparisonToken, Token replacementToken)
+            {
+                string normalizedTokenText = originalToken.NormalizedText;
+                string normalizedPartToReplace = comparisonToken.NormalizedText;
+                //#258 - ReplacementToken can be null. In this case, we consider that it's an empty replacement
+                var replacementPart = replacementToken != null ? replacementToken.Text : string.Empty;
+                string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
+                var scanState = _scanStateTracker.GetCurrentScanState() ?? originalToken.TokensLine.InitialScanState;
+                return GenerateReplacementToken(originalToken, replacedTokenText, scanState, CompilerOptions);
+            }
         }
 
-        internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, TypeCobolOptions scanOptions)
+        internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, MultilineScanState scanState, TypeCobolOptions scanOptions)
         {
-            // Transfer the scanner context the of original token to the call below
-            MultilineScanState scanState = originalToken.ScanStateSnapshot;
-            System.Diagnostics.Debug.Assert(scanState != null);
+            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedTokenText, originalToken.TokensLine.ColumnsLayout);
+            tempTokensLine.InitializeScanState(scanState);
 
-            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, scanOptions, originalToken.TokensLine.ColumnsLayout, out _);
-            // TODO : find a way to report the error above ...
+            Token generatedToken;
+            if (replacedTokenText.Length > 0)
+            {
+                Scanner.Scanner tempScanner = new Scanner.Scanner(replacedTokenText, 0, replacedTokenText.Length - 1, tempTokensLine, scanOptions);
+                generatedToken = tempScanner.GetNextToken();
+            }
+            else
+            {
+                // Create an empty SpaceSeparator token.
+                generatedToken = new Token(TokenType.SpaceSeparator, 0, -1, tempTokensLine);
+            }
 
-            if (originalToken.PreviousTokenType != null)
-                //In case original token was previously an other type of token reset it back to it's original type. 
-                generatedToken.TokenType = originalToken.PreviousTokenType.Value;
+            // TODO scanning may have produced errors, they are lost here.
 
             return generatedToken;
         }
