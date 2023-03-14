@@ -27,10 +27,8 @@ namespace TypeCobol.Compiler.Preprocessor
             // Underlying tokens iterator position
             public object SourceIteratorPosition;
 
-            // Optimization : current replace operation in the most common case when there is only one 
-            public ReplaceOperation ReplaceOperation;
-            // More general case where there are several replace operations in effect
-            public IList<ReplaceOperation> ReplaceOperations;
+            // Replace operations in effect
+            public IReadOnlyList<ReplaceOperation> ReplaceOperations;
 
             // Used when a replace operation returns several replacement tokens
             public Token[] ReplacementTokensBeingReturned;
@@ -40,6 +38,26 @@ namespace TypeCobol.Compiler.Preprocessor
             // Last Token that was returned by the NextToken method
             public Token CurrentToken;
         }
+
+        /// <summary>
+        /// Initialize this iterator with NO ReplaceOperations
+        /// </summary>
+        public AbstractReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, TypeCobolOptions compilerOptions)
+        {
+            this.sourceIterator = sourceIterator;
+            this.CompilerOptions = compilerOptions;
+            this._scanStateTracker = new ScanStateTracker(this);
+        }
+
+        /// <summary>
+        /// Initialize this iterator with ReplaceOperations
+        /// </summary>
+        public AbstractReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, IReadOnlyList<ReplaceOperation> replaceOperations, TypeCobolOptions compilerOptions)
+            : this(sourceIterator, compilerOptions)
+        {
+            this.currentPosition.ReplaceOperations = replaceOperations;
+        }
+
 
         /// <summary>
         /// Save and update the relevant ScanState used when rescanning tokens during a REPLACE operation.
@@ -139,7 +157,7 @@ namespace TypeCobol.Compiler.Preprocessor
         private object snapshotPosition;
 
         // Options entered in CLI
-        private TypeCobolOptions CompilerOptions;
+        protected TypeCobolOptions CompilerOptions { get; }
 
         private readonly ScanStateTracker _scanStateTracker;
 
@@ -207,79 +225,70 @@ namespace TypeCobol.Compiler.Preprocessor
             else
             {
                 var check = CheckTokenBeforeReplace(() => sourceIterator.NextToken(), currentPosition.ReplaceOperations);
+
                 Token nextToken = check.NextToken;
                 currentPosition.ReplaceOperations = check.UpdatedReplaceOperations;
+
                 if (!check.ApplyReplace)
                 {
-                    if (nextToken.Channel != Token.CHANNEL_CompilerDirectives)
-                    {
-                        currentPosition.CurrentToken = nextToken;
-                        _scanStateTracker.AccumulateToken(nextToken);
-                    }
+                    //if (nextToken.Channel != Token.CHANNEL_CompilerDirectives)
+                    //{
+                    //    currentPosition.CurrentToken = nextToken;
+                    //    _scanStateTracker.AccumulateToken(nextToken);
+                   // }
 
                     return nextToken;
                 }
 
                 // Apply the current REPLACE operations in effect
-                ReplaceStatus status;
-                do
+                
+                if (currentPosition.ReplaceOperations != null)
                 {
-                    status = TryAndReplace(nextToken, currentPosition.ReplaceOperation);
-                    if (status.replacedToken != null)
+                    ReplaceStatus status = null;
+                    do
                     {
-                        _scanStateTracker.AccumulateToken(status.replacedToken);
-                        return status.replacedToken;
-                    }
-                    if (status.tryAgain)
-                    {
-                        nextToken = sourceIterator.NextToken();
-                    }
-                    else
-                    {
-                        if (currentPosition.ReplaceOperations != null)
+                        Token lastReplacedToken = null;
+                        bool matchingMode = false;
+                        foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
                         {
-                            Token lastReplacedToken = null;
-                            bool matchingMode = false;
-                            foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
+                            status = TryAndReplace(lastReplacedToken ?? nextToken, replaceOperation);
+                            lastReplacedToken = status.replacedToken ?? lastReplacedToken;
+                            matchingMode = lastReplacedToken != null;
+                            if (status.tryAgain)
                             {
-                                status = TryAndReplace(lastReplacedToken ?? nextToken, replaceOperation);
-                                lastReplacedToken = status.replacedToken ?? lastReplacedToken;
-                                matchingMode = lastReplacedToken != null;
-                                if (status.tryAgain)
+                                if (matchingMode)
                                 {
-                                    if (matchingMode)
-                                    {
-                                        sourceIterator.ReturnToLastPositionSnapshot();
-                                    }
-                                    else
-                                    {
-                                        nextToken = sourceIterator.NextToken();
-                                        break;
-                                    }
+                                    sourceIterator.ReturnToLastPositionSnapshot();
                                 }
-                                else if (status.replacedToken != null)
+                                else
                                 {
-                                    if (replaceOperation.Type == ReplaceOperationType.PartialWord)
-                                    {
-                                        var partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
-                                        var replacement = partialWordReplaceOperation.PartialReplacementToken;
-                                        if (status.replacedToken.Text != replacement?.Text)
-                                        {
-                                            continue;
-                                        }
-                                    }
-
+                                    nextToken = sourceIterator.NextToken();
                                     break;
                                 }
                             }
-                            if (matchingMode)
+                            else if (status.replacedToken != null)
                             {
-                                _scanStateTracker.AccumulateToken(lastReplacedToken);
-                                return lastReplacedToken;
+                                if (replaceOperation.Type == ReplaceOperationType.PartialWord)
+                                {
+                                    var partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
+                                    var replacement = partialWordReplaceOperation.PartialReplacementToken;
+                                    if (status.replacedToken.Text != replacement?.Text)
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                break;
                             }
                         }
-                    }
-                } while (status.tryAgain);
+
+                        if (matchingMode)
+                        {
+                            _scanStateTracker.AccumulateToken(lastReplacedToken);
+                            return lastReplacedToken;
+                        }
+                    } while (status != null && status.tryAgain);
+                }
 
                 // If no replacement took place, simply return the next token of the underlying iterator
                 currentPosition.CurrentToken = nextToken;
@@ -290,12 +299,13 @@ namespace TypeCobol.Compiler.Preprocessor
 
         protected struct CheckTokenStatus
         {
+            //TODO wait to rewrite AutoReplace iterator with this class to see if this bool is useful or not
             public bool ApplyReplace;
             public Token NextToken;
-            public ReplaceOperation[] UpdatedReplaceOperations;
+            public IReadOnlyList<ReplaceOperation> UpdatedReplaceOperations;
         }
 
-        protected abstract CheckTokenStatus CheckTokenBeforeReplace(Func<Token> getNextToken, ReplaceOperation[] currentReplaceOperations);
+        protected abstract CheckTokenStatus CheckTokenBeforeReplace(Func<Token> getNextToken, IReadOnlyList<ReplaceOperation> currentReplaceOperations);
 
         private class ReplaceStatus
         {
