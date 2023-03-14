@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Preprocessor
@@ -9,13 +10,15 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class ReplaceTokensLinesIterator : AbstractReplaceTokensLinesIterator
     {
+        private ReplaceDirective _currentReplaceDirective;
+
         /// <summary>
         /// Implement REPLACE directives on top of a CopyTokensLinesIterator
         /// </summary>
         public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, TypeCobolOptions compilerOptions)
             : base(sourceIterator, compilerOptions)
         {
-
+            _currentReplaceDirective = null;
         }
 
         protected override CheckTokenStatus CheckNextTokenBeforeReplace(IReadOnlyList<ReplaceOperation> currentReplaceOperations)
@@ -34,15 +37,27 @@ namespace TypeCobol.Compiler.Preprocessor
                     ? (CompilerDirectiveToken)importedToken.OriginalToken
                     : (CompilerDirectiveToken)nextToken;
 
-                // A REPLACE OFF directive simply cancels the previous directive 
+                // Update current REPLACE
+                _currentReplaceDirective = (ReplaceDirective)compilerDirectiveToken.CompilerDirective;
+
                 if (compilerDirectiveToken.CompilerDirective.Type == CompilerDirectiveType.REPLACE)
                 {
-                    var replaceDirective = (ReplaceDirective)compilerDirectiveToken.CompilerDirective;
-                    updatedReplaceOperations = (IReadOnlyList<ReplaceOperation>)replaceDirective.ReplaceOperations;
+                    // Update replace operation for base iterator
+                    updatedReplaceOperations = (IReadOnlyList<ReplaceOperation>)_currentReplaceDirective.ReplaceOperations;
                 }
-                // else: it is a REPLACE OFF, update replace operations is null
+                else
+                {
+                    // A REPLACE OFF directive simply cancels the previous directive
+                    _currentReplaceDirective = null;
+                }
 
                 nextToken = SourceIteratorNextToken();
+            }
+
+            // Set active REPLACE for line
+            if (nextToken.TokenType != TokenType.EndOfFile)
+            {
+                ((CodeElementsLine)nextToken.TokensLine).ActiveReplaceDirective = _currentReplaceDirective;
             }
 
             return new CheckTokenStatus()
@@ -51,6 +66,12 @@ namespace TypeCobol.Compiler.Preprocessor
                        NextToken = nextToken,
                        UpdatedReplaceOperations = updatedReplaceOperations
                    };
+        }
+
+        public override void SeekToLineInMainDocument(int line)
+        {
+            base.SeekToLineInMainDocument(line);
+            _currentReplaceDirective = ((CodeElementsLine)CurrentLine).ActiveReplaceDirective;
         }
     }
 }

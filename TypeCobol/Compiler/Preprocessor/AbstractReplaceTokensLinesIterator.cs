@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
@@ -596,11 +597,11 @@ namespace TypeCobol.Compiler.Preprocessor
             _sourceIterator.SeekToPosition(_currentPosition.SourceIteratorPosition);
         }
 
-        public void SeekToLineInMainDocument(int line)
+        public virtual void SeekToLineInMainDocument(int line)
         {
-            // TODO actual REPLACE directive/operations in effect are lost here, this is equivalent to a reset of this ReplaceIterator
             _currentPosition = new Position();
             _sourceIterator.SeekToLineInMainDocument(line);
+            _currentPosition.ReplaceOperations = (IReadOnlyList<ReplaceOperation>)((CodeElementsLine)CurrentLine).ActiveReplaceDirective?.ReplaceOperations;
         }
 
         /// <summary>
