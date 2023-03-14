@@ -8,54 +8,24 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
-
-    /*
-    public class AutoReplace : AbstractReplaceTokensLinesIterator
-    {
-        protected override CheckTokenStatus CheckTokenBeforeReplace(Func<Token> getNextToken, IReadOnlyList<ReplaceOperation> currentReplaceOperations)
-        {
-            var nextToken = getNextToken();
-            if (nextToken.TokenType == TokenType.PartialCobolWord)
-            {
-                //basic replacement mechanic, remove the ':' from the tag.
-                //NOTE: Altered token is scanned as if it was located at the beginning of the line because we only have InitialScanState here.
-                //NOTE: Does not handle '::-item' or 'item-::' partial names as '::' will turn into empty string and will produce invalid data names.
-                var originalToken = nextToken;
-                string replacedTokenText = originalToken.NormalizedText.Replace(":", string.Empty);
-                var scanState = originalToken.TokensLine.InitialScanState;
-                var generatedReplacementToken = GenerateReplacementToken(originalToken, replacedTokenText, scanState, _compilerOptions);
-
-                nextToken = new ReplacedPartialCobolWord(generatedReplacementToken, null, originalToken);
-            }
-
-            return new CheckTokenStatus()
-                   {
-                       ApplyReplace = false,
-                       NextToken = nextToken,
-                       UpdatedReplaceOperations = currentReplaceOperations
-                   };
-        }
-    }*/
-
     /// <summary>
     /// Handle replacing clause and specific replacement for EUROINFO_RULES.
     /// Replacing clause is applied before Replace clause.
     /// </summary>
-    public class Replacing : AbstractReplaceTokensLinesIterator
+    public class ReplacingTokensLinesIterator : AbstractReplaceTokensLinesIterator
     {
-        private CopyDirective CopyReplacingDirective { get; }
+        private readonly CopyDirective _copyReplacingDirective;
 
-        public Replacing(ITokensLinesIterator sourceIterator, CopyDirective copyReplacingDirective, TypeCobolOptions compilerOptions) 
+        public ReplacingTokensLinesIterator(ITokensLinesIterator sourceIterator, CopyDirective copyReplacingDirective, TypeCobolOptions compilerOptions) 
             : base(sourceIterator, (IReadOnlyList<ReplaceOperation>)copyReplacingDirective.ReplaceOperations, compilerOptions)
         {
-            this.CopyReplacingDirective = copyReplacingDirective;
+            _copyReplacingDirective = copyReplacingDirective;
         }
 
-        protected override CheckTokenStatus CheckTokenBeforeReplace(Func<Token> getNextToken, IReadOnlyList<ReplaceOperation> currentReplaceOperations)
+        protected override CheckTokenStatus CheckNextTokenBeforeReplace(IReadOnlyList<ReplaceOperation> currentReplaceOperations)
         {
-            var nextToken = getNextToken();
+            var nextToken = SourceIteratorNextToken();
 
-            //Remove level 01
 #if EUROINFO_RULES
             if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
             {
@@ -63,7 +33,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Remove the first 01 level data item found in the COPY text
                 // before copying it into the main program
                 // But do not remove data from debug lines
-                if (CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && nextToken.TokensLine.Type != CobolTextLineType.Debug)
+                if (_copyReplacingDirective != null && _copyReplacingDirective.RemoveFirst01Level && nextToken.TokensLine.Type != CobolTextLineType.Debug)
                 {
                     //A Data description entry starts with an integer literal
                     if (nextToken.TokenType == TokenType.LevelNumber)
@@ -74,35 +44,29 @@ namespace TypeCobol.Compiler.Preprocessor
                             // Skip all tokens after 01 until the next period separator 
                             while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
                             {
-                                nextToken = getNextToken();
+                                nextToken = SourceIteratorNextToken();
 
                                 if (nextToken.TokenType == TokenType.PeriodSeparator)
                                 {
-                                    nextToken = getNextToken();
+                                    nextToken = SourceIteratorNextToken();
                                     if (nextToken.Text != "01" || nextToken.Column > 9)
                                         firstLevelFound = false;
-
                                 }
                             }
                         }
                     }
                 }
-            }
-#endif
 
-#if EUROINFO_RULES
-            if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
-            {
                 // Support for legacy replacing syntax semantics : 
                 // Insert Suffix before the first '-' in all user defined words found in the COPY text 
                 // before copying it into the main program
-                if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
+                if (_copyReplacingDirective != null && _copyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
                 {
                     string originalText = nextToken.Text;
-                    if (originalText.IndexOf(CopyReplacingDirective.PreSuffix, StringComparison.Ordinal) > -1)
+                    if (originalText.IndexOf(_copyReplacingDirective.PreSuffix, StringComparison.Ordinal) > -1)
                     {
-                        string replacement = CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix);
-                        string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix, replacement);
+                        string replacement = _copyReplacingDirective.PreSuffix.Insert(3, _copyReplacingDirective.Suffix);
+                        string replacedText = originalText.Replace(_copyReplacingDirective.PreSuffix, replacement);
                         int additionalSpaceRequired = replacedText.Length - originalText.Length;
                         if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
                         {
@@ -116,14 +80,13 @@ namespace TypeCobol.Compiler.Preprocessor
             }
 #endif
 
-            //Replacing directive never change
-            
+            //Replacing directive never changes
             return new CheckTokenStatus()
-            {
-                ApplyReplace = currentReplaceOperations != null,
-                NextToken = nextToken,
-                UpdatedReplaceOperations = currentReplaceOperations
-            };
+                   {
+                       ApplyReplace = currentReplaceOperations != null,
+                       NextToken = nextToken,
+                       UpdatedReplaceOperations = currentReplaceOperations
+                   };
         }
 
 #if EUROINFO_RULES
@@ -197,9 +160,9 @@ namespace TypeCobol.Compiler.Preprocessor
             void AddDiagnosticOnToken(MessageCode messageCode, string message)
             {
                 //token is part of a COPY however it has not been wrapped into ImportedToken yet. We have to create Position manually with the proper including directive.
-                var position = new Diagnostic.Position(token.Line, token.Column, token.Line, token.EndColumn, CopyReplacingDirective);
+                var position = new Diagnostic.Position(token.Line, token.Column, token.Line, token.EndColumn, _copyReplacingDirective);
                 var diagnostic = new Diagnostic(messageCode, position, message);
-                CopyReplacingDirective.AddProcessingDiagnostic(diagnostic);
+                _copyReplacingDirective.AddProcessingDiagnostic(diagnostic);
             }
         }
 #endif

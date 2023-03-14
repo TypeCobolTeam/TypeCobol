@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using TypeCobol.Compiler.Diagnostics;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -18,13 +12,15 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Implement REPLACE directives on top of a CopyTokensLinesIterator
         /// </summary>
-        public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, TypeCobolOptions compilerOptions) : base(sourceIterator, compilerOptions)
+        public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, TypeCobolOptions compilerOptions)
+            : base(sourceIterator, compilerOptions)
         {
+
         }
 
-        protected override CheckTokenStatus CheckTokenBeforeReplace(Func<Token> getNextToken, IReadOnlyList<ReplaceOperation> currentReplaceOperations)
+        protected override CheckTokenStatus CheckNextTokenBeforeReplace(IReadOnlyList<ReplaceOperation> currentReplaceOperations)
         {
-            var nextToken = getNextToken();
+            var nextToken = SourceIteratorNextToken();
             var updatedReplaceOperations = currentReplaceOperations;
 
             // If the next token is a REPLACE directive, update the current replace operations in effect
@@ -33,23 +29,28 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Reset previous replace operations
                 updatedReplaceOperations = null;
 
+                // Token may come from main document or a copy...
+                CompilerDirectiveToken compilerDirectiveToken = nextToken is ImportedToken importedToken
+                    ? (CompilerDirectiveToken)importedToken.OriginalToken
+                    : (CompilerDirectiveToken)nextToken;
+
                 // A REPLACE OFF directive simply cancels the previous directive 
-                if (((CompilerDirectiveToken)nextToken).CompilerDirective.Type == CompilerDirectiveType.REPLACE)
+                if (compilerDirectiveToken.CompilerDirective.Type == CompilerDirectiveType.REPLACE)
                 {
-                    var replaceDirective = (ReplaceDirective)((CompilerDirectiveToken)nextToken).CompilerDirective;
+                    var replaceDirective = (ReplaceDirective)compilerDirectiveToken.CompilerDirective;
                     updatedReplaceOperations = (IReadOnlyList<ReplaceOperation>)replaceDirective.ReplaceOperations;
                 }
                 // else: it is a REPLACE OFF, update replace operations is null
 
-                nextToken = getNextToken();
+                nextToken = SourceIteratorNextToken();
             }
 
             return new CheckTokenStatus()
-            {
-                ApplyReplace = updatedReplaceOperations != null,
-                NextToken = nextToken,
-                UpdatedReplaceOperations = updatedReplaceOperations
-            };
+                   {
+                       ApplyReplace = updatedReplaceOperations != null,
+                       NextToken = nextToken,
+                       UpdatedReplaceOperations = updatedReplaceOperations
+                   };
         }
     }
 }
