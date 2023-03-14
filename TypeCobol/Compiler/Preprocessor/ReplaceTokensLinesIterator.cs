@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
@@ -332,6 +333,11 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
                     nextToken = sourceIterator.NextToken();
+                }
+
+                if (nextToken.TokenType != TokenType.EndOfFile)
+                {
+                    ((CodeElementsLine)nextToken.TokensLine).ActiveReplaceDirective = currentPosition.ReplaceDirective;
                 }
 
                 // Apply the current REPLACE operations in effect
@@ -809,9 +815,24 @@ namespace TypeCobol.Compiler.Preprocessor
 
         public void SeekToLineInMainDocument(int line)
         {
-            // TODO actual REPLACE directive/operations in effect are lost here, this is equivalent to a reset of this ReplaceIterator
             currentPosition = new ReplaceTokensLinesIteratorPosition();
             sourceIterator.SeekToLineInMainDocument(line);
+            currentPosition.ReplaceDirective = ((CodeElementsLine)CurrentLine).ActiveReplaceDirective;
+            if (currentPosition.ReplaceDirective != null)
+            {
+                if (currentPosition.ReplaceDirective.ReplaceOperations.Count == 0)
+                {
+                    currentPosition.ReplaceDirective = null;
+                }
+                else if (currentPosition.ReplaceDirective.ReplaceOperations.Count == 1)
+                {
+                    currentPosition.ReplaceOperation = currentPosition.ReplaceDirective.ReplaceOperations[0];
+                }
+                else
+                {
+                    currentPosition.ReplaceOperations = currentPosition.ReplaceDirective.ReplaceOperations;
+                }
+            }
         }
 
         /// <summary>
