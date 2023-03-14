@@ -26,6 +26,9 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             var nextToken = SourceIteratorNextToken();
 
+            // TODO: Add error to signal unsupported feature or implement
+            // This parser currently does not support REPLACE coming from a copy and that should be altered by the REPLACING clause
+
 #if EUROINFO_RULES
             if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
             {
