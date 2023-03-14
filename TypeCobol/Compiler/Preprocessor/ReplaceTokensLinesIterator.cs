@@ -815,9 +815,24 @@ namespace TypeCobol.Compiler.Preprocessor
 
         public void SeekToLineInMainDocument(int line)
         {
-            // TODO actual REPLACE directive/operations in effect are lost here, this is equivalent to a reset of this ReplaceIterator
             currentPosition = new ReplaceTokensLinesIteratorPosition();
             sourceIterator.SeekToLineInMainDocument(line);
+            currentPosition.ReplaceDirective = ((CodeElementsLine)CurrentLine).ActiveReplaceDirective;
+            if (currentPosition.ReplaceDirective != null)
+            {
+                if (currentPosition.ReplaceDirective.ReplaceOperations.Count == 0)
+                {
+                    currentPosition.ReplaceDirective = null;
+                }
+                else if (currentPosition.ReplaceDirective.ReplaceOperations.Count == 1)
+                {
+                    currentPosition.ReplaceOperation = currentPosition.ReplaceDirective.ReplaceOperations[0];
+                }
+                else
+                {
+                    currentPosition.ReplaceOperations = currentPosition.ReplaceDirective.ReplaceOperations;
+                }
+            }
         }
 
         /// <summary>
