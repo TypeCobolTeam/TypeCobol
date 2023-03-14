@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
@@ -332,6 +333,11 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                     }
                     nextToken = sourceIterator.NextToken();
+                }
+
+                if (nextToken.TokenType != TokenType.EndOfFile)
+                {
+                    ((CodeElementsLine)nextToken.TokensLine).ActiveReplaceDirective = currentPosition.ReplaceDirective;
                 }
 
                 // Apply the current REPLACE operations in effect
