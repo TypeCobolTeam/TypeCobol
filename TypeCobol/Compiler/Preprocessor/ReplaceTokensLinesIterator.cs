@@ -21,6 +21,13 @@ namespace TypeCobol.Compiler.Preprocessor
             _currentReplaceDirective = null;
         }
 
+        //TODO ReplaceAndReplacing constructor only useful to detect replace affected by replacing
+        public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, IReadOnlyList<ReplaceOperation> replaceOperations, TypeCobolOptions compilerOptions)
+            : base(sourceIterator, replaceOperations, compilerOptions)
+        {
+            _currentReplaceDirective = null;//TODO ReplaceAndReplacing this is wrong as replaceOperations are set
+        }
+
         protected override CheckTokenStatus CheckNextTokenBeforeReplace(IReadOnlyList<ReplaceOperation> currentReplaceOperations)
         {
             var nextToken = SourceIteratorNextToken();
