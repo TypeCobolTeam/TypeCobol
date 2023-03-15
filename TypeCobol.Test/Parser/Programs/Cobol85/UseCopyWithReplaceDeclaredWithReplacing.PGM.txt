@@ -1,3 +1,7 @@
+--- Diagnostics ---
+Line 1[8,37] <27, Error, Syntax> - Syntax error : Copy directive COPY CopyWithReplace <REPLACE[SingleToken] WORD BY var1> will alter REPLACE REPLACE[PartialWord] :TAG: BY WORD inside a COPY. This is not supported RuleStack=,  OffendingSymbol=*** DIRECTIVE REPLACE <REPLACE[PartialWord] :TAG: BY WORD>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,22::TAG:]<PartialCobolWord>[23,24:==]<PseudoTextDelimiter>[26,27:BY]<BY>[29,30:==]<PseudoTextDelimiter>[31,34:WORD]<UserDefinedWord>[35,36:==]<PseudoTextDelimiter>[37,37+:.]<PeriodSeparator>) ***
+Line 3[8,36] <27, Error, Syntax> - Syntax error : Copy directive COPY CopyWithReplace <REPLACE[SingleToken] WORD BY var1> will alter REPLACE REPLACE[SingleToken] WORD BY var2 inside a COPY. This is not supported RuleStack=,  OffendingSymbol=*** DIRECTIVE REPLACE <REPLACE[SingleToken] WORD BY var2>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,21:WORD]<UserDefinedWord>[22,23:==]<PseudoTextDelimiter>[25,26:BY]<BY>[28,29:==]<PseudoTextDelimiter>[30,33:var2]<UserDefinedWord>[34,35:==]<PseudoTextDelimiter>[36,36+:.]<PeriodSeparator>) ***
+
 --- Program ---
 PROGRAM: MyPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
