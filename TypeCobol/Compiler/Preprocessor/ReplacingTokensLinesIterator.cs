@@ -31,41 +31,55 @@ namespace TypeCobol.Compiler.Preprocessor
             // This parser currently does not support REPLACE that are altered by the REPLACING clause
             if (nextToken.TokenType == TokenType.REPLACE_DIRECTIVE)
             {
-                var replaceDirective = ((ProcessedTokensLine)CurrentLine).ReplaceDirective;
-                bool replaceDirectiveAltered = false;
+                // Get REPLACE directive
+                CompilerDirectiveToken compilerDirectiveToken = nextToken is ImportedToken importedToken
+                    ? (CompilerDirectiveToken)importedToken.OriginalToken
+                    : (CompilerDirectiveToken)nextToken;
+                var replaceDirective = (ReplaceDirective)compilerDirectiveToken.CompilerDirective;
 
-                //TODO ReplaceAndReplacing better code to find the real ReplaceDirective on the line. Property ReplaceDirective is the LAST on the line
-                foreach (var replaceOperation in replaceDirective.ReplaceOperations)
+                // Check REPLACE directive nature
+                if (replaceDirective.Type == CompilerDirectiveType.REPLACE)
                 {
-                    CheckReplace(replaceOperation, replaceOperation.GetComparisonTokens());
-                    CheckReplace(replaceOperation, replaceOperation.GetReplacementTokens());
-                }
+                    bool replaceDirectiveAltered = false;
 
-                if (!replaceDirectiveAltered)
-                {
-                    _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy " + _copyReplacingDirective.TextName + " is included using a REPLACING clause and contains REPLACE directive(s)", nextToken, ""));
-                }
-
-                //Use a ReplaceTokensLinesIterator to detect if the replacing clause can alter a Replace
-                void CheckReplace(ReplaceOperation replaceOperation, IList<Token> tokens)
-                {
-                    var tokensIterator = new TokensIterator(DocumentPath, tokens);
-                    var replaceIterator = new ReplaceTokensLinesIterator(tokensIterator, (IReadOnlyList<ReplaceOperation>)this._copyReplacingDirective.ReplaceOperations, CompilerOptions);
-                    
-                    bool replaceMatch = false;
-                    Token currentToken = null;
-                    while (currentToken?.TokenType != TokenType.EndOfFile && !replaceMatch)
+                    //TODO ReplaceAndReplacing better code to find the real ReplaceDirective on the line. Property ReplaceDirective is the LAST on the line
+                    foreach (var replaceOperation in replaceDirective.ReplaceOperations)
                     {
-                        currentToken = replaceIterator.NextToken();
-                        replaceMatch = currentToken is ReplacedToken;
+                        CheckReplace(replaceOperation, replaceOperation.GetComparisonTokens());
+                        CheckReplace(replaceOperation, replaceOperation.GetReplacementTokens());
                     }
 
-                    if (replaceMatch)
+                    if (!replaceDirectiveAltered)
                     {
-                        replaceDirectiveAltered = true;
-                        //TODO ReplaceAndReplacing better error message that a Cobol develop can read easily
-                        _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy directive " + _copyReplacingDirective + " will alter REPLACE " + replaceOperation+ " inside a COPY. This is not supported", nextToken, ""));
+                        _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy " + _copyReplacingDirective.TextName + " is included using a REPLACING clause and contains REPLACE directive(s)", nextToken, ""));
                     }
+
+                    //Use a ReplaceTokensLinesIterator to detect if the replacing clause can alter a Replace
+                    void CheckReplace(ReplaceOperation replaceOperation, IList<Token> tokens)
+                    {
+                        var tokensIterator = new TokensIterator(DocumentPath, tokens);
+                        var replaceIterator = new ReplaceTokensLinesIterator(tokensIterator, (IReadOnlyList<ReplaceOperation>)this._copyReplacingDirective.ReplaceOperations, CompilerOptions);
+
+                        bool replaceMatch = false;
+                        Token currentToken = null;
+                        while (currentToken?.TokenType != TokenType.EndOfFile && !replaceMatch)
+                        {
+                            currentToken = replaceIterator.NextToken();
+                            replaceMatch = currentToken is ReplacedToken;
+                        }
+
+                        if (replaceMatch)
+                        {
+                            replaceDirectiveAltered = true;
+                            //TODO ReplaceAndReplacing better error message that a Cobol develop can read easily
+                            _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy directive " + _copyReplacingDirective + " will alter REPLACE " + replaceOperation + " inside a COPY. This is not supported", nextToken, ""));
+                        }
+                    }
+                }
+                else
+                {
+                    // REPLACE OFF
+                    _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy " + _copyReplacingDirective.TextName + " is included using a REPLACING clause and contains REPLACE OFF directive(s)", nextToken, ""));
                 }
             }
 
