@@ -427,7 +427,6 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
 
-#if EUROINFO_RULES
         /// <summary>
         /// List of errors found when processing this CopyDirective during CodeElement step.
         /// </summary>
@@ -439,6 +438,7 @@ namespace TypeCobol.Compiler.Directives
             ProcessingDiagnostics.Add(diagnostic);
         }
 
+#if EUROINFO_RULES
         /// <summary>
         /// If true, remove the first 01 level data item found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
