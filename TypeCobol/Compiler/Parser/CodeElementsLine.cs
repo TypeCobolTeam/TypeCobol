@@ -2,6 +2,7 @@
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
 
@@ -37,6 +38,11 @@ namespace TypeCobol.Compiler.Parser
         // --- Computed line properties after code elements parser execution ---
 
         /// <summary>
+        /// REPLACE directive targeting this line or null if no REPLACE affects this line.
+        /// </summary>
+        public ReplaceDirective ActiveReplaceDirective { get; internal set; }
+
+        /// <summary>
         /// True if a code element starts on the current line
         /// </summary>
         public bool HasCodeElements { get { return CodeElements != null; } }
@@ -68,6 +74,7 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElements = null;
             _ParserDiagnostics = null;
+            ActiveReplaceDirective = null;
         }
 
         /// <summary>
