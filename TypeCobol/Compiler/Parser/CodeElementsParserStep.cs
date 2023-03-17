@@ -492,7 +492,7 @@ namespace TypeCobol.Compiler.Parser
 
             // Special case for REPLACE: if a REPLACE directive has been updated, we have to go over all tokens up to next REPLACE directive (or end of file if none found)
             var changedProcessedTokensLine = (ProcessedTokensLine)change.NewLine;
-            bool lookForNextReplaceDirective = changedProcessedTokensLine?.ReplaceDirective != null;
+            bool lookForNextReplaceDirective = changedProcessedTokensLine?.ReplaceDirective != null || IncludesDocumentContainingReplaceDirective(changedProcessedTokensLine);
 
             // Navigate backwards to the start of the multiline code element
             int lineIndex = change.LineIndex;
@@ -592,7 +592,17 @@ namespace TypeCobol.Compiler.Parser
                             // Line could have been updated through the effect of the modified REPLACE
                             nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
                             codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                            continue;
+
+                            if (IncludesDocumentContainingReplaceDirective(nextLine))
+                            {
+                                // No need to look further in main document
+                                lookForNextReplaceDirective = false;
+                            }
+                            else
+                            {
+                                // Keep searching for next REPLACE...
+                                continue;
+                            }
                         }
                     }
 
@@ -649,6 +659,38 @@ namespace TypeCobol.Compiler.Parser
             }
 
             return currentParseSection;
+        }
+
+        private static bool IncludesDocumentContainingReplaceDirective(ProcessedTokensLine line)
+        {
+            if (line.ImportedDocuments != null)
+            {
+                foreach (var importedDocument in line.ImportedDocuments.Values)
+                {
+                    // Copy not found ?
+                    if (importedDocument == null) continue;
+
+                    // Check whether imported document contains a REPLACE or not
+                    var importedLines = (ISearchableReadOnlyList<CodeElementsLine>)importedDocument.SourceDocument.Lines;
+                    if (importedLines.Count > 0)
+                    {
+                        /*
+                         * TODO:
+                         * - does not work for freshly imported COPYs because ActiveReplaceDirective is set during CodeElementsParserStep
+                         * - does not work for REPLACE OFF directives
+                         */
+                        var activeReplaceBefore = importedLines[0].ActiveReplaceDirective;
+                        var activeReplaceAfter = importedLines[importedLines.Count - 1].ActiveReplaceDirective;
+                        if (activeReplaceBefore != activeReplaceAfter)
+                        {
+                            // Imported document contains a REPLACE
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
