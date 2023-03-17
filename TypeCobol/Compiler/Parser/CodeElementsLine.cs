@@ -74,7 +74,6 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElements = null;
             _ParserDiagnostics = null;
-            ActiveReplaceDirective = null;
         }
 
         /// <summary>
