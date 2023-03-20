@@ -187,13 +187,41 @@ namespace TypeCobol.Compiler.Parser
                 {
                     tokenStream.StartLookingForStopToken(largestRefreshParseSection.StopToken);
 
-                    //Remove all the code elements for the future line to parse.
+                    // Get active REPLACE directive from line located right before reparse section
+                    ReplaceDirective activeReplaceDirective;
+                    if (largestRefreshParseSection.StartLineIndex > 0)
+                    {
+                        var lineBefore = documentLines[largestRefreshParseSection.StartLineIndex - 1];
+                        if (lineBefore.ImportedDocuments != null)
+                        {
+                            // The preceding line imports copies, use last line of the last resolved copy
+                            var lastLine = lineBefore.ImportedDocuments.Values
+                                .Where(d => d != null)
+                                .SelectMany(d => d.SourceDocument.Lines)
+                                .LastOrDefault();
+                            activeReplaceDirective = ((CodeElementsLine)lastLine)?.ActiveReplaceDirective;
+                        }
+                        else
+                        {
+                            // Use value from preceding parsing round
+                            activeReplaceDirective = lineBefore.ActiveReplaceDirective;
+                        }
+                    }
+                    else
+                    {
+                        // Reparse section starts at the beginning of the document, no REPLACE is active
+                        activeReplaceDirective = null;
+                    }
+
+                    //Remove all the code elements for the future line to parse and set ActiveReplaceDirective
                     IncrementalLineLimit = (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
                             ? largestRefreshParseSection.StopLineIndex + 1
                             : largestRefreshParseSection.StopLineIndex);
                     for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
                     {
-                        documentLines[i].ResetCodeElements();
+                        var documentLine = documentLines[i];
+                        documentLine.ResetCodeElements();
+                        documentLine.ActiveReplaceDirective = activeReplaceDirective;
                     }
                 }
                 else
@@ -284,9 +312,8 @@ namespace TypeCobol.Compiler.Parser
                                 {
                                     ResetedCodeElementsLines = new HashSet<CodeElementsLine>();
                                 }
-                                if (ResetedCodeElementsLines.Count == 0 || !ResetedCodeElementsLines.Contains(codeElementsLine))
+                                if (ResetedCodeElementsLines.Add(codeElementsLine))
                                 {
-                                    ResetedCodeElementsLines.Add(codeElementsLine);
                                     codeElementsLine.ResetCodeElements();
                                 }
                             }
