@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
@@ -22,12 +24,51 @@ namespace TypeCobol.Compiler.Preprocessor
             _copyReplacingDirective = copyReplacingDirective;
         }
 
-        protected override CheckTokenStatus CheckNextTokenBeforeReplace(IReadOnlyList<ReplaceOperation> currentReplaceOperations)
+        protected override CheckTokenStatus CheckNextTokenBeforeReplace([CanBeNull] IReadOnlyList<ReplaceOperation> currentReplaceOperations)
         {
             var nextToken = SourceIteratorNextToken();
 
-            // TODO: Add error to signal unsupported feature or implement
-            // This parser currently does not support REPLACE coming from a copy and that should be altered by the REPLACING clause
+            // This parser currently does not support REPLACE that are altered by the REPLACING clause
+            if (nextToken.TokenType == TokenType.REPLACE_DIRECTIVE)
+            {
+                // Get REPLACE directive
+                CompilerDirectiveToken compilerDirectiveToken = nextToken is ImportedToken importedToken
+                    ? (CompilerDirectiveToken)importedToken.OriginalToken
+                    : (CompilerDirectiveToken)nextToken;
+                var replaceDirective = (ReplaceDirective)compilerDirectiveToken.CompilerDirective;
+
+                // Check REPLACE directive nature
+                if (replaceDirective.Type == CompilerDirectiveType.REPLACE)
+                {
+                    //TODO ReplaceAndReplacing better code to find the real ReplaceDirective on the line. Property ReplaceDirective is the LAST on the line
+                    foreach (var replaceOperation in replaceDirective.ReplaceOperations)
+                    {
+                        CheckReplace(replaceOperation, replaceOperation.GetComparisonTokens());
+                        CheckReplace(replaceOperation, replaceOperation.GetReplacementTokens());
+                    }
+
+                    //Use a ReplaceTokensLinesIterator to detect if the replacing clause can alter a Replace
+                    void CheckReplace(ReplaceOperation replaceOperation, IList<Token> tokens)
+                    {
+                        var tokensIterator = new TokensIterator(DocumentPath, tokens);
+                        var replaceIterator = new ReplaceTokensLinesIterator(tokensIterator, (IReadOnlyList<ReplaceOperation>)_copyReplacingDirective.ReplaceOperations, CompilerOptions);
+
+                        bool replaceMatch = false;
+                        Token currentToken = null;
+                        while (currentToken?.TokenType != TokenType.EndOfFile && !replaceMatch)
+                        {
+                            currentToken = replaceIterator.NextToken();
+                            replaceMatch = currentToken is ReplacedToken;
+                        }
+
+                        if (replaceMatch)
+                        {
+                            _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy directive " + _copyReplacingDirective + " will alter REPLACE " + replaceOperation + " inside a COPY. This is not supported", nextToken, ""));
+                        }
+                    }
+                }
+                // else it's a REPLACE OFF, no need to create a diagnostic
+            }
 
 #if EUROINFO_RULES
             if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)

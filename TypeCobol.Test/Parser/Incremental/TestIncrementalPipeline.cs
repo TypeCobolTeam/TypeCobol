@@ -74,7 +74,6 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestCategory("Incremental")]
         public void AddEmptyLineInTheMiddleThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineInTheMiddleThenRemove>();
 
-        [Ignore]
         [TestMethod]
         [TestCategory("Incremental")]
         public void ClearDocumentThenRewriteLineByLine() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLine>();

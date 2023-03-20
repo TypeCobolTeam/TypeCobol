@@ -259,7 +259,6 @@ namespace TypeCobol.Compiler.Parser
                             continue;
                         }
 
-#if EUROINFO_RULES
                         // Now that the tokens for this line have been enumerated, we can access the ProcessingDiagnostics of the COPY directives (if any)
                         // Copy these diagnostics into ParserDiagnostics but do it only once for each line !
                         if (codeElementsLineSet.Add(codeElementsLine) && codeElementsLine.ImportedDocuments != null)
@@ -275,7 +274,6 @@ namespace TypeCobol.Compiler.Parser
                                 }
                             }
                         }
-#endif
 
                         if (IncrementalLineLimit >= 0 && tokenStart.Line >= IncrementalLineLimit)
                         {
