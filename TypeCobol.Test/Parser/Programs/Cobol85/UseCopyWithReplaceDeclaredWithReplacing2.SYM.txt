@@ -1,6 +1,5 @@
 --- Diagnostics ---
 Line 3[8,38] <27, Error, Syntax> - Syntax error : Copy directive COPY CopyWithReplace2 <REPLACE[SingleToken] WORD1 BY WORD2> will alter REPLACE REPLACE[SingleToken] WORD1 BY WORD3 inside a COPY. This is not supported RuleStack=,  OffendingSymbol=*** DIRECTIVE REPLACE <REPLACE[SingleToken] WORD1 BY WORD3>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,22:WORD1]<UserDefinedWord>[23,24:==]<PseudoTextDelimiter>[26,27:BY]<BY>[29,30:==]<PseudoTextDelimiter>[31,35:WORD3]<UserDefinedWord>[36,37:==]<PseudoTextDelimiter>[38,38+:.]<PeriodSeparator>) ***
-Line 7[8,38] <27, Error, Syntax> - Syntax error : Copy CopyWithReplace2 is included using a REPLACING clause and contains REPLACE directive(s) RuleStack=,  OffendingSymbol=*** DIRECTIVE REPLACE <REPLACE[SingleToken] WORD2 BY WORD3>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,22:WORD2]<UserDefinedWord>[23,24:==]<PseudoTextDelimiter>[26,27:BY]<BY>[29,30:==]<PseudoTextDelimiter>[31,35:WORD3]<UserDefinedWord>[36,37:==]<PseudoTextDelimiter>[38,38+:.]<PeriodSeparator>) ***
 
 --- Program ---
 MyPGM (.NET Type=ProgramSymbol, Kind=Program)

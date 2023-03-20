@@ -40,8 +40,6 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Check REPLACE directive nature
                 if (replaceDirective.Type == CompilerDirectiveType.REPLACE)
                 {
-                    bool replaceDirectiveAltered = false;
-
                     //TODO ReplaceAndReplacing better code to find the real ReplaceDirective on the line. Property ReplaceDirective is the LAST on the line
                     foreach (var replaceOperation in replaceDirective.ReplaceOperations)
                     {
@@ -49,16 +47,11 @@ namespace TypeCobol.Compiler.Preprocessor
                         CheckReplace(replaceOperation, replaceOperation.GetReplacementTokens());
                     }
 
-                    if (!replaceDirectiveAltered)
-                    {
-                        _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy " + _copyReplacingDirective.TextName + " is included using a REPLACING clause and contains REPLACE directive(s)", nextToken, ""));
-                    }
-
                     //Use a ReplaceTokensLinesIterator to detect if the replacing clause can alter a Replace
                     void CheckReplace(ReplaceOperation replaceOperation, IList<Token> tokens)
                     {
                         var tokensIterator = new TokensIterator(DocumentPath, tokens);
-                        var replaceIterator = new ReplaceTokensLinesIterator(tokensIterator, (IReadOnlyList<ReplaceOperation>)this._copyReplacingDirective.ReplaceOperations, CompilerOptions);
+                        var replaceIterator = new ReplaceTokensLinesIterator(tokensIterator, (IReadOnlyList<ReplaceOperation>)_copyReplacingDirective.ReplaceOperations, CompilerOptions);
 
                         bool replaceMatch = false;
                         Token currentToken = null;
@@ -70,17 +63,11 @@ namespace TypeCobol.Compiler.Preprocessor
 
                         if (replaceMatch)
                         {
-                            replaceDirectiveAltered = true;
-                            //TODO ReplaceAndReplacing better error message that a Cobol develop can read easily
                             _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy directive " + _copyReplacingDirective + " will alter REPLACE " + replaceOperation + " inside a COPY. This is not supported", nextToken, ""));
                         }
                     }
                 }
-                else
-                {
-                    // REPLACE OFF
-                    _copyReplacingDirective.AddProcessingDiagnostic(new ParserDiagnostic("Copy " + _copyReplacingDirective.TextName + " is included using a REPLACING clause and contains REPLACE OFF directive(s)", nextToken, ""));
-                }
+                // else it's a REPLACE OFF, no need to create a diagnostic
             }
 
 #if EUROINFO_RULES
