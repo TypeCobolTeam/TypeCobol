@@ -119,11 +119,13 @@ namespace TypeCobol.Test.Utils
         private readonly HashSet<string> _resultExtensions;
         private readonly bool _recursive;
         private readonly string _filterPrefix;
+        private readonly string[] _exclude;
 
         public bool IsCobolLanguage { get; set; } = false;
         public IIncrementalChangesGenerator ChangesGenerator { get; set; } = null;
 
-        public FolderTester(string rootFolder, string[] sourceExtensions, string[] changeExtensions = null, string[] resultExtensions = null, bool recursive = true, string filterPrefix = null)
+        public FolderTester(string rootFolder, string[] sourceExtensions, string[] changeExtensions = null, string[] resultExtensions = null, bool recursive = true,
+            string filterPrefix = null, params string[] exclude)
         {
             if (string.IsNullOrEmpty(rootFolder))
             {
@@ -141,6 +143,7 @@ namespace TypeCobol.Test.Utils
             _resultExtensions = (IsNullOrEmpty(resultExtensions) ? _DefaultResultExtensions : resultExtensions).ToHashSet(StringComparer.OrdinalIgnoreCase);
             _recursive = recursive;
             _filterPrefix = filterPrefix;
+            _exclude = exclude;
 
             // Consistency checks, extension categories should not overlap
             CheckNoOverlap(nameof(sourceExtensions), _sourceExtensions, nameof(changeExtensions), _changeExtensions);
@@ -193,6 +196,12 @@ namespace TypeCobol.Test.Utils
                 int cut = fileName.IndexOf('.');
                 string testName = fileName.Substring(0, cut);
                 string extension = Path.GetExtension(fileName); // Includes dot
+
+                // Apply exclusions
+                if (_exclude.Contains(testName, StringComparer.InvariantCultureIgnoreCase))
+                {
+                    continue;
+                }
 
                 // Categorize file based on its extension
                 Action<TestUnitData> addFile;

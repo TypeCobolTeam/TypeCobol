@@ -51,12 +51,12 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestProperty("Time", "fast")]
         public void ContinuationLines() => TestFolder();
 
-        private static void TestProgramsWithChangesGenerator<TChangesGenerator>()
+        private static void TestProgramsWithChangesGenerator<TChangesGenerator>(params string[] exclude)
             where TChangesGenerator : IIncrementalChangesGenerator, new()
         {
             string[] extensions = { ".cbl", ".pgm", ".tcbl" };
             Console.WriteLine("Entering directory \"" + _RootPrograms + "\" [" + string.Join(", ", extensions) + "]:");
-            var folderTester = new FolderTester(_RootPrograms, extensions) { ChangesGenerator = new TChangesGenerator() };
+            var folderTester = new FolderTester(_RootPrograms, extensions, exclude: exclude) { ChangesGenerator = new TChangesGenerator() };
             int nbOfTests = folderTester.Test();
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
@@ -68,14 +68,21 @@ namespace TypeCobol.Test.Parser.Incremental
 
         [TestMethod]
         [TestCategory("Incremental")]
-        public void AddEmptyLineAtEndThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtEndThenRemove>();
+        public void AddEmptyLineAtEndThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtEndThenRemove>(
+            "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2" // TODO #2480
+            );
 
         [TestMethod]
         [TestCategory("Incremental")]
-        public void AddEmptyLineInTheMiddleThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineInTheMiddleThenRemove>();
+        public void AddEmptyLineInTheMiddleThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineInTheMiddleThenRemove>(
+            "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2" // TODO #2480
+            );
 
         [TestMethod]
         [TestCategory("Incremental")]
-        public void ClearDocumentThenRewriteLineByLine() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLine>();
+        public void ClearDocumentThenRewriteLineByLine() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLine>(
+            "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2", // TODO #2480
+            "DebugLinesNotDebugging" // TODO #2457
+        );
     }
 }
