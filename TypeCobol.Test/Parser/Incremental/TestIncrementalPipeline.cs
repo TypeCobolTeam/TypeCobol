@@ -68,31 +68,21 @@ namespace TypeCobol.Test.Parser.Incremental
 
         [TestMethod]
         [TestCategory("Incremental")]
-        public void AddEmptyLineAtEndThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtEndThenRemove>();
+        public void AddEmptyLineAtEndThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineAtEndThenRemove>(
+            "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2" // TODO #2480
+            );
 
         [TestMethod]
         [TestCategory("Incremental")]
-        public void AddEmptyLineInTheMiddleThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineInTheMiddleThenRemove>();
+        public void AddEmptyLineInTheMiddleThenRemove() => TestProgramsWithChangesGenerator<AddEmptyLineInTheMiddleThenRemove>(
+            "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2" // TODO #2480
+            );
 
         [TestMethod]
         [TestCategory("Incremental")]
         public void ClearDocumentThenRewriteLineByLine() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLine>(
-            "DebugLinesNotDebugging",
-            "InvalidReplace",
-            "InvalidReplace2",
-            "MaximumNameLength",
-            "NonUsualProcedureName",
-            "PgmEmptyPartialWordReplace",
-            "Replace",
-            "ReplaceMultipleTokens",
-            "ReplaceOccurs",
-            "ReplaceSimilarStatements",
-            "ReplaceTokenInsideDataDiv",
-            "ReplaceTokenInsideDataDiv2",
-            "ReplaceWithCommentLine",
-            "ReplaceWithLineBreak",
-            "Replace_SeparatorsForPartialCobolWords",
-            "REPLACPGM"
+            "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2", // TODO #2480
+            "DebugLinesNotDebugging" // TODO #2457
         );
     }
 }
