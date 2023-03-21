@@ -74,7 +74,8 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElements = null;
             _ParserDiagnostics = null;
-            ActiveReplaceDirective = null;
+            // Don't reset ActiveReplaceDirective.
+            // This property is always updated during CodeElementParserStep and we need the original value to start an incremental reparsing of CodeElementParserStep.
         }
 
         /// <summary>

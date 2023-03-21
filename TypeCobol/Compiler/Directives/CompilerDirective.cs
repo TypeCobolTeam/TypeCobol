@@ -427,7 +427,6 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
 
-#if EUROINFO_RULES
         /// <summary>
         /// List of errors found when processing this CopyDirective during CodeElement step.
         /// </summary>
@@ -439,6 +438,7 @@ namespace TypeCobol.Compiler.Directives
             ProcessingDiagnostics.Add(diagnostic);
         }
 
+#if EUROINFO_RULES
         /// <summary>
         /// If true, remove the first 01 level data item found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
@@ -679,6 +679,9 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token ComparisonToken { get; protected set; }
 
+        public abstract IList<Token> GetComparisonTokens();
+        public abstract IList<Token> GetReplacementTokens();
+
 		protected static string NoQuotes(Token token) {
 			if (token == null) return "?";
 			return token.SourceText.Trim('\"').Trim('\'');
@@ -706,7 +709,21 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token ReplacementToken { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ReplacementToken);
+            return result;
+        }
+
+        public override string ToString() {
 			return base.ToString()+" BY "+NoQuotes(ReplacementToken);
 		}
     }
@@ -728,7 +745,21 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token PartialReplacementToken { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.Add(PartialReplacementToken);
+            return result;
+        }
+
+        public override string ToString() {
 			return base.ToString()+" BY "+NoQuotes(PartialReplacementToken);
 		}
     }
@@ -750,7 +781,21 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token[] ReplacementTokens { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.AddRange(ReplacementTokens);
+            return result;
+        }
+
+        public override string ToString() {
 			var str = new StringBuilder();
 			if (ReplacementTokens != null) {
 				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
@@ -783,7 +828,22 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token[] ReplacementTokens { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            result.AddRange(FollowingComparisonTokens);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.AddRange(ReplacementTokens);
+            return result;
+        }
+
+        public override string ToString() {
 			var str = new StringBuilder(base.ToString());
 			foreach(var token in FollowingComparisonTokens) str.Append(',').Append(NoQuotes(token));
 			str.Append(" BY ");
