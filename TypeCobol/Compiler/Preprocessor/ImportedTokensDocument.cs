@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Directives;
+﻿using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Preprocessor
@@ -46,20 +41,18 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         public ITokensLinesIterator GetProcessedTokensIterator()
         {
-            ITokensLinesIterator sourceIterator = SourceDocument.GetProcessedTokensIterator();
+            ITokensLinesIterator iterator = new CopyTokensLinesIterator(SourceDocument.TextSourceInfo.Name, SourceDocument.Lines, Token.CHANNEL_SourceTokens);
+
             if (HasReplacingDirective
 #if EUROINFO_RULES
-                || (this.CompilerOptions.UseEuroInformationLegacyReplacingSyntax && (this. CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar))
+                || CompilerOptions.UseEuroInformationLegacyReplacingSyntax && (CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar)
 #endif
-                )
+               )
             {
-                ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective, CompilerOptions);
-                return replaceIterator;
+                iterator = new ReplacingTokensLinesIterator(iterator, CopyDirective, CompilerOptions);
             }
-            else
-            {
-                return sourceIterator;
-            }
+
+            return iterator;
         }
 
         /// <summary>

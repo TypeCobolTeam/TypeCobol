@@ -124,7 +124,7 @@ namespace TypeCobol.Compiler.Scanner
                 else
                 {
                     if (tokensLine.ScannerDiagnostics.Count > 0)
-                        tokensLine.ClearAllDiagnostics();
+                        tokensLine.ResetScannerDiagnostics();
                 }
 
             }
@@ -366,7 +366,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (concatenatedLine.Length > 0)
                 {
                     // Scan the continuation text, and get its last token so far
-                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine);
+                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, ColumnsLayout.FreeTextFormat);
                     Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
                     Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
@@ -531,7 +531,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // Scan the complete continuation text as a whole
-            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine);
+            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, ColumnsLayout.FreeTextFormat);
             // Create a BitArray of Multi String Positions based on the length of the concatenated line.
             BitArray multiStringConcatBitPosition = null;
             if (multiStringConcatPositions.Count > 0)
@@ -679,37 +679,6 @@ namespace TypeCobol.Compiler.Scanner
                 Scanner.ScanTokensLine(line, scanState, compilerOptions, copyTextNameVariations);
                 scanState = line.ScanState;
             }
-        }
-
-        /// <summary>
-        /// Scan an isolated token in the given context.
-        /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, TypeCobolOptions scanOptions, out Diagnostic error)
-        {
-            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
-            tempTokensLine.InitializeScanState(scanContext);
-
-            Token candidateToken;
-            if (tokenText.Length > 0)
-            {
-                Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, scanOptions, false);
-                candidateToken = tempScanner.GetNextToken();
-            }
-            else
-            {
-                //Create an empty SpaceSeparator token.
-                candidateToken = new Token(TokenType.SpaceSeparator, 0, -1, tempTokensLine);
-            }
-
-            if(tempTokensLine.ScannerDiagnostics.Count > 0)
-            {
-                error = tempTokensLine.ScannerDiagnostics[0];
-            }
-            else
-            {
-                error = null;
-            }
-            return candidateToken;
         }
 
         private readonly CobolLanguageLevel _targetLanguageLevel;
@@ -1850,11 +1819,10 @@ namespace TypeCobol.Compiler.Scanner
                 var replaceStartIndex = line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex;
                 if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && 
                     ScannerUtils.CheckForPartialCobolWordPattern(line, replaceStartIndex, lastIndex, InterpretDoubleColonAsQualifiedNameSeparator, out patternEndIndex)) 
-                { //Check if there is cobol partial word inside the picture declaration. 
-                    //Match the whole PictureCharecterString token as a partial cobol word. 
-                    var picToken = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
-                    picToken.PreviousTokenType = TokenType.PictureCharacterString; //Save that the token was previously a picture character string token
-                    return picToken;
+                {
+                    //Check if there is cobol partial word inside the picture declaration. 
+                    //Match the whole PictureCharacterString token as a partial cobol word. 
+                    return new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
                 }
                 else
                 {

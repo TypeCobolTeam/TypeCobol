@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Text
 {
@@ -28,10 +24,10 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="type">Type of chage applied to the line</param>
+        /// <param name="type">Type of change applied to the line</param>
         /// <param name="lineIndex">Index of the line which was changed</param>
         /// <param name="newLine">New line content after the update (null in case of a LineRemoved event)</param>
-        public TextChange(TextChangeType type, int lineIndex, ITextLine newLine)
+        internal TextChange(TextChangeType type, int lineIndex, ITextLine newLine)
         {
             Type = type;
             LineIndex = lineIndex;
@@ -54,7 +50,7 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public ITextLine NewLine { get; private set; }
 
-        public override String ToString() {
+        public override string ToString() {
             var str = new StringBuilder();
             str.Append(Type).Append("@").Append(LineIndex).Append("\"").Append(NewLine == null ? String.Empty : NewLine.Text).Append("\"");
             return str.ToString();

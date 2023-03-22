@@ -1,0 +1,75 @@
+================================ ICobolTextLine ================================
+Line    9: LineUpdated     ->            DISPLAY var1
+Line   10: LineRemoved     -> No new line
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineUpdated     ->            DISPLAY var1
+================================= ITokensLine ==================================
+Line    9: LineUpdated     -> [8,11:    ]<SpaceSeparator> [12,18:DISPLAY]<DISPLAY> [19,19: ]<SpaceSeparator> [20,23:var1]<UserDefinedWord> 
+Line   10: LineUpdated     -> [8,11:    ]<SpaceSeparator> [12,18:DISPLAY]<DISPLAY> [19,19: ]<SpaceSeparator> [20,23:var3]<UserDefinedWord> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineUpdated     -> [8,11:    ]<SpaceSeparator> [12,18:DISPLAY]<DISPLAY> [19,19: ]<SpaceSeparator> [20,23:var1]<UserDefinedWord> 
+Line   10: LineUpdated     -> [8,11:    ]<SpaceSeparator> [12,18:DISPLAY]<DISPLAY> [19,19: ]<SpaceSeparator> [20,23:var3]<UserDefinedWord> 
+============================= IProcessedTokensLine =============================
+Line    9: LineUpdated     -> +++ CONTINUATION OF REPLACE_DIRECTIVE ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var1]<UserDefinedWord>) +++ 
+Line    8: LineUpdated     -> *** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] :debug-code: BY DISPLAY, ,var1,    ,DISPLAY, ,var3>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,29::debug-code:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[33,34:BY]<BY>[36,37:==]<PseudoTextDelimiter>) *** 
+Line   10: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var3]<UserDefinedWord>) +++ 
+Line   11: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,13:==]<PseudoTextDelimiter>[14,14+:.]<PeriodSeparator>) +++ 
+Line   10: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var3]<UserDefinedWord>) +++ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    8: LineUpdated     -> *** DIRECTIVE REPLACE <REPLACE[SingleToMultipleTokens] :debug-code: BY DISPLAY, ,var1,    ,DISPLAY, ,var3>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,29::debug-code:]<PartialCobolWord>[30,31:==]<PseudoTextDelimiter>[33,34:BY]<BY>[36,37:==]<PseudoTextDelimiter>) *** 
+Line    9: LineUpdated     -> +++ CONTINUATION OF REPLACE_DIRECTIVE ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var1]<UserDefinedWord>) +++ 
+Line   10: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,18:DISPLAY]<DISPLAY>[19,19: ]<SpaceSeparator>[20,23:var3]<UserDefinedWord>) +++ 
+Line   11: LineUpdated     -> +++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,11:    ]<SpaceSeparator>[12,13:==]<PseudoTextDelimiter>[14,14+:.]<PeriodSeparator>) +++ 
+============================== ICodeElementsLine ===============================
+Line    9: LineUpdated     -> 
+Line   10: LineUpdated     -> 
+Line   11: LineUpdated     -> 
+Line   12: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var3]<UserDefinedWord>
+- variables = var3
+ 
+Line   13: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line   14: LineUpdated     -> [[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+ 
+Line   15: LineUpdated     -> [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = TCOMFL06
+ 
+Line    7: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line   12: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var3]<UserDefinedWord>
+- variables = var3
+ 
+Line   12: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var3]<UserDefinedWord>
+- variables = var3
+ 
+Line   13: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line   14: LineUpdated     -> [[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+ 
+Line   15: LineUpdated     -> [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = TCOMFL06
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    7: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> 
+Line   10: LineUpdated     -> 
+Line   11: LineUpdated     -> 
+Line   12: LineUpdated     -> [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var1]<UserDefinedWord>
+- variables = var1
+ [[DisplayStatement]] [12,23:DISPLAY]<DISPLAY> --> [12,23:var3]<UserDefinedWord>
+- variables = var3
+ 
+Line   13: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line   14: LineUpdated     -> [[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+ 
+Line   15: LineUpdated     -> [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = TCOMFL06
+ 

@@ -1,10 +1,10 @@
-﻿000000 ID DIVISION.
-000000 PROGRAM-ID.   myPGM.      
-000000 DATA DIVISION.
-000000 WORKING-STORAGE SECTION.
-000000 01  CR                      PIC X VALUE '␍'.
-000000 01  LF                      PIC X VALUE '␊'.      
-000000 PROCEDURE DIVISION.
-000000     GOBACK
-000000     .
-000000 END PROGRAM myPGM.
+﻿       ID DIVISION.
+       PROGRAM-ID.   myPGM.      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  CR                      PIC X VALUE '␍'.
+       01  LF                      PIC X VALUE '␊'.      
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM myPGM.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -74,12 +75,6 @@ namespace TypeCobol.Compiler.Scanner
             HasClosingDelimiter = false;
 
             UsesVirtualSpaceAtEndOfLine = usesVirtualSpaceAtEndOfLine;
-
-            //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
-            if (tokensLine.ScanState != null && (tokenType == TokenType.PartialCobolWord ||
-                    tokensLine.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
-                scanStateSnapshot = tokensLine.ScanState.Clone();
-
         }
 
         /// <summary>
@@ -124,11 +119,6 @@ namespace TypeCobol.Compiler.Scanner
         /// Type from the TokenType enumeration
         /// </summary>
         public TokenType TokenType { get; internal set; }
-
-        /// <summary>
-        /// Previous potential tokentype, used for instance when token is changed to a PartialCobolWord.
-        /// </summary>
-        public TokenType? PreviousTokenType { get; set; } 
 
         /// <summary>
         /// Family from the TokenFamily Enumeration
@@ -303,19 +293,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public LiteralTokenValue LiteralValue { get; set; }
 
-        private readonly MultilineScanState scanStateSnapshot;
-        /// <summary>
-        /// ScanState associated to this token if any, null otherwise.
-        /// This property is used to allow PartialCobolWords proper reconstruction.
-        /// </summary>
-        public MultilineScanState ScanStateSnapshot
-        {
-            get
-            {
-                return scanStateSnapshot ?? tokensLine.ScanState;
-            }
-        }
-
         // --- Ambiguous tokens resolved after having been created ---
 
         internal void CorrectType(TokenType tokenType)
@@ -419,7 +396,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <returns>New Token instance with EndOfFile TokenType</returns>
         public static Token EndOfFile()
         {
-            return new Token(TokenType.EndOfFile, 0, -1, Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, string.Empty));
+            return new Token(TokenType.EndOfFile, 0, -1, Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, string.Empty, ColumnsLayout.FreeTextFormat));
         }
 
         // --- Token comparison for REPLACE directive ---
@@ -429,47 +406,32 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool CompareForReplace(Token comparisonToken)
         {
-            // 1. First compare the token type                 
-            if (comparisonToken == null || this.TokenType != comparisonToken.TokenType &&
-                !(this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable()))
+            //Nothing to compare
+            if (comparisonToken == null)
             {
                 return false;
             }
-            // 2. For partial Cobol words, chech if the comparison token text (":TAG:") 
-            //    is contained in the current token text (":TAG:-AMOUNT")
-            else if (TokenType == TokenType.PartialCobolWord)
+
+            //PartialCobolWord and PictureCharacterString are text based (and must be rescanned later as a whole)
+            if (TokenType == TokenType.PartialCobolWord || TokenType == TokenType.PictureCharacterString)
             {
                 return NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase) >= 0;
             }
-            // 3. Check for Picture replacement
-            //else if (TokenType == TokenType.PictureCharacterString)
-            //{
-            //    if (comparisonToken.Text.Length > 1)
-            //        return Regex.IsMatch(Text, comparisonToken.Text, RegexOptions.IgnoreCase);
-            //}
-            // 4. For token families
-            //    - AlphanumericLiteral
-            //    - NumericLiteral
-            //    - SyntaxLiteral
-            //    - Symbol
-            //    => compare Token text
-            else if (IsFamilyComparable())
+
+            //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
+            if (this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable())
             {
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }
-            // 5. In all other cases, token type comparison was enough
-            {
-                return true;
-            }
 
-            /// <summary>
-            /// Determine if this token belong to a family that is textually comparable.
-            /// </summary>
-            /// <returns>true if yes, false otherwise</returns>
+            //Otherwise allow replace for same type tokens
+            return this.TokenType == comparisonToken.TokenType;
+
+            //Determine if this token belong to a family that is textually comparable.
             bool IsFamilyComparable()
             {
                 return TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
-                                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
+                       TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
             }
         }
     }

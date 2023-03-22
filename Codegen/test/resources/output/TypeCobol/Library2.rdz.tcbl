@@ -48,6 +48,7 @@
       *    RETURNING Result TYPE dateString.
 
        END PROGRAM DVZZDATE.
+
       *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.

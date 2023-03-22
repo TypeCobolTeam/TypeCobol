@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.Parser
@@ -36,20 +37,18 @@ namespace TypeCobol.Compiler.Parser
             public ParseSection()
             { }
 
-            public ParseSection(int startLineIndex, Token startToken, int stopLineIndex, Token stopToken, bool stopTokenIsLastTokenOfTheLine)
+            public ParseSection(int startLineIndex, Token startToken, int stopLineIndex, Token stopToken)
             {
                 StartLineIndex = startLineIndex;
                 StartToken = startToken;
                 StopLineIndex = stopLineIndex;
                 StopToken = stopToken;
-                StopTokenIsFirstTokenOfTheLine = stopTokenIsLastTokenOfTheLine;
             }
 
             public int StartLineIndex { get; set; }
             public Token StartToken { get; set; }
             public int StopLineIndex { get; set; }
             public Token StopToken { get; set; }
-            public bool StopTokenIsFirstTokenOfTheLine { get; set; }
         }
 
         // When not null, optionnaly used to gather Antlr performance profiling information
@@ -88,7 +87,7 @@ namespace TypeCobol.Compiler.Parser
                     {
                         if (lastParseSection == null || tokensChange.LineIndex > lastParseSection.StopLineIndex)
                         {
-                            lastParseSection = CheckIfAdjacentLinesNeedRefresh(tokensChange.LineIndex, documentLines, prepareDocumentLineForUpdate, codeElementsLinesChanges, lastParseSection);
+                            lastParseSection = CheckIfAdjacentLinesNeedRefresh(tokensChange, documentLines, prepareDocumentLineForUpdate, codeElementsLinesChanges, lastParseSection);
                             refreshParseSections.Add(lastParseSection);
                         }
                     }
@@ -99,16 +98,30 @@ namespace TypeCobol.Compiler.Parser
                 //After getting all the parts refreshed, get the largest part that has been refreshed
                 var minParseSection = refreshParseSections.OrderBy(p => p.StartLineIndex).First();
                 var maxParseSection = refreshParseSections.OrderByDescending(p => p.StopLineIndex).First();
-                largestRefreshParseSection = new ParseSection(minParseSection.StartLineIndex,
-                    minParseSection.StartToken, maxParseSection.StopLineIndex, maxParseSection.StopToken,
-                    maxParseSection.StopTokenIsFirstTokenOfTheLine);
+                largestRefreshParseSection = new ParseSection(minParseSection.StartLineIndex, minParseSection.StartToken, maxParseSection.StopLineIndex, maxParseSection.StopToken);
             }
 
 
             // --- INITIALIZE ANTLR CodeElements parser ---
 
-            // Create a token iterator on top of pre-processed tokens lines
+            // Create a token iterator on top of pre-processed tokens lines and position on start line
             ITokensLinesIterator tokensIterator = processedTokensDocument.GetProcessedTokensIterator();
+
+            //For incremental mode, calculate best value for start line of the iterator
+            if (largestRefreshParseSection != null)
+            {
+                //Position iterator at start line
+                /*
+                 * TODO: if the start line is the target of a REPLACE, we should theoretically
+                 * go back by the number of tokens of the REPLACE directive comparison operand
+                 * so as to ensure to iterate over the whole potential match of the REPLACE.
+                 *
+                 * As we already starts with the beginning of a whole CodeElement, this means
+                 * we run the risk of a bug only with REPLACE targeting multiple CodeElements
+                 * which is unlikely to happen.
+                 */
+                tokensIterator.SeekToLineInMainDocument(largestRefreshParseSection.StartLineIndex);
+            }
 
             // Create an Antlr compatible token source on top of the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
@@ -146,8 +159,14 @@ namespace TypeCobol.Compiler.Parser
             cobolParser.AddErrorListener(errorListener);
 
             // Prepare to analyze the parse tree
+            // Restore debugging mode flag using StartToken of the reparse section
+            bool isDebuggingModeEnabled = false;
+            if (largestRefreshParseSection?.StartToken != null)
+            {
+                isDebuggingModeEnabled = largestRefreshParseSection.StartToken.TokensLine.ScanState.WithDebuggingMode;
+            }
             ParseTreeWalker walker = new ParseTreeWalker();
-            CodeElementBuilder codeElementBuilder = new CodeElementBuilder(compilerOptions);
+            CodeElementBuilder codeElementBuilder = new CodeElementBuilder(compilerOptions, isDebuggingModeEnabled);
 
             // --- INCREMENTAL PARSING ---
 
@@ -174,8 +193,7 @@ namespace TypeCobol.Compiler.Parser
                             : largestRefreshParseSection.StopLineIndex);
                     for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
                     {
-                        if (documentLines[i].CodeElements != null)
-                            documentLines[i].ResetCodeElements();
+                        documentLines[i].ResetCodeElements();
                     }
                 }
                 else
@@ -183,8 +201,10 @@ namespace TypeCobol.Compiler.Parser
                     // Fail to find a starting point ==> Reparse all.
                     tokenStream.Seek(0);
                     tokenStream.ResetStopTokenLookup();
-                    largestRefreshParseSection = null;
-                    refreshParseSections = null;
+                    foreach (var documentLine in documentLines)
+                    {
+                        documentLine.ResetCodeElements();
+                    }
                 }
             }
           
@@ -225,7 +245,8 @@ namespace TypeCobol.Compiler.Parser
                 // If the parse tree is not empty
                 if (codeElementsParseTree.codeElement() != null && codeElementsParseTree.codeElement().Length > 0)
                 {
-                    List<Diagnostic> diagnosticsToReport = new List<Diagnostic>();
+                    var diagnosticsToReport = new List<Diagnostic>();
+                    var codeElementsLineSet = new HashSet<CodeElementsLine>();
 
                     // Analyze the parse tree for each code element
                     foreach (var codeElementParseTree in codeElementsParseTree.codeElement())
@@ -237,6 +258,23 @@ namespace TypeCobol.Compiler.Parser
                         {
                             continue;
                         }
+
+                        // Now that the tokens for this line have been enumerated, we can access the ProcessingDiagnostics of the COPY directives (if any)
+                        // Copy these diagnostics into ParserDiagnostics but do it only once for each line !
+                        if (codeElementsLineSet.Add(codeElementsLine) && codeElementsLine.ImportedDocuments != null)
+                        {
+                            foreach (var copyDirective in codeElementsLine.ImportedDocuments.Keys)
+                            {
+                                if (copyDirective.ProcessingDiagnostics != null)
+                                {
+                                    foreach (var copyDirectiveProcessingDiagnostic in copyDirective.ProcessingDiagnostics)
+                                    {
+                                        codeElementsLine.AddParserDiagnostic(copyDirectiveProcessingDiagnostic);
+                                    }
+                                }
+                            }
+                        }
+
                         if (IncrementalLineLimit >= 0 && tokenStart.Line >= IncrementalLineLimit)
                         {
                             bool tokenStartIsImported = tokenStart is TypeCobol.Compiler.Preprocessor.ImportedToken;
@@ -445,129 +483,160 @@ namespace TypeCobol.Compiler.Parser
         /// 1. List all the starting and stop tokens of sections to parse with the rules above
         /// 2. Parse code elements beginning with starting token and until we reach stop token
         /// </summary>
-        private static ParseSection CheckIfAdjacentLinesNeedRefresh(int lineIndex, ISearchableReadOnlyList<CodeElementsLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges, ParseSection lastParseSection)
+        private static ParseSection CheckIfAdjacentLinesNeedRefresh(DocumentChange<IProcessedTokensLine> change, ISearchableReadOnlyList<CodeElementsLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges, ParseSection lastParseSection)
         {
             ParseSection currentParseSection = new ParseSection();
+            bool foundStopCodeElement;
+
+            // Special case for REPLACE: if a REPLACE directive has been updated, we have to go over all tokens up to next REPLACE directive (or end of file if none found)
+            var changedProcessedTokensLine = (ProcessedTokensLine)change.NewLine;
+            bool lookForNextReplaceDirective = changedProcessedTokensLine?.ReplaceDirective != null;
 
             // Navigate backwards to the start of the multiline code element
+            int lineIndex = change.LineIndex;
             if (lineIndex > 0)
             {
                 int previousLineIndex = lineIndex;
                 int lastLineIndexReset = lastParseSection != null ? lastParseSection.StopLineIndex : -1;
                 IEnumerator<CodeElementsLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
-                bool previousLineHasCodeElements = false;
+                foundStopCodeElement = false;
                 while (reversedEnumerator.MoveNext() && (--previousLineIndex > lastLineIndexReset))
                 {
                     // Get the previous line until the first code element is encountered
                     CodeElementsLine previousLine = reversedEnumerator.Current;
+                    System.Diagnostics.Debug.Assert(previousLine != null);
 
-                    // The start of the parse section is delimited by the previous CodeElement
-                    if (previousLine != null)
+                    // Skip Comments and Blanks
+                    if (previousLine.Type == CobolTextLineType.Blank || previousLine.Type == CobolTextLineType.Comment || previousLine.Type == CobolTextLineType.MultiFormalizedComment)
                     {
-                        previousLineHasCodeElements = previousLine.HasCodeElements;
-                        if (previousLineHasCodeElements)
-                        {
-                            currentParseSection.StartLineIndex = previousLineIndex;
-                            currentParseSection.StartToken = previousLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
-                        }
-
-                        // All lines contained in the parse section could be modified, and should be reset
-                        previousLine = (CodeElementsLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.CodeElementsParser);
-                        previousLine.ResetCodeElements();
-                        codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
+                        continue;
                     }
 
-                    // Stop iterating backwards as soon as the start of an old CodeElement is found                   
-                    if (previousLineHasCodeElements)
+                    // The start of the parse section is delimited by the previous CodeElement
+                    bool previousCodeElementStartsAtBeginningOfTheLine = false;
+                    Token previousCodeElementFirstToken = null;
+                    if (previousLine.HasCodeElements)
                     {
+                        previousCodeElementFirstToken = previousLine.CodeElements[0].ConsumedTokens.First();
+                        Token previousLineFirstSourceToken = previousLine.SourceTokens.FirstOrDefault();
+                        previousCodeElementStartsAtBeginningOfTheLine = previousCodeElementFirstToken == previousLineFirstSourceToken;
+                    }
+
+                    if (!previousCodeElementStartsAtBeginningOfTheLine)
+                    {
+                        /*
+                         * Either:
+                         * - previous line has no code element
+                         * - previous line has code element but starts with the end of a multiline CE or a CE that failed to parse correctly
+                         * => add line to the parse section
+                         */
+                        previousLine = (CodeElementsLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.CodeElementsParser);
+                        codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
+                    }
+                    else
+                    {
+                        foundStopCodeElement = true;
+                        currentParseSection.StartLineIndex = previousLineIndex;
+                        currentParseSection.StartToken = previousCodeElementFirstToken;
                         break;
                     }
                 }
-                // If no CodeElement was found on the previous lines, current parse section starts at the beggining of the file
+
+                // If no CodeElement was found on the previous lines, current parse section starts at the beginning of the file
                 // (because last parseSection could only stop at a CodeElement or at the end of the file)
-                if (!previousLineHasCodeElements)
+                if (!foundStopCodeElement)
                 {
                     currentParseSection.StartLineIndex = 0;
                     currentParseSection.StartToken = null;
                 }
             }
-            // If line 0 was updated, current parse section starts at the beggining of the file
+            // If line 0 was updated, current parse section starts at the beginning of the file
             else
             {
                 currentParseSection.StartLineIndex = 0;
                 currentParseSection.StartToken = null;
             }
 
-            // Navigate forwards to the end of the multiline code element
+            // Navigate forwards to the end of the multiline code element or to the next REPLACE directive
             if (lineIndex < (documentLines.Count - 1))
             {
                 int nextLineIndex = lineIndex;
                 IEnumerator<CodeElementsLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
-                bool nextLineHasCodeElements = false;
-                //----------------------------------------------------------------------------
-                // Because we use multi line comments once we have figure out
-                // the last line for stopping reparsing, we must consider the next for that,
-                // So that if figured out line is candidate for formalized comments, it will
-                // be entirely reparsed along with its formalized comment.
-                //----------------------------------------------------------------------------
-                bool oneMoreLine = false;
+                bool stopOnNextCodeElement = false;
+                foundStopCodeElement = false;
                 while (enumerator.MoveNext())
                 {
-                    // Get the next line until non continuation line is encountered
+                    // Get the next line until new CodeElement is encountered
                     nextLineIndex++;
                     CodeElementsLine nextLine = enumerator.Current;
+                    System.Diagnostics.Debug.Assert(nextLine != null);
 
-                    // Check if the next CodeElement found starts at the beginning of the line   
-                    if (nextLine != null)
+                    // Skip Comments and Blanks
+                    if (nextLine.Type == CobolTextLineType.Blank || nextLine.Type == CobolTextLineType.Comment || nextLine.Type == CobolTextLineType.MultiFormalizedComment)
                     {
-                        nextLineHasCodeElements = nextLine.HasCodeElements;
-                        bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
-                        if (nextLineHasCodeElements)
-                        {
-                            try
-                            {
-                                Token startTokenForNextParseSection = nextLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
-                                Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
-                                nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
-                            }
-                            catch (System.InvalidOperationException /*e*/)
-                            {//JCM: 28/08/2017: I noticed that this Exception can occur if: it doesn't exists a token which verifies the predicate: token.Channel == Token.CHANNEL_SourceToken
-                                nextCodeElementStartsAtTheBeginningOfTheLine = false;
-                            }
-                        }
+                        continue;
+                    }
 
-                        // All lines contained in the parse section could be modified
-                        if (!nextCodeElementStartsAtTheBeginningOfTheLine)
+                    // Check REPLACE directive
+                    if (lookForNextReplaceDirective)
+                    {
+                        if (nextLine.ReplaceDirective != null)
                         {
-                            // TO DO : ERROR below, will not work if we have source tokens from previous CodeElement + one other CodeElement on the same line
-                            // => the other CodeElement will be deleted by prepareDocumentLineForUpdate and not parsed again
+                            // next line is a new REPLACE directive, stop looking for REPLACE and look for next CodeElement
+                            lookForNextReplaceDirective = false;
+                        }
+                        else
+                        {
+                            // Line could have been updated through the effect of the modified REPLACE
                             nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
                             codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                        }
-
-                        // Stop iterating forwards as soon as the start of an old CodeElement is found                   
-                        if (nextLineHasCodeElements)
-                        {
-                            if (oneMoreLine || !(nextLine.CodeElements.Any(ce => ce is IFormalizedCommentable)))
-                            {
-                                currentParseSection.StopLineIndex = nextLineIndex;
-                                currentParseSection.StopToken = nextLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
-                                currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
-                                break;
-                            }
-                            else
-                            {   //Ok next line will be the last one.
-                                oneMoreLine = true;
-                            }
+                            continue;
                         }
                     }
+
+                    // Check if the next CodeElement starts at the beginning of the line
+                    var nextLineHasCodeElements = nextLine.HasCodeElements;
+                    bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
+                    Token nextLineCodeElementFirstToken = null;
+                    if (nextLineHasCodeElements)
+                    {
+                        nextLineCodeElementFirstToken = nextLine.CodeElements[0].ConsumedTokens.First();
+                        Token nextLineFirstSourceToken = nextLine.SourceTokens.FirstOrDefault();
+                        nextCodeElementStartsAtTheBeginningOfTheLine = nextLineCodeElementFirstToken == nextLineFirstSourceToken;
+                    }
+
+                    // All lines contained in the parse section could be modified
+                    if (!nextCodeElementStartsAtTheBeginningOfTheLine)
+                    {
+                        // TO DO : ERROR below, will not work if we have source tokens from previous CodeElement + one other CodeElement on the same line
+                        // => the other CodeElement will be deleted by prepareDocumentLineForUpdate and not parsed again
+                        nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
+                        codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
+                        stopOnNextCodeElement = false;
+                    }
+
+                    // Stop iterating forwards as soon as the start of a previously parsed CodeElement is found                   
+                    if (nextLineHasCodeElements)
+                    {
+                        // Take one more CodeElement to refresh diagnostics related to one CE but located after it
+                        if (stopOnNextCodeElement)
+                        {
+                            currentParseSection.StopLineIndex = nextLineIndex;
+                            currentParseSection.StopToken = nextLineCodeElementFirstToken;
+                            foundStopCodeElement = true;
+                            break;
+                        }
+
+                        // Ok next line will be the last one.
+                        stopOnNextCodeElement = true;
+                    }
                 }
+
                 // If no CodeElement was found on the next lines, current parse section current parse section ends at the end of the file
-                if (!nextLineHasCodeElements)
+                if (!foundStopCodeElement)
                 {
-                    currentParseSection.StopLineIndex = nextLineIndex;
+                    currentParseSection.StopLineIndex = documentLines.Count - 1;
                     currentParseSection.StopToken = null;
-                    currentParseSection.StopTokenIsFirstTokenOfTheLine = false;
                 }
             }
             // If last line was updated, or if no CodeElement was found after the updated line, current parse section ends at the end of the file
@@ -575,7 +644,6 @@ namespace TypeCobol.Compiler.Parser
             {
                 currentParseSection.StopLineIndex = documentLines.Count - 1;
                 currentParseSection.StopToken = null;
-                currentParseSection.StopTokenIsFirstTokenOfTheLine = false;
             }
 
             return currentParseSection;

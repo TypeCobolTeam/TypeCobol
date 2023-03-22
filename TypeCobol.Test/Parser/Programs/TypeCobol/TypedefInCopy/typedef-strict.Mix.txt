@@ -1,0 +1,9 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+Line 5[10,28] <30, Error, Semantics> - Error in copy 'TypedefStrict' at line 1 : Semantic error: TYPEDEF STRICT is not allowed within a copy. Please review the 'TypedefStrict' copy.
+         COPY TypedefStrict.
+         01 var1 type TypedefStrict1.
+       END PROGRAM MainProgram.
+

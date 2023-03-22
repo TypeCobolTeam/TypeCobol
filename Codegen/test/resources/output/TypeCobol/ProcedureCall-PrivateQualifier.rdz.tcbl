@@ -76,6 +76,7 @@
 
        END PROGRAM PGM1.
 
+
       *
       *declare procedure check private
       *   input mydate        TYPE Date

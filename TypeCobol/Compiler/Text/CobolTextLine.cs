@@ -73,16 +73,6 @@ namespace TypeCobol.Compiler.Text
             CompilationStep = CompilationStep.Text;
         }
 
-        /// <summary>
-        /// Create an isolated CobolTextLine, not based on a real line of a TextDocument.
-        /// Useful only for unit tests, or to compute intermediate results.
-        /// </summary>
-        public static CobolTextLine Create(string text)
-        {
-            ITextLine isolatedTextLine = new TextLineSnapshot(-1, text, null);
-            return new CobolTextLine(isolatedTextLine, ColumnsLayout.FreeTextFormat);
-        }
-
         public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, TypeCobolOptions scannerOptions, int index = -1)
         {
             if (layout == ColumnsLayout.FreeTextFormat)
@@ -134,7 +124,7 @@ namespace TypeCobol.Compiler.Text
                         indicator = '-';
                     }
 
-                    IList<Tuple<string, bool>> lines = Split(part, max, min, scannerOptions);
+                    IList<Tuple<string, bool>> lines = Split(part, max, min, scannerOptions, layout);
 
                     for (int i = 0; i < lines.Count; i++)
                     {
@@ -177,7 +167,7 @@ namespace TypeCobol.Compiler.Text
             return result;
         }
 
-        private static IList<Tuple<string, bool> > Split(string line, int max, int min, TypeCobolOptions scannerOptions)
+        private static IList<Tuple<string, bool> > Split(string line, int max, int min, TypeCobolOptions scannerOptions, ColumnsLayout layout)
         {
             var lines = new List<Tuple<string, bool>>();
             int nLine = (line.Length / max) + ((line.Length % max) != 0 ? 1 : 0);
@@ -193,7 +183,7 @@ namespace TypeCobol.Compiler.Text
                     lines.Add(new Tuple<string, bool>(line.Substring(i, Math.Min((i == 0 ? max : min), line.Length - i)), true));
                 }
             }
-            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line);
+            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line, layout);
             tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
             Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, scannerOptions, false);

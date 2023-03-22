@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
 
@@ -39,6 +38,11 @@ namespace TypeCobol.Compiler.Parser
         // --- Computed line properties after code elements parser execution ---
 
         /// <summary>
+        /// REPLACE directive targeting this line or null if no REPLACE affects this line.
+        /// </summary>
+        public ReplaceDirective ActiveReplaceDirective { get; internal set; }
+
+        /// <summary>
         /// True if a code element starts on the current line
         /// </summary>
         public bool HasCodeElements { get { return CodeElements != null; } }
@@ -54,7 +58,7 @@ namespace TypeCobol.Compiler.Parser
         internal void AddCodeElement(CodeElement codeElement)
         {
             // Lazy list instantiation
-            if(CodeElements == null)
+            if (CodeElements == null)
             {
                 // In most cases, there will be no more than a single code element per line
                 CodeElements = new List<CodeElement>(1);
@@ -70,6 +74,8 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElements = null;
             _ParserDiagnostics = null;
+            // Don't reset ActiveReplaceDirective.
+            // This property is always updated during CodeElementParserStep and we need the original value to start an incremental reparsing of CodeElementParserStep.
         }
 
         /// <summary>
@@ -95,52 +101,41 @@ namespace TypeCobol.Compiler.Parser
             _ParserDiagnostics.Add(diag);
         }
 
-        /// <summary>
-        /// Reset all diagnostics for the current line
-        /// </summary>
-        internal void ResetDiagnostics()
+        public override void CollectDiagnostics(List<Diagnostic> diagnostics)
         {
-            _ParserDiagnostics = null;
-            if (CodeElements != null)
+            // Start with diagnostics from ProcessedTokensLine
+            base.CollectDiagnostics(diagnostics);
+
+            // CodeElement parsing diagnostics and COPY directive processing diagnostics in EI-mode
+            if (ParserDiagnostics != null)
             {
-                foreach (var codeElement in CodeElements)
-                {
-                    codeElement.Diagnostics = null; //Delete all diagnostics on every codeelement of this line
-                }
-            }
-        }
-
-        internal void ShiftUp() => Shift(-1);
-
-        internal void ShiftDown() => Shift(+1);
-
-        private void Shift(int offset)
-        {
-            //Update line index
-            LineIndex += offset;
-
-            //Update ParserDiag lines index
-            if (_ParserDiagnostics != null)
-            {
-                foreach (var parserDiagnostic in _ParserDiagnostics)
-                {
-                    parserDiagnostic.Shift(offset);
-                }
+                diagnostics.AddRange(ParserDiagnostics);
             }
 
-            //Update CodeElements Diags lines index
-            if (CodeElements != null)
+            // Diagnostics on CodeElement themselves
+            if (HasCodeElements)
             {
                 foreach (var codeElement in CodeElements)
                 {
                     if (codeElement.Diagnostics != null)
                     {
-                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
-                        {
-                            codeElementDiagnostic.Shift(offset);
-                        }
+                        diagnostics.AddRange(codeElement.Diagnostics);
                     }
                 }
+            }
+        }
+
+        internal void Shift(int offset)
+        {
+            //Update line index
+            LineIndex += offset;
+
+            //Shift diagnostics
+            var diagnostics = new List<Diagnostic>();
+            CollectDiagnostics(diagnostics);
+            foreach (var diagnostic in diagnostics)
+            {
+                diagnostic.Shift(offset);
             }
         }
     }

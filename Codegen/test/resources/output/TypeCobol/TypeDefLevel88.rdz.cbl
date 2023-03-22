@@ -55,3 +55,4 @@
              CONTINUE
           END-IF.
        END PROGRAM TypeDefLevel88.
+

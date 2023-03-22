@@ -28,11 +28,9 @@ namespace TypeCobol.Compiler.Scanner
         /// Factory method used by the parser when it inserts a missing token
         /// in the tokens stream to recover from the error and continue
         /// </summary>
-        internal static TokensLine CreateVirtualLineForInsertedToken(int lineIndex, string text)
+        internal static TokensLine CreateVirtualLineForInsertedToken(int lineIndex, string text, ColumnsLayout layout)
         {
-            return new TokensLine(
-                new TextLineSnapshot(lineIndex, text, null),
-                ColumnsLayout.FreeTextFormat);
+            return new TokensLine(new TextLineSnapshot(lineIndex, text, null), layout);
         }
         
         // Cache last index of a source char on this line
@@ -105,6 +103,12 @@ namespace TypeCobol.Compiler.Scanner
 
         private IList<Diagnostic> _ScannerDiagnostics;
 
+        public virtual void CollectDiagnostics(List<Diagnostic> diagnostics)
+        {
+            // For TokensLine all diagnostics are collected in ScannerDiagnostics
+            diagnostics.AddRange(_ScannerDiagnostics);
+        }
+
         /// <summary>
         /// Use this method to attach a diagnostic to this line 
         /// (never call directly Diagnostics.Add)
@@ -164,11 +168,7 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        internal void ClearAllDiagnostics()
-        {
-            System.Diagnostics.Debug.Assert(SourceTokens.Count == 0, "The diagnostics are on the tokens");
-            _ScannerDiagnostics.Clear();
-        }
+        internal void ResetScannerDiagnostics() => _ScannerDiagnostics.Clear();
 
         // --- State for context-sensitive tokens ---
 
@@ -176,7 +176,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Internal state that was used to start scanning this line
         /// (we need to remember this to avoid a full rescan when previous lines are update in a compatible way)
         /// </summary>
-        internal MultilineScanState InitialScanState { get; private set; }
+        public MultilineScanState InitialScanState { get; private set; }
 
         /// <summary>
         /// The preprocessor needs to know the exact ScanState just before each COPY token is encountered

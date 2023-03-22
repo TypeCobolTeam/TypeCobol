@@ -45,13 +45,6 @@ namespace TypeCobol.Test.Parser.Preprocessor
             PreprocessorUtils.CheckWithReplaceResultFile(result, testName);
         }
 
-        public static void CheckReplaceNested()
-        {
-            string testName = "PgmReplaceNested";
-            string result = PreprocessorUtils.ProcessReplaceDirectives(_ReplaceProject, testName);
-            PreprocessorUtils.CheckWithReplaceResultFile(result, testName);
-        }
-
         public static void CheckReplaceFunction()
         {
             string testName = "PgmReplaceFunction";

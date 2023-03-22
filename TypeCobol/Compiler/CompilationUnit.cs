@@ -26,8 +26,8 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
-            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations)
+        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, IAnalyzerProvider analyzerProvider) :
+            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState)
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler
                 _analyzerProvider = null;
             }
 
-            _history = this.TrackChanges(5);
+            _history = this.TrackChanges(20);
         }
 
         /// <summary>
@@ -455,41 +455,11 @@ namespace TypeCobol.Compiler
                 return base.AllDiagnostics();
             }
 
+            //CodeElements parsing diagnostics
             var diagnostics = new List<Diagnostic>();
             foreach (var codeElementsLine in codeElementsDocumentSnapshot.Lines)
             {
-                AddScannerDiagnostics(codeElementsLine, diagnostics);
-                AddPreprocessorDiagnostics(codeElementsLine, diagnostics);
-
-                //CompilerDirective processing diagnostics (compiler directives are parsed during Preprocessor step and processed during CodeElement step)
-                if (codeElementsLine.HasCompilerDirectives)
-                {
-                    foreach (var token in codeElementsLine.TokensWithCompilerDirectives)
-                    {
-                        if (token is CompilerDirectiveToken compilerDirectiveToken && compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics != null)
-                        {
-                            diagnostics.AddRange(compilerDirectiveToken.CompilerDirective.ProcessingDiagnostics);
-                        }
-                    }
-                }
-
-                //CodeElement parsing diagnostics
-                if (codeElementsLine.ParserDiagnostics != null)
-                {
-                    diagnostics.AddRange(codeElementsLine.ParserDiagnostics);
-                }
-
-                //Diagnostics on CodeElement themselves
-                if (codeElementsLine.CodeElements != null)
-                {
-                    foreach (var codeElement in codeElementsLine.CodeElements)
-                    {
-                        if (codeElement.Diagnostics != null)
-                        {
-                            diagnostics.AddRange(codeElement.Diagnostics);
-                        }
-                    }
-                }
+                codeElementsLine.CollectDiagnostics(diagnostics);
             }
 
             if (onlyCodeElementDiagnostics) return diagnostics; //No need to go further

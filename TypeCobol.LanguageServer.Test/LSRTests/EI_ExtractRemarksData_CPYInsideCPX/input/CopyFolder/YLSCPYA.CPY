@@ -1,0 +1,2 @@
+       01 LSCPYA.
+         05 LSCPYA-DATA-ITEM2 PIC X.

@@ -211,3 +211,4 @@
       *declare procedure Foo public
       *    input t pic x.
        END PROGRAM STACKED2.
+

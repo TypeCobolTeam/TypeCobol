@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Parser
 		private readonly SqlCodeElementBuilder _sqlCodeElementBuilder;
 		private readonly UnsupportedLanguageLevelFeaturesChecker _languageLevelChecker;
 
-		public CodeElementBuilder(TypeCobolOptions compilerOptions)
+		public CodeElementBuilder(TypeCobolOptions compilerOptions, bool isDebuggingModeEnabled)
 		{
 			var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
 			_languageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
@@ -35,7 +35,8 @@ namespace TypeCobol.Compiler.Parser
             _cobolExpressionsBuilder = new CobolExpressionsBuilder(_cobolWordsBuilder, _languageLevelChecker);
 			_cobolStatementsBuilder = new CobolStatementsBuilder(_cobolWordsBuilder, _cobolExpressionsBuilder, _languageLevelChecker);
 			_sqlCodeElementBuilder = new SqlCodeElementBuilder();
-		}
+            IsDebuggingModeEnabled = isDebuggingModeEnabled;
+        }
 
         /// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
         public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
@@ -71,13 +72,8 @@ namespace TypeCobol.Compiler.Parser
                     CodeElement.CallSites = _cobolExpressionsBuilder.callSites;
                 }
                 // Attach all tokens consumed by the parser for this code element
-                // Collect all error messages encoutered while parsing this code element
-                List<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
-                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
-                if (diagnostics.Count > 0)
-                {
-                    CodeElement.Diagnostics = diagnostics;
-                }
+                // Collect all error messages encountered while parsing this code element
+                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement, Context);
                 CodeElementChecker.OnCodeElement(CodeElement, IsDebuggingModeEnabled);
             }
             // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
@@ -91,28 +87,39 @@ namespace TypeCobol.Compiler.Parser
             }
 		}
 
-        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, List<Diagnostic> diagnostics, ParserRuleContext context)
+        private static void AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement codeElement, ParserRuleContext context)
         {
-            var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
-            if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
+            var consumedTokens = codeElement.ConsumedTokens;
+            var diagnostics = codeElement.Diagnostics ?? new List<Diagnostic>();
+			AttachDiagnosticsAndTokens(context);
+            if (diagnostics.Count > 0)
             {
-				diagnostics.AddRange(ruleNodeWithDiagnostics.Diagnostics);
+                codeElement.Diagnostics = diagnostics;
             }
-            if (context.children != null)
+
+            void AttachDiagnosticsAndTokens(ParserRuleContext currentContext)
             {
-                foreach(var childNode in context.children)
+                var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)currentContext;
+                if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
                 {
-                    if (childNode is IRuleNode)
-                    {                        
-                        AddTokensConsumedAndDiagnosticsAttachedInContext(consumedTokens, diagnostics, (ParserRuleContext)((IRuleNode)childNode).RuleContext);
-                    }
-                    else if(childNode is ITerminalNode)
+                    diagnostics.AddRange(ruleNodeWithDiagnostics.Diagnostics);
+                }
+                if (currentContext.children != null)
+                {
+                    foreach (var childNode in currentContext.children)
                     {
-                        Token token = (Token)((ITerminalNode)childNode).Symbol;
-                        consumedTokens.Add(token);
+                        if (childNode is IRuleNode)
+                        {
+                            AttachDiagnosticsAndTokens((ParserRuleContext)((IRuleNode)childNode).RuleContext);
+                        }
+                        else if (childNode is ITerminalNode)
+                        {
+                            Token token = (Token)((ITerminalNode)childNode).Symbol;
+                            consumedTokens.Add(token);
+                        }
                     }
                 }
-            }
+			}
         }
 
         // Code structure

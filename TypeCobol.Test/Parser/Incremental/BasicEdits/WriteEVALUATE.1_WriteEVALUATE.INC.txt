@@ -1,0 +1,33 @@
+================================ ICobolTextLine ================================
+Line    9: LineInserted    ->            EVALUATE TRUE
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineInserted    ->            EVALUATE TRUE
+================================= ITokensLine ==================================
+Line    9: LineInserted    -> [12,19:EVALUATE]<EVALUATE> [21,24:TRUE]<TRUE> 
+Line    9: LineUpdated     -> [12,19:EVALUATE]<EVALUATE> [21,24:TRUE]<TRUE> 
+Line   10: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineInserted    -> [12,19:EVALUATE]<EVALUATE> [21,24:TRUE]<TRUE> 
+Line   10: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+============================= IProcessedTokensLine =============================
+Line    9: LineInserted    -> 
+Line   10: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineInserted    -> 
+Line   10: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line   10: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[EvaluateStatement]] [12,19:EVALUATE]<EVALUATE> --> [21,24:TRUE]<TRUE>
+ 
+Line   10: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[EvaluateStatement]] [12,19:EVALUATE]<EVALUATE> --> [21,24:TRUE]<TRUE>
+ 
+Line   10: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 

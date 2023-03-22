@@ -1,0 +1,12 @@
+Line 7[8,9] <37, Warning, General> - Warning: Paragraph 'a' is empty
+--- Nodes ---
+?
+  Simple
+    procedure-division
+      main
+        sentence-0
+          [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+          end
+      a
+    end

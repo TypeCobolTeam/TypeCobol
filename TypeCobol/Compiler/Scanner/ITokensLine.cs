@@ -32,9 +32,19 @@ namespace TypeCobol.Compiler.Scanner
         bool HasTokenContinuationFromPreviousLine { get; }
 
         /// <summary>
+        /// Original ScanState before scanning the line
+        /// </summary>
+        MultilineScanState InitialScanState { get; }
+
+        /// <summary>
         /// Internal state used by the Scanner to disambiguate context-sensitive keywords
         /// </summary>
         MultilineScanState ScanState { get; }
 
+        /// <summary>
+        /// Collect all diagnostics attached to this line into the given list.
+        /// </summary>
+        /// <param name="diagnostics">A non-null list of diagnostics to accumulate results</param>
+        void CollectDiagnostics(List<Diagnostic> diagnostics);
     }
 }

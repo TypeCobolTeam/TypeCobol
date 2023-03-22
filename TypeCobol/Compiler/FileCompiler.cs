@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
@@ -87,7 +86,7 @@ namespace TypeCobol.Compiler
             CompilationProject compilationProject)
             : this(libraryName, fileName, columnsLayout, isCopyFile,
                 sourceFileProvider, documentImporter, compilerOptions, customSymbols,
-                null, compilationProject, null)
+                null, compilationProject)
         { }
 
         /// <summary>
@@ -95,10 +94,10 @@ namespace TypeCobol.Compiler
         /// </summary>
         public FileCompiler(string libraryName, string fileName, ColumnsLayout columnsLayout, bool isCopyFile,
             SourceFileProvider sourceFileProvider, IDocumentImporter documentImporter, TypeCobolOptions compilerOptions, SymbolTable customSymbols,
-            MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+            MultilineScanState scanState, CompilationProject compilationProject)
             : this(new Tuple<string, string, ColumnsLayout, bool>(libraryName, fileName, columnsLayout, isCopyFile), null,
                 sourceFileProvider, documentImporter, compilerOptions, customSymbols,
-                scanState, compilationProject, copyTextNameVariations)
+                scanState, compilationProject)
         { }
 
         /// <summary>
@@ -120,7 +119,7 @@ namespace TypeCobol.Compiler
             CompilationProject compilationProject)
             : this(null, textDocument,
                 sourceFileProvider, documentImporter, compilerOptions, customSymbols,
-                null, compilationProject, null)
+                null, compilationProject)
         { }
 
         /// <summary>
@@ -128,7 +127,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         private FileCompiler(Tuple<string, string, ColumnsLayout, bool> fileInfo, ITextDocument textDocument,
             SourceFileProvider sourceFileProvider, IDocumentImporter documentImporter, TypeCobolOptions compilerOptions, SymbolTable customSymbols,
-            [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+            [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject)
         {
             var chrono = new Stopwatch();
             chrono.Start();
@@ -185,13 +184,13 @@ namespace TypeCobol.Compiler
                 {
                     //This is an imported copy
                     Debug.Assert(scanState.InsideCopy);
-                    CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, true, TextDocument.Lines, compilerOptions, documentImporter, scanState, copyTextNameVariations);
+                    CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, true, TextDocument.Lines, compilerOptions, documentImporter, scanState);
                 }
                 else
                 {
                     //Direct copy parsing, copy is assumed to be part of Data Division and using comma as the decimal point.
                     var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals, true, true, insideCopy: true);
-                    CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, false, TextDocument.Lines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                    CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, false, TextDocument.Lines, compilerOptions, documentImporter, initialScanState, CompilationProject.AnalyzerProvider);
                     CompilationResultsForCopy = CompilationResultsForProgram;
                 }
 
@@ -202,7 +201,7 @@ namespace TypeCobol.Compiler
                 //This is a regular program
                 Debug.Assert(scanState == null);
                 var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals);
-                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, false, TextDocument.Lines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, false, TextDocument.Lines, compilerOptions, documentImporter, initialScanState, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
             CompilerOptions = compilerOptions;

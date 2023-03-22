@@ -68,6 +68,8 @@ namespace TypeCobol.Compiler.CupParser
             return null;
         }
 
+        internal bool AnomalousLineIndexFound { get; private set; }
+
         private IEnumerator<Symbol> Enumerator(IEnumerable<Symbol> before, IEnumerable<CodeElementsLine> lines, IEnumerable<Symbol> after)
         {
             //symbols before
@@ -82,8 +84,16 @@ namespace TypeCobol.Compiler.CupParser
             //symbols from lines
             if (lines != null)
             {
+                int expectedIndex = 0;
                 foreach (var line in lines)
                 {
+                    if (!AnomalousLineIndexFound && line.LineIndex != expectedIndex)
+                    {
+                        AnomalousLineIndexFound = true;
+                    }
+
+                    expectedIndex++;
+
                     if (line.HasCodeElements)
                     {
                         foreach (var codeElement in line.CodeElements)

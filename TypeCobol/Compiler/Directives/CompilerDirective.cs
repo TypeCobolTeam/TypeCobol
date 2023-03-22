@@ -82,11 +82,6 @@ namespace TypeCobol.Compiler.Directives
         public IList<Diagnostic> ParsingDiagnostics { get; private set; }
 
         /// <summary>
-        /// List of errors found when processing this CompilerDirective during CodeElement step.
-        /// </summary>
-        public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
-
-        /// <summary>
         /// Consumed tokens of the COPY. This property is set by the PreprocessorStep
         /// after creating the new CompilerDirective instance.
         /// </summary>
@@ -96,12 +91,6 @@ namespace TypeCobol.Compiler.Directives
         {
             if (ParsingDiagnostics == null) ParsingDiagnostics = new List<Diagnostic>();
             ParsingDiagnostics.Add(diagnostic);
-        }
-
-        public void AddProcessingDiagnostic(Diagnostic diagnostic)
-        {
-            if (ProcessingDiagnostics == null) ProcessingDiagnostics = new List<Diagnostic>();
-            ProcessingDiagnostics.Add(diagnostic);
         }
 
         public override string ToString()
@@ -438,8 +427,18 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
 
-#if EUROINFO_RULES
+        /// <summary>
+        /// List of errors found when processing this CopyDirective during CodeElement step.
+        /// </summary>
+        public IList<Diagnostic> ProcessingDiagnostics { get; private set; }
 
+        public void AddProcessingDiagnostic(Diagnostic diagnostic)
+        {
+            if (ProcessingDiagnostics == null) ProcessingDiagnostics = new List<Diagnostic>();
+            ProcessingDiagnostics.Add(diagnostic);
+        }
+
+#if EUROINFO_RULES
         /// <summary>
         /// If true, remove the first 01 level data item found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
@@ -680,6 +679,9 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token ComparisonToken { get; protected set; }
 
+        public abstract IList<Token> GetComparisonTokens();
+        public abstract IList<Token> GetReplacementTokens();
+
 		protected static string NoQuotes(Token token) {
 			if (token == null) return "?";
 			return token.SourceText.Trim('\"').Trim('\'');
@@ -707,7 +709,21 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token ReplacementToken { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ReplacementToken);
+            return result;
+        }
+
+        public override string ToString() {
 			return base.ToString()+" BY "+NoQuotes(ReplacementToken);
 		}
     }
@@ -729,7 +745,21 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token PartialReplacementToken { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.Add(PartialReplacementToken);
+            return result;
+        }
+
+        public override string ToString() {
 			return base.ToString()+" BY "+NoQuotes(PartialReplacementToken);
 		}
     }
@@ -751,7 +781,21 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token[] ReplacementTokens { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.AddRange(ReplacementTokens);
+            return result;
+        }
+
+        public override string ToString() {
 			var str = new StringBuilder();
 			if (ReplacementTokens != null) {
 				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
@@ -784,7 +828,22 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token[] ReplacementTokens { get; private set; }
 
-		public override string ToString() {
+        public override IList<Token> GetComparisonTokens()
+        {
+            var result = new List<Token>();
+            result.Add(ComparisonToken);
+            result.AddRange(FollowingComparisonTokens);
+            return result;
+        }
+
+        public override IList<Token> GetReplacementTokens()
+        {
+            var result = new List<Token>();
+            result.AddRange(ReplacementTokens);
+            return result;
+        }
+
+        public override string ToString() {
 			var str = new StringBuilder(base.ToString());
 			foreach(var token in FollowingComparisonTokens) str.Append(',').Append(NoQuotes(token));
 			str.Append(" BY ");
@@ -847,6 +906,30 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public class TextNameVariation
         {
+            public static TextNameVariation FindOrAdd(List<TextNameVariation> variations, CopyDirective copyDirective)
+            {
+                return FindOrAdd(variations, copyDirective.TextName, () => new TextNameVariation(copyDirective.TextName));
+            }
+
+            public static TextNameVariation FindOrAdd(List<TextNameVariation> variations, TextNameVariation variation)
+            {
+                return FindOrAdd(variations, variation.TextNameWithSuffix, () => variation);
+            }
+
+            private static TextNameVariation FindOrAdd(List<TextNameVariation> variations, string textNameWithSuffix, Func<TextNameVariation> getNewValue)
+            {
+                // Find the existing text name variation (if any)
+                var variation = variations.Find(v => string.Equals(v.TextNameWithSuffix, textNameWithSuffix, StringComparison.OrdinalIgnoreCase));
+                if (variation == null)
+                {
+                    //If it does not exists, create the text name variation and add it
+                    variation = getNewValue();
+                    variations.Add(variation);
+                }
+
+                return variation;
+            }
+
             public TextNameVariation(string textNameWithSuffix)
             {
                 TextNameWithSuffix = textNameWithSuffix;

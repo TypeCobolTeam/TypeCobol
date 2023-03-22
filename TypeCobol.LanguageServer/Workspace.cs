@@ -195,7 +195,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">Project's Key</param>
         /// <param name="copyFolders">List of copy folders associated to the project</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, string projectKey, List<string> copyFolders) => OpenTextDocument(docContext, sourceText, projectKey, copyFolders, LsrTestOptions);
+        public void OpenTextDocument(DocumentContext docContext, string sourceText, string projectKey, List<string> copyFolders) => OpenTextDocument(docContext, sourceText, projectKey, copyFolders, LsrTestOptions);
 
         /// <summary>
         /// Bind a document to a FileCompiler instance and update its content for a parsing..
@@ -204,7 +204,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="sourceText">The source text of the document</param>
         /// <param name="lsrOptions">LSR options</param>
         /// <returns>The FileCompiler instance associated to the document context</returns>
-        internal FileCompiler BindFileCompilerSourceTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
+        internal void BindFileCompilerSourceTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
             System.Diagnostics.Debug.Assert(docContext.Project != null);
             //The document was already there ==> Stop any pending background compilation
@@ -258,8 +258,6 @@ namespace TypeCobol.LanguageServer
             {
                 fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
             }
-
-            return fileCompiler;
         }
 
         /// <summary>
@@ -270,7 +268,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="projectKey">Project's Key</param>        
         /// <param name="lsrOptions">LSR testing options</param>
         /// <returns></returns>
-        private FileCompiler OpenTextDocument(DocumentContext docContext, 
+        private void OpenTextDocument(DocumentContext docContext, 
             string sourceText, string projectKey,
             List<string> copyFolders, LsrTestingOptions lsrOptions)
         {
@@ -280,7 +278,7 @@ namespace TypeCobol.LanguageServer
             workspaceProject.AddDocument(docContext);
             this._allOpenedDocuments.TryAdd(docContext.Uri, docContext);
             docContext.Project = workspaceProject;
-            return BindFileCompilerSourceTextDocument(docContext, sourceText, lsrOptions);
+            BindFileCompilerSourceTextDocument(docContext, sourceText, lsrOptions);
         }
 
         /// <summary>
@@ -327,14 +325,14 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
+        public void UpdateSourceFile(Uri fileUri, RangeUpdate[] updates)
         {
             if (TryGetOpenedDocument(fileUri, out var contextToUpdate))
             {
                 FileCompiler fileCompilerToUpdate = contextToUpdate.FileCompiler;
                 _semanticUpdaterTimer?.Stop();
 
-                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(updates);
                 if (IsLsrSourceTesting)
                 {
                     //Log text lines string 
@@ -768,33 +766,39 @@ namespace TypeCobol.LanguageServer
         /// <param name="changedCopies">List of modified copies.</param>
         internal void AcknowledgeCopyChanges(List<ChangedCopy> changedCopies)
         {
-            //Remove obsolete data from copy caches
-            var copies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            // Group changed copies by target copy cache
+            var evictions = WorkspaceProjectStore.AllProjects.ToDictionary(wp => wp.Project.CopyCache, wp => new List<string>());
             foreach (var changedCopy in changedCopies)
             {
-                copies.Add(changedCopy.CopyName);
                 if (changedCopy.ClearAllCaches)
                 {
-                    //Evict from all caches
-                    foreach (var workspaceProject in WorkspaceProjectStore.AllProjects)
+                    // Evict from all caches
+                    foreach (var toEvict in evictions.Values)
                     {
-                        workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
+                        toEvict.Add(changedCopy.CopyName);
                     }
                 }
                 else if (WorkspaceProjectStore.TryGetProject(changedCopy.OwnerProject, out var workspaceProject))
                 {
-                    //Evict from target project cache only
-                    workspaceProject.Project.CopyCache.Evict(null, changedCopy.CopyName);
+                    // Evict from target project cache only
+                    evictions[workspaceProject.Project.CopyCache].Add(changedCopy.CopyName);
                 }
                 else
                 {
-                    //Inconsistent notification from client, the target project could not be found
+                    // Inconsistent notification from client, the target project could not be found
                     LoggingSystem.LogMessage(LogLevel.Warning, $"Copy to WorkspaceProject mismatch: could not find project '{changedCopy.OwnerProject}'.");
                 }
             }
 
-            //Find programs depending on the obsolete copies
-            var dependentPrograms = new HashSet<DocumentContext>();
+            // Remove obsolete data from caches
+            var evicted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var eviction in evictions)
+            {
+                eviction.Key.Evict(eviction.Value, evicted);
+            }
+
+            // Find programs depending on the obsolete copies
+            var dependentPrograms = new List<DocumentContext>();
             foreach (var openedDocument in _allOpenedDocuments.Values)
             {
                 var usedCopies = openedDocument.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations;
@@ -802,9 +806,10 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var usedCopy in usedCopies)
                 {
-                    if (copies.Contains(usedCopy.TextName))
+                    if (evicted.Contains(usedCopy.TextName))
                     {
                         dependentPrograms.Add(openedDocument);
+                        break;
                     }
                 }
             }

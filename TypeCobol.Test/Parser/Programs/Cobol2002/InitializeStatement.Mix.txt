@@ -1,0 +1,40 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. InitTests.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X(12).
+
+       PROCEDURE DIVISION.
+
+       INITIALIZE var1
+       INITIALIZE var1 WITH FILLER
+       INITIALIZE var1 ALL VALUE
+       INITIALIZE var1 ALPHANUMERIC TO VALUE
+       INITIALIZE var1 DEFAULT
+      *Required for AddEmptyLineInTheMiddleThenRemove test:
+      *Adding an empty line at the original position would force
+      *parser to reparse all KO statements below and this alter
+      *residual diagnostics. By adding comment lines and a valid
+      *statement, we ensure the reparse section ends earlier.
+       DISPLAY 'No one will ever understand why this statement is here'
+       INITIALIZE var1 WITH FILLER THEN TO DEFAULT
+
+      *KO duplicate keyword FILLER
+Line 24[31,36] <27, Error, Syntax> - Syntax error : extraneous input 'FILLER' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+       INITIALIZE var1 FILLER FILLER
+      *KO duplicate keyword WITH
+Line 26[29,32] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting FILLER
+       INITIALIZE var1 WITH WITH FILLER
+      *KO invalid data category
+Line 28[24,29] <27, Error, Syntax> - Syntax error : extraneous input 'BINARY' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+       INITIALIZE var1 BINARY TO VALUE
+      *KO unexpected keyword DEFAULT
+Line 30[29,35] <27, Error, Syntax> - Syntax error : missing FILLER at 'DEFAULT'
+       INITIALIZE var1 WITH DEFAULT
+      *KO missing keyword VALUE
+       INITIALIZE var1 ALL
+Line 33[8,8] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {TO, VALUE}
+       .
+
+       END PROGRAM InitTests.

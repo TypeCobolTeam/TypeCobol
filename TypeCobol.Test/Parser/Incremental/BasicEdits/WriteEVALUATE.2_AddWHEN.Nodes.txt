@@ -1,0 +1,25 @@
+Line 10[12,24] <37, Warning, General> - Warning: "when other" is missing
+--- Nodes ---
+?
+  Simple
+    data-division
+      working-storage
+        var1
+          cond1
+          cond2
+        var2
+    procedure-division
+      sentence-0
+        [[EvaluateStatement]] [12,19:EVALUATE]<EVALUATE> --> [21,24:TRUE]<TRUE>
+
+          ?
+            [[WhenCondition]] [12,15:WHEN]<WHEN> --> [17,21:cond1]<UserDefinedWord>
+
+          ?
+            [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26:var2]<UserDefinedWord>
+- variables = var2
+
+            [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

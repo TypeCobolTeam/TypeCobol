@@ -1,0 +1,33 @@
+================================ ICobolTextLine ================================
+Line    9: LineInserted    ->            IF (cond1)
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineInserted    ->            IF (cond1)
+================================= ITokensLine ==================================
+Line    9: LineInserted    -> [12,13:IF]<IF> [15,15:(]<LeftParenthesisSeparator> [16,20:cond1]<UserDefinedWord> [21,21:)]<RightParenthesisSeparator> 
+Line    9: LineUpdated     -> [12,13:IF]<IF> [15,15:(]<LeftParenthesisSeparator> [16,20:cond1]<UserDefinedWord> [21,21:)]<RightParenthesisSeparator> 
+Line   10: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineInserted    -> [12,13:IF]<IF> [15,15:(]<LeftParenthesisSeparator> [16,20:cond1]<UserDefinedWord> [21,21:)]<RightParenthesisSeparator> 
+Line   10: LineUpdated     -> [12,17:GOBACK]<GOBACK> 
+============================= IProcessedTokensLine =============================
+Line    9: LineInserted    -> 
+Line   10: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    9: LineInserted    -> 
+Line   10: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line   10: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
+ 
+Line   10: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    8: LineUpdated     -> [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[IfStatement]] [12,13:IF]<IF> --> [21,21:)]<RightParenthesisSeparator>
+ 
+Line   10: LineUpdated     -> [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+ 
