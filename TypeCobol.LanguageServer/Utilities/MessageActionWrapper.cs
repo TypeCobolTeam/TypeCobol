@@ -38,14 +38,6 @@ namespace TypeCobol.LanguageServer
         public string Message { get; private set; }
         public IMessageServer MessageServer { get; private set; } 
         public Stopwatch InQueueDuration { get; }
-
-        /// <summary>
-        /// Call this method when this message is dequeue and will be processed
-        /// </summary>
-        public void BeginProcess()
-        {
-            InQueueDuration.Stop();
-        }
     }
 
     public enum MessageKind

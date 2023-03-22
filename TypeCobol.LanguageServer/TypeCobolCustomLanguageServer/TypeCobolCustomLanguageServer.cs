@@ -72,10 +72,13 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             base.OnShutdown();
         }
 
+
+        public static readonly TimeSpan MaxQueueWaitForDidSave = TimeSpan.FromSeconds(2);
+
         protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters, LSPProfiling lspProfiling)
         {
             //Too much server lag: skip this notification. The only drawbacks is that diagnostics might not be totally accurate are we still have some incremental bugs
-            if (lspProfiling.InQueueDuration > 2000)
+            if (lspProfiling.InQueueDuration > MaxQueueWaitForDidSave)
             {
                 return;
             }
