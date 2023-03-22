@@ -121,7 +121,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// <summary>
         /// Implementation of IMessageHandler
         /// </summary>
-        public virtual void HandleMessage(string message, IMessageServer server)
+        public virtual void HandleMessage(string message, IMessageServer server, LSPProfiling lspProfiling)
         {
             JObject jsonObject = JObject.Parse(message);
 
@@ -136,21 +136,21 @@ namespace TypeCobol.LanguageServer.JsonRPC
             // -- Notification --
             if (requestId == null && method != null)
             {
-                HandleNotification(method, parameters);
+                HandleNotification(method, parameters, lspProfiling);
             }
             // -- Request --
             else if (requestId != null && method != null)
             {
-                HandleRequest(method, requestId, parameters);
+                HandleRequest(method, requestId, parameters, lspProfiling);
             }
             // -- Response --
             else if (requestId != null && (result != null || error != null))
             {
-                HandleResponse(requestId, result, error);
+                HandleResponse(requestId, result, error, lspProfiling);
             }
         }
         
-        private void HandleNotification(string method, JToken parameters)
+        private void HandleNotification(string method, JToken parameters, LSPProfiling lspProfiling)
         {
             if (notificationMethods.TryGetValue(method, out var notificationMethod))
             {
@@ -162,7 +162,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
                 }
                 try
                 {
-                    notificationMethod.HandleNotification(notificationType, objParams);
+                    notificationMethod.HandleNotification(notificationType, objParams, lspProfiling);
                 }
                 catch (Exception e)
                 {
@@ -182,7 +182,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
             }
         }
 
-        private void HandleRequest(string method, string requestId, JToken parameters)
+        private void HandleRequest(string method, string requestId, JToken parameters, LSPProfiling lspProfiling)
         {
             RequestMethod requestMethod = null;
             requestMethods.TryGetValue(method, out requestMethod);
@@ -200,7 +200,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
                 }
                 try
                 {
-                    ResponseResultOrError resultOrError = requestMethod.HandleRequest(requestType, objParams);
+                    ResponseResultOrError resultOrError = requestMethod.HandleRequest(requestType, objParams, lspProfiling);
                     Reply(requestId, resultOrError);
                 }
                 catch(Exception e)
@@ -232,7 +232,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
             messageServer.SendMessage(jsonMessage.ToString(Formatting.None));
         }
 
-        private void HandleResponse(string requestId, JToken result, JToken error)
+        private void HandleResponse(string requestId, JToken result, JToken error, LSPProfiling lspProfiling)
         {
             ResponseWaitState responseWaitState = null;
             responsesExpected.TryGetValue(requestId, out responseWaitState);
