@@ -7,10 +7,10 @@ namespace TypeCobol.LanguageServer.JsonRPC
     /// <summary>
     /// Handle a notification received from a remote client
     /// </summary>
-    public delegate void NotificationHandler(NotificationType notificationType, object parameters);
+    public delegate void NotificationHandler(NotificationType notificationType, object parameters, LSPProfiling lspProfiling);
 
     /// <summary>
     /// Execute a request received from a remote client and return a ressult or error
     /// </summary>
-    public delegate ResponseResultOrError RequestHandler(RequestType requestType, object parameters);
+    public delegate ResponseResultOrError RequestHandler(RequestType requestType, object parameters, LSPProfiling lspProfiling);
 }

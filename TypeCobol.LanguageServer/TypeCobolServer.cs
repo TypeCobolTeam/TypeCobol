@@ -432,7 +432,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters, LSPProfiling lspProfiling)
         {
             if (parameters.text != null)
             {

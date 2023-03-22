@@ -88,7 +88,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         // --- Generic notification and request handlers ---
 
-        private ResponseResultOrError CallCodeAction(RequestType requestType, object parameters)
+        private ResponseResultOrError CallCodeAction(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -104,7 +104,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallCodeLens(RequestType requestType, object parameters)
+        private ResponseResultOrError CallCodeLens(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -120,7 +120,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallCodeLensResolve(RequestType requestType, object parameters)
+        private ResponseResultOrError CallCodeLensResolve(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -136,7 +136,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallCompletion(RequestType requestType, object parameters)
+        private ResponseResultOrError CallCompletion(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -152,7 +152,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallCompletionResolve(RequestType requestType, object parameters)
+        private ResponseResultOrError CallCompletionResolve(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -168,7 +168,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallDocumentHighlight(RequestType requestType, object parameters)
+        private ResponseResultOrError CallDocumentHighlight(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -184,7 +184,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallDocumentSymbol(RequestType requestType, object parameters)
+        private ResponseResultOrError CallDocumentSymbol(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -200,7 +200,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallDocumentFormatting(RequestType requestType, object parameters)
+        private ResponseResultOrError CallDocumentFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -216,7 +216,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallDocumentOnTypeFormatting(RequestType requestType, object parameters)
+        private ResponseResultOrError CallDocumentOnTypeFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -232,7 +232,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallDocumentRangeFormatting(RequestType requestType, object parameters)
+        private ResponseResultOrError CallDocumentRangeFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -248,7 +248,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallDefinition(RequestType requestType, object parameters)
+        private ResponseResultOrError CallDefinition(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -264,7 +264,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallHoverRequest(RequestType requestType, object parameters)
+        private ResponseResultOrError CallHoverRequest(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -280,7 +280,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallInitialize(RequestType requestType, object parameters)
+        private ResponseResultOrError CallInitialize(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -296,7 +296,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallReferences(RequestType requestType, object parameters)
+        private ResponseResultOrError CallReferences(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -312,7 +312,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallRename(RequestType requestType, object parameters)
+        private ResponseResultOrError CallRename(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -330,7 +330,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         private bool shutdownReceived = false;
 
-        private ResponseResultOrError CallShutdown(RequestType requestType, object parameters)
+        private ResponseResultOrError CallShutdown(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -347,7 +347,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallSignatureHelp(RequestType requestType, object parameters)
+        private ResponseResultOrError CallSignatureHelp(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -363,7 +363,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallWorkspaceSymbol(RequestType requestType, object parameters)
+        private ResponseResultOrError CallWorkspaceSymbol(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -379,7 +379,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private void CallDidChangeConfiguration(NotificationType notificationType, object parameters)
+        private void CallDidChangeConfiguration(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -392,7 +392,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
-        private void CallExit(NotificationType notificationType, object parameters)
+        private void CallExit(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -415,7 +415,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
-        private void CallDidChangeWatchedFiles(NotificationType notificationType, object parameters)
+        private void CallDidChangeWatchedFiles(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -428,7 +428,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
-        private void CallDidChangeTextDocument(NotificationType notificationType, object parameters)
+        private void CallDidChangeTextDocument(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -441,7 +441,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
-        private void CallDidCloseTextDocument(NotificationType notificationType, object parameters)
+        private void CallDidCloseTextDocument(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -454,7 +454,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
-        private void CallDidOpenTextDocument(NotificationType notificationType, object parameters)
+        private void CallDidOpenTextDocument(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -467,11 +467,11 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
-        private void CallDidSaveTextDocument(NotificationType notificationType, object parameters)
+        private void CallDidSaveTextDocument(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
-                OnDidSaveTextDocument((DidSaveTextDocumentParams)parameters);
+                OnDidSaveTextDocument((DidSaveTextDocumentParams)parameters, lspProfiling);
             }
             catch (Exception e)
             {
@@ -480,7 +480,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
-        private void CallClientInitialized(NotificationType notificationType, object parameters)
+        private void CallClientInitialized(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -597,7 +597,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// The document save notification is sent from the client to the server when the document for saved in the client.
         /// </summary>
-        protected virtual void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        protected virtual void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters, LSPProfiling lspProfiling)
         { }
 
         /// <summary>
