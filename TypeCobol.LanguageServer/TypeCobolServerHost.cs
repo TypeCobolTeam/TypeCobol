@@ -419,12 +419,19 @@ namespace TypeCobol.LanguageServer
 
     public class LSPProfiling
     {
+        /// <summary>
+        /// </summary>
+        /// <param name="inQueueDuration">Time waited in the queue in milliseconds</param>
+        /// <param name="numberOfMessagesToProcess"></param>
         public LSPProfiling(long inQueueDuration, int numberOfMessagesToProcess)
         {
             this.InQueueDuration = inQueueDuration;
             this.NumberOfMessagesToProcess = numberOfMessagesToProcess;
         }
 
+        /// <summary>
+        /// Time waited in the queue in milliseconds.
+        /// </summary>
         public long InQueueDuration { get; }
         /// <summary>
         /// Number of messages left to process
