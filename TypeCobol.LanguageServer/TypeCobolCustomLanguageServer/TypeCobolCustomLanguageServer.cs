@@ -72,16 +72,21 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             base.OnShutdown();
         }
 
-        protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters, LSPProfiling lspProfiling)
         {
-            base.OnDidSaveTextDocument(parameters);
+            //Too much server lag: skip this notification. The only drawbacks is that diagnostics might not be totally accurate are we still have some incremental bugs
+            if (lspProfiling.InQueueDuration > 2000)
+            {
+                return;
+            }
+            base.OnDidSaveTextDocument(parameters, lspProfiling);
             if (parameters.text != null && UseOutlineRefresh)
             {
                 OnDidReceiveRefreshOutline(parameters.textDocument.uri, true);
             }
         }
 
-        private void CallReceiveMissingCopies(NotificationType notificationType, object parameters)
+        private void CallReceiveMissingCopies(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -93,7 +98,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
         }
 
-        private void ReceivedRefreshNodeDemand(NotificationType notificationType, object parameters)
+        private void ReceivedRefreshNodeDemand(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -105,7 +110,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
         }
 
-        private ResponseResultOrError ReceivedRefreshNodeRequest(RequestType requestType, object parameters)
+        private ResponseResultOrError ReceivedRefreshNodeRequest(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
@@ -122,7 +127,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         }
 
 #if EUROINFO_RULES
-        private ResponseResultOrError ReceivedExtractRemarksDataRequest(RequestType requestType, object parameters)
+        private ResponseResultOrError ReceivedExtractRemarksDataRequest(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError;
             try
@@ -145,7 +150,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         }
 #endif
 
-        private void ReceivedSignatureHelpContext(NotificationType notificationType, object parameters)
+        private void ReceivedSignatureHelpContext(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -206,7 +211,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         }
 #endif
 
-        private void ReceivedExtractUseCopiesNotification(NotificationType notificationType, object parameters)
+        private void ReceivedExtractUseCopiesNotification(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
             {
@@ -223,7 +228,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         /// <param name="notificationType"></param>
         /// <param name="parameters"></param>
-        private void ReceivedDidOpenProjectTextDocument(NotificationType notificationType, object parameters)
+        private void ReceivedDidOpenProjectTextDocument(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             DidOpenProjectTextDocumentParams didOpenParams = (DidOpenProjectTextDocumentParams)parameters;            
             try
@@ -242,7 +247,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         /// <param name="notificationType">Notification's type</param>
         /// <param name="parameters">Notification's parameters</param>
-        private void ReceivedDidChangeProjectConfiguration(NotificationType notificationType, object parameters)
+        private void ReceivedDidChangeProjectConfiguration(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             DidChangeProjectConfigurationParams docChangeConfParams = (DidChangeProjectConfigurationParams)parameters;
             try

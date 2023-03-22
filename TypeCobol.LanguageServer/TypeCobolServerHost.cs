@@ -1,8 +1,8 @@
 ﻿using Mono.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -390,8 +390,15 @@ namespace TypeCobol.LanguageServer
 
                 if (MessagesActionQueue.TryDequeue(out MessageActionWrapper messageActionWrapper)) //Pop out message from queue
                 {
+                    messageActionWrapper.BeginProcess();
+                    //processDuration is here just to help during debug or when we need to add temporary code to check process duration of messages
+                    Stopwatch processDuration = new Stopwatch();
+                    processDuration.Start();
+
+                    LSPProfiling lspProfiling = new LSPProfiling(messageActionWrapper.InQueueDuration.ElapsedMilliseconds, MessagesActionQueue.Count);
+
                     if (messageActionWrapper.MessageKind == MessageKind.JSonMessage)
-                        messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer); //Give this mesage to the real handler
+                        messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer, lspProfiling); //Give this message to the real handler
                     else if (messageActionWrapper.MessageKind == MessageKind.Action)
                     {
                         try
@@ -403,9 +410,25 @@ namespace TypeCobol.LanguageServer
                             typeCobolServer.NotifyException(e);
                         }
                     }
+                    processDuration.Stop();
 
                 }
             }
         }
+    }
+
+    public class LSPProfiling
+    {
+        public LSPProfiling(long inQueueDuration, int numberOfMessagesToProcess)
+        {
+            this.InQueueDuration = inQueueDuration;
+            this.NumberOfMessagesToProcess = numberOfMessagesToProcess;
+        }
+
+        public long InQueueDuration { get; }
+        /// <summary>
+        /// Number of messages left to process
+        /// </summary>
+        public long NumberOfMessagesToProcess { get; }
     }
 }
