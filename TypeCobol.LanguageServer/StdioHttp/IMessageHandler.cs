@@ -10,6 +10,6 @@ namespace TypeCobol.LanguageServer.StdioHttp
         /// <summary>
         /// Do something useful with the message received, use the server interface to reply
         /// </summary>
-        void HandleMessage(string message, IMessageServer server);
+        void HandleMessage(string message, IMessageServer server, LSPProfiling lspProfiling);
     }
 }

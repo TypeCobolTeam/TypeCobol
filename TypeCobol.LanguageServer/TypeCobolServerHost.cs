@@ -1,8 +1,8 @@
 ﻿using Mono.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -390,8 +390,15 @@ namespace TypeCobol.LanguageServer
 
                 if (MessagesActionQueue.TryDequeue(out MessageActionWrapper messageActionWrapper)) //Pop out message from queue
                 {
+                    messageActionWrapper.InQueueDuration.Stop();
+                    //processDuration is here just to help during debug or when we need to add temporary code to check process duration of messages
+                    Stopwatch processDuration = new Stopwatch();
+                    processDuration.Start();
+
+                    LSPProfiling lspProfiling = new LSPProfiling(messageActionWrapper.InQueueDuration.Elapsed, MessagesActionQueue.Count);
+
                     if (messageActionWrapper.MessageKind == MessageKind.JSonMessage)
-                        messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer); //Give this mesage to the real handler
+                        messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer, lspProfiling); //Give this message to the real handler
                     else if (messageActionWrapper.MessageKind == MessageKind.Action)
                     {
                         try
@@ -403,9 +410,32 @@ namespace TypeCobol.LanguageServer
                             typeCobolServer.NotifyException(e);
                         }
                     }
+                    processDuration.Stop();
 
                 }
             }
         }
+    }
+
+    public class LSPProfiling
+    {
+        /// <summary>
+        /// </summary>
+        /// <param name="inQueueDuration">Time waited in the queue in milliseconds</param>
+        /// <param name="numberOfMessagesToProcess">Number of messages left to process after this one</param>
+        public LSPProfiling(TimeSpan inQueueDuration, int numberOfMessagesToProcess)
+        {
+            this.InQueueDuration = inQueueDuration;
+            this.NumberOfMessagesToProcess = numberOfMessagesToProcess;
+        }
+
+        /// <summary>
+        /// Time waited in the queue in milliseconds.
+        /// </summary>
+        public TimeSpan InQueueDuration { get; }
+        /// <summary>
+        /// Number of messages left to process after this one
+        /// </summary>
+        public int NumberOfMessagesToProcess { get; }
     }
 }
