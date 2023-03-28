@@ -1,5 +1,4 @@
-﻿using Analytics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -70,7 +69,6 @@ namespace TypeCobol.Server
             catch (Exception unexpected)
             {
                 LoggingSystem.LogException(unexpected); //TODO add more context data ?
-                AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, Environment.CommandLine);
 
                 string message = unexpected.Message + Environment.NewLine + unexpected.StackTrace;
                 Server.AddError(errorWriter, string.Empty, new Diagnostic(MessageCode.SyntaxErrorInParser, Diagnostic.Position.Default, message));
@@ -551,7 +549,6 @@ namespace TypeCobol.Server
                     if (diagnostic.CaughtException != null)
                     {
                         LoggingSystem.LogException(diagnostic.CaughtException, context);
-                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
                     }
                 }
 
@@ -564,8 +561,6 @@ namespace TypeCobol.Server
                     foreach (var generationException in generationExceptions)
                     {
                         LoggingSystem.LogException(generationException, context);
-
-                        AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
 
                         if (generationException.Logged)
                         {

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TypeCobol.LanguageServer.StdioHttp;
-using Analytics;
 using TypeCobol.Logging;
 
 namespace TypeCobol.LanguageServer.JsonRPC

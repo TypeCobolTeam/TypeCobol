@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
-using Analytics;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
@@ -67,8 +66,6 @@ namespace TypeCobol.Server {
                 {
                     LoggingSystem.RegisterLogger(externalLogger);
                 }
-
-                AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
 
 #if EUROINFO_RULES
                 config.LoadCpyCopyNameMap(cpyCopyNamesMapFilePath);
