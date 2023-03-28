@@ -56,7 +56,7 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   realformat:Numeric
   varA:Alphanumeric
   varC:Alphanumeric
-  varD:Alphanumeric
+  varD:?
   funcPointer:Alphanumeric
   procPointer:Alphanumeric
   MyToto:Toto

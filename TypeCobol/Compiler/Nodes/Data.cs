@@ -316,7 +316,7 @@ namespace TypeCobol.Compiler.Nodes {
             {
                 if (_primitiveDataType != null) return _primitiveDataType;
                 if (this.Picture != null) //Get DataType based on Picture clause
-                    _primitiveDataType = DataType.Create(this.Picture.Value);
+                    _primitiveDataType = DataType.Create(this._CommonDataDesc.PictureValidationResult);
                 else if (this.Usage.HasValue) //Get DataType based on Usage clause
                     _primitiveDataType = DataType.Create(this.Usage.Value);
                 else
