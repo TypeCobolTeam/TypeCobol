@@ -644,8 +644,7 @@ namespace TypeCobol.LanguageServer
             //Adding default copies folder
             Configuration.CopyFolders.Add(DefaultCopyFolder);
 
-            if (Configuration.Telemetry)
-                AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
+            AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
 
             if (Configuration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;

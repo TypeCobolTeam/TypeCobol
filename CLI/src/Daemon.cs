@@ -68,10 +68,7 @@ namespace TypeCobol.Server {
                     LoggingSystem.RegisterLogger(externalLogger);
                 }
 
-                if (config.Telemetry)
-                {
-                    AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
-                }
+                AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
 
 #if EUROINFO_RULES
                 config.LoadCpyCopyNameMap(cpyCopyNamesMapFilePath);
