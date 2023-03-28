@@ -146,7 +146,6 @@
   <ItemGroup>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
