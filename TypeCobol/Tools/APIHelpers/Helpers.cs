@@ -216,7 +216,7 @@ namespace TypeCobol.Tools.APIHelpers
 
                     if (parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
                     {
-                        throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
+                        throw new DependenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
                     }
 
                     foreach (var program in parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs)
@@ -239,13 +239,13 @@ namespace TypeCobol.Tools.APIHelpers
                         table.AddProgram(program); //Add program to Namespace symbol table
                     }
                 }
-                catch (DepedenciesLoadingException depLoadingEx)
+                catch (DependenciesLoadingException depLoadingEx)
                 {
                     throw depLoadingEx;
                 }
                 catch (Exception e)
                 {
-                    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e);
+                    throw new DependenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e);
                 }
             }
 
