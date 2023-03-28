@@ -53,7 +53,7 @@ namespace TypeCobol.Tools.APIHelpers
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
                     {
-                        throw new CopyLoadingException("Your Intrisic types/functions are not included into a program.", path, null, logged: true, needMail: false);
+                        throw new CopyLoadingException("Your Intrisic types/functions are not included into a program.", path);
                     }
 
                     foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
@@ -76,7 +76,7 @@ namespace TypeCobol.Tools.APIHelpers
                 }
                 catch (Exception e)
                 {
-                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e, logged: true, needMail: true);
+                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e);
                 }
             }
             return table;
@@ -216,7 +216,7 @@ namespace TypeCobol.Tools.APIHelpers
 
                     if (parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
                     {
-                        throw new DependenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
+                        throw new DependenciesLoadingException("Your dependency file is not included into a program", path);
                     }
 
                     foreach (var program in parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs)

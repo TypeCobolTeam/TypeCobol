@@ -565,10 +565,7 @@ namespace TypeCobol.Server
                     {
                         LoggingSystem.LogException(generationException, context);
 
-                        if (generationException.NeedMail)
-                        {
-                            AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
-                        }
+                        AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
 
                         if (generationException.Logged)
                         {
