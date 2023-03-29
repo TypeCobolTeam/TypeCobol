@@ -82,4 +82,36 @@ namespace TypeCobol.Test.Utils
             }
         }
     }
+
+    internal class ClearDocumentThenRewriteLineByLineInReverseOrder : IIncrementalChangesGenerator
+    {
+        public IEnumerable<RangeUpdate[]> GetUpdatesSequence(CompilationUnit afterInitialParsing)
+        {
+            // We are in a deferred enumerator, so copy lines before they change !
+            var initialCobolTextLines = afterInitialParsing.CobolTextLines.ToArray();
+
+            // Clear document. NOTE: with real client, the document is closed then reopened
+            var lastLine = initialCobolTextLines.LastOrDefault();
+            if (lastLine != null)
+            {
+                yield return new[] { new RangeUpdate(0, 0, lastLine.LineIndex, lastLine.Length, string.Empty) };
+            }
+
+            // Rewrite line by line in reverse order
+            for (int i = initialCobolTextLines.Length - 1; i >= 0; i--)
+            {
+                var currentLine = initialCobolTextLines[i];
+                if (i == initialCobolTextLines.Length - 1)
+                {
+                    // Write last line at the bottom of the document
+                    yield return new[] { new RangeUpdate(0, 0, 0, 0, currentLine.Text) };
+                }
+                else
+                {
+                    // Write following line above previous, so just end it with a line break
+                    yield return new[] { new RangeUpdate(0, 0, 0, 0, currentLine.Text + Environment.NewLine) };
+                }
+            }
+        }
+    }
 }

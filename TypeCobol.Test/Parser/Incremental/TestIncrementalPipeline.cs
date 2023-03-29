@@ -81,8 +81,15 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestMethod]
         [TestCategory("Incremental")]
         public void ClearDocumentThenRewriteLineByLine() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLine>(
-            "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2", // TODO #2480
-            "DebugLinesNotDebugging" // TODO #2457
-        );
+                "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2", // TODO #2480
+                "DebugLinesNotDebugging" // TODO #2457
+            );
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void ClearDocumentThenRewriteLineByLineInReverseOrder() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLineInReverseOrder>(
+                "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2", // TODO #2480
+                "IncompleteInspect", "Program", "SelectFile", "ContinuationLine9", "InitialValuesContinuations" // TODO #2467
+            );
     }
 }
