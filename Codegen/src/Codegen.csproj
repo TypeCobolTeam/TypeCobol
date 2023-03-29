@@ -40,10 +40,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analytics\Analytics.csproj">
-      <Project>{07445710-6b27-443e-9fe8-54b1476bc629}</Project>
-      <Name>Analytics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\TypeCobol.Transform\TypeCobol.Transform.csproj">
       <Project>{24c85d7c-a234-4af6-bad1-2c7425ba2d5f}</Project>
       <Name>TypeCobol.Transform</Name>

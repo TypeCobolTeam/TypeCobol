@@ -6,10 +6,9 @@ namespace TypeCobol.CLI.CustomExceptions
     public class PresenceOfDiagnostics : TypeCobolException
     {
         public PresenceOfDiagnostics(string message, string path)
-            : base(MessageCode.SyntaxErrorInParser, message, path, null, false, false)
+            : base(MessageCode.SyntaxErrorInParser, message, path)
         {
-            //Here you can do special thinks for this kind of exception... 
+            Logged = false;
         }
-
     }
 }

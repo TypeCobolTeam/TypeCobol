@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Analytics;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -644,9 +643,6 @@ namespace TypeCobol.LanguageServer
             //Adding default copies folder
             Configuration.CopyFolders.Add(DefaultCopyFolder);
 
-            if (Configuration.Telemetry)
-                AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
-
             if (Configuration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;
 
@@ -904,10 +900,7 @@ namespace TypeCobol.LanguageServer
                     LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 LoggingSystem.LogException(exception);
-                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles,
-                    Configuration.CopyFolders, Environment.CommandLine);
             }
-
         }
 
         /// <summary>
