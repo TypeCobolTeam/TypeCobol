@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2046
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33328.57
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -24,8 +24,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Transform", "TypeCobol.Transform\TypeCobol.Transform.csproj", "{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Test", "CLI\test\CLI.Test.csproj", "{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analytics", "Analytics\Analytics.csproj", "{07445710-6B27-443E-9FE8-54B1476BC629}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Transform.Test", "TypeCobol.Transform.Test\TypeCobol.Transform.Test.csproj", "{0B76D8A2-C909-47B5-BB32-1AC14ADDA06E}"
 EndProject
@@ -111,14 +109,6 @@ Global
 		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
 		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.EI_Debug|Any CPU.ActiveCfg = EI_Debug|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.EI_Debug|Any CPU.Build.0 = EI_Debug|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.EI_Release|Any CPU.ActiveCfg = EI_Release|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{07445710-6B27-443E-9FE8-54B1476BC629}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B76D8A2-C909-47B5-BB32-1AC14ADDA06E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B76D8A2-C909-47B5-BB32-1AC14ADDA06E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B76D8A2-C909-47B5-BB32-1AC14ADDA06E}.EI_Debug|Any CPU.ActiveCfg = EI_Debug|Any CPU

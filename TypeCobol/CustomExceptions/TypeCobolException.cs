@@ -18,7 +18,6 @@ namespace TypeCobol.CustomExceptions
         public int ColumnEndIndex { get; set; }
         public int LineNumber { get; set; }
         public bool Logged { get; set; }
-        public bool NeedMail { get; set; }
         public override string StackTrace
         {
             get
@@ -48,7 +47,7 @@ namespace TypeCobol.CustomExceptions
         }
 
 
-        protected TypeCobolException(MessageCode messageCode, string message, string path, Exception innerException = null, bool logged = true, bool needMail = true, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message, innerException)
+        protected TypeCobolException(MessageCode messageCode, string message, string path, Exception innerException = null, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message, innerException)
         {
             MessageCode = messageCode;
             //Message is set by the base constructor of Exception. 
@@ -56,8 +55,7 @@ namespace TypeCobol.CustomExceptions
             ColumnEndIndex = columnEndIndex;
             LineNumber = lineNumber;
             Path = path;
-            Logged = logged;
-            NeedMail = needMail;
+            Logged = true;
         }
     }
 }
