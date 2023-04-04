@@ -72,7 +72,7 @@ namespace TypeCobol.Server {
 #endif
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
-                    config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
+                    config.ExecToStep = ExecutionStep.CodeAnalysis; //If there is no given output file, we can't run generation, fallback to CodeAnalysis
 
                 var returnCode = CLI.runOnce(config, extensionManager);
                 if (returnCode != ReturnCode.Success)
