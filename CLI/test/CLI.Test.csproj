@@ -1,118 +1,71 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\TypeCobol\Common.props" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Common.props" />
+
   <PropertyGroup>
-    <ProjectGuid>{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CLI.Test</RootNamespace>
-    <AssemblyName>CLI.Test</AssemblyName>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
-    <IsCodedUITest>False</IsCodedUITest>
-    <TestProjectType>UnitTest</TestProjectType>
-    <DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="*.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj">
-      <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
-      <Name>TypeCobol</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm.cbl">
-      <Link>ressources\zcallpgmreportdfa_1\input\InBulkCallPgm.cbl</Link>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm.cbl" Link="ressources\zcallpgmreportdfa_1\input\InBulkCallPgm.cbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm.csv">
-      <Link>ressources\zcallpgmreportdfa_1\output_expected\InBulkCallPgm.csv</Link>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm.csv" Link="ressources\zcallpgmreportdfa_1\output_expected\InBulkCallPgm.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm88Set.cbl">
-      <Link>ressources\zcallpgmreportdfa_2\input\InBulkCallPgm88Set.cbl</Link>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm88Set.cbl" Link="ressources\zcallpgmreportdfa_2\input\InBulkCallPgm88Set.cbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm88Set.csv">
-      <Link>ressources\zcallpgmreportdfa_2\output_expected\InBulkCallPgm88Set.csv</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>	
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\XMYCOPY.cpy">
-      <Link>ressources\ycopylist\input\XMYCOPY.cpy</Link>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm88Set.csv" Link="ressources\zcallpgmreportdfa_2\output_expected\InBulkCallPgm88Set.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\XMYCOPY1.cpy">
-      <Link>ressources\ycopylist\input\XMYCOPY1.cpy</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\XMYCOPY.cpy" Link="ressources\ycopylist\input\XMYCOPY.cpy">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YCONVEA.CPY">
-      <Link>ressources\ycopylist\input\YCONVEA.CPY</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\XMYCOPY1.cpy" Link="ressources\ycopylist\input\XMYCOPY1.cpy">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YCPYRDZ.CPY">
-      <Link>ressources\ycopylist\input\YCPYRDZ.CPY</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YCONVEA.CPY" Link="ressources\ycopylist\input\YCONVEA.CPY">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YMYCOPY.cpy">
-      <Link>ressources\ycopylist\input\YMYCOPY.cpy</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YCPYRDZ.CPY" Link="ressources\ycopylist\input\YCPYRDZ.CPY">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YPRTD20.CPY">
-      <Link>ressources\ycopylist\input\YPRTD20.CPY</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YMYCOPY.cpy" Link="ressources\ycopylist\input\YMYCOPY.cpy">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAL.cpy">
-      <Link>ressources\ycopylist\input\YXXXFAL.cpy</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YPRTD20.CPY" Link="ressources\ycopylist\input\YPRTD20.CPY">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAS.cpy">
-      <Link>ressources\ycopylist\input\YXXXFAS.cpy</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAL.cpy" Link="ressources\ycopylist\input\YXXXFAL.cpy">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\Programs\TypeCobol\QualifiedVarSubsriptAccess.rdz.tcbl">
-      <Link>ressources\failcoboloptionparse\input\QualifiedVarSubsriptAccess.rdz.tcbl</Link>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAS.cpy" Link="ressources\ycopylist\input\YXXXFAS.cpy">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="ressources\**">
+    <None Include="..\..\TypeCobol.Test\Parser\Programs\TypeCobol\QualifiedVarSubsriptAccess.rdz.tcbl" Link="ressources\failcoboloptionparse\input\QualifiedVarSubsriptAccess.rdz.tcbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Choose>
-    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <Private>False</Private>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TypeCobol.Analysis.Test\TypeCobol.Analysis.Test.csproj" />
+    <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ressources\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

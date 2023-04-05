@@ -1,2 +1,2 @@
-﻿Code: 1021 TypeCobol.CLI.exe: Output paths given are unreachable.
-Try TypeCobol.CLI.exe --help for usage information.
+﻿Code: 1021 TypeCobol.CLI: Output paths given are unreachable.
+Try TypeCobol.CLI --help for usage information.

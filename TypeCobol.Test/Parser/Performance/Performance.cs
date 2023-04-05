@@ -18,8 +18,8 @@ namespace TypeCobol.Test.Parser.Performance
     {
         static readonly string AntlrFolder = PlatformUtils.GetPathForProjectFile("Parser") + Path.DirectorySeparatorChar + "Performance";
 
-        private static readonly string CNAF_FOLDER = "TypeCobol.Test" + Path.DirectorySeparatorChar + "ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch" + Path.DirectorySeparatorChar;
-        private static readonly string CNAF_TC_FOLDER = "TypeCobol.Test" + Path.DirectorySeparatorChar + "ThirdParty" + Path.DirectorySeparatorChar + "CNAF_TypeCobol" + Path.DirectorySeparatorChar;
+        private static readonly string CNAF_FOLDER = "ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch" + Path.DirectorySeparatorChar;
+        private static readonly string CNAF_TC_FOLDER = "ThirdParty" + Path.DirectorySeparatorChar + "CNAF_TypeCobol" + Path.DirectorySeparatorChar;
 
         /// <summary>
         /// It's under CNAF_TC_FOLDER because the file was modified for the performance test.
@@ -296,7 +296,7 @@ namespace TypeCobol.Test.Parser.Performance
         private void IncrementalPerformance2(string relativePath, string suffix, params RangeUpdate[] updates)
         {
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
-            string fullPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName + "\\" + relativePath;
+            string fullPath = PlatformUtils.GetPathForProjectFile(relativePath);
 
             // Create a FileCompiler for this program
             string filename = Path.GetFileName(fullPath);
@@ -461,7 +461,7 @@ namespace TypeCobol.Test.Parser.Performance
 
         private void FullParsing(string relativePath, params string[] copiesFolder)
         {
-            string fullPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName + "\\" + relativePath;
+            string fullPath = PlatformUtils.GetPathForProjectFile(relativePath);
             var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();

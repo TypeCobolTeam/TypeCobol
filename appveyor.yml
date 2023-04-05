@@ -1,5 +1,5 @@
 version: 1.0.{build}
-image: Visual Studio 2017
+image: Visual Studio 2022
 configuration: 
   - EI_Debug
   - Debug
@@ -18,7 +18,7 @@ matrix:
 
 # scripts to run before build
 before_build:
-    - nuget restore      #install missing nuget packages
+    - dotnet restore      #install missing nuget packages
     
 before_package:
     - BuildScript.bat

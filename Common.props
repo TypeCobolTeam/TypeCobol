@@ -1,0 +1,24 @@
+<Project>
+	
+	<!-- Each project must import this file ! -->
+	
+	<PropertyGroup>
+		<!-- Allow all build configurations for every project -->
+		<Configurations>Debug;Release;EI_Debug;EI_Release</Configurations>
+		<!-- Targeting .NET 6.0, with default language level (C# 10) -->
+		<TargetFramework>net6.0</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<!-- Versioning -->
+		<Version>0.0.0-local</Version>
+	</PropertyGroup>
+	
+	<!-- Custom build config, with custom compilation contant -->
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EI_Debug|AnyCPU'">
+		<DefineConstants>$(DefineConstants);EUROINFO_RULES</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EI_Release|AnyCPU'">
+		<Optimize>true</Optimize>
+		<DefineConstants>$(DefineConstants);EUROINFO_RULES</DefineConstants>
+	</PropertyGroup>
+	
+</Project>

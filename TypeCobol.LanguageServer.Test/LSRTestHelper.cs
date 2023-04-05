@@ -90,7 +90,7 @@ namespace TypeCobol.LanguageServer.Test
             //Setup the arguments
             //The path for LanguageServerRobot depends on the NuGetPackage. If the NuGet is not downloaded, it won't works
             var arguments = string.Format(defaultTypeCobolLSArgs,
-                @"TypeCobol.LanguageServerRobot.exe",
+                @"..\..\TypeCobol.LanguageServerRobot.exe",
                 initGeneratedFileInfo.FullName, 
                 configGeneratedFileInfo.FullName, 
                 scriptFileInfo.FullName, 
