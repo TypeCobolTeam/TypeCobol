@@ -27,7 +27,7 @@ namespace TypeCobol.Tools.APIHelpers
             var parser = new Parser();
             var options = new TypeCobolOptions()
                           {
-                              ExecToStep = ExecutionStep.CrossCheck,
+                              ExecToStep = ExecutionStep.SemanticCrossCheck,
                               OptimizeWhitespaceScanning = optimizeWhitespaceScanning
                           };
             var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
@@ -95,7 +95,7 @@ namespace TypeCobol.Tools.APIHelpers
         {
             var options = new TypeCobolOptions(config)
                           {
-                              ExecToStep = ExecutionStep.SemanticCheck,
+                              ExecToStep = ExecutionStep.AST,
                               OptimizeWhitespaceScanning = optimizeWhitespaceScanning
                           };
             var parser = new Parser(customSymbols);
