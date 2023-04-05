@@ -133,7 +133,7 @@ namespace TypeCobol.Server
                 analyzerProvider.AddProvider(customAnalyzerProvider);
             }
 
-            //Normalize TypeCobolOptions, the parser does not need to go beyond AST for the first phase
+            //Normalize TypeCobolOptions, the parser does not need to go beyond AST building for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration) { OptimizeWhitespaceScanning = optimizeWhitespaceScanning };
             if (_configuration.ExecToStep > ExecutionStep.AST)
             {
