@@ -10,8 +10,7 @@ on:
     - develop
   pull_request:
     branches:
-    - master
-    - develop
+    - 2488-migrate-to-net-60
 
 jobs:
   build:
