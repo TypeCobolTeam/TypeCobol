@@ -22,7 +22,13 @@
            ORGANIZATION IS INDEXED
            ACCESS IS RANDOM
            RECORD KEY IS STUDENT-F02-ID.
-		   
+		
+      *    Syntax RECORD KEY IS allow qualified data name        
+           SELECT CUSTOMER-F03 ASSIGN TO UT-CUSTOMER-F03
+           ORGANIZATION IS INDEXED
+           ACCESS IS RANDOM
+           RECORD KEY IS CUSTOMER-F03-ID OF CUSTOMER-F03-FILE.
+
        DATA DIVISION.
        FILE SECTION.
        FD  CUSTOMER-F01.
@@ -32,6 +38,10 @@
        FD  CUSTOMER-F02.
        01  CUSTOMER-F02-FILE.
          05 CUSTOMER-F02-ID  PIC X(8).
+         05 FILLER           PIC X(100).
+       FD  CUSTOMER-F03.
+       01  CUSTOMER-F03-FILE.
+         05 CUSTOMER-F03-ID  PIC X(8).
          05 FILLER           PIC X(100).
        FD STUDENT-F01.
        01 STUDENT-F01-FILE.

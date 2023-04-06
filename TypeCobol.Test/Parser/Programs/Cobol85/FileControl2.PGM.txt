@@ -9,6 +9,9 @@ PROGRAM: Pgm common:False initial:False recursive:False
   CUSTOMER-F02:?
   CUSTOMER-F02-FILE:Alphanumeric
   CUSTOMER-F02-ID:Alphanumeric
+  CUSTOMER-F03:?
+  CUSTOMER-F03-FILE:Alphanumeric
+  CUSTOMER-F03-ID:Alphanumeric
   STUDENT-F01:?
   STUDENT-F01-FILE:Alphanumeric
   STUDENT-F01-ID:Alphanumeric
