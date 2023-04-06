@@ -26,7 +26,7 @@
 [36,36+:.]<PeriodSeparator>
 
 -- Line 3 --
-[1,5:2.3e8]<FloatingPointLiteral>{23|1>2.3E8>230000000}
+[1,5:2.3e8]<FloatingPointLiteral>{23|1>2.3E8>229999999.99999997}
 [7,14:-.35e-17]<FloatingPointLiteral>{-35|2>-0.35E-17>-3.5E-18}
 [16,27:-50.7851E+20]<FloatingPointLiteral>{-507851|4>-50.7851E20>-5.07851E+21}
 [29,41:+.45486756E+1]<FloatingPointLiteral>{45486756|8>0.45486756E1>4.5486756}

@@ -21,7 +21,7 @@ namespace TypeCobol.Codegen
 
         private static string GetThirdParty()
         {
-            return Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\TypeCobol.Test\ThirdParty"));
+            return TypeCobol.Test.PlatformUtils.GetPathForProjectFile("ThirdParty");
         }
 
         private static string GetCNAFBatch()
@@ -43,7 +43,7 @@ namespace TypeCobol.Codegen
         private static readonly string _Cobol85_NoRedefines = Path.Combine(GetCNAFTypeCobol(), "CGMV01-Cobol85-NoRedefines.cbl");
         private static readonly string _BigTypes_NoProcedure = Path.Combine(GetCNAFTypeCobol(), "CGMV01-BigTypes.tcbl");
         private static readonly string _BigTypes_1Procedure = Path.Combine(GetCNAFTypeCobol(), "CGMV01-BigTypes-1Procedure.tcbl");
-        private static readonly string _GlobalStorage = Path.Combine(GetCNAFTypeCobol(), "CGMV01-GlobalStoragey.tcbl");
+        private static readonly string _GlobalStorage = Path.Combine(GetCNAFTypeCobol(), "CGMV01-GlobalStorage.tcbl");
         private static readonly string _UseALotOfTypes_1Times_Reference = Path.Combine(GetCNAFTypeCobol(), "CGMV01-UseAlotOfTypes-1Times.tcbl");
         private static readonly string _UseALotOfTypes_100Times = Path.Combine(GetCNAFTypeCobol(), "CGMV01-UseAlotOfTypes-100Times.tcbl");
         private static readonly string _UseALotOfTypes_WithProc_100Times = Path.Combine(GetCNAFTypeCobol(), "CGMV01-UseAlotOfTypes-WithProc-100Times.tcbl");

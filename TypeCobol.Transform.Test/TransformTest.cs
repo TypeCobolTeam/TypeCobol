@@ -62,8 +62,13 @@ namespace TypeCobol.Transform.Test
                     startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                     startInfo.FileName = "cmd.exe";
                     startInfo.WorkingDirectory = workingDirectory;
-                    startInfo.Arguments = @"/c " + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
-                                          "TypeCobol.Transform.exe " + line_args;
+                    // Find TypeCobol.Transform.exe location
+                    string currentDirectory = Environment.CurrentDirectory;
+                    string configuration = Path.GetFileName(currentDirectory);
+                    string pathToExe = Path.Combine(currentDirectory, "..", "..", "..");
+                    pathToExe = Path.GetFullPath(pathToExe);
+                    pathToExe = Path.Combine(pathToExe, "TypeCobol.Transform", "bin", configuration, "TypeCobol.Transform.exe");
+                    startInfo.Arguments = @"/c " + pathToExe + " " + line_args;
 
                     process.StartInfo = startInfo;
                     process.Start();

@@ -38,15 +38,12 @@ namespace TypeCobol.Analysis.Test
             AddAnalyzerProvider(CfgBuildingMode.Extended);
             AddAnalyzerProvider(CfgBuildingMode.WithDfa);
 
-            string currentDir = Directory.GetCurrentDirectory();
-            string solutionDir = Path.GetDirectoryName(Path.GetDirectoryName(currentDir));
-            Assert.IsNotNull(solutionDir);
-            ThirdPartyDir = Path.Combine(solutionDir, "TypeCobol.Test", "ThirdParty");
-            BasicCfgInstrs = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicCfgInstrs");
-            BasicCfgPrograms = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicCfgPrograms");
-            BasicDfaSamples = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicDfaSamples");
-            CfgDfaBuildTests = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "CfgDfaBuildTests");
-            Report = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "Report");
+            ThirdPartyDir = PlatformUtils.GetPathForProjectFile("ThirdParty");
+            BasicCfgInstrs = PlatformUtils.GetPathForProjectFile("BasicCfgInstrs", "TypeCobol.Analysis.Test");
+            BasicCfgPrograms = PlatformUtils.GetPathForProjectFile("BasicCfgPrograms", "TypeCobol.Analysis.Test");
+            BasicDfaSamples = PlatformUtils.GetPathForProjectFile("BasicDfaSamples", "TypeCobol.Analysis.Test");
+            CfgDfaBuildTests = PlatformUtils.GetPathForProjectFile("CfgDfaBuildTests", "TypeCobol.Analysis.Test");
+            Report = PlatformUtils.GetPathForProjectFile("Report", "TypeCobol.Analysis.Test");
 
             void AddAnalyzerProvider(CfgBuildingMode mode)
             {

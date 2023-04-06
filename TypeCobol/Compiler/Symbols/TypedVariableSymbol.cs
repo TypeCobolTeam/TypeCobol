@@ -1,5 +1,4 @@
-﻿using System.IO;
-using TypeCobol.Compiler.Types;
+﻿using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -30,7 +29,7 @@ namespace TypeCobol.Compiler.Symbols
         /// The Type of a variable whose type comes from a typedef is only accessible after the typedef has been resolved.
         /// It is then replaced by a new Type instance during program expansion.
         /// </summary>
-        public override Type Type
+        public override Types.Type Type
         {
             get
             {
