@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- To import DefaultCopies folder  -->
     <ProjectReference Include="..\CLI\src\CLI.csproj" />
     <ProjectReference Include="..\CLI\test\CLI.Test.csproj" />
     <ProjectReference Include="..\TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj" />

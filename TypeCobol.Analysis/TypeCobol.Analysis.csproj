@@ -9,6 +9,9 @@
 	
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 	
   <ItemGroup>
