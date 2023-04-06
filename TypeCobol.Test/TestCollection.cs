@@ -273,16 +273,16 @@ namespace TypeCobol.Test {
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Preprocessor Step failed");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SyntaxCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
+            compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.CodeElement);
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.CodeElement
                 && compileResult.CodeElementsDocumentSnapshot == null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
-                throw new Exception("SyntaxCheck Step failed");
+                throw new Exception("CodeElement Step failed");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SemanticCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
+            compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.AST);
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.AST
                 && !compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
-                throw new Exception("SemanticCheck Step failed");
+                throw new Exception("AST Step failed");
         }
 
 

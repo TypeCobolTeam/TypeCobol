@@ -133,14 +133,14 @@ namespace TypeCobol.Server
                 analyzerProvider.AddProvider(customAnalyzerProvider);
             }
 
-            //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
+            //Normalize TypeCobolOptions, the parser does not need to go beyond AST building for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration) { OptimizeWhitespaceScanning = optimizeWhitespaceScanning };
-            if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
+            if (_configuration.ExecToStep > ExecutionStep.AST)
             {
-                typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;
+                typeCobolOptions.ExecToStep = ExecutionStep.AST;
             }
 
-            //First phase : parse all inputs but do not make CrossCheck yet
+            //First phase : parse all inputs but do not make SemanticCrossCheck yet
             foreach (var inputFilePath in _configuration.InputFiles)
             {
                 var parser = new Parser(rootSymbolTable);
@@ -163,8 +163,8 @@ namespace TypeCobol.Server
                 GenerateExpandingCopyFile(inputFilePath, parser.Results);
             }
 
-            //Second phase : now that we have all known programs in the table, we can launch a CrossCheck
-            if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
+            //Second phase : now that we have all known programs in the table, we can launch a SemanticCrossCheck
+            if (_configuration.ExecToStep > ExecutionStep.AST)
             {
                 int fileIndex = 0;
                 foreach (var parserResult in _parserResults)
@@ -172,11 +172,11 @@ namespace TypeCobol.Server
                     var inputFilePath = parserResult.Key;
                     var compilationUnit = parserResult.Value; 
 
-                    //Force CrossCheck
+                    //Force SemanticCrossCheck
                     compilationUnit.RefreshProgramClassDocumentSnapshot();
 
-                    //Perform QualityCheck
-                    if (_configuration.ExecToStep > ExecutionStep.CrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
+                    //Perform CodeAnalysis
+                    if (_configuration.ExecToStep > ExecutionStep.SemanticCrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
 
                     //Since collecting diagnostics may be costly, we cache them here
                     var currentFileDiagnostics = compilationUnit.AllDiagnostics();
@@ -274,7 +274,7 @@ namespace TypeCobol.Server
         private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProviderWrapper analyzerProviderWrapper)
         {
             var reports = new Dictionary<string, IReport>();
-            if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
+            if (_configuration.ExecToStep >= ExecutionStep.SemanticCrossCheck)
             {
                 //All purpose CFG/DFA
                 analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
@@ -312,7 +312,7 @@ namespace TypeCobol.Server
 
         private void AddProgramsToRootTable(SymbolTable rootTable, IEnumerable<Program> programs)
         {
-            if (_configuration.ExecToStep >= ExecutionStep.SemanticCheck)
+            if (_configuration.ExecToStep >= ExecutionStep.AST)
             {
                 foreach (var program in programs.Where(p => p.IsMainProgram))
                 {
