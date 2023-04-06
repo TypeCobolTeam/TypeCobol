@@ -117,6 +117,19 @@ namespace TypeCobol.Test.Parser.Performance
         /// </summary>
         private static readonly string LargeFile = CNAF_FOLDER + "CGMX02.COB";
 
+        private readonly IAnalyzerProvider _analyzerProvider;
+
+        public Performance()
+            : this(null)
+        {
+
+        }
+
+        public Performance(IAnalyzerProvider analyzerProvider)
+        {
+            _analyzerProvider = analyzerProvider;
+        }
+
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "fast")]
@@ -284,15 +297,6 @@ namespace TypeCobol.Test.Parser.Performance
             IncrementalPerformance2(LargeFile, "LineInsertAtEnd", insert);
         }
 
-        /// <summary>
-        /// Creates the AnalyzerProvider to be used.
-        /// </summary>
-        /// <returns></returns>
-        protected virtual IAnalyzerProvider CreateAnalyzerProvider()
-        {
-            return null;
-        }
-
         private void IncrementalPerformance2(string relativePath, string suffix, params RangeUpdate[] updates)
         {
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
@@ -304,7 +308,7 @@ namespace TypeCobol.Test.Parser.Performance
 
             CompilationProject project = new CompilationProject("test",
                 root.FullName, new[] { ".cbl", ".cpy" },
-                documentFormat, new TypeCobolOptions(), CreateAnalyzerProvider());
+                documentFormat, new TypeCobolOptions(), _analyzerProvider);
             FileCompiler compiler = new FileCompiler(null, filename, documentFormat.ColumnsLayout, false, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
             //Make an incremental change to the source code
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
@@ -451,10 +455,10 @@ namespace TypeCobol.Test.Parser.Performance
         /// <param name="format"></param>
         /// <param name="copiesFolder"></param>
         /// <returns></returns>
-        protected virtual TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
+        private TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
         {
             var document = new TypeCobol.Parser();
-            document.Init(fullPath, false, options, format, copiesFolder, CreateAnalyzerProvider());
+            document.Init(fullPath, false, options, format, copiesFolder, _analyzerProvider);
             document.Parse(fullPath);
             return document;
         }
