@@ -1,21 +1,28 @@
-cd .\bin
-
-IF EXIST .\EI_Release (
+IF EXIST .\TypeCobol.LanguageServer\bin\EI_Release (
+IF EXIST .\CLI\src\bin\EI_Release (
 IF NOT EXIST .\EI_TypeCobol_Release (
-ECHO D | xcopy .\EI_Release\Templates .\EI_TypeCobol_Release\Templates /E /Y
-ECHO D | xcopy .\EI_Release\DefaultCopies .\EI_TypeCobol_Release\DefaultCopies /E /Y
-ECHO F | xcopy .\EI_Release\*.dll .\EI_TypeCobol_Release /Y
-ECHO F | xcopy .\EI_Release\*.config .\EI_TypeCobol_Release /Y
-ECHO F | xcopy .\EI_Release\*.exe .\EI_TypeCobol_Release /Y
-DEL .\EI_TypeCobol_Release\*.Test.dll )) ELSE (
-ECHO "EI_Release folder not found" )
+ECHO F | xcopy .\TypeCobol.LanguageServer\bin\EI_Release\*.exe .\EI_TypeCobol_Release /Y
+ECHO F | xcopy .\TypeCobol.LanguageServer\bin\EI_Release\*.dll .\EI_TypeCobol_Release /Y
+ECHO F | xcopy .\TypeCobol.LanguageServer\bin\EI_Release\*.runtimeconfig.json .\EI_TypeCobol_Release /Y
+ECHO D | xcopy .\CLI\src\bin\EI_Release\DefaultCopies .\EI_TypeCobol_Release\DefaultCopies /E /Y
+ECHO F | xcopy .\CLI\src\bin\EI_Release\*.exe .\EI_TypeCobol_Release /Y
+ECHO F | xcopy .\CLI\src\bin\EI_Release\*.dll .\EI_TypeCobol_Release /Y
+ECHO F | xcopy .\CLI\src\bin\EI_Release\*.runtimeconfig.json .\EI_TypeCobol_Release /Y
+)) ELSE (
+ECHO "CLI EI_Release folder not found" )) ELSE (
+ECHO "LanguageServer EI_Release folder not found" )
 
-IF EXIST .\Release (
+
+IF EXIST .\TypeCobol.LanguageServer\bin\Release (
+IF EXIST .\CLI\src\bin\Release (
 IF NOT EXIST .\TypeCobol_Release (
-ECHO D | xcopy .\Release\Templates .\TypeCobol_Release\Templates /E /Y
-ECHO D | xcopy .\Release\DefaultCopies .\TypeCobol_Release\DefaultCopies /E /Y
-ECHO F | xcopy .\Release\*.dll .\TypeCobol_Release /Y
-ECHO F | xcopy .\Release\*.config .\TypeCobol_Release /Y
-ECHO F | xcopy .\Release\*.exe .\TypeCobol_Release /Y
-DEL .\TypeCobol_Release\*.Test.dll )) ELSE (
-ECHO "Release folder not found" )
+ECHO F | xcopy .\TypeCobol.LanguageServer\bin\Release\*.exe .\TypeCobol_Release /Y
+ECHO F | xcopy .\TypeCobol.LanguageServer\bin\Release\*.dll .\TypeCobol_Release /Y
+ECHO F | xcopy .\TypeCobol.LanguageServer\bin\Release\*.runtimeconfig.json .\TypeCobol_Release /Y
+ECHO D | xcopy .\CLI\src\bin\Release\DefaultCopies .\TypeCobol_Release\DefaultCopies /E /Y
+ECHO F | xcopy .\CLI\src\bin\Release\*.exe .\TypeCobol_Release /Y
+ECHO F | xcopy .\CLI\src\bin\Release\*.dll .\TypeCobol_Release /Y
+ECHO F | xcopy .\CLI\src\bin\Release\*.runtimeconfig.json .\TypeCobol_Release /Y
+)) ELSE (
+ECHO "CLI Release folder not found" )) ELSE (
+ECHO "LanguageServer Release folder not found" )

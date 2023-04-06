@@ -5,9 +5,6 @@ configuration:
   - Debug
   - EI_Release
   - Release
-
-cache:
-  - packages -> **\packages.config
   
 matrix:
     fast_finish: true
@@ -37,9 +34,9 @@ build:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   
 artifacts: 
-  - path: bin\EI_TypeCobol_Release
+  - path: EI_TypeCobol_Release
     name: EI_TypeCobol_Release
-  - path: bin\TypeCobol_Release
+  - path: TypeCobol_Release
     name: TypeCobol_Release
 
 deploy:
