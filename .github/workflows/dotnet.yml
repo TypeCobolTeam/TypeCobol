@@ -14,18 +14,18 @@ on:
 
 jobs:
   build-and-test-ei-debug:
-    uses: ./.github/workflows/buildAndTest.yml@main
+    uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: EI_Debug
   build-and-test-debug:
-    uses: ./.github/workflows/buildAndTest.yml@main
+    uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: Debug
   build-and-test-ei-release:
-    uses: ./.github/workflows/buildAndTest.yml@main
+    uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: EI_Release
   build-and-test-release:
-    uses: ./.github/workflows/buildAndTest.yml@main
+    uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: Release
