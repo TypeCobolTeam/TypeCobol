@@ -320,9 +320,10 @@ namespace TypeCobol.Compiler.Parser
         private Variable CreateDisplayOperand(CodeElementsParser.DisplayOperandContext context)
         {
 			if (context.variable4() != null)
-            {
+			{
 				return CobolExpressionsBuilder.CreateVariable(context.variable4());
-			} else if (context.allFigurativeConstant() != null)
+			}
+			else if (context.allFigurativeConstant() != null)
 			{
 				return new Variable(CobolWordsBuilder.CreateRepeatedCharacterValue(context.allFigurativeConstant()));
 			}
