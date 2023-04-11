@@ -167,12 +167,6 @@ namespace TypeCobol.LanguageServer
             Process.StartInfo.UseShellExecute = false;
             Process.StartInfo.RedirectStandardOutput = true;
             Process.StartInfo.RedirectStandardInput = true;
-
-            List<string> error = new();
-            List<string> output = new();
-            Process.ErrorDataReceived += (sender, e) => error.Add(e.Data);
-            Process.OutputDataReceived += (sender, e) => output.Add(e.Data);
-
             //Start the process
             try
             {
@@ -182,22 +176,6 @@ namespace TypeCobol.LanguageServer
                 }
                 else
                 {
-                    Console.WriteLine("LSR started");
-                    if (Process.HasExited)
-                    {
-                        Console.WriteLine("output:");
-                        foreach (var item in output)
-                        {
-                            Console.WriteLine(item);
-                        }
-                        Console.WriteLine("error:");
-                        foreach (var item in error)
-                        {
-                            Console.WriteLine(item);
-                        }
-                        Console.WriteLine("Exit code: " + Process.ExitCode);
-                    }
-
                     return true;
                 }
             }
@@ -205,11 +183,6 @@ namespace TypeCobol.LanguageServer
             {
                 return false;
             }
-        }
-
-        private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         static int Main(string[] args)
