@@ -301,8 +301,8 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var statement = new DisplayStatement();
 
-			statement.Variables = BuildObjectArrrayWithNoNullFromParserRules(context.variable4(),
-				ctx => CobolExpressionsBuilder.CreateVariable(ctx));
+			statement.Variables = BuildObjectArrrayWithNoNullFromParserRules(context.displayOperand(),
+				ctx => CreateDisplayOperand(ctx));
 
 			if(context.uponOutputDevice() != null)
 			{
@@ -317,8 +317,21 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		  //////////////////////
-		 // DIVIDE STATEMENT //
+        private Variable CreateDisplayOperand(CodeElementsParser.DisplayOperandContext context)
+        {
+			if (context.variable4() != null)
+            {
+				return CobolExpressionsBuilder.CreateVariable(context.variable4());
+			} else if (context.allFigurativeConstant() != null)
+			{
+				return new Variable(CobolWordsBuilder.CreateRepeatedCharacterValue(context.allFigurativeConstant()));
+			}
+
+			return null;
+		}
+
+		//////////////////////
+		// DIVIDE STATEMENT //
 		//////////////////////
 
 		internal CodeElement CreateDivideStatement(CodeElementsParser.DivideSimpleContext context) {

@@ -1,6 +1,8 @@
 --- Diagnostics ---
 Line 6[16,17] <27, Error, Syntax> - Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>displayStatement,  OffendingSymbol=[16,17:no]<NO>
 Line 16[48,51] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[48,51:toto]<UserDefinedWord>
+Line 45[20,20] <27, Error, Syntax> - Syntax error : mismatched input '9' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[20,20:9]<IntegerLiteral>{9}
+Line 46[20,23] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[20,23:Var1]<UserDefinedWord>
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
 - variables = toto
@@ -82,4 +84,78 @@ Line 16[48,51] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expe
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,21:spaces]<SPACES>
 - variables = spaces
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,22+:'a']<AlphanumericLiteral>(',Y,Y){a}
+- variables = 'a'
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [43,51:advancing]<ADVANCING>
+- variables = 'a'
+- OutputDeviceName = SYSIN
+- WithNoAdvancing
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24+:X'40']<HexadecimalAlphanumericLiteral>(',Y,Y){@}
+- variables = X'40'
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,29:HIGH-VALUE]<HIGH_VALUE>
+- variables = HIGH-VALUE
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,30:HIGH-VALUES]<HIGH_VALUES>
+- variables = HIGH-VALUES
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,28:LOW-VALUE]<LOW_VALUE>
+- variables = LOW-VALUE
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,29:LOW-VALUES]<LOW_VALUES>
+- variables = LOW-VALUES
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24:QUOTE]<QUOTE>
+- variables = QUOTE
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,25:QUOTES]<QUOTES>
+- variables = QUOTES
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24:SPACE]<SPACE>
+- variables = SPACE
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,25:SPACES]<SPACES>
+- variables = SPACES
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,23:ZERO]<ZERO>
+- variables = ZERO
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24:ZEROS]<ZEROS>
+- variables = ZEROS
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,25:ZEROES]<ZEROES>
+- variables = ZEROES
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,27+:"test\0"]<AlphanumericLiteral>(",Y,Y){test\0}
+- variables = "test\0"
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [24,26+:"b"]<AlphanumericLiteral>(",Y,Y){b}
+- variables = "a" "b"
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [28,30+:"c"]<AlphanumericLiteral>(",Y,Y){c}
+- variables = "a" "b" "c"
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [28,28:9]<IntegerLiteral>{9}
+- variables = "a" "b" 9
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [28,31:Var1]<UserDefinedWord>
+- variables = "a" "b" Var1
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [22,24+:'a']<AlphanumericLiteral>(',Y,Y){a}
+- variables = 9 'a'
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [25,27+:'a']<AlphanumericLiteral>(',Y,Y){a}
+- variables = Var1 'a'
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [52,60:LOW-VALUE]<LOW_VALUE>
+- variables = 9 'a' 9 'a' Var1 "test" LOW-VALUE
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,20:9]<IntegerLiteral>{9}
+- variables = TypeCobol.Compiler.CodeElements.Variable 9
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,23:Var1]<UserDefinedWord>
+- variables = TypeCobol.Compiler.CodeElements.Variable Var1
 

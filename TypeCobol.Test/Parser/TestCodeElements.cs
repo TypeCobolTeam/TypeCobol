@@ -42,6 +42,10 @@ namespace TypeCobol.Test.Parser
             Assert.IsTrue(tuple.Item2.OutputDeviceName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing);
 
+            tuple = ParseOneCodeElement<DisplayStatement>("display 'a' all 'b' 'c' upon SYSIN with no advancing", correctSyntax: true);
+            Assert.IsTrue(tuple.Item2.Variables.Length == 3);
+            Assert.IsTrue(tuple.Item2.OutputDeviceName != null);
+            Assert.IsTrue(tuple.Item2.IsWithNoAdvancing);
 
             ParseDisplayStatement("display toto", 1);
             ParseDisplayStatement("display toto  'titi' tata", 3);
@@ -63,6 +67,11 @@ namespace TypeCobol.Test.Parser
             ParseDisplayStatement("display 'treortiertertert  '' zerzerzerze' ", 1);
             ParseDisplayStatement("display 'treortiertertert  \" zerzerzerze' ", 1);
             ParseDisplayStatement("display 'treortiertertert  \"\" zerzerzerze' ", 1);
+
+            ParseDisplayStatement("display all", 1, false);
+            ParseDisplayStatement("display all ", 1, false);
+            ParseDisplayStatement("display all 9.1", 2, false);
+            ParseDisplayStatement("display all Var2", 2, false);
         }
 
 
