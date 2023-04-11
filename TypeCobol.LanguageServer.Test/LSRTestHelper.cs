@@ -117,7 +117,7 @@ namespace TypeCobol.LanguageServer.Test
             process.WaitForExit(LSR_TEST_TIMEOUT);
             if (!process.HasExited)
             {
-                process.Kill();
+                process.Kill(true); // Also kill associated LSR process
                 throw new Exception("!!!! TC-LSP PROCESS KILLED !!!");
             }
             else

@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace TypeCobol.LanguageServer.Test
 {
     [TestClass]
+    [DoNotParallelize]
     public class LSRTest
     {
         #region Incremental_Tests
