@@ -6,7 +6,7 @@ name: Build and Test one configuration
 on:
   workflow_call:
     inputs:
-      build-configuation:
+      build-configuration:
         required: true
         type: string
 
@@ -24,6 +24,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration ${{ inputs.build-configuation }}
+      run: dotnet build --no-restore --configuration ${{ inputs.build-configuration }}
     - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration ${{ inputs.build-configuation }}
+      run: dotnet test --no-build --verbosity normal --configuration ${{ inputs.build-configuration }}
