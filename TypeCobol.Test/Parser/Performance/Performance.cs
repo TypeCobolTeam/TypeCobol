@@ -472,7 +472,7 @@ namespace TypeCobol.Test.Parser.Performance
             stats.IterationNumber = 20;
 
             //Warmup before measurement
-            var options = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
+            var options = new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCrossCheck };
             var documentWarmup = ParseDocument(fullPath, options, format, copiesFolder);
             //Be sure that there is no error, otherwise parsing can be incomplete
             CheckThatThereIsNoError(documentWarmup.Results); //Discard diagnostics collection time for this warmup run

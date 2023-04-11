@@ -1377,7 +1377,7 @@ accessModeClause:
 // For files defined with the EXTERNAL clause, all file description entries in the run unit that are associated with the file must have data description entries for data-name-2 that specify the same relative location in the record and the same length.
 
 recordKeyClause:
-    RECORD KEY? IS? dataNameReference;
+    RECORD KEY? IS? qualifiedDataName;
 
 // p141: The ALTERNATE RECORD KEY clause (format 2) specifies a data item within the record that provides an alternative path to the data in an indexed file. 
 // data-name-3 An ALTERNATE RECORD KEY data item. 
