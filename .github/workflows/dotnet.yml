@@ -8,43 +8,24 @@ on:
     branches:
     - master
     - develop
-    - develop_net6.0
   pull_request:
     branches:
     - 2488-migrate-to-net-60
 
 jobs:
-  nuget-restore:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-
   build-and-test-ei-debug:
-    needs: nuget-restore
     uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: EI_Debug
-
   build-and-test-debug:
-    needs: nuget-restore
     uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: Debug
-
   build-and-test-ei-release:
-    needs: nuget-restore
     uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: EI_Release
-
   build-and-test-release:
-    needs: nuget-restore
     uses: ./.github/workflows/buildAndTest.yml
     with:
       build-configuration: Release
