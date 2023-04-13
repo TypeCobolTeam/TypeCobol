@@ -29,6 +29,10 @@
     <ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <Antlr4UseCSharpGenerator>true</Antlr4UseCSharpGenerator>
+  </PropertyGroup>
+
   <ItemGroup>
     <Antlr4 Update="AntlrGrammar\Cobol2002CodeElements.g4">
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
