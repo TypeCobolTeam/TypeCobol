@@ -125,21 +125,7 @@ namespace TypeCobol.LanguageServer.Test
             if (!process.HasExited)
             {
                 process.Kill(true); // Also kill associated LSR process
-                string logs = Environment.NewLine;
-                logs += "Robot log: " + Read(logFile);
-                logs += Environment.NewLine;
-                logs += "Server log: " + Read(tcLogFile);
-                throw new Exception("!!!! TC-LSP PROCESS KILLED !!!" + logs);
-
-                string Read(string filePath)
-                {
-                    if (File.Exists(filePath))
-                    {
-                        return File.ReadAllText(filePath);
-                    }
-
-                    return $"'{filePath}' does not exist !";
-                }
+                throw new Exception("!!!! TC-LSP PROCESS KILLED !!!");
             }
             else
             {
