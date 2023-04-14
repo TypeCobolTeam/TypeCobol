@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="TypeCobol.LanguageServer.Robot.Monitor" Version="1.5.0" />
     <PackageReference Include="TypeCobol.LanguageServerRobot" Version="1.7.0" />
   </ItemGroup>
 
