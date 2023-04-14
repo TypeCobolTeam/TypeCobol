@@ -317,8 +317,8 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-        private Variable CreateDisplayOperand(CodeElementsParser.DisplayOperandContext context)
-        {
+		private Variable CreateDisplayOperand(CodeElementsParser.DisplayOperandContext context)
+		{
 			if (context.variable4() != null)
 			{
 				return CobolExpressionsBuilder.CreateVariable(context.variable4());
