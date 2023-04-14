@@ -1,6 +1,6 @@
 --- Diagnostics ---
 Line 6[16,17] <27, Error, Syntax> - Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>displayStatement,  OffendingSymbol=[16,17:no]<NO>
-Line 16[48,51] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[48,51:toto]<UserDefinedWord>
+Line 16[49,52] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[49,52:toto]<UserDefinedWord>
 Line 45[20,20] <27, Error, Syntax> - Syntax error : mismatched input '9' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[20,20:9]<IntegerLiteral>{9}
 Line 46[20,23] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[20,23:Var1]<UserDefinedWord>
 --- Code Elements ---
@@ -35,14 +35,14 @@ Line 46[20,23] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expe
 - variables = var1 'lit1' var2
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [52,60:advancing]<ADVANCING>
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [53,61:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
-- OutputDeviceName = SYSIN
+- OutputDeviceName = SYSOUT
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [47,55:advancing]<ADVANCING>
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [48,56:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
-- OutputDeviceName = SYSIN
+- OutputDeviceName = SYSOUT
 - WithNoAdvancing
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
@@ -61,9 +61,9 @@ Line 46[20,23] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expe
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,29+:'C"est à dire']<AlphanumericLiteral>(',Y,Y){C"est à dire}
 - variables = 'C"est à dire'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [42,46:SYSIN]<UserDefinedWord>
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [42,47:SYSOUT]<UserDefinedWord>
 - variables = var1 'litError' var2
-- OutputDeviceName = SYSIN
+- OutputDeviceName = SYSOUT
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
 - variables = var1 'lit2' var2
@@ -88,9 +88,9 @@ Line 46[20,23] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expe
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,22+:'a']<AlphanumericLiteral>(',Y,Y){a}
 - variables = 'a'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [43,51:advancing]<ADVANCING>
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [44,52:advancing]<ADVANCING>
 - variables = 'a'
-- OutputDeviceName = SYSIN
+- OutputDeviceName = SYSOUT
 - WithNoAdvancing
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24+:X'40']<HexadecimalAlphanumericLiteral>(',Y,Y){@}

@@ -42,7 +42,7 @@ namespace TypeCobol.Test.Parser
             Assert.IsTrue(tuple.Item2.OutputDeviceName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing);
 
-            tuple = ParseOneCodeElement<DisplayStatement>("display 'a' all 'b' 'c' upon SYSIN with no advancing", correctSyntax: true);
+            tuple = ParseOneCodeElement<DisplayStatement>("display 'a' all 'b' 'c' upon SYSOUT with no advancing");
             Assert.IsTrue(tuple.Item2.Variables.Length == 3);
             Assert.IsTrue(tuple.Item2.OutputDeviceName != null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing);

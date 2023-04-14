@@ -7,13 +7,13 @@
 000040 display "no advancing" with no advancing
 000040 display 'no advancing' with no advancing
 000040 display var1 'lit1' var2 with no advancing
-000040 display var1 'lit1' var2 upon SYSIN with no advancing
-000040 display var1 'lit1' var2 upon SYSIN no advancing
+000040 display var1 'lit1' var2 upon SYSOUT with no advancing
+000040 display var1 'lit1' var2 upon SYSOUT no advancing
 000040 display var1 'lit1' var2 upon toto with no advancing
 000040 display var1 'lit1' var2 upon toto no advancing
 000040 display "C'est à dire"
 000040 display 'C"est à dire'
-000040 display var1 'litError' var2 upon SYSIN toto with no advancing
+000040 display var1 'litError' var2 upon SYSOUT toto with no advancing
 000040 display var1 'lit2' var2 upon var2 with no advancing
 000000 display when-compiled
 000000 display function max(1 5)
@@ -21,7 +21,7 @@
 000000 display high-value
 000000 display spaces
 000000 display all 'a'
-000000 display all 'a' upon SYSIN with no advancing
+000000 display all 'a' upon SYSOUT with no advancing
 000000 display all X'40'
 000000 display all HIGH-VALUE
 000000 display all HIGH-VALUES
