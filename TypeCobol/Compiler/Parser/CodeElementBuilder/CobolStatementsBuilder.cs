@@ -301,8 +301,7 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var statement = new DisplayStatement();
 
-			statement.Variables = BuildObjectArrrayWithNoNullFromParserRules(context.displayOperand(),
-				ctx => CreateDisplayOperand(ctx));
+			statement.Variables = BuildObjectArrrayWithNoNullFromParserRules(context.displayOperand(), CreateDisplayOperand);
 
 			if(context.uponOutputDevice() != null)
 			{
