@@ -3,5 +3,7 @@
 
 [[ExitMethodStatement]] [8,11:EXIT]<EXIT> --> [13,18:METHOD]<METHOD>
 
+[[ExitParagraphStatement]] [8,11:EXIT]<EXIT> --> [13,21:PARAGRAPH]<UserDefinedWord>
+
 [[ExitProgramStatement]] [8,11:EXIT]<EXIT> --> [13,19:PROGRAM]<PROGRAM>
 

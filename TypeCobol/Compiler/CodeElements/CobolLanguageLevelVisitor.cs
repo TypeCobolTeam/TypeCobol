@@ -120,6 +120,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ExecStatementText execStatementText);
         bool Visit([NotNull] ExecStatementEnd execStatementEnd);
         bool Visit([NotNull] ExitMethodStatement exitMethodStatement);
+        bool Visit([NotNull] ExitParagraphStatement exitParagraphStatement);
         bool Visit([NotNull] ExitProgramStatement exitProgramStatement);
         bool Visit([NotNull] ExitStatement exitStatement);
         bool Visit([NotNull] FreeStatement freeStatement);
@@ -286,6 +287,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ExecText execText);
         bool Visit([NotNull] Exit exit);
         bool Visit([NotNull] ExitMethod exitMethod);
+        bool Visit([NotNull] ExitParagraph exitParagraph);
         bool Visit([NotNull] ExitProgram exitProgram);
         bool Visit([NotNull] Free free);
         bool Visit([NotNull] Goback goback);
@@ -539,6 +541,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ExitMethodStatement exitMethodStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(ExitParagraphStatement exitParagraphStatement)
+        {
             return true;
         }
 
@@ -1142,6 +1149,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ExitMethod exitMethod) {
+            return true;
+        }
+
+        public bool Visit([NotNull] ExitParagraph exitParagraph)
+        {
             return true;
         }
 

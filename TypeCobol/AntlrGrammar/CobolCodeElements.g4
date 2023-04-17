@@ -130,6 +130,7 @@ codeElement:
 	gotoStatement |
 	performStatement |
 	performStatementEnd |
+	exitParagraphStatement |
 
 	// --- Program or method linkage statements ---
 	callStatement |
@@ -4416,6 +4417,16 @@ exitStatement:
 
 exitMethodStatement:
 	EXIT METHOD;
+
+// EXIT PARAGRAPH statement
+// The EXIT PARAGRAPH statement controls the exit from the middle of a paragraph without executing any following statements within the paragraph.
+// When an EXIT PARAGRAPH statement is executed, control is passed to an implicit
+// CONTINUE statement that immediately follows the last explicit statement of the
+// current paragraph. This return mechanism supersedes any other return
+// mechanisms that are associated with language elements, such as PERFORM, SORT,
+// and USE for that paragraph.
+exitParagraphStatement:
+	EXIT ({ string.Equals(CurrentToken.Text, "PARAGRAPH", System.StringComparison.OrdinalIgnoreCase) }? PARAGRAPHKeyword=UserDefinedWord);
 
 // p337: EXIT PROGRAM statement
 // The EXIT PROGRAM statement specifies the end of a called program and returns control to the calling program.

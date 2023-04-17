@@ -975,6 +975,8 @@ singleStatement ::=
 	{: :}
 	| ExitMethodStatement:stmt
 	{: :}
+	| ExitParagraphStatement:stmt
+	{: :}
 	| ExitProgramStatement:stmt
 	{: :}
 	| GobackStatement:stmt

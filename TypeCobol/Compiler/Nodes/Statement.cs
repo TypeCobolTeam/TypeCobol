@@ -163,6 +163,15 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
+    public class ExitParagraph : GenericNode<ExitParagraphStatement>, Statement
+    {
+        public ExitParagraph(ExitParagraphStatement statement) : base(statement) { }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class ExitProgram: GenericNode<ExitProgramStatement>, Statement {
         public ExitProgram(ExitProgramStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)

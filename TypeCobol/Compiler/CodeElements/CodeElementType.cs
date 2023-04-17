@@ -79,6 +79,7 @@
         ExecStatement,
         ExecStatementText,
         ExitMethodStatement,
+        ExitParagraphStatement,
         ExitProgramStatement,
         ExitStatement,
         FreeStatement,

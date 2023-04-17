@@ -78,6 +78,7 @@
         WhenOtherCondition,
         ExecStatement,
         ExitMethodStatement,
+        ExitParagraphStatement,
         ExitProgramStatement,
         ExitStatement,
         FreeStatement,
