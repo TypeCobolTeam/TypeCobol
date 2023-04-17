@@ -753,7 +753,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.recordKeyClause() != null && context.recordKeyClause().Length > 0)
 			{
 				var recordKeyClauseContext = context.recordKeyClause()[0];
-				recordKey = _cobolWordsBuilder.CreateDataNameReference(recordKeyClauseContext.dataNameReference());
+				recordKey = _cobolWordsBuilder.CreateQualifiedDataName(recordKeyClauseContext.qualifiedDataName());
 			}
 			if (context.alternateRecordKeyClause() != null && context.alternateRecordKeyClause().Length > 0)
 			{
