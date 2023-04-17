@@ -422,6 +422,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
+        public virtual void OnExitSectionStatement(ExitSectionStatement stmt)
+        {
+
+        }
+
         public virtual void OnExitStatement(ExitStatement stmt)
         {
 

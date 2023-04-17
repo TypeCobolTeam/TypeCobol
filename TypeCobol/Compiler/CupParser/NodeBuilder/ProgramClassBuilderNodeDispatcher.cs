@@ -383,6 +383,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.OnExitProgramStatement(stmt);
         }
 
+        public virtual void OnExitSectionStatement(ExitSectionStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnExitSectionStatement(stmt);
+        }
+
         public virtual void OnAllocateStatement(AllocateStatement stmt)
         {
             foreach (var listener in _listeners) listener.OnAllocateStatement(stmt);

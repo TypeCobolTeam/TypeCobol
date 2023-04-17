@@ -81,6 +81,7 @@
         ExitMethodStatement,
         ExitParagraphStatement,
         ExitProgramStatement,
+        ExitSectionStatement,
         ExitStatement,
         FreeStatement,
         GobackStatement,

@@ -1914,8 +1914,14 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitProgramStatement();
 		}
 
-        // --- ALLOCATE ---
-        public override void EnterAllocateStatement(CodeElementsParser.AllocateStatementContext context)
+		public override void EnterExitSectionStatement(CodeElementsParser.ExitSectionStatementContext context)
+		{
+			Context = context;
+			CodeElement = new ExitSectionStatement();
+		}
+
+		// --- ALLOCATE ---
+		public override void EnterAllocateStatement(CodeElementsParser.AllocateStatementContext context)
         {
             Context = context;
             CodeElement = _cobolStatementsBuilder.CreateAllocateStatement(context);

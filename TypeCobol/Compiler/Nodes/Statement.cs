@@ -180,6 +180,15 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
+    public class ExitSection : GenericNode<ExitSectionStatement>, Statement
+    {
+        public ExitSection(ExitSectionStatement statement) : base(statement) { }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Free : GenericNode<FreeStatement>, Statement
     {
         public Free(FreeStatement statement)

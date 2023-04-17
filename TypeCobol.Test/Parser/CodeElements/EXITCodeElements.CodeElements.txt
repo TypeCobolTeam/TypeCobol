@@ -5,5 +5,7 @@
 
 [[ExitParagraphStatement]] [8,11:EXIT]<EXIT> --> [13,21:PARAGRAPH]<UserDefinedWord>
 
+[[ExitSectionStatement]] [8,11:EXIT]<EXIT> --> [13,19:SECTION]<SECTION>
+
 [[ExitProgramStatement]] [8,11:EXIT]<EXIT> --> [13,19:PROGRAM]<PROGRAM>
 

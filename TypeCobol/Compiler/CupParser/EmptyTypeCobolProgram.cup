@@ -979,6 +979,8 @@ singleStatement ::=
 	{: :}
 	| ExitProgramStatement:stmt
 	{: :}
+	| ExitSectionStatement:stmt
+	{: :}
 	| GobackStatement:stmt
 	{: :}
 // -- input-output --
