@@ -4257,7 +4257,10 @@ deleteStatementEnd: END_DELETE;
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-    DISPLAY variable4+ uponOutputDevice? withNoAdvancing?;
+    DISPLAY displayOperand+ uponOutputDevice? withNoAdvancing?;
+
+displayOperand:
+	variable4 | allFigurativeConstant;
 
 uponOutputDevice:
 	UPON outputDevice=mnemonicForEnvironmentNameReferenceOrEnvironmentName;
