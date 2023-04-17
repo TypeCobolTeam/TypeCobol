@@ -8,16 +8,31 @@
 		<!-- Targeting .NET 6.0, with default language level (C# 10) -->
 		<TargetFramework>net6.0</TargetFramework>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<!-- Enable all rules for code analyzers -->
+		<AnalysisMode>All</AnalysisMode>
 		<!-- Versioning -->
 		<Version>0.0.0-local</Version>
 	</PropertyGroup>
 	
-	<!-- Custom build config, with custom compilation contant -->
+	<!-- Customize build configs -->
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<EnableNETAnalyzers>false</EnableNETAnalyzers>
+		<Optimize>false</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EI_Debug|AnyCPU'">
+		<EnableNETAnalyzers>false</EnableNETAnalyzers>
+		<Optimize>false</Optimize>
+		<!-- Custom compilation constant -->
 		<DefineConstants>$(DefineConstants);EUROINFO_RULES</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EI_Release|AnyCPU'">
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<Optimize>true</Optimize>
+		<!-- Custom compilation constant -->
 		<DefineConstants>$(DefineConstants);EUROINFO_RULES</DefineConstants>
 	</PropertyGroup>
 	
