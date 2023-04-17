@@ -1,0 +1,24 @@
+--- Nodes ---
+?
+  TCOFM117
+    environment-division
+      input-output
+        file-control
+          file-control
+    data-division
+      file
+        FILE-DESC-1
+          FILE-DESC-1-AREA
+      working-storage
+        VAR-FILE-BUFFER
+        VAR-LINE-COUNT
+    procedure-division
+      sentence-0
+        [[WriteStatement]] [12,16:WRITE]<WRITE> --> [43,47:LINES]<LINES>
+
+        end
+      sentence-1
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
