@@ -1920,8 +1920,8 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitSectionStatement();
 		}
 
-		// --- ALLOCATE ---
-		public override void EnterAllocateStatement(CodeElementsParser.AllocateStatementContext context)
+        // --- ALLOCATE ---
+        public override void EnterAllocateStatement(CodeElementsParser.AllocateStatementContext context)
         {
             Context = context;
             CodeElement = _cobolStatementsBuilder.CreateAllocateStatement(context);
