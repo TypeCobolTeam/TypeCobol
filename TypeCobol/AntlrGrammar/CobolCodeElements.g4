@@ -4431,7 +4431,7 @@ exitMethodStatement:
 // and USE for that paragraph.
 
 exitParagraphStatement:
-	EXIT ({ string.Equals(CurrentToken.Text, "PARAGRAPH", System.StringComparison.OrdinalIgnoreCase) }? PARAGRAPHKeyword=UserDefinedWord);
+	EXIT ({ string.Equals(CurrentToken.Text, "PARAGRAPH", System.StringComparison.OrdinalIgnoreCase) }? KeywordPARAGRAPH=UserDefinedWord);
 
 // p337: EXIT PROGRAM statement
 // The EXIT PROGRAM statement specifies the end of a called program and returns control to the calling program.
