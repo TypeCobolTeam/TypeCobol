@@ -130,6 +130,8 @@ codeElement:
 	gotoStatement |
 	performStatement |
 	performStatementEnd |
+	exitParagraphStatement |
+	exitSectionStatement |
 
 	// --- Program or method linkage statements ---
 	callStatement |
@@ -4420,6 +4422,17 @@ exitStatement:
 exitMethodStatement:
 	EXIT METHOD;
 
+// EXIT PARAGRAPH statement
+// The EXIT PARAGRAPH statement controls the exit from the middle of a paragraph without executing any following statements within the paragraph.
+// When an EXIT PARAGRAPH statement is executed, control is passed to an implicit
+// CONTINUE statement that immediately follows the last explicit statement of the
+// current paragraph. This return mechanism supersedes any other return
+// mechanisms that are associated with language elements, such as PERFORM, SORT,
+// and USE for that paragraph.
+
+exitParagraphStatement:
+	EXIT ({ string.Equals(CurrentToken.Text, "PARAGRAPH", System.StringComparison.OrdinalIgnoreCase) }? KeywordPARAGRAPH=UserDefinedWord);
+
 // p337: EXIT PROGRAM statement
 // The EXIT PROGRAM statement specifies the end of a called program and returns control to the calling program.
 // You can specify EXIT PROGRAM only in the PROCEDURE DIVISION of a program. 
@@ -4433,6 +4446,19 @@ exitMethodStatement:
 
 exitProgramStatement:
 	EXIT PROGRAM;
+
+// EXIT SECTION statement
+// The EXIT SECTION statement controls the exit from a section without executing any
+// following statements within the section.
+// The EXIT SECTION statement can be specified only in a section.
+// When an EXIT SECTION statement is executed, control is passed to an unnamed
+// empty paragraph that immediately follows the last paragraph of the current
+// section. This return mechanism supersedes any other return mechanisms that are
+// associated with language elements, such as PERFORM, SORT, and USE for that
+// section.
+
+exitSectionStatement:
+	EXIT SECTION;
 
 // p338: GOBACK statement
 // The GOBACK statement functions like the EXIT PROGRAM statement when it is coded as part of a called program (or the EXIT METHOD statement when GOBACK is coded as part of an invoked method) and like the STOP RUN statement when coded in a main program.
