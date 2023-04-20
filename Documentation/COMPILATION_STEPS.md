@@ -15,39 +15,148 @@ The first five steps: _Text Change Notification Handling_, _Text Update_, _Token
 
 The remaining three steps: _AST building_, _Cross check_ and _Code analysis_ are **non-incremental**. They are node-based and operate on the Abstract Syntax Tree. The AST is fully rebuilt and fully checked during these steps.
 
-## Text Change Notification Handling
+## Step 0: Text Change Notification Handling
+
+**This step takes place in LanguageServer, not in parser directly.**
+
+**Following steps all take place in parser.**
 
 |Class|Method|Input|Output|
 |-|-|-|-|
 |`TypeCobolServer`|`OnDidChangeTextDocument`|`DidChangeTextDocumentParams` instance|`RangeUpdate` array|
-
-This step is merely a translation step from LSP objects to parser objects. Each `TextDocumentContentChangeEvent` contained in the notification is turned into a `RangeUpdate` instance. However if one of the change does correspond to a document clear action, the incremental compilation is skipped and the document is reopened, triggering a full parsing.
-
-The `RangeUpdate` array is passed to `Workspace.UpdateSourceFile` method.
-
-## Text Update
-
-|Class|Method|Input|Output|
-|-|-|-|-|
 |`Workspace`|`UpdateSourceFile`|`RangeUpdate` array|`void`|
-|`CompilationDocument`|`UpdateTextLines`|`RangeUpdate` array|Updated `compilationDocumentLines`, list of `DocumentChangedEvent<ICobolTextLine>`|
 
-This step aims at applying text changes to the current in-memory representation of the document. It then starts the incremental steps in same thread and schedules remaining non-incremental steps using a timer.
+This step is merely a translation step from LSP objects to parser objects. Each `TextDocumentContentChangeEvent` contained in the notification is turned into a `RangeUpdate` instance. However if one of the change does correspond to a document clear action, the incremental compilation is totally skipped and the document is reopened, triggering a full parsing.
 
-### Source file update
-
-1. Forward the `RangeUpdate`s to the `UpdateTextLines` method
+The `RangeUpdate` array is then passed to the `Workspace.UpdateSourceFile` method which is responsible for driving the compilation process:
+1. Forward the `RangeUpdate`s to the `CompilationDocument.UpdateTextLines` method
 2. Start incremental parsing, meaning up to and including _Code Element Update_
 3. Schedule remaining non-incremental steps on a timer. After **750ms**, and if no other text changes have been received, the non-incremental parsing steps will be performed.
 
-### Text lines update
+## Step 1: Text Update
 
-The goal of this step is to apply the text changes (received as an array of `RangeUpdate`) on the `compilationDocumentLines` of the current `CompilationDocument`. Range updates are translated into `TextChange` instances. While a `RangeUpdate` describe a local modification on a portion of text, a `TextChange` describe a modification on a given line. The line can be added, updated or removed and each `TextChange` contains the whole text of the line after being modified. Consequently `TextChange` are created using both the `RangeUpdate`s and the existing lines.
+|Class|Method|Input|Output|
+|-|-|-|-|
+|`CompilationDocument`|`UpdateTextLines`|`RangeUpdate` array|Updated `compilationDocumentLines`, list of `DocumentChange<ICobolTextLine>`|
 
-- from RangeUpdate to TextChange
+The goal of this step is to apply the text changes (received as an array of `RangeUpdate`) on the `compilationDocumentLines` of the current `CompilationDocument`. Range updates are translated into `TextChange` instances. While a `RangeUpdate` describes a local modification on a portion of text, a `TextChange` describes a modification on a given line. The line can be added, updated or removed and each `TextChange` contains the whole text of the line after being modified. Consequently, `TextChange` are created using both the `RangeUpdate`s and the existing lines.
+
+### From RangeUpdate to TextChange
+
+TODO Explain how this algorithm work
+
+### Applying TextChanges
+
+The `CompilationDocument.ApplyTextChange` is responsible for modifying the `compilationDocumentLines` collection according to the `TextChange`s previously built. It also creates the `DocumentChange<ICobolTextLine>` objects. To avoid returning redundant changes, the method aggregates them on the fly.
+
+- When a new line is inserted:
+  - Create and insert the new instance of `CodeElementsLine`
+  - Shift down every following lines, this means increasing the line number for every following lines and every associated document changes 
+  - Create the corresponding `DocumentChange`
+- When an existing line is updated:
+  - Replace the `CodeElementsLine` at specified index with a new instance
+  - Create or update the corresponding `DocumentChange`
+- When an existing line is removed:
+  - Remove the `CodeElementsLine` at specified index
+  - Shift up every following lines and every associated document changes and remove document changes corresponding to the removed line (if any)
+  - Create the corresponding `DocumentChange`
+
+Note that when a line is shifted up or down, its diagnostics are also updated accordingly.
+
+## Step 2: Tokens Update
+
+|Class|Method|Input|Output|
+|-|-|-|-|
+|`CompilationDocument`|`UpdateTokensLines`|List of `DocumentChange<ICobolTextLine>`|Updated `compilationDocumentLines`, list of `DocumentChange<ITokensLine>`|
+|`CompilationDocument`|`RefreshTokensDocumentSnapshot`|`void`|Updated `TokensDocumentSnapshot`|
+
+During this step, the lines that have been altered are scanned to identify their tokens. The `RefreshTokensDocumentSnapshot`  only updates the `TokensDocument` instance, the `UpdateTokensLines` is doing all the work by calling the `ScannerStep` class.
+
+TODO Explain the whole scanner ??
+
+## Step 3 Tokens Preprocessing
+
+|Class|Method|Input|Output|
+|-|-|-|-|
+|`CompilationDocument`|`RefreshProcessedTokensDocumentSnapshot`|List of `DocumentChange<ITokensLine>`|Updated `compilationDocumentLines`, list of `DocumentChange<IProcessedTokensLine>`, updated `ProcessedTokensDocumentSnapshot`|
+
+While being called 'Preprocessor', this step does not actually modifies text like a regular preprocessor would. The goal here is to parse compiler directives, this is done through CUP parser using definitions of 'CobolCompilerDirectives.cup' grammar.
+
+For `COPY` directives, a second phase happens during Preprocessor step: after all directives of the modified lines have been parsed, the lines having `COPY` directives are checked again to perform actual loading of the target documents.
+
+All results of compiler directive parsing are stored at `ProcessedTokensLine` level in these properties:
+|Property|Role|
+|-|-|
+|`CompilerListingControlDirective`|Stores the `*CBL`, `*CONTROL`, `EJECT`, `SKIP1`, `SKIP2`, `SKIP3` or `TITLE` directive of the line if any has been found|
+|`HasDirectiveTokenContinuationFromPreviousLine`|Self-explanatory|
+|`HasDirectiveTokenContinuedOnNextLine`|Self-explanatory|
+|`ImportedDocuments`|Stores all documents imported by this line using the `COPY` directive|
+|`ReplaceDirective`|Stores the `REPLACE` directive of this line if any|
+|`tokensWithCompilerDirectives`|General storage for all compiler directives found on this line. Each directive is stored in a single `CompilerDirectiveToken` which is then added into this collection|
+|`PreprocessorDiagnostics`|Diagnostics reported during the parsing of the compiler directives of this line|
+|`NeedsCompilerDirectiveParsing`|Boolean flag indicating whether this line has been preprocessed or not|
+
+Among compiler directives, `REPLACE` and `COPY` have a special handling. Both `REPLACE` and `COPY` alter the stream of tokens used to create CodeElements during next step, so they are both parsed during Preprocessing step but actually processed during CodeElement step. This processing is done through the use of multiple TokensLinesIterators (see `CopyTokensLinesIterator`, `ReplaceTokensLinesIterator` and `ReplacingTokensLinesIterator`).
+
+## Step 4 Code Element Update
+
+|Class|Method|Input|Output|
+|-|-|-|-|
+|`CompilationUnit`|`RefreshCodeElementsDocumentSnapshot`|List of `DocumentChange<IProcessedTokensLine>`|Updated `compilationDocumentLines`, list of `DocumentChange<ICodeElementsLine>`, updated `CodeElementsDocumentSnapshot`|
+
+This step turns a stream of tokens into a stream of `CodeElement`s. This is achieved using the ANTLR parser. The parsing is done in three phases:
+1. Determine the boundaries of the reparse section
+2. PArse CodeElements from tokens located inside the reparse section
+3. Convert each CodeElement context built by ANTLR into a real `CodeElement` instance
+
+The results of this step are stored in `CodeElements` collection at the `CodeElementsLine` level. The `ParserDiagnostics` collection also contains diagnostics produced by this step. And the `ActiveReplaceDirective` which tracks the `REPLACE` that applies to a given line is updated during this step too.
+
+### Reparse section
+
+To ensure clean reparsing, the reparse section is delimited by CodeElements, but since the token iterator works at line level, the reparse section must also start at the beginning of a line and end at the end of a line.
+
+The beginning of the reparse section is defined as the previous unmodified CodeElement as long as it starts at the beginning of its CodeElementsLine. The end of the reparse section obeys the same rule, but the algorithm adds one more CodeElement because ANTLR diagnostics may be attached on the _following_ CodeElement. Adding one more CodeElement allows to properly refresh the diagnostics for such cases. Additionally if modified lines are affected by a `REPLACE` directive, the reparse section include all lines up to next `REPLACE` directive.
+
+### ANTLR parsing
+
+The parsing itself is triggered through a single call to `CodeElementsParser.cobolCodeElements()`. This is within this operation that the tokens are actually iterated and the `COPY` / `REPLACE` directives are processed. To give ANTLR the real tokens, the iterator must:
+- import tokens from documents included by `COPY`s instructions
+  - applying the `REPLACING` clause if any
+- alter tokens that match current `REPLACE` directive
+
+### Building CodeElements
+
+ANTLR returns a single `CodeElementsParser.CobolCodeElementsContext`. Context objects are not kept in the final result but are rather converted into real `CodeElement`s objects. This is done through a visitor pattern, the visitor object is `CodeElementBuilder` which turns each context object into its corresponding CodeElement object and also gather tokens of this CE into its `ConsumedTokens` collection.
+
+## Step 5 AST building
+
+|Class|Method|Input|Output|
+|-|-|-|-|
+|`CompilationUnit`|`ProduceTemporarySemanticDocument`|Up-to-date `compilationDocumentLines`|Updated `TemporaryProgramClassDocumentSnapshot`|
+
+This step turns the complete list of CodeElements into an Abstract Syntax Tree using the CUP parser and the 'TypeCobolProgram.cup' grammar. Unlike ANTLR, the parsing and the visit are done simultaneously, no intermediary objects are created and the CUP parser calls directly `ProgramClassBuilder`. The `ProgramClassBuilder` is responsible for creating the AST by adding `Node` objects into it. It always starts with a root node of type `SourceFile`. Then for each structure recognized by CUP, it creates the corresponding `Node` object and adds it in tree. The builder tracks current node by successive calls to `Enter`or `Exit` methods depending on whether the current node expect children or not.
+
+By convention, structures allowing children are entered when the corresponding `StartXXX` method is called and exited when the `ExitXXX` method is called. Childless structures are visited with a `OnXXX` method call.
+
+For example:
+- `ProgramClassBuilder.StartDataDivision` signals the beginning of the `DATA DIVISION` of the program, after this call the current node is the newly created `DataDivision` node allowing to add data definitions children.
+- `ProgramClassBuilder.EndDataDivision` signals the end of the DATA DIVISION, thus the current node will be the program node.
+- `ProgramClassBuilder.OnGobackStatement` signals the encounter of a `GobackStatement`. The method creates the `Goback` node, enters it as a child of the current node (most probably the `ProceddureDivision` node) and exit immediately.
+
+## Step 6 Cross check
+
+|Class|Method|Input|Output|
+|-|-|-|-|
+|`CompilationUnit`|`RefreshProgramClassDocumentSnapshot`|Up-to-date `TemporaryProgramClassDocumentSnapshot`|Updated `ProgramClassDocumentSnapshot`|
 
 TODO
 
-- ApplyTextChange
+## Step 7 Code analysis
 
-TODO
+|Class|Method|Input|Output|
+|-|-|-|-|
+|`CompilationUnit`|`RefreshCodeAnalysisDocumentSnapshot`|Up-to-date `ProgramClassDocumentSnapshot`|Updated `CodeAnalysisDocumentSnapshot`|
+
+This final step runs external analyzers on the latest `ProgramClassDocumentSnapshot`. To allow all types of code analysis, the analyzers are given all previous document snapshots (Tokens, ProcessedTokens, CodeElements, TemporaryProgramClass and ProgramClass).
+
+Each analyzer receives all five document snapshot in sequence through calls to their `Inspect` methods. The results of the analysis (mainly diagnostics) are stored in a new instance of `InspectedProgramClassDocument`.
