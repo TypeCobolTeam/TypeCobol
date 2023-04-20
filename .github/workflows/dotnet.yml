@@ -8,9 +8,12 @@ on:
     branches:
     - master
     - develop
+    - develop_net6.0
   pull_request:
     branches:
-    - 2488-migrate-to-net-60
+    - master
+    - develop
+    - develop_net6.0
 
 jobs:
   build-and-test-ei-debug:
