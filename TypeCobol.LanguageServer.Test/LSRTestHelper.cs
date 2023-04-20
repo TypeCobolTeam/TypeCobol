@@ -87,10 +87,17 @@ namespace TypeCobol.LanguageServer.Test
             var tcLogFile = Path.Combine(workingDir.FullName, "TCLSPLog.txt");
 
             var scriptFileInfo = new FileInfo(scriptPath);
+
+            //Get the path to LanguageServerRobot executable
+            string lsrPath = Environment.CurrentDirectory;
+            string configuration = Path.GetFileName(lsrPath);
+            lsrPath = Path.Combine(lsrPath, "..", "..", "..");
+            lsrPath = Path.GetFullPath(lsrPath);
+            lsrPath = Path.Combine(lsrPath, "TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer", "bin", configuration, "TypeCobol.LanguageServerRobot.exe");
+
             //Setup the arguments
-            //The path for LanguageServerRobot depends on the NuGetPackage. If the NuGet is not downloaded, it won't works
             var arguments = string.Format(defaultTypeCobolLSArgs,
-                @"..\..\TypeCobol.LanguageServerRobot.exe",
+                lsrPath,
                 initGeneratedFileInfo.FullName, 
                 configGeneratedFileInfo.FullName, 
                 scriptFileInfo.FullName, 
@@ -111,13 +118,13 @@ namespace TypeCobol.LanguageServer.Test
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar +"TypeCobol.LanguageServer.exe";
             startInfo.WorkingDirectory = testWorkingDirectory;
-            startInfo.Arguments =  arguments;
+            startInfo.Arguments = arguments;
             process.StartInfo = startInfo;
             process.Start();
             process.WaitForExit(LSR_TEST_TIMEOUT);
             if (!process.HasExited)
             {
-                process.Kill();
+                process.Kill(true); // Also kill associated LSR process
                 throw new Exception("!!!! TC-LSP PROCESS KILLED !!!");
             }
             else
