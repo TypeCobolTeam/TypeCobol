@@ -172,6 +172,18 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
+    public class ExitPerform : GenericNode<ExitPerformStatement>, Statement
+    {
+        public ExitPerform(ExitPerformStatement statement) : base(statement) { }
+
+        public bool Cycle => CodeElement.Cycle?.Value ?? false;
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class ExitProgram: GenericNode<ExitProgramStatement>, Statement {
         public ExitProgram(ExitProgramStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)

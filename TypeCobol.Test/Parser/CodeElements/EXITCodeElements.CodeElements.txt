@@ -1,4 +1,6 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+Line 6[21,24] <27, Error, Syntax> - Syntax error : no viable alternative at input 'cycl' RuleStack=codeElement>exitPerformStatement,  OffendingSymbol=[21,24:cycl]<UserDefinedWord>
+--- Code Elements ---
 [[ExitStatement]] [8,11:EXIT]<EXIT> --> [8,11:EXIT]<EXIT>
 
 [[ExitMethodStatement]] [8,11:EXIT]<EXIT> --> [13,18:METHOD]<METHOD>
@@ -6,6 +8,14 @@
 [[ExitParagraphStatement]] [8,11:EXIT]<EXIT> --> [13,21:PARAGRAPH]<UserDefinedWord>
 
 [[ExitSectionStatement]] [8,11:EXIT]<EXIT> --> [13,19:SECTION]<SECTION>
+
+[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [13,19:PERFORM]<PERFORM>
+
+[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [21,24:cycl]<UserDefinedWord>
+
+[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [21,25:CYCLE]<UserDefinedWord>
+
+[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [21,25:cycle]<UserDefinedWord>
 
 [[ExitProgramStatement]] [8,11:EXIT]<EXIT> --> [13,19:PROGRAM]<PROGRAM>
 

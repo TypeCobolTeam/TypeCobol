@@ -115,12 +115,13 @@ codeElement:
 
 	// --- Control flow statements ---
 	continueStatement |
-    entryStatement |
-    execStatement |
+	entryStatement |
+	execStatement |
 	execStatementText |
 	execStatementEnd |
-    exitMethodStatement |
-    exitProgramStatement |	
+	exitMethodStatement |
+	exitPerformStatement |
+	exitProgramStatement |
 	gobackStatement |
 	stopStatement |
 
@@ -4433,6 +4434,24 @@ exitMethodStatement:
 exitParagraphStatement:
 	EXIT ({ string.Equals(CurrentToken.Text, "PARAGRAPH", System.StringComparison.OrdinalIgnoreCase) }? KeywordPARAGRAPH=UserDefinedWord);
 
+// EXIT PERFORM statement
+// The EXIT PERFORM statement controls the exit from an inline PERFORM without using a GO TO statement
+// or a PERFORM ... THROUGH statement.
+// If you specify an EXIT PERFORM statement outside of an inline PERFORM statement, the EXIT PERFORM
+// is ignored.
+// When an EXIT PERFORM statement without the CYCLE phrase is executed, control is passed to an implicit
+// CONTINUE statement. This implicit CONTINUE statement immediately follows the END-PERFORM phrase
+// that matches the most closely preceding and unterminated inline PERFORM statement.
+// When an EXIT PERFORM statement with the CYCLE phrase is executed, control is passed to an implicit
+// CONTINUE statement. This implicit CONTINUE statement immediately precedes the END-PERFORM
+// phrase that matches the most closely preceding and unterminated inline PERFORM statement.
+
+exitPerformStatement:
+	EXIT PERFORM cycle?;
+
+cycle:
+	{ string.Equals(CurrentToken.Text, "CYCLE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCYCLE=UserDefinedWord;
+
 // p337: EXIT PROGRAM statement
 // The EXIT PROGRAM statement specifies the end of a called program and returns control to the calling program.
 // You can specify EXIT PROGRAM only in the PROCEDURE DIVISION of a program. 
@@ -8358,7 +8377,6 @@ connectionTarget: SQL_TO ((locationName = UserDefinedWord) | hostVariable) autho
 sqlIncrement: ({ string.Equals(CurrentToken.Text, "INCREMENT", System.StringComparison.OrdinalIgnoreCase) }? KeywordINCREMENT=UserDefinedWord);
 minvalue: ({ string.Equals(CurrentToken.Text, "MINVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMINVALUE=UserDefinedWord);
 maxvalue: ({ string.Equals(CurrentToken.Text, "MAXVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMAXVALUE=UserDefinedWord);
-cycle: ({ string.Equals(CurrentToken.Text, "CYCLE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCYCLE=UserDefinedWord);
 cache: ({ string.Equals(CurrentToken.Text, "CACHE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCACHE=UserDefinedWord);
 
 alterSequenceStatement: SQL_ALTER SQL_SEQUENCE (sequence_name=tableOrViewOrCorrelationName) alterSequenceClause alterSequenceClause*;

@@ -412,6 +412,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void OnExitProgramStatement([NotNull] ExitProgramStatement stmt);
 
         /// <summary>
+        /// Exit Perform Statement seen
+        /// </summary>
+        /// <param name="stmt">Exit Perform Statement code element</param>
+        void OnExitPerformStatement([NotNull] ExitPerformStatement stmt);
+
+        /// <summary>
         /// Exit Section Statement seen
         /// </summary>
         /// <param name="stmt">Exit Section Statement code element</param>
