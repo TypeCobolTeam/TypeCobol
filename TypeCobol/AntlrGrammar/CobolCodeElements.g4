@@ -115,13 +115,13 @@ codeElement:
 
 	// --- Control flow statements ---
 	continueStatement |
-    entryStatement |
-    execStatement |
+	entryStatement |
+	execStatement |
 	execStatementText |
 	execStatementEnd |
-    exitMethodStatement |
+	exitMethodStatement |
 	exitPerformStatement |
-    exitProgramStatement |	
+	exitProgramStatement |
 	gobackStatement |
 	stopStatement |
 
