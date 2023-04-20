@@ -1,0 +1,38 @@
+# NOTE: Requires **VS2019 16.3** or later
+
+# TypeCobol code analysis
+# Description: Code analysis rules for TypeCobol.
+
+# Code files
+[*.{cs,vb}]
+
+
+dotnet_diagnostic.CA1046.severity = error
+
+dotnet_diagnostic.CA2218.severity = error
+
+dotnet_diagnostic.CS0108.severity = error
+
+dotnet_diagnostic.CS0109.severity = error
+
+dotnet_diagnostic.CS0114.severity = error
+
+dotnet_diagnostic.CS0168.severity = error
+
+dotnet_diagnostic.CS0183.severity = error
+
+dotnet_diagnostic.CS0184.severity = error
+
+dotnet_diagnostic.CS0472.severity = error
+
+dotnet_diagnostic.CS0642.severity = error
+
+dotnet_diagnostic.CS0659.severity = error
+
+dotnet_diagnostic.CS0660.severity = error
+
+dotnet_diagnostic.CS1058.severity = error
+
+dotnet_diagnostic.CS1717.severity = error
+
+dotnet_diagnostic.CS1718.severity = error

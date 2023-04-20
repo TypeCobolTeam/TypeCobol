@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using TypeCobol.Compiler.CodeElements;
+﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
+
+using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Domain
 {

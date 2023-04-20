@@ -271,7 +271,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Nodes.Class classNode);
         bool Visit([NotNull] Factory factory);
         bool Visit([NotNull] Nodes.Method method);
-        bool Visit([NotNull] Object objectNode);
+        bool Visit([NotNull] Nodes.Object objectNode);
         bool Visit([NotNull] End end);
 
         bool Visit([NotNull] Accept accept);
@@ -307,7 +307,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Sort sort);
         bool Visit([NotNull] Start start);
         bool Visit([NotNull] Stop stop);
-        bool Visit([NotNull] String stringNode);
+        bool Visit([NotNull] Nodes.String stringNode);
         bool Visit([NotNull] Unstring unstring);
         bool Visit([NotNull] XmlGenerate xmlGenerate);
         bool Visit([NotNull] XmlParse xmlParse);
@@ -1094,7 +1094,7 @@ namespace TypeCobol.Compiler.CodeElements
         public virtual bool Visit(Factory factory) {
             return true;
         }
-        public virtual bool Visit(Object objectNode) {
+        public virtual bool Visit(Nodes.Object objectNode) {
             return true;
         }
 
@@ -1239,7 +1239,7 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public virtual bool Visit(String stringNode) {
+        public virtual bool Visit(Nodes.String stringNode) {
             return true;
         }
 

@@ -477,8 +477,13 @@ namespace CLI.Test
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
             startInfo.WorkingDirectory = workingDirectory;
-            startInfo.Arguments = @"/c " + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
-                                  "TypeCobol.CLI.exe " + arguments;
+            // Find TypeCobol.CLI.exe location
+            string currentDirectory = Environment.CurrentDirectory;
+            string configuration = Path.GetFileName(currentDirectory);
+            string pathToExe = Path.Combine(currentDirectory, "..", "..", "..", "..");
+            pathToExe = Path.GetFullPath(pathToExe);
+            pathToExe = Path.Combine(pathToExe, "CLI", "src", "bin", configuration, "TypeCobol.CLI.exe");
+            startInfo.Arguments = @"/c " + pathToExe + " " + arguments;
 
             process.StartInfo = startInfo;
             process.StartInfo.RedirectStandardOutput = true;
