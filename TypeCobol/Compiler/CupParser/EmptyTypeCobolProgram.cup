@@ -64,6 +64,7 @@ terminal TypeCobol.Compiler.CodeElements.ExecStatement ExecStatement;
 terminal TypeCobol.Compiler.CodeElements.ExecStatementText ExecStatementText;
 terminal TypeCobol.Compiler.CodeElements.ExitMethodStatement ExitMethodStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitParagraphStatement ExitParagraphStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitPerformStatement ExitPerformStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitProgramStatement ExitProgramStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitSectionStatement ExitSectionStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitStatement ExitStatement;
@@ -978,6 +979,8 @@ singleStatement ::=
 	| ExitMethodStatement:stmt
 	{: :}
 	| ExitParagraphStatement:stmt
+	{: :}
+	| ExitPerformStatement:stmt
 	{: :}
 	| ExitProgramStatement:stmt
 	{: :}

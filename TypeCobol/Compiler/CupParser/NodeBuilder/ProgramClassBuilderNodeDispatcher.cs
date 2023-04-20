@@ -378,6 +378,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.OnExitParagraphStatement(stmt);
         }
 
+        public virtual void OnExitPerformStatement(ExitPerformStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnExitPerformStatement(stmt);
+        }
+
         public virtual void OnExitProgramStatement(ExitProgramStatement stmt)
         {
             foreach (var listener in _listeners) listener.OnExitProgramStatement(stmt);

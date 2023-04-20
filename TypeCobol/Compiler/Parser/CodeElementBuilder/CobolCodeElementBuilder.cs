@@ -1909,6 +1909,12 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitParagraphStatement();
 		}
 
+		public override void EnterExitPerformStatement(CodeElementsParser.ExitPerformStatementContext context)
+		{
+			Context = context;
+			CodeElement = _cobolStatementsBuilder.CreateExitPerformStatement(context);
+		}
+
 		public override void EnterExitProgramStatement(CodeElementsParser.ExitProgramStatementContext context) {
 			Context = context;
 			CodeElement = new ExitProgramStatement();

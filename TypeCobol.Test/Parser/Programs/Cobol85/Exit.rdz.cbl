@@ -4,6 +4,21 @@
        WORKING-STORAGE  SECTION.
        01  Var1 pic X value "A".
        PROCEDURE  DIVISION.
+      *    Ok ignored
+           exit perform
+
+           perform varying Var1 from 1 by 1 until Var1 > 10
+                if Var1 = 3
+                    exit perform cycle
+                end-if
+                display Var1
+
+                if Var1 = 8
+                    exit perform
+                end-if
+
+           end-perform
+
            perform PARA1
            goback
            .

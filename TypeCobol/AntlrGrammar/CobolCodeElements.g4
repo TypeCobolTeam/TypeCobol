@@ -120,6 +120,7 @@ codeElement:
 	execStatementText |
 	execStatementEnd |
     exitMethodStatement |
+	exitPerformStatement |
     exitProgramStatement |	
 	gobackStatement |
 	stopStatement |
@@ -4432,6 +4433,21 @@ exitMethodStatement:
 
 exitParagraphStatement:
 	EXIT ({ string.Equals(CurrentToken.Text, "PARAGRAPH", System.StringComparison.OrdinalIgnoreCase) }? KeywordPARAGRAPH=UserDefinedWord);
+
+// EXIT PERFORM statement
+// The EXIT PERFORM statement controls the exit from an inline PERFORM without using a GO TO statement
+// or a PERFORM ... THROUGH statement.
+// If you specify an EXIT PERFORM statement outside of an inline PERFORM statement, the EXIT PERFORM
+// is ignored.
+// When an EXIT PERFORM statement without the CYCLE phrase is executed, control is passed to an implicit
+// CONTINUE statement. This implicit CONTINUE statement immediately follows the END-PERFORM phrase
+// that matches the most closely preceding and unterminated inline PERFORM statement.
+// When an EXIT PERFORM statement with the CYCLE phrase is executed, control is passed to an implicit
+// CONTINUE statement. This implicit CONTINUE statement immediately precedes the END-PERFORM
+// phrase that matches the most closely preceding and unterminated inline PERFORM statement.
+
+exitPerformStatement:
+	EXIT PERFORM cycle?;
 
 // p337: EXIT PROGRAM statement
 // The EXIT PROGRAM statement specifies the end of a called program and returns control to the calling program.

@@ -410,6 +410,21 @@ namespace TypeCobol.Compiler.Parser
 			return selectionSubject;
 		}
 
+		  //////////////////
+		 // EXIT PERFORM //
+		//////////////////
+		internal CodeElement CreateExitPerformStatement(CodeElementsParser.ExitPerformStatementContext context)
+		{
+			var statement = new ExitPerformStatement();
+
+            if (context.cycle() != null)
+            {
+                statement.Cycle = new SyntaxProperty<bool>(true, (Token)context.cycle().KeywordCYCLE);
+            }
+
+            return statement;
+		}
+
 		  ////////////////////
 		 // EXEC STATEMENT //
 		////////////////////
