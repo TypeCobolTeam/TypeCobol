@@ -927,18 +927,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 return true;
             }
 
-            if (referenceToResolve.IsAmbiguous)
+            if (referenceToResolve.IsAmbiguous && referenceToResolve.IsOrCanBeOfType(SymbolType.MnemonicForEnvironmentName))
             {
                 // Check for mnemonic
                 var mnemonic = CheckMnemonicForEnvironmentName(write, referenceToResolve);
 
                 // Check for variable
                 var ambiguousSymbolReference = (AmbiguousSymbolReference)referenceToResolve;
-                System.Diagnostics.Debug.Assert(!ambiguousSymbolReference.IsQualifiedReference);
-                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes != null);
-                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Length == 2);
-                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Contains(SymbolType.DataName));
-                System.Diagnostics.Debug.Assert(ambiguousSymbolReference.CandidateTypes.Contains(SymbolType.MnemonicForEnvironmentName));
                 var originalCandidateTypes = ambiguousSymbolReference.CandidateTypes;
                 ambiguousSymbolReference.CandidateTypes = new[] { SymbolType.DataName }; //To call CheckVariable again
                 var dataDefinition = CheckVariable(write, variable.StorageArea, true, true);

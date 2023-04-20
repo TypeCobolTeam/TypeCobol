@@ -1903,9 +1903,21 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitMethodStatement();
 		}
 
+		public override void EnterExitParagraphStatement(CodeElementsParser.ExitParagraphStatementContext context)
+		{
+			Context = context;
+			CodeElement = new ExitParagraphStatement();
+		}
+
 		public override void EnterExitProgramStatement(CodeElementsParser.ExitProgramStatementContext context) {
 			Context = context;
 			CodeElement = new ExitProgramStatement();
+		}
+
+		public override void EnterExitSectionStatement(CodeElementsParser.ExitSectionStatementContext context)
+		{
+			Context = context;
+			CodeElement = new ExitSectionStatement();
 		}
 
         // --- ALLOCATE ---
