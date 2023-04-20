@@ -417,12 +417,12 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var statement = new ExitPerformStatement();
 
-            if (context.cycle() != null)
-            {
-                statement.Cycle = new SyntaxProperty<bool>(true, (Token)context.cycle().KeywordCYCLE);
-            }
+			if (context.cycle() != null)
+			{
+				statement.Cycle = new SyntaxProperty<bool>(true, (Token)context.cycle().KeywordCYCLE);
+			}
 
-            return statement;
+			return statement;
 		}
 
 		  ////////////////////
