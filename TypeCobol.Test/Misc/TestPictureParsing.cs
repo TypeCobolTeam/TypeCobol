@@ -29,7 +29,7 @@ namespace TypeCobol.Test.Misc {
 			TestConversion("99,999",        DataType.NumericEdited);
 			TestConversion("GGBBGG",        DataType.DBCS);
 			TestConversion("+999.99E+99",   DataType.FloatingPoint);
-            TestConversion("+999,99E+99",   DataType.FloatingPoint, true);
+			TestConversion("+999,99E+99",   DataType.FloatingPoint, true);
 			TestConversion("-9v9(9)E-99",   DataType.FloatingPoint);
 
 			TestConversion("999",  DataType.Numeric);
