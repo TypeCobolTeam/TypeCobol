@@ -22,8 +22,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore .\TypeCobol.sln
     - name: Build
-      run: dotnet build --no-restore --configuration ${{ inputs.build-configuration }}
+      run: dotnet build .\TypeCobol.sln --no-restore --configuration ${{ inputs.build-configuration }}
     - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration ${{ inputs.build-configuration }}
+      run: dotnet test .\TypeCobol.sln --no-build --verbosity normal --configuration ${{ inputs.build-configuration }}
