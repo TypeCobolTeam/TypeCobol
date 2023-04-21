@@ -30,7 +30,7 @@ This step is merely a translation step from LSP objects to parser objects. Each 
 
 The `RangeUpdate` array is then passed to the `Workspace.UpdateSourceFile` method which is responsible for driving the compilation process:
 1. Forward the `RangeUpdate`s to the `CompilationDocument.UpdateTextLines` method
-2. Start incremental parsing, meaning up to and including _Code Element Update_
+2. Start incremental parsing, meaning up-to and including _Code Element Update_
 3. Schedule remaining non-incremental steps on a timer. After **750ms**, and if no other text changes have been received, the non-incremental parsing steps will be performed.
 
 ## Step 1: Text Update
@@ -72,7 +72,11 @@ Note that when a line is shifted up or down, its diagnostics are also updated ac
 
 During this step, the lines that have been altered are scanned to identify their tokens. The `RefreshTokensDocumentSnapshot`  only updates the `TokensDocument` instance, the `UpdateTokensLines` is doing all the work by calling the `ScannerStep` class.
 
-TODO Explain the whole scanner ??
+To enable incremental scanning, the ScannerStep uses the `MultilineScanState` object. A line must be rescanned when either:
+- it is part of the modified lines (and consequently has no tokens yet)
+- it is part of a modified continuation group
+- its `InitialScanState` differs from the final `ScanState` of the previous line
+  - it means that previous line has been rescanned and the resulting `ScanState` is different from the one computed during previous compilation cycle. The line must be rescanned again according to the updated ScanState
 
 ## Step 3 Tokens Preprocessing
 
@@ -149,7 +153,11 @@ For example:
 |-|-|-|-|
 |`CompilationUnit`|`RefreshProgramClassDocumentSnapshot`|Up-to-date `TemporaryProgramClassDocumentSnapshot`|Updated `ProgramClassDocumentSnapshot`|
 
-TODO
+The goal of this step is to perform a full visit of the refreshed AST in order to check the semantics of the document. The main goal is to check that all used variables are defined unambiguously but other checks specifically related to some statements are performed as well.
+
+The `CrossCompleteChecker` class is the visitor object that implements those checks. Note that it is configured to skip CodeElements during the visit, as it assumes that CodeElements have already been checked previously. All diagnostics must be created on nodes only during this step because CodeElements persist between compilation cycles whereas nodes are always recreated.
+
+The `BeginNode` method triggers the check for variable definition, while the `VisitXXX` methods implement node-specific checks.
 
 ## Step 7 Code analysis
 
