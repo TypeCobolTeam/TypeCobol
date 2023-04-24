@@ -80,6 +80,7 @@
         ExecStatementText,
         ExitMethodStatement,
         ExitParagraphStatement,
+        ExitPerformStatement,
         ExitProgramStatement,
         ExitSectionStatement,
         ExitStatement,
