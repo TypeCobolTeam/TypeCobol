@@ -1,5 +1,7 @@
 ﻿using TypeCobol.Compiler.Types;
 
+using Type = TypeCobol.Compiler.Types.Type;
+
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>

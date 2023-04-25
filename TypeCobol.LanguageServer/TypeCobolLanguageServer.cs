@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using TypeCobol.Compiler;
+﻿using TypeCobol.Compiler;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
@@ -18,6 +15,7 @@ using TypeCobol.Analysis.Graph;
 using TypeCobol.LanguageServer.Context;
 
 using TokenType = TypeCobol.Compiler.Scanner.TokenType;
+using Range = TypeCobol.LanguageServer.VsCodeProtocol.Range;
 
 namespace TypeCobol.LanguageServer
 {

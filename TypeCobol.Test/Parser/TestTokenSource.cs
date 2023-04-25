@@ -176,7 +176,6 @@ namespace TypeCobol.Test.Parser
             // Test file properties
             string relativePath = SampleFolder;
             string textName = "MSVCOUT";
-            Encoding encoding = Encoding.GetEncoding(1252);
             DocumentFormat docFormat = DocumentFormat.RDZReferenceFormat;
 
             // Compile test file

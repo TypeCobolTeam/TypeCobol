@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
@@ -17,6 +12,8 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
 using TypeCobol.Tools;
+
+using Range = TypeCobol.LanguageServer.VsCodeProtocol.Range;
 
 namespace TypeCobol.LanguageServer
 {

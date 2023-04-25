@@ -298,7 +298,8 @@ namespace TypeCobol.LanguageServer
             }
             if (LsrMode && LsrPath != null && LsrScript != null)
             {
-                if (!StartLsr(LsrPath, (LsrOptions ?? "") + "-ioc -c -script=" + LsrScript))
+                string fullPath = Path.GetFullPath(LsrPath);
+                if (!StartLsr(fullPath, (LsrOptions ?? "") + "-ioc -c -script=" + LsrScript))
                 {
                     System.Console.Error.WriteLine("Fail to run LSR process");
                     return -1;

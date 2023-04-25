@@ -1,3 +1,0 @@
-"C:\Program Files (x86)\IBM\SDP_RDZ95\ei-resources\TypeCobol\TypeCobol.CLI.exe" -1 -i "C:\Users\MAYANJE\Source\Repos\TypeCobol2\TypeCobol.Transform\Tests\DVZF0OSM.TXT" -g -o "C:\Users\MAYANJE\Source\Repos\TypeCobol2\TypeCobol.Transform\Tests\DVZF0OSM.CBL" -d DIAGNOSTIC_FILE -s "C:\Program Files (x86)\IBM\SDP_RDZ95\ei-resources\TypeCobol\ALL.xml" -e rdz
-C:\Users\MAYANJE\Source\Repos\TypeCobol2\TypeCobol.Transform\..\bin\Debug\TypeCobol.Transform.exe -tcmc "C:\Users\MAYANJE\Source\Repos\TypeCobol2\TypeCobol.Transform\Tests\DVZF0OSM.TXT" "C:\Users\MAYANJE\Source\Repos\TypeCobol2\TypeCobol.Transform\Tests\DVZF0OSM.CBL" "C:\Users\MAYANJE\Source\Repos\TypeCobol2\TypeCobol.Transform\Tests\DVZF0OSM.mtcbl"
-

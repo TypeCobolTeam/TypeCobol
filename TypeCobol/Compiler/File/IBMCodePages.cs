@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace TypeCobol.Compiler.File
 {
@@ -94,6 +90,8 @@ namespace TypeCobol.Compiler.File
 
         static IBMCodePages()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             DotNetCodePageFromIBMCCSID.Add(37, new CodePageEquivalence() { IBM_CCSID = 37, IBM_Name = "COM EUROPE EBCDIC", IBM_EncodingScheme = "EBCDIC, SBCS", IBM_EBCDIC = true, MS_CodePage = 37, MS_DotNetName = "IBM037 ", MS_AdditionalInfo = "IBM EBCDIC (EU-Canada) " });
             DotNetCodePageFromIBMCCSID.Add(273, new CodePageEquivalence() { IBM_CCSID = 273, IBM_Name = "AUS/GERM EBCDIC", IBM_EncodingScheme = "EBCDIC, SBCS", IBM_EBCDIC = true, MS_CodePage = 20273, MS_DotNetName = "IBM273 ", MS_AdditionalInfo = "IBM EBCDIC (Allemagne) " });
             DotNetCodePageFromIBMCCSID.Add(277, new CodePageEquivalence() { IBM_CCSID = 277, IBM_Name = "DEN/NORWAY EBCDIC", IBM_EncodingScheme = "EBCDIC, SBCS", IBM_EBCDIC = true, MS_CodePage = 20277, MS_DotNetName = "IBM277 ", MS_AdditionalInfo = "IBM EBCDIC (Danemark-Norvège) " });
