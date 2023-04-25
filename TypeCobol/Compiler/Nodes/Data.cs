@@ -1,7 +1,4 @@
-
-using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -11,7 +8,6 @@ namespace TypeCobol.Compiler.Nodes {
 
     using System;
     using System.Collections.Generic;
-    using CodeElements.Expressions;
     using Scanner;
     using TypeCobol.Compiler.CodeElements;
 
@@ -222,7 +218,7 @@ namespace TypeCobol.Compiler.Nodes {
             this.CodeElement = dataDefinitionEntry;
         }
 
-        private CommonDataDescriptionAndDataRedefines _CommonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
+        private CommonDataDescriptionAndDataRedefines? _CommonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
 
 
         protected override CodeElement InternalCodeElement => CodeElement;
@@ -231,8 +227,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// IndexDefinition and GeneratedDefinition don't have a CodeElement.
         /// Otherwise all others DataDefinition must have a CodeElement
         /// </summary>
-        [CanBeNull]
-        public new DataDefinitionEntry CodeElement { get; }
+        public new DataDefinitionEntry? CodeElement { get; }
 
 
 
@@ -309,19 +304,31 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        private DataType _primitiveDataType;
-        public virtual DataType PrimitiveDataType
+        private DataType? _primitiveDataType;
+        public virtual DataType? PrimitiveDataType
         {
             get
             {
                 if (_primitiveDataType != null) return _primitiveDataType;
-                if (this.Picture != null) //Get DataType based on Picture clause
-                    _primitiveDataType = DataType.Create(this._CommonDataDesc.PictureValidationResult);
-                else if (this.Usage.HasValue) //Get DataType based on Usage clause
-                    _primitiveDataType = DataType.Create(this.Usage.Value);
-                else
-                    return null;
-
+                //If it's not a Typedef
+                if (_CommonDataDesc?.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
+                {
+                    _primitiveDataType = _CommonDataDesc.DataType;
+                }
+                else //It's a Typedef, its DataType doesn't reflect its picture or its usage but the Typedef
+                {
+                    if (_CommonDataDesc?.PictureValidationResult != null)
+                    {
+                        _primitiveDataType = DataType.Create(_CommonDataDesc.PictureValidationResult);
+                    }
+                    else
+                    {
+                        var dataUsage = Usage;
+                        if (dataUsage.HasValue)
+                            _primitiveDataType = DataType.Create(dataUsage.Value);
+                    }
+                }
+                
                 return _primitiveDataType;
             }
         }
@@ -645,8 +652,8 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         #region TypeProperties
-        public AlphanumericValue Picture => _CommonDataDesc?.Picture;
-        internal PictureValidator.Result PictureValidationResult => _CommonDataDesc?.PictureValidationResult;
+        public AlphanumericValue? Picture => _CommonDataDesc?.Picture;
+        internal PictureValidator.Result? PictureValidationResult => _CommonDataDesc?.PictureValidationResult;
         public bool IsJustified { get {  if(_CommonDataDesc != null && _CommonDataDesc.IsJustified != null) return _CommonDataDesc.IsJustified.Value; else return false; } }
         public virtual DataUsage? Usage
         {

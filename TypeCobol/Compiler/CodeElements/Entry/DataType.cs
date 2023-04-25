@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Types;
@@ -25,11 +24,11 @@ namespace TypeCobol.Compiler.CodeElements
             return astVisitor.Visit(this);
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             return Equals(obj as DataType);
         }
 
-        public bool Equals(DataType dataType)
+        public bool Equals(DataType? dataType)
         {
             if (object.ReferenceEquals(this, dataType)) return true;
             if (object.ReferenceEquals(null, dataType)) return false;
@@ -52,11 +51,11 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public static bool operator ==(DataType x, DataType y)
+        public static bool operator ==(DataType? x, DataType? y)
         {
             return x?.Equals(y) ?? object.ReferenceEquals(y, null);
         }
-        public static bool operator !=(DataType x, DataType y)
+        public static bool operator !=(DataType? x, DataType? y)
         {
             return !(x == y);
         }
@@ -70,48 +69,32 @@ namespace TypeCobol.Compiler.CodeElements
         
         public static DataType Create(PictureValidator.Result pictureValidatorResult)
         {
-            if (pictureValidatorResult.Category == PictureCategory.Invalid)
+            switch (pictureValidatorResult.Category)
             {
-                return DataType.Unknown;
+                case PictureCategory.Invalid:
+                    return DataType.Unknown;
+                case PictureCategory.Alphabetic:
+                    return DataType.Alphabetic;
+                case PictureCategory.Alphanumeric:
+                    return DataType.Alphanumeric;
+                case PictureCategory.AlphanumericEdited:
+                    return DataType.AlphanumericEdited;
+                case PictureCategory.DBCS:
+                    return DataType.DBCS;
+                case PictureCategory.National:
+                    return DataType.National;
+                case PictureCategory.NationalEdited:
+                    return DataType.NationalEdited;
+                case PictureCategory.ExternalFloatingPoint:
+                    return DataType.FloatingPoint;
+                case PictureCategory.Numeric:
+                    return DataType.Numeric;
+                case PictureCategory.NumericEdited:
+                    return DataType.NumericEdited;
+                default:
+                    //Exception to detect new PictureCategory not handled here
+                    throw new NotImplementedException("Unknown pictureValidatorResult.Category: " + pictureValidatorResult.Category);
             }
-            else if (pictureValidatorResult.Category == PictureCategory.Alphabetic)
-            {
-                return DataType.Alphabetic;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.Alphanumeric)
-            {
-                return DataType.Alphanumeric;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.AlphanumericEdited)
-            {
-                return DataType.AlphanumericEdited;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.DBCS)
-            {
-                return DataType.DBCS;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.National)
-            {
-                return DataType.National;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.NationalEdited)
-            {
-                return DataType.NationalEdited;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.ExternalFloatingPoint)
-            {
-                return DataType.FloatingPoint;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.Numeric)
-            {
-                return DataType.Numeric;
-            }
-            else if (pictureValidatorResult.Category == PictureCategory.NumericEdited)
-            {
-                return DataType.NumericEdited;
-            }
-            //Exception to detect new PictureCategory not handled here
-            throw new NotImplementedException("Unknown pictureValidatorResult.Category: " + pictureValidatorResult.Category);
         }
 
         /// <summary>

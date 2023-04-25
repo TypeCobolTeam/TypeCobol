@@ -23,7 +23,7 @@ namespace TypeCobol.Test.Misc {
 			TestConversion("XXXXXXXXX",     DataType.Alphanumeric);
 			TestConversion("xxxxxxxxx",     DataType.Alphanumeric);
 			TestConversion("****.**",       DataType.NumericEdited);
-			TestConversion("****,**",       DataType.NumericEdited, false);
+			TestConversion("****,**",       DataType.NumericEdited, true);
 			TestConversion("ZZZZ.ZZ",       DataType.NumericEdited);
 			TestConversion("99,B999,B000",  DataType.NumericEdited);
 			TestConversion("99,999",        DataType.NumericEdited);
