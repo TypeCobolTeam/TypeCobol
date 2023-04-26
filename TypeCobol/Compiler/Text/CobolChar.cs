@@ -13,6 +13,7 @@ namespace TypeCobol.Compiler.Text
     {
         private static bool[] isCobolWordChar = new bool[256];
         private static bool[] isCobolWordSeparator = new bool[256];
+        private static bool[] isAdditionalCharAllowedInPartialCobolWord = new bool[256];
 
         /// <summary>
         /// True if the current char can be found inside a Cobol word
@@ -33,6 +34,14 @@ namespace TypeCobol.Compiler.Text
         public static bool IsCobolWordSeparator(char chr)
         {
             return isCobolWordSeparator[(byte)chr];
+        }
+
+        /// <summary>
+        /// True if the current char is allowed in a PartialCobolWord
+        /// </summary>
+        public static bool IsAllowedInsidePartialCobolWord(char chr)
+        {
+            return IsCobolWordChar(chr) || isAdditionalCharAllowedInPartialCobolWord[(byte)chr];
         }
 
         static CobolChar()
@@ -88,6 +97,30 @@ namespace TypeCobol.Compiler.Text
             isCobolWordSeparator[(byte)'='] = true;
             isCobolWordSeparator[(byte)'"'] = true;
             isCobolWordSeparator[(byte)'\''] = true;
+
+            // --- isAdditionalCharAllowedInPartialCobolWord ---
+
+            for (int i = 0; i < 256; i++)
+            {
+                isAdditionalCharAllowedInPartialCobolWord[i] = false;
+            }
+            // list of additional chars allowed in a Partial Cobol word (in addition to the ones allowed in a Cobol word)
+            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)' '] = true; // Currently too problematic to allow it
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'+'] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'*'] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'/'] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'='] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'$'] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)','] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)';'] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'.'] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'\''] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'"'] = true;
+            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)'('] = true; // Currently too problematic to allow it
+            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)')'] = true; // Currently too problematic to allow it
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'<'] = true;
+            isAdditionalCharAllowedInPartialCobolWord[(byte)'>'] = true;
+            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)':'] = true; // Currently too problematic to allow it
         }
 
         // --- isStartOfPictureCharacterString ? => not useful ---
