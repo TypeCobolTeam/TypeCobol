@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.Types
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
         /// <param name="decimalPointIsComma">a boolean to swap NumericSeparator and DecimalPoint characters, default is false</param>
         /// <param name="currencyDescriptors">All custom currency descriptors indexed by their symbol. If null, the default currency descriptor is used.</param>
-        public PictureValidator(string picture, bool separateSign = false, bool decimalPointIsComma = false, IDictionary<char, CurrencyDescriptor> currencyDescriptors = null)
+        public PictureValidator(string picture, bool separateSign = false, bool decimalPointIsComma = false, IDictionary<char, CurrencyDescriptor>? currencyDescriptors = null)
         {
             System.Diagnostics.Debug.Assert(picture != null);
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
@@ -111,7 +111,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// The Currency Symbol found in the picture.
         /// </summary>
-        private CurrencyDescriptor _currencyDescriptor;
+        private CurrencyDescriptor? _currencyDescriptor;
 
         /// <summary>
         /// Comma and Dot swapped ?

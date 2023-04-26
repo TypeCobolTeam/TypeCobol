@@ -59,15 +59,8 @@ namespace TypeCobol.Test.Misc {
 
         private static void TestConversion(string picture, DataType expected, bool decimalPointIsComma, params char[] currencies)
         {
-            Dictionary<char, PictureValidator.CurrencyDescriptor> currencyDescriptor = null;
-            if (currencies?.Length > 0)
-            {
-                currencyDescriptor = new Dictionary<char, PictureValidator.CurrencyDescriptor>();
-                foreach (var currency in currencies)
-                {
-                    currencyDescriptor.Add(currency, new PictureValidator.CurrencyDescriptor(currency, currency.ToString()));
-                }
-            }
+            var currencyDescriptor =
+                currencies.ToDictionary(c => c, c => new PictureValidator.CurrencyDescriptor(c, c.ToString()));
 
             PictureValidator pictureValidator = new PictureValidator(picture, false, decimalPointIsComma, currencyDescriptor);
             var result = pictureValidator.Validate(out var validationMessages);
