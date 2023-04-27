@@ -24,7 +24,7 @@ namespace TypeCobol.Test.Misc
         {
             var folder = Path.Combine("Misc");
             var fileName = "ExpressionsEquivalence";
-            var compilationUnit = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.CrossCheck);
+            var compilationUnit = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SemanticCrossCheck);
             var root = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root;
 
             // Get all expressions
@@ -161,7 +161,7 @@ namespace TypeCobol.Test.Misc
         {
             var folder = Path.Combine("Parser", "Programs", "Cobol85");
             var fileName = "Expressions";
-            var compilationUnit = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.CrossCheck);
+            var compilationUnit = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SemanticCrossCheck);
             var root = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root;
 
             // TODO: Correct the error on switch conditions and set the number of diagnostics to 0

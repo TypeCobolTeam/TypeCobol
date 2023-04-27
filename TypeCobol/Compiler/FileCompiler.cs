@@ -223,7 +223,7 @@ namespace TypeCobol.Compiler
         public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
         {
             if (exec2Step == null)
-                exec2Step = ExecutionStep.CrossCheck;
+                exec2Step = ExecutionStep.SemanticCrossCheck;
 
             if (CompilationResultsForProgram != null)
             {
@@ -239,23 +239,23 @@ namespace TypeCobol.Compiler
                 if (!(exec2Step > ExecutionStep.Preprocessor)) return;
                 if (haltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
 
-                CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SyntaxCheck });
+                CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //CodeElement
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CodeElement });
 
-                if (!(exec2Step > ExecutionStep.SyntaxCheck)) return;
+                if (!(exec2Step > ExecutionStep.CodeElement)) return;
 
-                CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //SemanticCheck
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SemanticCheck });
+                CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //AST
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.AST });
 
-                if (!(exec2Step > ExecutionStep.SemanticCheck)) return;
+                if (!(exec2Step > ExecutionStep.AST)) return;
 
-                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CrossCheck });
+                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCrossCheck step
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SemanticCrossCheck });
 
-                if (!(exec2Step > ExecutionStep.CrossCheck)) return;
+                if (!(exec2Step > ExecutionStep.SemanticCrossCheck)) return;
 
-                CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //QualityCheck step
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.QualityCheck });
+                CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //CodeAnalysis step
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CodeAnalysis });
             }
             else
             {

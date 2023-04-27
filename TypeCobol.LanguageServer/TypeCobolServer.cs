@@ -448,8 +448,6 @@ namespace TypeCobol.LanguageServer
         {
             Hover resultHover = new Hover();
 
-            //Commented because it's too slow
-            //AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
             var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return resultHover;

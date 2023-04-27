@@ -753,7 +753,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.recordKeyClause() != null && context.recordKeyClause().Length > 0)
 			{
 				var recordKeyClauseContext = context.recordKeyClause()[0];
-				recordKey = _cobolWordsBuilder.CreateDataNameReference(recordKeyClauseContext.dataNameReference());
+				recordKey = _cobolWordsBuilder.CreateQualifiedDataName(recordKeyClauseContext.qualifiedDataName());
 			}
 			if (context.alternateRecordKeyClause() != null && context.alternateRecordKeyClause().Length > 0)
 			{
@@ -1903,9 +1903,27 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitMethodStatement();
 		}
 
+		public override void EnterExitParagraphStatement(CodeElementsParser.ExitParagraphStatementContext context)
+		{
+			Context = context;
+			CodeElement = new ExitParagraphStatement();
+		}
+
+		public override void EnterExitPerformStatement(CodeElementsParser.ExitPerformStatementContext context)
+		{
+			Context = context;
+			CodeElement = _cobolStatementsBuilder.CreateExitPerformStatement(context);
+		}
+
 		public override void EnterExitProgramStatement(CodeElementsParser.ExitProgramStatementContext context) {
 			Context = context;
 			CodeElement = new ExitProgramStatement();
+		}
+
+		public override void EnterExitSectionStatement(CodeElementsParser.ExitSectionStatementContext context)
+		{
+			Context = context;
+			CodeElement = new ExitSectionStatement();
 		}
 
         // --- ALLOCATE ---

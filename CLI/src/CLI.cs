@@ -1,5 +1,4 @@
-﻿using Analytics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -70,7 +69,6 @@ namespace TypeCobol.Server
             catch (Exception unexpected)
             {
                 LoggingSystem.LogException(unexpected); //TODO add more context data ?
-                AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, Environment.CommandLine);
 
                 string message = unexpected.Message + Environment.NewLine + unexpected.StackTrace;
                 Server.AddError(errorWriter, string.Empty, new Diagnostic(MessageCode.SyntaxErrorInParser, Diagnostic.Position.Default, message));
@@ -135,14 +133,14 @@ namespace TypeCobol.Server
                 analyzerProvider.AddProvider(customAnalyzerProvider);
             }
 
-            //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
+            //Normalize TypeCobolOptions, the parser does not need to go beyond AST building for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration) { OptimizeWhitespaceScanning = optimizeWhitespaceScanning };
-            if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
+            if (_configuration.ExecToStep > ExecutionStep.AST)
             {
-                typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;
+                typeCobolOptions.ExecToStep = ExecutionStep.AST;
             }
 
-            //First phase : parse all inputs but do not make CrossCheck yet
+            //First phase : parse all inputs but do not make SemanticCrossCheck yet
             foreach (var inputFilePath in _configuration.InputFiles)
             {
                 var parser = new Parser(rootSymbolTable);
@@ -165,8 +163,8 @@ namespace TypeCobol.Server
                 GenerateExpandingCopyFile(inputFilePath, parser.Results);
             }
 
-            //Second phase : now that we have all known programs in the table, we can launch a CrossCheck
-            if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
+            //Second phase : now that we have all known programs in the table, we can launch a SemanticCrossCheck
+            if (_configuration.ExecToStep > ExecutionStep.AST)
             {
                 int fileIndex = 0;
                 foreach (var parserResult in _parserResults)
@@ -174,11 +172,11 @@ namespace TypeCobol.Server
                     var inputFilePath = parserResult.Key;
                     var compilationUnit = parserResult.Value; 
 
-                    //Force CrossCheck
+                    //Force SemanticCrossCheck
                     compilationUnit.RefreshProgramClassDocumentSnapshot();
 
-                    //Perform QualityCheck
-                    if (_configuration.ExecToStep > ExecutionStep.CrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
+                    //Perform CodeAnalysis
+                    if (_configuration.ExecToStep > ExecutionStep.SemanticCrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
 
                     //Since collecting diagnostics may be costly, we cache them here
                     var currentFileDiagnostics = compilationUnit.AllDiagnostics();
@@ -276,7 +274,7 @@ namespace TypeCobol.Server
         private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProviderWrapper analyzerProviderWrapper)
         {
             var reports = new Dictionary<string, IReport>();
-            if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
+            if (_configuration.ExecToStep >= ExecutionStep.SemanticCrossCheck)
             {
                 //All purpose CFG/DFA
                 analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode, o));
@@ -314,7 +312,7 @@ namespace TypeCobol.Server
 
         private void AddProgramsToRootTable(SymbolTable rootTable, IEnumerable<Program> programs)
         {
-            if (_configuration.ExecToStep >= ExecutionStep.SemanticCheck)
+            if (_configuration.ExecToStep >= ExecutionStep.AST)
             {
                 foreach (var program in programs.Where(p => p.IsMainProgram))
                 {
@@ -551,7 +549,6 @@ namespace TypeCobol.Server
                     if (diagnostic.CaughtException != null)
                     {
                         LoggingSystem.LogException(diagnostic.CaughtException, context);
-                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
                     }
                 }
 
@@ -564,11 +561,6 @@ namespace TypeCobol.Server
                     foreach (var generationException in generationExceptions)
                     {
                         LoggingSystem.LogException(generationException, context);
-
-                        if (generationException.NeedMail)
-                        {
-                            AnalyticsWrapper.Telemetry.SendMail(generationException, _configuration.InputFiles, _configuration.CopyFolders, Environment.CommandLine);
-                        }
 
                         if (generationException.Logged)
                         {

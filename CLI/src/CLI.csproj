@@ -18,10 +18,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Analytics\Analytics.csproj">
-      <Project>{07445710-6b27-443e-9fe8-54b1476bc629}</Project>
-      <Name>Analytics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Codegen\src\Codegen.csproj">
       <Project>{4034cbc5-d3dc-45e5-81f2-605579e6b876}</Project>
       <Name>Codegen</Name>

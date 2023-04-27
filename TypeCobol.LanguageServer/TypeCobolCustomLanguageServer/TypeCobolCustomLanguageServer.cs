@@ -199,7 +199,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 var compilationResults = context.FileCompiler.CompilationResultsForProgram;
                 if (compilationResults.MissingCopies.Any())
                 {
-                    throw new MissingCopyException("Cannot find used copy before all copys are resolved", uri, null, false, false);
+                    throw new MissingCopyException("Cannot find used copy before all copys are resolved", uri) { Logged = false };
                 }
 
                 var data = this.Workspace.GetRemarksData(compilationResults);

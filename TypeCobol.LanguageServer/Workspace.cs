@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Analytics;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -346,8 +345,8 @@ namespace TypeCobol.LanguageServer
                 //Subscribe to FileCompilerEvent 
                 fileCompilerToUpdate.ExecutionStepEventHandler += handler.Invoke;
                 var execStep = LsrTestOptions.ExecutionStep(fileCompilerToUpdate.CompilerOptions.ExecToStep);
-                if (execStep > ExecutionStep.SyntaxCheck)
-                    execStep = ExecutionStep.SyntaxCheck; //The maximum execstep authorize for incremental parsing is SyntaxCheck, 
+                if (execStep > ExecutionStep.CodeElement)
+                    execStep = ExecutionStep.CodeElement; //The maximum execstep authorize for incremental parsing is CodeElement, 
                                                           //further it's for semantic, which is handle by NodeRefresh method
 
 
@@ -401,7 +400,7 @@ namespace TypeCobol.LanguageServer
                         _Logger(sb.ToString(), fileUri);
                     }
                     break;
-                case ExecutionStep.SyntaxCheck:
+                case ExecutionStep.CodeElement:
                     if (IsLsrParserTesting)
                     {
                         //Return log information about code elements
@@ -411,9 +410,9 @@ namespace TypeCobol.LanguageServer
                         _Logger(sb.ToString(), fileUri);
                     }
                     break;
-                case ExecutionStep.SemanticCheck:
-                case ExecutionStep.CrossCheck:
-                case ExecutionStep.QualityCheck:
+                case ExecutionStep.AST:
+                case ExecutionStep.SemanticCrossCheck:
+                case ExecutionStep.CodeAnalysis:
                 case ExecutionStep.Generate:
                 default:
                     return;
@@ -444,7 +443,7 @@ namespace TypeCobol.LanguageServer
             {
                 if (TryGetOpenedDocument(fileUri, out var docContext))
                 {
-                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck);
+                    RefreshSyntaxTree(docContext.FileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformCodeAnalysis);
                 }
             }
         }
@@ -460,14 +459,14 @@ namespace TypeCobol.LanguageServer
             NoRefresh,
 
             /// <summary>
-            /// Rebuilds semantic document and run CrossCheck on updated version
+            /// Rebuilds semantic document and run SemanticCrossCheck on updated version
             /// </summary>
             RebuildNodes,
 
             /// <summary>
             /// Same as RebuildNodes but also launches code quality analysis
             /// </summary>
-            RebuildNodesAndPerformQualityCheck,
+            RebuildNodesAndPerformCodeAnalysis,
 
             /// <summary>
             /// Rebuild nodes and run code quality analysis even if the file hasn't changed
@@ -506,7 +505,7 @@ namespace TypeCobol.LanguageServer
                     case SyntaxTreeRefreshLevel.RebuildNodes:
                         RefreshNodes();
                         break;
-                    case SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck:
+                    case SyntaxTreeRefreshLevel.RebuildNodesAndPerformCodeAnalysis:
                     case SyntaxTreeRefreshLevel.ForceFullRefresh:
                         RefreshNodes();
                         RefreshCodeAnalysisResults();
@@ -644,9 +643,6 @@ namespace TypeCobol.LanguageServer
             //Adding default copies folder
             Configuration.CopyFolders.Add(DefaultCopyFolder);
 
-            if (Configuration.Telemetry)
-                AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
-
             if (Configuration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;
 
@@ -654,7 +650,7 @@ namespace TypeCobol.LanguageServer
                 UseEuroInformationLegacyReplacingSyntax = true;
 
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
-                Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
+                Configuration.ExecToStep = ExecutionStep.CodeAnalysis; //Language Server does not support Cobol Generation for now
 
 #if EUROINFO_RULES
             if (previouslyLoadedCpyCopyNamesMap != null)
@@ -904,10 +900,7 @@ namespace TypeCobol.LanguageServer
                     LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 LoggingSystem.LogException(exception);
-                AnalyticsWrapper.Telemetry.SendMail(exception, Configuration.InputFiles,
-                    Configuration.CopyFolders, Environment.CommandLine);
             }
-
         }
 
         /// <summary>

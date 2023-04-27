@@ -21,6 +21,7 @@ namespace TypeCobol.Test.Misc
             {
                 {"CUSTOMER-F01", "UT-CUSTOMER-F01"},
                 {"CUSTOMER-F02", "UT-CUSTOMER-F02"},
+                {"CUSTOMER-F03", "UT-CUSTOMER-F03"},
                 {"STUDENT-F01", "UT-STUDENT-F01"},
                 {"STUDENT-F02", "UT-STUDENT-F02"}
             };

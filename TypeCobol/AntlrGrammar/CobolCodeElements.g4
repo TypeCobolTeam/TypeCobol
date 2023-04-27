@@ -115,12 +115,13 @@ codeElement:
 
 	// --- Control flow statements ---
 	continueStatement |
-    entryStatement |
-    execStatement |
+	entryStatement |
+	execStatement |
 	execStatementText |
 	execStatementEnd |
-    exitMethodStatement |
-    exitProgramStatement |	
+	exitMethodStatement |
+	exitPerformStatement |
+	exitProgramStatement |
 	gobackStatement |
 	stopStatement |
 
@@ -130,6 +131,8 @@ codeElement:
 	gotoStatement |
 	performStatement |
 	performStatementEnd |
+	exitParagraphStatement |
+	exitSectionStatement |
 
 	// --- Program or method linkage statements ---
 	callStatement |
@@ -1377,7 +1380,7 @@ accessModeClause:
 // For files defined with the EXTERNAL clause, all file description entries in the run unit that are associated with the file must have data description entries for data-name-2 that specify the same relative location in the record and the same length.
 
 recordKeyClause:
-    RECORD KEY? IS? dataNameReference;
+    RECORD KEY? IS? qualifiedDataName;
 
 // p141: The ALTERNATE RECORD KEY clause (format 2) specifies a data item within the record that provides an alternative path to the data in an indexed file. 
 // data-name-3 An ALTERNATE RECORD KEY data item. 
@@ -4257,7 +4260,10 @@ deleteStatementEnd: END_DELETE;
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-    DISPLAY variable4+ uponOutputDevice? withNoAdvancing?;
+    DISPLAY displayOperand+ uponOutputDevice? withNoAdvancing?;
+
+displayOperand:
+	variable4 | allFigurativeConstant;
 
 uponOutputDevice:
 	UPON outputDevice=mnemonicForEnvironmentNameReferenceOrEnvironmentName;
@@ -4417,6 +4423,35 @@ exitStatement:
 exitMethodStatement:
 	EXIT METHOD;
 
+// EXIT PARAGRAPH statement
+// The EXIT PARAGRAPH statement controls the exit from the middle of a paragraph without executing any following statements within the paragraph.
+// When an EXIT PARAGRAPH statement is executed, control is passed to an implicit
+// CONTINUE statement that immediately follows the last explicit statement of the
+// current paragraph. This return mechanism supersedes any other return
+// mechanisms that are associated with language elements, such as PERFORM, SORT,
+// and USE for that paragraph.
+
+exitParagraphStatement:
+	EXIT ({ string.Equals(CurrentToken.Text, "PARAGRAPH", System.StringComparison.OrdinalIgnoreCase) }? KeywordPARAGRAPH=UserDefinedWord);
+
+// EXIT PERFORM statement
+// The EXIT PERFORM statement controls the exit from an inline PERFORM without using a GO TO statement
+// or a PERFORM ... THROUGH statement.
+// If you specify an EXIT PERFORM statement outside of an inline PERFORM statement, the EXIT PERFORM
+// is ignored.
+// When an EXIT PERFORM statement without the CYCLE phrase is executed, control is passed to an implicit
+// CONTINUE statement. This implicit CONTINUE statement immediately follows the END-PERFORM phrase
+// that matches the most closely preceding and unterminated inline PERFORM statement.
+// When an EXIT PERFORM statement with the CYCLE phrase is executed, control is passed to an implicit
+// CONTINUE statement. This implicit CONTINUE statement immediately precedes the END-PERFORM
+// phrase that matches the most closely preceding and unterminated inline PERFORM statement.
+
+exitPerformStatement:
+	EXIT PERFORM cycle?;
+
+cycle:
+	{ string.Equals(CurrentToken.Text, "CYCLE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCYCLE=UserDefinedWord;
+
 // p337: EXIT PROGRAM statement
 // The EXIT PROGRAM statement specifies the end of a called program and returns control to the calling program.
 // You can specify EXIT PROGRAM only in the PROCEDURE DIVISION of a program. 
@@ -4430,6 +4465,19 @@ exitMethodStatement:
 
 exitProgramStatement:
 	EXIT PROGRAM;
+
+// EXIT SECTION statement
+// The EXIT SECTION statement controls the exit from a section without executing any
+// following statements within the section.
+// The EXIT SECTION statement can be specified only in a section.
+// When an EXIT SECTION statement is executed, control is passed to an unnamed
+// empty paragraph that immediately follows the last paragraph of the current
+// section. This return mechanism supersedes any other return mechanisms that are
+// associated with language elements, such as PERFORM, SORT, and USE for that
+// section.
+
+exitSectionStatement:
+	EXIT SECTION;
 
 // p338: GOBACK statement
 // The GOBACK statement functions like the EXIT PROGRAM statement when it is coded as part of a called program (or the EXIT METHOD statement when GOBACK is coded as part of an invoked method) and like the STOP RUN statement when coded in a main program.
@@ -8329,7 +8377,6 @@ connectionTarget: SQL_TO ((locationName = UserDefinedWord) | hostVariable) autho
 sqlIncrement: ({ string.Equals(CurrentToken.Text, "INCREMENT", System.StringComparison.OrdinalIgnoreCase) }? KeywordINCREMENT=UserDefinedWord);
 minvalue: ({ string.Equals(CurrentToken.Text, "MINVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMINVALUE=UserDefinedWord);
 maxvalue: ({ string.Equals(CurrentToken.Text, "MAXVALUE", System.StringComparison.OrdinalIgnoreCase) }? KeywordMAXVALUE=UserDefinedWord);
-cycle: ({ string.Equals(CurrentToken.Text, "CYCLE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCYCLE=UserDefinedWord);
 cache: ({ string.Equals(CurrentToken.Text, "CACHE", System.StringComparison.OrdinalIgnoreCase) }? KeywordCACHE=UserDefinedWord);
 
 alterSequenceStatement: SQL_ALTER SQL_SEQUENCE (sequence_name=tableOrViewOrCorrelationName) alterSequenceClause alterSequenceClause*;
