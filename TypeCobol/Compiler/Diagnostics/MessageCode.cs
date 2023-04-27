@@ -62,6 +62,8 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidExponentInDecimalFloatingPointLiteral = 51,
         InvalidMantissaInDecimalFloatingPointLiteral = 52,
         InvalidCharBeforePseudoTextDelimiter = 53,
-        ShouldBePrecededBySpace = 54
+        ShouldBePrecededBySpace = 54,
+        // End for SQL
+        InvalidCharInsidePseudoText = 55
     }
 }

@@ -3,16 +3,27 @@ Line 56[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at inp
 Line 56[28,28] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader} OffendingSymbol=[[SentenceEnd]] [28,28+:.]<PeriodSeparator> --> [28,28+:.]<PeriodSeparator>
 
 Line 58[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 63[18,18] <55, Error, Tokens> - Non-COBOL character "@" was found in column 19.
 Line 66[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 71[18,18] <55, Error, Tokens> - Non-COBOL character "€" was found in column 19.
 Line 72[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 76[18,18] <55, Error, Tokens> - Non-COBOL character "£" was found in column 19.
 Line 77[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 81[18,18] <55, Error, Tokens> - Non-COBOL character "#" was found in column 19.
 Line 82[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 86[18,18] <55, Error, Tokens> - Non-COBOL character "é" was found in column 19.
 Line 87[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 91[18,18] <55, Error, Tokens> - Non-COBOL character "&" was found in column 19.
 Line 92[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 96[18,18] <55, Error, Tokens> - Non-COBOL character "[" was found in column 19.
 Line 97[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 100[18,18] <55, Error, Tokens> - Non-COBOL character "]" was found in column 19.
 Line 101[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 104[18,18] <55, Error, Tokens> - Non-COBOL character "^" was found in column 19.
 Line 105[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[19,19:-]<MinusOperator>
+Line 108[18,18] <55, Error, Tokens> - Non-COBOL character "{" was found in column 19.
 Line 109[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
+Line 112[18,18] <55, Error, Tokens> - Non-COBOL character "}" was found in column 19.
 Line 113[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[18,18:-]<MinusOperator>
 
 --- Program ---
@@ -21,23 +32,23 @@ PROGRAM: ReplaceCheckAllowedCharacters common:False initial:False recursive:Fals
 --- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   Group1:Alphanumeric
-  OK-UNDERSCORE-Var:Alphanumeric
-  OK-GREATER-Var:Alphanumeric
-  OK-EQUAL-Var:Alphanumeric
-  OK-LESS-Var:Alphanumeric
-  OK-SEMICOLON-Var:Alphanumeric
-  OK-SLASH-Var:Alphanumeric
-  OK-DOT-Var:Alphanumeric
-  OK-HYPHEN-Var:Alphanumeric
-  OK-COLON-Var:Alphanumeric
-  OK-PLUS-Var:Alphanumeric
-  OK-STAR-Var:Alphanumeric
-  OK-DOLLAR-Var:Alphanumeric
-  OK-SPACE-Var:Alphanumeric
-  OK-2-QUOTE-Var:Alphanumeric
-  OK-2-DOUBLEQUOTE-Var:Alphanumeric
-  OK-QUOTE-Var:Alphanumeric
-  OK-DOUBLE-QUOTE-Var:Alphanumeric
+  OK1-UNDERSCORE-Var:Alphanumeric
+  OK2-GREATER-Var:Alphanumeric
+  OK3-EQUAL-Var:Alphanumeric
+  OK4-LESS-Var:Alphanumeric
+  OK5-SEMICOLON-Var:Alphanumeric
+  OK6-SLASH-Var:Alphanumeric
+  OK7-DOT-Var:Alphanumeric
+  OK8-HYPHEN-Var:Alphanumeric
+  OK9-COLON-Var:Alphanumeric
+  OK10-PLUS-Var:Alphanumeric
+  OK11-STAR-Var:Alphanumeric
+  OK12-DOLLAR-Var:Alphanumeric
+  OK13-SPACE-Var:Alphanumeric
+  OK14-2-QUOTE-Var:Alphanumeric
+  OK15-2-DOUBLEQUOTE-Var:Alphanumeric
+  OK16-QUOTE-Var:Alphanumeric
+  OK17-DOUBLE-QUOTE-Var:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

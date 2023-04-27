@@ -4,51 +4,51 @@
        working-storage section.
 
        01  Group1.
-       replace ==:_:== by ==OK-UNDERSCORE==.
+       replace ==:_:== by ==OK1-UNDERSCORE==.
            05 :_:-Var pic X.
-       replace ==:>:== by ==OK-GREATER==.
+       replace ==:>:== by ==OK2-GREATER==.
            05 :>:-Var pic X.
-       replace ==:=:== by ==OK-EQUAL==.
+       replace ==:=:== by ==OK3-EQUAL==.
            05 :=:-Var pic X.
-       replace ==:<:== by ==OK-LESS==.
+       replace ==:<:== by ==OK4-LESS==.
            05 :<:-Var pic X.
-       replace ==:;:== by ==OK-SEMICOLON==.
+       replace ==:;:== by ==OK5-SEMICOLON==.
            05 :;:-Var pic X.
-       replace ==:/:== by ==OK-SLASH==.
+       replace ==:/:== by ==OK6-SLASH==.
            05 :/:-Var pic X.
-       replace ==:.:== by ==OK-DOT==.
+       replace ==:.:== by ==OK7-DOT==.
            05 :.:-Var pic X.
-       replace ==:-:== by ==OK-HYPHEN==.
+       replace ==:-:== by ==OK8-HYPHEN==.
            05 :-:-Var pic X.
-       replace ==:,:== by ==OK-COLON==.
+       replace ==:,:== by ==OK9-COLON==.
            05 :,:-Var pic X.
-       replace ==:+:== by ==OK-PLUS==.
+       replace ==:+:== by ==OK10-PLUS==.
            05 :+:-Var pic X.
-       replace ==:*:== by ==OK-STAR==.
+       replace ==:*:== by ==OK11-STAR==.
            05 :*:-Var pic X.
-       replace ==:$:== by ==OK-DOLLAR==.
+       replace ==:$:== by ==OK12-DOLLAR==.
            05 :$:-Var pic X.
-       replace ==: :== by ==OK-SPACE==.
+       replace ==: :== by ==OK13-SPACE==.
            05 : :-Var pic X.
 
       *Ok
-       replace ==:'':== by ==OK-2-QUOTE==.
+       replace ==:'':== by ==OK14-2-QUOTE==.
            05 :'':-Var pic X.
       *Ok
-       replace ==:"":== by ==OK-2-DOUBLEQUOTE==.
+       replace ==:"":== by ==OK15-2-DOUBLEQUOTE==.
            05 :"":-Var pic X.
 
       *Ok for CobolEditorE-I
       *But NOT OK in IBM because string is not terminated correctly ?
       *An invalid"REPLACE"statement was found.  Scanning was resumed at
       *  the period terminating the"REPLACE"statement.
-       replace ==:':== by ==OK-QUOTE==.
+       replace ==:':== by ==OK16-QUOTE==.
            05 :':-Var pic X.
       *Ok for CobolEditorE-I
       *But NOT OK because string is not terminated correctly ?
       *An invalid"REPLACE"statement was found.  Scanning was resumed at
       *  the period terminating the"REPLACE"statement.
-       replace ==:":== by ==OK-DOUBLE-QUOTE==.
+       replace ==:":== by ==OK17-DOUBLE-QUOTE==.
            05 :":-Var pic X.
 
       *KO for CobolEditorE-I

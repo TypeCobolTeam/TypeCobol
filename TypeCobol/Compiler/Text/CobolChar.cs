@@ -44,6 +44,14 @@ namespace TypeCobol.Compiler.Text
             return IsCobolWordChar(chr) || isAdditionalCharAllowedInPartialCobolWord[(byte)chr];
         }
 
+        /// <summary>
+        /// True if the current char is allowed in a PseudoText
+        /// </summary>
+        public static bool IsAllowedInsidePseudoText(char chr)
+        {
+            return IsAllowedInsidePartialCobolWord(chr) || (chr == ' ') || (chr == ':') || (chr == '(') || (chr == ')');
+        }
+
         static CobolChar()
         {
             // --- isCobolWordChar ---
