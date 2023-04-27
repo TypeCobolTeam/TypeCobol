@@ -37,7 +37,7 @@ namespace TypeCobol.Test.Utils
             return compiler.CompilationResultsForProgram;
         }
 
-        public static CompilationUnit ParseCobolFile(string textName, string folder, bool isCopy = false, DocumentFormat documentFormat = null, ExecutionStep execToStep = ExecutionStep.SemanticCheck)
+        public static CompilationUnit ParseCobolFile(string textName, string folder, bool isCopy = false, DocumentFormat documentFormat = null, ExecutionStep execToStep = ExecutionStep.AST)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
             if (!localDirectory.Exists)

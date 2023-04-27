@@ -422,8 +422,8 @@ namespace TypeCobol.Compiler
 
 
         /// <summary>
-        /// Temporary Snapshot stored between Semantic and CrossCheck phase. 
-        /// Only use this snapshot to go from semantic to cross check pahse. 
+        /// Temporary Snapshot stored between AST and SemanticCrossCheck phase. 
+        /// Only use this snapshot to go from AST to SemanticCrossCheck phase. 
         /// </summary>
         public TemporarySemanticDocument TemporaryProgramClassDocumentSnapshot { get; private set; }
 

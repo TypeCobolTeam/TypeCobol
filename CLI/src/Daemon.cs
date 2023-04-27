@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
-using Analytics;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
@@ -68,17 +67,12 @@ namespace TypeCobol.Server {
                     LoggingSystem.RegisterLogger(externalLogger);
                 }
 
-                if (config.Telemetry)
-                {
-                    AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
-                }
-
 #if EUROINFO_RULES
                 config.LoadCpyCopyNameMap(cpyCopyNamesMapFilePath);
 #endif
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
-                    config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
+                    config.ExecToStep = ExecutionStep.CodeAnalysis; //If there is no given output file, we can't run generation, fallback to CodeAnalysis
 
                 var returnCode = CLI.runOnce(config, extensionManager);
                 if (returnCode != ReturnCode.Success)

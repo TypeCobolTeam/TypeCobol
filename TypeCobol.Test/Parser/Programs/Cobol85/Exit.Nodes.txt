@@ -1,0 +1,110 @@
+﻿--- Nodes ---
+?
+  MyPgm
+    data-division
+      working-storage
+        Var1
+    procedure-division
+      sentence-0
+        [[ExitPerformStatement]] [12,15:exit]<EXIT> --> [17,23:perform]<PERFORM>
+
+        [[PerformStatement]] [12,18:perform]<PERFORM> --> [58,59:10]<IntegerLiteral>{10}
+
+          [[IfStatement]] [17,18:if]<IF> --> [27,27:3]<IntegerLiteral>{3}
+
+            ?
+              [[ExitPerformStatement]] [21,24:exit]<EXIT> --> [34,38:cycle]<UserDefinedWord>
+
+            end
+          [[DisplayStatement]] [17,23:display]<DISPLAY> --> [25,28:Var1]<UserDefinedWord>
+- variables = Var1
+
+          [[IfStatement]] [17,18:if]<IF> --> [27,27:8]<IntegerLiteral>{8}
+
+            ?
+              [[ExitPerformStatement]] [21,24:exit]<EXIT> --> [26,32:perform]<PERFORM>
+
+            end
+          end
+        [[PerformProcedureStatement]] [12,18:perform]<PERFORM> --> [20,24:PARA1]<UserDefinedWord>
+
+        [[GobackStatement]] [12,17:goback]<GOBACK> --> [12,17:goback]<GOBACK>
+
+        end
+      PARA1
+        sentence-0
+          [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,39+:"Start of paragraph"]<AlphanumericLiteral>(",Y,Y){Start of paragraph}
+- variables = "Start of paragraph"
+
+          [[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+            ?
+              [[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+            end
+          [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"End of paragraph"]<AlphanumericLiteral>(",Y,Y){End of paragraph}
+- variables = "End of paragraph"
+
+          end
+      PARA2
+        sentence-0
+          [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,39+:"Start of paragraph"]<AlphanumericLiteral>(",Y,Y){Start of paragraph}
+- variables = "Start of paragraph"
+
+          [[ExitParagraphStatement]] [12,15:exit]<EXIT> --> [17,25:paragraph]<UserDefinedWord>
+
+          [[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+            ?
+              [[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+            end
+          [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"End of paragraph"]<AlphanumericLiteral>(",Y,Y){End of paragraph}
+- variables = "End of paragraph"
+
+          end
+      SECTION-A
+        [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"Start of section"]<AlphanumericLiteral>(",Y,Y){Start of section}
+- variables = "Start of section"
+
+        [[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+          ?
+            [[ExitSectionStatement]] [17,20:exit]<EXIT> --> [22,28:section]<SECTION>
+
+          end
+        [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,35+:"End of section"]<AlphanumericLiteral>(",Y,Y){End of section}
+- variables = "End of section"
+
+        end
+      SECTION-B
+        [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"Start of section"]<AlphanumericLiteral>(",Y,Y){Start of section}
+- variables = "Start of section"
+
+        [[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+          ?
+            [[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+          end
+        [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,35+:"End of section"]<AlphanumericLiteral>(",Y,Y){End of section}
+- variables = "End of section"
+
+        end
+      SECTION-C
+        PARA1
+          sentence-0
+            [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,32+:"Start of C1"]<AlphanumericLiteral>(",Y,Y){Start of C1}
+- variables = "Start of C1"
+
+            [[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+              ?
+                [[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+              end
+            [[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,30+:"End of C1"]<AlphanumericLiteral>(",Y,Y){End of C1}
+- variables = "End of C1"
+
+            end
+    end

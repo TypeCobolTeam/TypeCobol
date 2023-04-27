@@ -1115,11 +1115,32 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.OnExitMethodStatement(stmt);
         }
 
+        public virtual void OnExitParagraphStatement(ExitParagraphStatement stmt)
+        {
+            Enter(new ExitParagraph(stmt), stmt);
+            Exit();
+            Dispatcher.OnExitParagraphStatement(stmt);
+        }
+
+        public virtual void OnExitPerformStatement(ExitPerformStatement stmt)
+        {
+            Enter(new ExitPerform(stmt), stmt);
+            Exit();
+            Dispatcher.OnExitPerformStatement(stmt);
+        }
+
         public virtual void OnExitProgramStatement(ExitProgramStatement stmt)
         {
             Enter(new ExitProgram(stmt), stmt);
             Exit();
             Dispatcher.OnExitProgramStatement(stmt);
+        }
+
+        public virtual void OnExitSectionStatement(ExitSectionStatement stmt)
+        {
+            Enter(new ExitSection(stmt), stmt);
+            Exit();
+            Dispatcher.OnExitSectionStatement(stmt);
         }
 
         public virtual void OnAllocateStatement(AllocateStatement stmt)

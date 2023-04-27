@@ -20,11 +20,11 @@ namespace TypeCobol.LanguageServer.Utilities
                 case LsrTestingOptions.LsrPreprocessingPhaseTesting:
                     return TypeCobol.ExecutionStep.Preprocessor;
                 case LsrTestingOptions.LsrParsingPhaseTesting:
-                    return TypeCobol.ExecutionStep.SyntaxCheck;
+                    return TypeCobol.ExecutionStep.CodeElement;
                 case LsrTestingOptions.LsrSemanticPhaseTesting:
-                    return TypeCobol.ExecutionStep.CrossCheck;
+                    return TypeCobol.ExecutionStep.SemanticCrossCheck;
                 case LsrTestingOptions.LsrCodeAnalysisPhaseTesting:
-                    return TypeCobol.ExecutionStep.QualityCheck;
+                    return TypeCobol.ExecutionStep.CodeAnalysis;
             }
             return defaultValue;
         }

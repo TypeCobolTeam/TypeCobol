@@ -158,7 +158,10 @@ terminal TypeCobol.Compiler.CodeElements.EvaluateStatement EvaluateStatement;
 terminal TypeCobol.Compiler.CodeElements.ExecStatement ExecStatement;
 terminal TypeCobol.Compiler.CodeElements.ExecStatementText ExecStatementText;
 terminal TypeCobol.Compiler.CodeElements.ExitMethodStatement ExitMethodStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitParagraphStatement ExitParagraphStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitPerformStatement ExitPerformStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitProgramStatement ExitProgramStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitSectionStatement ExitSectionStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitStatement ExitStatement;
 terminal TypeCobol.Compiler.CodeElements.FreeStatement FreeStatement;
 terminal TypeCobol.Compiler.CodeElements.GobackStatement GobackStatement;
@@ -1115,8 +1118,14 @@ singleStatement ::=
 	{: my_parser.Builder.OnStopStatement(stmt); :}
 	| ExitMethodStatement:stmt
 	{: my_parser.Builder.OnExitMethodStatement(stmt); :}
+	| ExitParagraphStatement:stmt
+	{: my_parser.Builder.OnExitParagraphStatement(stmt); :}
+	| ExitPerformStatement:stmt
+	{: my_parser.Builder.OnExitPerformStatement(stmt); :}
 	| ExitProgramStatement:stmt
 	{: my_parser.Builder.OnExitProgramStatement(stmt); :}
+	| ExitSectionStatement:stmt
+	{: my_parser.Builder.OnExitSectionStatement(stmt); :}
 	| GobackStatement:stmt
 	{: my_parser.Builder.OnGobackStatement(stmt); :}
 // -- input-output --

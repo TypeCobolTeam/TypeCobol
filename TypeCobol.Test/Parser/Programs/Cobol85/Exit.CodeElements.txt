@@ -1,0 +1,135 @@
+﻿--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [30,30+:.]<PeriodSeparator>
+- ProgramName = MyPgm
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [32,32+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [32,32+:.]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [27,27+:.]<PeriodSeparator>
+
+[[ExitPerformStatement]] [12,15:exit]<EXIT> --> [17,23:perform]<PERFORM>
+
+[[PerformStatement]] [12,18:perform]<PERFORM> --> [58,59:10]<IntegerLiteral>{10}
+
+[[IfStatement]] [17,18:if]<IF> --> [27,27:3]<IntegerLiteral>{3}
+
+[[ExitPerformStatement]] [21,24:exit]<EXIT> --> [34,38:cycle]<UserDefinedWord>
+
+[[IfStatementEnd]] [17,22:end-if]<END_IF> --> [17,22:end-if]<END_IF>
+
+[[DisplayStatement]] [17,23:display]<DISPLAY> --> [25,28:Var1]<UserDefinedWord>
+- variables = Var1
+
+[[IfStatement]] [17,18:if]<IF> --> [27,27:8]<IntegerLiteral>{8}
+
+[[ExitPerformStatement]] [21,24:exit]<EXIT> --> [26,32:perform]<PERFORM>
+
+[[IfStatementEnd]] [17,22:end-if]<END_IF> --> [17,22:end-if]<END_IF>
+
+[[PerformStatementEnd]] [12,22:end-perform]<END_PERFORM> --> [12,22:end-perform]<END_PERFORM>
+
+[[PerformProcedureStatement]] [12,18:perform]<PERFORM> --> [20,24:PARA1]<UserDefinedWord>
+
+[[GobackStatement]] [12,17:goback]<GOBACK> --> [12,17:goback]<GOBACK>
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[ParagraphHeader]] [8,12:PARA1]<SectionParagraphName> --> [13,13+:.]<PeriodSeparator>
+- ParagraphName = PARA1
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,39+:"Start of paragraph"]<AlphanumericLiteral>(",Y,Y){Start of paragraph}
+- variables = "Start of paragraph"
+
+[[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+[[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+[[IfStatementEnd]] [12,17:end-if]<END_IF> --> [12,17:end-if]<END_IF>
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"End of paragraph"]<AlphanumericLiteral>(",Y,Y){End of paragraph}
+- variables = "End of paragraph"
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[ParagraphHeader]] [8,12:PARA2]<SectionParagraphName> --> [13,13+:.]<PeriodSeparator>
+- ParagraphName = PARA2
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,39+:"Start of paragraph"]<AlphanumericLiteral>(",Y,Y){Start of paragraph}
+- variables = "Start of paragraph"
+
+[[ExitParagraphStatement]] [12,15:exit]<EXIT> --> [17,25:paragraph]<UserDefinedWord>
+
+[[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+[[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+[[IfStatementEnd]] [12,17:end-if]<END_IF> --> [12,17:end-if]<END_IF>
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"End of paragraph"]<AlphanumericLiteral>(",Y,Y){End of paragraph}
+- variables = "End of paragraph"
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[SectionHeader]] [8,16:SECTION-A]<SectionParagraphName> --> [25,25+:.]<PeriodSeparator>
+- SectionName = SECTION-A
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"Start of section"]<AlphanumericLiteral>(",Y,Y){Start of section}
+- variables = "Start of section"
+
+[[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+[[ExitSectionStatement]] [17,20:exit]<EXIT> --> [22,28:section]<SECTION>
+
+[[IfStatementEnd]] [12,17:end-if]<END_IF> --> [12,17:end-if]<END_IF>
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,35+:"End of section"]<AlphanumericLiteral>(",Y,Y){End of section}
+- variables = "End of section"
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[SectionHeader]] [8,16:SECTION-B]<SectionParagraphName> --> [25,25+:.]<PeriodSeparator>
+- SectionName = SECTION-B
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,37+:"Start of section"]<AlphanumericLiteral>(",Y,Y){Start of section}
+- variables = "Start of section"
+
+[[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+[[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+[[IfStatementEnd]] [12,17:end-if]<END_IF> --> [12,17:end-if]<END_IF>
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,35+:"End of section"]<AlphanumericLiteral>(",Y,Y){End of section}
+- variables = "End of section"
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[SectionHeader]] [8,16:SECTION-C]<SectionParagraphName> --> [25,25+:.]<PeriodSeparator>
+- SectionName = SECTION-C
+
+[[ParagraphHeader]] [8,12:PARA1]<SectionParagraphName> --> [13,13+:.]<PeriodSeparator>
+- ParagraphName = PARA1
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,32+:"Start of C1"]<AlphanumericLiteral>(",Y,Y){Start of C1}
+- variables = "Start of C1"
+
+[[IfStatement]] [12,13:if]<IF> --> [22,24+:"A"]<AlphanumericLiteral>(",Y,Y){A}
+
+[[ExitParagraphStatement]] [17,20:exit]<EXIT> --> [22,30:paragraph]<UserDefinedWord>
+
+[[IfStatementEnd]] [12,17:end-if]<END_IF> --> [12,17:end-if]<END_IF>
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,30+:"End of C1"]<AlphanumericLiteral>(",Y,Y){End of C1}
+- variables = "End of C1"
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>
+- ProgramName = MyPgm
+

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Analytics;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler;
@@ -269,7 +268,7 @@ namespace TypeCobol.Codegen
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                throw new GenerationException("Unable to generate because of error diagnostics", compilationUnit.TextSourceInfo.Name, null, false, false);
+                throw new GenerationException("Unable to generate because of error diagnostics", compilationUnit.TextSourceInfo.Name) { Logged = false };
             }
 
             var stopwatch = Stopwatch.StartNew();

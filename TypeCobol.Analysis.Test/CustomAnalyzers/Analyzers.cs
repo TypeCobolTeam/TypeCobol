@@ -42,7 +42,7 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
     }
 
     /// <summary>
-    /// Simple QualityAnalyzer to demonstrate dynamic load and use in QualityCheck
+    /// Simple QualityAnalyzer to demonstrate dynamic load and use in CodeAnalysis
     /// </summary>
     internal class DummyQualityAnalyzer : QualityAnalyzerBase
     {
