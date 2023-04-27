@@ -33,6 +33,8 @@ The `RangeUpdate` array is then passed to the `Workspace.UpdateSourceFile` metho
 2. Start incremental parsing, meaning up-to and including _Code Element Update_
 3. Schedule remaining non-incremental steps on a timer. After **750ms**, and if no other text changes have been received, the non-incremental parsing steps will be performed.
 
+This step does not produce any diagnostic.
+
 ## Step 1: Text Update
 
 |Class|Method|Input|Output|
@@ -61,7 +63,7 @@ The `CompilationDocument.ApplyTextChange` is responsible for modifying the `comp
   - Shift up every following lines and every associated document changes and remove document changes corresponding to the removed line (if any)
   - Create the corresponding `DocumentChange`
 
-Note that when a line is shifted up or down, its diagnostics are also updated accordingly.
+The Text Update step does not produce any diagnostic but it ensures that existing diagnostics are synced during the line shifting operations (i.e. line number of existing diagnostics are shifted accordingly).
 
 ## Step 2: Tokens Update
 
@@ -78,6 +80,8 @@ To enable incremental scanning, the ScannerStep uses the `MultilineScanState` ob
 - its `InitialScanState` differs from the final `ScanState` of the previous line
   - it means that previous line has been rescanned and the resulting `ScanState` is different from the one computed during previous compilation cycle. The line must be rescanned again according to the updated ScanState
 
+This step produces scanner diagnostics stored in `_ScannerDiagnostics` field in `TokensLines` class.
+
 ## Step 3 Tokens Preprocessing
 
 |Class|Method|Input|Output|
@@ -87,6 +91,12 @@ To enable incremental scanning, the ScannerStep uses the `MultilineScanState` ob
 While being called 'Preprocessor', this step does not actually modifies text like a regular preprocessor would. The goal here is to parse compiler directives, this is done through CUP parser using definitions of 'CobolCompilerDirectives.cup' grammar.
 
 For `COPY` directives, a second phase happens during Preprocessor step: after all directives of the modified lines have been parsed, the lines having `COPY` directives are checked again to perform actual loading of the target documents.
+
+### Reparse section
+
+To ensure clean reparsing, the reparse section is delimited by full compiler directives. This means that compiler directives written on several lines are included in the reparse section in order to be reparsed entirely. The `PreprocessorStep.CheckIfAdjacentLinesNeedRefresh` method is responsible for including lines located before or after modified lines that participate in a multiline compiler directive.
+
+### Results
 
 All results of compiler directive parsing are stored at `ProcessedTokensLine` level in these properties:
 |Property|Role|
@@ -113,7 +123,9 @@ This step turns a stream of tokens into a stream of `CodeElement`s. This is achi
 2. PArse CodeElements from tokens located inside the reparse section
 3. Convert each CodeElement context built by ANTLR into a real `CodeElement` instance
 
-The results of this step are stored in `CodeElements` collection at the `CodeElementsLine` level. The `ParserDiagnostics` collection also contains diagnostics produced by this step. And the `ActiveReplaceDirective` which tracks the `REPLACE` that applies to a given line is updated during this step too.
+The results of this step are stored in `CodeElements` collection at the `CodeElementsLine` level. Each code element holds its own diagnostic collection. The `ParserDiagnostics` of `CodeElementsLine` stores diagnostics produced by this step that cannot be attached directly to a code element. This is used mainly for exceptions happening during parsing and also for diagnostics produced during the processing of `REPLACE`/`COPY` directives.
+
+The `ActiveReplaceDirective` which tracks the `REPLACE` that applies to a given line is updated during this step too. 
 
 ### Reparse section
 
@@ -145,7 +157,9 @@ By convention, structures allowing children are entered when the corresponding `
 For example:
 - `ProgramClassBuilder.StartDataDivision` signals the beginning of the `DATA DIVISION` of the program, after this call the current node is the newly created `DataDivision` node allowing to add data definitions children.
 - `ProgramClassBuilder.EndDataDivision` signals the end of the DATA DIVISION, thus the current node will be the program node.
-- `ProgramClassBuilder.OnGobackStatement` signals the encounter of a `GobackStatement`. The method creates the `Goback` node, enters it as a child of the current node (most probably the `ProceddureDivision` node) and exit immediately.
+- `ProgramClassBuilder.OnGobackStatement` signals the encounter of a `GobackStatement`. The method creates the `Goback` node, enters it as a child of the current node (most probably the `ProcedureDivision` node) and exit immediately.
+
+The parsing errors produced by CUP parser are stored in the `Diagnostics` collection of the `TemporarySemanticDocument`.
 
 ## Step 6 Cross check
 
@@ -159,6 +173,8 @@ The `CrossCompleteChecker` class is the visitor object that implements those che
 
 The `BeginNode` method triggers the check for variable definition, while the `VisitXXX` methods implement node-specific checks.
 
+As stated before, the diagnostics are stored inside `Node` instances, they are later collected using a dedicated visitor (see `CompilationUnit.AllDiagnostics` method).
+
 ## Step 7 Code analysis
 
 |Class|Method|Input|Output|
@@ -168,3 +184,35 @@ The `BeginNode` method triggers the check for variable definition, while the `Vi
 This final step runs external analyzers on the latest `ProgramClassDocumentSnapshot`. To allow all types of code analysis, the analyzers are given all previous document snapshots (Tokens, ProcessedTokens, CodeElements, TemporaryProgramClass and ProgramClass).
 
 Each analyzer receives all five document snapshot in sequence through calls to their `Inspect` methods. The results of the analysis (mainly diagnostics) are stored in a new instance of `InspectedProgramClassDocument`.
+
+## About snapshots and result consistency.
+
+The parser does not use multi-threading to parallelize source code processing. However the client of the parser may choose to perform multiple operations on the same source simultaneously. Typically in LanguageServer, a thread may be reading results of an incremental compilation round while the timer thread is already performing the remaining non-incremental compilation steps.
+
+To ensure consistency, the results are exposed as 'snapshots', each `IDocumentSnapshot` contains compilation results for a given step, is identified by a version number and is _consistent_.
+
+Line objects are intrinsicallly shared between snapshots because a single most-derived type is used to represent a line: each `CodeElementsLine` _is_ indeed a `CodeElementsLine` but also a `ProcessedTokensLine` and a `TokensLine`. To avoid altering a line that has already been captured in a snapshot, the parser checks whether a line _can still be updated_ by a given step. A line can be updated by a given step only if the updating step is further than the creating step of this line. If the line cannot be updated a new instance is created instead.
+
+This logic is implemented by `CobolTextLine.CanStillBeUpdatedBy` and `CompilationDocument.PrepareDocumentLineForUpdate`.
+
+Note that lines are not necessarily created by the _Text Update_ step: during the incremental parsing steps, the reparse section may grow in both directions because of continuations, multiline compiler directives or multiline code elements and consequently lines may need to be updated/created during _Tokens Update_, _Tokens Preprocessing_ or _Code Element Update_ steps.
+While not being modified directly by an edit, the associated data to these lines is modified.
+
+### Line classes hierarchy
+
+- `ITextLine`
+  - `ICobolTextLine` implemented by `CobolTextLine`
+    - `ITokensLine` implemented by `TokensLine` which inherits from `CobolTextLine`
+      - `IProcessedTokensLine` implemented by `ProcessedTokensLine` which inherits from `TokensLine`
+        - `ICodeElementsLine` implemented by `CodeElementsLine` which inherits from `ProcessedTokensLine`
+  - `TextLineSnapshot`
+
+The `TextLineSnapshot` class is used to capture a text and a line number, the other classes all wrap an `ITextLine` and adds their own data, related to the step they are used in.
+
+|Interface|Role / Content|
+|-|-|
+|`ITextLine`|Represents any line of source code, it has a `Text` and a `LineIndex`|
+|`ICobolTextLine`|Specialized `ITextLine` for Cobol text, the Cobol text has a layout and is divided into 4 regions: sequence number, indicator, source and comments|
+|`ITokensLine`|Specialized `ICobolTextLine` for Cobol text that has been parsed into tokens, this type of line holds the tokens and the scanner scan state|
+|`IProcessedTokensLine`|Specialized `ITokensLine` for Cobol tokens that have been preprocessed. This type of line holds the compiler directives data|
+|`ICodeElementsLine`|Specialized `IProcessedTokensLine` for tokens that have been assembled into code elements. This type of line holds the `CodeElement`s. The current `CompilationDocument` is made of a list of `CodeElementsLine`s which are updated or re-instanciated by successive compilation steps|
