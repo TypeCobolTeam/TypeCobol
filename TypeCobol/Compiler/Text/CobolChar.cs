@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.Text
     {
         private static bool[] isCobolWordChar = new bool[256];
         private static bool[] isCobolWordSeparator = new bool[256];
-        private static bool[] isAdditionalCharAllowedInPartialCobolWord = new bool[256];
+        private static bool[] isAdditionalCharAllowedInPseudoText = new bool[256];
 
         /// <summary>
         /// True if the current char can be found inside a Cobol word
@@ -41,7 +41,13 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public static bool IsAllowedInsidePartialCobolWord(char chr)
         {
-            return IsCobolWordChar(chr) || isAdditionalCharAllowedInPartialCobolWord[(byte)chr];
+            if ((chr == ' ') || (chr == ':') || (chr == '(') || (chr == ')'))
+            {
+                // Currently too problematic to allow them
+                return false;
+            }
+
+            return IsAllowedInsidePseudoText(chr);
         }
 
         /// <summary>
@@ -49,17 +55,14 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public static bool IsAllowedInsidePseudoText(char chr)
         {
-            return IsAllowedInsidePartialCobolWord(chr) || (chr == ' ') || (chr == ':') || (chr == '(') || (chr == ')');
+            return IsCobolWordChar(chr) || isAdditionalCharAllowedInPseudoText[(byte)chr];
         }
 
         static CobolChar()
         {
             // --- isCobolWordChar ---
+            // bool default value is false (not allowed) => set to true allowed characters
 
-            for (int i = 0; i < 256; i++)
-            {
-                isCobolWordChar[i] = false;
-            }
             // list of all chars allowed in a Cobol word
             // Latin uppercase letters A through Z
             for (int i = (byte)'A'; i <= (byte)'Z'; i++)
@@ -82,11 +85,8 @@ namespace TypeCobol.Compiler.Text
             isCobolWordChar[(byte)'_'] = true;
 
             // --- isCobolWordSeparator ---
+            // bool default value is false (not allowed) => set to true allowed characters
 
-            for(int i = 0 ; i < 256 ; i++)
-            {
-                isCobolWordSeparator[i] = false;
-            }
             // list of all chars which begin a different token type 
             // and are not allowed in a reserved word or user defined word
             isCobolWordSeparator[(byte)' '] = true;
@@ -106,29 +106,26 @@ namespace TypeCobol.Compiler.Text
             isCobolWordSeparator[(byte)'"'] = true;
             isCobolWordSeparator[(byte)'\''] = true;
 
-            // --- isAdditionalCharAllowedInPartialCobolWord ---
+            // --- isAdditionalCharAllowedInPseudoText ---
+            // bool default value is false (not allowed) => set to true allowed characters
 
-            for (int i = 0; i < 256; i++)
-            {
-                isAdditionalCharAllowedInPartialCobolWord[i] = false;
-            }
-            // list of additional chars allowed in a Partial Cobol word (in addition to the ones allowed in a Cobol word)
-            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)' '] = true; // Currently too problematic to allow it
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'+'] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'*'] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'/'] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'='] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'$'] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)','] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)';'] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'.'] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'\''] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'"'] = true;
-            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)'('] = true; // Currently too problematic to allow it
-            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)')'] = true; // Currently too problematic to allow it
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'<'] = true;
-            isAdditionalCharAllowedInPartialCobolWord[(byte)'>'] = true;
-            //isAdditionalCharAllowedInsidePartialCobolWord[(byte)':'] = true; // Currently too problematic to allow it
+            // list of additional chars allowed in a Pseudo Text (in addition to the ones allowed in a Cobol word)
+            isAdditionalCharAllowedInPseudoText[(byte)' '] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'+'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'*'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'/'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'='] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'$'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)','] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)';'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'.'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'\''] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'"'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'('] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)')'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'<'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)'>'] = true;
+            isAdditionalCharAllowedInPseudoText[(byte)':'] = true;
         }
 
         // --- isStartOfPictureCharacterString ? => not useful ---
