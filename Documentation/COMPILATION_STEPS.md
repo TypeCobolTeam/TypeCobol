@@ -45,7 +45,9 @@ The goal of this step is to apply the text changes (received as an array of `Ran
 
 ### From RangeUpdate to TextChange
 
-TODO Explain how this algorithm work
+Each `RangeUpdate` is processed individually to create a `TextChange`. The range update text is split on line breaks to check whether the update contains only one or several lines. The start and end of the range update define the span of the modification in the original text. By comparing the number of lines modified in the original text with the number of lines in the supplied text, we can determine which lines are inserted, updated or removed.
+
+To build the final text of each line, the beginning of the first modified line (before start of update) is concatenated to the beginning of the range upate text. Similarly, the end of the last modified line (after end of update) is concatenated after the end of range update text.
 
 ### Applying TextChanges
 
