@@ -465,7 +465,7 @@ namespace TypeCobol.Compiler.Preprocessor
             Token RegexReplace(Token comparisonToken, Token replacementToken)
             {
                 string normalizedTokenText = originalToken.NormalizedText;
-                string normalizedPartToReplace = comparisonToken.NormalizedText;
+                string normalizedPartToReplace = Regex.Escape(comparisonToken.NormalizedText);
                 //#258 - ReplacementToken can be null. In this case, we consider that it's an empty replacement
                 var replacementPart = replacementToken != null ? replacementToken.Text : string.Empty;
                 string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
