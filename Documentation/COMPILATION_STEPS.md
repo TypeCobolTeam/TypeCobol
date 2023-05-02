@@ -49,7 +49,7 @@ TODO Explain how this algorithm work
 
 ### Applying TextChanges
 
-The `CompilationDocument.ApplyTextChange` is responsible for modifying the `compilationDocumentLines` collection according to the `TextChange`s previously built. It also creates the `DocumentChange<ICobolTextLine>` objects. To avoid returning redundant changes, the method aggregates them on the fly.
+The `CompilationDocument.ApplyTextChange` method is responsible for modifying the `compilationDocumentLines` collection according to the `TextChange`s previously built. It also creates the `DocumentChange<ICobolTextLine>` objects. To avoid returning redundant changes, the method aggregates them on the fly.
 
 - When a new line is inserted:
   - Create and insert the new instance of `CodeElementsLine`
@@ -101,14 +101,14 @@ To ensure clean reparsing, the reparse section is delimited by full compiler dir
 All results of compiler directive parsing are stored at `ProcessedTokensLine` level in these properties:
 |Property|Role|
 |-|-|
-|`CompilerListingControlDirective`|Stores the `*CBL`, `*CONTROL`, `EJECT`, `SKIP1`, `SKIP2`, `SKIP3` or `TITLE` directive of the line if any has been found|
+|`CompilerListingControlDirective`|Stores the `*CBL`, `*CONTROL`, `EJECT`, `SKIP1`, `SKIP2`, `SKIP3` or `TITLE` directive of the line if any has been found.|
 |`HasDirectiveTokenContinuationFromPreviousLine`|Self-explanatory|
 |`HasDirectiveTokenContinuedOnNextLine`|Self-explanatory|
-|`ImportedDocuments`|Stores all documents imported by this line using the `COPY` directive|
-|`ReplaceDirective`|Stores the `REPLACE` directive of this line if any|
-|`tokensWithCompilerDirectives`|General storage for all compiler directives found on this line. Each directive is stored in a single `CompilerDirectiveToken` which is then added into this collection|
-|`PreprocessorDiagnostics`|Diagnostics reported during the parsing of the compiler directives of this line|
-|`NeedsCompilerDirectiveParsing`|Boolean flag indicating whether this line has been preprocessed or not|
+|`ImportedDocuments`|Stores all documents imported by this line using the `COPY` directive.|
+|`ReplaceDirective`|Stores the `REPLACE` directive of this line if any.|
+|`tokensWithCompilerDirectives`|General storage for all compiler directives found on this line. Each directive is stored in a single `CompilerDirectiveToken` which is then added into this collection.|
+|`PreprocessorDiagnostics`|Diagnostics reported during the parsing of the compiler directives of this line.|
+|`NeedsCompilerDirectiveParsing`|Boolean flag indicating whether this line has been preprocessed or not.|
 
 Among compiler directives, `REPLACE` and `COPY` have a special handling. Both `REPLACE` and `COPY` alter the stream of tokens used to create CodeElements during next step, so they are both parsed during Preprocessing step but actually processed during CodeElement step. This processing is done through the use of multiple TokensLinesIterators (see `CopyTokensLinesIterator`, `ReplaceTokensLinesIterator` and `ReplacingTokensLinesIterator`).
 
@@ -120,10 +120,10 @@ Among compiler directives, `REPLACE` and `COPY` have a special handling. Both `R
 
 This step turns a stream of tokens into a stream of `CodeElement`s. This is achieved using the ANTLR parser. The parsing is done in three phases:
 1. Determine the boundaries of the reparse section
-2. PArse CodeElements from tokens located inside the reparse section
-3. Convert each CodeElement context built by ANTLR into a real `CodeElement` instance
+2. Parse CodeElements from tokens located inside the reparse section
+3. Convert each CodeElement context object built by ANTLR into a real `CodeElement` instance
 
-The results of this step are stored in `CodeElements` collection at the `CodeElementsLine` level. Each code element holds its own diagnostic collection. The `ParserDiagnostics` of `CodeElementsLine` stores diagnostics produced by this step that cannot be attached directly to a code element. This is used mainly for exceptions happening during parsing and also for diagnostics produced during the processing of `REPLACE`/`COPY` directives.
+The results of this step are stored in `CodeElements` collection at the `CodeElementsLine` level. Each code element holds its own diagnostic collection. The `ParserDiagnostics` of `CodeElementsLine` stores diagnostics produced by this step but that can't be attached directly to a code element. This is used mainly for exceptions happening during parsing and also for diagnostics produced during the processing of `REPLACE`/`COPY` directives.
 
 The `ActiveReplaceDirective` which tracks the `REPLACE` that applies to a given line is updated during this step too. 
 
@@ -150,7 +150,7 @@ ANTLR returns a single `CodeElementsParser.CobolCodeElementsContext`. Context ob
 |-|-|-|-|
 |`CompilationUnit`|`ProduceTemporarySemanticDocument`|Up-to-date `compilationDocumentLines`|Updated `TemporaryProgramClassDocumentSnapshot`|
 
-This step turns the complete list of CodeElements into an Abstract Syntax Tree using the CUP parser and the 'TypeCobolProgram.cup' grammar. Unlike ANTLR, the parsing and the visit are done simultaneously, no intermediary objects are created and the CUP parser calls directly `ProgramClassBuilder`. The `ProgramClassBuilder` is responsible for creating the AST by adding `Node` objects into it. It always starts with a root node of type `SourceFile`. Then for each structure recognized by CUP, it creates the corresponding `Node` object and adds it in tree. The builder tracks current node by successive calls to `Enter`or `Exit` methods depending on whether the current node expect children or not.
+This step turns the complete list of CodeElements into an Abstract Syntax Tree using the CUP parser and the 'TypeCobolProgram.cup' grammar. Unlike ANTLR, the parsing and the visit are done simultaneously, no intermediary objects are created and the CUP parser calls directly `ProgramClassBuilder`. The `ProgramClassBuilder` is responsible for creating the AST by adding `Node` objects into it. It always starts with a root node of type `SourceFile`. Then for each structure recognized by CUP, it creates the corresponding `Node` object and adds it in tree. The builder tracks current node by successive calls to `Enter` or `Exit` methods depending on whether the current node expects children or not.
 
 By convention, structures allowing children are entered when the corresponding `StartXXX` method is called and exited when the `ExitXXX` method is called. Childless structures are visited with a `OnXXX` method call.
 
@@ -191,14 +191,16 @@ The parser does not use multi-threading to parallelize source code processing. H
 
 To ensure consistency, the results are exposed as 'snapshots', each `IDocumentSnapshot` contains compilation results for a given step, is identified by a version number and is _consistent_.
 
-Line objects are intrinsicallly shared between snapshots because a single most-derived type is used to represent a line: each `CodeElementsLine` _is_ indeed a `CodeElementsLine` but also a `ProcessedTokensLine` and a `TokensLine`. To avoid altering a line that has already been captured in a snapshot, the parser checks whether a line _can still be updated_ by a given step. A line can be updated by a given step only if the updating step is further than the creating step of this line. If the line cannot be updated a new instance is created instead.
+Line objects are intrinsicallly shared between snapshots because a single most-derived type is used to represent a line: each `CodeElementsLine` _is_ indeed a `CodeElementsLine` but also a `ProcessedTokensLine` and a `TokensLine`. To avoid altering a line that has already been captured in a snapshot, the parser checks whether a line _can still be updated_ by a given step. A line can be updated by a given step only if the updating step is further than the creating step of this line. If the line cannot be updated, a new instance is created instead.
 
 This logic is implemented by `CobolTextLine.CanStillBeUpdatedBy` and `CompilationDocument.PrepareDocumentLineForUpdate`.
 
 Note that lines are not necessarily created by the _Text Update_ step: during the incremental parsing steps, the reparse section may grow in both directions because of continuations, multiline compiler directives or multiline code elements and consequently lines may need to be updated/created during _Tokens Update_, _Tokens Preprocessing_ or _Code Element Update_ steps.
-While not being modified directly by an edit, the associated data to these lines is modified.
+While not being modified directly by an edit, these lines will have their data actually modified.
 
 ### Line classes hierarchy
+
+The line types are defined through a seraies of classes and interfaces.
 
 - `ITextLine`
   - `ICobolTextLine` implemented by `CobolTextLine`
@@ -207,12 +209,12 @@ While not being modified directly by an edit, the associated data to these lines
         - `ICodeElementsLine` implemented by `CodeElementsLine` which inherits from `ProcessedTokensLine`
   - `TextLineSnapshot`
 
-The `TextLineSnapshot` class is used to capture a text and a line number, the other classes all wrap an `ITextLine` and adds their own data, related to the step they are used in.
+The `TextLineSnapshot` class is used to capture only a text and a line number, the other classes all wrap an `ITextLine` instance and adds their own data, related to the step they are used in.
 
 |Interface|Role / Content|
 |-|-|
-|`ITextLine`|Represents any line of source code, it has a `Text` and a `LineIndex`|
-|`ICobolTextLine`|Specialized `ITextLine` for Cobol text, the Cobol text has a layout and is divided into 4 regions: sequence number, indicator, source and comments|
-|`ITokensLine`|Specialized `ICobolTextLine` for Cobol text that has been parsed into tokens, this type of line holds the tokens and the scanner scan state|
-|`IProcessedTokensLine`|Specialized `ITokensLine` for Cobol tokens that have been preprocessed. This type of line holds the compiler directives data|
-|`ICodeElementsLine`|Specialized `IProcessedTokensLine` for tokens that have been assembled into code elements. This type of line holds the `CodeElement`s. The current `CompilationDocument` is made of a list of `CodeElementsLine`s which are updated or re-instanciated by successive compilation steps|
+|`ITextLine`|Represents any line of source code, it has a `Text` and a `LineIndex`.|
+|`ICobolTextLine`|Specialized `ITextLine` for Cobol text, the Cobol text has a layout and is divided into 4 regions: sequence number, indicator, source and comments. For performance reasons, only `Source` and `Indicator` are materialized as `TextArea`, comments and sequence number are only available as text.|
+|`ITokensLine`|Specialized `ICobolTextLine` for Cobol text that has been parsed into tokens, this type of line holds the tokens and the scanner scan state.|
+|`IProcessedTokensLine`|Specialized `ITokensLine` for Cobol tokens that have been preprocessed. This type of line holds the compiler directives data.|
+|`ICodeElementsLine`|Specialized `IProcessedTokensLine` for tokens that have been assembled into code elements. This type of line holds the `CodeElement`s. The current `CompilationDocument` is made of a list of `CodeElementsLine`s which are updated or re-instanciated by successive compilation steps.|
