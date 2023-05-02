@@ -41,13 +41,17 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public static bool IsAllowedInsidePartialCobolWord(char chr)
         {
-            if ((chr == ' ') || (chr == ':') || (chr == '(') || (chr == ')'))
+            switch (chr)
             {
-                // Currently too problematic to allow them
-                return false;
+                case ' ':
+                case ':':
+                case '(':
+                case ')':
+                    // Currently not supported by the parser
+                    return false;
+                default:
+                    return IsAllowedInsidePseudoText(chr);
             }
-
-            return IsAllowedInsidePseudoText(chr);
         }
 
         /// <summary>
