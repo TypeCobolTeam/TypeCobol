@@ -101,7 +101,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             CupParserDiagnostic diagnostic = new CupParserDiagnostic(msg, ce, null);
             AddDiagnostic(diagnostic);
             
-            // Try to add the last encountered statement in the stack if it is not already entered. 
+            // Try to add the last encountered statement in the stack if it is not already entered.
+            bool checkForUnclosedStatement = true;
             StackList<Symbol> stack = tcpParser.getParserStack();
             foreach (var symbol in stack)
             {
@@ -109,15 +110,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 {
                     lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementEntryPoint, statementElement, true);
                     stmtParser.parse();
+                    checkForUnclosedStatement = false;
                     break;
                 }
             }
 
             // Try to close current statement if current token is a matching END-Statement
-            if (((ProgramClassBuilder)tcpParser.Builder).CurrentNode is StatementWithBody currentStatement && ce?.Type == currentStatement.EndType)
+            if (checkForUnclosedStatement)
             {
-                lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementClosingPoint, ce, true);
-                stmtParser.parse();
+                if (((ProgramClassBuilder)tcpParser.Builder).CurrentNode is StatementWithBody currentStatement && ce?.Type == currentStatement.EndType)
+                {
+                    lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementClosingPoint, ce, true);
+                    stmtParser.parse();
+                }
             }
 
             return true;

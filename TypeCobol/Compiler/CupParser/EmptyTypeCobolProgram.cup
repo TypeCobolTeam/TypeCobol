@@ -926,6 +926,8 @@ sentences ::= sentence
 
 sentence ::= SentenceEnd:send
 	  {: :}
+    | statements
+	  {: :}
     | statements SentenceEnd:send
 	  {: :}
 	| execStatement:stmt
