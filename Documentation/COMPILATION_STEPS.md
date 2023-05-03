@@ -15,6 +15,8 @@ The first five steps: _Text Change Notification Handling_, _Text Update_, _Token
 
 The remaining three steps: _AST building_, _Cross check_ and _Code analysis_ are **non-incremental**. They are node-based and operate on the Abstract Syntax Tree. The AST is fully rebuilt and fully checked during these steps.
 
+Incremental parsing allows the parser to be reactive to user input by analyzing only what has changed. Incremental parsing enables real-time diagnostics and is a major feature of TypeCobol parser.
+
 ## Step 0: Text Change Notification Handling
 
 **This step takes place in LanguageServer, not in parser directly.**
@@ -78,7 +80,7 @@ During this step, the lines that have been altered are scanned to identify their
 
 To enable incremental scanning, the ScannerStep uses the `MultilineScanState` object. A line must be rescanned when either:
 - it is part of the modified lines (and consequently has no tokens yet)
-- it is part of a modified continuation group
+- it is part of a modified continuation group (a continuation group is a cobol declaration or statement split across several lines, the continuation lines are identified by the '-' indicator character)
 - its `InitialScanState` differs from the final `ScanState` of the previous line
   - it means that previous line has been rescanned and the resulting `ScanState` is different from the one computed during previous compilation cycle. The line must be rescanned again according to the updated ScanState
 
@@ -142,6 +144,17 @@ The parsing itself is triggered through a single call to `CodeElementsParser.cob
   - applying the `REPLACING` clause if any
 - alter tokens that match current `REPLACE` directive
 
+The ANTLR parsing rules are described in several files, using the [g4 file format](https://github.com/antlr/antlr4/blob/master/doc/grammars.md):
+
+|File|Imports|Role|
+|-|-|-|
+|CodeElements.g4|TypeCobolCodeElements|Root file, translated into `CodeElementsParser` class. Does not contain any meaningful definition but could be used to switch between pure Cobol grammar (CobolCodeElements) and TypeCobol grammar (TypeCobolCodeElements).|
+|TypeCobolCodeElements.g4|Cobol2002CodeElements|Contains TypeCobol-specific definitions or redefinitions.|
+|Cobol2002CodeElements.g4|CobolCodeElements|Contains Cobol2002 definitions or redefinitions.|
+|CobolCodeElements.g4|CobolExpressions|Contains all Cobol85 definitions.|
+|CobolExpressions.g4|CobolWords|Contains shared definitions for expressions or more generally speaking for reusable sub-components of CodeElements.|
+|CobolWords.g4|_none_|Contains terminals of the ANTLR grammar. This is the ANTLR list of tokens.|
+
 ### Building CodeElements
 
 ANTLR returns a single `CodeElementsParser.CobolCodeElementsContext`. Context objects are not kept in the final result but are rather converted into real `CodeElement`s objects. This is done through a visitor pattern, the visitor object is `CodeElementBuilder` which turns each context object into its corresponding CodeElement object and also gather tokens of this CE into its `ConsumedTokens` collection.
@@ -162,6 +175,8 @@ For example:
 - `ProgramClassBuilder.OnGobackStatement` signals the encounter of a `GobackStatement`. The method creates the `Goback` node, enters it as a child of the current node (most probably the `ProcedureDivision` node) and exit immediately.
 
 The parsing errors produced by CUP parser are stored in the `Diagnostics` collection of the `TemporarySemanticDocument`.
+
+A secondary grammar file, 'EmptyTypeCobolProgram.cup', is kept up-to-date to provide a starting point for anyone willing to implement their own Cobol parser.
 
 ## Step 6 Cross check
 
