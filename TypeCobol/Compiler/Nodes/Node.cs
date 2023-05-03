@@ -920,6 +920,23 @@ namespace TypeCobol.Compiler.Nodes {
             CloneChildren(cloned);
             return cloned;
         }
+
+        /// <summary>
+        /// Return the node that immediately follows this one in document order.
+        /// </summary>
+        /// <returns>Non-null instance of Node.</returns>
+        public virtual Node GetNextNode()
+        {
+            System.Diagnostics.Debug.Assert(Parent != null);
+
+            int nextIndex = Parent.IndexOf(this) + 1;
+            if (nextIndex < Parent.ChildrenCount)
+            {
+                return Parent.Children[nextIndex];
+            }
+
+            return Parent.GetNextNode();
+        }
     }
 
     /// <summary>
@@ -1038,16 +1055,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-
-
-
-
-
-
-
-
-
-
+        public override Node GetNextNode() => this;
     }
 
     public class LibraryCopy : GenericNode<LibraryCopyCodeElement>, Child<Program> {
