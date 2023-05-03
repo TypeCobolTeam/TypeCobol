@@ -938,6 +938,15 @@ namespace TypeCobol.Compiler.Scanner
                 }
             }
 
+            if (currentState.InsidePseudoText)
+            {
+                if (!CobolChar.IsAllowedInsidePseudoText(line[startIndex]))
+                {
+                    // Add diagnostic to match error raised by IBM compiler
+                    tokensLine.AddDiagnostic(MessageCode.InvalidCharInsidePseudoText, startIndex, startIndex, line[startIndex], startIndex + 1);
+                }
+            }
+
             // --- Main switch ---
 
             switch (line[startIndex])

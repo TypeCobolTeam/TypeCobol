@@ -755,6 +755,25 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Sentence sentence)
+        {
+            // Check for missing end
+            bool hasEnd = false;
+            if (sentence.ChildrenCount > 0)
+            {
+                hasEnd = sentence.Children[sentence.ChildrenCount - 1].CodeElement?.Type == CodeElementType.SentenceEnd;
+            }
+
+            if (!hasEnd)
+            {
+                // Report missing end on node coming right after
+                var nextNode = sentence.GetNextNode();
+                DiagnosticUtils.AddError(nextNode, "Sentence is not correctly ended: a period was required.");
+            }
+
+            return true;
+        }
+
         public override bool Visit(End end)
         {
             // Check if PROGRAM END is orphan

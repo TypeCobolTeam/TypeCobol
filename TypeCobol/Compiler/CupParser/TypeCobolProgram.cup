@@ -1023,7 +1023,9 @@ sentences ::= sentence
 
 sentence ::= SentenceEnd:send
 	{: my_parser.Builder.StartSentence(); my_parser.Builder.EndSentence(send); :}
-    | statements SentenceEnd:send
+	| statements
+	{: my_parser.Builder.EndSentence(null, true); :}
+	| statements SentenceEnd:send
 	{: my_parser.Builder.EndSentence(send, true); :}
 	| execStatement:stmt
 	{:  :}

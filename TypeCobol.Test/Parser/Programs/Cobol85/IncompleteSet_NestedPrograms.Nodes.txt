@@ -1,0 +1,29 @@
+﻿Line 16[8,10] <27, Error, Syntax> - Syntax error : no viable alternative at input 'set ... end'
+Line 13[12,28] <37, Warning, General> - Warning: "end-if" is missing
+Line 16[8,27] <27, Error, Syntax> - Syntax error : Sentence is not correctly ended: a period was required.
+--- Nodes ---
+?
+  MainPgm
+    procedure-division
+    Nested1
+      data-division
+        local-storage
+          Var1
+      procedure-division
+        sentence-0
+          [[IfStatement]] [12,13:if]<IF> --> [28,28:)]<RightParenthesisSeparator>
+
+            ?
+              [[SetStatement]] [17,19:set]<SET> --> [17,19:set]<SET>
+
+      end
+    Nested2
+      procedure-division
+        sentence-0
+          [[GobackStatement]] [12,17:goback]<GOBACK> --> [12,17:goback]<GOBACK>
+
+          end
+      end
+    Nested3
+      end
+    end

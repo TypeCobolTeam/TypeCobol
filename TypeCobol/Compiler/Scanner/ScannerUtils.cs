@@ -26,7 +26,7 @@ public static class ScannerUtils
         { }
 
         // match all legal cobol word chars
-        for (; index <= lastIndex && CobolChar.IsCobolWordChar(line[index]); index++)
+        for (; index <= lastIndex && CobolChar.IsAllowedInsidePartialCobolWord(line[index]); index++)
         { }
 
         // match trailing spaces if any
