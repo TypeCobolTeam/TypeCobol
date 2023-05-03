@@ -8,6 +8,8 @@
 		<!-- Targeting .NET 6.0, with default language level (C# 10) -->
 		<TargetFramework>net6.0</TargetFramework>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<!-- Nullable checks as errors -->
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
 		<!-- Enable all rules for code analyzers -->
 		<AnalysisMode>All</AnalysisMode>
 		<!-- Versioning -->
