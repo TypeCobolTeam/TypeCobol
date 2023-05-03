@@ -204,9 +204,12 @@ Each analyzer receives all five document snapshot in sequence through calls to t
 
 ## About snapshots and result consistency.
 
-The parser does not use multi-threading to parallelize source code processing. However the client of the parser may choose to perform multiple operations on the same source simultaneously. Typically in LanguageServer, a thread may be reading results of an incremental compilation round while the timer thread is already performing the remaining non-incremental compilation steps.
+The parser does not use multi-threading to parallelize source code processing. However the client of the parser may choose to perform multiple operations on the same source simultaneously. The parser (i.e. TypeCobol project) is designed with multi-threading in mind but has not been field-tested. LanguageServer is based on the Producer/Consumer pattern:
+- one thread receives messages and enqueue them on a shared message queue,
+- another thread dequeues messages from the queue and process them.
+- Additionally the timer thread performs non-incremental steps after some delay.
 
-To ensure consistency, the results are exposed as 'snapshots', each `IDocumentSnapshot` contains compilation results for a given step, is identified by a version number and is _consistent_.
+To ensure consistency in TypeCobol project, the results are exposed as 'snapshots', each `IDocumentSnapshot` contains compilation results for a given step, is identified by a version number and is _consistent_.
 
 Line objects are intrinsicallly shared between snapshots because a single most-derived type is used to represent a line: each `CodeElementsLine` _is_ indeed a `CodeElementsLine` but also a `ProcessedTokensLine` and a `TokensLine`. To avoid altering a line that has already been captured in a snapshot, the parser checks whether a line _can still be updated_ by a given step. A line can be updated by a given step only if the updating step is further than the creating step of this line. If the line cannot be updated, a new instance is created instead.
 
