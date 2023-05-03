@@ -929,10 +929,10 @@ namespace TypeCobol.Compiler.Nodes {
         {
             System.Diagnostics.Debug.Assert(Parent != null);
 
-            int myIndex = Parent.IndexOf(this);
-            if (myIndex + 1 < Parent.ChildrenCount)
+            int nextIndex = Parent.IndexOf(this) + 1;
+            if (nextIndex < Parent.ChildrenCount)
             {
-                return Parent.Children[myIndex + 1];
+                return Parent.Children[nextIndex];
             }
 
             return Parent.GetNextNode();
