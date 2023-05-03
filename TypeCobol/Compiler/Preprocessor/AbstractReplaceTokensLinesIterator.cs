@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
@@ -409,7 +405,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         // Special case for PictureCharacterString, handle as PartialWord
                         if (originalToken.TokenType == TokenType.PictureCharacterString)
                         {
-                            var generatedTokenForSingleToken = RegexReplace(singleTokenReplaceOperation.ComparisonToken, singleTokenReplaceOperation.ReplacementToken);
+                            var generatedTokenForSingleToken = TextReplace(singleTokenReplaceOperation.ComparisonToken, singleTokenReplaceOperation.ReplacementToken);
                             return new ReplacedToken(generatedTokenForSingleToken, originalToken);
                         }
 
@@ -423,7 +419,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 // One pure partial word => one replacement token
                 case ReplaceOperationType.PartialWord:
                     PartialWordReplaceOperation partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
-                    var generatedTokenForPartialCobolWord = RegexReplace(partialWordReplaceOperation.ComparisonToken, partialWordReplaceOperation.PartialReplacementToken);
+                    var generatedTokenForPartialCobolWord = TextReplace(partialWordReplaceOperation.ComparisonToken, partialWordReplaceOperation.PartialReplacementToken);
                     return new ReplacedPartialCobolWord(generatedTokenForPartialCobolWord, partialWordReplaceOperation.PartialReplacementToken, originalToken);
 
                 // One comparison token => more than one replacement tokens
@@ -461,14 +457,14 @@ namespace TypeCobol.Compiler.Preprocessor
                     }
             }
 
-            // Performs a Regex Replace on original token using one comparison token and one replacement token
-            Token RegexReplace(Token comparisonToken, Token replacementToken)
+            // Performs a textual replace on original token using one comparison token and one replacement token
+            Token TextReplace(Token comparisonToken, Token replacementToken)
             {
                 string normalizedTokenText = originalToken.NormalizedText;
-                string normalizedPartToReplace = Regex.Escape(comparisonToken.NormalizedText);
+                string normalizedPartToReplace = comparisonToken.NormalizedText;
                 //#258 - ReplacementToken can be null. In this case, we consider that it's an empty replacement
                 var replacementPart = replacementToken != null ? replacementToken.Text : string.Empty;
-                string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
+                string replacedTokenText = normalizedTokenText.Replace(normalizedPartToReplace, replacementPart, StringComparison.OrdinalIgnoreCase);
                 var scanState = _scanStateTracker.GetCurrentScanState() ?? originalToken.TokensLine.InitialScanState;
                 return GenerateReplacementToken(originalToken, replacedTokenText, scanState, CompilerOptions);
             }
