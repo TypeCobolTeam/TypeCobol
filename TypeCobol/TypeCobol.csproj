@@ -1,179 +1,67 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props" Condition="Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Import Project="..\TypeCobol\Common.props" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\Common.props" />
+
   <PropertyGroup>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7AC7A3E5-91F2-44BF-955D-86CC61375742}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TypeCobol</RootNamespace>
-    <AssemblyName>TypeCobol</AssemblyName>
-    <DoNotCopyLocalIfInGac>false</DoNotCopyLocalIfInGac>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4" Version="4.6.6">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <Antlr4UseCSharpGenerator>true</Antlr4UseCSharpGenerator>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
-      <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="JetBrains.Annotations, Version=2019.1.3.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.2019.1.3\lib\net20\JetBrains.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.1\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseListener.cs">
-      <Link>Compiler\Parser\Generated\CodeElementsBaseListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseVisitor.cs">
-      <Link>Compiler\Parser\Generated\CodeElementsBaseVisitor.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsListener.cs">
-      <Link>Compiler\Parser\Generated\CodeElementsListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsParser.cs">
-      <Link>Compiler\Parser\Generated\CodeElementsParser.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs">
-      <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseVisitor.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseVisitor.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsListener.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsParser.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsParser.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsVisitor.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsVisitor.cs</Link>
-    </Compile>
-    <Compile Include="**\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Antlr4 Include="AntlrGrammar\Cobol2002CodeElements.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="AntlrGrammar\CobolCodeElements.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <None Include="AntlrGrammar\CobolExpressions.g4" />
-    <None Include="AntlrGrammar\CobolWords.g4" />
-    <Antlr4 Include="AntlrGrammar\CodeElements.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="AntlrGrammar\TypeCobolCodeElements.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
-    <None Include="Compiler\CupCommon\CobolWordsDirectiveRules.cup" />
-    <None Include="Compiler\CupCommon\CobolWordsRules.cup" />
-    <None Include="Compiler\CupCommon\CobolWordsSymbols.cup" />
-    <None Include="Compiler\CupCommon\CodeElementStartingKeyword.cup" />
-    <None Include="Compiler\CupParser\EmptyTypeCobolProgram.cup" />
-    <None Include="Compiler\CupParser\TypeCobolProgram.cup" />
-    <None Include="Compiler\CupPreprocessor\CobolCompilerDirectives.cup" />
-    <None Include="Documentation\Architecture\Initial requirements.docx" />
-    <None Include="Documentation\Architecture\TypeCobolStats_14_04_2015.xlsx" />
-    <None Include="Documentation\Reference\DB2 11 for zOs - Application Programming and SQL Guide.pdf" />
-    <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Language Reference.pdf" />
-    <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf" />
-    <None Include="Documentation\Reference\IBM Enterprise Cobol 6.1 for zOS - Language Reference.pdf" />
-    <None Include="Documentation\Reference\IBM Enterprise Cobol 6.2 for zOS - Language Reference.pdf" />
-    <None Include="Documentation\Studies\Antlr 4 parsing algorithm.pdf" />
-    <None Include="Documentation\Studies\CobolLexer.tokens.xlsx" />
-    <None Include="Documentation\Studies\Code elements starting tokens.xlsx" />
-    <None Include="Documentation\Studies\Compiler directive study.xlsx" />
-    <None Include="Documentation\Studies\Compiler options study.xlsx" />
-    <None Include="Documentation\Studies\Data item study.docx" />
-    <None Include="Documentation\Studies\IBM compiler versions study.xlsx" />
-    <None Include="Documentation\Studies\IBM vs DotNet charsets.xlsx" />
-    <None Include="Documentation\Studies\Lexical families.xlsx" />
-    <None Include="Documentation\Studies\Literals and Identifiers in parser rules.xlsx" />
-    <None Include="Documentation\Studies\Move code element study.docx" />
-    <None Include="Documentation\Studies\Pipeline - compilation steps.docx" />
-    <None Include="Documentation\Studies\SymbolInformationsAndStorageAreas.xlsx" />
-    <None Include="Documentation\Studies\Text editors functions study.xlsx" />
-    <None Include="Documentation\Studies\Symbols and User defined words.xlsx" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="AntlrGrammar\How to configure antlr 4 in Visual Studio.txt" />
-    <Content Include="AntlrGrammar\How to edit antlr 4 grammar files.txt" />
-    <Content Include="Documentation\Studies\Cobol 2 phases parsing study.txt" />
-    <Content Include="Documentation\Studies\Compiler directives study.txt" />
-    <Content Include="Documentation\Studies\Copy replacing study.txt" />
-    <Content Include="Documentation\Studies\Lexical grammar.txt" />
-    <Content Include="Documentation\Studies\Lexical study.txt" />
-    <Content Include="Documentation\Studies\Antlr 4 error recovery strategy.txt" />
-    <Content Include="Documentation\Studies\Parser rules ordering .txt" />
-    <Content Include="Documentation\Studies\Specific syntax - REMARKS.txt" />
-    <Content Include="Documentation\Studies\Syntax tree study.txt" />
-    <Content Include="Documentation\Studies\TypeCobolStats_counters.txt" />
-    <Content Include="Documentation\Studies\TypeCobolStats_modelForCopy.txt" />
-    <Content Include="Documentation\Studies\TypeCobolStats_modelForProgram.txt" />
-    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Copy.txt" />
-    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Program.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj">
-      <Project>{8cc6ccc3-7ed4-4dc8-a636-733856301aac}</Project>
-      <Name>CSCupRuntime</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>$(OutDir)\CSCup.exe -nodate -nopositions -expect 2000 -parser CobolCompilerDirectivesParser -symbols CobolCompilerDirectivesSymbols $(ProjectDir)\Compiler\CupPreprocessor\CobolCompilerDirectives.cup
-COPY $(TargetDir)CobolCompilerDirectivesParser.cs $(ProjectDir)\Compiler\CupPreprocessor\
-COPY $(TargetDir)CobolCompilerDirectivesSymbols.cs $(ProjectDir)\Compiler\CupPreprocessor\
 
-$(OutDir)\CSCup.exe -nodate -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(ProjectDir)\Compiler\CupParser\TypeCobolProgram.cup
-COPY $(TargetDir)TypeCobolProgramParser.cs $(ProjectDir)\Compiler\CupParser\
-COPY $(TargetDir)TypeCobolProgramSymbols.cs $(ProjectDir)\Compiler\CupParser\
-</PreBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props'))" />
-    <Error Condition="!Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets'))" />
+  <ItemGroup>
+    <Antlr4 Update="AntlrGrammar\Cobol2002CodeElements.g4">
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Update="AntlrGrammar\CobolCodeElements.g4">
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Update="AntlrGrammar\CobolExpressions.g4">
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Update="AntlrGrammar\CobolWords.g4">
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Update="AntlrGrammar\CodeElements.g4">
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Update="AntlrGrammar\TypeCobolCodeElements.g4">
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell .\PreBuildCSCup.ps1 $(Configuration) $(IntermediateOutputPath)CSCupGenerated" />
   </Target>
-  <Import Project="..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets" Condition="Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+
+  <Target Name="IncludeCSCupGeneratedClassesForCompile" AfterTargets="PreBuildEvent" BeforeTargets="BeforeCompile;CoreCompile">
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)CSCupGenerated\*.cs" />
+    </ItemGroup>
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

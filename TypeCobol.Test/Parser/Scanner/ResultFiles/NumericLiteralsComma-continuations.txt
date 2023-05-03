@@ -74,26 +74,26 @@ Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 [6,7:23]<IntegerLiteral>{23}
 
 -- Line 22 --
-=>continued:[2,6:-1,231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.231E+20}
+=>continued:[2,6:-1,231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.2310000000000002E+20}
 
 -- Line 23 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:=>continued:[6,8:-1,231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.231E+20}
+=>continuation:=>continued:[6,8:-1,231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.2310000000000002E+20}
 
 -- Line 24 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,7:-1,231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.231E+20}
+=>continuation:[6,7:-1,231E+20]<FloatingPointLiteral>{-1231|3>-1.231E20>-1.2310000000000002E+20}
 [8,8+:,]<CommaSeparator>
 
 -- Line 25 --
-=>continued:[1,4:1,231E+20]<FloatingPointLiteral>{1231|3>1.231E20>1.231E+20}
+=>continued:[1,4:1,231E+20]<FloatingPointLiteral>{1231|3>1.231E20>1.2310000000000002E+20}
 
 -- Line 26 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:=>continued:[6,7:1,231E+20]<FloatingPointLiteral>{1231|3>1.231E20>1.231E+20}
+=>continuation:=>continued:[6,7:1,231E+20]<FloatingPointLiteral>{1231|3>1.231E20>1.2310000000000002E+20}
 
 -- Line 27 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,8:1,231E+20]<FloatingPointLiteral>{1231|3>1.231E20>1.231E+20}
+=>continuation:[6,8:1,231E+20]<FloatingPointLiteral>{1231|3>1.231E20>1.2310000000000002E+20}
 [9,9+:,]<CommaSeparator>
 
