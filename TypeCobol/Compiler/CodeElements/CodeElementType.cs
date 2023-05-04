@@ -179,9 +179,9 @@
 
         // [TYPECOBOL]
         LibraryCopy,
-		FunctionDeclarationHeader,
-		FunctionDeclarationEnd,
-		ProcedureStyleCall,
+        FunctionDeclarationHeader,
+        FunctionDeclarationEnd,
+        ProcedureStyleCall,
         GlobalStorageSectionHeader,
         // [/TYPECOBOL]
 

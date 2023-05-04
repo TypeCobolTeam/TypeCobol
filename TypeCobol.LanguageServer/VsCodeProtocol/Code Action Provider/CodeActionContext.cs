@@ -12,8 +12,8 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     public class CodeActionContext
     {
         /// <summary>
-	    /// An array of diagnostics.
-	    /// </summary>
+        /// An array of diagnostics.
+        /// </summary>
         public Diagnostic[] diagnostics { get; set; }
 
         /// <summary>

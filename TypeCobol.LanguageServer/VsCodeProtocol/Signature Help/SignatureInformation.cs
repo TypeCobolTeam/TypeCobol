@@ -38,7 +38,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             this.label = label;
             this.documentation = documentation;
             this.parameters = parameters;
-	    }
+        }
 
         public override bool Equals(object obj)
         {

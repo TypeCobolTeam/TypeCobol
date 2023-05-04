@@ -603,11 +603,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static string ToString(FunctionType type)
         {
-		    if (type == FunctionType.Undefined) return "symbol";
-		    if (type == FunctionType.Function) return "function";
-		    if (type == FunctionType.Procedure) return "procedure";
-		    return "function or procedure";
-	    }
+            if (type == FunctionType.Undefined) return "symbol";
+            if (type == FunctionType.Function) return "function";
+            if (type == FunctionType.Procedure) return "procedure";
+            return "function or procedure";
+        }
     }
     
 
@@ -774,35 +774,35 @@ namespace TypeCobol.Compiler.Diagnostics
         //A procedure or a function cannot contains another procedure or function declaration
         //So we only need to check ProcedureDivision of Program
             if (!(procedureDivision.Parent is Program))
-	        return;
+            return;
 
 
         //If the procedure division contains a PUBLIC procedure or function then it's considered as a "Library"
-	    bool isLibrary = procedureDivision.Children.Any(c =>
-		{
-		    var f = c.CodeElement as FunctionDeclarationHeader;
+        bool isLibrary = procedureDivision.Children.Any(c =>
+        {
+            var f = c.CodeElement as FunctionDeclarationHeader;
                 return f != null && f.Visibility == AccessModifier.Public;
             });
 
-	    if (isLibrary)
+        if (isLibrary)
         {
-	        bool firstParagraphChecked = false;
-	        foreach (var child in procedureDivision.Children)
+            bool firstParagraphChecked = false;
+            foreach (var child in procedureDivision.Children)
             {
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (child is Paragraph)
                 {
-	                if (!firstParagraphChecked &&
-	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
+                    if (!firstParagraphChecked &&
+                        !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
                             DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
                                 "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph " + child.Name + " is not allowed at this location.");
                     }
 
-	                firstParagraphChecked = true;
+                    firstParagraphChecked = true;
 
-	                continue; //A paragraph is always accepted as a child of ProcedureDivision
-	            }
+                    continue; //A paragraph is always accepted as a child of ProcedureDivision
+                }
 
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (!(child is FunctionDeclaration || child is Declaratives))
@@ -816,7 +816,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         // this case corresponds to SECTION declarations or statements not inside a paragraph
                         DiagnosticUtils.AddError(node,
-							"A program which contains public procedure cannot contain section or statement not under a paragraph.");
+                            "A program which contains public procedure cannot contain section or statement not under a paragraph.");
                     }
                     else
                     {
@@ -826,14 +826,14 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-		    var pdiv = procedureDivision.CodeElement;
+            var pdiv = procedureDivision.CodeElement;
 
             //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
             if (pdiv?.UsingParameters != null && pdiv.UsingParameters.Count > 0)
                     DiagnosticUtils.AddError(procedureDivision,
                         "Illegal " + pdiv.UsingParameters.Count + " USING in library PROCEDURE DIVISION.");
-		}
-	}
+        }
+    }
 }
 
     public class SetStatementChecker

@@ -29,12 +29,12 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         public static Token GetTokenFromTerminalNode(ITerminalNode terminalNode)
         {
-			var ce = terminalNode.Symbol as CodeElements.CodeElement;
-			if (ce != null) {
-				if (ce.ConsumedTokens.Count < 1) return null;
-				return ce.ConsumedTokens[0];
-			}
-			return (Token)terminalNode.Symbol;
+            var ce = terminalNode.Symbol as CodeElements.CodeElement;
+            if (ce != null) {
+                if (ce.ConsumedTokens.Count < 1) return null;
+                return ce.ConsumedTokens[0];
+            }
+            return (Token)terminalNode.Symbol;
         }
 
         public static Token GetFirstToken(IParseTree node)

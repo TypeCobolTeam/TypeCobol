@@ -139,7 +139,7 @@
     /// <summary>Sending field for SET statement for assignation</summary>
     public class SetSendingVariable : IVisitable
     {
-        /// <summary>integerVariableOrIndex1 - identifier can also be an index name	(Format 1 + 5)</summary>
+        /// <summary>integerVariableOrIndex1 - identifier can also be an index name    (Format 1 + 5)</summary>
         public IntegerVariable IntegerVariableOrIndex { get; set; }
         /// <summary>nullPointerValue - pointer data item (Format 5 + 6 + 7)</summary>
         public NullPointerValue NullPointerValue { get; set; }

@@ -16,69 +16,69 @@ namespace TypeCobol.Compiler.Nodes {
 
     public static class Attributes
     {
-	    internal static object Get(Node node, string attribute) {
-		    var table = node.SymbolTable;
-		    object value = node;
-		    try {
-			    foreach(var attr in attribute.Split('.')) {
-				    if (value == null) break;
-				    value = attributes[attr.ToLower()].GetValue(value, table);
-			    }
-			    return value;
-		    } catch (KeyNotFoundException) {
-			    DEFAULT.Key = attribute;
-			    return DEFAULT.GetValue(value, table);
-		    }
-	    }
+        internal static object Get(Node node, string attribute) {
+            var table = node.SymbolTable;
+            object value = node;
+            try {
+                foreach(var attr in attribute.Split('.')) {
+                    if (value == null) break;
+                    value = attributes[attr.ToLower()].GetValue(value, table);
+                }
+                return value;
+            } catch (KeyNotFoundException) {
+                DEFAULT.Key = attribute;
+                return DEFAULT.GetValue(value, table);
+            }
+        }
 
-	    private static Dictionary<string,Attribute> attributes;
-	    static Attributes() {
-		    attributes = new Dictionary<string,Attribute>();
-		    attributes["name"]  = new NameAttribute();
-		    attributes["level"] = new LevelAttribute();
+        private static Dictionary<string,Attribute> attributes;
+        static Attributes() {
+            attributes = new Dictionary<string,Attribute>();
+            attributes["name"]  = new NameAttribute();
+            attributes["level"] = new LevelAttribute();
             attributes["value"] = new ValueAttribute();
             attributes["type"]  = new TypeAttribute();
-		    attributes["sender"] = new SenderAttribute();
-	        attributes["receiver"] = new ReceiverAttribute();
+            attributes["sender"] = new SenderAttribute();
+            attributes["receiver"] = new ReceiverAttribute();
             attributes["unsafe"] = new UnsafeAttribute();
-		    attributes["function"] = new FunctionUserAttribute();
-		    attributes["definitions"] = new DefinitionsAttribute();
-	        attributes["usage"] = new UsageAttribute();
-	        attributes["hash"] = new HashAttribute();
-	        attributes["displayablereceivers"] = new PointerDisplayableReceiversAttribute();
-	        attributes["receivers"] = new PointerReceiversAttribute();
+            attributes["function"] = new FunctionUserAttribute();
+            attributes["definitions"] = new DefinitionsAttribute();
+            attributes["usage"] = new UsageAttribute();
+            attributes["hash"] = new HashAttribute();
+            attributes["displayablereceivers"] = new PointerDisplayableReceiversAttribute();
+            attributes["receivers"] = new PointerReceiversAttribute();
             attributes["receiverusage"] = new ReceiverUsageAttribute();
-	        attributes["incrementdirection"] = new incrementDirectionAttribute();
-	        attributes["needcompute"] = new NeedComputeAttribute();
-	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
-	        attributes["isnested"] = new IsNestedAttribute();
-	        attributes["containnested"] = new ContainNestedAttribute();
+            attributes["incrementdirection"] = new incrementDirectionAttribute();
+            attributes["needcompute"] = new NeedComputeAttribute();
+            attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
+            attributes["isnested"] = new IsNestedAttribute();
+            attributes["containnested"] = new ContainNestedAttribute();
             attributes["global"] = new GlobalAttribute();
             attributes["useglobalstoragevariable"] = new UseGlobalStorageVariableAttribute();
             attributes["sourceprogramhash"] = new SourceProgramHashAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
-		    attributes["visibility"] = new VisibilityAttribute();
-		    attributes["copyname"] = new LibraryCopyAttribute();
-		    attributes["programname8"] = new ProgramName8Attribute();
+            attributes["visibility"] = new VisibilityAttribute();
+            attributes["copyname"] = new LibraryCopyAttribute();
+            attributes["programname8"] = new ProgramName8Attribute();
             attributes["imports"] = new ProgramImportsAttribute();
-	    }
-	    private static ContainerAttribute DEFAULT = new ContainerAttribute();
+        }
+        private static ContainerAttribute DEFAULT = new ContainerAttribute();
     }
 
     internal class ContainerAttribute: Attribute
     {
-	    internal string Key { get; set; }
-	    public object GetValue(object o, SymbolTable table) {
-		    return null;
-	    }
+        internal string Key { get; set; }
+        public object GetValue(object o, SymbolTable table) {
+            return null;
+        }
     }
 
 
 
     public interface Attribute
     {
-	    object GetValue(object o, SymbolTable table);
+        object GetValue(object o, SymbolTable table);
     }
 
     internal class NameAttribute : Attribute
@@ -159,22 +159,22 @@ namespace TypeCobol.Compiler.Nodes {
     }
     internal class TypeAttribute: Attribute
     {
-	    public object GetValue(object o, SymbolTable table) {
+        public object GetValue(object o, SymbolTable table) {
             bool result;
             if(bool.TryParse(o.ToString(), out result)) {
                 return "BOOL";
             }
 
-		    var node = o as DataDescription;
-	        if (node != null) {
+            var node = o as DataDescription;
+            if (node != null) {
                     var data = node.CodeElement;
-	            if (data != null) {
+                if (data != null) {
                         return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
                     }
                 }
-	        return null;
+            return null;
 
-	    }
+        }
     }
 
     /// <summary>
@@ -202,12 +202,12 @@ namespace TypeCobol.Compiler.Nodes {
 
     internal class LevelAttribute: Attribute
     {
-	    public object GetValue(object o, SymbolTable table)
-	    {
-		    var data = o as DataDefinition;
-		    if (data == null) return null;
-		    return string.Format("{0:00}", data.CodeElement?.LevelNumber?.Value);
-	    }
+        public object GetValue(object o, SymbolTable table)
+        {
+            var data = o as DataDefinition;
+            if (data == null) return null;
+            return string.Format("{0:00}", data.CodeElement?.LevelNumber?.Value);
+        }
     }
 
     internal class GlobalAttribute : Attribute
@@ -258,17 +258,17 @@ namespace TypeCobol.Compiler.Nodes {
 
     internal class TypeCobolAttribute: Attribute
     {
-	    internal string Key { get; set; }
-	    public object GetValue(object o, SymbolTable table)
-	    {
-		    var map = o as IDictionary<StorageArea,object>;
-		    var results = new Dictionary<StorageArea,object>();
-	        if (map != null)
-	            foreach (var kv in map)
-	                if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
-	                    results.Add(kv.Key,kv.Value);
-	        return results;
-	    }
+        internal string Key { get; set; }
+        public object GetValue(object o, SymbolTable table)
+        {
+            var map = o as IDictionary<StorageArea,object>;
+            var results = new Dictionary<StorageArea,object>();
+            if (map != null)
+                foreach (var kv in map)
+                    if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
+                        results.Add(kv.Key,kv.Value);
+            return results;
+        }
     }
 
     internal class SenderAttribute : Attribute
@@ -411,21 +411,21 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
     internal class UnsafeAttribute: Attribute {
-	    public object GetValue(object o, SymbolTable table) {
-		    var statement = o as VariableWriter;
-		    if (statement == null) return null;
-		    return statement.IsUnsafe;
-	    }
+        public object GetValue(object o, SymbolTable table) {
+            var statement = o as VariableWriter;
+            if (statement == null) return null;
+            return statement.IsUnsafe;
+        }
     }
 
     internal class FunctionUserAttribute: Attribute {
-	    public object GetValue(object o, SymbolTable table) {
-		    var statement = o as FunctionCaller;
+        public object GetValue(object o, SymbolTable table) {
+            var statement = o as FunctionCaller;
 
             string functionName = statement?.FunctionCall?.FunctionName;
             if (functionName == null) return null;
 
-		    var found = table.GetFunction(new URI(functionName));
+            var found = table.GetFunction(new URI(functionName));
             switch (found.Count)
             {
                 case 0:
@@ -437,42 +437,42 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-	    private static FunctionCallInfo Create(FunctionCall call, FunctionDeclaration declaration) {
+        private static FunctionCallInfo Create(FunctionCall call, FunctionDeclaration declaration) {
             System.Diagnostics.Debug.Assert(call.FunctionName != null);
-		    var result = new FunctionCallInfo(new URI(call.FunctionName), declaration.Library, declaration.Copy);
-		    if (declaration.Profile == null) return result;
-		    int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
-		    // declaration.Profile.ReturningParameter is not used because
-		    // the same data is always used by (and hardcoded in) function call codegen: <function.Name>-RESULT
-		    for(int i=0; i < count; i++) {
-			    var pAsDefined = GetParameter(i, declaration);
-			    var pAsUsed    = GetParameter(i, call);
-			    result.InputParameters.Add(Create(pAsDefined, pAsUsed));
-		    }
-		    return result;
-	    }
-	    private static CallParameter Create(ParameterDescription pAsDefined, CallParameter pAsUsed) {
-		    if (pAsUsed != null) return pAsUsed; //Code is strange here..
-		    return new EmptyCallParameter();
-	    }
-	    private static ParameterDescription GetParameter(int index, FunctionDeclaration function) {
-		    int offset = 0;
-		    if (index - offset < function.Profile.InputParameters.Count) return function.Profile.InputParameters[index-offset];
-		    offset += function.Profile.InputParameters.Count;
-		    if (index - offset < function.Profile.InoutParameters.Count) return function.Profile.InoutParameters[index-offset];
-		    offset += function.Profile.InoutParameters.Count;
-		    if (index - offset < function.Profile.OutputParameters.Count) return function.Profile.OutputParameters[index-offset];
-		    offset += function.Profile.OutputParameters.Count;
-		    if (index - offset < 1) return function.Profile.ReturningParameter;
-		    throw new System.ArgumentOutOfRangeException("Expected: "+index+" < "+function.Profile.InputParameters.Count
-		                                                                     +'+'+function.Profile.InoutParameters.Count
-		                                                                     +'+'+function.Profile.OutputParameters.Count
-		                                                                     +'+'+(function.Profile.ReturningParameter!=null?1:0));
-	    }
-	    private static CallParameter GetParameter(int index, FunctionCall function) {
-		    if (function.Arguments != null && index < function.Arguments.Length) return new CallParameter(function.Arguments[index].StorageAreaOrValue);
-		    return null;
-	    }
+            var result = new FunctionCallInfo(new URI(call.FunctionName), declaration.Library, declaration.Copy);
+            if (declaration.Profile == null) return result;
+            int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
+            // declaration.Profile.ReturningParameter is not used because
+            // the same data is always used by (and hardcoded in) function call codegen: <function.Name>-RESULT
+            for(int i=0; i < count; i++) {
+                var pAsDefined = GetParameter(i, declaration);
+                var pAsUsed    = GetParameter(i, call);
+                result.InputParameters.Add(Create(pAsDefined, pAsUsed));
+            }
+            return result;
+        }
+        private static CallParameter Create(ParameterDescription pAsDefined, CallParameter pAsUsed) {
+            if (pAsUsed != null) return pAsUsed; //Code is strange here..
+            return new EmptyCallParameter();
+        }
+        private static ParameterDescription GetParameter(int index, FunctionDeclaration function) {
+            int offset = 0;
+            if (index - offset < function.Profile.InputParameters.Count) return function.Profile.InputParameters[index-offset];
+            offset += function.Profile.InputParameters.Count;
+            if (index - offset < function.Profile.InoutParameters.Count) return function.Profile.InoutParameters[index-offset];
+            offset += function.Profile.InoutParameters.Count;
+            if (index - offset < function.Profile.OutputParameters.Count) return function.Profile.OutputParameters[index-offset];
+            offset += function.Profile.OutputParameters.Count;
+            if (index - offset < 1) return function.Profile.ReturningParameter;
+            throw new System.ArgumentOutOfRangeException("Expected: "+index+" < "+function.Profile.InputParameters.Count
+                                                                             +'+'+function.Profile.InoutParameters.Count
+                                                                             +'+'+function.Profile.OutputParameters.Count
+                                                                             +'+'+(function.Profile.ReturningParameter!=null?1:0));
+        }
+        private static CallParameter GetParameter(int index, FunctionCall function) {
+            if (function.Arguments != null && index < function.Arguments.Length) return new CallParameter(function.Arguments[index].StorageAreaOrValue);
+            return null;
+        }
     }
 
     public class FunctionCallInfo
@@ -513,27 +513,27 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
 internal class DefinitionsAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var definitions = new Definitions();
-		definitions.types = GetTypes(table);
-		definitions.functions = GetFunctions(table);
-		definitions.functionsGeneratedAsNested = GetFunctionsGeneratedAsNested(o as Program);
-		return definitions;
-	}
-	private Definitions.NList GetTypes(SymbolTable table) {
-		var list = new Definitions.NList();
-		if (table == null) return list;
-		foreach(var items in table.Types) list.AddRange(items.Value);
-		list.AddRange(GetTypes(table.EnclosingScope));
-		return list;
-	}
-	private Definitions.NList GetFunctions(SymbolTable table) {
-		var list = new Definitions.NList();
-		if (table == null) return list;
-		foreach(var items in table.Functions) list.AddRange(items.Value.Where(fd => !fd.GenerateAsNested));
-		list.AddRange(GetFunctions(table.EnclosingScope));
-		return list;
-	}
+    public object GetValue(object o, SymbolTable table) {
+        var definitions = new Definitions();
+        definitions.types = GetTypes(table);
+        definitions.functions = GetFunctions(table);
+        definitions.functionsGeneratedAsNested = GetFunctionsGeneratedAsNested(o as Program);
+        return definitions;
+    }
+    private Definitions.NList GetTypes(SymbolTable table) {
+        var list = new Definitions.NList();
+        if (table == null) return list;
+        foreach(var items in table.Types) list.AddRange(items.Value);
+        list.AddRange(GetTypes(table.EnclosingScope));
+        return list;
+    }
+    private Definitions.NList GetFunctions(SymbolTable table) {
+        var list = new Definitions.NList();
+        if (table == null) return list;
+        foreach(var items in table.Functions) list.AddRange(items.Value.Where(fd => !fd.GenerateAsNested));
+        list.AddRange(GetFunctions(table.EnclosingScope));
+        return list;
+    }
 
     internal static Definitions.NList GetFunctionsGeneratedAsNested(Program pgm)
     {
@@ -552,24 +552,24 @@ internal class DefinitionsAttribute: Attribute {
 
     }
     public class Definitions {
-	public NList types;
-	public NList functions;
-	public NList functionsGeneratedAsNested;
+    public NList types;
+    public NList functions;
+    public NList functionsGeneratedAsNested;
 
-	public override string ToString() {
-		var str = new System.Text.StringBuilder();
-		str.Append("Types:[");
-		foreach(var item in types) str.Append(item.Name).Append(',');
-		if (types.Count > 0) str.Length -= 1;
-		str.Append("] Functions:[");
-		foreach(var item in functions) str.Append(item.Name).Append(',');
-		if (functions.Count > 0) str.Length -= 1;
-		str.Append(']');
-		return str.ToString();
-	}
+    public override string ToString() {
+        var str = new System.Text.StringBuilder();
+        str.Append("Types:[");
+        foreach(var item in types) str.Append(item.Name).Append(',');
+        if (types.Count > 0) str.Length -= 1;
+        str.Append("] Functions:[");
+        foreach(var item in functions) str.Append(item.Name).Append(',');
+        if (functions.Count > 0) str.Length -= 1;
+        str.Append(']');
+        return str.ToString();
+    }
 
-	public class NList: List<Node> {
-		internal NList(): base() { }
+    public class NList: List<Node> {
+        internal NList(): base() { }
 
         public List<Node> Public => this.FindAll(node => node is FunctionDeclaration fd && fd.CodeElement.Visibility == AccessModifier.Public);
 
@@ -588,39 +588,39 @@ internal class DefinitionsAttribute: Attribute {
 }
 
 internal class VisibilityAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var fun = o as FunctionDeclaration;
-		if (fun != null) return fun.CodeElement.Visibility.ToString();
-		return null;
-	}
+    public object GetValue(object o, SymbolTable table) {
+        var fun = o as FunctionDeclaration;
+        if (fun != null) return fun.CodeElement.Visibility.ToString();
+        return null;
+    }
 }
 
 internal class LibraryCopyAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var pgm = ((Node)o).GetProgramNode();
+    public object GetValue(object o, SymbolTable table) {
+        var pgm = ((Node)o).GetProgramNode();
 
-		var copies = pgm.GetChildren<LibraryCopy>();
-		var copy = copies.Count > 0? copies[0] : null;
-		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement.Name.Name;
-	}
+        var copies = pgm.GetChildren<LibraryCopy>();
+        var copy = copies.Count > 0? copies[0] : null;
+        return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement.Name.Name;
+    }
 }
     /// <summary>
     /// return the name of enclosing program of the current node.
     /// The name is limited to 8 characters
     /// </summary>
     internal class ProgramName8Attribute: Attribute {
-	    public object GetValue(object o, SymbolTable table) {
+        public object GetValue(object o, SymbolTable table) {
             var node = o as Node;
-	        while (node != null) {
-	            var pgm = node as Program;
-	            if (pgm != null) {
-	                var name = pgm.Name;
+            while (node != null) {
+                var pgm = node as Program;
+                if (pgm != null) {
+                    var name = pgm.Name;
                     return pgm.Name.Substring(0,Math.Min(name.Length, 8));
-	            }
-	            node = node.Parent;
-	        }
-	        return "";
-	    }
+                }
+                node = node.Parent;
+            }
+            return "";
+        }
     }
 
     public class ProcedureImport

@@ -681,7 +681,7 @@ namespace TypeCobol.Compiler.Directives
         }
 
         /// <summary>
-        /// If optionWord is a supported option name (EXIT)	or abbreviation (EX) or negation (NOEXIT / NOEX)
+        /// If optionWord is a supported option name (EXIT)    or abbreviation (EX) or negation (NOEXIT / NOEX)
         /// this method sets its status (IsActivated) and value (from parameters)
         /// </summary>
         public bool TrySetIBMOptionStatusAndValue(string optionWord, string optionParameters)
