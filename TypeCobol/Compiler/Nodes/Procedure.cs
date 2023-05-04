@@ -12,8 +12,8 @@ namespace TypeCobol.Compiler.Nodes {
     using CodeElements.Expressions;
 
     public class ProcedureDivision: GenericNode<ProcedureDivisionHeader> {
-	    public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }
-	    public override string ID { get { return "procedure-division"; } }
+        public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }
+        public override string ID { get { return "procedure-division"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -106,15 +106,15 @@ namespace TypeCobol.Compiler.Nodes {
         {
             Profile = new ParametersProfileNode(null);
         }
-	    public override string ID { get { return Name; } }
-	    public string Label { get; internal set; }
+        public override string ID { get { return Name; } }
+        public string Label { get; internal set; }
 
-	    public override string Name => this.CodeElement.FunctionName.Name;
+        public override string Name => this.CodeElement.FunctionName.Name;
         public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement.Name); } }
 
-	    public string Library { get; internal set; }
-	    public string Copy { get { return Library+"cpy"; } }
-	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
+        public string Library { get; internal set; }
+        public string Copy { get { return Library+"cpy"; } }
+        //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
         public ParametersProfileNode Profile{ get; set; }
         //For specific FunctionDeclaration generation as nested, check flag on FunctionDeclaration node
         //Don't forget to set the flag on the right node in ProgramClassBuilder
@@ -122,9 +122,9 @@ namespace TypeCobol.Compiler.Nodes {
 
 
         private string _hash;
-	    public string Hash {
-		    get
-		    {
+        public string Hash {
+            get
+            {
 		        if (_hash != null) return _hash;
 			    var hash = new StringBuilder();
 			    hash.Append(Library).Append('.').Append(Name);
@@ -136,15 +136,15 @@ namespace TypeCobol.Compiler.Nodes {
 
 		        return _hash;
 		    }
-	    }
-	    private StringBuilder encode(StringBuilder str, IList<ParameterDescription> parameters) {
+        }
+        private StringBuilder encode(StringBuilder str, IList<ParameterDescription> parameters) {
 		    str.Append('[');
 		    foreach(var p in parameters) str.Append(encode(p)).Append(',');
 		    if (parameters.Count > 0) str.Length -= 1;
 		    str.Append(']');
 		    return str;
 	    }
-	    private string encode(ParameterDescription parameter) {
+        private string encode(ParameterDescription parameter) {
 		    if (parameter == null) return "?";
 		    if (parameter.Picture != null) return parameter.Picture.ToString();
 		    if (parameter.DataType != null) return "T("+parameter.DataType.Name+")";
@@ -164,8 +164,8 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
     public class FunctionEnd: GenericNode<FunctionDeclarationEnd> {
-	    public FunctionEnd(FunctionDeclarationEnd end): base(end) { }
-	    public override string ID { get { return "function-end"; } }
+        public FunctionEnd(FunctionDeclarationEnd end): base(end) { }
+        public override string ID { get { return "function-end"; } }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -176,8 +176,8 @@ namespace TypeCobol.Compiler.Nodes {
 // [/TYPECOBOL]
 
     public class Section: GenericNode<SectionHeader> {
-	    public Section(SectionHeader header): base(header) { }
-	    public override string ID { get { return "section"; } }
+        public Section(SectionHeader header): base(header) { }
+        public override string ID { get { return "section"; } }
         public override string Name { get { return this.CodeElement.SectionName.Name; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
@@ -186,8 +186,8 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
     public class Paragraph: GenericNode<ParagraphHeader> {
-	    public Paragraph(ParagraphHeader header): base(header) { }
-	    public override string ID { get { return "paragraph"; } }
+        public Paragraph(ParagraphHeader header): base(header) { }
+        public override string ID { get { return "paragraph"; } }
         private string _Name;
         public override string Name { get {
             if (_Name == null)
@@ -201,15 +201,15 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
     public class Sentence: Node {
-	    public Sentence() { }
-	    public override string ID {
-		    get {
+        public Sentence() { }
+        public override string ID {
+            get {
 			    string id = "sentence-";
 			    if (Parent == null) id += '0';
-			    else id += new System.Collections.Generic.List<Node>(Parent.Children).IndexOf(this);
+                else id += new System.Collections.Generic.List<Node>(Parent.Children).IndexOf(this);
 			    return id;
 		    }
-	    }
+        }
 
         protected override CodeElement InternalCodeElement => null;
 

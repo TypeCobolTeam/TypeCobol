@@ -31,9 +31,9 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
 			var ce = terminalNode.Symbol as CodeElements.CodeElement;
 			if (ce != null) {
-				if (ce.ConsumedTokens.Count < 1) return null;
-				return ce.ConsumedTokens[0];
-			}
+                if (ce.ConsumedTokens.Count < 1) return null;
+                return ce.ConsumedTokens[0];
+            }
 			return (Token)terminalNode.Symbol;
         }
 

@@ -56,9 +56,9 @@ namespace TypeCobol.Compiler.AntlrUtils
     /// </summary>
     public class ParserDiagnostic : Diagnostic
     {
-		public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null) :
-			base(code, offendingSymbol.Position(), message, exception)
-		{
+        public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null) :
+            base(code, offendingSymbol.Position(), message, exception)
+        {
 			OffendingSymbol = offendingSymbol;
 			this.ruleStack = ruleStack;
         }

@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.CupCommon
     /// 
     /// procedureName:
     /// paragraphNameReferenceOrSectionNameReference
-    /// |	qualifiedParagraphNameReference
+    /// |   qualifiedParagraphNameReference
     /// /// 
     /// 
     /// </summary>
@@ -211,7 +211,7 @@ namespace TypeCobol.Compiler.CupCommon
     /// <summary>
     /// Representation of:
     /// 
-    /// qualifiedConditionName: 	conditionNameReferenceOrConditionForUPSISwitchNameReference((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+    /// qualifiedConditionName:     conditionNameReferenceOrConditionForUPSISwitchNameReference((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
     /// 
     /// </summary>
     public class QualifiedConditionName

@@ -4,7 +4,7 @@
 /// The DATA DIVISION of a COBOL source program describes, in a structured manner, all the data to be processed by the program. 
 /// </summary>
 public class DataDivisionHeader: CodeElement {
-	public DataDivisionHeader() : base(CodeElementType.DataDivisionHeader) { }
+    public DataDivisionHeader() : base(CodeElementType.DataDivisionHeader) { }
 }
 
 
@@ -16,7 +16,7 @@ public abstract class DataSectionHeader: CodeElement {
 /// The FILE SECTION defines the structure of data files.
 /// </summary>
 public class FileSectionHeader: DataSectionHeader {
-	public FileSectionHeader() : base(CodeElementType.FileSectionHeader) { }
+    public FileSectionHeader() : base(CodeElementType.FileSectionHeader) { }
 }
 
 /// <summary>
@@ -33,7 +33,7 @@ public class GlobalStorageSectionHeader : DataSectionHeader {
 /// The WORKING-STORAGE SECTION also describes data items whose values are assigned in the source program or method and do not change during execution of the object program.
 /// </summary>
 public class WorkingStorageSectionHeader: DataSectionHeader {
-	public WorkingStorageSectionHeader() : base(CodeElementType.WorkingStorageSectionHeader) { }
+    public WorkingStorageSectionHeader() : base(CodeElementType.WorkingStorageSectionHeader) { }
 }
 
 
@@ -41,14 +41,14 @@ public class WorkingStorageSectionHeader: DataSectionHeader {
 /// The LOCAL-STORAGE SECTION defines storage that is allocated and freed on a per-invocation basis.
 /// </summary>
 public class LocalStorageSectionHeader: DataSectionHeader {
-	public LocalStorageSectionHeader() : base(CodeElementType.LocalStorageSectionHeader) { }
+    public LocalStorageSectionHeader() : base(CodeElementType.LocalStorageSectionHeader) { }
 }
 
 /// <summary>
 /// The LINKAGE SECTION describes data made available from another program or method.
 /// </summary>
 public class LinkageSectionHeader: DataSectionHeader {
-	public LinkageSectionHeader() : base(CodeElementType.LinkageSectionHeader) { }
+    public LinkageSectionHeader() : base(CodeElementType.LinkageSectionHeader) { }
 }
 
 

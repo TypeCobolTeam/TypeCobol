@@ -6,26 +6,26 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements {
 
-	using System.Collections.Generic;
+    using System.Collections.Generic;
 
     /// <summary>TypeCobol function declaration</summary>
     public class FunctionDeclarationHeader: CodeElement, IFormalizedCommentable
     {
-	    public SymbolDefinition FunctionName { get; set; }
-	    public AccessModifier Visibility { get; set; }
-	    public FunctionType UserDefinedType { get; set; }
+        public SymbolDefinition FunctionName { get; set; }
+        public AccessModifier Visibility { get; set; }
+        public FunctionType UserDefinedType { get; set; }
         public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
         public FunctionType ActualType {
-		    get {
+            get {
 			    if ( Profile.IsFunction && !Profile.IsProcedure) return FunctionType.Function;
 			    if (!Profile.IsFunction &&  Profile.IsProcedure) return FunctionType.Procedure;
 			    if ( Profile.IsFunction &&  Profile.IsProcedure)
-				    if (UserDefinedType == FunctionType.Undefined)
-				         return FunctionType.Function;
-				    else return UserDefinedType;
+                    if (UserDefinedType == FunctionType.Undefined)
+                         return FunctionType.Function;
+                    else return UserDefinedType;
 			    return FunctionType.Undefined;
 		    }
-	    }
+        }
 
         public FunctionDeclarationHeader()
             : base(CodeElementType.FunctionDeclarationHeader)
@@ -34,21 +34,21 @@ namespace TypeCobol.Compiler.CodeElements {
         }
 
         // TO DO : remove this and move to second parsing phase
-	    private string libraryName;
-	    public string Name { get { return libraryName != null ? libraryName + "." + FunctionName.Name : FunctionName.Name; } }
-	    public void SetLibrary(string libname) { libraryName = libname; }
+        private string libraryName;
+        public string Name { get { return libraryName != null ? libraryName + "." + FunctionName.Name : FunctionName.Name; } }
+        public void SetLibrary(string libname) { libraryName = libname; }
 
-	     // PROFILE
-	    /////////////
-	    public ParametersProfile Profile { get; private set; }
-	    /// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
-	    public SyntaxProperty<ParameterPassingDirection> Input { get; internal set; }
-	    /// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
-	    public SyntaxProperty<ParameterPassingDirection> Output { get; internal set; }
-	    /// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
-	    public SyntaxProperty<ParameterPassingDirection> Inout { get; internal set; }
-	    /// <summary>RETURNING dataname.</summary>
-	    public SyntaxProperty<ParameterPassingDirection> Returning { get; internal set; }
+         // PROFILE
+        /////////////
+        public ParametersProfile Profile { get; private set; }
+        /// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
+        public SyntaxProperty<ParameterPassingDirection> Input { get; internal set; }
+        /// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
+        public SyntaxProperty<ParameterPassingDirection> Output { get; internal set; }
+        /// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
+        public SyntaxProperty<ParameterPassingDirection> Inout { get; internal set; }
+        /// <summary>RETURNING dataname.</summary>
+        public SyntaxProperty<ParameterPassingDirection> Returning { get; internal set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
@@ -66,13 +66,13 @@ namespace TypeCobol.Compiler.CodeElements {
     public enum AccessModifier {
         Local,
         Public,
-	    Private,
+        Private,
     }
 
     public enum FunctionType: int {
-	    Undefined = 0,
-	    Function  = 1,
-	    Procedure = 2,
+        Undefined = 0,
+        Function  = 1,
+        Procedure = 2,
     }
 
     public class TypeInfo
@@ -212,32 +212,32 @@ namespace TypeCobol.Compiler.CodeElements {
 
     public class ParametersProfile: CodeElement, IVisitable, IEquatable<ParametersProfile>
     {
-	    public IList<ParameterDescriptionEntry> InputParameters { get; set; }
-	    public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
-	    public IList<ParameterDescriptionEntry> OutputParameters { get; set; }
-	    public ParameterDescriptionEntry ReturningParameter { get; set; }
+        public IList<ParameterDescriptionEntry> InputParameters { get; set; }
+        public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
+        public IList<ParameterDescriptionEntry> OutputParameters { get; set; }
+        public ParameterDescriptionEntry ReturningParameter { get; set; }
 
-	    public ParametersProfile() : base(CodeElementType.ParametersProfile) {
+        public ParametersProfile() : base(CodeElementType.ParametersProfile) {
 		    InputParameters = new List<ParameterDescriptionEntry>();
 		    InoutParameters = new List<ParameterDescriptionEntry>();
 		    OutputParameters = new List<ParameterDescriptionEntry>();
 		    ReturningParameter = null;
 	    }
 
-	    public IList<ParameterDescriptionEntry> Parameters {
-		    get {
+        public IList<ParameterDescriptionEntry> Parameters {
+            get {
 			    var parameters = new List<ParameterDescriptionEntry>();
 			    parameters.AddRange(InputParameters);
 			    parameters.AddRange(InoutParameters);
 			    parameters.AddRange(OutputParameters);
 			    return parameters;
 		    }
-	    }
+        }
 
-	    /// <summary>TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS</summary>
-	    public bool IsFunction  { get { return InoutParameters.Count < 1 && OutputParameters.Count < 1; } }
-	    /// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
-	    public bool IsProcedure { get { return ReturningParameter == null; } }
+        /// <summary>TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS</summary>
+        public bool IsFunction  { get { return InoutParameters.Count < 1 && OutputParameters.Count < 1; } }
+        /// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
+        public bool IsProcedure { get { return ReturningParameter == null; } }
 
         public override bool Equals(object other)
         {
@@ -306,11 +306,11 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public class Passing {
-	    public SyntaxProperty<ParameterPassingDirection> PassingMode { get; set; }
+        public SyntaxProperty<ParameterPassingDirection> PassingMode { get; set; }
     }
 
     public class FunctionDeclarationEnd: CodeElement {
-	    public FunctionDeclarationEnd(): base(CodeElementType.FunctionDeclarationEnd) { }
+        public FunctionDeclarationEnd(): base(CodeElementType.FunctionDeclarationEnd) { }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);

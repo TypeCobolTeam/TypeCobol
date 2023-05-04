@@ -3,13 +3,13 @@ using System.IO;
 
 namespace TypeCobol.Test {
 
-	[TestClass]
-	public class ThirdParty
+    [TestClass]
+    public class ThirdParty
     {
         [TestMethod]
-		[TestCategory("Parsing")]
-		[TestProperty("Time","long")]
-		public void CNAF() {
+        [TestCategory("Parsing")]
+        [TestProperty("Time","long")]
+        public void CNAF() {
 			string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch";
 			string root = PlatformUtils.GetPathForProjectFile(samples);
             GrammarTest.CheckTests(root, @"CNAFTest", @"CNAF.txt", codegen: false, ignoreWarningDiag: true, regex: "*");

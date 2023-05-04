@@ -461,14 +461,14 @@ namespace TypeCobol.Compiler.Directives
 #endif
 
         public override string ToString() {
-			var str = new StringBuilder(Type.ToString());
-			if (Suppress) str.Append(".SUPPRESS");
-			if (!String.IsNullOrEmpty(TextName))
-				str.Append(" " + TextName);
+            var str = new StringBuilder(Type.ToString());
+            if (Suppress) str.Append(".SUPPRESS");
+            if (!String.IsNullOrEmpty(TextName))
+                str.Append(" " + TextName);
             if(!String.IsNullOrEmpty(LibraryName))
-				str.Append(".OF(" + LibraryName + ")");
-			foreach (var replace in ReplaceOperations)
-				str.Append(" <").Append(replace).Append('>');
+                str.Append(".OF(" + LibraryName + ")");
+            foreach (var replace in ReplaceOperations)
+                str.Append(" <").Append(replace).Append('>');
             return str.ToString();
         }
     }
@@ -682,12 +682,12 @@ namespace TypeCobol.Compiler.Directives
         public abstract IList<Token> GetComparisonTokens();
         public abstract IList<Token> GetReplacementTokens();
 
-		protected static string NoQuotes(Token token) {
+        protected static string NoQuotes(Token token) {
 			if (token == null) return "?";
 			return token.SourceText.Trim('\"').Trim('\'');
 		}
 
-		public override string ToString() {
+        public override string ToString() {
 			return "REPLACE["+Type+"] "+NoQuotes(ComparisonToken);
 		}
     }
@@ -798,9 +798,9 @@ namespace TypeCobol.Compiler.Directives
         public override string ToString() {
 			var str = new StringBuilder();
 			if (ReplacementTokens != null) {
-				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
-				if (ReplacementTokens.Length > 0) str.Length -= 1;
-			}
+                foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
+                if (ReplacementTokens.Length > 0) str.Length -= 1;
+            }
 			return base.ToString()+" BY "+str.ToString();
 		}
     }
@@ -848,9 +848,9 @@ namespace TypeCobol.Compiler.Directives
 			foreach(var token in FollowingComparisonTokens) str.Append(',').Append(NoQuotes(token));
 			str.Append(" BY ");
 			if (ReplacementTokens != null) {
-				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
-				if (ReplacementTokens.Length > 0) str.Length -= 1;
-			}
+                foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
+                if (ReplacementTokens.Length > 0) str.Length -= 1;
+            }
 			return str.ToString();
 		}
     }
@@ -1067,11 +1067,11 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; private set; }
 
-		public override string ToString() {
+        public override string ToString() {
             var str = new StringBuilder();
 			if (ReplaceOperations.Count > 0) str.Append(' ');
 			foreach (var replace in ReplaceOperations)
-				str.Append('<').Append(replace.ToString()).Append("> ");
+                str.Append('<').Append(replace.ToString()).Append("> ");
 			return Type.ToString()+str.ToString();
 		}
     }
