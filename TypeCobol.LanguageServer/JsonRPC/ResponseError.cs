@@ -20,7 +20,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// <summary>
         /// A string providing a short decription of the error.
         /// </summary>
-        public string message { get; set; }
+	    public string message { get; set; }
 
         /// <summary>
         ///  A Primitive or Structured value that contains additional information about the error.

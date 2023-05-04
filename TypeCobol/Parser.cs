@@ -17,8 +17,8 @@ using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol
 {
-    public class Parser
-    {
+	public class Parser
+	{
         public static readonly string Version;
 
         static Parser()
@@ -31,10 +31,10 @@ namespace TypeCobol
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
-        /// <summary>Optional custom symbol table to use for name and type resolution.</summary>
-        public SymbolTable CustomSymbols = null;
+		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
+		public SymbolTable CustomSymbols = null;
 
-        public Parser() {
+		public Parser() {
 			Inits = new Dictionary<string,bool>();
 			Compilers = new Dictionary<string,FileCompiler>();
 		}
@@ -44,11 +44,11 @@ namespace TypeCobol
             CustomSymbols = custmSymbols;
         }
 
-        private static DocumentFormat GetFormat(string filename) {
+		private static DocumentFormat GetFormat(string filename) {
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-        public void Init([NotNull] string path, bool isCopy, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
+		public void Init([NotNull] string path, bool isCopy, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
@@ -56,13 +56,13 @@ namespace TypeCobol
 			if (format == null) format = GetFormat(path);
             
             CompilationProject project = new CompilationProject(path, root.FullName, Helpers.DEFAULT_EXTENSIONS,
-                format, options, analyzerProvider);
+				format, options, analyzerProvider);
 			//Add copy folder into sourceFileProvider
 			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
 			copies = copies ?? new List<string>();
 			foreach (var folder in copies) {
-                sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
-            }
+				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+			}
 			compiler = new FileCompiler(null, filename, format.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, CustomSymbols, project);
             
 			Compilers.Add(path, compiler);
@@ -70,8 +70,8 @@ namespace TypeCobol
 		}
 
 
-        public void Parse(string path)
-        {
+		public void Parse(string path)
+		{
             if (!Compilers.TryGetValue(path, out Compiler))
             {
                 throw new InvalidOperationException($"Parser error: compiler for path '{path}' has not been initialized.");
@@ -83,9 +83,9 @@ namespace TypeCobol
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
 
             try { Compiler.CompileOnce(); }
-            catch(Exception ex) {
+			catch(Exception ex) {
                 throw new ParsingException(MessageCode.SyntaxErrorInParser, ex.Message, path, ex);
-            }
+			}
 
 		    MissingCopys = Compiler.CompilationResultsForProgram.MissingCopies;
 
@@ -93,47 +93,47 @@ namespace TypeCobol
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;
 		}
 
-        private void OnCodeElementLine(object sender, DocumentChangedEvent<ICodeElementsLine> e)
-        {
+		private void OnCodeElementLine(object sender, DocumentChangedEvent<ICodeElementsLine> e)
+		{
 			System.Console.WriteLine("+++ OnCodeElementLine(..):");
 			int c = 0;
 			if (e.DocumentChanges != null)
-            foreach(var change in e.DocumentChanges) {
-                System.Console.WriteLine(" - "+change.Type+"@"+change.LineIndex);
-                if (change.NewLine == null) System.Console.WriteLine("Line NIL");
-                else
-                if (change.NewLine.CodeElements == null) System.Console.WriteLine("CodeElements NIL");
-                else {
-                    int i = 0;
-                    foreach(var ce in change.NewLine.CodeElements) {
-                        System.Console.WriteLine("   - "+ce);
-                        i++;
-                    }
-                    System.Console.WriteLine("   "+i+" CodeElements");
-                }
-                c++;
-            }
+			foreach(var change in e.DocumentChanges) {
+				System.Console.WriteLine(" - "+change.Type+"@"+change.LineIndex);
+				if (change.NewLine == null) System.Console.WriteLine("Line NIL");
+				else
+				if (change.NewLine.CodeElements == null) System.Console.WriteLine("CodeElements NIL");
+				else {
+					int i = 0;
+					foreach(var ce in change.NewLine.CodeElements) {
+						System.Console.WriteLine("   - "+ce);
+						i++;
+					}
+					System.Console.WriteLine("   "+i+" CodeElements");
+				}
+				c++;
+			}
 			System.Console.WriteLine("+++ --> "+(c>0?(""+c):(e.DocumentChanges==null?"?":"0"))+" changes");
 		}
 
-        private void OnTextLine(object sender, DocumentChangedEvent<ICobolTextLine> e)
-        {
+		private void OnTextLine(object sender, DocumentChangedEvent<ICobolTextLine> e)
+		{
 			System.Console.WriteLine("--- OnTextLine(..):");
 			int c = 0;
 			if (e.DocumentChanges != null)
-            foreach(var change in e.DocumentChanges) {
-                System.Console.Write(" + "+change.Type+"@"+change.LineIndex+": ");
-                if (change.NewLine == null) System.Console.WriteLine("?");
-                else System.Console.WriteLine("\""+change.NewLine.SourceText+"\"");
-                c++;
-            }
+			foreach(var change in e.DocumentChanges) {
+				System.Console.Write(" + "+change.Type+"@"+change.LineIndex+": ");
+				if (change.NewLine == null) System.Console.WriteLine("?");
+				else System.Console.WriteLine("\""+change.NewLine.SourceText+"\"");
+				c++;
+			}
 			System.Console.WriteLine("--- --> "+(c>0?(""+c):(e.DocumentChanges==null?"?":"0"))+" changes");
 		}
 
 
-        public CompilationUnit Results {
-            get { return Compiler.CompilationResultsForProgram; }
-        }
+		public CompilationUnit Results {
+			get { return Compiler.CompilationResultsForProgram; }
+		}
 
         public static Parser Parse(string path, bool isCopy, TypeCobolOptions options, DocumentFormat format, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null)
         {
@@ -143,5 +143,5 @@ namespace TypeCobol
             parser.Parse(path);
 			return parser;
 		}
-    }
+	}
 }

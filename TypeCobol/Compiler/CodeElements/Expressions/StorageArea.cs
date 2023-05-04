@@ -112,19 +112,19 @@ namespace TypeCobol.Compiler.CodeElements
         FunctionCallResult // allocated on reference
     }
 
-    /// <summary>
-    /// Storage area for a data symbol or condition symbol defined in the program.
-    /// Also used for the storage area allocated by the compiler for the implicitely 
-    /// defined special registers (see list in a comment just below).
-    /// </summary>
-    public class DataOrConditionStorageArea: StorageArea {
+	/// <summary>
+	/// Storage area for a data symbol or condition symbol defined in the program.
+	/// Also used for the storage area allocated by the compiler for the implicitely 
+	/// defined special registers (see list in a comment just below).
+	/// </summary>
+	public class DataOrConditionStorageArea: StorageArea {
         public DataOrConditionStorageArea(SymbolReference symbolReference, bool isPartOfFunctionArgument)
             : this(symbolReference, new SubscriptExpression[0], isPartOfFunctionArgument)
         {
 
         }
 
-        public DataOrConditionStorageArea(SymbolReference symbolReference, SubscriptExpression[] subscripts, bool isPartOfFunctionArgument)
+		public DataOrConditionStorageArea(SymbolReference symbolReference, SubscriptExpression[] subscripts, bool isPartOfFunctionArgument)
             : base(StorageAreaKind.DataOrCondition)
         {
 			SymbolReference = symbolReference;
@@ -135,7 +135,7 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsPartOfFunctionArgument { get; }
 
         [NotNull]
-        public SubscriptExpression[] Subscripts { get; }
+		public SubscriptExpression[] Subscripts { get; }
 
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
@@ -143,7 +143,7 @@ namespace TypeCobol.Compiler.CodeElements
                 && this.ContinueVisitToChildren(astVisitor, Subscripts);
         }
 
-        public override string ToString() {
+	    public override string ToString() {
 			return ToString(false);
 		}
 
@@ -195,17 +195,17 @@ namespace TypeCobol.Compiler.CodeElements
             return str.ToString();
         }
 
-        private string GetExpressionToAppend(ArithmeticExpression expression)
-        {
+	    private string GetExpressionToAppend(ArithmeticExpression expression)
+	    {
 	        if (expression == null)
-                return string.Empty;
+	            return string.Empty;
 	        var expressionToAppend = expression.ToString();
 	        if (expression.NodeType == ExpressionNodeType.NumericVariable &&
-                (expression as NumericVariableOperand)?.NumericVariable.MainSymbolReference != null)
-            {
-                expressionToAppend = ((NumericVariableOperand) expression).NumericVariable
-                    .MainSymbolReference.ToString();
-            }
+	            (expression as NumericVariableOperand)?.NumericVariable.MainSymbolReference != null)
+	        {
+	            expressionToAppend = ((NumericVariableOperand) expression).NumericVariable
+	                .MainSymbolReference.ToString();
+	        }
 
 	        return expressionToAppend;
 	    }
@@ -252,16 +252,16 @@ namespace TypeCobol.Compiler.CodeElements
 
     /// <summary>Subscript used to reference a specific table element</summary>
     public class SubscriptExpression : IVisitable {
-        public SubscriptExpression(ArithmeticExpression numericExpression) {
+	    public SubscriptExpression(ArithmeticExpression numericExpression) {
 		    NumericExpression = numericExpression;
 	    }
 
-        public SubscriptExpression(Token allToken) {
+	    public SubscriptExpression(Token allToken) {
 		    ALL = new SyntaxProperty<bool>(true, allToken);
 	    }
 
-        public ArithmeticExpression NumericExpression { get; private set; }
-        public SyntaxProperty<bool> ALL { get; private set; }
+	    public ArithmeticExpression NumericExpression { get; private set; }
+	    public SyntaxProperty<bool> ALL { get; private set; }
 
 
         public override string ToString() {
@@ -276,13 +276,13 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    /// <summary>Storage area for an index</summary>
-    public class IndexStorageArea : StorageArea {
+	/// <summary>Storage area for an index</summary>
+	public class IndexStorageArea : StorageArea {
         public IndexStorageArea(SymbolReference indexNameReference): base(StorageAreaKind.Index) {
 			SymbolReference = indexNameReference;
         }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
 	    }
     }
@@ -301,9 +301,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// Specific storage area allocated by the compiler to hold
     /// a property describing another storage area
     /// </summary>
-    public class StorageAreaPropertySpecialRegister: StorageArea {
+	public class StorageAreaPropertySpecialRegister: StorageArea {
         public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference)
-                : base(StorageAreaKind.StorageAreaPropertySpecialRegister) {
+				: base(StorageAreaKind.StorageAreaPropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
 			OtherStorageAreaReference = storageAreaReference;
             
@@ -313,13 +313,13 @@ namespace TypeCobol.Compiler.CodeElements
             SymbolReference = new SymbolReference(DataDescriptionEntry.DataName);
         }
 
-        public Token SpecialRegisterName { get; private set; }
+		public Token SpecialRegisterName { get; private set; }
 
-        public StorageArea OtherStorageAreaReference { get; private set; }
+		public StorageArea OtherStorageAreaReference { get; private set; }
 
         /// <summary>
         /// A mention to this kind of special register in the code is both a storage area definition
-        /// and a reference to the same storage area
+		/// and a reference to the same storage area
         /// </summary>
         public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
 
@@ -347,13 +347,13 @@ namespace TypeCobol.Compiler.CodeElements
 		}
     }
 
-    /// <summary>
-    /// Specific storage area allocated by the compiler to hold
-    /// a property describing another storage area
-    /// </summary>
-    public class FilePropertySpecialRegister : StorageArea {
+	/// <summary>
+	/// Specific storage area allocated by the compiler to hold
+	/// a property describing another storage area
+	/// </summary>
+	public class FilePropertySpecialRegister : StorageArea {
         public FilePropertySpecialRegister(Token specialRegisterName, [NotNull] SymbolReference fileNameReference)
-                : base(StorageAreaKind.FilePropertySpecialRegister) {
+				: base(StorageAreaKind.FilePropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
 			FileNameReference = fileNameReference;
 
@@ -363,13 +363,13 @@ namespace TypeCobol.Compiler.CodeElements
 
         }
 
-        public Token SpecialRegisterName { get; private set; }
+		public Token SpecialRegisterName { get; private set; }
 
-        public SymbolReference FileNameReference { get; private set; }
+		public SymbolReference FileNameReference { get; private set; }
 
         /// <summary>
         /// A mention to this kind of special register in the code is both a storage area definition
-        /// and a reference to the same storage area
+		/// and a reference to the same storage area
         /// </summary>
         public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
 
@@ -380,18 +380,18 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    /// <summary>
-    /// Call to a Cobol intrinsic function OR a TypeCobol user defined function.
-    ///  AND
-    /// Storage area allocated by the compiler to hold the result of the call.
-    /// </summary>
-    public class FunctionCallResult : StorageArea {
+	/// <summary>
+	/// Call to a Cobol intrinsic function OR a TypeCobol user defined function.
+	///  AND
+	/// Storage area allocated by the compiler to hold the result of the call.
+	/// </summary>
+	public class FunctionCallResult : StorageArea {
 
         // Static counter which will only increase during a compilation session
         private static int callSiteCounter;
 
         public FunctionCallResult(FunctionCall functionCall)
-                : base(StorageAreaKind.FunctionCallResult) {
+				: base(StorageAreaKind.FunctionCallResult) {
 			FunctionCall = functionCall;
 
             // This is both a storage area definition and a reference to the same storage area
@@ -402,7 +402,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         /// <summary>
         /// Each individual function call site in the code is both a storage area definition
-        /// and a reference to the same storage area
+		/// and a reference to the same storage area
         /// </summary>
         public FunctionCallResultDescriptionEntry DataDescriptionEntry { get; private set; }
  
@@ -411,11 +411,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public FunctionCall FunctionCall { get; private set; }
 
-        public override bool NeedDeclaration {
-            get { return FunctionCall.NeedDeclaration; }
-        }
+	    public override bool NeedDeclaration {
+	        get { return FunctionCall.NeedDeclaration; }
+	    }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, FunctionCall, DataDescriptionEntry);
@@ -431,14 +431,14 @@ namespace TypeCobol.Compiler.CodeElements
             Arguments = arguments;
         }
 
-        public FunctionCallType Type { get; private set; }
+	    public FunctionCallType Type { get; private set; }
         [CanBeNull]
-        public abstract string FunctionName { get; }
+	    public abstract string FunctionName { get; }
         [CanBeNull]
         public abstract string Namespace { get; }
         [CanBeNull]
         public abstract Token FunctionNameToken { get; }
-        public virtual CallSiteParameter[] Arguments { get; private set; }
+	    public virtual CallSiteParameter[] Arguments { get; private set; }
 
         public virtual IProfile BuildProfile(Node node)
         {
@@ -456,7 +456,7 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 
-        protected class ArgumentsProfile : IProfile
+	    protected class ArgumentsProfile : IProfile
         {
             private static readonly TypeInfo _Unknown = new TypeInfo() { DataType = DataType.Unknown };
             private static readonly TypeInfo _Omitted = new TypeInfo() { DataType = DataType.Omitted };
@@ -526,17 +526,17 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    /// <summary>Call to an intrinsic function</summary>
-    public class IntrinsicFunctionCall: FunctionCall {
-        public IntrinsicFunctionCall([CanBeNull] ExternalName intrinsicFunctionName, CallSiteParameter[] arguments)
-            : base(FunctionCallType.IntrinsicFunctionCall, arguments) {
+	/// <summary>Call to an intrinsic function</summary>
+	public class IntrinsicFunctionCall: FunctionCall {
+		public IntrinsicFunctionCall([CanBeNull] ExternalName intrinsicFunctionName, CallSiteParameter[] arguments)
+			: base(FunctionCallType.IntrinsicFunctionCall, arguments) {
 			IntrinsicFunctionName = intrinsicFunctionName;
 		}
 
         [CanBeNull]
         public ExternalName IntrinsicFunctionName { get; private set; }
         public override string FunctionName { get { return IntrinsicFunctionName?.Name; } }
-        public override Token FunctionNameToken { get { return IntrinsicFunctionName?.NameLiteral.Token; } }
+		public override Token FunctionNameToken { get { return IntrinsicFunctionName?.NameLiteral.Token; } }
 
         public override bool NeedDeclaration
         {
@@ -557,17 +557,17 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    /// <summary>Call to a TypeCobol user defined function</summary>
-    public class UserDefinedFunctionCall: FunctionCall {
-        public UserDefinedFunctionCall([CanBeNull] SymbolReference functionName, CallSiteParameter[] arguments)
-            : base(FunctionCallType.UserDefinedFunctionCall, arguments) {
+	/// <summary>Call to a TypeCobol user defined function</summary>
+	public class UserDefinedFunctionCall: FunctionCall {
+		public UserDefinedFunctionCall([CanBeNull] SymbolReference functionName, CallSiteParameter[] arguments)
+			: base(FunctionCallType.UserDefinedFunctionCall, arguments) {
 			UserDefinedFunctionName = functionName;
 		}
 
         [CanBeNull]
         public SymbolReference UserDefinedFunctionName { get; private set;  }
-        public override string FunctionName { get { return UserDefinedFunctionName?.Name; } }
-        public override Token FunctionNameToken { get { return UserDefinedFunctionName?.NameLiteral.Token; } }
+		public override string FunctionName { get { return UserDefinedFunctionName?.Name; } }
+		public override Token FunctionNameToken { get { return UserDefinedFunctionName?.NameLiteral.Token; } }
 
         public override string Namespace { get { return (UserDefinedFunctionName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference)UserDefinedFunctionName).Tail.Name; } }
 
@@ -579,9 +579,9 @@ namespace TypeCobol.Compiler.CodeElements
         
     }
 
-    public class ProcedureCall: FunctionCall {
-        public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
-            : base(FunctionCallType.UserDefinedFunctionCall, null) {
+	public class ProcedureCall: FunctionCall {
+		public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
+			: base(FunctionCallType.UserDefinedFunctionCall, null) {
 			ProcedureName = name;
 			
             InputParameters = inputs ?? new List<CallSiteParameter>();
@@ -590,26 +590,26 @@ namespace TypeCobol.Compiler.CodeElements
 
 		}
 
-        public SymbolReference ProcedureName { get; private set; }
-        public override string FunctionName { get { return ProcedureName.Name; } }
-        public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
+		public SymbolReference ProcedureName { get; private set; }
+		public override string FunctionName { get { return ProcedureName.Name; } }
+		public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
         
         public List<CallSiteParameter> InputParameters { get; private set; }
         public List<CallSiteParameter> InoutParameters { get; private set; }
         public List<CallSiteParameter> OutputParameters { get; private set; }
        
-        private List<CallSiteParameter> _cache;
-        public override CallSiteParameter[] Arguments {
-            get {
+		private List<CallSiteParameter> _cache;
+		public override CallSiteParameter[] Arguments {
+			get {
 				if (_cache == null) {
-                    _cache = new List<CallSiteParameter>();
-                    _cache.AddRange(InputParameters);
-                    _cache.AddRange(InoutParameters);
-                    _cache.AddRange(OutputParameters);
-                }
+					_cache = new List<CallSiteParameter>();
+					_cache.AddRange(InputParameters);
+					_cache.AddRange(InoutParameters);
+					_cache.AddRange(OutputParameters);
+				}
 				return _cache.ToArray();
 			}
-        }
+		}
 
         public override string Namespace { get { return (ProcedureName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference) ProcedureName).Tail.Name; } }
 
@@ -617,7 +617,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return ArgumentsProfile.Create(node, InputParameters, InoutParameters, OutputParameters);
         }
-        
+		
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -627,17 +627,17 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    public enum FunctionCallType {
-        IntrinsicFunctionCall,
-        UserDefinedFunctionCall
-    }
+	public enum FunctionCallType {
+		IntrinsicFunctionCall,
+		UserDefinedFunctionCall
+	}
 
-    public class GroupCorrespondingImpact : IVisitable {
-        public StorageArea SendingGroupItem { get; set; }
-        public StorageArea ReceivingGroupItem { get; set; }
-        public bool ReceivingGroupIsAlsoSending { get; set; }
-        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	public class GroupCorrespondingImpact : IVisitable {
+		public StorageArea SendingGroupItem { get; set; }
+		public StorageArea ReceivingGroupItem { get; set; }
+		public bool ReceivingGroupIsAlsoSending { get; set; }
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SendingGroupItem, ReceivingGroupItem);
 	    }
-    }
+	}
 }

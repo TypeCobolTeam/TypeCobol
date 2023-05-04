@@ -171,13 +171,13 @@ namespace TypeCobol.Compiler.Source
             at = Math.Max(0,at);
 
             foreach(Position m in this) {
-                if (m.TestFlag(Position.Flags.Locked))
-                    continue;
-                if (at < m.Pos && at + n >= m.Pos + m.Len)
+	            if (m.TestFlag(Position.Flags.Locked))
+	                continue;
+	            if (at < m.Pos && at + n >= m.Pos + m.Len)
+	                m.State = Position.States.Changed;
+	            else if (at >= m.Pos && at < m.Pos+m.Len)
                     m.State = Position.States.Changed;
-                else if (at >= m.Pos && at < m.Pos+m.Len)
-                    m.State = Position.States.Changed;
-                else if (at + n >= m.Pos && at + n < m.Pos+m.Len)
+	            else if (at + n >= m.Pos && at + n < m.Pos+m.Len)
                     m.State = Position.States.Changed;
             }
         }

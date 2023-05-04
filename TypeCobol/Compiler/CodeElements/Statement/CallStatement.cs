@@ -202,8 +202,8 @@ namespace TypeCobol.Compiler.CodeElements
         //public SymbolReferenceVariable ProcdurePointerOrTCProcedureFunction { get; set; }
 
     public ProcedureStyleCallStatement(ProcedureCall call)
-        : base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
-    {
+		: base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
+	{
 		this.ProcedureCall = call;
 	}
         public ProcedureStyleCallStatement()

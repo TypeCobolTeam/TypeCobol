@@ -330,12 +330,12 @@ namespace TypeCobol.Compiler.CodeModel
         /// Example for this algorithm (USE-CASE)
         //  Regarding to the following context
 
-        //  01 FinalVar TYPE Bool.
-        //  01 MyType TYPEDEF STRICT.
-        //      05 FinalVar TYPE Bool.
+        //	01 FinalVar TYPE Bool.
+        //	01 MyType TYPEDEF STRICT.
+        //		05 FinalVar TYPE Bool.
 
-        //  01 MyGroup.
-        //      05 TypedVar TYPE MyType.
+        //	01 MyGroup.
+        //		05 TypedVar TYPE MyType.
 
         //    SET TypedVar::FinalVar TO TRUE.
 

@@ -3,28 +3,28 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements {
 
-    using JetBrains.Annotations;
-    using System.Collections.Generic;
+	using JetBrains.Annotations;
+	using System.Collections.Generic;
 
     /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
     public abstract class MoveStatement : StatementElement, VariableWriter
     {
         protected MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
     // [TYPECOBOL]
-        public SyntaxProperty<bool> Unsafe { get; set; }
-        public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
+	    public SyntaxProperty<bool> Unsafe { get; set; }
+	    public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
     // [/TYPECOBOL]
 
-        protected IDictionary<StorageArea, object> variables;
-        protected FunctionCall _functions = null;
+	    protected IDictionary<StorageArea, object> variables;
+	    protected FunctionCall _functions = null;
 
         public abstract IDictionary<StorageArea, object> Variables { get; }
-        public virtual  IDictionary<StorageArea,object> VariablesWritten {
-            [NotNull]
-            get {
+	    public virtual  IDictionary<StorageArea,object> VariablesWritten {
+		    [NotNull]
+		    get {
 			    return Variables;
 		    }
-        }
+	    }
 
         public abstract FunctionCall FunctionCall { get; }
         
@@ -51,8 +51,8 @@ namespace TypeCobol.Compiler.CodeElements {
     /// MOVE statement. See “Elementary moves” on page 370 and “Group moves” on page 374 below.
     /// </summary>
     public class MoveSimpleStatement : MoveStatement {
-        public MoveSimpleStatement(Variable sendingVariable, ReceivingStorageArea[] receivingStorageAreas, BooleanValue sendingBoolean)
-                : base(StatementType.MoveSimpleStatement) {
+	    public MoveSimpleStatement(Variable sendingVariable, ReceivingStorageArea[] receivingStorageAreas, BooleanValue sendingBoolean)
+			    : base(StatementType.MoveSimpleStatement) {
 		    SendingVariable = sendingVariable;
 		    SendingBoolean = sendingBoolean;
             //StorageAreaWrites is set with receivingStorageAreas by CobolCodeElementBuilder
@@ -61,7 +61,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// <summary>The sending area.</summary>
         public Variable SendingVariable { get; private set; }
     // [TYPECOBOL]
-        public BooleanValue SendingBoolean { get; private set; }
+	    public BooleanValue SendingBoolean { get; private set; }
     // [/TYPECOBOL]
         /// <summary>The receiving areas. Must not reference an intrinsic function.</summary>
         //public override IList<ReceivingStorageArea> StorageAreaWrites { get; set; }
@@ -71,53 +71,53 @@ namespace TypeCobol.Compiler.CodeElements {
                    && this.ContinueVisitToChildren(astVisitor, SendingVariable, SendingBoolean);
         }
 
-        public override IDictionary<StorageArea, object> Variables {
-            [NotNull]
-            get
-            {
+	    public override IDictionary<StorageArea, object> Variables {
+	        [NotNull]
+	        get
+	        {
 	            if (variables != null) return variables;
 	            variables = new Dictionary<StorageArea, object>();
 
 	            if (StorageAreaWrites != null)
-                {
-                    foreach (var writeStorage in StorageAreaWrites)
-                    {
-                        if (writeStorage?.StorageArea == null) continue;
+	            {
+	                foreach (var writeStorage in StorageAreaWrites)
+	                {
+	                    if (writeStorage?.StorageArea == null) continue;
 
-                        if (variables.ContainsKey(writeStorage.StorageArea))
-                            if (writeStorage.StorageArea is DataOrConditionStorageArea)
-                                continue; // same variable with (presumably) different subscript
-                            else throw new ArgumentException(writeStorage.StorageArea + " already written, but not subscripted?");
-                        else variables.Add(writeStorage.StorageArea, SendingItem);
-                    }
-                }
+	                    if (variables.ContainsKey(writeStorage.StorageArea))
+	                        if (writeStorage.StorageArea is DataOrConditionStorageArea)
+	                            continue; // same variable with (presumably) different subscript
+	                        else throw new ArgumentException(writeStorage.StorageArea + " already written, but not subscripted?");
+	                    else variables.Add(writeStorage.StorageArea, SendingItem);
+	                }
+	            }
 
 	            return variables;
 	        }
-        }
+	    }
         
 
         public object SendingItem {
-            [CanBeNull]
-            get {
+		    [CanBeNull]
+		    get {
 		        if (SendingVariable != null) {
-                    if (SendingVariable.IsLiteral) {
-                        if (SendingVariable.NumericValue != null) return SendingVariable.NumericValue.Value;
-                        if (SendingVariable.AlphanumericValue != null) return SendingVariable.AlphanumericValue.Value;
-                        throw new System.NotSupportedException();
-                    }
+				    if (SendingVariable.IsLiteral) {
+					    if (SendingVariable.NumericValue != null) return SendingVariable.NumericValue.Value;
+					    if (SendingVariable.AlphanumericValue != null) return SendingVariable.AlphanumericValue.Value;
+					    throw new System.NotSupportedException();
+				    }
                     if(SendingVariable.MainSymbolReference != null)
                         return new URI(SendingVariable.MainSymbolReference.Name);
                     return null;
-                }
+		        }
 		        if (SendingBoolean != null) return SendingBoolean.Value;
 		        return null;
 		    }
-        }
+	    }
 
-        public override FunctionCall FunctionCall {
-            [NotNull]
-            get {
+	    public override FunctionCall FunctionCall {
+		    [NotNull]
+		    get {
 			    if (_functions != null) return _functions;
 
 			    FunctionCallResult sending = null;
@@ -125,7 +125,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		        if (sending != null) return sending.FunctionCall;
 			    return _functions;
 		    }
-        }
+	    }
     }
 
     /// <summary>
@@ -141,19 +141,19 @@ namespace TypeCobol.Compiler.CodeElements {
     /// statement.
     /// </summary>
     public class MoveCorrespondingStatement : MoveStatement {
-        public MoveCorrespondingStatement() : base(StatementType.MoveCorrespondingStatement) { }
+	    public MoveCorrespondingStatement() : base(StatementType.MoveCorrespondingStatement) { }
 
-        /// <summary>
-        /// identifier-1
-        /// The sending group item.
-        /// </summary>
-        public DataOrConditionStorageArea FromGroupItem { get; set; }
+	    /// <summary>
+	    /// identifier-1
+	    /// The sending group item.
+	    /// </summary>
+	    public DataOrConditionStorageArea FromGroupItem { get; set; }
 
-        /// <summary>
-        /// identifier-2
-        /// The receiving group item.
-        /// </summary>
-        public DataOrConditionStorageArea ToGroupItem { get; set; }
+	    /// <summary>
+	    /// identifier-2
+	    /// The receiving group item.
+	    /// </summary>
+	    public DataOrConditionStorageArea ToGroupItem { get; set; }
 
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
@@ -162,23 +162,23 @@ namespace TypeCobol.Compiler.CodeElements {
         }
 
         public override IDictionary<StorageArea, object> Variables {
-            [NotNull]
-            get {
+		    [NotNull]
+		    get {
 			    if (variables != null) return variables;
 
 			    variables = new Dictionary<StorageArea, object>();
 		        if (ToGroupItem != null)
-                    variables.Add(ToGroupItem, FromGroupItem);
+		            variables.Add(ToGroupItem, FromGroupItem);
                 return variables;
 		    }
-        }
+	    }
 
-        public override FunctionCall FunctionCall {
-            [NotNull]
-            get {
+	    public override FunctionCall FunctionCall {
+		    [NotNull]
+		    get {
                 return _functions;
 		    }
-        }
+	    }
     }
 
 

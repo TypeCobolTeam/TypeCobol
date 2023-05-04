@@ -84,8 +84,8 @@
 			sb.AppendLine("- IsRecursive = " + IsRecursive);
 			sb.AppendLine("- IsCommon = " + IsCommon);
 			if (AuthoringProperties != null) {
-                sb.Append(AuthoringProperties);
-            }
+				sb.Append(AuthoringProperties);
+			}
 			return sb.ToString();
 		}
     }
@@ -93,8 +93,8 @@
 
 
 public class LibraryCopyCodeElement: CodeElement {
-    public LibraryCopyCodeElement(): base(CodeElementType.LibraryCopy) { }
-    public ExternalName Name { get; set; }
+	public LibraryCopyCodeElement(): base(CodeElementType.LibraryCopy) { }
+	public ExternalName Name { get; set; }
 }
 
 }

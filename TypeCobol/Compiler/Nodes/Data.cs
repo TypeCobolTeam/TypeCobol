@@ -20,10 +20,10 @@ namespace TypeCobol.Compiler.Nodes {
     public class DataDivision: GenericNode<DataDivisionHeader>, Parent<DataSection> {
 
         public const string NODE_ID = "data-division";
-        public DataDivision(DataDivisionHeader header): base(header) { }
-        public override string ID { get { return NODE_ID; } }
+	    public DataDivision(DataDivisionHeader header): base(header) { }
+	    public override string ID { get { return NODE_ID; } }
 
-        public override void Add(Node child, int index = -1) {
+	    public override void Add(Node child, int index = -1) {
 		    if (index <= 0) index = WhereShouldIAdd(child.GetType());
 		    base.Add(child,index);
 	    }
@@ -61,8 +61,8 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
         public abstract class DataSection: GenericNode<DataSectionHeader>, Child<DataDivision>{
-        protected DataSection(DataSectionHeader header): base(header) { }
-        public virtual bool IsShared { get { return false; } }
+	    protected DataSection(DataSectionHeader header): base(header) { }
+	    public virtual bool IsShared { get { return false; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -70,8 +70,8 @@ namespace TypeCobol.Compiler.Nodes {
     }
     public class FileSection: DataSection {
         public FileSection(FileSectionHeader header): base(header) { }
-        public override string ID { get { return "file"; } }
-        public override bool IsShared { get { return true; } }
+	    public override string ID { get { return "file"; } }
+	    public override bool IsShared { get { return true; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
@@ -131,7 +131,7 @@ namespace TypeCobol.Compiler.Nodes {
     }
     public class LocalStorageSection: DataSection, Parent<DataDefinition>
         {
-        public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
+	    public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
 
         public override IEnumerable<ITextLine> Lines
         {
@@ -163,7 +163,7 @@ namespace TypeCobol.Compiler.Nodes {
     }
     public class LinkageSection: DataSection, Parent<DataDefinition>
     {
-        public LinkageSection(LinkageSectionHeader header): base(header) { }
+	    public LinkageSection(LinkageSectionHeader header): base(header) { }
 
         public override IEnumerable<ITextLine> Lines
         {
@@ -188,7 +188,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
         public override string ID { get { return "linkage"; } }
-        public override bool IsShared { get { return true; } }
+	    public override bool IsShared { get { return true; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
@@ -950,7 +950,7 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override DataUsage? Usage
         {
-            get { return DataUsage.Index; }
+	        get { return DataUsage.Index; }
         }
 
         public override long PhysicalLength

@@ -11,13 +11,13 @@ using System.Text;
 
 namespace TypeCobol.Test {
 
-    [TestClass]
-    public class GrammarTest {
-        [TestMethod]
-        [TestCategory("Parsing")]
-        [TestProperty("Time", "long")]
-        [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
-        public void CheckGrammarCorrectness() {
+	[TestClass]
+	public class GrammarTest {
+	    [TestMethod]
+	    [TestCategory("Parsing")]
+	    [TestProperty("Time", "long")]
+	    [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
+	    public void CheckGrammarCorrectness() {
 	        string regex = "*.PGM";
 	        string samples = @"Samples";
 	        string root = PlatformUtils.GetPathForProjectFile(samples);
@@ -25,14 +25,14 @@ namespace TypeCobol.Test {
         }
 
         private static void AppendTextToFiles(string tetxToAppend, params string[] files)
-        {
+	    {
 	        foreach (var file in files)
-            {
-                if (!string.IsNullOrEmpty(file))
-                {
-                    File.AppendAllText(file, tetxToAppend);
-                }
-            }
+	        {
+	            if (!string.IsNullOrEmpty(file))
+	            {
+	                File.AppendAllText(file, tetxToAppend);
+	            }
+	        }
 	            
 	    }
 
@@ -61,7 +61,7 @@ namespace TypeCobol.Test {
             //Initialize both files
             File.WriteAllText(timedResultFile, "");
 	        if (expectedResultFile != null)
-                File.WriteAllText(resultFile, "");
+	            File.WriteAllText(resultFile, "");
 
             int tested = 0, nbFilesInError = 0, ignores = 0;
 			TimeSpan parsingSumDuration = new TimeSpan(0);
@@ -71,19 +71,19 @@ namespace TypeCobol.Test {
 			int codegenDiff = 0;
 			foreach (var file in files) {
 
-                string filename = Path.GetFileName(file);
-                AppendTextToFiles((filename + ':'), timedResultFile, resultFile);
+				string filename = Path.GetFileName(file);
+			    AppendTextToFiles((filename + ':'), timedResultFile, resultFile);
 
                 bool ignore = include.Length > 0 && !include.Contains(filename);
-                if (!ignore) ignore = exclude.Contains(filename);
-                if (ignore) {
-                    ignores++;
-                    File.AppendAllText(timedResultFile, " ignored.\n");
+				if (!ignore) ignore = exclude.Contains(filename);
+				if (ignore) {
+					ignores++;
+					File.AppendAllText(timedResultFile, " ignored.\n");
                     continue;
-                }
-                string path = Path.Combine(rootFolder, filename);
-                Stopwatch watch = new Stopwatch();
-                watch.Start();
+				}
+				string path = Path.Combine(rootFolder, filename);
+				Stopwatch watch = new Stopwatch();
+				watch.Start();
                 var document = new TypeCobol.Parser();
 
                 //We assume here that all sources are programs (not copies)
@@ -92,11 +92,11 @@ namespace TypeCobol.Test {
                 
 
                 watch.Stop();
-                //TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
-                TimeSpan elapsed = watch.Elapsed;
-                parsingSumDuration += elapsed;
-                string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-                AppendTextToFiles(" parsed in " + formatted + "\n", timedResultFile);
+				//TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
+				TimeSpan elapsed = watch.Elapsed;
+				parsingSumDuration += elapsed;
+				string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
+			    AppendTextToFiles(" parsed in " + formatted + "\n", timedResultFile);
                 AppendTextToFiles("- " + document.Results.PerfStatsForText.FirstCompilationTime + " ms : text update\n", timedResultFile);
                 AppendTextToFiles("- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n", timedResultFile);
                 AppendTextToFiles("- " + document.Results.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor\n", timedResultFile);
@@ -115,29 +115,29 @@ namespace TypeCobol.Test {
                 {
                     diagnostics = diagnostics.Where(d => d.Info.Severity != Severity.Warning).ToList();
                 }
-                 
-                if (diagnostics.Any()) {
-                    okay = false;
-                    parseErrors += diagnostics.Count();
-                }
-                displayAndWriteErrorsToGrammarResult(diagnostics, timedResultFile, resultFile);
+			     
+			    if (diagnostics.Any()) {
+			        okay = false;
+			        parseErrors += diagnostics.Count();
+			    }
+			    displayAndWriteErrorsToGrammarResult(diagnostics, timedResultFile, resultFile);
 
                 
-                if (!okay) {
+				if (!okay) {
                     AppendTextToFiles("\n", timedResultFile, resultFile);
                     nbFilesInError++;
-                    if (nbFilesInError >= stopAfterAsManyErrors) break;
-                }
+					if (nbFilesInError >= stopAfterAsManyErrors) break;
+				}
 
-                if (codegen && okay) {
+			    if (codegen && okay) {
                     watch.Reset();
-                    watch.Start();
+			        watch.Start();
 
                     var writer = new StringWriter();
                     var generatedCobolStringBuilder = new StringBuilder();
-                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, null);
-                    var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-                    generator.Generate(document.Results, columns);
+			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, null);
+			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
+			        generator.Generate(document.Results, columns);
                     writer.Write(generatedCobolStringBuilder);
                     writer.Close();
 
@@ -156,9 +156,9 @@ namespace TypeCobol.Test {
                     }
                     
                     //Error during generation, no need to check the content of generated Cobol
-                    if (parsingDiags != null && parsingDiags.Any()) {
+			        if (parsingDiags != null && parsingDiags.Any()) {
 
-                        codegenErrors += parsingDiags.Count();
+			            codegenErrors += parsingDiags.Count();
                         displayAndWriteErrorsToGrammarResult(parsingDiags, timedResultFile, resultFile);
                         nbFilesInError++;
                         if (nbFilesInError >= stopAfterAsManyErrors) break;
@@ -219,7 +219,7 @@ namespace TypeCobol.Test {
                         }
                     }
                 }
-            }
+			}
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;
             string parsingTotalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", parsingSumDuration.Minutes, parsingSumDuration.Seconds, parsingSumDuration.Milliseconds);
             
@@ -237,7 +237,7 @@ namespace TypeCobol.Test {
             AppendTextToFiles(message, timedResultFile);
 			if (nbFilesInError > 0 && expectedResultFile == null) Assert.Fail('\n'+message); //If no expectedFile to compare throw assert if error
             else if (expectedResultFile != null) //If expectedFileResult exists compare the DefaultGeneratedFile with expectedFile
-            {
+			{
                 StreamReader expectedResultReader = new StreamReader(new FileStream(expectedResultFile, FileMode.Open));
                 StreamReader actualResultReader = new StreamReader(new FileStream(resultFile, FileMode.Open));
                 TestUtils.compareLines("GrammarTestCompareFiles", expectedResultReader.ReadToEnd(), actualResultReader.ReadToEnd(), expectedResultFile); //The test will fail if result files are different
@@ -254,37 +254,37 @@ namespace TypeCobol.Test {
 			AppendTextToFiles((result + "\n"), files);
 		}
 
-        private static List<string> AsLines(string text) {
+		private static List<string> AsLines(string text) {
 			return text.Replace("\r\n","\n").Replace("\r","\n").Split('\n').ToList();
 		}
-        private static string Lines2FormatString(int lines) {
+		private static string Lines2FormatString(int lines) {
 			string res = "0";
 			for (int i=1; i<lines.ToString().Length; i++) res += "0";
 			return res;
 		}
-        /// <param name="output"></param>
-        /// <param name="input">Input text</param>
-        /// <param name="index">Line index</param>
-        /// <param name="before">Number of line before line index</param>
-        /// <param name="fmt"></param>
-        private static void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
+		/// <param name="output"></param>
+		/// <param name="input">Input text</param>
+		/// <param name="index">Line index</param>
+		/// <param name="before">Number of line before line index</param>
+		/// <param name="fmt"></param>
+		private static void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
 			for(int line=index-before; line<index; line++)
-                if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
+				if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}
-        private static void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
+		private static void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
 			for (int i=start; i<=end; i++)
-                output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i+1, expected[i]));
+				output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i+1, expected[i]));
 			for (int i=start; i<=end; i++)
-                output.AppendLine(String.Format("+{0:"+fmt+"} {1}", i+1, actual[i]));
+				output.AppendLine(String.Format("+{0:"+fmt+"} {1}", i+1, actual[i]));
 		}
-        /// <param name="output"></param>
-        /// <param name="input">Input text</param>
-        /// <param name="index">Line index</param>
-        /// <param name="after">Number of line after line index</param>
-        /// <param name="fmt"></param>
-        private static void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
+		/// <param name="output"></param>
+		/// <param name="input">Input text</param>
+		/// <param name="index">Line index</param>
+		/// <param name="after">Number of line after line index</param>
+		/// <param name="fmt"></param>
+		private static void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
 			for(int line=index+1; line<=index+after; line++)
-                if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
+				if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}
-    }
+	}
 }

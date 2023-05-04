@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Source
         public override void Delete(int from,int to)
         {
             if (!CheckRange(next, from, to))
-                return;
+	            return;
 
             base.Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
 
@@ -89,7 +89,7 @@ namespace TypeCobol.Compiler.Source
 
             next-= (to - from);
             if (LowWaterMark()) 
-                Expand(size/2);
+	            Expand(size/2);
             base.Delete(from, to);
             Send(new TextChangeInfo(TextChanges.TextDeleted, from, to));
         }
@@ -107,34 +107,34 @@ namespace TypeCobol.Compiler.Source
 
             if (!(paste is StringSourceText))
             { // try to convert
-                int s = paste.Size;
-                buf = new char[s];
-                paste.CopyInStr(buf, s, 0, s);
-                ct= new StringSourceText(buf, s);
+	            int s = paste.Size;
+	            buf = new char[s];
+	            paste.CopyInStr(buf, s, 0, s);
+	            ct= new StringSourceText(buf, s);
             } else
-                ct = (StringSourceText)paste; 
+	            ct = (StringSourceText)paste; 
 
             int shift= ct.next - (to - from);
 
             if (!CheckRange(next, from, to))
-                return;
+	            return;
 
             if ((to - from) > 0)
                 Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
 
             if (HighWaterMark(shift))
-            Expand(GrowBy(size+shift));
+	        Expand(GrowBy(size+shift));
 
             if (shift < 0)
-                Array.Copy(content, to, content, to + shift, next-to);
+	            Array.Copy(content, to, content, to + shift, next-to);
             else if (shift > 0)
-                Array.Copy(content, from, content, from + shift, next-from);
+	            Array.Copy(content, from, content, from + shift, next-from);
 
             //---- insert pasted text
             Array.Copy(ct.content, 0, content, from, ct.next);
             next += shift;
             if (LowWaterMark())
-                Expand(size/2);
+	            Expand(size/2);
             base.Insert(paste, from, to);
             Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, paste.Size), paste);     
         }
@@ -215,22 +215,22 @@ namespace TypeCobol.Compiler.Source
         public override void Copy(SourceText target, int from, int to)
         {
             if (!CheckRange(next,from,to) || target == null)
-            return;
+	        return;
 
             if (!(target is StringSourceText)) 
             { // convert
-                int s = to - from;
-                char[] buf= new char[s];
-                Array.Copy(content, from, buf, 0, s);
-                target.ReplaceWithStr(buf, s);
-                return;
+	            int s = to - from;
+	            char[] buf= new char[s];
+	            Array.Copy(content, from, buf, 0, s);
+	            target.ReplaceWithStr(buf, s);
+	            return;
             }
 
             StringSourceText ct= (StringSourceText)target;    
             int nSave= to-from;
 
             if (ct.size < nSave) 
-                ct.Expand(nSave);
+	            ct.Expand(nSave);
 
             Array.Copy(content, from, ct.content, 0, nSave);
             ct.next= nSave;
@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Source
         public override void CopyInStr(char[] buffer, int length, int from, int to)
         {
             if (!CheckRange(next, from, to) || buffer == null)
-                return;
+	            return;
 
             int l = Math.Min(to, from + length) - from;
                 Array.Copy(content, from, buffer, 0, l);
@@ -305,20 +305,20 @@ namespace TypeCobol.Compiler.Source
             int shift = to - from + 1;
 
             if (!CheckRange(next, from, to))
-            return;
+	        return;
 
             if (HighWaterMark(shift))
-                Expand(GrowBy(size + shift));
+	            Expand(GrowBy(size + shift));
 
             if (shift < 0)
-                Array.Copy(content, to, content, to + next, size-to);
+	            Array.Copy(content, to, content, to + next, size-to);
             else if (shift > 0)
-                Array.Copy(content, from, content,  from + shift, next-from);
+	            Array.Copy(content, from, content,  from + shift, next-from);
 
             content[from] = c;
             next += shift;
             if (LowWaterMark())
-                Expand(size / 2);
+	            Expand(size / 2);
             base.Insert(c, from, to);
             Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, 1), new char[] { c });     
         }
@@ -372,10 +372,10 @@ namespace TypeCobol.Compiler.Source
         private void Expand (int newSize)                                         
         {
             if (newSize == 0)
-                newSize= size * 2;
+	            newSize= size * 2;
 
             if (newSize < Size)  // texts never shrink
-                return;
+	            return;
             Array.Resize(ref content, newSize);
             next = Math.Min(newSize, next);
             size= newSize;

@@ -73,18 +73,18 @@ namespace TypeCobol.Compiler.Diagnostics
                 while((line = tableReader.ReadLine()) != null)
                 {
                     string[] columns = line.Split(';');
-                    // Category 
+                    // Category	
                     Category category = (Category)Int32.Parse(columns[0]);
-                    // Code 
+                    // Code	
                     int code = Int32.Parse(columns[1]);
-                    // Severity 
+                    // Severity	
                     Severity severity = (Severity)Int32.Parse(columns[2]);
-                    // MessageTemplate  
+                    // MessageTemplate	
                     string messageTemplate = columns[3];
-                    // Document 
+                    // Document	
                     int documentId = Int32.Parse(columns[4]);
                     ReferenceDocument referenceDocument = ReferenceDocument.GetFromCode[documentId];
-                    // PageNumber   
+                    // PageNumber	
                     int pageNumber = Int32.Parse(columns[5]);
                     // ReferenceText
                     string referenceText = columns[6];

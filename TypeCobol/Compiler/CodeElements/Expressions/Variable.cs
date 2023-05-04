@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		    StorageArea = storageArea;
 	    }
 
-        public StorageDataType DataType { get; private set; }
+	    public StorageDataType DataType { get; private set; }
 
         [CanBeNull]
         public StorageArea StorageArea { get; private set; }
@@ -40,7 +40,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// </summary>
         public virtual SymbolReference MainSymbolReference { get { return StorageArea != null ? StorageArea.SymbolReference : null; } }
 
-        public override string ToString() {
+	    public override string ToString() {
 		    if (StorageArea != null) return StorageArea.ToString();
 		    return base.ToString();
 	    }
@@ -52,28 +52,28 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public enum StorageDataType {
-        Any,
+	    Any,
         Condition,
-        Integer,
-        Numeric,
-        Character,
-        Alphanumeric,
-        ProgramName,
-        ProgramNameOrProgramEntry,
-        ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer,
-        ProcedurePointerOrFunctionPointerOrTCFunctionName,
-        ClassNameOrObjectReference,
-        MethodName,
+	    Integer,
+	    Numeric,
+	    Character,
+	    Alphanumeric,
+	    ProgramName,
+	    ProgramNameOrProgramEntry,
+	    ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer,
+	    ProcedurePointerOrFunctionPointerOrTCFunctionName,
+	    ClassNameOrObjectReference,
+	    MethodName,
         DataPointer
     }
 
     public class IntegerVariable: VariableBase {
-        public IntegerVariable([NotNull] StorageArea storageArea): base(StorageDataType.Integer, storageArea) { }
-        public IntegerVariable([NotNull] IntegerValue value): base(StorageDataType.Integer, null) { Value = value; }
+	    public IntegerVariable([NotNull] StorageArea storageArea): base(StorageDataType.Integer, storageArea) { }
+	    public IntegerVariable([NotNull] IntegerValue value): base(StorageDataType.Integer, null) { Value = value; }
 
-        public IntegerValue Value { get; private set; }
+	    public IntegerValue Value { get; private set; }
 
-        public override string ToString() {
+	    public override string ToString() {
 		    if (Value != null) return Value.ToString();
 		    return base.ToString();
 	    }
@@ -85,10 +85,10 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public class NumericVariable: VariableBase {
-        public NumericVariable(StorageArea storageArea): base(StorageDataType.Numeric, storageArea) { }
-        public NumericVariable(NumericValue value): base(StorageDataType.Numeric, null) { Value = value; }
+	    public NumericVariable(StorageArea storageArea): base(StorageDataType.Numeric, storageArea) { }
+	    public NumericVariable(NumericValue value): base(StorageDataType.Numeric, null) { Value = value; }
 
-        public NumericValue Value { get; private set; }
+	    public NumericValue Value { get; private set; }
 
         public override string ToString() {
 		    if (Value != null) return Value.ToString();
@@ -103,10 +103,10 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public class CharacterVariable: VariableBase {
-        public CharacterVariable(StorageArea storageArea): base(StorageDataType.Character, storageArea) { }
-        public CharacterVariable(CharacterValue value): base(StorageDataType.Character, null) { Value = value; }
+	    public CharacterVariable(StorageArea storageArea): base(StorageDataType.Character, storageArea) { }
+	    public CharacterVariable(CharacterValue value): base(StorageDataType.Character, null) { Value = value; }
 
-        public CharacterValue Value { get; private set; }
+	    public CharacterValue Value { get; private set; }
 
         public override string ToString() {
 		    if (Value != null) return Value.ToString();
@@ -121,14 +121,14 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public class AlphanumericVariable: VariableBase {
-        public AlphanumericVariable(StorageArea storageArea): base(StorageDataType.Alphanumeric, storageArea) { }
-        public AlphanumericVariable(AlphanumericValue value): base(StorageDataType.Alphanumeric, null) { Value = value; }
-        public AlphanumericVariable(RepeatedCharacterValue value): base(StorageDataType.Alphanumeric, null) {
+	    public AlphanumericVariable(StorageArea storageArea): base(StorageDataType.Alphanumeric, storageArea) { }
+	    public AlphanumericVariable(AlphanumericValue value): base(StorageDataType.Alphanumeric, null) { Value = value; }
+	    public AlphanumericVariable(RepeatedCharacterValue value): base(StorageDataType.Alphanumeric, null) {
 		    RepeatedCharacterValue = value;
 	    }
 
-        public AlphanumericValue Value { get; private set; }
-        public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
+	    public AlphanumericValue Value { get; private set; }
+	    public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
 
         public override string ToString() {
 		    if (RepeatedCharacterValue != null) return RepeatedCharacterValue.Value;
@@ -145,12 +145,12 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public class SymbolReferenceVariable : VariableBase {
-        public SymbolReferenceVariable(StorageDataType symbolType, StorageArea storageArea): base(symbolType, storageArea) { }
-        public SymbolReferenceVariable(StorageDataType symbolType, SymbolReference symbolReference): base(symbolType, null) {
+	    public SymbolReferenceVariable(StorageDataType symbolType, StorageArea storageArea): base(symbolType, storageArea) { }
+	    public SymbolReferenceVariable(StorageDataType symbolType, SymbolReference symbolReference): base(symbolType, null) {
 		    SymbolReference = symbolReference;
 	    }
 
-        public SymbolReference SymbolReference { get; private set; }
+	    public SymbolReference SymbolReference { get; private set; }
 
         public override SymbolReference MainSymbolReference { get { return SymbolReference ?? base.MainSymbolReference; } }
 
@@ -166,21 +166,21 @@ namespace TypeCobol.Compiler.CodeElements {
 
     public class Variable: VariableBase {
 
-        protected Variable(): base(StorageDataType.Any, null) { }
+	    protected Variable(): base(StorageDataType.Any, null) { }
 
-        public Variable(StorageArea reference): base(StorageDataType.Any, reference) { }
+	    public Variable(StorageArea reference): base(StorageDataType.Any, reference) { }
 
-        public Variable(NumericValue value): base(StorageDataType.Any, null) { NumericValue = value; }
-        public Variable(AlphanumericValue value): base(StorageDataType.Any, null) { AlphanumericValue = value; }
-        public Variable(RepeatedCharacterValue value): base(StorageDataType.Any, null) { RepeatedCharacterValue = value; }
-        public Variable(SymbolReference reference): base(StorageDataType.Any, null) { SymbolReference = reference; }
+	    public Variable(NumericValue value): base(StorageDataType.Any, null) { NumericValue = value; }
+	    public Variable(AlphanumericValue value): base(StorageDataType.Any, null) { AlphanumericValue = value; }
+	    public Variable(RepeatedCharacterValue value): base(StorageDataType.Any, null) { RepeatedCharacterValue = value; }
+	    public Variable(SymbolReference reference): base(StorageDataType.Any, null) { SymbolReference = reference; }
 
-        public NumericValue NumericValue { get; private set; }
-        public AlphanumericValue AlphanumericValue { get; private set; }
-        public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
-        public SymbolReference SymbolReference { get; private set; }
+	    public NumericValue NumericValue { get; private set; }
+	    public AlphanumericValue AlphanumericValue { get; private set; }
+	    public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
+	    public SymbolReference SymbolReference { get; private set; }
 
-        public bool IsLiteral { get { return NumericValue != null || AlphanumericValue != null; } }
+	    public bool IsLiteral { get { return NumericValue != null || AlphanumericValue != null; } }
 
         public override SymbolReference MainSymbolReference { get { return SymbolReference ?? base.MainSymbolReference; } }
 
@@ -219,10 +219,10 @@ namespace TypeCobol.Compiler.CodeElements {
 
                     return bUseToString ? qualifiedName : StorageArea?.SymbolReference?.Name + (isBoolType ? "-value" : "");
                 }
-                //these should be: return XXXValue.GetValueInContext(???);
-                if (AlphanumericValue != null) return AlphanumericValue.Token.SourceText;
-                if (RepeatedCharacterValue != null) return RepeatedCharacterValue.Token.SourceText;
-            } catch(System.InvalidOperationException) { }
+			    //these should be: return XXXValue.GetValueInContext(???);
+			    if (AlphanumericValue != null) return AlphanumericValue.Token.SourceText;
+			    if (RepeatedCharacterValue != null) return RepeatedCharacterValue.Token.SourceText;
+		    } catch(System.InvalidOperationException) { }
 		    return base.ToString();
 	    }
 
@@ -291,12 +291,12 @@ namespace TypeCobol.Compiler.CodeElements {
     }    
 
     public class ReceivingStorageArea: VariableBase {
-        public ReceivingStorageArea(StorageDataType dataType, [NotNull] StorageArea storageArea): base(dataType, storageArea) {
+	    public ReceivingStorageArea(StorageDataType dataType, [NotNull] StorageArea storageArea): base(dataType, storageArea) {
 		    storageArea.IsReadFrom = false;
 		    storageArea.IsWrittenTo = true;
 	    }
 
-        public StorageArea[] SendingStorageAreas { get; set; }
+	    public StorageArea[] SendingStorageAreas { get; set; }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)

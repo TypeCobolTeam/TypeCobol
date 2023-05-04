@@ -1,5 +1,5 @@
 ﻿namespace TypeCobol.Compiler.CodeElements {
-    using System.Collections.Generic;
+	using System.Collections.Generic;
 
 /// <summary>
 /// p325:
@@ -8,7 +8,7 @@
 /// </summary>
 public abstract class DivideStatement: AbstractArithmeticStatement {
     protected DivideStatement(StatementType statementType): base(CodeElementType.DivideStatement, statementType) { }
-    public abstract override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations { get; }
+	public abstract override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations { get; }
 }
 
 /// <summary>
@@ -16,26 +16,26 @@ public abstract class DivideStatement: AbstractArithmeticStatement {
 /// For each successive occurrence of identifier-2, the division takes place in the left-to-right order in which identifier-2 is specified.
 /// </summary>
 public class DivideSimpleStatement: DivideStatement {
-    public DivideSimpleStatement(): base(StatementType.DivideSimpleStatement) { }
+	public DivideSimpleStatement(): base(StatementType.DivideSimpleStatement) { }
 
-    public NumericVariable Divisor { get; set; }
-    public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
+	public NumericVariable Divisor { get; set; }
+	public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
 
-    public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
-        get {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
+		get {
 			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
 			ArithmeticExpression right = new NumericVariableOperand(Divisor);
 			foreach(var receiver in SendingAndReceivingStorageAreas) {
-                var rarea = receiver.ReceivingStorageArea.StorageArea;
-                if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
-                var left = new NumericVariableOperand(new NumericVariable(rarea));
-                var operation = ArithmeticOperator.Divide.CreateOperation(left, right);
-                if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-                if (rarea != null) map[rarea].Add(operation);
-            }
+				var rarea = receiver.ReceivingStorageArea.StorageArea;
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
+				var left = new NumericVariableOperand(new NumericVariable(rarea));
+				var operation = ArithmeticOperator.Divide.CreateOperation(left, right);
+				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+			    if (rarea != null) map[rarea].Add(operation);
+			}
 			return map;
 		}
-    }
+	}
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
@@ -55,30 +55,30 @@ public class DivideSimpleStatement: DivideStatement {
 /// The value of the quotient is stored in each data item referenced by identifier-3.
 /// </summary>
 public class DivideGivingStatement: DivideStatement {
-    public DivideGivingStatement(): base(StatementType.DivideGivingStatement) { }
+	public DivideGivingStatement(): base(StatementType.DivideGivingStatement) { }
 
-    public NumericVariable Dividend { get; set; }
-    /// <summary>Divisor</summary>
-    public NumericVariable Divisor { get; set; }
-    /// <summary>Quotients</summary>
-    public RoundedResult[] ReceivingStorageAreas { get; set; }
+	public NumericVariable Dividend { get; set; }
+	/// <summary>Divisor</summary>
+	public NumericVariable Divisor { get; set; }
+	/// <summary>Quotients</summary>
+	public RoundedResult[] ReceivingStorageAreas { get; set; }
 
-    public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
-        get {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
+		get {
 			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
 			ArithmeticExpression left  = new NumericVariableOperand(Dividend);
 			ArithmeticExpression right = new NumericVariableOperand(Divisor);
 			left = ArithmeticOperator.Divide.CreateOperation(left, right);
 			foreach(var receiver in ReceivingStorageAreas) {
-                var rarea = receiver.ReceivingStorageArea.StorageArea;
-                if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
-                var operation = left;
-                if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-                if (rarea != null) map[rarea].Add(operation);
-            }
+				var rarea = receiver.ReceivingStorageArea.StorageArea;
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
+				var operation = left;
+				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+			    if (rarea != null) map[rarea].Add(operation);
+			}
 			return map;
 		}
-    }
+	}
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
@@ -98,15 +98,15 @@ public class DivideGivingStatement: DivideStatement {
 /// The value of the quotient is stored in identifier-3, and the value of the remainder is stored in identifier-4.
 /// </summary>
 public class DivideRemainderStatement: DivideStatement {
-    public DivideRemainderStatement(): base(StatementType.DivideRemainderStatement) { }
+	public DivideRemainderStatement(): base(StatementType.DivideRemainderStatement) { }
 
-    public NumericVariable Divisor { get; set; }
-    public NumericVariable Dividend { get; set; }
-    public RoundedResult Quotient { get; set; }
-    public ReceivingStorageArea Remainder { get; set; }
+	public NumericVariable Divisor { get; set; }
+	public NumericVariable Dividend { get; set; }
+	public RoundedResult Quotient { get; set; }
+	public ReceivingStorageArea Remainder { get; set; }
 
-    public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
-        get {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
+		get {
 			var map = new Dictionary<StorageArea,List<ArithmeticExpression>>();
 			ArithmeticExpression left  = new NumericVariableOperand(Dividend);
 			ArithmeticExpression right = new NumericVariableOperand(Divisor);
@@ -115,22 +115,22 @@ public class DivideRemainderStatement: DivideStatement {
 			operation = ArithmeticOperator.Divide.CreateOperation(left, right);
 			var rarea = Quotient.ReceivingStorageArea.StorageArea;
 		    if (rarea != null)
-            {
-                map[rarea] = new List<ArithmeticExpression>();
-                if (Quotient.IsRounded)
-                    map[rarea].Add(ArithmeticOperator.Round.CreateOperation(operation));
-                else map[rarea].Add(operation);
+		    {
+		        map[rarea] = new List<ArithmeticExpression>();
+		        if (Quotient.IsRounded)
+		            map[rarea].Add(ArithmeticOperator.Round.CreateOperation(operation));
+		        else map[rarea].Add(operation);
 
-                operation = ArithmeticOperator.Remainder.CreateOperation(left, right);
-                rarea = Remainder.StorageArea;
-            }
+		        operation = ArithmeticOperator.Remainder.CreateOperation(left, right);
+		        rarea = Remainder.StorageArea;
+		    }
                
 		    if (rarea != null)
-                map[rarea] = new List<ArithmeticExpression> {operation};
+		        map[rarea] = new List<ArithmeticExpression> {operation};
 
 		    return map;
 		}
-    }
+	}
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {

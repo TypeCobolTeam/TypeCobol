@@ -3,13 +3,13 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Test.Misc {
 
-    [TestClass]
-    public class TestPictureParsing {
+	[TestClass]
+	public class TestPictureParsing {
 
-        [TestMethod]
-        [TestCategory("Parsing")]
-        [TestProperty("Time","fast")]
-        public void Check_PictureToType() {
+		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
+		public void Check_PictureToType() {
 			TestConversion("",              DataType.Unknown);
 			TestConversion("WWW",           DataType.Unknown);
 			TestConversion("AAA",           DataType.Alphabetic);
@@ -43,13 +43,13 @@ namespace TypeCobol.Test.Misc {
 			TestConversion("$,50", DataType.NumericEdited, new char[] {'$'});
 		}
 
-        private static bool TestConversion(string picture, DataType expected, char[] currencies = null) {
+		private static bool TestConversion(string picture, DataType expected, char[] currencies = null) {
 			DataType result;
 			if (currencies == null) result = DataType.Create(picture);
-            else result = DataType.Create(picture, currencies);
+			else result = DataType.Create(picture, currencies);
 			if (result != expected) throw new System.Exception("\""+picture+"\">"+result+" vs expected: "+expected);
 			return result == expected;
 		}
-    }
+	}
 
 }

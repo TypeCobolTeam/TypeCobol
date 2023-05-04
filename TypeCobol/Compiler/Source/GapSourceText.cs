@@ -45,14 +45,14 @@ namespace TypeCobol.Compiler.Source
         public GapSourceText(char[] buf, int len, bool ic)
         {   
             if (len < 0)
-                len = buf.Length;
+	            len = buf.Length;
             size = Math.Max(INITIAL_SIZE, len);
             if (ic)
-                body = buf;
+	            body = buf;
             else 
             {
-                body = new char[size];
-                Array.Copy(buf, body, len);
+	            body = new char[size];
+	            Array.Copy(buf, body, len);
             }
             length = len;
             TabWidth = DEFAULT_TAB_WIDTH;
@@ -78,10 +78,10 @@ namespace TypeCobol.Compiler.Source
         protected void MoveGap(int to)
         {
             if (to == part1len)
-            return;
+	        return;
 
             if (part1len > to)
-                Array.Copy(body, to, body, to + gaplen, part1len - to);
+	            Array.Copy(body, to, body, to + gaplen, part1len - to);
             else
                 Array.Copy(body , part1len + gaplen, body , part1len, to - part1len);
             part1len= to; 
@@ -119,13 +119,13 @@ namespace TypeCobol.Compiler.Source
             int part2;
 
             if (to == 0)
-                to = size * 2;
+	            to = size * 2;
 
             if (to < size) 
-                return;
+	            return;
 
             if (moveto > length)
-                moveto= length;
+	            moveto= length;
 
             size = to;
             pos = new char[size];
@@ -133,7 +133,7 @@ namespace TypeCobol.Compiler.Source
 
             if (moveto < part1len) 
             {
-                Array.Copy(body, pos, moveto);
+	            Array.Copy(body, pos, moveto);
                 //if ((part1len - moveto) > 0)
                     Array.Copy(body, moveto, pos, part2 + moveto, part1len - moveto);
                 //if ((length - part1len) > 0)
@@ -160,10 +160,10 @@ namespace TypeCobol.Compiler.Source
             char[] pos;
 
             if ((to == 0) || (to < length))
-            to= size / SHRINK_FACTOR + 1;
+	        to= size / SHRINK_FACTOR + 1;
 
             if ( (to > size) || (to < length) ) 
-            return;
+	        return;
 
             size = to;
 
@@ -205,19 +205,19 @@ namespace TypeCobol.Compiler.Source
         public override void Insert(SourceText paste,int from,int to)
         {
             if (!CheckRange(length,from,to))
-                return;
+	            return;
 
             GapSourceText ft;
             char[] buf = null;
 
             if (!(paste is GapSourceText)) 
             {  // convert the text into a GapText
-                int s = paste.Size;
-                buf = new char[s];
-                paste.CopyInStr(buf, s, 0, s);
-                ft = new GapSourceText(buf, s, true);
+	            int s = paste.Size;
+	            buf = new char[s];
+	            paste.CopyInStr(buf, s, 0, s);
+	            ft = new GapSourceText(buf, s, true);
             } else
-                ft = (GapSourceText)paste;
+	            ft = (GapSourceText)paste;
 
             int shift= ft.length - (to - from);
 
@@ -225,9 +225,9 @@ namespace TypeCobol.Compiler.Source
                 Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
 
             if (HighWaterMark(shift))
-                Expand(GrowBy(size + shift), from);
+	            Expand(GrowBy(size + shift), from);
             else
-                MoveGap(from);
+	            MoveGap(from);
 
             ft.CopyTo(body, from, 0, ft.length);
 
@@ -239,7 +239,7 @@ namespace TypeCobol.Compiler.Source
             body2= part2body + part1len;
 
             if (LowWaterMark())
-                Shrink();   
+	            Shrink();   
             base.Insert(paste, from, to);
             base.Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, paste.Size), paste);
         }
@@ -327,14 +327,14 @@ namespace TypeCobol.Compiler.Source
             int shift= to - from;
 
             if (!CheckRange(length, from, to))
-                return;
+	            return;
 
             base.Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
             
             if (from <= part1len && to >= part1len) // Gap is in between
-                part1len= from;
+	            part1len= from;
             else  
-                MoveGap(from); 
+	            MoveGap(from); 
             length -= shift;
             gaplen += shift;
             part2body += shift;
@@ -342,7 +342,7 @@ namespace TypeCobol.Compiler.Source
             body2= part2body + part1len;
 
             if (LowWaterMark())
-                Shrink();
+	            Shrink();
 
             base.Delete(from,to);   
             base.Send(new TextChangeInfo(TextChanges.TextDeleted, from, to));     
@@ -466,12 +466,12 @@ namespace TypeCobol.Compiler.Source
             int shift = 1 - (to - from);
 
             if (!CheckRange(length,from,to))
-                return;
+	            return;
 
             if (HighWaterMark(shift))
-                Expand(GrowBy(size+shift), from);
+	            Expand(GrowBy(size+shift), from);
             else     
-                MoveGap(from);
+	            MoveGap(from);
             body[from] = c;
 
             length    += shift;
@@ -482,7 +482,7 @@ namespace TypeCobol.Compiler.Source
             body2 = part2body + part1len;
 
             if (LowWaterMark())
-                Shrink();
+	            Shrink();
 
             base.Insert(c, from, to);
             Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, 1), new char[]{c});     
@@ -588,10 +588,10 @@ namespace TypeCobol.Compiler.Source
                 }
                 else if (i >= part1len && i <= (part1len + gaplen))
                     continue;//ignore gap content
-                if ((body[i]>= ' ') && (body[i] <='~'))
-                    System.Console.Write(body[i]);
-                else
-                    System.Console.Write(allChars ? body[i] : '.');
+	            if ((body[i]>= ' ') && (body[i] <='~'))
+	                System.Console.Write(body[i]);
+	            else
+	                System.Console.Write(allChars ? body[i] : '.');
             }
             System.Console.WriteLine();
         }

@@ -163,7 +163,7 @@ namespace TypeCobol.Transform
         /// <param name="cobol85FilePath">The path to the generated Cobol 85 source file, if null this means that an empty generated file is requested.</param>
         /// <param name="outputFilePath">The path to the output file which will contains the conactenation.</param>
         /// <returns>true if the conactenation was successful, false otherwise</returns>
-        public static bool concatenateFiles(string typeCobolFilePath, string cobol85FilePath, string outputFilePath)
+	    public static bool concatenateFiles(string typeCobolFilePath, string cobol85FilePath, string outputFilePath)
         {
             try
             {

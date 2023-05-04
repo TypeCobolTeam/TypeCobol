@@ -1,13 +1,13 @@
 ﻿namespace TypeCobol.Compiler.CodeElements {
 
-    using System.Collections.Generic;
+	using System.Collections.Generic;
 
 /// <summary>p376: The MULTIPLY statement multiplies numeric items and sets the values of data items equal to the results.</summary>
 public abstract class MultiplyStatement: AbstractArithmeticStatement {
     protected MultiplyStatement(StatementType statementType): base(CodeElementType.MultiplyStatement, statementType) { }
 
-    public NumericVariable Operand { get; set; }
-    public abstract override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations { get; }
+	public NumericVariable Operand { get; set; }
+	public abstract override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations { get; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
@@ -24,26 +24,26 @@ public abstract class MultiplyStatement: AbstractArithmeticStatement {
 /// identifier-2 is specified.
 /// </summary>
 public class MultiplySimpleStatement: MultiplyStatement {
-    public MultiplySimpleStatement(): base(StatementType.MultiplySimpleStatement) { }
+	public MultiplySimpleStatement(): base(StatementType.MultiplySimpleStatement) { }
 
-    public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
+	public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
 
-    public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
-        get {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
+		get {
 			var map = new Dictionary<StorageArea,List<ArithmeticExpression>>();
 			ArithmeticExpression left = new NumericVariableOperand(Operand);
 			foreach(var receiver in SendingAndReceivingStorageAreas) {
-                var rarea = receiver.ReceivingStorageArea.StorageArea;
-                
-                if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
-                var right = new NumericVariableOperand(new NumericVariable(rarea));
-                var operation = ArithmeticOperator.Multiply.CreateOperation(left, right);
-                if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-                if (rarea != null) map[rarea].Add(operation);
-            }
+				var rarea = receiver.ReceivingStorageArea.StorageArea;
+				
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
+				var right = new NumericVariableOperand(new NumericVariable(rarea));
+				var operation = ArithmeticOperator.Multiply.CreateOperation(left, right);
+				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+			    if (rarea != null) map[rarea].Add(operation);
+			}
 			return map;
 		}
-    }
+	}
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
@@ -59,28 +59,28 @@ public class MultiplySimpleStatement: MultiplyStatement {
 /// identifier-3.
 /// </summary>
 public class MultiplyGivingStatement: MultiplyStatement {
-    public MultiplyGivingStatement(): base(StatementType.MultiplyGivingStatement) { }
+	public MultiplyGivingStatement(): base(StatementType.MultiplyGivingStatement) { }
 
-    public NumericVariable ByOperand { get; set; }
-    public RoundedResult[] ReceivingStorageAreas { get; set; }
+	public NumericVariable ByOperand { get; set; }
+	public RoundedResult[] ReceivingStorageAreas { get; set; }
 
-    public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
-        get {
+	public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
+		get {
 			var map = new Dictionary<StorageArea,List<ArithmeticExpression>>();
 			ArithmeticExpression left  = new NumericVariableOperand(Operand);
 			ArithmeticExpression right = new NumericVariableOperand(ByOperand);
 			left = ArithmeticOperator.Multiply.CreateOperation(left, right);
 			foreach(var receiver in ReceivingStorageAreas) {
-                var rarea = receiver.ReceivingStorageArea.StorageArea;
-                if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
-                //right = new NumericVariableOperand(new NumericVariable(rarea));
-                var operation = left;
-                if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-                if (rarea != null) map[rarea].Add(operation);
-            }
+				var rarea = receiver.ReceivingStorageArea.StorageArea;
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
+				//right = new NumericVariableOperand(new NumericVariable(rarea));
+				var operation = left;
+				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+			    if (rarea != null) map[rarea].Add(operation);
+			}
 			return map;
 		}
-    }
+	}
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)

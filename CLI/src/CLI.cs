@@ -579,14 +579,14 @@ namespace TypeCobol.Server
             //Avoid returning MissingCopy for users who are only interested in copies extraction
             if (_configuration.ExecToStep <= ExecutionStep.Preprocessor)
             {
-                if (_configuration.ExtractedCopiesFilePath != null
+	            if (_configuration.ExtractedCopiesFilePath != null
 #if EUROINFO_RULES
-                    || _configuration.ReportUsedCopyNamesPath != null
+	                || _configuration.ReportUsedCopyNamesPath != null
 #endif
-                   )
-                {
-                    return returnCode;
-                }
+	               )
+	            {
+		            return returnCode;
+	            }
             }
 
             //Return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once

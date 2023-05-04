@@ -267,7 +267,7 @@ namespace TypeCobol.Compiler.Source
         {
             if (Positions != null) 
             {
-                if (from != to)
+	            if (from != to)
                     Positions.Delete(from, to - from);
                 Positions.Insert(from, 1); 
             }
@@ -359,12 +359,12 @@ namespace TypeCobol.Compiler.Source
             
             for (i = at-1; i >= 0 && IsWordCharacter(this[i]); i--)
             {
-                ;
+	            ;
             }
             start = i+1; 
             for (i = at; i < Size && IsWordCharacter(this[i]); i++)
             {
-                ; 
+	            ; 
             }
             end = i;
         }
@@ -387,15 +387,15 @@ namespace TypeCobol.Compiler.Source
             }
 
             for (i = at-1; i >= 0; i--) {
-            ch= this[i];
-            if (ch == '\n' || ch == '\r')
-                break;
+	        ch= this[i];
+	        if (ch == '\n' || ch == '\r')
+	            break;
             }
             start = i+1; 
             for (i = at; i < Size; i++) {
-            ch= this[i];
-            if (ch == '\n' || ch == '\r')
-                break; 
+	        ch= this[i];
+	        if (ch == '\n' || ch == '\r')
+	            break; 
             }
             end= Math.Min(Size, i+1);
         }
@@ -526,8 +526,8 @@ namespace TypeCobol.Compiler.Source
         public int Tabulate(int x)
         {
             if (TabWidth > 0) {
-            int n = x / TabWidth;
-            return ((n+1) * TabWidth - x);
+	        int n = x / TabWidth;
+	        return ((n+1) * TabWidth - x);
             }
             return 0;
         }
@@ -554,7 +554,7 @@ namespace TypeCobol.Compiler.Source
             int s= 0;
 
             if (Size >= Int32.MaxValue)
-                throw new ArgumentException("GrowBy", "cannot expand text");
+	            throw new ArgumentException("GrowBy", "cannot expand text");
             else
                 s = range(2, Int32.MaxValue - desiredSize, desiredSize);
             return Size + s;
@@ -568,7 +568,7 @@ namespace TypeCobol.Compiler.Source
         public Position AddPosition(Position p)
         {
             if (Positions == null)
-                Positions = new PositionList();
+	            Positions = new PositionList();
             Positions.Add(p);
             return p;
         }
@@ -583,7 +583,7 @@ namespace TypeCobol.Compiler.Source
         public bool RemoveMark(Position p)
         {
             if (Positions == null)
-                Positions = new PositionList();
+	            Positions = new PositionList();
             return Positions.Remove(p);
         }
 
@@ -595,7 +595,7 @@ namespace TypeCobol.Compiler.Source
         public List<Position>.Enumerator GetPositionEnumerator()
         {
             if (Positions == null)
-                Positions = new PositionList();
+	            Positions = new PositionList();
             return Positions.GetEnumerator();
         }
 

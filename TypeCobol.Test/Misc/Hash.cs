@@ -4,8 +4,8 @@ using TypeCobol.Tools;
 namespace TypeCobol.Test.Misc {
     [TestClass]
 public class Hashes {
-    [TestMethod]
-    public void TestStringHashes() {
+	[TestMethod]
+	public void TestStringHashes() {
 		Assert.AreEqual(Hash.CreateSHA256("Hello, world"),        "4ae7c3b6ac0beff671efa8cf57386151c06e58ca53a78d83f36107316cec125f");
 		Assert.AreEqual(Hash.CreateSHA256("titi"),                "cce66316b4c1c59df94a35afb80cecd82d1a8d91b554022557e115f5c275f515");
 		Assert.AreEqual(Hash.CreateSHA256("toto"),                "31f7a65e315586ac198bd798b6629ce4903d0899476d5741a9f32e2e521b6a66");
@@ -14,8 +14,8 @@ public class Hashes {
 		Assert.AreEqual(Hash.CreateSHA256(message),               "82b7b70cb1b423246cf480501d261dde41277829fd46ee0d5c08b3e2150e6824");
 		Assert.AreEqual(Hash.CreateSHA256("TH̘Ë͖́̉ ͠P̯͍̭O̚​N̐Y̡ H̸̡̪̯ͨ͊̽̅̾̎Ȩ̬̩̾͛ͪ̈́̀́͘ ̶̧̨̱̹̭̯ͧ̾ͬC̷̙̲̝͖ͭ̏ͥͮ͟Oͮ͏̮̪̝͍M̲̖͊̒ͪͩͬ̚̚͜Ȇ̴̟̟͙̞ͩ͌͝S̨̥̫͎̭ͯ̿̔̀ͅ"), "4e60680be7e0c3e2629cae1828ab07089e3a95273753e6c5b38a3f40fcdb5070");
 	}
-    [TestMethod]
-    public void TestStringHashesCOBOL() {
+	[TestMethod]
+	public void TestStringHashesCOBOL() {
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("Hello, world", 14),       "ca7e4eaa6e8ae9");
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("titi"),                   "cce66316");
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("toto", 8),                "f7a65e31");
@@ -29,8 +29,8 @@ public class Hashes {
 
 [TestClass]
 public class HumanReadableUID {
-    [TestMethod]
-    public void TestUIDStoreConstruction() {
+	[TestMethod]
+	public void TestUIDStoreConstruction() {
 		UIDStore lut;
 		lut = new UIDStore();
 		Assert.AreEqual(lut.MaxSize, UIDStore.DEFAULT_MAX_SIZE);
@@ -49,8 +49,8 @@ public class HumanReadableUID {
 		Assert.AreEqual(lut.MaxItems, 999);
 		Assert.AreEqual(lut.TruncatedSize, 96);
 	}
-    [TestMethod]
-    public void TestUIDStore() {
+	[TestMethod]
+	public void TestUIDStore() {
 		var lut = new UIDStore();
 
 		Assert.IsNull(lut.FromGenerated("titi-01"));

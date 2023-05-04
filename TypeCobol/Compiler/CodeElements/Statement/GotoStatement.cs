@@ -29,15 +29,15 @@ public abstract class GotoStatement: StatementElement {
 /// For more information, see “ALTER statement” on page 301.
 /// </summary>
 public class GotoSimpleStatement: GotoStatement {
-    public GotoSimpleStatement() : base(StatementType.GotoSimpleStatement) { }
+	public GotoSimpleStatement() : base(StatementType.GotoSimpleStatement) { }
 
-    /// <summary>
-    /// p339:
-    /// procedure-name-1 (Unconditional)
-    /// Must name a procedure or a section in the same PROCEDURE DIVISION
-    /// as the GO TO statement.
-    /// </summary>
-    public SymbolReference ProcedureName { get; set; }
+	/// <summary>
+	/// p339:
+	/// procedure-name-1 (Unconditional)
+	/// Must name a procedure or a section in the same PROCEDURE DIVISION
+	/// as the GO TO statement.
+	/// </summary>
+	public SymbolReference ProcedureName { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
@@ -56,34 +56,34 @@ public class GotoSimpleStatement: GotoStatement {
 /// depending on the value of the data item referenced by identifier-1.
 /// </summary>
 public class GotoConditionalStatement: GotoStatement {
-    public GotoConditionalStatement() : base(StatementType.GotoConditionalStatement) { }
+	public GotoConditionalStatement() : base(StatementType.GotoConditionalStatement) { }
 
-    /// <summary>
-    /// p340:
-    /// procedure-name-1 (Conditional)
-    /// Must be a procedure or a section in the same PROCEDURE DIVISION as
-    /// the GO TO statement. The number of procedure-names must not exceed
-    /// 255.
-    /// </summary>
-    public SymbolReference[] ProcedureNames { get; set; }
+	/// <summary>
+	/// p340:
+	/// procedure-name-1 (Conditional)
+	/// Must be a procedure or a section in the same PROCEDURE DIVISION as
+	/// the GO TO statement. The number of procedure-names must not exceed
+	/// 255.
+	/// </summary>
+	public SymbolReference[] ProcedureNames { get; set; }
 
-    /// <summary>
-    /// p340:
-    /// identifier-1
-    /// Must be a numeric elementary data item that is an integer.
-    ///
-    /// If 1, control is transferred to the first statement in the procedure named by
-    /// the first occurrence of procedure-name-1.
-    ///
-    /// If 2, control is transferred to the first statement in the procedure named by
-    /// the second occurrence of procedure-name-1, and so forth.
-    ///
-    /// If the value of identifier is anything other than a value within the range of
-    /// 1 through n (where n is the number of procedure-names specified in this
-    /// GO TO statement), no control transfer occurs. Instead, control passes to the
-    /// next statement in the normal sequence of execution.
-    /// </summary>
-    public Variable DependingOn { get; set; }
+	/// <summary>
+	/// p340:
+	/// identifier-1
+	/// Must be a numeric elementary data item that is an integer.
+	///
+	/// If 1, control is transferred to the first statement in the procedure named by
+	/// the first occurrence of procedure-name-1.
+	///
+	/// If 2, control is transferred to the first statement in the procedure named by
+	/// the second occurrence of procedure-name-1, and so forth.
+	///
+	/// If the value of identifier is anything other than a value within the range of
+	/// 1 through n (where n is the number of procedure-names specified in this
+	/// GO TO statement), no control transfer occurs. Instead, control passes to the
+	/// next statement in the normal sequence of execution.
+	/// </summary>
+	public Variable DependingOn { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {

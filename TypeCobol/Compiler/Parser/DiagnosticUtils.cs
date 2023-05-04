@@ -11,23 +11,23 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
-    internal static class DiagnosticUtils
-    {
-        internal static void AddError(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser) {
+	internal static class DiagnosticUtils
+	{
+		internal static void AddError(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser) {
 			AddError(e, message, ParseTreeUtils.GetFirstToken(context), RuleStackBuilder.GetRuleStack(context), code);
 		}
-        internal static void AddError(CodeElement e, string message, MessageCode code = MessageCode.SyntaxErrorInParser) {
+		internal static void AddError(CodeElement e, string message, MessageCode code = MessageCode.SyntaxErrorInParser) {
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
             var parserDiag = new ParserDiagnostic(message, e.Position(), null, code);
             e.Diagnostics.Add(parserDiag);    
         }
-        internal static void AddError(CodeElement e, string message, IToken token, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
+		internal static void AddError(CodeElement e, string message, IToken token, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
 		    var parserDiag = new ParserDiagnostic(message, token, rulestack, code);
             e.Diagnostics.Add(parserDiag);
         }
         internal static void AddErrorWithNoRuleStack(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser)
-        {
+	    {
 	        Token token = ParseTreeUtils.GetFirstToken(context);
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
 	        var parserDiag = new ParserDiagnostic(message, token.Position(), null, code);
@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.Parser
         #region Node Diagnostic Generator
 
         public static void AddError(Node node, string message, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null)
-        {
+	    {
             var diagnostic = new Diagnostic(code, node.CodeElement.Position(), message, exception);
             node.AddDiagnostic(diagnostic);
         }
@@ -58,24 +58,24 @@ namespace TypeCobol.Compiler.Parser
             node.AddDiagnostic(diagnostic);
         }
 
-        internal static void AddError(Node node, string message, SymbolReference symbol, MessageCode code = MessageCode.SyntaxErrorInParser)
-        {
+	    internal static void AddError(Node node, string message, SymbolReference symbol, MessageCode code = MessageCode.SyntaxErrorInParser)
+	    {
 	        var diagnostic = new ParserDiagnostic(message, symbol.NameLiteral.Token, null, code);
 	        node.AddDiagnostic(diagnostic);
 	    }
 
-        internal static void AddError(Node node, string message, DataDefinitionEntry data, MessageCode code = MessageCode.SyntaxErrorInParser)
-        {
+	    internal static void AddError(Node node, string message, DataDefinitionEntry data, MessageCode code = MessageCode.SyntaxErrorInParser)
+	    {
 	        ParserDiagnostic diagnostic;
 
 	        if (data?.DataName != null)
-            {
-                diagnostic = new ParserDiagnostic(message, data?.DataName != null ? data.DataName.NameLiteral.Token : data.ConsumedTokens[0], null, code);
+	        {
+	            diagnostic = new ParserDiagnostic(message, data?.DataName != null ? data.DataName.NameLiteral.Token : data.ConsumedTokens[0], null, code);
                 node.AddDiagnostic(diagnostic);
             }
-            else
-            {
-                AddError(node, message, code);
+	        else
+	        {
+	            AddError(node, message, code);
             }
 	    }
 

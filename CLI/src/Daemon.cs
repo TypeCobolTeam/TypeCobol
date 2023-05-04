@@ -85,7 +85,7 @@ namespace TypeCobol.Server {
             }
 
             return exit((int)ReturnCode.Success, "Success");
-        }
+		}
 
         internal static void AddError(AbstractErrorWriter writer, string path, Diagnostic diagnostic)
         {
@@ -93,10 +93,10 @@ namespace TypeCobol.Server {
             Console.WriteLine(diagnostic);
         }
 
-        private static readonly string PROGNAME = System.AppDomain.CurrentDomain.FriendlyName;
-        private static readonly string PROGVERSION = GetVersion();
+		private static readonly string PROGNAME = System.AppDomain.CurrentDomain.FriendlyName;
+		private static readonly string PROGVERSION = GetVersion();
 
-        private static string GetVersion() {
+		private static string GetVersion() {
 			System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
 			var info = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
 			return info.FileVersion;

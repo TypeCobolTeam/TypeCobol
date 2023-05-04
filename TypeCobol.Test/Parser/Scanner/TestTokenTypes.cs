@@ -163,7 +163,7 @@ namespace TypeCobol.Test.Parser.Scanner
                               //Use == at the end, so the scanner is again in a correct state
                 "==== ====.", //Correct
                 "==::==== ==.",   //Incorrect
-                          //Use == at the end, so the scanner is again in a correct state
+		                  //Use == at the end, so the scanner is again in a correct state
                 "==::== ==::==.", //Correct
             };
             string result = ScannerUtils.ScanLines(testLines);

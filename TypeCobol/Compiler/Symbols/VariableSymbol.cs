@@ -113,19 +113,19 @@ namespace TypeCobol.Compiler.Symbols
             set;
         }
 
-        /// <summary>   
-        /// All Symbol that redefines this Symbol.  
-        /// </summary>  
+        /// <summary>	
+        /// All Symbol that redefines this Symbol.	
+        /// </summary>	
         public List<VariableSymbol> Redefines
         {
             get;
             private set;
         }
 
-        /// <summary>   
-        /// Add a redefines symbol to this symbol.  
-        /// </summary>  
-        /// <param name="symbol"></param>   
+        /// <summary>	
+        /// Add a redefines symbol to this symbol.	
+        /// </summary>	
+        /// <param name="symbol"></param>	
         public void AddRedefines(VariableSymbol symbol)
         {
             System.Diagnostics.Debug.Assert(symbol != null);
@@ -185,7 +185,7 @@ namespace TypeCobol.Compiler.Symbols
                 foreach (var redefines in Redefines)
                 {
                     output.Write(indent);
-                    output.WriteLine(redefines.FullName);//Write reference  
+                    output.WriteLine(redefines.FullName);//Write reference	
                 }
             }
 
