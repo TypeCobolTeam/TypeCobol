@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/hum7rioly7mib3so/branch/master?svg=true)](https://ci.appveyor.com/project/TypeCobolTeam/typecobol/branch/master)
+[![Build status](https://github.com/TypeCobolTeam/TypeCobol/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/TypeCobolTeam/TypeCobol/actions/workflows/dotnet.yml)
 
 
 # TypeCobol

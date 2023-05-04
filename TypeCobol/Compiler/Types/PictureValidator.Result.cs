@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Types
+﻿using JetBrains.Annotations;
+
+namespace TypeCobol.Compiler.Types
 {
     public partial class PictureValidator
     {
@@ -20,7 +22,8 @@
             /// <summary>
             /// Currency descriptor found in Picture, if any.
             /// </summary>
-            public CurrencyDescriptor? CurrencyDescriptor { get; }
+            [CanBeNull]
+            public CurrencyDescriptor CurrencyDescriptor { get; }
 
             /// <summary>
             /// Computed picture category.
@@ -60,7 +63,7 @@
             }
 
             //Invalid result, but we have a parsed sequence and potentially a currency descriptor
-            internal Result(Character[] sequence, CurrencyDescriptor? currencyDescriptor)
+            internal Result(Character[] sequence, [CanBeNull] CurrencyDescriptor currencyDescriptor)
             {
                 IsValid = false;
                 Sequence = sequence;
@@ -69,7 +72,7 @@
             }
 
             //Valid result
-            internal Result(Character[] sequence, CurrencyDescriptor? currencyDescriptor, PictureCategory category, int digits, int realDigits, bool isSigned, int scale, int size)
+            internal Result(Character[] sequence, [CanBeNull] CurrencyDescriptor currencyDescriptor, PictureCategory category, int digits, int realDigits, bool isSigned, int scale, int size)
             {
                 IsValid = true;
                 Sequence = sequence;

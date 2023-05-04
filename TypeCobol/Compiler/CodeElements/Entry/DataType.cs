@@ -24,11 +24,11 @@ namespace TypeCobol.Compiler.CodeElements
             return astVisitor.Visit(this);
         }
 
-        public override bool Equals(object? obj) {
+        public override bool Equals(object obj) {
             return Equals(obj as DataType);
         }
 
-        public bool Equals(DataType? dataType)
+        public bool Equals(DataType dataType)
         {
             if (object.ReferenceEquals(this, dataType)) return true;
             if (object.ReferenceEquals(null, dataType)) return false;
@@ -51,11 +51,11 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public static bool operator ==(DataType? x, DataType? y)
+        public static bool operator ==([CanBeNull]DataType x, [CanBeNull]DataType y)
         {
             return x?.Equals(y) ?? object.ReferenceEquals(y, null);
         }
-        public static bool operator !=(DataType? x, DataType? y)
+        public static bool operator !=([CanBeNull]DataType x, [CanBeNull]DataType y)
         {
             return !(x == y);
         }

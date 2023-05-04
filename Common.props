@@ -8,6 +8,8 @@
 		<!-- Targeting .NET 6.0, with default language level (C# 10) -->
 		<TargetFramework>net6.0</TargetFramework>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<!-- Nullable checks as errors -->
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
 		<!-- Enable all rules for code analyzers -->
 		<AnalysisMode>All</AnalysisMode>
 		<!-- Versioning -->
@@ -27,13 +29,13 @@
 		<EnableNETAnalyzers>false</EnableNETAnalyzers>
 		<Optimize>false</Optimize>
 		<!-- Custom compilation constant -->
-		<DefineConstants>$(DefineConstants);EUROINFO_RULES</DefineConstants>
+		<DefineConstants>$(DefineConstants);DEBUG;EUROINFO_RULES</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EI_Release|AnyCPU'">
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<Optimize>true</Optimize>
 		<!-- Custom compilation constant -->
-		<DefineConstants>$(DefineConstants);EUROINFO_RULES</DefineConstants>
+		<DefineConstants>$(DefineConstants);RELEASE;EUROINFO_RULES</DefineConstants>
 	</PropertyGroup>
 	
 </Project>

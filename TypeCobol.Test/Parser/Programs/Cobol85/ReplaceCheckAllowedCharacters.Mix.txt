@@ -1,0 +1,140 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.    ReplaceCheckAllowedCharacters.
+       DATA DIVISION.
+       working-storage section.
+
+       01  Group1.
+       replace ==:_:== by ==OK1-UNDERSCORE==.
+           05 :_:-Var pic X.
+       replace ==:>:== by ==OK2-GREATER==.
+           05 :>:-Var pic X.
+       replace ==:=:== by ==OK3-EQUAL==.
+           05 :=:-Var pic X.
+       replace ==:<:== by ==OK4-LESS==.
+           05 :<:-Var pic X.
+       replace ==:;:== by ==OK5-SEMICOLON==.
+           05 :;:-Var pic X.
+       replace ==:/:== by ==OK6-SLASH==.
+           05 :/:-Var pic X.
+       replace ==:.:== by ==OK7-DOT==.
+           05 :.:-Var pic X.
+       replace ==:-:== by ==OK8-HYPHEN==.
+           05 :-:-Var pic X.
+       replace ==:,:== by ==OK9-COLON==.
+           05 :,:-Var pic X.
+       replace ==:+:== by ==OK10-PLUS==.
+           05 :+:-Var pic X.
+       replace ==:*:== by ==OK11-STAR==.
+           05 :*:-Var pic X.
+       replace ==:$:== by ==OK12-DOLLAR==.
+           05 :$:-Var pic X.
+       replace ==: :== by ==OK13-SPACE==.
+           05 : :-Var pic X.
+
+      *Ok
+       replace ==:'':== by ==OK14-2-QUOTE==.
+           05 :'':-Var pic X.
+      *Ok
+       replace ==:"":== by ==OK15-2-DOUBLEQUOTE==.
+           05 :"":-Var pic X.
+
+      *Ok for CobolEditorE-I
+      *But NOT OK in IBM because string is not terminated correctly ?
+      *An invalid"REPLACE"statement was found.  Scanning was resumed at
+      *  the period terminating the"REPLACE"statement.
+       replace ==:':== by ==OK16-QUOTE==.
+           05 :':-Var pic X.
+      *Ok for CobolEditorE-I
+      *But NOT OK because string is not terminated correctly ?
+      *An invalid"REPLACE"statement was found.  Scanning was resumed at
+      *  the period terminating the"REPLACE"statement.
+       replace ==:":== by ==OK17-DOUBLE-QUOTE==.
+           05 :":-Var pic X.
+
+      *KO for CobolEditorE-I
+       replace ==:):== by ==KO-OPEN-PARENTHESIS==.
+Line 56[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+Line 56[28,28] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+           05 :):-Var pic X.
+       replace ==:(:== by ==KO-CLOSE-PARENTHESIS==.
+Line 58[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :(:-Var pic X.
+
+
+      *Non-COBOL character"@"was found in column 19.
+      *  The character was accepted.
+Line 63[18,18] <55, Error, Tokens> - Non-COBOL character "@" was found in column 19.
+       replace ==:@:== by ==KO-AROBASE==.
+      *Non-COBOL character(s) were found starting with"@"in column 16.
+      *  The characters were discarded.
+Line 66[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :@:-Var pic X.
+
+
+      *Ko Non-COBOL character"€"was found in column 19.
+      *The character was accepted.
+Line 71[18,18] <55, Error, Tokens> - Non-COBOL character "€" was found in column 19.
+       replace ==:€:== by ==KO-EURO==.
+Line 72[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :€:-Var pic X.
+
+      *Ko Non-COBOL character"£"was found in column 19.
+      *The character was accepted.
+Line 76[18,18] <55, Error, Tokens> - Non-COBOL character "£" was found in column 19.
+       replace ==:£:== by ==KO-GBR==.
+Line 77[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :£:-Var pic X.
+
+      *Ko Non-COBOL character"#"was found in column 19.
+      *The character was accepted.
+Line 81[18,18] <55, Error, Tokens> - Non-COBOL character "#" was found in column 19.
+       replace ==:#:== by ==KO-SHARP==.
+Line 82[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :#:-Var pic X.
+
+      *Ko Non-COBOL character"é"was found in column 19.
+      *The character was accepted.
+Line 86[18,18] <55, Error, Tokens> - Non-COBOL character "é" was found in column 19.
+       replace ==:é:== by ==KO-E-ACUTE==.
+Line 87[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :é:-Var pic X.
+
+      *Ko Non-COBOL character"&"was found in column 19.
+      *The character was accepted.
+Line 91[18,18] <55, Error, Tokens> - Non-COBOL character "&" was found in column 19.
+       replace ==:&:== by ==KO-AND==.
+Line 92[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :&:-Var pic X.
+
+      *Ko Non-COBOL character"["was found in column 19.
+      *The character was accepted.
+Line 96[18,18] <55, Error, Tokens> - Non-COBOL character "[" was found in column 19.
+       replace ==:[:== by ==KO-OPEN-BRACKET==.
+Line 97[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :[:-Var pic X.
+      *Ko Non-COBOL character"]"was found in column 19.
+      *The character was accepted.
+Line 100[18,18] <55, Error, Tokens> - Non-COBOL character "]" was found in column 19.
+       replace ==:]:== by ==KO-CLOSE-BRACKET==.
+Line 101[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :]:-Var pic X.
+      *Ko Non-COBOL character"^"was found in column 19.
+      *The character was accepted.
+Line 104[18,18] <55, Error, Tokens> - Non-COBOL character "^" was found in column 19.
+       replace ==:^:== by ==KO-CIRCUMFLEX ==.
+Line 105[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :^ :-Var pic X.
+      *Ko Non-COBOL character"{"was found in column 19.
+      *The character was accepted.
+Line 108[18,18] <55, Error, Tokens> - Non-COBOL character "{" was found in column 19.
+       replace ==:{:== by ==KO-OPEN-BRACE==.
+Line 109[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :{:-Var pic X.
+      *Ko Non-COBOL character"}"was found in column 19.
+      *The character was accepted.
+Line 112[18,18] <55, Error, Tokens> - Non-COBOL character "}" was found in column 19.
+       replace ==:}:== by ==KO-CLOSE-BRACE==.
+Line 113[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '05 ... -'
+           05 :}:-Var pic X.
+
+       END PROGRAM ReplaceCheckAllowedCharacters.

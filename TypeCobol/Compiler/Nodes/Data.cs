@@ -218,7 +218,8 @@ namespace TypeCobol.Compiler.Nodes {
             this.CodeElement = dataDefinitionEntry;
         }
 
-        private CommonDataDescriptionAndDataRedefines? _CommonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
+        [CanBeNull]
+        private CommonDataDescriptionAndDataRedefines _CommonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
 
 
         protected override CodeElement InternalCodeElement => CodeElement;
@@ -227,7 +228,8 @@ namespace TypeCobol.Compiler.Nodes {
         /// IndexDefinition and GeneratedDefinition don't have a CodeElement.
         /// Otherwise all others DataDefinition must have a CodeElement
         /// </summary>
-        public new DataDefinitionEntry? CodeElement { get; }
+        [CanBeNull]
+        public new DataDefinitionEntry CodeElement { get; }
 
 
 
@@ -304,8 +306,11 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        private DataType? _primitiveDataType;
-        public virtual DataType? PrimitiveDataType
+        [CanBeNull]
+        private DataType _primitiveDataType;
+
+        [CanBeNull]
+        public virtual DataType PrimitiveDataType
         {
             get
             {
@@ -652,8 +657,13 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         #region TypeProperties
-        public AlphanumericValue? Picture => _CommonDataDesc?.Picture;
-        internal PictureValidator.Result? PictureValidationResult => _CommonDataDesc?.PictureValidationResult;
+
+        [CanBeNull]
+        public AlphanumericValue Picture => _CommonDataDesc?.Picture;
+
+        [CanBeNull]
+        internal PictureValidator.Result PictureValidationResult => _CommonDataDesc?.PictureValidationResult;
+
         public bool IsJustified { get {  if(_CommonDataDesc != null && _CommonDataDesc.IsJustified != null) return _CommonDataDesc.IsJustified.Value; else return false; } }
         public virtual DataUsage? Usage
         {
