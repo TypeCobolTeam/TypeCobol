@@ -422,6 +422,7 @@ terminal TypeCobol.Compiler.Scanner.Token PASSWORD;
 terminal TypeCobol.Compiler.Scanner.Token PIC;
 terminal TypeCobol.Compiler.Scanner.Token PICTURE;
 terminal TypeCobol.Compiler.Scanner.Token POINTER;
+terminal TypeCobol.Compiler.Scanner.Token POINTER_32;
 terminal TypeCobol.Compiler.Scanner.Token POSITION;
 terminal TypeCobol.Compiler.Scanner.Token POSITIVE;
 terminal TypeCobol.Compiler.Scanner.Token PROCEDURE_POINTER;

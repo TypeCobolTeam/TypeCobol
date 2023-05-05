@@ -7,6 +7,7 @@ string "a" 'b' delimited by SIZE "C" "D" 'e' delimited "delimiter" into toto end
 string "a" 'b' delimited by SIZE "C" "D" 'e' delimited by "delimiter" into toto
 string "a" 'b' delimited by SIZE "C" "D" 'e' delimited by "delimiter" into toto end-string
 string "a" 'b' delimited by SIZE "C" "D" 'e' delimited by "delimiter" into toto POINTER myPointer
+string "a" 'b' delimited by SIZE "C" "D" 'e' delimited by "delimiter" into toto POINTER-32 myPointer
 string "a" 'b' delimited by SIZE "C" "D" 'e' delimited by "delimiter" into toto POINTER myPointer end-string
 string "a" 'b' delimited by SIZE "C" "D" 'e' delimited by "delimiter" into toto with POINTER myPointer
 string "a" 'b' delimited by SIZE "C" "D" 'e' delimited by "delimiter" into toto with POINTER myPointer end-string

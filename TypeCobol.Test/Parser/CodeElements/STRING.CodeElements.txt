@@ -1,4 +1,6 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+Line 10[81,90] <27, Error, Syntax> - Syntax error : extraneous input 'POINTER-32' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[81,90:POINTER-32]<POINTER_32>
+--- Code Elements ---
 [[StringStatement]] [1,6:string]<STRING> --> [45,48:toto]<UserDefinedWord>
 - variables to concat =  "toto" "titi"  DELIMITED BY SIZE into = toto
 
@@ -34,6 +36,9 @@
 [[StringStatement]] [1,6:string]<STRING> --> [89,97:myPointer]<UserDefinedWord>
 - variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
  pointer = myPointer
+
+[[StringStatement]] [1,6:string]<STRING> --> [76,79:toto]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
 
 [[StringStatement]] [1,6:string]<STRING> --> [89,97:myPointer]<UserDefinedWord>
 - variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto

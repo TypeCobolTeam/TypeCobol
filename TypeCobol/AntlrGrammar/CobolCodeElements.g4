@@ -3097,7 +3097,7 @@ usageClause:
 					(NATIONAL NATIVE?) |
 					(OBJECT REFERENCE classNameReference?) |
 					(PACKED_DECIMAL NATIVE?) |
-					(POINTER |
+					(POINTER | POINTER_32 |
 					PROCEDURE_POINTER |
 					FUNCTION_POINTER)                            
 				);

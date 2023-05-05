@@ -851,7 +851,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 bool allArePointers = true;
                 foreach (var receiver in receivers)
                 {
-                    if (receiver.Usage == DataUsage.Pointer)
+                    if (receiver.Usage == DataUsage.Pointer || receiver.Usage == DataUsage.Pointer32)
                     {
                         containsPointers = true;
                         System.Diagnostics.Debug.Assert(receiver.CodeElement != null);

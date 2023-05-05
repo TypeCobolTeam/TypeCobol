@@ -487,6 +487,7 @@ namespace TypeCobol.Compiler.Nodes {
                             break;
                         case DataUsage.Index:
                         case DataUsage.Pointer:
+                        case DataUsage.Pointer32:
                         case DataUsage.ProcedurePointer:
                         case DataUsage.ObjectReference:
                         case DataUsage.FunctionPointer:
@@ -727,6 +728,7 @@ namespace TypeCobol.Compiler.Nodes {
                         return true;
                     }
                     else if (!this.Usage.HasValue || this.Usage.Value != DataUsage.Pointer &&
+                             this.Usage.Value != DataUsage.Pointer32 &&
                              this.Usage.Value != DataUsage.FunctionPointer &&
                              this.Usage.Value != DataUsage.ProcedurePointer &&
                              this.Usage.Value != DataUsage.ObjectReference &&

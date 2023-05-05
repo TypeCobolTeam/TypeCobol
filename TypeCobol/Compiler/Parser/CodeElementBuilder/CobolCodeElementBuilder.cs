@@ -1151,6 +1151,7 @@ namespace TypeCobol.Compiler.Parser
 					CreateDataUsageProperty(DataUsage.ObjectReference, c.OBJECT()) ??
 					CreateDataUsageProperty(DataUsage.ObjectReference, c.REFERENCE()) ??
 					CreateDataUsageProperty(DataUsage.Pointer, c.POINTER()) ??
+					CreateDataUsageProperty(DataUsage.Pointer32, c.POINTER_32()) ??
 					CreateDataUsageProperty(DataUsage.FunctionPointer, c.FUNCTION_POINTER()) ??
 					CreateDataUsageProperty(DataUsage.ProcedurePointer, c.PROCEDURE_POINTER()) ??
 					null;
