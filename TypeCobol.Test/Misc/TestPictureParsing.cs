@@ -1,5 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Test.Misc {
 
@@ -21,34 +23,50 @@ namespace TypeCobol.Test.Misc {
             TestConversion("XXXXXXXXX",     DataType.Alphanumeric);
             TestConversion("xxxxxxxxx",     DataType.Alphanumeric);
             TestConversion("****.**",       DataType.NumericEdited);
+            TestConversion("****,**",       DataType.NumericEdited, true);
             TestConversion("ZZZZ.ZZ",       DataType.NumericEdited);
             TestConversion("99,B999,B000",  DataType.NumericEdited);
-            TestConversion("99,999",        DataType.Numeric);
+            TestConversion("99,999",        DataType.NumericEdited);
             TestConversion("GGBBGG",        DataType.DBCS);
-            TestConversion("+999,99E+99",   DataType.FloatingPoint);
+            TestConversion("+999.99E+99",   DataType.FloatingPoint);
+            TestConversion("+999,99E+99",   DataType.FloatingPoint, true);
             TestConversion("-9v9(9)E-99",   DataType.FloatingPoint);
 
-            TestConversion("$,99", DataType.Numeric);
-            TestConversion("$,99", DataType.NumericEdited, new char[] {'$'});
-            TestConversion("€,99", DataType.NumericEdited, new char[] {'€'});
-            TestConversion("$,99", DataType.NumericEdited, new char[] {'$','€'});
-            TestConversion("SVU",  DataType.NumericEdited, new char[] {'U'});
-            TestConversion("SV",   DataType.Numeric);
+            TestConversion("999",  DataType.Numeric);
+            TestConversion("$,99", DataType.NumericEdited);
+            TestConversion("$,99", DataType.NumericEdited, '$');
+            TestConversion("€,99", DataType.NumericEdited, '€');
+            TestConversion("$,99", DataType.NumericEdited, '$', '€');
+            
+            
+            TestConversion("U9V", DataType.NumericEdited, 'U');
+            TestConversion("S9V", DataType.Numeric);
+
             // the following syntaxes are recognized, although wrong
             // this method tries to detect intent, it's not its job to detect syntax errors
-            TestConversion("UX",   DataType.Alphanumeric,  new char[] {'U'});
-            TestConversion("UN",   DataType.DBCS,          new char[] {'U'});
-            TestConversion("UA",   DataType.Alphabetic,    new char[] {'U'});
-            TestConversion("$,50", DataType.NumericEdited);
-            TestConversion("$,50", DataType.NumericEdited, new char[] {'$'});
+            TestConversion("SVU",  DataType.Unknown, 'U');
+            TestConversion("UX",   DataType.Unknown, 'U');
+            TestConversion("UN",   DataType.Unknown, 'U');
+            TestConversion("UA",   DataType.Unknown, 'U');
+            TestConversion("$,50", DataType.Unknown);
+            TestConversion("$,50", DataType.Unknown, '$');
         }
 
-        private static bool TestConversion(string picture, DataType expected, char[] currencies = null) {
-            DataType result;
-            if (currencies == null) result = DataType.Create(picture);
-            else result = DataType.Create(picture, currencies);
-            if (result != expected) throw new System.Exception("\""+picture+"\">"+result+" vs expected: "+expected);
-            return result == expected;
+        private static void TestConversion(string picture, DataType expected, params char[] currencies)
+        {
+            TestConversion(picture, expected, false, currencies);
+        }
+
+        private static void TestConversion(string picture, DataType expected, bool decimalPointIsComma, params char[] currencies)
+        {
+            var currencyDescriptor =
+                currencies.ToDictionary(c => c, c => new PictureValidator.CurrencyDescriptor(c, c.ToString()));
+
+            PictureValidator pictureValidator = new PictureValidator(picture, false, decimalPointIsComma, currencyDescriptor);
+            var result = pictureValidator.Validate(out var validationMessages);
+
+            var dataType = DataType.Create(result);
+            if (dataType != expected) throw new System.Exception("\""+picture+"\">"+result.Category+" vs expected: "+expected);
         }
     }
 

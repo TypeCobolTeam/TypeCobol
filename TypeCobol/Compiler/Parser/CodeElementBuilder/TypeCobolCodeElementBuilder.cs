@@ -126,7 +126,7 @@ namespace TypeCobol.Compiler.Parser
                     System.Diagnostics.Debug.Assert(pictureClauseContext.pictureCharacterString is Token);
                     //TokenType is PictureCharacterString so it's ok to create an AlphanumericValue
                     parameter.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
-                    parameter.DataType = DataType.Create(parameter.Picture.Value);
+                    //Don't set parameter.DataType here, it will be set in CodeElementChecker
                 }
             }
             else if (context.cobol2002TypeClause() != null)

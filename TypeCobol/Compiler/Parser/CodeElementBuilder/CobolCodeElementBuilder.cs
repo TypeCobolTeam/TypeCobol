@@ -1110,7 +1110,7 @@ namespace TypeCobol.Compiler.Parser
             else {               
                 entry = new DataDescriptionEntry();
                 entry.DataName = _cobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
-                entry.DataType = DataType.Unknown;
+                //Don't set parameter.DataType here, it will be set in CodeElementChecker
             }
             
 
@@ -1381,8 +1381,8 @@ namespace TypeCobol.Compiler.Parser
                 }
                 // [/COBOL 2002]
                 else if (entry.Picture != null)
-                { // only for a basic TYPEDEF <typename> PIC <picture>
-                    entry.DataType = DataType.Create(entry.Picture.Value);
+                { 
+                    //Don't set parameter.DataType here, it will be set in CodeElementChecker
                 }
                 else if (entry.IsTableOccurence)
                 {

@@ -1,0 +1,37 @@
+================================ ICobolTextLine ================================
+Line    4: LineUpdated     ->        REPLACE ==:suffix:== BY ==suffixFromMainProgram==.
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineUpdated     ->        REPLACE ==:suffix:== BY ==suffixFromMainProgram==.
+================================= ITokensLine ==================================
+Line    4: LineUpdated     -> [8,14:REPLACE]<REPLACE> [16,17:==]<PseudoTextDelimiter> [18,25::suffix:]<PartialCobolWord> [26,27:==]<PseudoTextDelimiter> [29,30:BY]<BY> [32,33:==]<PseudoTextDelimiter> [34,54:suffixFromMainProgram]<UserDefinedWord> [55,56:==]<PseudoTextDelimiter> [57,57+:.]<PeriodSeparator> 
+Line    5: LineUpdated     -> [8,11:COPY]<COPY> [13,20:YReplace]<UserDefinedWord> [21,21+:.]<PeriodSeparator> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineUpdated     -> [8,14:REPLACE]<REPLACE> [16,17:==]<PseudoTextDelimiter> [18,25::suffix:]<PartialCobolWord> [26,27:==]<PseudoTextDelimiter> [29,30:BY]<BY> [32,33:==]<PseudoTextDelimiter> [34,54:suffixFromMainProgram]<UserDefinedWord> [55,56:==]<PseudoTextDelimiter> [57,57+:.]<PeriodSeparator> 
+Line    5: LineUpdated     -> [8,11:COPY]<COPY> [13,20:YReplace]<UserDefinedWord> [21,21+:.]<PeriodSeparator> 
+============================= IProcessedTokensLine =============================
+Line    4: LineUpdated     -> *** DIRECTIVE REPLACE <REPLACE[PartialWord] :suffix: BY suffixFromMainProgram>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,25::suffix:]<PartialCobolWord>[26,27:==]<PseudoTextDelimiter>[29,30:BY]<BY>[32,33:==]<PseudoTextDelimiter>[34,54:suffixFromMainProgram]<UserDefinedWord>[55,56:==]<PseudoTextDelimiter>[57,57+:.]<PeriodSeparator>) *** 
+Line    5: LineUpdated     -> *** DIRECTIVE COPY YReplace ([8,11:COPY]<COPY>[13,20:YReplace]<UserDefinedWord>[21,21+:.]<PeriodSeparator>) *** 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    4: LineUpdated     -> *** DIRECTIVE REPLACE <REPLACE[PartialWord] :suffix: BY suffixFromMainProgram>  ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,25::suffix:]<PartialCobolWord>[26,27:==]<PseudoTextDelimiter>[29,30:BY]<BY>[32,33:==]<PseudoTextDelimiter>[34,54:suffixFromMainProgram]<UserDefinedWord>[55,56:==]<PseudoTextDelimiter>[57,57+:.]<PeriodSeparator>) *** 
+Line    5: LineUpdated     -> *** DIRECTIVE COPY YReplace ([8,11:COPY]<COPY>[13,20:YReplace]<UserDefinedWord>[21,21+:.]<PeriodSeparator>) *** 
+============================== ICodeElementsLine ===============================
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 

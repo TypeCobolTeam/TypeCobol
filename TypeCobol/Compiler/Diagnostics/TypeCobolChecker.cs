@@ -287,7 +287,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             }
 
                                // accepted format is "PIC [S]9(5..9) comp-5"
-                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.PhysicalLength != 4 || expected.Usage != DataUsage.NativeBinary)
+                            if (expected.PrimitiveDataType != DataType.Numeric || expected.PhysicalLength != 4 || expected.Usage != DataUsage.NativeBinary)
                             {
                                 DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5",
                                     actualSpecialRegister.SpecialRegisterName);
