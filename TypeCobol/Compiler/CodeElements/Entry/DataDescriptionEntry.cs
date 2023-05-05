@@ -163,11 +163,13 @@ namespace TypeCobol.Compiler.CodeElements {
         ///
         ///   character-string can contain a maximum of 50 characters.
         /// </summary>
+        [CanBeNull]
         public AlphanumericValue Picture { get; set; }
 
         /// <summary>
         /// Stores the result of Picture validation process
         /// </summary>
+        [CanBeNull]
         internal PictureValidator.Result PictureValidationResult { get; set; }
 
 // [COBOL 2002]        
@@ -616,6 +618,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// NATIVE is treated as a comment in all phrases for which NATIVE is
         /// shown in the USAGE clause.
         /// </summary>
+        [CanBeNull]
         public SyntaxProperty<DataUsage> Usage { get; set; }
 
         /// <summary>

@@ -122,6 +122,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
             //Store validation result for future usages
             codeElement.PictureValidationResult = pictureValidationResult;
+            if (codeElement.DataType == DataType.Unknown)
+            {
+                codeElement.DataType = DataType.Create(pictureValidationResult);
+            }
         }
 
         public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
