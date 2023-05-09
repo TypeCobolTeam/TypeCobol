@@ -294,6 +294,8 @@ namespace TypeCobol.Compiler.Diagnostics
                                 continue;
                             }
                         }
+                        // Here we manage only DataUsage = POINTER (and not POINTER-32)
+                        // because POINTER-32 is not supported in TypeCobol specific syntax "DECLARE function/procedure"
                         else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer)
                         {
                             if (!actualDataDefinition.IsFlagSet(Node.Flag.LinkageSectionNode) &&
