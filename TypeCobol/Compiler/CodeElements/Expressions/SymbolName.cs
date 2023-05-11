@@ -37,8 +37,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SyntaxValue<string> NameLiteral { get; private set; }
 
-		/// <summary>Symbol name</summary>
-		public virtual string Name { get { return NameLiteral != null ? NameLiteral.Value : null; } }
+        /// <summary>Symbol name</summary>
+        public virtual string Name { get { return NameLiteral != null ? NameLiteral.Value : null; } }
 
         /// <summary>
         /// Role of this symbol Token
@@ -114,10 +114,10 @@ namespace TypeCobol.Compiler.CodeElements
         ExternalNameOrSymbolReference // mnemonicForEnvironmentName or EnvironmentName, assignmentName or FileName
     }
     
-	/// <summary>Declaration of a new symbol in the Cobol syntax</summary>
-	public class SymbolDefinition: SymbolInformation {
-		public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type)
-			: base(nameLiteral, SymbolRole.SymbolDefinition, type) { }
+    /// <summary>Declaration of a new symbol in the Cobol syntax</summary>
+    public class SymbolDefinition: SymbolInformation {
+        public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type)
+            : base(nameLiteral, SymbolRole.SymbolDefinition, type) { }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -137,8 +137,8 @@ namespace TypeCobol.Compiler.CodeElements
             IsQualifiedReference = false;
         }
 
-		public SymbolReference(SymbolDefinition symbol)
-			: this(symbol.NameLiteral, symbol.Type) { }
+        public SymbolReference(SymbolDefinition symbol)
+            : this(symbol.NameLiteral, symbol.Type) { }
 
         /// <summary>
         /// True of the type of the symbol reference is ambiguous 
@@ -245,25 +245,25 @@ namespace TypeCobol.Compiler.CodeElements
     /// such names are made unique is called qualification.
     /// </summary>
     public class QualifiedSymbolReference: SymbolReference, IList<SymbolReference> {
-		public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
-			IsAmbiguous = head.IsAmbiguous || tail.IsAmbiguous;
-			IsQualifiedReference = true;
-			Head = head;
-			Tail = tail;
+        public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
+            IsAmbiguous = head.IsAmbiguous || tail.IsAmbiguous;
+            IsQualifiedReference = true;
+            Head = head;
+            Tail = tail;
 
-		}
+        }
 
-	    public SymbolReference Head { get; private set; }
-		public SymbolReference Tail { get; private set; }
-		public SymbolReference First {
-			get {
-				var head = Head;
-				while (head.IsQualifiedReference) {
-					head = ((QualifiedSymbolReference)head).Head;
-				}
-				return head;
-			}
-		}
+        public SymbolReference Head { get; private set; }
+        public SymbolReference Tail { get; private set; }
+        public SymbolReference First {
+            get {
+                var head = Head;
+                while (head.IsQualifiedReference) {
+                    head = ((QualifiedSymbolReference)head).Head;
+                }
+                return head;
+            }
+        }
 
         public override bool IsOrCanBeOfType(SymbolType symbolType) {
             return Head.IsOrCanBeOfType(symbolType) || Tail.IsOrCanBeOfType(symbolType);
@@ -279,23 +279,23 @@ namespace TypeCobol.Compiler.CodeElements
 
         /// <summary>Used to resolve the symbol reference in a hierarchy of names</summary>
         public override string DefinitionPathPattern {
-			get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
-		}
+            get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
+        }
 
-	    public override string ToString()
-	    {
-	        return Head + " IN " + Tail;
-	    }
+        public override string ToString()
+        {
+            return Head + " IN " + Tail;
+        }
 
-	    public override string ToString(bool isBoolType)
-	    {
-	        string head = "";
-	        if (Head.IsQualifiedReference)
-	            head = Head.ToString(isBoolType);
-	        else
-	        {
-	            head = Head.ToString() + (isBoolType ? "-value" : "");
-	        }
+        public override string ToString(bool isBoolType)
+        {
+            string head = "";
+            if (Head.IsQualifiedReference)
+                head = Head.ToString(isBoolType);
+            else
+            {
+                head = Head.ToString() + (isBoolType ? "-value" : "");
+            }
             return head + " IN " + Tail;
         }
         public override string Name { get { return Tail.Name+'.'+Head.Name; } }
@@ -303,80 +303,80 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public bool IsReadOnly { get { return true; } }
+        public bool IsReadOnly { get { return true; } }
 
-		public int Count { get { return AsList().Count; } }
+        public int Count { get { return AsList().Count; } }
 
-		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-		public IEnumerator<SymbolReference> GetEnumerator() { return AsList().GetEnumerator(); }
-		public IList<SymbolReference> AsList() {
-			var refs = new List<SymbolReference>();
-			if (Head is QualifiedSymbolReference)
-				 refs.AddRange(((QualifiedSymbolReference)Head).AsList());
-			else refs.Add(Head);
-			if (Tail is QualifiedSymbolReference)
-				 refs.AddRange(((QualifiedSymbolReference)Tail).AsList());
-			else refs.Add(Tail);
-			return refs;
-		}
+        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        public IEnumerator<SymbolReference> GetEnumerator() { return AsList().GetEnumerator(); }
+        public IList<SymbolReference> AsList() {
+            var refs = new List<SymbolReference>();
+            if (Head is QualifiedSymbolReference)
+                 refs.AddRange(((QualifiedSymbolReference)Head).AsList());
+            else refs.Add(Head);
+            if (Tail is QualifiedSymbolReference)
+                 refs.AddRange(((QualifiedSymbolReference)Tail).AsList());
+            else refs.Add(Tail);
+            return refs;
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, Head, Tail);
-	    }
+        }
 
-	    // UNIMPLEMENTED BECAUSE OF LAZYNESS
+        // UNIMPLEMENTED BECAUSE OF LAZYNESS
 
         public int IndexOf(SymbolReference item) {
-			throw new NotImplementedException("TODO");
-		}
+            throw new NotImplementedException("TODO");
+        }
 
-		public void Insert(int index,SymbolReference item) {
-			throw new NotImplementedException();
-		}
+        public void Insert(int index,SymbolReference item) {
+            throw new NotImplementedException();
+        }
 
-		public void RemoveAt(int index) {
-			throw new NotImplementedException();
-		}
+        public void RemoveAt(int index) {
+            throw new NotImplementedException();
+        }
 
-		public SymbolReference this[int index] {
-			get {
-				throw new NotImplementedException("TODO");
-			}
-			set {
-				throw new NotImplementedException();
-			}
-		}
+        public SymbolReference this[int index] {
+            get {
+                throw new NotImplementedException("TODO");
+            }
+            set {
+                throw new NotImplementedException();
+            }
+        }
 
-		public void Add(SymbolReference item) {
-			throw new NotImplementedException();
-		}
+        public void Add(SymbolReference item) {
+            throw new NotImplementedException();
+        }
 
-		public void Clear() {
-			throw new NotImplementedException();
-		}
+        public void Clear() {
+            throw new NotImplementedException();
+        }
 
-		public bool Contains(SymbolReference item) {
-			throw new NotImplementedException("TODO");
-		}
+        public bool Contains(SymbolReference item) {
+            throw new NotImplementedException("TODO");
+        }
 
-		public void CopyTo(SymbolReference[] array, int index) {
-			throw new NotImplementedException();
-		}
+        public void CopyTo(SymbolReference[] array, int index) {
+            throw new NotImplementedException();
+        }
 
-		public bool Remove(SymbolReference item) {
-			throw new NotImplementedException();
-		}
-	}
-	public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
-	    public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail) : base(head, tail)
-	    {
-	        IsTypeCobolQualifiedReference = true;
-	    }
+        public bool Remove(SymbolReference item) {
+            throw new NotImplementedException();
+        }
+    }
+    public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
+        public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail) : base(head, tail)
+        {
+            IsTypeCobolQualifiedReference = true;
+        }
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
-	    }
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
     }
 
     /// <summary>
@@ -412,23 +412,23 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-	/// <summary>Unique case of qualified external name: textName (IN | OF) libraryName</summary>
-	public class QualifiedTextName: ExternalName {
-		public QualifiedTextName([NotNull] ExternalName textName, ExternalName libraryName)
-				: base(textName.NameLiteral, textName.Type) {
-			TextName = textName;
-			LibraryName = libraryName;
-		}
+    /// <summary>Unique case of qualified external name: textName (IN | OF) libraryName</summary>
+    public class QualifiedTextName: ExternalName {
+        public QualifiedTextName([NotNull] ExternalName textName, ExternalName libraryName)
+                : base(textName.NameLiteral, textName.Type) {
+            TextName = textName;
+            LibraryName = libraryName;
+        }
 
-		public ExternalName TextName { get; private set; }
-		public ExternalName LibraryName { get; private set; }
+        public ExternalName TextName { get; private set; }
+        public ExternalName LibraryName { get; private set; }
 
-		public override string ToString() {
-			if (LibraryName == null) return base.ToString();
-			return base.ToString() + " IN " + LibraryName;
-		}
+        public override string ToString() {
+            if (LibraryName == null) return base.ToString();
+            return base.ToString() + " IN " + LibraryName;
+        }
 
-		public override string Name { get { return LibraryName.Name+'.'+TextName.Name; } }
+        public override string Name { get { return LibraryName.Name+'.'+TextName.Name; } }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)

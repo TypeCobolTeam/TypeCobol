@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SpecialNamesParagraph : CodeElement
     {
-		public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph)
+        public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph)
         { }
 
         /// <summary>

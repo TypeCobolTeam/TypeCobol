@@ -78,23 +78,23 @@
         public bool IsCommon { get { return Common != null && Common.Value; } }
 
         public override string ToString() {
-			var sb = new System.Text.StringBuilder(base.ToString());
-			sb.AppendLine("- ProgramName = " + ProgramName);
-			sb.AppendLine("- IsInitial = " + IsInitial);
-			sb.AppendLine("- IsRecursive = " + IsRecursive);
-			sb.AppendLine("- IsCommon = " + IsCommon);
-			if (AuthoringProperties != null) {
-				sb.Append(AuthoringProperties);
-			}
-			return sb.ToString();
-		}
+            var sb = new System.Text.StringBuilder(base.ToString());
+            sb.AppendLine("- ProgramName = " + ProgramName);
+            sb.AppendLine("- IsInitial = " + IsInitial);
+            sb.AppendLine("- IsRecursive = " + IsRecursive);
+            sb.AppendLine("- IsCommon = " + IsCommon);
+            if (AuthoringProperties != null) {
+                sb.Append(AuthoringProperties);
+            }
+            return sb.ToString();
+        }
     }
 
 
 
 public class LibraryCopyCodeElement: CodeElement {
-	public LibraryCopyCodeElement(): base(CodeElementType.LibraryCopy) { }
-	public ExternalName Name { get; set; }
+    public LibraryCopyCodeElement(): base(CodeElementType.LibraryCopy) { }
+    public ExternalName Name { get; set; }
 }
 
 }

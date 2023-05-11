@@ -5,14 +5,14 @@ using TypeCobol.Compiler.CodeElements;
 public interface ExceptionCondition { }
 
     public class OnSizeError: GenericNode<OnSizeErrorCondition>, ExceptionCondition {
-	    public OnSizeError(OnSizeErrorCondition condition): base(condition) { }
+        public OnSizeError(OnSizeErrorCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
     public class NoSizeError: GenericNode<NotOnSizeErrorCondition>, ExceptionCondition {
-	    public NoSizeError(NotOnSizeErrorCondition condition): base(condition) { }
+        public NoSizeError(NotOnSizeErrorCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -20,14 +20,14 @@ public interface ExceptionCondition { }
     }
 
     public class OnAtEnd: GenericNode<AtEndCondition>, ExceptionCondition {
-	    public OnAtEnd(AtEndCondition condition): base(condition) { }
+        public OnAtEnd(AtEndCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
     public class NoAtEnd: GenericNode<NotAtEndCondition>, ExceptionCondition {
-	    public NoAtEnd(NotAtEndCondition condition): base(condition) { }
+        public NoAtEnd(NotAtEndCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -35,14 +35,14 @@ public interface ExceptionCondition { }
     }
 
     public class OnException: GenericNode<OnExceptionCondition>, ExceptionCondition {
-	    public OnException(OnExceptionCondition condition): base(condition) { }
+        public OnException(OnExceptionCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
     public class NoException: GenericNode<NotOnExceptionCondition>, ExceptionCondition {
-	    public NoException(NotOnExceptionCondition condition): base(condition) { }
+        public NoException(NotOnExceptionCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -50,14 +50,14 @@ public interface ExceptionCondition { }
     }
 
     public class OnInvalidKey: GenericNode<InvalidKeyCondition>, ExceptionCondition {
-	    public OnInvalidKey(InvalidKeyCondition condition): base(condition) { }
+        public OnInvalidKey(InvalidKeyCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
     public class NoInvalidKey: GenericNode<NotInvalidKeyCondition>, ExceptionCondition {
-	    public NoInvalidKey(NotInvalidKeyCondition condition): base(condition) { }
+        public NoInvalidKey(NotInvalidKeyCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -65,14 +65,14 @@ public interface ExceptionCondition { }
     }
 
     public class OnOverflow: GenericNode<OnOverflowCondition>, ExceptionCondition {
-	    public OnOverflow(OnOverflowCondition condition): base(condition) { }
+        public OnOverflow(OnOverflowCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
     public class NoOverflow: GenericNode<NotOnOverflowCondition>, ExceptionCondition {
-	    public NoOverflow(NotOnOverflowCondition condition): base(condition) { }
+        public NoOverflow(NotOnOverflowCondition condition): base(condition) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);

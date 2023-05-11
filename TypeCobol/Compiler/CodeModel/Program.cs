@@ -154,14 +154,14 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public class SourceProgram: Program {
 
-		public SourceProgram(SymbolTable EnclosingScope, ProgramIdentification codeElement) : base(codeElement)
-		{
+        public SourceProgram(SymbolTable EnclosingScope, ProgramIdentification codeElement) : base(codeElement)
+        {
             // Main and Stacked programs are always bound to Namespace Scope.
             System.Diagnostics.Debug.Assert(EnclosingScope != null && EnclosingScope.CurrentScope == SymbolTable.Scope.Namespace);
 
             var programSymbolTable = new SymbolTable(EnclosingScope, SymbolTable.Scope.Program);
             var globalSymbolTable = new SymbolTable(programSymbolTable, SymbolTable.Scope.Global);
-			SymbolTable = new SymbolTable(globalSymbolTable, SymbolTable.Scope.Local);
+            SymbolTable = new SymbolTable(globalSymbolTable, SymbolTable.Scope.Local);
         }
 
         // -- ENVIRONMENT DIVISION --
@@ -213,11 +213,11 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs can be directly or indirectly contained in the containing program.     
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
-	public class NestedProgram: Program {
-		public NestedProgram(Program containingProgram, ProgramIdentification codeElement)
+    public class NestedProgram: Program {
+        public NestedProgram(Program containingProgram, ProgramIdentification codeElement)
             : base(codeElement)
         {
-			ContainingProgram = containingProgram;
+            ContainingProgram = containingProgram;
             SymbolTable globalTable = containingProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global); //Get Parent Global Table
             var globalNestedSymbolTable = new SymbolTable(globalTable, SymbolTable.Scope.Global); //Create a new Global symbol table for this nested program and his childrens programs
             //It allows to goes down with global variable and ensure that nested global variables and types are not accessible to parent program. 
@@ -229,7 +229,7 @@ namespace TypeCobol.Compiler.CodeModel
         public override bool IsMainProgram => false;
 
         /// <summary>A nested program is a program that is contained in another program.</summary>
-		public Program ContainingProgram { get; private set; }
+        public Program ContainingProgram { get; private set; }
         
         public override bool VisitNode(IASTVisitor astVisitor)
         {
