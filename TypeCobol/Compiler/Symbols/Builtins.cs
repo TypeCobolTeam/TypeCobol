@@ -24,6 +24,7 @@ namespace TypeCobol.Compiler.Symbols
         public static readonly Type NationalType;
         public static readonly Type ObjectReferenceType;
         public static readonly Type PointerType;
+        public static readonly Type Pointer32Type;
         public static readonly Type ProcedurePointerType;
         public static readonly Type FunctionPointerType;
 
@@ -53,6 +54,7 @@ namespace TypeCobol.Compiler.Symbols
             NationalType = new Type(Type.Tags.Usage, Type.UsageFormat.National);
             ObjectReferenceType = new Type(Type.Tags.Usage, Type.UsageFormat.ObjectReference);
             PointerType = new Type(Type.Tags.Usage, Type.UsageFormat.Pointer);
+            Pointer32Type = new Type(Type.Tags.Usage, Type.UsageFormat.Pointer32);
             ProcedurePointerType = new Type(Type.Tags.Usage, Type.UsageFormat.ProcedurePointer);
             FunctionPointerType = new Type(Type.Tags.Usage, Type.UsageFormat.FunctionPointer);
 
@@ -155,6 +157,8 @@ namespace TypeCobol.Compiler.Symbols
                     return ObjectReferenceType;
                 case Type.UsageFormat.Pointer:
                     return PointerType;
+                case Type.UsageFormat.Pointer32:
+                    return Pointer32Type;
                 case Type.UsageFormat.ProcedurePointer:
                     return ProcedurePointerType;
                 case Type.UsageFormat.FunctionPointer:

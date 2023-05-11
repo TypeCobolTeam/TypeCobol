@@ -1269,6 +1269,10 @@ namespace TypeCobol.Compiler.CodeElements {
         /// </summary>
         Pointer,
         /// <summary>
+        /// POINTER-32 phrase
+        /// </summary>
+        Pointer32,
+        /// <summary>
         /// p236: PROCEDURE-POINTER phrase 
         /// </summary>
         ProcedurePointer
