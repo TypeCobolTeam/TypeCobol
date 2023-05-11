@@ -294,6 +294,8 @@ namespace TypeCobol.Compiler.Diagnostics
                                 continue;
                             }
                         }
+                        // Here we manage only DataUsage = POINTER (and not POINTER-32)
+                        // because POINTER-32 is not supported in TypeCobol specific syntax "DECLARE function/procedure"
                         else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer)
                         {
                             if (!actualDataDefinition.IsFlagSet(Node.Flag.LinkageSectionNode) &&
@@ -851,7 +853,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 bool allArePointers = true;
                 foreach (var receiver in receivers)
                 {
-                    if (receiver.Usage == DataUsage.Pointer)
+                    if (receiver.Usage == DataUsage.Pointer || receiver.Usage == DataUsage.Pointer32)
                     {
                         containsPointers = true;
                         System.Diagnostics.Debug.Assert(receiver.CodeElement != null);

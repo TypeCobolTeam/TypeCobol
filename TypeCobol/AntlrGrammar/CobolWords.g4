@@ -416,6 +416,7 @@ tokens
     PIC,
     PICTURE,
     POINTER,
+    POINTER_32,
     POSITION,
     POSITIVE,
     PROCEDURE_POINTER,
@@ -2265,6 +2266,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     PIC |
     PICTURE |
     POINTER |
+    POINTER_32 |
     POSITION |
     POSITIVE |
     PROCEDURE_POINTER |

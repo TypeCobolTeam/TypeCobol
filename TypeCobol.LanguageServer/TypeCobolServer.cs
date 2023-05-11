@@ -661,7 +661,7 @@ namespace TypeCobol.LanguageServer
                                          ((v.CodeElement?.LevelNumber != null && v.CodeElement.LevelNumber.Value == 88)
                                           //Level 88 Variable
                                           || v.DataType == DataType.Numeric //Numeric Integer Variable
-                                          || v.Usage == DataUsage.Pointer) //Or usage is pointer 
+                                          || v.Usage == DataUsage.Pointer || v.Usage == DataUsage.Pointer32) //Or usage is pointer/pointer-32 
                                 ));
                                 break;
                             }
