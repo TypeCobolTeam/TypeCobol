@@ -64,14 +64,14 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 //TODO We systematically throw an error in case of empty array with a TYPEDEF defined on parent group
                 //This could be improved by checking type expansion
-                if (!dataDefinition.Usage.HasValue || !IsUsagetAllowedInArray(dataDefinition.Usage.Value))
+                if (!dataDefinition.Usage.HasValue || !IsUsageAllowedInArray(dataDefinition.Usage.Value))
                 {
                     DiagnosticUtils.AddError(dataDefinition, $"A \"PICTURE\"clause was not found for elementary item \"{dataEntry.Name}\".\"PICTURE X(1)\"was assumed.", dataEntry);
                 }
             }
 
             //TODO Issue #2504 UTF-8: check this method (but normally there should be nothing to change)
-            static bool IsUsagetAllowedInArray(DataUsage usage)
+            static bool IsUsageAllowedInArray(DataUsage usage)
             {
                 switch (usage)
                 {
