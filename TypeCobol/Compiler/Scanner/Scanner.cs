@@ -1209,11 +1209,24 @@ namespace TypeCobol.Compiler.Scanner
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.GreaterThanOrEqualOperator);
                     }
-                    else {
-                        // consume > char and try to match it as a greater than operator
-                        currentIndex++;
-                        return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
+                    else if (line[currentIndex + 1] == '>')
+                    {
+                        // Check for potential compiler directive keyword like >>DEFINE, >>IF, etc
+                        int index = currentIndex + 2;
+                        for (; index <= lastIndex && !CobolChar.IsCobolWordSeparator(line[index]); index++) { }
+                        int endIndex = (index == lastIndex && !CobolChar.IsCobolWordSeparator(line[index])) ? lastIndex : index - 1;
+                        string tokenText = line.Substring(startIndex, endIndex - startIndex + 1);
+                        var candidateTokenType = TokenUtils.GetCobolKeywordTokenTypeFromTokenString(tokenText, _targetLanguageLevel);
+                        if (candidateTokenType != TokenType.UserDefinedWord)
+                        {
+                            currentIndex = endIndex + 1;
+                            return new Token(candidateTokenType, startIndex, endIndex, tokensLine);
+                        }
                     }
+
+                    // consume > char and try to match it as a greater than operator
+                    currentIndex++;
+                    return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
                 case '=':
                     //EqualOperator=20,
                     // p260: Each relational operator must be preceded and followed

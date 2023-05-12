@@ -114,6 +114,17 @@ terminal TypeCobol.Compiler.Scanner.Token SKIP1;
 terminal TypeCobol.Compiler.Scanner.Token SKIP2;
 terminal TypeCobol.Compiler.Scanner.Token SKIP3;
 terminal TypeCobol.Compiler.Scanner.Token TITLE;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_CALLINT;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_CALLINTERFACE;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_DATA;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_DEFINE;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_ELSE;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_END_EVALUATE;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_END_IF;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_EVALUATE;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_IF;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_INLINE;
+terminal TypeCobol.Compiler.Scanner.Token COMPILERDIRECTIVE_WHEN;
 // Keywords - Code element starting tokens
 terminal TypeCobol.Compiler.Scanner.Token ACCEPT;
 terminal TypeCobol.Compiler.Scanner.Token ADD;

@@ -246,6 +246,14 @@ namespace TypeCobol.Test.Parser.Scanner
             ScannerUtils.CompilerOptions.IsCobolLanguage = false;
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName + "-AsTypeCobol");
+
+            testName = "CompilerDirectiveKeywords";
+            testLines = new string[] {
+                ">>CALLINT >>CALLINTERFACE >>DATA >>DEFINE >>ELSE >>END-EVALUATE >>END-IF >>EVALUATE >>IF >>INLINE >>WHEN", //Keywords
+                ">>CALL >>DIVISION >>UNDEFINE" //Mix of GreaterThanOperators and Keywords
+            };
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName);
         }
 
         /// <summary>
