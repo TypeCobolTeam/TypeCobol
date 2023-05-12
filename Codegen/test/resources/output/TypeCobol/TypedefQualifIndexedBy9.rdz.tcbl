@@ -14,7 +14,7 @@
       *                      depending on Counter
       *                      indexed by Idx.
 
-       01 MyGroupVar.
+       01 MyGroupVar usage is comp-2.
         05 LigCln-Taxes  OCCURS 10
         INDEXED BY  Idx-nonQualified.
 
