@@ -10,6 +10,17 @@
 [85,88:>>IF]<COMPILERDIRECTIVE_IF>
 [90,97:>>INLINE]<COMPILERDIRECTIVE_INLINE>
 [99,104:>>WHEN]<COMPILERDIRECTIVE_WHEN>
+Line 0[1,9] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[11,25] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[27,32] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[34,41] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[43,48] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[50,63] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[65,72] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[74,83] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[85,88] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[90,97] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
+Line 0[99,104] <27, Error, Syntax> - Syntax error : Conditional compilation directives are not supported by this parser.
 
 -- Line 2 --
 [1,1:>]<GreaterThanOperator>

@@ -1219,8 +1219,13 @@ namespace TypeCobol.Compiler.Scanner
                         var candidateTokenType = TokenUtils.GetCobolKeywordTokenTypeFromTokenString(tokenText, _targetLanguageLevel);
                         if (candidateTokenType != TokenType.UserDefinedWord)
                         {
+                            // Create readable diagnostic for unsupported language feature
+                            var token = new Token(candidateTokenType, startIndex, endIndex, tokensLine);
+                            tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Conditional compilation directives are not supported by this parser.");
+
+                            // Consume chars and return
                             currentIndex = endIndex + 1;
-                            return new Token(candidateTokenType, startIndex, endIndex, tokensLine);
+                            return token;
                         }
                     }
 

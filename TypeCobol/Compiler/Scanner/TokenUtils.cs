@@ -219,6 +219,8 @@ namespace TypeCobol.Compiler.Scanner
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string NameForTokenType(TokenType tokenType)
         {
+            // For conditional compilation tokens, enum names are prefixed with "COMPILERDIRECTIVE_"
+            // Note: will break if Cobol introduce a keyword starting with "COMPILERDIRECTIVE-"...
             return tokenType.ToString().Replace('_', '-').Replace("COMPILERDIRECTIVE-", ">>");
         }
 
