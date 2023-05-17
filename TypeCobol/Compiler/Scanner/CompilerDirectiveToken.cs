@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#nullable enable
+
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -32,7 +27,6 @@ namespace TypeCobol.Compiler.Scanner
         
         /// <summary>
         /// Details of the compiler directive represented by this token.
-        /// If the HasError propert
         /// </summary>
         public CompilerDirective CompilerDirective { get; private set; }
 

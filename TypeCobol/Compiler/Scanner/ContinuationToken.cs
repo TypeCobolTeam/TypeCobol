@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+
 using System.Text;
 
 namespace TypeCobol.Compiler.Scanner

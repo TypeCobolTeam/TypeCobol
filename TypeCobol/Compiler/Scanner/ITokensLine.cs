@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 
@@ -34,12 +35,12 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Original ScanState before scanning the line
         /// </summary>
-        MultilineScanState InitialScanState { get; }
+        MultilineScanState? InitialScanState { get; }
 
         /// <summary>
         /// Internal state used by the Scanner to disambiguate context-sensitive keywords
         /// </summary>
-        MultilineScanState ScanState { get; }
+        MultilineScanState? ScanState { get; }
 
         /// <summary>
         /// Collect all diagnostics attached to this line into the given list.

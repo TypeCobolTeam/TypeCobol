@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
+
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
@@ -56,15 +56,20 @@ namespace TypeCobol.Compiler.Text
 
             // Scan the line to find the indexes of the different areas
             // - 72 columns reference format
+
+            TextArea indicator;
+            TextArea source;
             if (columnsLayout == ColumnsLayout.CobolReferenceFormat)
             {
-                MapVariableLengthLineWithReferenceFormat();
+                MapVariableLengthLineWithReferenceFormat(out indicator, out source);
             }
             // - free format and unlimited line length
             else
             {
-                MapVariableLengthLineWithFreeFormat();
+                MapVariableLengthLineWithFreeFormat(out indicator, out source);
             }
+            Indicator = indicator;
+            Source = source;
 
             // Study the indicator char to determine the type of the line
             ComputeLineTypeFromIndicator();
@@ -95,7 +100,7 @@ namespace TypeCobol.Compiler.Text
                 }
                 return CreateCobolLines(layout, scannerOptions, index, indicator, indent, text);
             }
-            throw new System.NotImplementedException("Unsuported ITextLine type: " + layout);
+            throw new System.NotImplementedException("Unsupported ITextLine type: " + layout);
         }
 
         public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, TypeCobolOptions scannerOptions, int index, char indicator, string indent, string text)
@@ -187,7 +192,7 @@ namespace TypeCobol.Compiler.Text
             tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
             Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, scannerOptions, false);
-            Token t = null;
+            Token t;
             int nCurLength = 0;
             int nSpan = max;
             int index = 0;
@@ -224,7 +229,7 @@ namespace TypeCobol.Compiler.Text
 
         // --- Cobol text line scanner
 
-        private void MapVariableLengthLineWithReferenceFormat()
+        private void MapVariableLengthLineWithReferenceFormat(out TextArea indicator, out TextArea source)
         {
             string line = textLine.Text;
             int lastIndexOfLine = line.Length - 1;
@@ -234,31 +239,31 @@ namespace TypeCobol.Compiler.Text
             if (compilerDirectiveIndex >= 0)
             {
                 // Free text format line embedded in reference format file
-                Indicator = new TextArea(compilerDirectiveIndex, compilerDirectiveIndex - 1);
-                Source = new TextArea(compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                indicator = new TextArea(compilerDirectiveIndex, compilerDirectiveIndex - 1);
+                source = new TextArea(compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
             }
             else
             {
                 // Cobol reference format
                 if (lastIndexOfLine >= 7)
                 {
-                    Indicator = new TextArea(6, 6);
-                    Source = new TextArea(7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                    indicator = new TextArea(6, 6);
+                    source = new TextArea(7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
                 }
                 else if (lastIndexOfLine == 6)
                 {
-                    Indicator = new TextArea(6, 6);
-                    Source = new TextArea(7, 6);
+                    indicator = new TextArea(6, 6);
+                    source = new TextArea(7, 6);
                 }
                 else
                 {
-                    Indicator = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
-                    Source = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
+                    indicator = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
+                    source = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
                 }
             }
         }
 
-        private void MapVariableLengthLineWithFreeFormat()
+        private void MapVariableLengthLineWithFreeFormat(out TextArea indicator, out TextArea source)
         {
             string line = textLine.Text;
             int lastIndexOfLine = line.Length - 1;
@@ -271,13 +276,13 @@ namespace TypeCobol.Compiler.Text
                 if ((line.Length >= 5 && (line.StartsWith("*CBL ") || line.StartsWith("*CBL,"))) ||
                     (line.Length >= 9 && (line.StartsWith("*CONTROL ") || line.StartsWith("*CONTROL,"))))
                 {
-                    Indicator = new TextArea(0, -1);
-                    Source = new TextArea(0, lastIndexOfLine);
+                    indicator = new TextArea(0, -1);
+                    source = new TextArea(0, lastIndexOfLine);
                 }
                 else
                 {
-                    Indicator = new TextArea(0, 0);
-                    Source = new TextArea(1, lastIndexOfLine);
+                    indicator = new TextArea(0, 0);
+                    source = new TextArea(1, lastIndexOfLine);
                 }
             }
             // - a line starting with char / is a comment line 
@@ -285,19 +290,19 @@ namespace TypeCobol.Compiler.Text
             // => a free format program line cannot start with one of these three chars, insert a space before if needed
             else if (lastIndexOfLine >= 0 && (line[0] == '/' || line[0] == '-'))
             {
-                Indicator = new TextArea(0, 0);
-                Source = new TextArea(1, lastIndexOfLine);
+                indicator = new TextArea(0, 0);
+                source = new TextArea(1, lastIndexOfLine);
             }
             // - a line starting with d or D + space char is a debug ligne
             else if (lastIndexOfLine >= 1 && ((line[0] == 'd' || line[0] == 'D') & line[1] == ' '))
             {
-                Indicator = new TextArea(0, 1);
-                Source = new TextArea(2, lastIndexOfLine);
+                indicator = new TextArea(0, 1);
+                source = new TextArea(2, lastIndexOfLine);
             }
             else // no indicator
             {
-                Indicator = new TextArea(0, -1);
-                Source = new TextArea(0, lastIndexOfLine);
+                indicator = new TextArea(0, -1);
+                source = new TextArea(0, lastIndexOfLine);
             }
         }
 
@@ -429,7 +434,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Sequence number text : Columns 1 through 6
         /// </summary>
-        public string SequenceNumberText
+        public string? SequenceNumberText
         {
             get
             {
@@ -447,7 +452,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Indicator area : Column 7
         /// </summary>
-        public TextArea Indicator { get; private set; }
+        public TextArea Indicator { get; }
 
         /// <summary>
         /// Indicator char : Column 7
@@ -470,14 +475,14 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
-                return Source.IsEmpty ? null : textLine.TextSegment(Source.StartIndex, Source.EndIndex);
+                return Source.IsEmpty ? string.Empty : textLine.TextSegment(Source.StartIndex, Source.EndIndex);
             }
         }
 
         /// <summary>
         /// Comment text : Columns 73 through 80+
         /// </summary>
-        public string CommentText
+        public string? CommentText
         {
             get
             {
@@ -552,7 +557,7 @@ namespace TypeCobol.Compiler.Text
         /// This property returns an opaque reference to a line tracking object from the live text document,
         /// which will enable an efficient retrieval of the line number for this line in the document.
         /// </summary>
-        public object LineTrackingReferenceInSourceDocument { get { return textLine.LineTrackingReferenceInSourceDocument; } }
+        public object? LineTrackingReferenceInSourceDocument { get { return textLine.LineTrackingReferenceInSourceDocument; } }
 
         // --- Incremental compilation process ---
 
@@ -562,7 +567,7 @@ namespace TypeCobol.Compiler.Text
         public CompilationStep CompilationStep { get; set; }
 
         /// <summary>
-        /// A line is freezed after the completion of each compiler step to enable reliable snapshots.
+        /// A line is frozen after the completion of each compiler step to enable reliable snapshots.
         /// If we need to update the properties of the line later, a new line must be allocated.
         /// This method returns true if the line can be updated in place, false if a new copy of the line must be allocated.
         /// </summary>
