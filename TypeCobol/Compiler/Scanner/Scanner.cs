@@ -1221,7 +1221,7 @@ namespace TypeCobol.Compiler.Scanner
                         {
                             // Create readable diagnostic for unsupported language feature
                             var token = new Token(candidateTokenType, startIndex, endIndex, tokensLine);
-                            tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Conditional compilation directives are not supported by this parser.");
+                            tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, $"The '{tokenText}' compiler directive is not supported by this parser.");
 
                             // Consume chars and return
                             currentIndex = endIndex + 1;
