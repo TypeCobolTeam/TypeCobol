@@ -559,6 +559,16 @@ namespace TypeCobol.Compiler.CodeElements
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
+
+        // Enum value should logically depends on nothing
+        public override bool ValueNeedsCompilationContext => false;
+
+        public override bool ValueNeedsSymbolicCharactersMap => false;
+
+        public override bool ValueNeedsCharactersCountContext => false;
+
+        // Enum value should logically always be the token text
+        public override string Value => Token.Text;
     }
 
     /// <summary>
