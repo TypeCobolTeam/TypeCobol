@@ -518,6 +518,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// UserDefinedWord
     /// IntrinsicFunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
+    /// LEADING | TRAILING
     /// </summary>
     public class EnumeratedValue : AlphanumericValue
     {
@@ -534,6 +535,8 @@ namespace TypeCobol.Compiler.CodeElements
                 case TokenType.RANDOM:
                 case TokenType.WHEN_COMPILED:
                 case TokenType.ExecTranslatorName:
+                case TokenType.LEADING:
+                case TokenType.TRAILING:
                     break;
                 default:
                     throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);

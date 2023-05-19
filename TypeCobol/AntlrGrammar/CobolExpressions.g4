@@ -250,7 +250,15 @@ lengthOfSpecialRegister:
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier: 
-	FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+	FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator (intrinsicArgument)+ RightParenthesisSeparator)?;
+
+// A keyword shall be specified in accordance with the intrinsic function definition.
+// The TRIM intrinsic function is an example of an intrinsic function with a keyword argument.
+// The keywords LEADING and TRAILING may be specified as the second and optional argument of TRIM.
+
+intrinsicArgument: 
+	argument | LEADING | TRAILING;
+
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the

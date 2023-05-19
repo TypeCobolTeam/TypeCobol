@@ -5,6 +5,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
+using static TypeCobol.Compiler.Parser.CobolWordsBuilder;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -311,7 +312,42 @@ namespace TypeCobol.Compiler.Parser
         [NotNull]
         internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
             var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicFunctionName());
-            return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
+            return new IntrinsicFunctionCall(name, CreateIntrinsicArguments(context.intrinsicArgument()));
+        }
+
+        private CallSiteParameter[] CreateIntrinsicArguments(CodeElementsParser.IntrinsicArgumentContext[] intrinsicArgumentContext)
+        {
+            _insideFunctionArgument = true;
+            CallSiteParameter[] arguments = new CallSiteParameter[intrinsicArgumentContext.Length];
+            for (int i = 0; i < intrinsicArgumentContext.Length; i++)
+            {
+                Variable storageAreaOrValue = null;
+                if (intrinsicArgumentContext[i].argument() != null)
+                {
+                    var variableOrExpression = CreateSharedVariableOrExpression(intrinsicArgumentContext[i].argument().sharedVariableOrExpression1());
+                    if (variableOrExpression != null)
+                    {
+                        storageAreaOrValue = variableOrExpression;
+                    }
+                }
+                else if (intrinsicArgumentContext[i].LEADING() != null)
+                {
+                    Token token = ParseTreeUtils.GetFirstToken(intrinsicArgumentContext[i].LEADING());
+                    storageAreaOrValue = new Variable(new EnumeratedValue(token, typeof(IntrinsicFunctionKeywordArgument)));
+                }
+                else if (intrinsicArgumentContext[i].TRAILING != null)
+                {
+                    Token token = ParseTreeUtils.GetFirstToken(intrinsicArgumentContext[i].TRAILING());
+                    storageAreaOrValue = new Variable(new EnumeratedValue(token, typeof(IntrinsicFunctionKeywordArgument)));
+                }
+
+                if (storageAreaOrValue != null)
+                {
+                    arguments[i] = new CallSiteParameter() { StorageAreaOrValue = storageAreaOrValue };
+                }
+            }
+            _insideFunctionArgument = false;
+            return arguments;
         }
 
         [NotNull]
