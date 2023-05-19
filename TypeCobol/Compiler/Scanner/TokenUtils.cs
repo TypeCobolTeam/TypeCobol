@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace TypeCobol.Compiler.Scanner
@@ -34,7 +35,7 @@ namespace TypeCobol.Compiler.Scanner
             for (int c = keywordBegin; c <= keywordEnd; c++)
             {
                 var current = types[c];
-                _TokenStringFromTokenType[(int)current] = current.ToString().Replace('_', '-');
+                _TokenStringFromTokenType[(int)current] = NameForTokenType(current);
             }
             _TokenStringFromTokenType[(int)TokenType.ASTERISK_CBL] = "*CBL";
             _TokenStringFromTokenType[(int)TokenType.ASTERISK_CONTROL] = "*CONTROL";
@@ -215,11 +216,19 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string NameForTokenType(TokenType tokenType)
+        {
+            // For conditional compilation tokens, enum names are prefixed with "COMPILERDIRECTIVE_"
+            // Note: will break if Cobol introduce a keyword starting with "COMPILERDIRECTIVE-"...
+            return tokenType.ToString().Replace('_', '-').Replace("COMPILERDIRECTIVE-", ">>");
+        }
+
         public static string GetDisplayNameForTokenType(TokenType tokenType)
         {
             if ((int)TokenFamily.TypeCobolOperators > (int)tokenType && (int)tokenType >= (int)TokenFamily.CompilerDirectiveStartingKeyword && tokenType != TokenType.SymbolicCharacter)
             {
-                return tokenType.ToString().Replace('_', '-');
+                return NameForTokenType(tokenType);
             }
             
             if (_TokenFamilyFromTokenType[(int)tokenType] == TokenFamily.SqlKeywords)
