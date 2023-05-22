@@ -553,7 +553,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public object EnumValue
         {
-            get { return Enum.Parse(EnumType, Value); }
+            get { return Enum.Parse(EnumType, Value, true); }
         }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
