@@ -167,7 +167,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum IntrinsicFunctionKeywordArgument
     {
-        Leading,
-        Trailing
+        Leading, // Only allowed for TRIM
+        Trailing // Only allowed for TRIM
     }
 }

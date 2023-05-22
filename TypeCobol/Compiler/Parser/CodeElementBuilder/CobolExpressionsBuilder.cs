@@ -5,7 +5,6 @@ using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
-using static TypeCobol.Compiler.Parser.CobolWordsBuilder;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -321,33 +320,34 @@ namespace TypeCobol.Compiler.Parser
             CallSiteParameter[] arguments = new CallSiteParameter[intrinsicArgumentContext.Length];
             for (int i = 0; i < intrinsicArgumentContext.Length; i++)
             {
-                Variable storageAreaOrValue = null;
                 if (intrinsicArgumentContext[i].argument() != null)
                 {
-                    var variableOrExpression = CreateSharedVariableOrExpression(intrinsicArgumentContext[i].argument().sharedVariableOrExpression1());
-                    if (variableOrExpression != null)
+                    arguments[i] = CreateArgumentWithSharedVariableOrExpression(intrinsicArgumentContext[i].argument().sharedVariableOrExpression1());
+                }
+                else
+                {
+                    var keyword = intrinsicArgumentContext[i].LEADING() ?? intrinsicArgumentContext[i].TRAILING();
+                    if (keyword != null)
                     {
-                        storageAreaOrValue = variableOrExpression;
+                        Token token = ParseTreeUtils.GetFirstToken(keyword);
+                        Variable enumeratedValue = new Variable(new EnumeratedValue(token, typeof(IntrinsicFunctionKeywordArgument)));
+                        arguments[i] = new CallSiteParameter() { StorageAreaOrValue = enumeratedValue };
                     }
-                }
-                else if (intrinsicArgumentContext[i].LEADING() != null)
-                {
-                    Token token = ParseTreeUtils.GetFirstToken(intrinsicArgumentContext[i].LEADING());
-                    storageAreaOrValue = new Variable(new EnumeratedValue(token, typeof(IntrinsicFunctionKeywordArgument)));
-                }
-                else if (intrinsicArgumentContext[i].TRAILING != null)
-                {
-                    Token token = ParseTreeUtils.GetFirstToken(intrinsicArgumentContext[i].TRAILING());
-                    storageAreaOrValue = new Variable(new EnumeratedValue(token, typeof(IntrinsicFunctionKeywordArgument)));
-                }
-
-                if (storageAreaOrValue != null)
-                {
-                    arguments[i] = new CallSiteParameter() { StorageAreaOrValue = storageAreaOrValue };
                 }
             }
             _insideFunctionArgument = false;
             return arguments;
+        }
+
+        private CallSiteParameter CreateArgumentWithSharedVariableOrExpression(CodeElementsParser.SharedVariableOrExpression1Context sharedVariableOrExpression1Context)
+        {
+            var variableOrExpression = CreateSharedVariableOrExpression(sharedVariableOrExpression1Context);
+            if (variableOrExpression != null)
+            {
+                return new CallSiteParameter() { StorageAreaOrValue = variableOrExpression };
+            }
+
+            return null;
         }
 
         [NotNull]
@@ -360,10 +360,7 @@ namespace TypeCobol.Compiler.Parser
             _insideFunctionArgument = true;
             CallSiteParameter[] arguments = new CallSiteParameter[argumentContext.Length];
             for(int i = 0; i < argumentContext.Length; i++) {
-                var variableOrExpression = CreateSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
-                if (variableOrExpression != null) {
-                    arguments[i] = new CallSiteParameter() { StorageAreaOrValue = variableOrExpression };
-                }
+                arguments[i] = CreateArgumentWithSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
             }
             _insideFunctionArgument = false;
             return arguments;
