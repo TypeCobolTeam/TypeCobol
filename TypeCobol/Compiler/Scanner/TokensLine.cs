@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Scanner
         public void InitializeScanState(MultilineScanState initialScanState)
         {
             InitialScanState = initialScanState;
-            ScanState = initialScanState;
+            ScanState = initialScanState.Clone();
         }
 
         /// <summary>
