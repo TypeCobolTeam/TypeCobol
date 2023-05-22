@@ -412,7 +412,7 @@ namespace TypeCobol.Compiler.Text
             if (Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation)
             {
                 // Detect blank lines
-                if (Source.IsEmpty || string.IsNullOrWhiteSpace(SourceText))
+                if (Source.IsMissing || string.IsNullOrWhiteSpace(SourceText))
                 {
                     Type = CobolTextLineType.Blank;
                 }
@@ -461,7 +461,7 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
-                return Indicator.IsEmpty ? ' ' : textLine.TextSegment(Indicator.StartIndex, Indicator.EndIndex)[0];
+                return Indicator.IsMissing ? ' ' : textLine.TextSegment(Indicator.StartIndex, Indicator.EndIndex)[0];
             }
         }
 
@@ -475,7 +475,7 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
-                return Source.IsEmpty ? string.Empty : textLine.TextSegment(Source.StartIndex, Source.EndIndex);
+                return Source.IsMissing ? string.Empty : textLine.TextSegment(Source.StartIndex, Source.EndIndex);
             }
         }
 

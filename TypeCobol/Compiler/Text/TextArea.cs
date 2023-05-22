@@ -24,7 +24,7 @@
         /// <summary>
         /// True if EndIndex < StartIndex : no char in the area
         /// </summary>
-        public bool IsEmpty => EndIndex < StartIndex;
+        public bool IsMissing => EndIndex < StartIndex;
 
         public override string ToString()
         {
