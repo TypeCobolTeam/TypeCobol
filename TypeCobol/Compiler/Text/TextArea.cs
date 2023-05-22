@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Text
+﻿#nullable enable
+
+namespace TypeCobol.Compiler.Text
 {
     /// <summary>
     /// Portion of a text line with a specific meaning
@@ -22,7 +24,7 @@
         public int EndIndex { get; }
 
         /// <summary>
-        /// True if EndIndex < StartIndex : no char in the area
+        /// True if EndIndex is strictly inferior than StartIndex : no char in the area
         /// </summary>
         public bool IsMissing => EndIndex < StartIndex;
 

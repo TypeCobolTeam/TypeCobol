@@ -1,6 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿#nullable enable
+
 using System.Text.RegularExpressions;
 
 namespace TypeCobol.Compiler.Scanner
@@ -10,7 +9,7 @@ namespace TypeCobol.Compiler.Scanner
         public static readonly Regex CobolIntrinsicFunctions = new Regex("^(ACOS|ANNUITY|ASIN|ATAN|CHAR|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|FACTORIAL|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|ORD|ORD-MAX|ORD-MIN|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly TokenFamily[] _TokenFamilyFromTokenType;
-        private static readonly string[] _TokenStringFromTokenType;
+        private static readonly string?[] _TokenStringFromTokenType;
         private static readonly IDictionary<string, TokenType> _TokenTypeFromTokenString;
         private static readonly IDictionary<string, TokenType> _SqlTokenTypeFromTokenString;
 
@@ -57,7 +56,7 @@ namespace TypeCobol.Compiler.Scanner
             _SqlTokenTypeFromTokenString = new Dictionary<string, TokenType>(StringComparer.OrdinalIgnoreCase);
             for (int tokenType = 0; tokenType < _TokenStringFromTokenType.Length; tokenType++)
             {
-                string tokenString = _TokenStringFromTokenType[tokenType];
+                string? tokenString = _TokenStringFromTokenType[tokenType];
                 if (tokenString == null)
                 {
                     continue;
@@ -83,11 +82,6 @@ namespace TypeCobol.Compiler.Scanner
         {
             if (tokenType == TokenType.EndOfFile) return TokenFamily.SyntaxSeparator;
             return _TokenFamilyFromTokenType[(int)tokenType];
-        }
-
-        public static string GetTokenStringFromTokenType(TokenType tokenType)
-        {
-            return _TokenStringFromTokenType[(int)tokenType];
         }
 
         internal static TokenType GetCobolKeywordTokenTypeFromTokenString(string tokenString, CobolLanguageLevel targetLanguageLevel)

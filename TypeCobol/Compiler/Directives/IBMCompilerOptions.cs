@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#nullable enable
 
 namespace TypeCobol.Compiler.Directives
 {
@@ -92,7 +88,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Name of the option
         /// </summary>
-        public IBMCompilerOptionName Name { get; private set; }
+        public IBMCompilerOptionName Name { get; }
 
         /// <summary>
         /// True if the option status is On (DBCS)
@@ -104,7 +100,7 @@ namespace TypeCobol.Compiler.Directives
         /// String parameter passed to configured the option
         /// Ex : FLAG(I,I) => Value = "I,I"
         /// </summary>
-        public string Value { get; private set; }
+        public string? Value { get; private set; }
 
         /// <summary>
         /// Initialize a compiler option directive to its default state
@@ -184,7 +180,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Set the option status and value from the word and parameters found in source text
         /// </summary>
-        public bool SetStatutsAndValue(string optionWord, string optionParameters)
+        public bool SetStatusAndValue(string optionWord, string? optionParameters)
         {
             // Special case QUOTE / APOST
             if(Name == IBMCompilerOptionName.QUOTE)
@@ -201,7 +197,7 @@ namespace TypeCobol.Compiler.Directives
             // For all other option words, the format is word/NOword or abbr/NOabbr
             else
             {
-                if(optionWord != null && optionWord.StartsWith("NO"))
+                if(optionWord.StartsWith("NO"))
                 {
                     IsActivated = false;
                 }
@@ -684,13 +680,12 @@ namespace TypeCobol.Compiler.Directives
         /// If optionWord is a supported option name (EXIT)    or abbreviation (EX) or negation (NOEXIT / NOEX)
         /// this method sets its status (IsActivated) and value (from parameters)
         /// </summary>
-        public bool TrySetIBMOptionStatusAndValue(string optionWord, string optionParameters)
+        public bool TrySetIBMOptionStatusAndValue(string optionWord, string? optionParameters)
         {
-            IBMCompilerOptionStatus optionStatus = null;
-            String optionWordUpper = optionWord.ToUpper();
-            if (optionWordToOptionName.TryGetValue(optionWordUpper, out optionStatus))
+            string optionWordUpper = optionWord.ToUpper();
+            if (optionWordToOptionName.TryGetValue(optionWordUpper, out var optionStatus))
             {
-                return optionStatus.SetStatutsAndValue(optionWordUpper, optionParameters);
+                return optionStatus.SetStatusAndValue(optionWordUpper, optionParameters);
             }
             else
             {

@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using TypeCobol.Compiler.Scanner;
+#nullable enable
+
 using TypeCobol.Compiler.Text;
 
 public static class ScannerUtils

@@ -236,17 +236,11 @@ namespace TypeCobol.Compiler.Scanner
                  * So an inactive debug line has to be parsed as regular source if it participates
                  * in a REPLACE directive.
                  */
-                return lineScanState.InsideReplaceDirective || StartsWithReplace();
+                return lineScanState.InsideReplaceDirective || lineSourceText.StartsWith(nameof(TokenType.REPLACE), StringComparison.OrdinalIgnoreCase);
             }
 
             //DebuggingMode is active, debug line is considered as regular source line.
             return true;
-
-            bool StartsWithReplace()
-            {
-                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
-                return lineSourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
-            }
         }
 
         /// <summary>
