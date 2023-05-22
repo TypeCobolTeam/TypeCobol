@@ -322,26 +322,22 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (intrinsicArgumentContext[i].argument() != null)
                 {
-                    arguments[i] = CreateArgumentWithSharedVariableOrExpression(intrinsicArgumentContext[i].argument().sharedVariableOrExpression1());
+                    arguments[i] = CreateArgument(intrinsicArgumentContext[i].argument());
                 }
                 else
                 {
-                    var keyword = intrinsicArgumentContext[i].LEADING() ?? intrinsicArgumentContext[i].TRAILING();
-                    if (keyword != null)
-                    {
-                        Token token = ParseTreeUtils.GetFirstToken(keyword);
-                        Variable enumeratedValue = new Variable(new EnumeratedValue(token, typeof(IntrinsicFunctionKeywordArgument)));
-                        arguments[i] = new CallSiteParameter() { StorageAreaOrValue = enumeratedValue };
-                    }
+                    Token token = ParseTreeUtils.GetFirstToken(intrinsicArgumentContext[i]);
+                    Variable enumeratedValue = new Variable(new EnumeratedValue(token, typeof(IntrinsicFunctionKeywordArgument)));
+                    arguments[i] = new CallSiteParameter() { StorageAreaOrValue = enumeratedValue };
                 }
             }
             _insideFunctionArgument = false;
             return arguments;
         }
 
-        private CallSiteParameter CreateArgumentWithSharedVariableOrExpression(CodeElementsParser.SharedVariableOrExpression1Context sharedVariableOrExpression1Context)
+        private CallSiteParameter CreateArgument([NotNull] CodeElementsParser.ArgumentContext argumentContext)
         {
-            var variableOrExpression = CreateSharedVariableOrExpression(sharedVariableOrExpression1Context);
+            var variableOrExpression = CreateSharedVariableOrExpression(argumentContext.sharedVariableOrExpression1());
             if (variableOrExpression != null)
             {
                 return new CallSiteParameter() { StorageAreaOrValue = variableOrExpression };
@@ -360,7 +356,7 @@ namespace TypeCobol.Compiler.Parser
             _insideFunctionArgument = true;
             CallSiteParameter[] arguments = new CallSiteParameter[argumentContext.Length];
             for(int i = 0; i < argumentContext.Length; i++) {
-                arguments[i] = CreateArgumentWithSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
+                arguments[i] = CreateArgument(argumentContext[i]);
             }
             _insideFunctionArgument = false;
             return arguments;
