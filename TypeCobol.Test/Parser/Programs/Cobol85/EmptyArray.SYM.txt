@@ -1,29 +1,29 @@
 --- Diagnostics ---
-Line 16[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
-Line 19[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
-Line 24[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
-Line 31[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
-Line 45[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
-Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
-Line 55[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
-Line 63[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
-Line 68[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
-Line 73[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
-Line 82[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A20-KO]<UserDefinedWord>
-Line 92[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B01-KO]<UserDefinedWord>
-Line 99[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B02-KO]<UserDefinedWord>
-Line 107[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B04-KO]<UserDefinedWord>
-Line 115[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B05-KO]<UserDefinedWord>
-Line 121[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
-Line 128[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
-Line 135[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
-Line 146[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
-Line 153[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
-Line 160[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
-Line 181[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
-Line 202[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
-Line 217[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
-Line 228[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
+Line 16[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
+Line 19[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
+Line 24[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
+Line 31[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
+Line 45[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
+Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
+Line 55[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
+Line 63[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
+Line 68[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
+Line 73[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
+Line 82[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-A20-KO]<UserDefinedWord>
+Line 92[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B01-KO]<UserDefinedWord>
+Line 99[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B02-KO]<UserDefinedWord>
+Line 107[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B04-KO]<UserDefinedWord>
+Line 115[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B05-KO]<UserDefinedWord>
+Line 121[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
+Line 128[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
+Line 135[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
+Line 146[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
+Line 153[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
+Line 160[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
+Line 181[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
+Line 202[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
+Line 217[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
+Line 228[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
 
 --- Program ---
 Pgm2358 (.NET Type=ProgramSymbol, Kind=Program)

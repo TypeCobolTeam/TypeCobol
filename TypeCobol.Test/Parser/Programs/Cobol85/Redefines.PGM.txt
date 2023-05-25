@@ -1,6 +1,6 @@
 --- Diagnostics ---
-Line 24[8,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
-Line 27[11,22] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[11,22:MyRedifines3]<UserDefinedWord>
+Line 24[8,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 27[11,22] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,22:MyRedifines3]<UserDefinedWord>
 Line 27[34,39] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'MyVar1' is not referenced OffendingSymbol=[34,39:MyVar1]<UserDefinedWord>
 
 --- Program ---

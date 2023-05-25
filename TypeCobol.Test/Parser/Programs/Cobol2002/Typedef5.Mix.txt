@@ -6,7 +6,7 @@
        01 A2   TYPEDEF STRICT PUBLIC comp-2.
        01 A3   TYPEDEF STRICT PUBLIC pointer.
        01 A4   TYPEDEF STRICT PUBLIC procedure-pointer.
-Line 9[11,12] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 9[11,12] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
        01 A5   TYPEDEF STRICT PUBLIC comp-5.
        01 v1 type A1.
        01 v2 type A2.

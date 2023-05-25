@@ -7,6 +7,7 @@ Line 18[11,31] <27, Error, Syntax> - Syntax error : SyncVar is part of a declara
 Line 50[20,26] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
 Line 56[36,42] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[36,42:TYPEDEF]<TYPEDEF>
 Line 57[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
+Line 63[11,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,23:NoDescription]<UserDefinedWord>
 Line 63[8,39] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
 Line 69[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
 Line 71[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced

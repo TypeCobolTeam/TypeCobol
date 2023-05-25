@@ -10,7 +10,7 @@
        01 Group-A.
       *A "PICTURE" clause was not found for elementary item "SIMPLE-KO".
       *"PICTURE X(1)" was assumed.
-Line 13[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 13[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 simple-KO.
            66 simple-KO-R renames simple-KO.
       
@@ -25,7 +25,7 @@ Line 13[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty
        01 Group-A2.
       *A"PICTURE"clause was not found for elementary item"Array-A02-KO".
       *   "PICTURE X(1)"was assumed.
-Line 27[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 27[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A02-KO.
            66 Array-A02-OK-R renames Array-A02-KO .
       
@@ -34,7 +34,7 @@ Line 27[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty
       
       *A"PICTURE"clause was not found for elementary item"Array-A03-KO".
       *   "PICTURE X(1)"was assumed.
-Line 35[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 35[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A03-KO usage is display.
       
       *"usage" was invalid.  Scanning was resumed at the next
@@ -50,7 +50,7 @@ Line 35[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty
       *with the specified "USAGE".  "USAGE DISPLAY" was assumed.
       *A "PICTURE" clause was not found for elementary item
       *"ARRAY-A04-KO". "PICTURE X(1)" was assumed.
-Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A04-KO usage is display-1.
       *"usage" was invalid.  Scanning was resumed at the next
       * area"A"item, level-number, or the start of the next clause.
@@ -75,7 +75,7 @@ Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty
       *   specified"USAGE". "USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-A06-KO".
       *   "PICTURE X(1)"was assumed.
-Line 74[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 74[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A06-KO usage is national.
       *"usage" was invalid.  Scanning was resumed at the next
       * area"A"item, level-number, or the start of the next clause.
@@ -101,7 +101,7 @@ Line 74[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty
       *   specified"USAGE". "USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-A08-KO".
       *   "PICTURE X(1)"was assumed.
-Line 99[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 99[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A08-KO binary.
       *"binary" was invalid.  Scanning was resumed at the next
       * area"A"item, level-number, or the start of the next clause.
@@ -117,7 +117,7 @@ Line 104[53,58] <27, Error, Syntax> - Syntax error : extraneous input 'binary' e
       *   specified"USAGE". "USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-A09-KO".
       *   "PICTURE X(1)"was assumed.
-Line 113[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 113[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A09-KO packed-decimal.
       *"packed-decimal" was invalid.  Scanning was resumed at the next
       * area"A"item, level-number, or the start of the next clause.
@@ -132,7 +132,7 @@ Line 118[51,64] <27, Error, Syntax> - Syntax error : extraneous input 'packed-de
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-A10-KO".
       *   "PICTURE X(1)"was assumed.
-Line 126[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 126[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A10-KO comp.
       *"comp" was invalid.  Scanning was resumed at the next
       * area"A"item, level-number, or the start of the next clause.
@@ -167,7 +167,7 @@ Line 149[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-2' e
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-A13-KO".
       *   "PICTURE X(1)"was assumed.
-Line 157[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 157[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A13-KO comp-3.
       *"comp-3" was invalid.  Scanning was resumed at the next
       * area"A"item, level-number, or the start of the next clause.
@@ -183,7 +183,7 @@ Line 162[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-3' e
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-A14-KO".
       *   "PICTURE X(1)"was assumed.
-Line 171[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 171[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A14-KO comp-4.
       *"comp-4" was invalid.  Scanning was resumed at the next
       * area"A"item, level-number, or the start of the next clause.
@@ -199,7 +199,7 @@ Line 176[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-4' e
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-A15-KO".
       *   "PICTURE X(1)"was assumed.
-Line 185[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 185[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-A15-KO comp-5.
       
       *"comp-5" was invalid.  Scanning was resumed at the next
@@ -256,7 +256,7 @@ Line 225[51,66] <27, Error, Syntax> - Syntax error : extraneous input 'function-
        01 Group-B01 usage is display.
       *A"PICTURE"clause was not found for elementary item"Array-B01-KO".
       *   "PICTURE X(1)"was assumed.
-Line 236[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 236[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-B01-KO.
            66 Array-B01-OK-R renames Array-B01-KO .
       
@@ -268,7 +268,7 @@ Line 236[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B02-KO".
       *   "PICTURE X(1)"was assumed.
-Line 247[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 247[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-B02-KO.
            66 Array-B02-OK-R renames Array-B02-KO .
       
@@ -284,7 +284,7 @@ Line 247[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B04-KO".
       *   "PICTURE X(1)"was assumed.
-Line 262[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 262[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-B04-KO.
            66 Array-B04-OK-R renames Array-B04-KO .
       
@@ -306,7 +306,7 @@ Line 262[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B06-KO".
       *   "PICTURE X(1)"was assumed.
-Line 283[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 283[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
             05 Array-B06-KO.
             66 Array-B06-OK-R renames Array-B06-KO .
       
@@ -318,7 +318,7 @@ Line 283[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B07-KO".
       *   "PICTURE X(1)"was assumed.
-Line 294[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 294[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
             05 Array-B07-KO.
       
             66 Array-B07-OK-R renames Array-B07-KO .
@@ -331,7 +331,7 @@ Line 294[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B08-KO".
       *   "PICTURE X(1)"was assumed.
-Line 306[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 306[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
             05 Array-B08-KO.
       
             66 Array-B08-OK-R renames Array-B08-KO .
@@ -353,7 +353,7 @@ Line 306[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B11-KO".
       *   "PICTURE X(1)"was assumed.
-Line 327[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 327[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
             05 Array-B11-KO.
             66 Array-B11-OK-R renames Array-B11-KO .
       
@@ -364,7 +364,7 @@ Line 327[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B12-KO".
       *   "PICTURE X(1)"was assumed.
-Line 337[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 337[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
             05 Array-B12-KO.
             66 Array-B12-OK-R renames Array-B12-KO .
       
@@ -376,7 +376,7 @@ Line 337[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Array-B13-KO".
       *   "PICTURE X(1)"was assumed.
-Line 348[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 348[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
             05 Array-B13-KO.
             66 Array-B13-OK-R renames Array-B13-KO .
       
@@ -410,7 +410,7 @@ Line 348[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *A"PICTURE"clause was not found for elementary item"Array-C01-KO".
       *   "PICTURE X(1)"was assumed.
        01 Group-C01 group-usage is national.
-Line 381[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 381[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
            05 Array-C01-KO.
            66 Array-C01-OK-R renames Array-C01-KO .
       
@@ -439,7 +439,7 @@ Line 381[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *the specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"ARRAY-D2-KO".
       *   "PICTURE X(1)"was assumed.
-Line 409[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 409[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
                 10 Array-D2-KO.
                 66 Array-D2-OK-R renames Array-D2-KO .
       
@@ -461,7 +461,7 @@ Line 409[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *the specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"ARRAY-D4-KO".
       *   "PICTURE X(1)"was assumed.
-Line 430[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 430[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
                     15 Array-D4-KO.
                     66 Array-D4-OK-R renames Array-D4-KO .
       
@@ -479,7 +479,7 @@ Line 430[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empt
       *Ok because group-usage is national is not considered valid by IBM
       * compiler. Usage comp-1 from the first parent with an usage is
       *considered in this case.
-Line 447[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 447[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
                     15 Array-D5-KO.
                     66 Array-D5-OK-R renames Array-D5-KO .
       
@@ -493,13 +493,13 @@ Line 447[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empt
            05 Array-E1-OK.
       *A "PICTURE" clause was not found for elementary item "VARCHILD".
       *"PICTURE X(1)" was assumed.
-Line 460[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 460[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
                 10 VarChild.
       
            66 Array-E1-OK-R renames Array-E1-OK .
       *A "PICTURE" clause was not found for elementary item "VARCHILD-R"
       *"PICTURE X(1)" was assumed.
-Line 465[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
+Line 465[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
                 10 VarChild-R.
       
        END PROGRAM RenamesAndUsage.

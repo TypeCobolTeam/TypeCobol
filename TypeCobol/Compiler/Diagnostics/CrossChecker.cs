@@ -788,7 +788,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                     else
                     {
-                        DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty.", dataEntry);
+                        DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or usage declaration.", dataEntry);
                     }
                 }
             }

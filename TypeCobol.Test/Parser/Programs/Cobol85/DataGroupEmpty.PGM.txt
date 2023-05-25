@@ -1,6 +1,6 @@
 --- Diagnostics ---
 Line 7[8,14] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData2 under level 5 because copy starts at level 5. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
-Line 12[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+Line 12[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
 Line 28[4,7] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData3 under level 1 because copy starts at level 1. OffendingSymbol=[4,7:STR5]<UserDefinedWord>
 Line 32[8,14] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData4 under level 5 because copy starts at level 2. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
 
