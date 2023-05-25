@@ -8,8 +8,6 @@
       *********************************************
 
        01 Group-A.
-           05 simple.
-           05 simplePicture pic X.
       *Ok
            05 Array-A01-OK OCCURS 50 pic X.
 
@@ -236,6 +234,6 @@
 
        01 Group-E1.
            05 Array-E1-OK OCCURS 50.
-                10 VarChild.
+                10 VarChild PIC X.
 
        END PROGRAM Pgm2358.

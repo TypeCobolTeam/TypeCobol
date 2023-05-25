@@ -1,55 +1,29 @@
 --- Diagnostics ---
-Line 11[15,20] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,20:simple]<UserDefinedWord>
-Line 18[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A02-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
-Line 18[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
-Line 21[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A03-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
-Line 21[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
-Line 26[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A04-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
-Line 26[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
-Line 33[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A06-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
-Line 33[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
-Line 47[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A08-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
-Line 47[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
-Line 52[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A09-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
-Line 52[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
-Line 57[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A10-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
-Line 57[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
-Line 65[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A13-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
-Line 65[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
-Line 70[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A14-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
-Line 70[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
-Line 75[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A15-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
-Line 75[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
-Line 84[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-A20-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-A20-KO]<UserDefinedWord>
-Line 94[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B01-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B01-KO]<UserDefinedWord>
-Line 94[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B01-KO]<UserDefinedWord>
-Line 101[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B02-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B02-KO]<UserDefinedWord>
-Line 101[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B02-KO]<UserDefinedWord>
-Line 109[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B04-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B04-KO]<UserDefinedWord>
-Line 109[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B04-KO]<UserDefinedWord>
-Line 117[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B05-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B05-KO]<UserDefinedWord>
-Line 117[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B05-KO]<UserDefinedWord>
-Line 123[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B06-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
-Line 123[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
-Line 130[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B07-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
-Line 130[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
-Line 137[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B08-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
-Line 137[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
-Line 148[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B11-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
-Line 148[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
-Line 155[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B12-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
-Line 155[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
-Line 162[16,27] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-B13-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
-Line 162[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
-Line 183[15,26] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-C01-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
-Line 183[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
-Line 204[20,30] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-D2-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
-Line 204[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
-Line 219[24,34] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-D4-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
-Line 219[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
-Line 230[24,34] <27, Error, Syntax> - Syntax error : A "PICTURE"clause was not found for elementary item "Array-D5-KO"."PICTURE X(1)"was assumed. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
-Line 230[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
-Line 239[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,27:VarChild]<UserDefinedWord>
+Line 16[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
+Line 19[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
+Line 24[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
+Line 31[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
+Line 45[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
+Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
+Line 55[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
+Line 63[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
+Line 68[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
+Line 73[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
+Line 82[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A20-KO]<UserDefinedWord>
+Line 92[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B01-KO]<UserDefinedWord>
+Line 99[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B02-KO]<UserDefinedWord>
+Line 107[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B04-KO]<UserDefinedWord>
+Line 115[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B05-KO]<UserDefinedWord>
+Line 121[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
+Line 128[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
+Line 135[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
+Line 146[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
+Line 153[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
+Line 160[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
+Line 181[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
+Line 202[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
+Line 217[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
+Line 228[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
 
 --- Program ---
 Pgm2358 (.NET Type=ProgramSymbol, Kind=Program)
@@ -62,21 +36,6 @@ WorkingStorageData:
   Type:
     (.NET Type=GroupType, Tag=Group)
     Fields:
-      simple (.NET Type=VariableSymbol, Kind=Variable)
-      Flags: [WORKING_STORAGE]
-      Owner: Pgm2358::Group-A
-      Type:
-        (.NET Type=Type, Tag=Usage)
-      Level: 5
-      IsFiller: False
-      simplePicture (.NET Type=VariableSymbol, Kind=Variable)
-      Flags: [WORKING_STORAGE]
-      Owner: Pgm2358::Group-A
-      Type:
-        (.NET Type=PictureType, Tag=Picture)
-        Picture: X(1)
-      Level: 5
-      IsFiller: False
       Array-A01-OK (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
       Owner: Pgm2358::Group-A
@@ -957,7 +916,8 @@ WorkingStorageData:
             Flags: [WORKING_STORAGE]
             Owner: Pgm2358::Group-E1::Array-E1-OK
             Type:
-              (.NET Type=Type, Tag=Usage)
+              (.NET Type=PictureType, Tag=Picture)
+              Picture: X(1)
             Level: 10
             IsFiller: False
       Level: 5

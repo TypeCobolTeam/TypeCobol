@@ -760,10 +760,6 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public override bool VisitNode(IASTVisitor astVisitor)
-        {
-            return base.VisitNode(astVisitor) && astVisitor.Visit(this);
-        }
         /// <summary>
         /// A Dictonary that gives for a Token that appears in a qualified name its subtitution.
         /// </summary>

@@ -755,6 +755,94 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        class DataDefinitionChecker
+        {
+            public static void OnNode(DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines dataEntry = null)
+            {
+                if (dataEntry == null)
+                {
+                    dataEntry = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
+                }
+
+                if (dataEntry?.Usage != null &&
+                    (dataEntry.Usage.Value == DataUsage.FloatingPoint || dataEntry.Usage.Value == DataUsage.LongFloatingPoint) &&
+                    dataEntry.Picture != null)
+                {
+                    DiagnosticUtils.AddError(dataDefinition,
+                        "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataEntry);
+                }
+
+                if (dataEntry?.LevelNumber != null && IsDataDefinitionEmpty(dataDefinition, dataEntry))
+                {
+                    //Get current node index
+                    var nodeIndex = dataDefinition.Parent.IndexOf(dataDefinition);
+                    //Get sibling nodes
+                    var siblingNodes = dataDefinition.Parent.Children;
+                    //Get immediately following DataDefinition
+                    var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
+                    if (nextData != null && nextData.IsInsideCopy())
+                    {
+                        DiagnosticUtils.AddError(dataDefinition, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
+                                                                  $"under level {dataEntry.LevelNumber} " +
+                                                                  $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataEntry);
+                    }
+                    else
+                    {
+                        DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty.", dataEntry);
+                    }
+                }
+            }
+        }
+
+        private static bool IsDataDefinitionEmpty([NotNull] DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines dataEntry)
+        {
+            if (dataDefinition.IsTableOccurence)
+            {
+                // OCCURS: not empty if PICTURE or type definition
+                if ((dataEntry?.Picture != null) || (dataDefinition.TypeDefinition != null))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // Others: exclude RENAME + not empty if PICTURE or userD defined data type
+                if (dataDefinition.CodeElement.LevelNumber?.Value >= 50 || dataDefinition.Picture != null || dataEntry?.UserDefinedDataType != null)
+                {
+                    return false;
+                }
+            }
+
+
+            if (dataDefinition.Usage.HasValue && IsUsageAllowed(dataDefinition.Usage.Value))
+            {
+                // Empty because usage is not allowed
+                return false;
+            }
+
+            // Not empty if at least one child (but ignore Index chidren)
+            return dataDefinition.Children.Count(c => c is not IndexDefinition) == 0;
+
+            //TODO Issue #2504 UTF-8: check this method (but normally there should be nothing to change)
+            static bool IsUsageAllowed(DataUsage usage)
+            {
+                switch (usage)
+                {
+                    case DataUsage.Index:
+                    case DataUsage.FloatingPoint:
+                    case DataUsage.LongFloatingPoint:
+                    case DataUsage.Pointer:
+                    case DataUsage.Pointer32:
+                    case DataUsage.ProcedurePointer:
+                    case DataUsage.FunctionPointer:
+                        return true;
+                    default:
+                        // None is not allowed
+                        return false;
+                }
+            }
+        }
+
         public override bool Visit(Sentence sentence)
         {
             // Check for missing end
@@ -809,35 +897,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     CheckEndNode(openingDeclareToken, functionEnd);
                 }
             }
-            return true;
-        }
-
-        public override bool Visit(DataDescription dataDescription)
-        {
-            DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
-
-            //Check if the DataDescription is an empty group
-            if (dataDescriptionEntry.LevelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
-            {
-                //Get current node index
-                var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
-                //Get sibling nodes
-                var siblingNodes = dataDescription.Parent.Children;
-                //Get immediately following DataDefinition
-                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
-                if (nextData != null && nextData.IsInsideCopy())
-                {
-                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
-                                                              $"under level {dataDescriptionEntry.LevelNumber} " +
-                                                              $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataDescriptionEntry);
-                }
-                else
-                {
-                    //Last node so this is an empty group item
-                    DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
-                }
-            }
-
             return true;
         }
 

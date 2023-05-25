@@ -42,54 +42,6 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class DataDefinitionChecker
-    {
-        public static void OnNode(DataDefinition dataDefinition, DataDescriptionEntry dataEntry = null)
-        {
-            if (dataEntry == null)
-            {
-                dataEntry = dataDefinition.CodeElement as DataDescriptionEntry;
-            }
-
-
-            if (dataEntry?.Usage != null &&
-                (dataEntry.Usage.Value == DataUsage.FloatingPoint || dataEntry.Usage.Value == DataUsage.LongFloatingPoint) &&
-                dataEntry.Picture != null)
-            {
-                DiagnosticUtils.AddError(dataDefinition,
-                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataEntry);
-            }
-
-            if (dataEntry != null && dataEntry.IsTableOccurence && dataEntry.Picture == null && dataDefinition.TypeDefinition == null)
-            {
-                //TODO We systematically throw an error in case of empty array with a TYPEDEF defined on parent group
-                //This could be improved by checking type expansion
-                if (!dataDefinition.Usage.HasValue || !IsUsageAllowedInArray(dataDefinition.Usage.Value))
-                {
-                    DiagnosticUtils.AddError(dataDefinition, $"A \"PICTURE\"clause was not found for elementary item \"{dataEntry.Name}\".\"PICTURE X(1)\"was assumed.", dataEntry);
-                }
-            }
-
-            //TODO Issue #2504 UTF-8: check this method (but normally there should be nothing to change)
-            static bool IsUsageAllowedInArray(DataUsage usage)
-            {
-                switch (usage)
-                {
-                    case DataUsage.Index:
-                    case DataUsage.FloatingPoint:
-                    case DataUsage.LongFloatingPoint:
-                    case DataUsage.Pointer:
-                    case DataUsage.Pointer32:
-                    case DataUsage.ProcedurePointer:
-                    case DataUsage.FunctionPointer:
-                        return true;
-                    default:
-                        // None is not allowed
-                        return false;
-                }
-            }
-        }
-    }
     class FunctionCallChecker
     {
         public static void OnNode(Node node)

@@ -1,0 +1,890 @@
+--- Diagnostics ---
+Line 13[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,23:simple-KO]<UserDefinedWord>
+Line 27[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
+Line 35[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
+Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
+Line 74[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
+Line 99[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
+Line 104[53,58] <27, Error, Syntax> - Syntax error : extraneous input 'binary' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[53,58:binary]<BINARY>
+Line 113[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
+Line 118[51,64] <27, Error, Syntax> - Syntax error : extraneous input 'packed-decimal' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[51,64:packed-decimal]<PACKED_DECIMAL>
+Line 126[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
+Line 131[52,55] <27, Error, Syntax> - Syntax error : extraneous input 'comp' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,55:comp]<COMP>
+Line 140[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-1' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,57:comp-1]<COMP_1>
+Line 149[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-2' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,57:comp-2]<COMP_2>
+Line 157[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
+Line 162[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-3' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,57:comp-3]<COMP_3>
+Line 171[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
+Line 176[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-4' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,57:comp-4]<COMP_4>
+Line 185[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
+Line 191[52,57] <27, Error, Syntax> - Syntax error : extraneous input 'comp-5' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,57:comp-5]<COMP_5>
+Line 200[52,58] <27, Error, Syntax> - Syntax error : extraneous input 'pointer' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,58:pointer]<POINTER>
+Line 208[52,61] <27, Error, Syntax> - Syntax error : extraneous input 'pointer-32' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[52,61:pointer-32]<POINTER_32>
+Line 217[12,28] <27, Error, Syntax> - Syntax error : extraneous input 'procedure-pointer' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[12,28:procedure-pointer]<PROCEDURE_POINTER>
+Line 225[51,66] <27, Error, Syntax> - Syntax error : extraneous input 'function-pointer' expecting '.' RuleStack=codeElement>dataDescriptionEntry>dataRenamesEntry,  OffendingSymbol=[51,66:function-pointer]<FUNCTION_POINTER>
+Line 236[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-B01-KO]<UserDefinedWord>
+Line 247[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-B02-KO]<UserDefinedWord>
+Line 262[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-B04-KO]<UserDefinedWord>
+Line 283[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
+Line 294[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
+Line 306[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
+Line 327[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
+Line 337[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
+Line 348[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
+Line 381[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
+Line 409[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
+Line 430[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
+Line 447[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
+Line 460[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,27:VarChild]<UserDefinedWord>
+Line 465[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,29:VarChild-R]<UserDefinedWord>
+
+--- Program ---
+RenamesAndUsage (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  Group-A (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      simple-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A01-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A02-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A2
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A03-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A3
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A04-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A4
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A5 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A05-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A5
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Index
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A6 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A06-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A6
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: National
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A8 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A08-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A8
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A9 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A09-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A9
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A10 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A10-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A10
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A11 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A11-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A11
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A12 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A12-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A12
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp2
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A13 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A13-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A13
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A14 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A14-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A14
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A15 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A15-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A15
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp5
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A16 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A16-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A16
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A17 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A17-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A17
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer32
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A18 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A18-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A18
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-A19 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A19-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-A19
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B01 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display
+    Fields:
+      Array-B01-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B01
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B02 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display1
+    Fields:
+      Array-B02-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B02
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B03 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Index
+    Fields:
+      Array-B03-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B03
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Index
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B04 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: National
+    Fields:
+      Array-B04-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B04
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: National
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B06 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B06-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B06
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B07 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      Array-B07-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B07
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B08 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B08-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B08
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B09 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp1
+    Fields:
+      Array-B09-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B09
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B10 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp2
+    Fields:
+      Array-B10-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B10
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp2
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B11 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      Array-B11-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B11
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B12 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B12-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B12
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B13 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp5
+    Fields:
+      Array-B13-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B13
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp5
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B14 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer
+    Fields:
+      Array-B14-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B14
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B15 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer32
+    Fields:
+      Array-B15-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B15
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer32
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B16 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: ProcedurePointer
+    Fields:
+      Array-B16-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B16
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B17 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: FunctionPointer
+    Fields:
+      Array-B17-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-B17
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-C01 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, GroupUsageNational]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-C01-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, GroupUsageNational]
+      Owner: RenamesAndUsage::Group-C01
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: National
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer
+    Fields:
+      Group-D11 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-D1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer
+        Fields:
+          Array-D1-OK (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RenamesAndUsage::Group-D1::Group-D11
+          Type:
+            (.NET Type=Type, Tag=Usage)
+            Usage: Pointer
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp5
+    Fields:
+      Group-D21 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-D2
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp5
+        Fields:
+          Array-D2-KO (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RenamesAndUsage::Group-D2::Group-D21
+          Type:
+            (.NET Type=Type, Tag=Usage)
+            Usage: Comp5
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: ProcedurePointer
+    Fields:
+      Group-D31 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-D3
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: ProcedurePointer
+        Fields:
+          Group-D311 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RenamesAndUsage::Group-D3::Group-D31
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: ProcedurePointer
+            Fields:
+              Array-D3-OK (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: RenamesAndUsage::Group-D3::Group-D31::Group-D311
+              Type:
+                (.NET Type=Type, Tag=Usage)
+                Usage: ProcedurePointer
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display1
+    Fields:
+      Group-D41 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-D4
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display1
+        Fields:
+          Group-D411 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RenamesAndUsage::Group-D4::Group-D41
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: Display1
+            Fields:
+              Array-D4-KO (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: RenamesAndUsage::Group-D4::Group-D41::Group-D411
+              Type:
+                (.NET Type=Type, Tag=Usage)
+                Usage: Display1
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D5 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp1
+    Fields:
+      Array-D5-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-D5
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp1
+      Level: 5
+      IsFiller: False
+      Group-D51 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, GroupUsageNational]
+      Owner: RenamesAndUsage::Group-D5
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+        Fields:
+          Group-D511 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, GroupUsageNational]
+          Owner: RenamesAndUsage::Group-D5::Group-D51
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: National
+            Fields:
+              Array-D5-KO (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE, GroupUsageNational]
+              Owner: RenamesAndUsage::Group-D5::Group-D51::Group-D511
+              Type:
+                (.NET Type=Type, Tag=Usage)
+                Usage: National
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-E1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RenamesAndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-E1-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-E1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          VarChild (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RenamesAndUsage::Group-E1::Array-E1-OK
+          Type:
+            (.NET Type=Type, Tag=Usage)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+      VarChild-R (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RenamesAndUsage::Group-E1
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 10
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+
