@@ -799,6 +799,8 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDefinition.IsTableOccurence)
             {
                 // OCCURS: not empty if PICTURE or type definition
+                //TODO We systematically throw an error in case of empty array with a TYPEDEF defined on parent group
+                //This could be improved by checking after type expansion
                 if ((dataEntry?.Picture != null) || (dataDefinition.TypeDefinition != null))
                 {
                     return false;
