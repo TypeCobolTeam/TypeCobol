@@ -85,6 +85,11 @@ namespace TypeCobol.Compiler.Scanner
             return _TokenFamilyFromTokenType[(int)tokenType];
         }
 
+        public static string? GetTokenStringFromTokenType(TokenType tokenType)
+        {
+            return _TokenStringFromTokenType[(int)tokenType];
+        }
+
         internal static TokenType GetCobolKeywordTokenTypeFromTokenString(string tokenString, CobolLanguageLevel targetLanguageLevel)
         {
             if (_TokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
