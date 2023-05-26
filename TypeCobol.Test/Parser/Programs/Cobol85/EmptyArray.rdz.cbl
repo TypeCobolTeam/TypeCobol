@@ -17,9 +17,9 @@
       *A"PICTURE"clause was not found for elementary item"Array-A03-KO".
       *   "PICTURE X(1)"was assumed.
            05 Array-A03-KO OCCURS 50 usage is display.
-      *The"PICTURE"clause for item"A04-KO"was not compatible with the
+      *The"PICTURE"clause for item"Array-A04-KO"was not compatible with the
       *   specified"USAGE". "USAGE DISPLAY"was assumed.
-      *A"PICTURE"clause was not found for elementary item"A04-KO".
+      *A"PICTURE"clause was not found for elementary item"Array-A04-KO".
       *   "PICTURE X(1)"was assumed.
            05 Array-A04-KO OCCURS 50 usage is display-1.
            05 Array-A05-OK OCCURS 50 usage is index.

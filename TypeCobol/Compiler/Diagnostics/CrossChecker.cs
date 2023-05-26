@@ -808,13 +808,12 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else
             {
-                // Others: exclude RENAME + not empty if PICTURE or userD defined data type
+                // Others: exclude RENAME + not empty if PICTURE or user defined data type
                 if (dataDefinition.CodeElement.LevelNumber?.Value >= 50 || dataDefinition.Picture != null || dataEntry?.UserDefinedDataType != null)
                 {
                     return false;
                 }
             }
-
 
             if (dataDefinition.Usage.HasValue && IsUsageAllowed(dataDefinition.Usage.Value))
             {
