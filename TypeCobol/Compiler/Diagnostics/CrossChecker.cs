@@ -794,14 +794,14 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private static bool IsDataDefinitionEmpty([NotNull] DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines dataEntry)
+        private static bool IsDataDefinitionEmpty([NotNull] DataDefinition dataDefinition, [NotNull] CommonDataDescriptionAndDataRedefines dataEntry)
         {
             if (dataDefinition.IsTableOccurence)
             {
                 // OCCURS: not empty if PICTURE or type definition
                 //TODO We systematically throw an error in case of empty array with a TYPEDEF defined on parent group
                 //This could be improved by checking after type expansion
-                if ((dataEntry?.Picture != null) || (dataDefinition.TypeDefinition != null))
+                if ((dataEntry.Picture != null) || (dataDefinition.TypeDefinition != null))
                 {
                     return false;
                 }
@@ -809,7 +809,7 @@ namespace TypeCobol.Compiler.Diagnostics
             else
             {
                 // Others: exclude RENAME + not empty if PICTURE or user defined data type
-                if (dataDefinition.CodeElement.LevelNumber?.Value >= 50 || dataDefinition.Picture != null || dataEntry?.UserDefinedDataType != null)
+                if (dataDefinition.CodeElement.LevelNumber?.Value >= 50 || dataDefinition.Picture != null || dataEntry.UserDefinedDataType != null)
                 {
                     return false;
                 }
