@@ -2000,12 +2000,26 @@ namespace TypeCobol.Compiler.Scanner
 
             //IntrinsicFunctionName = 34,
             // p477: function-name-1 must be one of the intrinsic function names.
-            // ACOS | ANNUITY | ASIN | ATAN | CHAR | COS | CURRENT_DATE | DATE_OF_INTEGER | DATE_TO_YYYYMMDD |
-            // DAY_OF_INTEGER | DAY_TO_YYYYDDD | DISPLAY_OF | FACTORIAL | INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY |
-            // INTEGER_PART | LENGTH | LOG | LOG10 | LOWER_CASE | MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
-            // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
-            // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR |
-            // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
+            //.ABS | ACOS | ANNUITY | ASIN | ATAN |
+            //.BIT_OF | BIT_TO_CHAR | BYTE_LENGTH |
+            //.CHAR | COMBINED_DATETIME | COS | CURRENT_DATE |
+            //.DATE_OF_INTEGER | DATE_TO_YYYYMMDD | DAY_OF_INTEGER | DAY_TO_YYYYDDD | DISPLAY_OF |
+            //.E | EXP | EXP10 |
+            //.FACTORIAL | FORMATTED_CURRENT_DATE | FORMATTED_DATE | FORMATTED_DATETIME | FORMATTED_TIME |
+            //.HEX_OF | HEX_TO_CHAR |
+            //.INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY | INTEGER_OF_FORMATTED_DATE | INTEGER_PART |
+            //.LENGTH | LOG | LOG10 | LOWER_CASE |
+            //.MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
+            //.NATIONAL_OF | NUMVAL | NUMVAL_C | NUMVAL_F |
+            //.ORD | ORD_MAX | ORD_MIN |
+            //.PI | PRESENT_VALUE |
+            //.RANDOM | RANGE | REM | REVERSE |
+            //.SECONDS_FROM_FORMATTED_TIME | SECONDS_PAST_MIDNIGHT | SIGN | SIN | SQRT | STANDARD_DEVIATION | SUM |
+            //.TAN | TEST_DATE_YYYYMMDD | TEST_DAY_YYYYDDD | TEST_FORMATTED_DATETIME | TEST_NUMVAL | TEST_NUMVAL_C | TEST_NUMVAL_F | TRIM |
+            //.ULENGTH | UPOS | UPPER_CASE | USUBSTR | USUPPLEMENTARY | UUID4 | UVALID | UWIDTH |
+            //.VARIANCE |
+            //.WHEN_COMPILED |
+            //.YEAR_TO_YYYY;
             if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.CobolIntrinsicFunctions.IsMatch(tokenText))
             {
                 tokenType = TokenType.IntrinsicFunctionName;

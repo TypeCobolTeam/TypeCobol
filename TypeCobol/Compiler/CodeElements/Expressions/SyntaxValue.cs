@@ -518,6 +518,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// UserDefinedWord
     /// IntrinsicFunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
+    /// LEADING | TRAILING
     /// </summary>
     public class EnumeratedValue : AlphanumericValue
     {
@@ -534,6 +535,8 @@ namespace TypeCobol.Compiler.CodeElements
                 case TokenType.RANDOM:
                 case TokenType.WHEN_COMPILED:
                 case TokenType.ExecTranslatorName:
+                case TokenType.LEADING:
+                case TokenType.TRAILING:
                     break;
                 default:
                     throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
@@ -550,12 +553,22 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public object EnumValue
         {
-            get { return Enum.Parse(EnumType, Value); }
+            get { return Enum.Parse(EnumType, Value, true); }
         }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
+
+        // Enum value should logically depends on nothing
+        public override bool ValueNeedsCompilationContext => false;
+
+        public override bool ValueNeedsSymbolicCharactersMap => false;
+
+        public override bool ValueNeedsCharactersCountContext => false;
+
+        // Enum value should logically always be the token text
+        public override string Value => Token.Text;
     }
 
     /// <summary>
