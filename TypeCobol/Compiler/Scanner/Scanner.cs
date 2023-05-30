@@ -2098,6 +2098,7 @@ namespace TypeCobol.Compiler.Scanner
             CblProcessDirective compilerDirective = new CblProcessDirective(tokenType == TokenType.CBL ? CompilerDirectiveType.CBL : CompilerDirectiveType.PROCESS);
 
             bool lineSyntaxIsValid = true;
+            string optionWord = null;
 
             // The CBL (PROCESS) statement must end before or at column 72, 
             // and options cannot be continued across multiple CBL (PROCESS) statements. 
@@ -2134,7 +2135,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     for (; currentIndex <= lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex]); currentIndex++) { }
                     int nameEndIndex = (currentIndex == lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex])) ? lastIndex : currentIndex - 1;
-                    string optionWord = line.Substring(nameStartIndex, nameEndIndex - nameStartIndex + 1);
+                    optionWord = line.Substring(nameStartIndex, nameEndIndex - nameStartIndex + 1);
 
                     // Try to scan option parameters
                     string optionParameters = null;
@@ -2215,6 +2216,11 @@ namespace TypeCobol.Compiler.Scanner
             {            
                 tokensLine.AddDiagnostic(MessageCode.InvalidCblProcessCompilerDirective, compilerDirectiveToken);
             }
+            else if (optionWord != null && compilerOptions.TryDeprecatedOption(optionWord, out string warningMessage))
+            {
+                tokensLine.AddDiagnostic(MessageCode.DeprecatedCompilerOption, compilerDirectiveToken, warningMessage);
+            }
+
             return compilerDirectiveToken;
         }
 

@@ -37,3 +37,7 @@ Line 0[1,14] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compi
 -- Line 11 --
 *** DIRECTIVE PROCESS|CP=1147|NOADV|C ([1,24:PROCESS CP(1147) NOADV C]<COMPILER_DIRECTIVE>) ***
 
+-- Line 12 --
+*** DIRECTIVE CBL|LIB ([1,7:CBL LIB]<COMPILER_DIRECTIVE>) ***
+Line 0[1,7] <56, Warning, Directives> - Warning: the "LIB" option specification is no longer required. COBOL library processing is always in effect.
+

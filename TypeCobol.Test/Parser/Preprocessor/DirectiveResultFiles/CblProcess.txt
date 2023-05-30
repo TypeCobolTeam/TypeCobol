@@ -73,18 +73,21 @@
 *** DIRECTIVE PROCESS|ARITH=EXTEND ([8,72:PROCESS ARITH(EXTEND)                                            ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 25 --
+*** DIRECTIVE CBL|LIB ([8,14:CBL LIB]<COMPILER_DIRECTIVE>) ***
+
+-- Line 26 --
 [8,21:IDENTIFICATION]<IDENTIFICATION>
 [23,30:DIVISION]<DIVISION>
 [31,32:. ]<PeriodSeparator>
 
--- Line 26 --
+-- Line 27 --
 [8,72:-Reason  : AMEELIORATION PROCESS ACTIMAT                         ]<CommentLine>
 
--- Line 27 --
+-- Line 28 --
 [17,23:PERFORM]<PERFORM>
 [25,49:PROCESSUS-INDEXATION-IMMO]<UserDefinedWord>
 [50,51:. ]<PeriodSeparator>
 
--- Line 28 --
+-- Line 29 --
 [8,72:*** PROCESSUS DE MENAGE                                          ]<CommentLine>
 

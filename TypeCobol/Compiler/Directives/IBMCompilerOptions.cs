@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -83,6 +84,9 @@ namespace TypeCobol.Compiler.Directives
     // “MDECK” on page 332 NOMDECK NOMD|MD|MD(C|NOC) 
     // “OPTFILE” on page 338 None None 
     // “THREAD” on page 356 NOTHREAD None
+    // --- Deprecated ---
+    // “LIB”
+
 
     /// <summary>
     /// Current status and value for all the IBM compiler options
@@ -143,6 +147,7 @@ namespace TypeCobol.Compiler.Directives
                 case IBMCompilerOptionName.HGPR: IsActivated = true; Value = "PRESERVE"; break;
                 case IBMCompilerOptionName.INTDATE: IsActivated = true; Value = "ANSI"; break;
                 case IBMCompilerOptionName.LANGUAGE: IsActivated = true; Value = "ENGLISH"; break;
+                case IBMCompilerOptionName.LIB: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.LINECOUNT: IsActivated = true; Value = "60"; break;
                 case IBMCompilerOptionName.LIST: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.MAP: IsActivated = false; Value = null; break;
@@ -546,6 +551,9 @@ namespace TypeCobol.Compiler.Directives
         // Conversion of option words in source text to option name enumeration
         private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(63);
               
+        // Deprecated options which are not supported anymore with the corresponding warning message to be displayed
+        private readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1);
+
         /// <summary>
         /// Initialize all compiler options to their default status and value
         /// </summary>
@@ -678,16 +686,24 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["WORD"] = WORD; optionWordToOptionName["WD"] = WORD; optionWordToOptionName["NOWORD"] = WORD; optionWordToOptionName["NOWD"] = WORD;
             optionWordToOptionName["XREF"] = XREF; optionWordToOptionName["X"] = XREF; optionWordToOptionName["NOXREF"] = XREF; optionWordToOptionName["NOX"] = XREF;
             optionWordToOptionName["ZWB"] = ZWB; optionWordToOptionName["NOZWB"] = ZWB; 
+
+            deprecatedOptions["LIB"] = "the \"LIB\" option specification is no longer required. COBOL library processing is always in effect.";
         }
 
         /// <summary>
         /// If optionWord is a supported option name (EXIT)    or abbreviation (EX) or negation (NOEXIT / NOEX)
-        /// this method sets its status (IsActivated) and value (from parameters)
+        /// this method sets its status (IsActivated) and value (from parameters).
+        /// <br>Deprecated options are simply ignored (but are considered as valid).</br>
         /// </summary>
         public bool TrySetIBMOptionStatusAndValue(string optionWord, string optionParameters)
         {
-            IBMCompilerOptionStatus optionStatus = null;
             String optionWordUpper = optionWord.ToUpper();
+            if (deprecatedOptions.ContainsKey(optionWordUpper))
+            {
+                return true;
+            }
+
+            IBMCompilerOptionStatus optionStatus = null;
             if (optionWordToOptionName.TryGetValue(optionWordUpper, out optionStatus))
             {
                 return optionStatus.SetStatutsAndValue(optionWordUpper, optionParameters);
@@ -696,6 +712,14 @@ namespace TypeCobol.Compiler.Directives
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// If optionWord is a deprecated option this method returns the corresponding warning message to be displayed
+        /// </summary>
+        public bool TryDeprecatedOption([NotNull] string optionWord, out string warningMessage)
+        {
+            return deprecatedOptions.TryGetValue(optionWord.ToUpper(), out warningMessage);
         }
     }
 
@@ -760,6 +784,8 @@ namespace TypeCobol.Compiler.Directives
         INTDATE,
         /* Use the LANGUAGE option to select the language in which compiler output will be printed. The information that will be printed in the selected language includes diagnostic messages, source listing page and scale headers, FIPS message headers, message summary headers, compilation summary, and headers and notations that result from the selection of certain compiler options (MAP, XREF, VBREF, and FLAGSTD). */
         LANGUAGE,
+        /* The LIB option specification is no longer required. COBOL library processing is always in effect. We keep it only for compatibility with old versions. */
+        LIB,
         /* Use LINECOUNT(nnn) to specify the number of lines to be printed on each page of the compilation listing, or use LINECOUNT(0) to suppress pagination. */
         LINECOUNT,
         /* Use the LIST compiler option to produce a listing of the assembler-language expansion of your source code. */

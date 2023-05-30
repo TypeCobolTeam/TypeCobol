@@ -64,6 +64,7 @@ namespace TypeCobol.Compiler.Diagnostics
         // End for SQL
         InvalidCharBeforePseudoTextDelimiter = 53,
         ShouldBePrecededBySpace = 54,
-        InvalidCharInsidePseudoText = 55
+        InvalidCharInsidePseudoText = 55,
+        DeprecatedCompilerOption = 56
     }
 }
