@@ -157,7 +157,15 @@ namespace TypeCobol.Compiler.Scanner
                 }
 
                 //Helper local functions
-                string Text(Token alphanumericLiteralToken) => ((AlphanumericLiteralTokenValue) alphanumericLiteralToken.LiteralValue!).Text; //Using null-forgiving operator here as AlphanumericLiteralToken always has a non-null LiteralValue.
+
+                /*
+                 * Using null-forgiving operator here as AlphanumericLiteralToken always has a non-null LiteralValue.
+                 * The token received here is guaranteed to be non-null and either of type AlphanumericLiteral
+                 * or HexadecimalAlphanumericLiteral or NullTerminatedAlphanumericLiteral.
+                 * Those three types of tokens are created by the AbstractScanner.ScanAlphanumericLiteral method which always sets the LiteralValue property.
+                 */
+                string Text(Token alphanumericLiteralToken) => ((AlphanumericLiteralTokenValue) alphanumericLiteralToken.LiteralValue!).Text;
+                
                 void AddError(Token token, string message) => ((TokensLine) token.TokensLine).AddDiagnostic(MessageCode.SyntaxErrorInParser, token, message);
             }
 

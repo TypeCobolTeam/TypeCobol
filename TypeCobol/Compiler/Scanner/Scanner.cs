@@ -244,8 +244,8 @@ namespace TypeCobol.Compiler.Scanner
 
             bool StartsWithReplace()
             {
-                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
-                return replaceKeyword != null && lineSourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
+                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE)!; // REPLACE is a keyword TokenType, so the result is known to be non-null.
+                return lineSourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
             }
         }
 
