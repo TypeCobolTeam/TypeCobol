@@ -552,7 +552,7 @@ namespace TypeCobol.Compiler.Directives
         private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(63);
               
         // Deprecated options which are not supported anymore with the corresponding warning message to be displayed
-        private readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1);
+        private static readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Initialize all compiler options to their default status and value
@@ -697,13 +697,13 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public bool TrySetIBMOptionStatusAndValue(string optionWord, string optionParameters)
         {
-            String optionWordUpper = optionWord.ToUpper();
-            if (deprecatedOptions.ContainsKey(optionWordUpper))
+            if (deprecatedOptions.ContainsKey(optionWord))
             {
                 return true;
             }
 
             IBMCompilerOptionStatus optionStatus = null;
+            String optionWordUpper = optionWord.ToUpper();
             if (optionWordToOptionName.TryGetValue(optionWordUpper, out optionStatus))
             {
                 return optionStatus.SetStatutsAndValue(optionWordUpper, optionParameters);
@@ -717,9 +717,9 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// If optionWord is a deprecated option this method returns the corresponding warning message to be displayed
         /// </summary>
-        public bool TryDeprecatedOption([NotNull] string optionWord, out string warningMessage)
+        public bool IsOptionDeprecated([NotNull] string optionWord, out string warningMessage)
         {
-            return deprecatedOptions.TryGetValue(optionWord.ToUpper(), out warningMessage);
+            return deprecatedOptions.TryGetValue(optionWord, out warningMessage);
         }
     }
 
