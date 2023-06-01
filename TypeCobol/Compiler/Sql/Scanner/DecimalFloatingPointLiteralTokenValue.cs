@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler.Scanner;
+﻿#nullable enable
+
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Sql.Scanner
 {
@@ -24,9 +26,9 @@ namespace TypeCobol.Compiler.Sql.Scanner
 
     public class DecimalFloatingPointLiteralTokenValue : LiteralTokenValue
     {
-        public DecimalFloatingPointSpecialValue SpecialValue { get; }
+        public DecimalFloatingPointSpecialValue? SpecialValue { get; }
 
-        public FloatingPointLiteralTokenValue NumericConstant { get; }
+        public FloatingPointLiteralTokenValue? NumericConstant { get; }
 
         public DecimalFloatingPointLiteralTokenValue(FloatingPointLiteralTokenValue numericConstant) : base(LiteralTokenValueType.DecimalFloatingPoint)
         {

@@ -67,7 +67,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
                 if (tokensLine.ScanState.InsideRemarksDirective)
                 {
-                    string remarksLine = textLine.SourceText?.TrimEnd();
+                    string remarksLine = textLine.SourceText.TrimEnd();
 
                     if (!string.IsNullOrEmpty(remarksLine))
                     {
@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Scanner
             else if (textLine.Type == CobolTextLineType.MultiFormalizedComment)
             {
                 //If a '%' is spotted that isn't a multiline/formalized comment token or if a stop token is spotted without an associated start
-                if (tokensLine.SourceText == null || !tokensLine.SourceText.StartsWith("<<") && !tokensLine.SourceText.StartsWith(">>") || 
+                if (tokensLine.Source.IsMissing || !tokensLine.SourceText.StartsWith("<<") && !tokensLine.SourceText.StartsWith(">>") || 
                     !tokensLine.ScanState.InsideMultilineComments && !tokensLine.ScanState.InsideFormalizedComment && tokensLine.SourceText.StartsWith(">>"))
                 {
                     tokensLine.AddDiagnostic(MessageCode.MultiFormalizedCommentIndicatorMisused, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
@@ -244,7 +244,7 @@ namespace TypeCobol.Compiler.Scanner
 
             bool StartsWithReplace()
             {
-                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
+                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE)!; // REPLACE is a keyword TokenType, so the result is known to be non-null.
                 return lineSourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
             }
         }

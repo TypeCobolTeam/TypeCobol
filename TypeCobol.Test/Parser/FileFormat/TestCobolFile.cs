@@ -181,7 +181,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             TextChangeMap tce1 = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges.First<TextChange>(), docFormat.ColumnsLayout);
             if (tce1.LineIndex != 0 || tce1.Type != TextChangeType.LineInserted ||
                 tce1.NewLineMap.SequenceNumberText != null || tce1.NewLineMap.IndicatorChar != ' ' ||
-                tce1.NewLineMap.SourceText != null || tce1.NewLineMap.CommentText != null)
+                tce1.NewLineMap.SourceText != string.Empty || tce1.NewLineMap.CommentText != null)
             {
                 throw new Exception("Error reading line 1 of the ASCII Linux text source (reference format)");
             }

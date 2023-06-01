@@ -1,4 +1,6 @@
-﻿using TypeCobol.Tools.Options_Config;
+﻿#nullable enable
+
+using TypeCobol.Tools.Options_Config;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -15,7 +17,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Path to generate collected used copy names
         /// </summary>
-        public string ReportUsedCopyNamesPath { get; set; }
+        public string? ReportUsedCopyNamesPath { get; set; }
 #endif
         /// <summary>
         /// Option to create a missing copy file, it will stop the execution before semantic phase if a copy is missing
@@ -47,7 +49,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Instance of the CPY Copy name map
         /// </summary>
-        public CopyNameMapFile CpyCopyNameMap { get; set; }
+        public CopyNameMapFile? CpyCopyNameMap { get; set; }
 #else
         private bool _useEuroInformationLegacyReplacingSyntax = false;
 #endif
@@ -118,7 +120,11 @@ namespace TypeCobol.Compiler.Directives
         public TypeCobolOptions()
         {
             // default values for checks
-            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+            CheckEndAlignment = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndAlignmentSeverity);
+            CheckEndProgram = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndProgramSeverity);
+            CheckPerformPrematureExits = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformPrematureExitsSeverity);
+            CheckPerformThruOrder = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformThruOrderSeverity);
+            CheckRecursivePerforms = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckRecursivePerformsSeverity);
         }
     }
 }

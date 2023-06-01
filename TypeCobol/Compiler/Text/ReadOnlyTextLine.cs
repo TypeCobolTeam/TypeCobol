@@ -1,4 +1,4 @@
-﻿using System;
+﻿#nullable enable
 
 namespace TypeCobol.Compiler.Text
 {
@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public class ReadOnlyTextLine : TextLineSnapshot
     {
-        public ReadOnlyTextLine(int lineIndex, int startOffset, string text, object lineTrackingReferenceInSourceDocument) :
+        public ReadOnlyTextLine(int lineIndex, int startOffset, string text, object? lineTrackingReferenceInSourceDocument) :
             base(lineIndex, text, lineTrackingReferenceInSourceDocument)
         {
             StartOffset = startOffset;

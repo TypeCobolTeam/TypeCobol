@@ -1,4 +1,4 @@
-﻿using System;
+﻿#nullable enable
 
 namespace TypeCobol.Compiler.Text
 {
@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public class TextLineSnapshot : ITextLine
     {
-        public TextLineSnapshot(int lineIndex, string text, object lineTrackingReferenceInSourceDocument)
+        public TextLineSnapshot(int lineIndex, string text, object? lineTrackingReferenceInSourceDocument)
         {
             LineIndex = lineIndex;
             Text = text;
@@ -82,6 +82,6 @@ namespace TypeCobol.Compiler.Text
         /// This property returns an opaque reference to a line tracking object from the live text document,
         /// which will enable an efficient retrieval of the line number for this line in the document.
         /// </summary>
-        public object LineTrackingReferenceInSourceDocument { get; private set; }
+        public object? LineTrackingReferenceInSourceDocument { get; private set; }
     }
 }

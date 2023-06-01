@@ -130,7 +130,11 @@ namespace TypeCobol.Tools.Options_Config
         public TypeCobolConfiguration()
         {
             // default values for checks
-            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+            CheckEndAlignment = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndAlignmentSeverity);
+            CheckEndProgram = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndProgramSeverity);
+            CheckPerformPrematureExits = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformPrematureExitsSeverity);
+            CheckPerformThruOrder = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformThruOrderSeverity);
+            CheckRecursivePerforms = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckRecursivePerformsSeverity);
         }
     }
 
@@ -239,23 +243,17 @@ namespace TypeCobol.Tools.Options_Config
 
     public interface ITypeCobolCheckOptions
     {
+        const Severity DefaultCheckEndAlignmentSeverity = Severity.Warning;
+        const Severity DefaultCheckEndProgramSeverity = Severity.Error;
+        const Severity DefaultCheckPerformPrematureExitsSeverity = Severity.Warning;
+        const Severity DefaultCheckPerformThruOrderSeverity = Severity.Warning;
+        const Severity DefaultCheckRecursivePerformsSeverity = Severity.Warning;
+
         TypeCobolCheckOption CheckEndAlignment { get; set; }
         TypeCobolCheckOption CheckEndProgram { get; set; }
         TypeCobolCheckOption CheckPerformPrematureExits { get; set; }
         TypeCobolCheckOption CheckPerformThruOrder { get; set; }
         TypeCobolCheckOption CheckRecursivePerforms { get; set; }
-    }
-
-    public static class TypeCobolCheckOptionsInitializer
-    {
-        public static void SetDefaultValues(ITypeCobolCheckOptions checkOptions)
-        {
-            checkOptions.CheckEndAlignment = new TypeCobolCheckOption(Severity.Warning);
-            checkOptions.CheckEndProgram = new TypeCobolCheckOption(Severity.Error);
-            checkOptions.CheckPerformPrematureExits = new TypeCobolCheckOption(Severity.Warning);
-            checkOptions.CheckPerformThruOrder = new TypeCobolCheckOption(Severity.Warning);
-            checkOptions.CheckRecursivePerforms = new TypeCobolCheckOption(Severity.Warning);
-        }
     }
 
     public static class TypeCobolOptionSet
