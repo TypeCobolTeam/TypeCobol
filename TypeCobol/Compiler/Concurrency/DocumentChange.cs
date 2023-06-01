@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
+
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Concurrency
 {
@@ -27,7 +28,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// <param name="type">Type of change applied to the line</param>
         /// <param name="lineIndex">Index of the line which was changed</param>
         /// <param name="newLine">New line content after the update (null in case of a LineRemoved event)</param>
-        public DocumentChange(DocumentChangeType type, int lineIndex, T newLine)
+        public DocumentChange(DocumentChangeType type, int lineIndex, T? newLine)
         {
             Type = type;
             LineIndex = lineIndex;
@@ -37,7 +38,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// <summary>
         /// LineInserted, LineUpdated, LineRemoved, or DocumentCleared
         /// </summary>
-        public DocumentChangeType Type { get; private set; }
+        public DocumentChangeType Type { get; }
 
         /// <summary>
         /// If a new line is inserted at index 2, the line previously stored at index 2 is now at index 3, and so on ...
@@ -49,7 +50,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// <summary>
         /// New line content after the update (null in case of a LineRemoved event, or when computing an inverted change)
         /// </summary>
-        public T NewLine { get; internal set; }
+        public T? NewLine { get; internal set; }
 
         /// <summary>
         /// Reverts the change, useful when computing the sequence of changes

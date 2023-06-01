@@ -1,6 +1,5 @@
 ﻿#nullable enable
 
-using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Diagnostics

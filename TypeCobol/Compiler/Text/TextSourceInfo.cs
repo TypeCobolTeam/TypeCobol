@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿#nullable enable
+
+using System.Text;
 
 namespace TypeCobol.Compiler.Text
 {
