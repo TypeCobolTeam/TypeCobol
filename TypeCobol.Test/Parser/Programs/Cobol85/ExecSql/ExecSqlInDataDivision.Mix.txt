@@ -13,6 +13,7 @@ Line 11[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty
        01 group2.
        COPY CopyWithExecSqlOnly.
       *KO level number mismatch
+Line 14[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
 Line 14[11,16] <27, Error, Syntax> - Syntax error : Cannot include copy CopyWithExecSqlAndData1 under level 1 because copy starts at level 1.
        01 group3.
        COPY CopyWithExecSqlAndData1.

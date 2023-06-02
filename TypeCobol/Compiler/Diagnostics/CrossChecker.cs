@@ -726,7 +726,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (HasChildrenThatDeclareData(dataDefinition))
+            if (HasChildrenThatDeclareData(dataDefinition))//Check if group is valid
             {
                 if (dataDefinition.Picture != null)
                 {
@@ -746,86 +746,36 @@ namespace TypeCobol.Compiler.Diagnostics
                         "Group item " + dataDefinition.Name + " cannot have \"Blank when zero\" clause",
                         dataDefinitionEntry);
                 }
+            }
+            else if (commonDataDataDefinitionCodeElement != null) 
+            {
+                //This is an elementary item. It must have a picture, type or a valid usage
+                var levelNumberValue = levelNumber?.Value;
+                if ((levelNumberValue < 50 || levelNumberValue == 77)
+                    && dataDefinition.Picture == null
+                    //commonDataDataDefinitionCodeElement.UserDefinedDataType is the type as written in the code. dataDefinition.TypeDefinition is the resolved type which can be null if the type cannot be found
+                    && commonDataDataDefinitionCodeElement.UserDefinedDataType == null 
+                    && (!dataDefinition.Usage.HasValue || !IsUsageAllowedWithoutPicture(dataDefinition.Usage)))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or usage declaration.", commonDataDataDefinitionCodeElement);
 
-                return true;
+                    //Detect copy included at wrong level (because there is already the same level in the copy)
+                    CheckCopyAtWrongLevel(dataDefinition, commonDataDataDefinitionCodeElement);
+                }
             }
 
-            DataDefinitionChecker.OnNode(dataDefinition);
+            if (commonDataDataDefinitionCodeElement?.Usage != null &&
+                (commonDataDataDefinitionCodeElement.Usage.Value == DataUsage.FloatingPoint || commonDataDataDefinitionCodeElement.Usage.Value == DataUsage.LongFloatingPoint) &&
+                commonDataDataDefinitionCodeElement.Picture != null)
+            {
+                DiagnosticUtils.AddError(dataDefinition,
+                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", commonDataDataDefinitionCodeElement);
+            }
+
 
             return true;
-        }
 
-        class DataDefinitionChecker
-        {
-            public static void OnNode(DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines dataEntry = null)
-            {
-                if (dataEntry == null)
-                {
-                    dataEntry = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
-                }
-
-                if (dataEntry?.Usage != null &&
-                    (dataEntry.Usage.Value == DataUsage.FloatingPoint || dataEntry.Usage.Value == DataUsage.LongFloatingPoint) &&
-                    dataEntry.Picture != null)
-                {
-                    DiagnosticUtils.AddError(dataDefinition,
-                        "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataEntry);
-                }
-
-                if (dataEntry?.LevelNumber != null && IsDataDefinitionEmpty(dataDefinition, dataEntry))
-                {
-                    //Get current node index
-                    var nodeIndex = dataDefinition.Parent.IndexOf(dataDefinition);
-                    //Get sibling nodes
-                    var siblingNodes = dataDefinition.Parent.Children;
-                    //Get immediately following DataDefinition
-                    var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
-                    if (nextData != null && nextData.IsInsideCopy())
-                    {
-                        DiagnosticUtils.AddError(dataDefinition, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
-                                                                  $"under level {dataEntry.LevelNumber} " +
-                                                                  $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataEntry);
-                    }
-                    else
-                    {
-                        DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or usage declaration.", dataEntry);
-                    }
-                }
-            }
-        }
-
-        private static bool IsDataDefinitionEmpty([NotNull] DataDefinition dataDefinition, [NotNull] CommonDataDescriptionAndDataRedefines dataEntry)
-        {
-            if (dataDefinition.IsTableOccurence)
-            {
-                // OCCURS: not empty if PICTURE or type definition
-                //TODO We systematically throw an error in case of empty array with a TYPEDEF defined on parent group
-                //This could be improved by checking after type expansion
-                if ((dataEntry.Picture != null) || (dataDefinition.TypeDefinition != null))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                // Others: exclude RENAME + not empty if PICTURE or user defined data type
-                if (dataDefinition.CodeElement.LevelNumber?.Value >= 50 || dataDefinition.Picture != null || dataEntry.UserDefinedDataType != null)
-                {
-                    return false;
-                }
-            }
-
-            if (dataDefinition.Usage.HasValue && IsUsageAllowed(dataDefinition.Usage.Value))
-            {
-                // Empty because usage is not allowed
-                return false;
-            }
-
-            // Not empty if at least one child (but ignore Index chidren)
-            return dataDefinition.Children.Count(c => c is not IndexDefinition) == 0;
-
-            //TODO Issue #2504 UTF-8: check this method (but normally there should be nothing to change)
-            static bool IsUsageAllowed(DataUsage usage)
+            static bool IsUsageAllowedWithoutPicture(DataUsage? usage)
             {
                 switch (usage)
                 {
@@ -840,6 +790,22 @@ namespace TypeCobol.Compiler.Diagnostics
                     default:
                         // None is not allowed
                         return false;
+                }
+            }
+
+            static void CheckCopyAtWrongLevel(DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines commonDataDescriptionAndDataRedefines)
+            {
+                //Get current node index
+                var nodeIndex = dataDefinition.Parent.IndexOf(dataDefinition);
+                //Get sibling nodes
+                var siblingNodes = dataDefinition.Parent.Children;
+                //Get immediately following DataDefinition
+                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
+                if (nextData != null && nextData.IsInsideCopy())
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
+                                                                $"under level {commonDataDescriptionAndDataRedefines.LevelNumber} " +
+                                                                $"because copy starts at level {nextData.CodeElement.LevelNumber}.", commonDataDescriptionAndDataRedefines);
                 }
             }
         }
@@ -917,9 +883,18 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var lastChild = dataDefinition.Children[dataDefinition.ChildrenCount - 1];
 
+                if (lastChild.CodeElement == null) //index
+                {
+                    return false;
+                }
+
+                if (lastChild.CodeElement.Type == CodeElementType.DataRenamesEntry)
+                {
+                    return dataDefinition.Children.Any(c => c is DataDescription);
+                }
+
                 return lastChild.CodeElement != null
-                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry
-                       && lastChild.CodeElement.Type != CodeElementType.DataRenamesEntry;
+                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry;
             }
 
             return false;

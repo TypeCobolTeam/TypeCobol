@@ -1,4 +1,5 @@
 --- Diagnostics ---
+Line 9[11,19] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,19:MYCOPY-X2]<UserDefinedWord>
 Line 9[11,19] <27, Error, Syntax> - Syntax error : Cannot include copy XMYCOPY1 under level 1 because copy starts at level 1. OffendingSymbol=[11,19:MYCOPY-X2]<UserDefinedWord>
 
 --- Program ---
