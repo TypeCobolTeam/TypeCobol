@@ -734,30 +734,9 @@ namespace TypeCobol.Compiler.Nodes {
         [NotNull]
         public new DataDescriptionEntry CodeElement => (DataDescriptionEntry) base.CodeElement;
 
-        public bool IsDataDescriptionGroup
+        public override bool VisitNode(IASTVisitor astVisitor)
         {
-            get
-            {
-                if (this.CodeElement.LevelNumber?.Value < 50 && this.Picture == null && this.CodeElement.UserDefinedDataType == null)
-                {
-                    if (this.ChildrenCount > 0)
-                    {
-                        return true;
-                    }
-                    else if (!this.Usage.HasValue || this.Usage.Value != DataUsage.Pointer &&
-                             this.Usage.Value != DataUsage.Pointer32 &&
-                             this.Usage.Value != DataUsage.FunctionPointer &&
-                             this.Usage.Value != DataUsage.ProcedurePointer &&
-                             this.Usage.Value != DataUsage.ObjectReference &&
-                             this.Usage.Value != DataUsage.FloatingPoint &&
-                             this.Usage.Value != DataUsage.LongFloatingPoint &&
-                             this.Usage.Value != DataUsage.Index)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
 
         /// <summary>
