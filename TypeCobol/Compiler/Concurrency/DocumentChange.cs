@@ -1,7 +1,5 @@
 ﻿#nullable enable
 
-using TypeCobol.Compiler.Text;
-
 namespace TypeCobol.Compiler.Concurrency
 {
     /// <summary>
