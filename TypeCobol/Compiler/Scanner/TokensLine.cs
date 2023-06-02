@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿#nullable enable
+
+using System.Diagnostics;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -21,7 +22,7 @@ namespace TypeCobol.Compiler.Scanner
         public void InitializeScanState(MultilineScanState initialScanState)
         {
             InitialScanState = initialScanState;
-            ScanState = initialScanState != null ?  initialScanState.Clone(): null;
+            ScanState = initialScanState.Clone();
         }
 
         /// <summary>
@@ -56,12 +57,8 @@ namespace TypeCobol.Compiler.Scanner
         /// Always use this method add new token to this line (never call directly Tokens.Add)
         /// </summary>
         internal void AddToken(Token token)
-        {            
-            // Identify pseudo-text tokens : could be necessary to filter them from "real" source text tokens
-            if(ScanState.InsidePseudoText && token.TokenType != TokenType.PseudoTextDelimiter)
-            {
-                token.IsPseudoText = true;
-            }
+        {
+            Debug.Assert(ScanState != null);    //Call InitializeScanState before this method
 
             // Register new token in list
             SourceTokens.Add(token);
@@ -148,7 +145,6 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="targetLine">Target line that shall receive duplicated diagnostics.</param>
         internal void CopyDiagnosticsForToken(Token token, TokensLine targetLine)
         {
-            if (token == null) return;
             foreach (var diagnostic in GetDiagnosticsForToken(token))
             {
                 targetLine._ScannerDiagnostics.Add(diagnostic.CopyAt(token.Position()));
@@ -161,7 +157,6 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="token">Token to filter diagnostics.</param>
         internal void ClearDiagnosticsForToken(Token token)
         {
-            if (token == null) return;
             foreach (var diagnostic in GetDiagnosticsForToken(token).ToArray())
             {
                 _ScannerDiagnostics.Remove(diagnostic);
@@ -176,17 +171,17 @@ namespace TypeCobol.Compiler.Scanner
         /// Internal state that was used to start scanning this line
         /// (we need to remember this to avoid a full rescan when previous lines are update in a compatible way)
         /// </summary>
-        public MultilineScanState InitialScanState { get; private set; }
+        public MultilineScanState? InitialScanState { get; private set; }
 
         /// <summary>
         /// The preprocessor needs to know the exact ScanState just before each COPY token is encountered
         /// </summary>
-        internal IDictionary<Token,MultilineScanState> ScanStateBeforeCOPYToken { get; private set; }
+        internal IDictionary<Token,MultilineScanState>? ScanStateBeforeCOPYToken { get; private set; }
 
         /// <summary>
         /// Internal state used by the Scanner to disambiguate context-sensitive keywords
         /// </summary>
-        public MultilineScanState ScanState { get; private set; }
+        public MultilineScanState? ScanState { get; private set; }
        
         // --- Incremental compilation process ---
 

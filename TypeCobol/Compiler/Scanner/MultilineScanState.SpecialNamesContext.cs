@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
+
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Types;
 
@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Scanner
             /// NB : value will be null until at least one symbolic character is defined
             /// => only use method AddSymbolicCharacter to safely add an element to this list
             /// </summary>
-            public IList<string> SymbolicCharacters { get; private set; }
+            public IList<string>? SymbolicCharacters { get; private set; }
 
             /// <summary>
             /// Register a new symbolic character name found in the source file
@@ -35,14 +35,15 @@ namespace TypeCobol.Compiler.Scanner
 
             private bool _nextLiteralIsCurrencySign;
             private bool _nextLiteralIsCurrencySymbol;
-            private Token _lastCurrencySignToken;
-            private Token _lastCurrencySymbolToken;
+            private Token? _lastCurrencySignToken;
+            private Token? _lastCurrencySymbolToken;
+
             /// <summary>
             /// All custom currency descriptors declared in SPECIAL-NAMES. Maybe null but not empty.
             /// Do not add/remove items, use BeginCurrencySignClause / WithPictureSymbol / OnAlphanumericLiteralToken
             /// and EndAllCurrencySignClauses methods to drive the currency descriptor building process.
             /// </summary>
-            public IDictionary<char, PictureValidator.CurrencyDescriptor> CustomCurrencyDescriptors { get; private set; }
+            public IDictionary<char, PictureValidator.CurrencyDescriptor>? CustomCurrencyDescriptors { get; private set; }
 
             /// <summary>
             /// True if we are inside currencySignClause
@@ -156,7 +157,15 @@ namespace TypeCobol.Compiler.Scanner
                 }
 
                 //Helper local functions
-                string Text(Token alphanumericLiteralToken) => ((AlphanumericLiteralTokenValue) alphanumericLiteralToken.LiteralValue).Text;
+
+                /*
+                 * Using null-forgiving operator here as AlphanumericLiteralToken always has a non-null LiteralValue.
+                 * The token received here is guaranteed to be non-null and either of type AlphanumericLiteral
+                 * or HexadecimalAlphanumericLiteral or NullTerminatedAlphanumericLiteral.
+                 * Those three types of tokens are created by the AbstractScanner.ScanAlphanumericLiteral method which always sets the LiteralValue property.
+                 */
+                string Text(Token alphanumericLiteralToken) => ((AlphanumericLiteralTokenValue) alphanumericLiteralToken.LiteralValue!).Text;
+                
                 void AddError(Token token, string message) => ((TokensLine) token.TokensLine).AddDiagnostic(MessageCode.SyntaxErrorInParser, token, message);
             }
 
@@ -172,12 +181,12 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             private SpecialNamesContext(bool insideSymbolicCharacterDefinitions,
-                IList<string> symbolicCharacters,
+                IList<string>? symbolicCharacters,
                 bool nextLiteralIsCurrencySign,
                 bool nextLiteralIsCurrencySymbol,
-                Token lastCurrencySignToken,
-                Token lastCurrencySymbolToken,
-                IDictionary<char, PictureValidator.CurrencyDescriptor> customCurrencyDescriptors,
+                Token? lastCurrencySignToken,
+                Token? lastCurrencySymbolToken,
+                IDictionary<char, PictureValidator.CurrencyDescriptor>? customCurrencyDescriptors,
                 bool decimalPointIsComma)
             {
                 InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
@@ -204,7 +213,7 @@ namespace TypeCobol.Compiler.Scanner
                     DecimalPointIsComma);
             }
 
-            public bool Equals(SpecialNamesContext other)
+            public bool Equals(SpecialNamesContext? other)
             {
                 if (ReferenceEquals(this, other)) return true;
                 if (ReferenceEquals(null, other)) return false;
@@ -217,7 +226,7 @@ namespace TypeCobol.Compiler.Scanner
                        && DecimalPointIsComma == other.DecimalPointIsComma;
             }
 
-            public override bool Equals(object obj) => Equals(obj as SpecialNamesContext);
+            public override bool Equals(object? obj) => Equals(obj as SpecialNamesContext);
 
             //Consistent with Equals method but completely unsafe as it uses mutable properties !
             public override int GetHashCode()
