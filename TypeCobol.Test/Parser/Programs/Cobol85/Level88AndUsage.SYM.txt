@@ -1,0 +1,231 @@
+--- Diagnostics ---
+Line 11[11,19] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,19:Group2-KO]<UserDefinedWord>
+Line 16[11,19] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,19:Group3-KO]<UserDefinedWord>
+Line 23[11,19] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,19:Group4-KO]<UserDefinedWord>
+Line 46[11,19] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,19:Group8-KO]<UserDefinedWord>
+Line 53[11,19] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,19:Group9-KO]<UserDefinedWord>
+Line 60[11,20] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,20:Group10-KO]<UserDefinedWord>
+Line 72[11,20] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,20:Group13-KO]<UserDefinedWord>
+Line 79[11,20] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,20:Group14-KO]<UserDefinedWord>
+Line 86[11,20] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,20:Group15-KO]<UserDefinedWord>
+
+--- Program ---
+Level88AndUsage (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  Group1-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: 9(1)
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group1-OK
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group2-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group2-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group3-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group3-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group4-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display1
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group4-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group8-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group8-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group9-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group9-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group10-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group10-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group11-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp1
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group11-OK
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group12-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp2
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group12-OK
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group13-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group13-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group14-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group14-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group15-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level88AndUsage
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp5
+    Fields:
+      var88 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Level88AndUsage::Group15-KO
+      Type:
+        (.NET Type=Type, Tag=DataCondition)
+      Level: 88
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+
