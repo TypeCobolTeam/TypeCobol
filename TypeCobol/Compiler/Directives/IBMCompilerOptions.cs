@@ -1,5 +1,7 @@
 #nullable enable
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace TypeCobol.Compiler.Directives
 {
     // Cobol Programming Guide p299 : Compiler options
@@ -711,7 +713,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// If optionWord is a deprecated option this method returns the corresponding warning message to be displayed
         /// </summary>
-        public bool IsOptionDeprecated(string optionWord, out string? warningMessage)
+        public bool IsOptionDeprecated(string optionWord, [MaybeNullWhen(false)] out string warningMessage)
         {
             return deprecatedOptions.TryGetValue(optionWord, out warningMessage);
         }
