@@ -1411,7 +1411,7 @@ namespace TypeCobol.Codegen.Generators
                 else
                     if (Layout == ColumnsLayout.FreeTextFormat)
                 {
-                    results.Add(SetComment(new TextLineSnapshot(-1, cobol.SourceText ?? "", null), isComment));
+                    results.Add(SetComment(new TextLineSnapshot(-1, cobol.SourceText, null), isComment));
                 }
                 else
                     throw new System.NotImplementedException("Unsuported columns layout: " + Layout);

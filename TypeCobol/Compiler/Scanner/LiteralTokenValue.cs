@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+
 using System.Globalization;
 using System.Numerics;
 using System.Text;
@@ -76,7 +77,7 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class IntegerLiteralTokenValue : LiteralTokenValue
     {
-        public IntegerLiteralTokenValue(string sign, string number) : base(LiteralTokenValueType.Integer)
+        public IntegerLiteralTokenValue(string? sign, string number) : base(LiteralTokenValueType.Integer)
         {
             HasSign = !string.IsNullOrEmpty(sign);
             Number = BigInteger.Parse(number);
@@ -108,7 +109,7 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class DecimalLiteralTokenValue : LiteralTokenValue
     {
-        public DecimalLiteralTokenValue(string sign, string integerPart, string decimalPart) : base(LiteralTokenValueType.Decimal)
+        public DecimalLiteralTokenValue(string? sign, string integerPart, string decimalPart) : base(LiteralTokenValueType.Decimal)
         {
             HasSign = !string.IsNullOrEmpty(sign);
             IntegerValue = BigInteger.Parse(integerPart + decimalPart);
@@ -160,7 +161,7 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class FloatingPointLiteralTokenValue : LiteralTokenValue
     {
-        public FloatingPointLiteralTokenValue(string mantissaSign, string mantissaIntegerPart, string mantissaDecimalPart, string exponentSign, string exponentNumber) : base(LiteralTokenValueType.FloatingPoint)
+        public FloatingPointLiteralTokenValue(string? mantissaSign, string mantissaIntegerPart, string mantissaDecimalPart, string? exponentSign, string exponentNumber) : base(LiteralTokenValueType.FloatingPoint)
         {
             Mantissa = new DecimalLiteralTokenValue(mantissaSign, mantissaIntegerPart, mantissaDecimalPart);
             Exponent = new IntegerLiteralTokenValue(exponentSign, exponentNumber);

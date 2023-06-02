@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler.Concurrency;
+﻿#nullable enable
+
+using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Compiler.Text
 {
@@ -20,7 +22,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Sequence number text : Columns 1 through 6
         /// </summary>
-        string SequenceNumberText { get; }
+        string? SequenceNumberText { get; }
 
         /// <summary>
         /// Indicator area : Column 7
@@ -30,7 +32,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Indicator char : Column 7
         /// </summary>
-        char IndicatorChar { get; }
+        char IndicatorChar { get; } // TODO turn into char? to respect FreeTextFormat
 
         /// <summary>
         /// Area A : Columns 8 through 11 
@@ -47,7 +49,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Comment text : Columns 73 through 80+
         /// </summary>
-        string CommentText { get; }
+        string? CommentText { get; }
 
         // --- Incremental compilation process ---
 
@@ -57,7 +59,7 @@ namespace TypeCobol.Compiler.Text
         CompilationStep CompilationStep { get; set; }
 
         /// <summary>
-        /// A line is freezed after the completion of each compiler step to enable reliable snapshots.
+        /// A line is frozen after the completion of each compiler step to enable reliable snapshots.
         /// If we need to update the properties of the line later, a new line must be allocated.
         /// This method returns true if the line can be updated in place, false if a new copy of the line must be allocated.
         /// </summary>

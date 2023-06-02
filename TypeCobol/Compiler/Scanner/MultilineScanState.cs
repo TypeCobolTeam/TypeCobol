@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿#nullable enable
+
 using System.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -12,12 +12,12 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        public Token LastSignificantToken { get; set; }
+        public Token? LastSignificantToken { get; set; }
 
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        public Token BeforeLastSignificantToken { get; set; }
+        public Token? BeforeLastSignificantToken { get; set; }
 
         /// <summary>
         /// True if we know from the keyword stream that we are inside a DATA DIVISION.
@@ -568,19 +568,19 @@ namespace TypeCobol.Compiler.Scanner
                   // 2. EJECT | SKIP1 | SKIP2 | SKIP3 <= sometimes PeriodSeparator missing here.
                   (LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EJECT || LastSignificantToken.TokenType == TokenType.SKIP1 || LastSignificantToken.TokenType == TokenType.SKIP2 || LastSignificantToken.TokenType == TokenType.SKIP3)) ||
                   // 3. TITLE alphanumericValue2 <= sometimes PeriodSeparator missing here.
-                  (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken.TokenFamily == TokenFamily.AlphanumericLiteral);
+                  (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken?.TokenFamily == TokenFamily.AlphanumericLiteral);
             }
         }
 
         /// <summary>
         /// Used to check if an update to a TokensLine modified the scanner context for the following lines
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as MultilineScanState);
         }
 
-        public bool Equals(MultilineScanState otherScanState)
+        public bool Equals(MultilineScanState? otherScanState)
         {
             if (Object.ReferenceEquals(this, otherScanState)) return true;
             if (Object.ReferenceEquals(null, otherScanState)) return false;

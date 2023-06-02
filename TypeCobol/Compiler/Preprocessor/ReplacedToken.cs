@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#nullable enable
+
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
@@ -49,7 +46,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        public bool Equals(ReplacedToken other)
+        public bool Equals(ReplacedToken? other)
         {
             if (object.ReferenceEquals(this, other)) return true;
             if (object.ReferenceEquals(null, other)) return false;
@@ -57,7 +54,7 @@ namespace TypeCobol.Compiler.Preprocessor
             return ReplacementToken.Equals(other.ReplacementToken) && OriginalToken.Equals(other.OriginalToken);
         }
 
-        public override bool Equals(object obj) => Equals(obj as ReplacedToken);
+        public override bool Equals(object? obj) => Equals(obj as ReplacedToken);
 
         public override int GetHashCode()
         {
@@ -76,7 +73,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Parameter of the REPLACE directive or REPLACING clause of the COPY directive which replaces the original token
         /// </summary>
-        public Token PartialReplacementToken { get; private set; }
+        public Token? PartialReplacementToken { get; private set; }
 
         /// <summary>
         /// Create a token placeholder.
@@ -85,7 +82,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// partialReplacementToken = CONTRACT (token type = UserDefinedWord)
         /// generatedReplacementToken = CONTRACT-USER-NAME (token type = UserDefinedWord)
         /// </summary>
-        public ReplacedPartialCobolWord(Token generatedReplacementToken, Token partialReplacementToken, Token originalPartialCobolWord)
+        public ReplacedPartialCobolWord(Token generatedReplacementToken, Token? partialReplacementToken, Token originalPartialCobolWord)
             : base(generatedReplacementToken, originalPartialCobolWord)
         {
             PartialReplacementToken = partialReplacementToken;
@@ -133,7 +130,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        public bool Equals(ReplacedTokenGroup other)
+        public bool Equals(ReplacedTokenGroup? other)
         {
             if (object.ReferenceEquals(this, other)) return true;
             if (object.ReferenceEquals(null, other)) return false;
@@ -141,7 +138,7 @@ namespace TypeCobol.Compiler.Preprocessor
             return ReplacementToken.Equals(other.ReplacementToken) && OriginalTokens.SequenceEqual(other.OriginalTokens);
         }
 
-        public override bool Equals(object obj) => Equals(obj as ReplacedTokenGroup);
+        public override bool Equals(object? obj) => Equals(obj as ReplacedTokenGroup);
 
         public override int GetHashCode()
         {
@@ -177,12 +174,12 @@ namespace TypeCobol.Compiler.Preprocessor
                 return OriginalToken.Text;
             }
         }
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as ImportedToken);
         }
 
-        public bool Equals(ImportedToken tokenCompare)
+        public bool Equals(ImportedToken? tokenCompare)
         {
             if (Object.ReferenceEquals(this, tokenCompare)) return true;
             if (Object.ReferenceEquals(null, tokenCompare)) return false;

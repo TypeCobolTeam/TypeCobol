@@ -67,7 +67,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
                 if (tokensLine.ScanState.InsideRemarksDirective)
                 {
-                    string remarksLine = textLine.SourceText?.TrimEnd();
+                    string remarksLine = textLine.SourceText.TrimEnd();
 
                     if (!string.IsNullOrEmpty(remarksLine))
                     {
@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Scanner
             else if (textLine.Type == CobolTextLineType.MultiFormalizedComment)
             {
                 //If a '%' is spotted that isn't a multiline/formalized comment token or if a stop token is spotted without an associated start
-                if (tokensLine.SourceText == null || !tokensLine.SourceText.StartsWith("<<") && !tokensLine.SourceText.StartsWith(">>") || 
+                if (tokensLine.Source.IsMissing || !tokensLine.SourceText.StartsWith("<<") && !tokensLine.SourceText.StartsWith(">>") || 
                     !tokensLine.ScanState.InsideMultilineComments && !tokensLine.ScanState.InsideFormalizedComment && tokensLine.SourceText.StartsWith(">>"))
                 {
                     tokensLine.AddDiagnostic(MessageCode.MultiFormalizedCommentIndicatorMisused, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
@@ -244,7 +244,7 @@ namespace TypeCobol.Compiler.Scanner
 
             bool StartsWithReplace()
             {
-                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE);
+                string replaceKeyword = TokenUtils.GetTokenStringFromTokenType(TokenType.REPLACE)!; // REPLACE is a keyword TokenType, so the result is known to be non-null.
                 return lineSourceText.StartsWith(replaceKeyword, StringComparison.OrdinalIgnoreCase);
             }
         }
@@ -1209,11 +1209,29 @@ namespace TypeCobol.Compiler.Scanner
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.GreaterThanOrEqualOperator);
                     }
-                    else {
-                        // consume > char and try to match it as a greater than operator
-                        currentIndex++;
-                        return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
+                    else if (line[currentIndex + 1] == '>')
+                    {
+                        // Check for potential compiler directive keyword like >>DEFINE, >>IF, etc
+                        int index = currentIndex + 2;
+                        for (; index <= lastIndex && !CobolChar.IsCobolWordSeparator(line[index]); index++) { }
+                        int endIndex = (index == lastIndex && !CobolChar.IsCobolWordSeparator(line[index])) ? lastIndex : index - 1;
+                        string tokenText = line.Substring(startIndex, endIndex - startIndex + 1);
+                        var candidateTokenType = TokenUtils.GetCobolKeywordTokenTypeFromTokenString(tokenText, _targetLanguageLevel);
+                        if (candidateTokenType != TokenType.UserDefinedWord)
+                        {
+                            // Create readable diagnostic for unsupported language feature
+                            var token = new Token(candidateTokenType, startIndex, endIndex, tokensLine);
+                            tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, $"The '{tokenText}' compiler directive is not supported by this parser.");
+
+                            // Consume chars and return
+                            currentIndex = endIndex + 1;
+                            return token;
+                        }
                     }
+
+                    // consume > char and try to match it as a greater than operator
+                    currentIndex++;
+                    return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
                 case '=':
                     //EqualOperator=20,
                     // p260: Each relational operator must be preceded and followed
@@ -1982,12 +2000,26 @@ namespace TypeCobol.Compiler.Scanner
 
             //IntrinsicFunctionName = 34,
             // p477: function-name-1 must be one of the intrinsic function names.
-            // ACOS | ANNUITY | ASIN | ATAN | CHAR | COS | CURRENT_DATE | DATE_OF_INTEGER | DATE_TO_YYYYMMDD |
-            // DAY_OF_INTEGER | DAY_TO_YYYYDDD | DISPLAY_OF | FACTORIAL | INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY |
-            // INTEGER_PART | LENGTH | LOG | LOG10 | LOWER_CASE | MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
-            // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
-            // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR |
-            // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
+            //.ABS | ACOS | ANNUITY | ASIN | ATAN |
+            //.BIT_OF | BIT_TO_CHAR | BYTE_LENGTH |
+            //.CHAR | COMBINED_DATETIME | COS | CURRENT_DATE |
+            //.DATE_OF_INTEGER | DATE_TO_YYYYMMDD | DAY_OF_INTEGER | DAY_TO_YYYYDDD | DISPLAY_OF |
+            //.E | EXP | EXP10 |
+            //.FACTORIAL | FORMATTED_CURRENT_DATE | FORMATTED_DATE | FORMATTED_DATETIME | FORMATTED_TIME |
+            //.HEX_OF | HEX_TO_CHAR |
+            //.INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY | INTEGER_OF_FORMATTED_DATE | INTEGER_PART |
+            //.LENGTH | LOG | LOG10 | LOWER_CASE |
+            //.MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
+            //.NATIONAL_OF | NUMVAL | NUMVAL_C | NUMVAL_F |
+            //.ORD | ORD_MAX | ORD_MIN |
+            //.PI | PRESENT_VALUE |
+            //.RANDOM | RANGE | REM | REVERSE |
+            //.SECONDS_FROM_FORMATTED_TIME | SECONDS_PAST_MIDNIGHT | SIGN | SIN | SQRT | STANDARD_DEVIATION | SUM |
+            //.TAN | TEST_DATE_YYYYMMDD | TEST_DAY_YYYYDDD | TEST_FORMATTED_DATETIME | TEST_NUMVAL | TEST_NUMVAL_C | TEST_NUMVAL_F | TRIM |
+            //.ULENGTH | UPOS | UPPER_CASE | USUBSTR | USUPPLEMENTARY | UUID4 | UVALID | UWIDTH |
+            //.VARIANCE |
+            //.WHEN_COMPILED |
+            //.YEAR_TO_YYYY;
             if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.CobolIntrinsicFunctions.IsMatch(tokenText))
             {
                 tokenType = TokenType.IntrinsicFunctionName;

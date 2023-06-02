@@ -631,7 +631,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var intrinsicFunctionCall = context.intrinsicFunctionCall();
                 if (intrinsicFunctionCall.LeftParenthesisSeparator() != null
                     && intrinsicFunctionCall.RightParenthesisSeparator() != null
-                    && intrinsicFunctionCall.argument().Length == 0)
+                    && intrinsicFunctionCall.intrinsicArgument().Length == 0)
                 {
                     var name = intrinsicFunctionCall.IntrinsicFunctionName().GetText();
                     AddError(intrinsicFunctionCall, $"using empty brackets is not allowed, use 'FUNCTION {name}'.", intrinsicFunctionCall.IntrinsicFunctionName());

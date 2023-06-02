@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler.Diagnostics;
+﻿#nullable enable
+
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.Scanner
