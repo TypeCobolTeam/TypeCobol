@@ -37,3 +37,12 @@ Line 0[1,14] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compi
 -- Line 11 --
 *** DIRECTIVE PROCESS|CP=1147|NOADV|C ([1,24:PROCESS CP(1147) NOADV C]<COMPILER_DIRECTIVE>) ***
 
+-- Line 12 --
+*** DIRECTIVE CBL|LIB ([1,7:CBL LIB]<COMPILER_DIRECTIVE>) ***
+Line 0[1,7] <56, Warning, Directives> - Warning: the "LIB" option specification is no longer required. COBOL library processing is always in effect.
+
+-- Line 13 --
+*** DIRECTIVE INVALID SYNTAX -> CBL|BOTH_INVALID_AND_WARNING|lib ([1,32:CBL BOTH_INVALID_AND_WARNING lib]<COMPILER_DIRECTIVE>) ***
+Line 0[1,32] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+Line 0[1,32] <56, Warning, Directives> - Warning: the "LIB" option specification is no longer required. COBOL library processing is always in effect.
+

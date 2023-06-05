@@ -408,7 +408,9 @@ namespace TypeCobol.Test.Parser.Scanner
                 "CBL (",
                 "CBL ARCH(5",
                 "CBL ARCH(5 B()",
-                "PROCESS CP(1147) NOADV C"
+                "PROCESS CP(1147) NOADV C",
+                "CBL LIB",
+                "CBL BOTH_INVALID_AND_WARNING lib"
             };
             string result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
