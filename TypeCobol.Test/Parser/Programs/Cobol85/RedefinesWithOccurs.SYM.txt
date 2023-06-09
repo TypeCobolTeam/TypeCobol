@@ -45,10 +45,10 @@ Line 416[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empt
 Line 421[20,32] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,32:Array-D2-KO-R]<UserDefinedWord>
 Line 441[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
 Line 447[24,36] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,36:Array-D4-KO-R]<UserDefinedWord>
-Line 463[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
-Line 465[24,36] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,36:Array-D5-KO-R]<UserDefinedWord>
-Line 477[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,27:VarChild]<UserDefinedWord>
-Line 482[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,29:VarChild-R]<UserDefinedWord>
+Line 468[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
+Line 470[24,36] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,36:Array-D5-KO-R]<UserDefinedWord>
+Line 482[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,27:VarChild]<UserDefinedWord>
+Line 487[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,29:VarChild-R]<UserDefinedWord>
 
 --- Program ---
 RedefinesWithOccurs (.NET Type=ProgramSymbol, Kind=Program)

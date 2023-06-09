@@ -34,9 +34,9 @@ Line 348[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empt
 Line 381[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
 Line 409[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
 Line 430[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
-Line 447[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
-Line 460[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,27:VarChild]<UserDefinedWord>
-Line 465[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,29:VarChild-R]<UserDefinedWord>
+Line 452[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
+Line 465[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,27:VarChild]<UserDefinedWord>
+Line 470[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,29:VarChild-R]<UserDefinedWord>
 
 --- Program ---
 RenamesAndUsage (.NET Type=ProgramSymbol, Kind=Program)

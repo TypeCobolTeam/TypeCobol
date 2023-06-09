@@ -452,16 +452,21 @@
       
        01 Group-D5 usage is comp-1.
            05 Array-D5-OK.
+      *Here 'group-usage is national' is not valid for IBM
+      *because it is not compliant with 'usage comp-1' on parent.
+      *As a result the children are not checked and only the 
+      *following error is displayed:
       *The specified "USAGE" was different from the "USAGE" specified at
       *the group level.  The group "USAGE" was assumed for this item.
            05 Group-D51 group-usage is national.
       
                 10 Group-D511.
-      *Ok because group-usage is national is not considered valid by IBM
-      * compiler. Usage comp-1 from the first parent with an usage is
-      *considered in this case.
+      *Our parser does not check consistency between group-usage
+      *definition and its parent.
+      *As a result 'Array-D5-KO' inherits the usage from its parent
+      *and 'national' is not considered as valid.
                     15 Array-D5-KO.
-      *Ok idem
+      *Idem
                     15 Array-D5-KO-R redefines Array-D5-KO OCCURS 1.
       
       

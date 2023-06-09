@@ -11,6 +11,7 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
+using System.Diagnostics;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -755,7 +756,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     && dataDefinition.Picture == null
                     //commonDataDataDefinitionCodeElement.UserDefinedDataType is the type as written in the code. dataDefinition.TypeDefinition is the resolved type which can be null if the type cannot be found
                     && commonDataDataDefinitionCodeElement.UserDefinedDataType == null 
-                    && (!dataDefinition.Usage.HasValue || !IsUsageAllowedWithoutPicture(dataDefinition.Usage)))
+                    && (!dataDefinition.Usage.HasValue || !IsUsageAllowedWithoutPicture(dataDefinition.Usage.Value)))
                 {
                     DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or usage declaration.", commonDataDataDefinitionCodeElement);
 
@@ -775,7 +776,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             return true;
 
-            static bool IsUsageAllowedWithoutPicture(DataUsage? usage)
+            static bool IsUsageAllowedWithoutPicture(DataUsage usage)
             {
                 switch (usage)
                 {
@@ -878,23 +879,26 @@ namespace TypeCobol.Compiler.Diagnostics
             //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
             //DataDescription and DataRedefines are level between 1 and 49 inclusive.
             //As the level number drive the positioning of Node inside the Children property DataConditionEntry and DataRenamesEntry will always be
-            //positioned before dataDescription.
+            //positioned after dataDescription.
             if (dataDefinition.ChildrenCount > 0)
             {
                 var lastChild = dataDefinition.Children[dataDefinition.ChildrenCount - 1];
 
-                if (lastChild.CodeElement == null) //index
+                if (lastChild.CodeElement == null)
                 {
+                    Debug.Assert(lastChild is IndexDefinition);
+                    //Last child is an Index in an OCCURS: it is not a declaration
                     return false;
                 }
 
                 if (lastChild.CodeElement.Type == CodeElementType.DataRenamesEntry)
                 {
+                    //Last child is a DataRenamesEntry: we need to loop on the other children to find a possible DataDescription before
                     return dataDefinition.Children.Any(c => c is DataDescription);
                 }
 
-                return lastChild.CodeElement != null
-                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry;
+                //DataConditionEntry are always the only children in a group
+                return lastChild.CodeElement.Type != CodeElementType.DataConditionEntry;
             }
 
             return false;
