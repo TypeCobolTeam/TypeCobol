@@ -192,7 +192,7 @@ namespace TypeCobol.Compiler.Text
             tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
             Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, scannerOptions, false);
-            Token t;
+            Token? t;
             int nCurLength = 0;
             int nSpan = max;
             int index = 0;

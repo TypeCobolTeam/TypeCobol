@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
+﻿#nullable enable
+
+using System.Diagnostics;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
@@ -15,9 +15,9 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initial scan of a complete document
         /// </summary>
-        public static void ScanDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, [NotNull] MultilineScanState initialScanState)
+        public static void ScanDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, MultilineScanState initialScanState)
         {
-            TokensLine tokensLine = null;
+            TokensLine? tokensLine = null;
             MultilineScanState lastScanState = initialScanState;
             IList<TokensLine> lineGroup = new List<TokensLine>();
             bool groupIsContinuationGroup = false;
@@ -59,7 +59,9 @@ namespace TypeCobol.Compiler.Scanner
                         {
                             //Group must be scanned as a whole
                             Scanner.ScanTokensLineContinuationGroup(lineGroup, lastScanState, textSourceInfo.ColumnsLayout, compilerOptions, copyTextNameVariations);
-                            lastScanState = lineGroup.Last().ScanState;
+                            var lastLine = lineGroup.Last();
+                            Debug.Assert(lastLine.ScanState != null);
+                            lastScanState = lastLine.ScanState;
                         }
                         else
                         {
@@ -67,6 +69,7 @@ namespace TypeCobol.Compiler.Scanner
                             foreach (var line in lineGroup)
                             {
                                 Scanner.ScanTokensLine(line, lastScanState, compilerOptions, copyTextNameVariations);
+                                Debug.Assert(line.ScanState != null);
                                 lastScanState = line.ScanState;
                             }
                         }
@@ -82,7 +85,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Incremental scan of a set of text lines changes
         /// </summary>
-        internal static IList<DocumentChange<ITokensLine>> ScanTextLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, IList<DocumentChange<ICobolTextLine>> textLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, [NotNull] MultilineScanState scanState)
+        internal static IList<DocumentChange<ITokensLine>> ScanTextLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, IList<DocumentChange<ICobolTextLine>> textLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, MultilineScanState scanState)
         {
             // Collect all changes applied to the tokens lines during the incremental scan
             IList<DocumentChange<ITokensLine>> tokensLinesChanges = new List<DocumentChange<ITokensLine>>();
@@ -97,7 +100,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 // Local variables used to optimize navigation in the document
                 int nextLineToScanIndex = -1;
-                TokensLine nextLineToScan = null;
+                TokensLine? nextLineToScan = null;
 
                 // Update tokens depending on the current text change
                 if (textChange.Type == DocumentChangeType.DocumentCleared)
@@ -107,6 +110,8 @@ namespace TypeCobol.Compiler.Scanner
                 }
                 else if (textChange.Type == DocumentChangeType.LineInserted || textChange.Type == DocumentChangeType.LineUpdated)
                 {
+                    Debug.Assert(textChange.NewLine != null);
+
                     // We update lines as a group below, but we remember here which lines were inserted
                     if (textChange.Type == DocumentChangeType.LineInserted)
                     {
@@ -118,10 +123,12 @@ namespace TypeCobol.Compiler.Scanner
                 }
                 else if (textChange.Type == DocumentChangeType.LineRemoved)
                 {
-                    tokensLinesChanges.Add(new DocumentChange<ITokensLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, (ITokensLine)textChange.NewLine));
+                    Debug.Assert(textChange.NewLine == null);
+
+                    tokensLinesChanges.Add(new DocumentChange<ITokensLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, null));
 
                     // Get the last line just before the line that was removed
-                    TokensLine previousLine = null;
+                    TokensLine? previousLine = null;
                     if (textChange.LineIndex > 0)
                     {
                         previousLine = documentLines[textChange.LineIndex - 1];
@@ -141,10 +148,13 @@ namespace TypeCobol.Compiler.Scanner
                         nextLineToScan = documentLines[nextLineToScanIndex];
                     }
                     // - the next line must be scanned again if the scan state at the end of the previous line is different from the scan state at the beginning of the next line
-                    if (nextLineToScan != null && nextLineToScanIndex == textChange.LineIndex && previousLine != null &&
-                        !nextLineToScan.InitialScanState.Equals(previousLine.ScanState))
+                    if (nextLineToScan != null)
                     {
-                        ScanTokensLineWithMultilineScanState(textChange.LineIndex, nextLineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
+                        Debug.Assert(nextLineToScan.InitialScanState != null);
+                        if (nextLineToScanIndex == textChange.LineIndex && previousLine != null && !nextLineToScan.InitialScanState.Equals(previousLine.ScanState))
+                        {
+                            ScanTokensLineWithMultilineScanState(textChange.LineIndex, nextLineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
+                        }
                     }
                 }
 
@@ -176,7 +186,7 @@ namespace TypeCobol.Compiler.Scanner
             return false;
         }
 
-        private static void ScanTokensLineWithMultilineScanState(int lineToScanIndex, TokensLine lineToScan, TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IList<DocumentChange<ITokensLine>> tokensLinesChanges, MultilineScanState scanState, out int nextLineToScanIndex, out TokensLine nextLineToScan)
+        private static void ScanTokensLineWithMultilineScanState(int lineToScanIndex, TokensLine lineToScan, TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IList<DocumentChange<ITokensLine>> tokensLinesChanges, MultilineScanState scanState, out int nextLineToScanIndex, out TokensLine? nextLineToScan)
         {
             // Scan the current line (or continuation lines group)
             MultilineScanState currentScanState = ScanTokensLineWithContinuations(lineToScanIndex, lineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
@@ -210,7 +220,7 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         private static MultilineScanState ScanTokensLineWithContinuations(int lineToScanIndex, TokensLine lineToScan, TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IList<DocumentChange<ITokensLine>> tokensLinesChanges,
-            MultilineScanState scanState, out int nextLineToScanIndex, out TokensLine nextLineToScan)
+            MultilineScanState scanState, out int nextLineToScanIndex, out TokensLine? nextLineToScan)
         {
             // Initialize out parameters
             if (lineToScanIndex < (documentLines.Count - 1))
@@ -262,6 +272,7 @@ namespace TypeCobol.Compiler.Scanner
                     // Scan the current line with this initial scan state 
                     Scanner.ScanTokensLine(lineToScan, previousLine.ScanState, compilerOptions, copyTextNameVariations);
                 }
+                Debug.Assert(lineToScan.ScanState != null);
                 tokensLinesChanges.Add(new DocumentChange<ITokensLine>(DocumentChangeType.LineUpdated, lineToScanIndex, lineToScan));
                 return lineToScan.ScanState;
             }
@@ -352,6 +363,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     // Get the scan state at the end of the previous line
                     TokensLine previousLine = documentLines[firstLineIndex - 1];
+                    Debug.Assert(previousLine.ScanState != null);
                     // Scan the current line group with this initial scan state 
                     Scanner.ScanTokensLineContinuationGroup(continuationLinesGroup, previousLine.ScanState, textSourceInfo.ColumnsLayout, compilerOptions, copyTextNameVariations);
                 }
@@ -361,7 +373,10 @@ namespace TypeCobol.Compiler.Scanner
                     tokensLinesChanges.Add(new DocumentChange<ITokensLine>(DocumentChangeType.LineUpdated, updatedLineIndex, updatedLine));
                     updatedLineIndex++;
                 }
-                return continuationLinesGroup[continuationLinesGroup.Count - 1].ScanState;
+
+                var lastLine = continuationLinesGroup[continuationLinesGroup.Count - 1];
+                Debug.Assert(lastLine.ScanState != null);
+                return lastLine.ScanState;
             }
         }
     }
