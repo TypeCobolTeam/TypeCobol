@@ -878,8 +878,9 @@ namespace TypeCobol.Compiler.Diagnostics
             //We only need to check the last children:
             //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
             //DataDescription and DataRedefines are level between 1 and 49 inclusive.
-            //As the level number drive the positioning of Node inside the Children property DataConditionEntry and DataRenamesEntry will always be
-            //positioned after dataDescription.
+            //As the level number drives the positioning of Node inside the Children:
+            //- DataConditionEntry will always be positioned before other dataDescription
+            //- DataRenamesEntry will always be positioned after other dataDescription
             if (dataDefinition.ChildrenCount > 0)
             {
                 var lastChild = dataDefinition.Children[dataDefinition.ChildrenCount - 1];
@@ -897,7 +898,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     return dataDefinition.Children.Any(c => c is DataDescription);
                 }
 
-                //DataConditionEntry are always the only children in a group
                 return lastChild.CodeElement.Type != CodeElementType.DataConditionEntry;
             }
 
