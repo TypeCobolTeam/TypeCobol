@@ -1,14 +1,14 @@
 --- Diagnostics ---
-Line 10[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,17:Var2-KO]<UserDefinedWord>
-Line 14[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,17:Var3-KO]<UserDefinedWord>
-Line 20[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,17:Var4-KO]<UserDefinedWord>
-Line 28[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,17:Var6-KO]<UserDefinedWord>
-Line 41[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,17:Var8-KO]<UserDefinedWord>
-Line 47[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,17:Var9-KO]<UserDefinedWord>
-Line 53[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,18:Var10-KO]<UserDefinedWord>
-Line 62[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,18:Var13-KO]<UserDefinedWord>
-Line 68[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,18:Var14-KO]<UserDefinedWord>
-Line 74[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[11,18:Var15-KO]<UserDefinedWord>
+Line 10[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var2-KO]<UserDefinedWord>
+Line 14[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var3-KO]<UserDefinedWord>
+Line 20[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var4-KO]<UserDefinedWord>
+Line 28[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var6-KO]<UserDefinedWord>
+Line 41[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var8-KO]<UserDefinedWord>
+Line 47[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var9-KO]<UserDefinedWord>
+Line 53[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var10-KO]<UserDefinedWord>
+Line 62[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var13-KO]<UserDefinedWord>
+Line 68[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var14-KO]<UserDefinedWord>
+Line 74[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var15-KO]<UserDefinedWord>
 
 --- Program ---
 Level77AndUsage (.NET Type=ProgramSymbol, Kind=Program)

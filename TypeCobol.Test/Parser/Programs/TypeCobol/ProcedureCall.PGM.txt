@@ -1,7 +1,7 @@
 --- Diagnostics ---
 Line 15[29,39] <27, Error, Syntax> - Syntax error : Missing '(' or ')' in PICTURE string OffendingSymbol=[29,39:X(00ABC100)]<PictureCharacterString>
 Line 27[37,39] <27, Error, Syntax> - Syntax error : mismatched input 'PIC' expecting {user defined word, CURRENCY, DATE} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause,  OffendingSymbol=[37,39:PIC]<PIC>
-Line 27[21,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[21,26:myDate]<UserDefinedWord>
+Line 27[21,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[21,26:myDate]<UserDefinedWord>
 Line 36[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
 Line 37[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
 Line 38[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>

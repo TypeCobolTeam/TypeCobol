@@ -1,11 +1,11 @@
 --- Diagnostics ---
-Line 8[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,23:MyGIdxTab]<UserDefinedWord>
-Line 14[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,23:MyGIdxTab]<UserDefinedWord>
-Line 21[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,18:Tab3]<UserDefinedWord>
-Line 22[8,20] <27, Error, Syntax> - Error in copy 'YCONVEA' at line 3 : Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[20,24:MyTab]<UserDefinedWord> in COPY YCONVEA
-Line 25[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,18:Dup1]<UserDefinedWord>
+Line 8[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,23:MyGIdxTab]<UserDefinedWord>
+Line 14[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,23:MyGIdxTab]<UserDefinedWord>
+Line 21[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,18:Tab3]<UserDefinedWord>
+Line 22[8,20] <27, Error, Syntax> - Error in copy 'YCONVEA' at line 3 : Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[20,24:MyTab]<UserDefinedWord> in COPY YCONVEA
+Line 25[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,18:Dup1]<UserDefinedWord>
 Line 25[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
-Line 26[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[15,18:Dup2]<UserDefinedWord>
+Line 26[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,18:Dup2]<UserDefinedWord>
 Line 26[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
 Line 65[12,14] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx OffendingSymbol=[12,14:Idx]<UserDefinedWord>
 Line 68[12,17] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol BadIdx 

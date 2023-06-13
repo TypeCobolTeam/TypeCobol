@@ -7,19 +7,19 @@
       
       *A"PICTURE"clause was not found for elementary item"Var2-KO".
       *   "PICTURE X(1)"was assumed.
-Line 10[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 10[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var2-KO.
       
       *A"PICTURE"clause was not found for elementary item"Var3-KO".
       *   "PICTURE X(1)"was assumed.
-Line 14[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 14[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var3-KO USAGE IS display.
       
       *The"PICTURE"clause for item"Var4-KO"was not compatible with the
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var4-KO".
       *   "PICTURE X(1)"was assumed.
-Line 20[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 20[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var4-KO USAGE IS display-1.
       
        77 Var5-OK USAGE IS INDEX.
@@ -28,7 +28,7 @@ Line 20[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var6-KO".
       *   "PICTURE X(1)"was assumed.
-Line 28[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 28[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var6-KO USAGE IS national.
       
       *TODO Wait for support of UTF-8 (#2504)
@@ -42,21 +42,21 @@ Line 28[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var8-KO".
       *   "PICTURE X(1)"was assumed.
-Line 41[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 41[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var8-KO USAGE IS binary.
       
       *The"PICTURE"clause for item"Var9-KO"was not compatible with the
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var9-KO".
       *   "PICTURE X(1)"was assumed.
-Line 47[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 47[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var9-KO USAGE IS packed-decimal.
       
       *The"PICTURE"clause for item"Var10-KO"was not compatible with the
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var10-KO".
       *   "PICTURE X(1)"was assumed.
-Line 53[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 53[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var10-KO USAGE IS comp.
       
        77 Var11-OK USAGE IS comp-1.
@@ -66,21 +66,21 @@ Line 53[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var13-KO".
       *   "PICTURE X(1)"was assumed.
-Line 62[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 62[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var13-KO USAGE IS comp-3.
       
       *The"PICTURE"clause for item"Var14-KO"was not compatible with the
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var14-KO".
       *   "PICTURE X(1)"was assumed.
-Line 68[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 68[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var14-KO USAGE IS comp-4.
       
       *The"PICTURE"clause for item"Var15-KO"was not compatible with the
       *   specified"USAGE"."USAGE DISPLAY"was assumed.
       *A"PICTURE"clause was not found for elementary item"Var15-KO".
       *   "PICTURE X(1)"was assumed.
-Line 74[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 74[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        77 Var15-KO USAGE IS comp-5.
       
        77 Var16-OK POINTER.

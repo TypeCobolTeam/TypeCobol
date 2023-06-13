@@ -1,10 +1,10 @@
 --- Diagnostics ---
-Line 7[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+Line 7[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
 Line 7[8,14] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData2 under level 5 because copy starts at level 5. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
-Line 12[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
-Line 28[4,7] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[4,7:STR5]<UserDefinedWord>
+Line 12[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+Line 28[4,7] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[4,7:STR5]<UserDefinedWord>
 Line 28[4,7] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData3 under level 1 because copy starts at level 1. OffendingSymbol=[4,7:STR5]<UserDefinedWord>
-Line 32[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+Line 32[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
 Line 32[8,14] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData4 under level 5 because copy starts at level 2. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
 
 --- Program ---

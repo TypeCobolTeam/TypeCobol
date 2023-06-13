@@ -3,17 +3,17 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *KO empty group item
-Line 6[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 6[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        01 group1.
           EXEC SQL
             SELECT * FROM Table2 
           END-EXEC.
       *KO same thing but with a copy
-Line 11[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 11[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
        01 group2.
        COPY CopyWithExecSqlOnly.
       *KO level number mismatch
-Line 14[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
+Line 14[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
 Line 14[11,16] <27, Error, Syntax> - Syntax error : Cannot include copy CopyWithExecSqlAndData1 under level 1 because copy starts at level 1.
        01 group3.
        COPY CopyWithExecSqlAndData1.

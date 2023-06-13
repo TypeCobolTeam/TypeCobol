@@ -758,7 +758,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     && commonDataDataDefinitionCodeElement.UserDefinedDataType == null 
                     && (!dataDefinition.Usage.HasValue || !IsUsageAllowedWithoutPicture(dataDefinition.Usage.Value)))
                 {
-                    DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or usage declaration.", commonDataDataDefinitionCodeElement);
+                    DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).", commonDataDataDefinitionCodeElement);
 
                     //Detect copy included at wrong level (because there is already the same level in the copy)
                     CheckCopyAtWrongLevel(dataDefinition, commonDataDataDefinitionCodeElement);
