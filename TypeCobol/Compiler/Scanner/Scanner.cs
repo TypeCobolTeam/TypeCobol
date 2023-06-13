@@ -2138,7 +2138,7 @@ namespace TypeCobol.Compiler.Scanner
             CblProcessDirective compilerDirective = new CblProcessDirective(tokenType == TokenType.CBL ? CompilerDirectiveType.CBL : CompilerDirectiveType.PROCESS);
 
             bool lineSyntaxIsValid = true;
-            string optionWord = null;
+            string? optionWord = null;
 
             // The CBL (PROCESS) statement must end before or at column 72, 
             // and options cannot be continued across multiple CBL (PROCESS) statements. 
@@ -2178,7 +2178,6 @@ namespace TypeCobol.Compiler.Scanner
                     optionWord = line.Substring(nameStartIndex, nameEndIndex - nameStartIndex + 1);
 
                     // Try to scan option parameters
-                    string optionParameters;
                     if (currentIndex <= lastIndex && !(line[currentIndex] == ' ' || line[currentIndex] == ','))
                     {
                         if (currentIndex < lastIndex && line[currentIndex] == '(')
@@ -2197,7 +2196,7 @@ namespace TypeCobol.Compiler.Scanner
                             if (currentIndex <= lastIndex && line[currentIndex] == ')')
                             {
                                 int paramsEndIndex = currentIndex - 1;
-                                optionParameters = line.Substring(paramsStartIndex, paramsEndIndex - paramsStartIndex + 1);
+                                string optionParameters = line.Substring(paramsStartIndex, paramsEndIndex - paramsStartIndex + 1);
 
                                 // Store compiler option in compiler directive
                                 compilerDirective.OptionsList.Add(
@@ -2248,7 +2247,7 @@ namespace TypeCobol.Compiler.Scanner
             int stopIndex = currentIndex - 1;
             Token sourceToken = new Token(TokenType.COMPILER_DIRECTIVE, startIndex, stopIndex, tokensLine);
             
-            // Wrap the source token in a CompilerDirectiveToken (which is a GroupToken by defaut)
+            // Wrap the source token in a CompilerDirectiveToken (which is a GroupToken by default)
             IList<Token> originalTokens = new List<Token>();
             originalTokens.Add(sourceToken);
             CompilerDirectiveToken compilerDirectiveToken = new CompilerDirectiveToken(compilerDirective, originalTokens, !lineSyntaxIsValid);
@@ -2257,7 +2256,7 @@ namespace TypeCobol.Compiler.Scanner
                 tokensLine.AddDiagnostic(MessageCode.InvalidCblProcessCompilerDirective, compilerDirectiveToken);
             }
             // Add a warning in case of deprecated option (a line can contain both deprecated and invalid options)
-            if (optionWord != null && compilerOptions.IsOptionDeprecated(optionWord, out string warningMessage))
+            if (optionWord != null && compilerOptions.IsOptionDeprecated(optionWord, out var warningMessage))
             {
                 tokensLine.AddDiagnostic(MessageCode.DirectiveSyntaxWarning, compilerDirectiveToken, warningMessage);
             }
