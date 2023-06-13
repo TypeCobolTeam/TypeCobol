@@ -24,7 +24,6 @@ Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'stro
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 57[4,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or usage declaration.
-Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
 Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
 Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
 Line 73[27,40] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
