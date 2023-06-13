@@ -22,6 +22,7 @@ PROCESS FLAG(I,I FLAGSTD(x[yy][,0])
 000010CBL DATA(31)                                                      00010000
 000020*-----------------------------------------------------------------00020000  
 000010 PROCESS ARITH(EXTEND)                                                    
+000015 CBL LIB
 000020 IDENTIFICATION DIVISION. 
 000100*-Reason  : AMEELIORATION PROCESS ACTIMAT                         00012701
 086490          PERFORM PROCESSUS-INDEXATION-IMMO.                      08868001

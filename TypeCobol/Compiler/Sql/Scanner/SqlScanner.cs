@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
+
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
@@ -51,7 +52,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
 
         }
 
-        public override Token GetTokenStartingFrom(int startIndex)
+        public override Token? GetTokenStartingFrom(int startIndex)
         {
             // Cannot read past end of line or before its beginning
             if (startIndex < 0 || startIndex > lastIndex)
@@ -163,6 +164,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
             }
 
             // Handle DECIMAL-POINT IS COMMA clause
+            Debug.Assert(tokensLine.ScanState != null);
             char decimalPoint = tokensLine.ScanState.SpecialNames.DecimalPointIsComma ? ',' : '.';
             var token = ScanNumericLiteral(startIndex, decimalPoint);
             switch (token.TokenType)
@@ -245,7 +247,7 @@ namespace TypeCobol.Compiler.Sql.Scanner
         }
 
         private bool TryScanDecimalFloatingPointSpecialValue(int startIndex, Sign? sign,
-            out DecimalFloatingPointLiteralTokenValue decimalFloatingPointLiteralTokenValue)
+            [MaybeNullWhen(false)] out DecimalFloatingPointLiteralTokenValue decimalFloatingPointLiteralTokenValue)
         {
             // Read letters but do not consume chars yet
             int start = sign.HasValue ? startIndex + 1 : startIndex;

@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -19,6 +20,7 @@ namespace TypeCobol.Compiler.Scanner
             _ScannerDiagnostics = new List<Diagnostic>();
         }
 
+        [MemberNotNull(nameof(InitialScanState), nameof(ScanState))]
         public void InitializeScanState(MultilineScanState initialScanState)
         {
             InitialScanState = initialScanState;

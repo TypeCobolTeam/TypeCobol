@@ -53,3 +53,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 2;53;2;Invalid character found before pseudo-text delimiter "==": "{0}";1;47;An opening pseudo-text delimiter should be preceded by a space separator.
 2;54;2;A blank was missing after character "{0}" in column {1}. A blank was assumed.;0;0;
 2;55;1;Non-COBOL character "{0}" was found in column {1}.;0;0;
+3;56;2;Warning: {0};0;0;
