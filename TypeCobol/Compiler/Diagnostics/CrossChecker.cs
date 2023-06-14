@@ -765,8 +765,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (commonDataDataDefinitionCodeElement?.Usage != null &&
-                (commonDataDataDefinitionCodeElement.Usage.Value == DataUsage.FloatingPoint || commonDataDataDefinitionCodeElement.Usage.Value == DataUsage.LongFloatingPoint) &&
+            var usage = commonDataDataDefinitionCodeElement?.Usage;
+            if (usage != null && (usage.Value == DataUsage.FloatingPoint || usage.Value == DataUsage.LongFloatingPoint) &&
                 commonDataDataDefinitionCodeElement.Picture != null)
             {
                 DiagnosticUtils.AddError(dataDefinition,
