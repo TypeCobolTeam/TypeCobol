@@ -1,4 +1,4 @@
-﻿      * 4 errors
+      * 4 errors
       * Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
       * Line 52[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
       * Line 57[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
@@ -9,7 +9,7 @@
 
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  TC-DocCodeG-FctList-Loaded PIC X(02).
+       01  TC-DocCodeG-FctList-Loaded PIC X(02) VALUE space.
            88 TC-DocCodeG-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DocCodeG-PntTab.
            05 TC-DocCodeG-PntNbr         PIC S9(04) COMP VALUE 1.

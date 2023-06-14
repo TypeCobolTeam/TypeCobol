@@ -3,7 +3,7 @@
        DATA DIVISION.
                                                              
        WORKING-STORAGE SECTION.
-       01  TC-TCOZCHKP-FctList-Loaded PIC X(02).
+       01  TC-TCOZCHKP-FctList-Loaded PIC X(02) VALUE space.
            88 TC-TCOZCHKP-FctList-IsLoaded      VALUE 'OK'.
        01 TC-TCOZCHKP-PntTab.
            05 TC-TCOZCHKP-PntNbr         PIC S9(04) COMP VALUE 1.
