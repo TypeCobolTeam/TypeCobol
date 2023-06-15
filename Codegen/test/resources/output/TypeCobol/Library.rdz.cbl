@@ -33,7 +33,7 @@
       *01 culture        TYPEDEF strict PUBLIC.
       *    10 lng                    PIC X(02).
       *    10 cty                    PIC X(02).
-       01  TC-DVZZDATE-FctList-Loaded PIC X(02).
+       01  TC-DVZZDATE-FctList-Loaded PIC X(02) VALUE space.
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
