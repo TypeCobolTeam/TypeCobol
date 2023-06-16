@@ -54,7 +54,7 @@
               88 isEndPack value -1 -2.
               88 isOverflow value -2.
                                  
-       01  TC-TCOSMPL2-FctList-Loaded PIC X(02).
+       01  TC-TCOSMPL2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-TCOSMPL2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-TCOSMPL2-PntTab.
            05 TC-TCOSMPL2-PntNbr         PIC S9(04) COMP VALUE 1.

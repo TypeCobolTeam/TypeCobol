@@ -3,7 +3,7 @@
        PROGRAM-ID. PGM2.
        data division.
        working-storage section.
-       01  TC-PGM2-FctList-Loaded PIC X(02).
+       01  TC-PGM2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-PGM2-PntTab.
@@ -97,7 +97,7 @@
        DATA DIVISION.
                                                             
        WORKING-STORAGE SECTION.
-       01  TC-STACKED-FctList-Loaded PIC X(02).
+       01  TC-STACKED-FctList-Loaded PIC X(02) VALUE space.
            88 TC-STACKED-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-STACKED-PntTab.
@@ -163,7 +163,7 @@
        DATA DIVISION.
                                                              
        WORKING-STORAGE SECTION.
-       01  TC-STACKED2-FctList-Loaded PIC X(02).
+       01  TC-STACKED2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-STACKED2-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-STACKED2-PntTab.
