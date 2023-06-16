@@ -1,9 +1,9 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MainProgram.
        data division.
        working-storage section.
-       01  TC-MainProg-FctList-Loaded PIC X(02).
+       01  TC-MainProg-FctList-Loaded PIC X(02) VALUE space.
            88 TC-MainProg-FctList-IsLoaded      VALUE 'OK'.
        01 TC-MainProg-PntTab.
            05 TC-MainProg-PntNbr         PIC S9(04) COMP VALUE 1.

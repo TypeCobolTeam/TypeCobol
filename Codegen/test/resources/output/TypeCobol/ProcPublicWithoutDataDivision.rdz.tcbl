@@ -5,7 +5,7 @@
       *SOURCE-COMPUTER.    IBM-3033 WITH DEBUGGING MODE.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  TC-TestMe-FctList-Loaded PIC X(02).
+       01  TC-TestMe-FctList-Loaded PIC X(02) VALUE space.
            88 TC-TestMe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-TestMe-PntTab.
            05 TC-TestMe-PntNbr         PIC S9(04) COMP VALUE 1.

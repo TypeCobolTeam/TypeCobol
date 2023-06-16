@@ -11,7 +11,7 @@
            02 DD PIC 9(2).
                                  
        01  myname1      PIC X(15).
-       01  TC-PGM1-FctList-Loaded PIC X(02).
+       01  TC-PGM1-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-PGM1-PntTab.

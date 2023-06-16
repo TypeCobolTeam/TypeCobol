@@ -33,7 +33,7 @@
        DATA DIVISION.
                                                                   
        WORKING-STORAGE SECTION.
-       01  TC-PersonSe-FctList-Loaded PIC X(02).
+       01  TC-PersonSe-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PersonSe-PntTab.
            05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
