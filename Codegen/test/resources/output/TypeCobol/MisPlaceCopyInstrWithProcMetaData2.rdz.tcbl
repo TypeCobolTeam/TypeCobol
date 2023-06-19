@@ -84,7 +84,7 @@
        working-storage section.
        01 var1 .
        COPY Codegen-SecondCopy.
-       01  TC-DVZF0OS2-FctList-Loaded PIC X(02).
+       01  TC-DVZF0OS2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-DVZF0OS2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZF0OS2-PntTab.
            05 TC-DVZF0OS2-PntNbr         PIC S9(04) COMP VALUE 1.
