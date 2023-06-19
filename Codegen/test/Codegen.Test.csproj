@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\TypeCobol.Test\TypeCobol.Test.csproj" />
+    <ProjectReference Include="..\src\Codegen.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

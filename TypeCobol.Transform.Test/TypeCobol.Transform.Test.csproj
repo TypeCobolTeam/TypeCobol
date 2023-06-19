@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TypeCobol.Transform\TypeCobol.Transform.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="ressources\**\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

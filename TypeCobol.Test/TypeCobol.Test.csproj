@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj" />
+    <ProjectReference Include="..\TypeCobol\TypeCobol.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
