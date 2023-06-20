@@ -241,6 +241,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// Codegen node is cloned.
             /// </summary>
             IsCloned = 0x01UL << 32,
+            /// <summary>
+            /// A Boolean is set to FALSE on this node.
+            /// </summary>
+            IsBoolSetToFalse = 0x01UL << 33,
         };
         /// <summary>
         /// A 64 bits value for flags associated to this Node

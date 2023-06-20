@@ -233,7 +233,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (foundedType == null || data == null || data.LevelNumber == null)
                 return;
 
-            if (data.LevelNumber.Value == 88 || data.LevelNumber.Value == 66)
+            if (data.Type == CodeElementType.DataConditionEntry || data.Type == CodeElementType.DataRenamesEntry)
             {
                 DiagnosticUtils.AddError(dataDefinition,
                     string.Format("A {0} level variable cannot be typed", data.LevelNumber.Value),

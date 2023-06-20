@@ -6,6 +6,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
+using static TypeCobol.Compiler.Nodes.Node;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -884,6 +885,44 @@ namespace TypeCobol.Compiler.Diagnostics
                         }
                     }
                 }
+            }
+
+            if (node.StorageAreaWritesDataDefinition != null && node.CodeElement is SetStatementForConditions setConditions && setConditions.IsSendingValueFalse)
+            {
+                // Statement is a SET TO FALSE: check whether it mixes variables of type BOOL and Level 88
+                bool hasBool = false;
+                bool hasLevel88 = false;
+                string errorMessage = "The\"SET\"statement mixes variables of type BOOL and Level 88. This is not possible: please split it into 2 statements.";
+                foreach (var condition in setConditions.Conditions)
+                {
+                    if (condition.StorageArea != null)
+                    {
+                        node.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition);
+
+                        if (dataCondition?.CodeElement.Type == CodeElementType.DataConditionEntry)
+                        {
+                            hasLevel88 = true;
+                            if (hasBool)
+                            {
+                                DiagnosticUtils.AddError(node, errorMessage);
+                                break;
+                            }
+                        }
+                        else if (dataCondition?.CodeElement is DataDescriptionEntry dataDescriptionEntry && dataDescriptionEntry.DataType == DataType.Boolean)
+                        {
+                            hasBool = true;
+                            if (hasLevel88)
+                            {
+                                DiagnosticUtils.AddError(node, errorMessage);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Set a flag to remember this check
+                node.SetFlag(Flag.IsBoolSetToFalse, hasBool && !hasLevel88);
+
             }
         }
     }

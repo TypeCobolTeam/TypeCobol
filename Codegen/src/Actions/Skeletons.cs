@@ -142,7 +142,7 @@ namespace TypeCobol.Codegen.Actions
                                                 {
                                                                 receiver = @Self["receiver"];
                                                 }
-                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.Set"), new Tuple<string,string>("sender.type","BOOL"), new Tuple<string,string>("sender","FALSE")};
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.Set"), new Tuple<string,string>("isboolsettofalse","true")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 return CheckConditions(@Self, __ConditionsAttributes_0);

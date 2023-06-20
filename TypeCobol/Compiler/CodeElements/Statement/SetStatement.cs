@@ -311,7 +311,8 @@
         /// <summary>identifier (condition-name)</summary>
         public ReceivingStorageArea[] Conditions { get; set; }
 
-        /// <summary>Always TRUE in COBOL, can be either TRUE or FALSE in TypeCobol.</summary>
+        /// <summary>Can be either TRUE or FALSE.</summary>
+        [CanBeNull]
         public BooleanValue SendingValue { get; set; }
 
         public override string ToString()
@@ -353,6 +354,9 @@
                 return variables;
             }
         }
+
+        /// <summary>Indicate whether the condition's value is defined and equals to FALSE</summary>
+        public bool IsSendingValueFalse => SendingValue != null && !SendingValue.Value;
     }
 
     public class SetStatementPartial : SetStatementForAssignment

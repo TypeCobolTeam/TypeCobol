@@ -357,7 +357,7 @@ namespace TypeCobol.Compiler.Nodes {
                     {
                         _physicalLength = GetPhysicalLength();
                     }
-                    else if (CodeElement?.LevelNumber?.Value == 88)
+                    else if (CodeElement?.Type == CodeElementType.DataConditionEntry)
                     {
                         //Exception case if this is a level 88
                         _physicalLength = 0;

@@ -1444,6 +1444,22 @@ namespace TypeCobol.Compiler.Parser
                         _cobolWordsBuilder.CreateValue(valuesRangeContext.endValue));
                 }
             }
+
+            if (context.whenSetToFalse() != null)
+            {
+                if (context.whenSetToFalse().FALSE() != null && context.whenSetToFalse().value1() != null)
+                {
+                    // TODO(?): handle strange case when FALSE context is set but equals to 'Missing FALSE'
+                    try
+                    {
+                        entry.FalseConditionValue = _cobolWordsBuilder.CreateValue(context.whenSetToFalse().value1());
+                    }
+                    catch (System.InvalidOperationException)
+                    {
+                        // Even if value1 context is set, value1 may be missing => crash in CreateValue
+                    }
+                }
+            }
         }
 
           ////////////////////////

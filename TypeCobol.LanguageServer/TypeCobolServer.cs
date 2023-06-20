@@ -658,7 +658,7 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
                                          &&
-                                         ((v.CodeElement?.LevelNumber != null && v.CodeElement.LevelNumber.Value == 88)
+                                         ((v.CodeElement?.Type == CodeElementType.DataConditionEntry)
                                           //Level 88 Variable
                                           || v.DataType == DataType.Numeric //Numeric Integer Variable
                                           || v.Usage == DataUsage.Pointer || v.Usage == DataUsage.Pointer32) //Or usage is pointer/pointer-32 

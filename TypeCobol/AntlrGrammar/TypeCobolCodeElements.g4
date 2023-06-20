@@ -67,12 +67,6 @@ setStatementForAssignment:
 	SET UNSAFE? setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
 
 
-// rule modified to support:
-// - SET <boolean> TO FALSE
-setStatementForConditions:
-	SET conditionStorageArea+ TO (TRUE | FALSE);
-
-
 
 libraryCopy: SERVICE ID? IS? qualifiedTextName PeriodSeparator?; // TCRFUN_LIBRARY_COPY
 
