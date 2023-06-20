@@ -27,7 +27,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj" />
-    <ProjectReference Include="..\CSCup\CSCup.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\CSCup\CSCup.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <PropertyGroup>

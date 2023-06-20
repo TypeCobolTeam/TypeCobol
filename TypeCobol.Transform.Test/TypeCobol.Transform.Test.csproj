@@ -16,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TypeCobol.Transform\TypeCobol.Transform.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\TypeCobol.Transform\TypeCobol.Transform.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
