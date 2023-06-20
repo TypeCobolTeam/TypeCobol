@@ -19,10 +19,6 @@
     <!-- To import DefaultCopies folder  -->
     <ProjectReference Include="..\CLI\src\CLI.csproj" />
     <ProjectReference Include="..\CLI\test\CLI.Test.csproj" />
-    <ProjectReference Include="..\TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer\TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer.csproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <Private>false</Private>
-    </ProjectReference>
     <ProjectReference Include="..\TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj" />
   </ItemGroup>
 

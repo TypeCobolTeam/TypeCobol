@@ -16,10 +16,19 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol.Transform", "TypeCobol.Transform\TypeCobol.Transform.csproj", "{2D2ABE04-408E-4446-A706-2052B7907922}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol.Transform.Test", "TypeCobol.Transform.Test\TypeCobol.Transform.Test.csproj", "{99CC43AD-F8A9-44A3-8590-83B83EB5647E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2D2ABE04-408E-4446-A706-2052B7907922} = {2D2ABE04-408E-4446-A706-2052B7907922}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{E0C0672B-5CAD-4FBB-8558-DEDCBA3BF38A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A694B675-2472-4BA3-8647-1D81C583B9BA} = {A694B675-2472-4BA3-8647-1D81C583B9BA}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{CAC3E81E-1D42-4D08-AA55-2F3770E8A985}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E0C0672B-5CAD-4FBB-8558-DEDCBA3BF38A} = {E0C0672B-5CAD-4FBB-8558-DEDCBA3BF38A}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol.Analysis", "TypeCobol.Analysis\TypeCobol.Analysis.csproj", "{64375AD2-4D57-44C6-A0C2-F82CD9B58A05}"
 EndProject
@@ -28,14 +37,23 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codegen", "Codegen\src\Codegen.csproj", "{3386C461-1B83-4AC7-832D-119DBDE194D1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codegen.Test", "Codegen\test\Codegen.Test.csproj", "{8542343C-D022-436D-A899-B7FAEF7781AE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3386C461-1B83-4AC7-832D-119DBDE194D1} = {3386C461-1B83-4AC7-832D-119DBDE194D1}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol.LanguageServer", "TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj", "{D777ED68-078C-4816-B8FD-1B6908A22DFD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol.LanguageServer.Test", "TypeCobol.LanguageServer.Test\TypeCobol.LanguageServer.Test.csproj", "{B7685173-1730-474E-841D-FFF3597D2C4C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C5F56EA-99F2-4731-B507-61512108C29F} = {6C5F56EA-99F2-4731-B507-61512108C29F}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "CLI\src\CLI.csproj", "{94CA3406-43B5-4BBC-B4EB-BD733C60671B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI.Test", "CLI\test\CLI.Test.csproj", "{57133479-133B-4148-AE88-F3822E403B76}"
+	ProjectSection(ProjectDependencies) = postProject
+		{94CA3406-43B5-4BBC-B4EB-BD733C60671B} = {94CA3406-43B5-4BBC-B4EB-BD733C60671B}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer", "TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer\TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer.csproj", "{6C5F56EA-99F2-4731-B507-61512108C29F}"
 EndProject
