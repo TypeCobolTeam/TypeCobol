@@ -275,7 +275,7 @@
                            'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
-       01  TC-Callee-FctList-Loaded PIC X(02).
+       01  TC-Callee-FctList-Loaded PIC X(02) VALUE space.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
        01 TC-Callee-PntTab.
            05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 4.
@@ -363,7 +363,7 @@
       *    05 LastName   pic X(30).
       *      88 Empty value space.
       *    05 FirstName  pic X(30).
-       01  TC-PersonSe-FctList-Loaded PIC X(02).
+       01  TC-PersonSe-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PersonSe-PntTab.
            05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
