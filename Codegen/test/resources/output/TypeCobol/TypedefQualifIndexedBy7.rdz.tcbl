@@ -2,11 +2,11 @@
        PROGRAM-ID. DVZF0OSM.
        DATA DIVISION.
        working-storage section.
-       01 Var1.
+       01 Var1 usage is comp-2.
            05 Tab1 occurs 99 indexed by ea84b906MyIdx.
       
       *01 MyType TYPEDEF STRICT.
-      *    05 Tab10 occurs 99 indexed by MyIdx.
+      *    05 Tab10 usage is comp-2 occurs 99 indexed by MyIdx.
       
        procedure division.
       *    set Var1::MyIdx to 1

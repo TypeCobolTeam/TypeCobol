@@ -9,7 +9,7 @@ Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' e
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'ClausesOrderOK' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
 Line 57[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'NoDescription' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
-Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
+Line 57[4,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[4,16:NoDescription]<UserDefinedWord>
 Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
 Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
 Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>

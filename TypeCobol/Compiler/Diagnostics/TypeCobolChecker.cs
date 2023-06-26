@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -44,27 +40,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(node, type + " properties are read-only");
             }
         }
-    }
-
-    class DataDefinitionChecker
-    {
-        public static void OnNode(Node node, DataDescriptionEntry dataEntry = null)
-        {
-            if (dataEntry == null && node is DataDefinition)
-            {
-                dataEntry = node.CodeElement as DataDescriptionEntry;
-            }
-
-
-            if (dataEntry?.Usage != null &&
-                (dataEntry.Usage.Value == DataUsage.FloatingPoint || dataEntry.Usage.Value == DataUsage.LongFloatingPoint) &&
-                dataEntry.Picture != null)
-            {
-                DiagnosticUtils.AddError(node,
-                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataEntry);
-            }
-        }
-
     }
 
     class FunctionCallChecker

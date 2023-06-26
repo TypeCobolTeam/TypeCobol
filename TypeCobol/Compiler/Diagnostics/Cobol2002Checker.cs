@@ -86,13 +86,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
 
-            if (typeDefinition.CodeElement.Picture == null && typeDefinition.Children.Count < 1 &&
-                !typeDefinition.Usage.HasValue)
-            {
-                string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
-                DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
-            }
-
             if (typeDefinition.IsInsideCopy())
             {
                 string copyName = typeDefinition.CodeElement.FirstCopyDirective.TextName;

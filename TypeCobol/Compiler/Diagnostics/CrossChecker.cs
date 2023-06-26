@@ -11,6 +11,7 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
+using System.Diagnostics;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -726,7 +727,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (HasChildrenThatDeclareData(dataDefinition))
+            if (HasChildrenThatDeclareData(dataDefinition))//Check if group is valid
             {
                 if (dataDefinition.Picture != null)
                 {
@@ -746,13 +747,68 @@ namespace TypeCobol.Compiler.Diagnostics
                         "Group item " + dataDefinition.Name + " cannot have \"Blank when zero\" clause",
                         dataDefinitionEntry);
                 }
+            }
+            else if (commonDataDataDefinitionCodeElement != null) 
+            {
+                //This is an elementary item. It must have a picture, type or a valid usage
+                var levelNumberValue = levelNumber?.Value;
+                if ((levelNumberValue < 50 || levelNumberValue == 77)
+                    && dataDefinition.Picture == null
+                    //commonDataDataDefinitionCodeElement.UserDefinedDataType is the type as written in the code. dataDefinition.TypeDefinition is the resolved type which can be null if the type cannot be found
+                    && commonDataDataDefinitionCodeElement.UserDefinedDataType == null 
+                    && (!dataDefinition.Usage.HasValue || !IsUsageAllowedWithoutPicture(dataDefinition.Usage.Value)))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).", commonDataDataDefinitionCodeElement);
 
-                return true;
+                    //Detect copy included at wrong level (because there is already the same level in the copy)
+                    CheckCopyAtWrongLevel(dataDefinition, commonDataDataDefinitionCodeElement);
+                }
             }
 
-            DataDefinitionChecker.OnNode(dataDefinition);
+            var usage = commonDataDataDefinitionCodeElement?.Usage;
+            if (usage != null && (usage.Value == DataUsage.FloatingPoint || usage.Value == DataUsage.LongFloatingPoint) &&
+                commonDataDataDefinitionCodeElement.Picture != null)
+            {
+                DiagnosticUtils.AddError(dataDefinition,
+                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", commonDataDataDefinitionCodeElement);
+            }
+
 
             return true;
+
+            static bool IsUsageAllowedWithoutPicture(DataUsage usage)
+            {
+                switch (usage)
+                {
+                    case DataUsage.Index:
+                    case DataUsage.FloatingPoint:
+                    case DataUsage.LongFloatingPoint:
+                    case DataUsage.Pointer:
+                    case DataUsage.Pointer32:
+                    case DataUsage.ProcedurePointer:
+                    case DataUsage.FunctionPointer:
+                        return true;
+                    default:
+                        // None is not allowed
+                        return false;
+                }
+            }
+
+            static void CheckCopyAtWrongLevel(DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines commonDataDescriptionAndDataRedefines)
+            {
+                //Get current node index
+                var nodeIndex = dataDefinition.Parent.IndexOf(dataDefinition);
+                //Get sibling nodes
+                var siblingNodes = dataDefinition.Parent.Children;
+                //Get immediately following DataDefinition
+                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
+                if (nextData != null && nextData.IsInsideCopy())
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
+                                                                $"under level {commonDataDescriptionAndDataRedefines.LevelNumber} " +
+                                                                $"because copy starts at level {nextData.CodeElement.LevelNumber}.", commonDataDescriptionAndDataRedefines);
+                }
+            }
         }
 
         public override bool Visit(Sentence sentence)
@@ -812,35 +868,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public override bool Visit(DataDescription dataDescription)
-        {
-            DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
-
-            //Check if the DataDescription is an empty group
-            if (dataDescriptionEntry.LevelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
-            {
-                //Get current node index
-                var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
-                //Get sibling nodes
-                var siblingNodes = dataDescription.Parent.Children;
-                //Get immediately following DataDefinition
-                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
-                if (nextData != null && nextData.IsInsideCopy())
-                {
-                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
-                                                              $"under level {dataDescriptionEntry.LevelNumber} " +
-                                                              $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataDescriptionEntry);
-                }
-                else
-                {
-                    //Last node so this is an empty group item
-                    DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
-                }
-            }
-
-            return true;
-        }
-
         /// <summary>
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>
@@ -851,15 +878,27 @@ namespace TypeCobol.Compiler.Diagnostics
             //We only need to check the last children:
             //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
             //DataDescription and DataRedefines are level between 1 and 49 inclusive.
-            //As the level number drive the positioning of Node inside the Children property DataConditionEntry and DataRenamesEntry will always be
-            //positioned before dataDescription.
+            //As the level number drives the positioning of Node inside the Children:
+            //- DataConditionEntry will always be positioned before other dataDescription
+            //- DataRenamesEntry will always be positioned after other dataDescription
             if (dataDefinition.ChildrenCount > 0)
             {
                 var lastChild = dataDefinition.Children[dataDefinition.ChildrenCount - 1];
 
-                return lastChild.CodeElement != null
-                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry
-                       && lastChild.CodeElement.Type != CodeElementType.DataRenamesEntry;
+                if (lastChild.CodeElement == null)
+                {
+                    Debug.Assert(lastChild is IndexDefinition);
+                    //Last child is an Index in an OCCURS: it is not a declaration
+                    return false;
+                }
+
+                if (lastChild.CodeElement.Type == CodeElementType.DataRenamesEntry)
+                {
+                    //Last child is a DataRenamesEntry: we need to loop on the other children to find a possible DataDescription before
+                    return dataDefinition.Children.Any(c => c is DataDescription);
+                }
+
+                return lastChild.CodeElement.Type != CodeElementType.DataConditionEntry;
             }
 
             return false;
