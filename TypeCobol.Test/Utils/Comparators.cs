@@ -425,7 +425,7 @@ namespace TypeCobol.Test.Utils
                 foreach (var dataDefinition in dataDefinitions)
                 {
                     //TODO: Issue #1192 handle correctly a DataRenames
-                    if (dataDefinition is DataRenames == false && dataDefinition.CodeElement?.Type != CodeElementType.DataConditionEntry)
+                    if (dataDefinition is not DataRenames && dataDefinition.CodeElement?.Type != CodeElementType.DataConditionEntry)
                         result.AppendLine(CreateLine(dataDefinition, dataDefinition.SlackBytes == 0));
                 }
             }

@@ -356,7 +356,7 @@
         }
 
         /// <summary>Indicate whether the condition's value is defined and equals to FALSE</summary>
-        public bool IsSendingValueFalse => SendingValue != null && !SendingValue.Value;
+        internal bool IsSendingValueFalse => SendingValue != null && !SendingValue.Value;
     }
 
     public class SetStatementPartial : SetStatementForAssignment

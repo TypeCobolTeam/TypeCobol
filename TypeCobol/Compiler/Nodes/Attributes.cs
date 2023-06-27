@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Nodes {
             attributes["global"] = new GlobalAttribute();
             attributes["useglobalstoragevariable"] = new UseGlobalStorageVariableAttribute();
             attributes["sourceprogramhash"] = new SourceProgramHashAttribute();
-            attributes["isboolsettofalse"] = new IsBoolSetToFalseAttribute();
+            attributes["istypecobolsettofalse"] = new IsTypeCobolSetToFalseAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
             attributes["visibility"] = new VisibilityAttribute();
@@ -794,11 +794,11 @@ internal class LibraryCopyAttribute: Attribute {
         }
     }
 
-    internal class IsBoolSetToFalseAttribute : Attribute
+    internal class IsTypeCobolSetToFalseAttribute : Attribute
     {
         public object GetValue(object o, SymbolTable table)
         {
-            return ((Node)o).IsFlagSet(Node.Flag.IsBoolSetToFalse);
+            return ((Node)o).IsFlagSet(Node.Flag.IsTypeCobolSetToFalse);
         }
     }
 }

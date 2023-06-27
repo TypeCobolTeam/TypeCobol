@@ -1106,6 +1106,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// <summary>
         /// When a condition-name is referenced in a SET TO FALSE statement, this value (a literal
         /// defined in the FALSE phrase) is placed in the associated conditional variable.
+        /// </summary>
         [CanBeNull]
         public Value FalseConditionValue { get; set; }
 

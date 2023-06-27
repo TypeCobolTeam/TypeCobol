@@ -253,7 +253,7 @@ namespace TypeCobol.Compiler.Parser
                 return new Value(CreateAlphanumericValue(context.alphanumericValue2()));
             if (context.repeatedCharacterValue2() != null)
                 return new Value(CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
-            throw new InvalidOperationException();
+            return null;
         }
 
         internal Value CreateValue(CodeElementsParser.Value2Context context)

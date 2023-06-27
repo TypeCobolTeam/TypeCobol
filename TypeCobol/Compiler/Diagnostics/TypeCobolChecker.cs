@@ -6,7 +6,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
-using static TypeCobol.Compiler.Nodes.Node;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -892,13 +891,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 // Statement is a SET TO FALSE: check whether it mixes variables of type BOOL and Level 88
                 bool hasBool = false;
                 bool hasLevel88 = false;
-                string errorMessage = "The\"SET\"statement mixes variables of type BOOL and Level 88. This is not possible: please split it into 2 statements.";
+                string errorMessage = "Mixing TypeCobol BOOL variables with Level 88 in the same \"SET\" statement is not allowed. Consider splitting it into 2 separate statements.";
                 foreach (var condition in setConditions.Conditions)
                 {
-                    if (condition.StorageArea != null)
+                    if (condition.StorageArea != null && node.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition))
                     {
-                        node.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition);
-
                         if (dataCondition?.CodeElement.Type == CodeElementType.DataConditionEntry)
                         {
                             hasLevel88 = true;
@@ -921,8 +918,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 // Set a flag to remember this check
-                node.SetFlag(Flag.IsBoolSetToFalse, hasBool && !hasLevel88);
-
+                node.SetFlag(Node.Flag.IsTypeCobolSetToFalse, hasBool && !hasLevel88);
             }
         }
     }

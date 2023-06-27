@@ -21,21 +21,23 @@
            88 ok7 value 'A' when false 'H'.
            88 ok8 value 'A' when to false 'I'.
       * Invalid clause WHEN SET TO FALSE
-Line 24[37,39] <27, Error, Syntax> - Syntax error : missing FALSE at ''U''
+      * Definition is KO and statement SET TO FALSE will fail
+Line 25[37,39] <27, Error, Syntax> - Syntax error : missing FALSE at ''U''
            88 ko1 value 'A' when to 'U'.
-Line 25[41,42] <27, Error, Syntax> - Syntax error : missing FALSE at 'is'
+Line 26[41,42] <27, Error, Syntax> - Syntax error : missing FALSE at 'is'
            88 ko2 value 'A' when set to is 'V'.
-Line 26[33,35] <27, Error, Syntax> - Syntax error : mismatched input ''W'' expecting {FALSE, TO}
+Line 27[33,35] <27, Error, Syntax> - Syntax error : mismatched input ''W'' expecting {FALSE, TO}
            88 ko3 value 'A' set 'W'.
-Line 27[32,34] <27, Error, Syntax> - Syntax error : missing FALSE at ''X''
+Line 28[32,34] <27, Error, Syntax> - Syntax error : missing FALSE at ''X''
            88 ko4 value 'A' to 'X'.
-Line 28[34,36] <27, Error, Syntax> - Syntax error : mismatched input ''Y'' expecting {SET, FALSE, TO}
+Line 29[34,36] <27, Error, Syntax> - Syntax error : mismatched input ''Y'' expecting {SET, FALSE, TO}
            88 ko5 value 'A' when 'Y'.
-Line 29[34,35] <27, Error, Syntax> - Syntax error : mismatched input 'is' expecting {SET, FALSE, TO}
+Line 30[34,35] <27, Error, Syntax> - Syntax error : mismatched input 'is' expecting {SET, FALSE, TO}
            88 ko6 value 'A' when is 'Z'.
-Line 30[49,49] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, figurative constant, keyword}
+Line 31[49,49] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, figurative constant, keyword}
            88 ko7 value 'A' when set to false is.
       * Missing clause WHEN SET TO FALSE
+      * Definition is OK but statement SET TO FALSE will fail
            88 ko8 value 'A'.
            
        procedure division.
@@ -49,27 +51,28 @@ Line 30[49,49] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
            set ok2 ok3 ok4 ok5 ok6 ok7 ok8 to false
 
       ***************************************************************
-      * Expected error: clause WHEN SET TO FALSE is invalid/missing *
+      * SET TO FALSE KO for all the next 8 statements
+      * because clause WHEN SET TO FALSE is invalid/missing
       ***************************************************************
 
-      * OK for the 5 following conditions:
-Line 49[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a"SET TO FALSE"statement, but no"WHEN FALSE"value was defined for"ko3".The"SET"statement was discarded.
+      * Our parser manages correctly the 5 first statements
+Line 52[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a "SET TO FALSE" statement, but no "WHEN FALSE" value was defined for "ko3".
            set ko3 to false
-Line 50[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a"SET TO FALSE"statement, but no"WHEN FALSE"value was defined for"ko5".The"SET"statement was discarded.
+Line 53[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a "SET TO FALSE" statement, but no "WHEN FALSE" value was defined for "ko5".
            set ko5 to false
-Line 51[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a"SET TO FALSE"statement, but no"WHEN FALSE"value was defined for"ko6".The"SET"statement was discarded.
+Line 54[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a "SET TO FALSE" statement, but no "WHEN FALSE" value was defined for "ko6".
            set ko6 to false
-Line 52[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a"SET TO FALSE"statement, but no"WHEN FALSE"value was defined for"ko7".The"SET"statement was discarded.
+Line 55[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a "SET TO FALSE" statement, but no "WHEN FALSE" value was defined for "ko7".
            set ko7 to false
-Line 53[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a"SET TO FALSE"statement, but no"WHEN FALSE"value was defined for"ko8".The"SET"statement was discarded.
+Line 56[12,14] <27, Error, Syntax> - Syntax error : A condition-name was specified in a "SET TO FALSE" statement, but no "WHEN FALSE" value was defined for "ko8".
            set ko8 to false
 
-      * KO for the 3 following conditions:
+      * Our parser misses the 3 last statements because
+      * clause WHEN SET TO FALSE is not checked correctly
+      * (due to ANTLR strange behavior)
            set ko1 to false
            set ko2 to false
            set ko4 to false
-      * Clause WHEN SET TO FALSE is not checked correctly
-      * (because of ANTLR strange behavior)
 
            goback.
 

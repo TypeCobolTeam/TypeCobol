@@ -157,12 +157,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 // Statement is a SET TO FALSE: we need to check that all conditions have been defined with a clause WHEN SET TO FALSE
                 foreach (var condition in setConditions.Conditions)
                 {
-                    if (condition.StorageArea != null)
+                    if (condition.StorageArea != null && set.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition))
                     {
-                        set.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition);
                         if (dataCondition?.CodeElement is DataConditionEntry dataConditionEntry && dataConditionEntry.FalseConditionValue == null)
                         {
-                            DiagnosticUtils.AddError(set, $"A condition-name was specified in a\"SET TO FALSE\"statement, but no\"WHEN FALSE\"value was defined for\"{dataCondition.Name}\".The\"SET\"statement was discarded.", setConditions);
+                            DiagnosticUtils.AddError(set, $"A condition-name was specified in a \"SET TO FALSE\" statement, but no \"WHEN FALSE\" value was defined for \"{dataCondition.Name}\".", setConditions);
                         }
                     }
                 }
@@ -668,12 +667,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var commonDataDataDefinitionCodeElement = dataDefinitionEntry as CommonDataDescriptionAndDataRedefines;
 
-            var codeElementType = dataDefinitionEntry.Type;
             var levelNumber = dataDefinitionEntry.LevelNumber;
             if (levelNumber != null)
             {
                 var dataDefinitionParent = (dataDefinition.Parent as DataDefinition);
-                var levelNumberValue = levelNumber.Value;
+                var codeElementType = dataDefinitionEntry.Type;
                 if (dataDefinitionParent != null)
                 {
                     //Check if DataDefinition is level 88 and declared under a Type BOOL variable
@@ -689,6 +687,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     //Parent is not a DataDefinition so it's a top level data definition under a section (eg working-storage)
                     //These top level DataDefinition can only be level 01 or 77
+                    var levelNumberValue = levelNumber.Value;
                     if (!(levelNumberValue == 01 || levelNumberValue == 77))
                     {
                         DiagnosticUtils.AddError(dataDefinition,

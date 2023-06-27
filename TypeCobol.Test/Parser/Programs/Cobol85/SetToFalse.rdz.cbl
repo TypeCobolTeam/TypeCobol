@@ -21,6 +21,7 @@
            88 ok7 value 'A' when false 'H'.
            88 ok8 value 'A' when to false 'I'.
       * Invalid clause WHEN SET TO FALSE
+      * Definition is KO and statement SET TO FALSE will fail
            88 ko1 value 'A' when to 'U'.
            88 ko2 value 'A' when set to is 'V'.
            88 ko3 value 'A' set 'W'.
@@ -29,6 +30,7 @@
            88 ko6 value 'A' when is 'Z'.
            88 ko7 value 'A' when set to false is.
       * Missing clause WHEN SET TO FALSE
+      * Definition is OK but statement SET TO FALSE will fail
            88 ko8 value 'A'.
            
        procedure division.
@@ -42,22 +44,23 @@
            set ok2 ok3 ok4 ok5 ok6 ok7 ok8 to false
 
       ***************************************************************
-      * Expected error: clause WHEN SET TO FALSE is invalid/missing *
+      * SET TO FALSE KO for all the next 8 statements
+      * because clause WHEN SET TO FALSE is invalid/missing
       ***************************************************************
 
-      * OK for the 5 following conditions:
+      * Our parser manages correctly the 5 first statements
            set ko3 to false
            set ko5 to false
            set ko6 to false
            set ko7 to false
            set ko8 to false
 
-      * KO for the 3 following conditions:
+      * Our parser misses the 3 last statements because
+      * clause WHEN SET TO FALSE is not checked correctly
+      * (due to ANTLR strange behavior)
            set ko1 to false
            set ko2 to false
            set ko4 to false
-      * Clause WHEN SET TO FALSE is not checked correctly
-      * (because of ANTLR strange behavior)
 
            goback.
 
