@@ -178,7 +178,7 @@
     </conditions>
     <patterns>      
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
-01  TC-@Model.programName8-FctList-Loaded PIC X(02).
+01  TC-@Model.programName8-FctList-Loaded PIC X(02) VALUE space.
     88 TC-@Model.programName8-FctList-IsLoaded      VALUE 'OK'.
       </pattern>
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL -->
@@ -322,7 +322,7 @@
         @{
         var items = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count &gt; 0) {
-        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
+        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02) VALUE space.\n";
         items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
         }
         }

@@ -645,7 +645,7 @@ namespace TypeCobol.Codegen.Actions
                                                                 {
                                                                                 SkeleTonFUN_DECLARE_PUBLICModel @Model = new SkeleTonFUN_DECLARE_PUBLICModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
-                                                                                @SelfResult.Append(@"01  TC-");@SelfResult.Append($@"{@Model.programName8}");@SelfResult.Append(@"-FctList-Loaded PIC X(02).
+                                                                                @SelfResult.Append(@"01  TC-");@SelfResult.Append($@"{@Model.programName8}");@SelfResult.Append(@"-FctList-Loaded PIC X(02) VALUE space.
     88 TC-");@SelfResult.Append($@"{@Model.programName8}");@SelfResult.Append(@"-FctList-IsLoaded      VALUE 'OK'.");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_IS_LOADED", "program.data-division.working-storage", null, false);
                                                                                 if (@SelfAction != null)
@@ -856,7 +856,7 @@ namespace TypeCobol.Codegen.Actions
                                                                                 @SelfResult.Append(@"");
         var items = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
+        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02) VALUE space.\n";
         items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
         }
         @SelfResult.Append(@"

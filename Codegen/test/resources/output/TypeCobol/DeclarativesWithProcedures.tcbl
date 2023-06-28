@@ -22,7 +22,7 @@
            OCCURS 200 TIMES INDEXED BY Idx-TaxElm.
            06 TaxTyp PIC X(03).
                                                   
-       01  TC-DVZF0OSM-FctList-Loaded PIC X(02).
+       01  TC-DVZF0OSM-FctList-Loaded PIC X(02) VALUE space.
            88 TC-DVZF0OSM-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZF0OSM-PntTab.
            05 TC-DVZF0OSM-PntNbr         PIC S9(04) COMP VALUE 1.

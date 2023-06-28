@@ -82,12 +82,6 @@ namespace TypeCobol.Compiler
             // Evict from this cache
             foreach (var textName in textNames)
             {
-                if (!evicted.Add(textName))
-                {
-                    // Already done
-                    continue;
-                }
-
                 Evict(textName);
 
                 // Evict dependent copies if any (no need to recurse as the list of dependent copies is already flattened)
@@ -105,9 +99,14 @@ namespace TypeCobol.Compiler
                 // Remove all variants of this document
                 string fullName = GetFullName(null, textName);
                 var keysToRemove = _documents.Keys.Where(key => key.StartsWith(fullName, StringComparison.OrdinalIgnoreCase)).ToArray();
-                foreach (var keyToRemove in keysToRemove)
+                if (keysToRemove.Length > 0)
                 {
-                    _documents.Remove(keyToRemove);
+                    foreach (var keyToRemove in keysToRemove)
+                    {
+                        _documents.Remove(keyToRemove);
+                    }
+
+                    evicted.Add(textName);
                 }
             }
         }
