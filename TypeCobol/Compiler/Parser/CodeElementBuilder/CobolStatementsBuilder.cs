@@ -1209,8 +1209,6 @@ namespace TypeCobol.Compiler.Parser
             if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
             if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
 
-            LanguageLevelChecker.Check(statement, context);
-
             return statement;
         }
 

@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (data.LevelNumber != null &&
                     !((data.LevelNumber.Value >= 01 && data.LevelNumber.Value <= 49)
-                      || data.LevelNumber.Value == 66 || data.LevelNumber.Value == 77 || data.LevelNumber.Value == 88))
+                      || data.Type == CodeElementType.DataRenamesEntry || data.LevelNumber.Value == 77 || data.Type == CodeElementType.DataConditionEntry))
                 {
                     DiagnosticUtils.AddError(data,
                         "Data must be declared between level 01 to 49, or equals to 66, 77, 88",
@@ -171,7 +171,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void OnCodeElement(DataConditionEntry data, CodeElementsParser.DataConditionEntryContext context)
         {
-            if (data.LevelNumber?.Value != 88)
+            if (data.Type != CodeElementType.DataConditionEntry)
                 DiagnosticUtils.AddError(data, "Data conditions must be level 88", context?.levelNumber);
             if (data.DataName == null)
                 DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context?.levelNumber);
@@ -539,16 +539,6 @@ namespace TypeCobol.Compiler.Diagnostics
             if (context.variableOrExpression2()?.arithmeticExpression() != null)
             {
                 AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.", context.variableOrExpression2().arithmeticExpression());
-            }
-        }
-
-        public void Check(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
-        {
-            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
-
-            if (context.FALSE() != null)
-            {
-                AddError(statement, "SET TO FALSE statement is not supported.", context.FALSE());
             }
         }
 

@@ -150,9 +150,24 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public override bool Visit(Set setStatement)
+        public override bool Visit(Set set)
         {
-            SetStatementChecker.CheckStatement(setStatement);
+            if (set.StorageAreaWritesDataDefinition != null && set.CodeElement is SetStatementForConditions setConditions && setConditions.IsSendingValueFalse)
+            {
+                // Statement is a SET TO FALSE: we need to check that all conditions have been defined with a clause WHEN SET TO FALSE
+                foreach (var condition in setConditions.Conditions)
+                {
+                    if (condition.StorageArea != null && set.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition))
+                    {
+                        if (dataCondition?.CodeElement is DataConditionEntry dataConditionEntry && dataConditionEntry.FalseConditionValue == null)
+                        {
+                            DiagnosticUtils.AddError(set, $"A condition-name was specified in a \"SET TO FALSE\" statement, but no \"WHEN FALSE\" value was defined for \"{dataCondition.Name}\".", setConditions);
+                        }
+                    }
+                }
+            }
+
+            SetStatementChecker.CheckStatement(set);
             return true;
         }
 
@@ -491,7 +506,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         else 
                         {
                             //Special check for 88 level definitions that are children of a selected used key.
-                            if (usedKey.CodeElement?.LevelNumber?.Value == 88 &&
+                            if (usedKey.CodeElement?.Type == CodeElementType.DataConditionEntry &&
                                 usedKey.Parent is DataDefinition parentUsedKey &&
                                 usedKeys.ContainsKey(parentUsedKey.Name))
                             {
@@ -656,12 +671,12 @@ namespace TypeCobol.Compiler.Diagnostics
             if (levelNumber != null)
             {
                 var dataDefinitionParent = (dataDefinition.Parent as DataDefinition);
-                var levelNumberValue = levelNumber.Value;
+                var codeElementType = dataDefinitionEntry.Type;
                 if (dataDefinitionParent != null)
                 {
                     //Check if DataDefinition is level 88 and declared under a Type BOOL variable
-                    //Perf note: first compare levelNumberValue because it's faster than DataType
-                    if (levelNumberValue == 88 && dataDefinitionParent.DataType == DataType.Boolean)
+                    //Perf note: first compare CodeElementType because it's faster than DataType
+                    if (codeElementType == CodeElementType.DataConditionEntry && dataDefinitionParent.DataType == DataType.Boolean)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
                             "The Level 88 symbol '" + dataDefinition.Name +
@@ -672,6 +687,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     //Parent is not a DataDefinition so it's a top level data definition under a section (eg working-storage)
                     //These top level DataDefinition can only be level 01 or 77
+                    var levelNumberValue = levelNumber.Value;
                     if (!(levelNumberValue == 01 || levelNumberValue == 77))
                     {
                         DiagnosticUtils.AddError(dataDefinition,
@@ -681,7 +697,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 //Level 88 and 66 cannot have Children.
-                if ((levelNumberValue == 88 || levelNumberValue == 66))
+                if ((codeElementType == CodeElementType.DataConditionEntry || codeElementType == CodeElementType.DataRenamesEntry))
                 {
                     if (dataDefinition.ChildrenCount != 0)
                     {

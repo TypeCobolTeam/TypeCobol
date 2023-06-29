@@ -274,7 +274,7 @@ namespace TypeCobol.Compiler.Nodes
     /// <param name="IsBlankWheneZero">Is set to true if current data have the option "BLANK WHEN ZERO"</param>
     /// <param name="Justified">Is set to true if current data have the option "JUSTIFIED RIGHT"</param>
     /// <param name="IsLevel77">Is set to true if current data is defined in level 77</param>
-    /// <param name="IsLevel88">Is set to true if current data is defined in level 77</param>
+    /// <param name="IsLevel88">Is set to true if current data is defined in level 88</param>
     /// <param name="ConditionValues">(only for level 88 data) contains an array of the equality conditions defined</param>
     /// <param name="ConditionValuesRanges">(only for level 88 data) contains an array of the interval conditions defined</param>
     /// <param name="DocDataType">Contains the information relative to the type data type(Usage, Occurs, Value, PIC ...)</param>
@@ -342,7 +342,7 @@ namespace TypeCobol.Compiler.Nodes
             if (ce != null)
             {
                 IsLevel77 = ce.LevelNumber?.Value == 77;
-                IsLevel88 = ce.LevelNumber?.Value == 88;
+                IsLevel88 = ce.Type == CodeElementType.DataConditionEntry;
                 if (IsLevel88)
                 {
                     DataConditionEntry ceCondition = dataDef.CodeElement as DataConditionEntry;

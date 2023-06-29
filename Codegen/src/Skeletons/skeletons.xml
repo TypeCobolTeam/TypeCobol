@@ -78,7 +78,7 @@
   <!-- replace SET <boolean> TO FALSE -->
   <skeleton name="BOOL.SET" var="receiver">
     <conditions>
-      <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
+      <condition node="TypeCobol.Compiler.Nodes.Set" istypecobolsettofalse="true"/>
     </conditions>
     <patterns>
       <pattern name = "BOOL.SET" location="NODE" action="replace">

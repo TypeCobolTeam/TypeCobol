@@ -885,6 +885,41 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
             }
+
+            if (node.StorageAreaWritesDataDefinition != null && node.CodeElement is SetStatementForConditions setConditions && setConditions.IsSendingValueFalse)
+            {
+                // Statement is a SET TO FALSE: check whether it mixes variables of type BOOL and Level 88
+                bool hasBool = false;
+                bool hasLevel88 = false;
+                string errorMessage = "Mixing TypeCobol BOOL variables with Level 88 in the same \"SET\" statement is not allowed. Consider splitting it into 2 separate statements.";
+                foreach (var condition in setConditions.Conditions)
+                {
+                    if (condition.StorageArea != null && node.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition))
+                    {
+                        if (dataCondition?.CodeElement.Type == CodeElementType.DataConditionEntry)
+                        {
+                            hasLevel88 = true;
+                            if (hasBool)
+                            {
+                                DiagnosticUtils.AddError(node, errorMessage);
+                                break;
+                            }
+                        }
+                        else if (dataCondition?.CodeElement is DataDescriptionEntry dataDescriptionEntry && dataDescriptionEntry.DataType == DataType.Boolean)
+                        {
+                            hasBool = true;
+                            if (hasLevel88)
+                            {
+                                DiagnosticUtils.AddError(node, errorMessage);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Set a flag to remember this check
+                node.SetFlag(Node.Flag.IsTypeCobolSetToFalse, hasBool && !hasLevel88);
+            }
         }
     }
 

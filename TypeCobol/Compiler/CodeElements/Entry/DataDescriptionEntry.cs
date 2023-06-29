@@ -1103,6 +1103,13 @@ namespace TypeCobol.Compiler.CodeElements {
         /// </summary>
         public ValuesRange[] ConditionValuesRanges { get; set; }
 
+        /// <summary>
+        /// When a condition-name is referenced in a SET TO FALSE statement, this value (a literal
+        /// defined in the FALSE phrase) is placed in the associated conditional variable.
+        /// </summary>
+        [CanBeNull]
+        public Value FalseConditionValue { get; set; }
+
         public override DataType DataType { get { return DataType.Level88; } }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
