@@ -36,10 +36,12 @@ namespace TypeCobol.Tools.Options_Config
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
 
 #if EUROINFO_RULES
-        public bool UseEuroInformationLegacyReplacingSyntax = true;
+        public bool EILegacy_RemoveFirst01Level = true;
+        public bool EILegacy_ApplyCopySuffixing = true;
         public string ReportUsedCopyNamesPath;
 #else
-        public bool UseEuroInformationLegacyReplacingSyntax = false;
+        public bool EILegacy_RemoveFirst01Level = false;
+        public bool EILegacy_ApplyCopySuffixing = false;
 #endif
         // Checks
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
@@ -282,7 +284,9 @@ namespace TypeCobol.Tools.Options_Config
                 { "alr|antlrprogparse", "Use ANTLR to parse a program.", v => typeCobolConfig.UseAntlrProgramParsing = true},
                 { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v },
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
-                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
+                { "dcs|disablecopysuffixing", "OBSOLETE - Use 'drfl' and 'dcsm' options instead.'.", v => { typeCobolConfig.EILegacy_RemoveFirst01Level = false; typeCobolConfig.EILegacy_ApplyCopySuffixing = false; } },
+                { "drfl|disableremovefirst01level", "Disable EI Legacy automatic removal of first 01 level from CPY copies.", v => typeCobolConfig.EILegacy_RemoveFirst01Level = false },
+                { "dcsm|disablecopysuffixingmechanism", "Disable EI Legacy automatic suffixing of data names from CPY copies.", v => typeCobolConfig.EILegacy_ApplyCopySuffixing = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "diag.cep|diagnostic.checkEndProgram=", "Indicate level of check end program: warning, error, info, ignore.", v => typeCobolConfig.CheckEndProgram = TypeCobolCheckOption.Parse(v) },

@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Directives
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
-            UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
+            UseEuroInformationLegacyReplacingSyntax = config.EILegacy_RemoveFirst01Level && config.EILegacy_ApplyCopySuffixing;
 
 #if EUROINFO_RULES
             CpyCopyNameMap = config.CpyCopyNameMap;

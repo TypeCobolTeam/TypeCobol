@@ -646,11 +646,11 @@ namespace TypeCobol.LanguageServer
             if (Configuration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;
 
-            if (Configuration.UseEuroInformationLegacyReplacingSyntax)
-            {
+            if (Configuration.EILegacy_RemoveFirst01Level)
                 EILegacy_RemoveFirst01Level = true;
+
+            if (Configuration.EILegacy_ApplyCopySuffixing)
                 EILegacy_ApplyCopySuffixing = true;
-            }
 
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
                 Configuration.ExecToStep = ExecutionStep.CodeAnalysis; //Language Server does not support Cobol Generation for now

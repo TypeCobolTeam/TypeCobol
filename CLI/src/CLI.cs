@@ -253,7 +253,7 @@ namespace TypeCobol.Server
             foreach (var textNameVariation in usedCopies)
             {
 #if EUROINFO_RULES
-                string copyName = _configuration.UseEuroInformationLegacyReplacingSyntax
+                string copyName = _configuration.EILegacy_ApplyCopySuffixing
                     ? textNameVariation.TextName
                     : textNameVariation.TextNameWithSuffix;
 #else
