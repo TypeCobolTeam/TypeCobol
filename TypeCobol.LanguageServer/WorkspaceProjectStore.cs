@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
@@ -81,7 +79,7 @@ namespace TypeCobol.LanguageServer
             var defaultOptions = new TypeCobolOptions()
             {
                 UseAntlrProgramParsing = _workspace.UseAntlrProgramParsing,
-                UseEuroInformationLegacyReplacingSyntax = _workspace.UseEuroInformationLegacyReplacingSyntax
+                UseEuroInformationLegacyReplacingSyntax = _workspace.EILegacy_RemoveFirst01Level && _workspace.EILegacy_ApplyCopySuffixing
             };
             //We don't have the information about the real RootDirectory.
             //We use the RootDirectory from the Workspace because it has no consequences as long as
