@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             if (HasReplacingDirective
 #if EUROINFO_RULES
-                || CompilerOptions.UseEuroInformationLegacyReplacingSyntax && (CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar)
+                || (CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar)
 #endif
                )
             {

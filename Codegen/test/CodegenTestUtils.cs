@@ -33,7 +33,8 @@ namespace TypeCobol.Codegen {
         {
             var options = new TypeCobolOptions() {
                                                      OptimizeWhitespaceScanning = false,
-                                                     UseEuroInformationLegacyReplacingSyntax = enableRemarksParsingAndGeneration
+                                                     EILegacy_RemoveFirst01Level = enableRemarksParsingAndGeneration,
+                                                     EILegacy_ApplyCopySuffixing = enableRemarksParsingAndGeneration
                                                  };
 #if EUROINFO_RULES
             if (cpyCopyNamesMapFilePath != null) options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesMapFilePath);

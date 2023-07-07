@@ -79,7 +79,8 @@ namespace TypeCobol.LanguageServer
             var defaultOptions = new TypeCobolOptions()
             {
                 UseAntlrProgramParsing = _workspace.UseAntlrProgramParsing,
-                UseEuroInformationLegacyReplacingSyntax = _workspace.EILegacy_RemoveFirst01Level && _workspace.EILegacy_ApplyCopySuffixing
+                EILegacy_RemoveFirst01Level = _workspace.EILegacy_RemoveFirst01Level,
+                EILegacy_ApplyCopySuffixing = _workspace.EILegacy_ApplyCopySuffixing
             };
             //We don't have the information about the real RootDirectory.
             //We use the RootDirectory from the Workspace because it has no consequences as long as

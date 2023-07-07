@@ -97,13 +97,15 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 var variation = RemarksDirective.TextNameVariation.FindOrAdd(CopyTextNameVariations, copy);
 
 #if  EUROINFO_RULES
-                if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
+                bool removeFirst01Level = TypeCobolOptions.EILegacy_RemoveFirst01Level;
+                bool applyCopySuffixing = TypeCobolOptions.EILegacy_ApplyCopySuffixing;
+                if (removeFirst01Level || applyCopySuffixing)
                 {
                     if (this.TypeCobolOptions.IsCpyCopy(variation.TextName))
                     {
                         // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
-                        copy.RemoveFirst01Level = true;
-                        if (variation.HasSuffix)
+                        copy.RemoveFirst01Level = removeFirst01Level;
+                        if (applyCopySuffixing && variation.HasSuffix)
                         {
                             copy.TextName = variation.TextName;
                             copy.Suffix = variation.Suffix;

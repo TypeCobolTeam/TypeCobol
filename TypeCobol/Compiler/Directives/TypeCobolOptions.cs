@@ -34,24 +34,25 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
 
-        /// <summary>
-        /// Shall we use EI legacy replacing mechanism when including copys ?
-        /// </summary>
-        public bool UseEuroInformationLegacyReplacingSyntax
-        {
-            get { return _useEuroInformationLegacyReplacingSyntax; }
-            set { _useEuroInformationLegacyReplacingSyntax = value; }
-        }
-
 #if EUROINFO_RULES
-        private bool _useEuroInformationLegacyReplacingSyntax = true;
+        /// <summary>
+        /// Euro-Information Legacy REPLACING syntax: automatically remove first 01 level from included CPY copies.
+        /// </summary>
+        public bool EILegacy_RemoveFirst01Level { get; set; } = true;
+
+        /// <summary>
+        /// Euro-Information Legacy REPLACING syntax: automatically suffix data items coming
+        /// from CPY copies when they are included using an additional char at the end of their text name.
+        /// </summary>
+        public bool EILegacy_ApplyCopySuffixing { get; set; } = true;
 
         /// <summary>
         /// Instance of the CPY Copy name map
         /// </summary>
         public CopyNameMapFile? CpyCopyNameMap { get; set; }
 #else
-        private bool _useEuroInformationLegacyReplacingSyntax = false;
+        public bool EILegacy_RemoveFirst01Level { get; set; } = false;
+        public bool EILegacy_ApplyCopySuffixing { get; set; } = true;
 #endif
 
         /// <summary>
@@ -101,7 +102,8 @@ namespace TypeCobol.Compiler.Directives
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
-            UseEuroInformationLegacyReplacingSyntax = config.EILegacy_RemoveFirst01Level && config.EILegacy_ApplyCopySuffixing;
+            EILegacy_RemoveFirst01Level = config.EILegacy_RemoveFirst01Level;
+            EILegacy_ApplyCopySuffixing = config.EILegacy_ApplyCopySuffixing;
 
 #if EUROINFO_RULES
             CpyCopyNameMap = config.CpyCopyNameMap;
