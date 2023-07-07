@@ -297,7 +297,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
 #if EUROINFO_RULES
-                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
+                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a program.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
 #endif
             };
             return commonOptions;
