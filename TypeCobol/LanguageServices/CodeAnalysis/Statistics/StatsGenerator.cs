@@ -184,7 +184,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                                         copyDirectiveType = CopyDirectiveType.CopyRemarks;
                                     }
 #endif
-                                if (copyDirective.ReplaceOperations != null && copyDirective.ReplaceOperations.Count > 0)
+                                    if (copyDirective.ReplaceOperations != null && copyDirective.ReplaceOperations.Count > 0)
                                     {
                                         copyDirectiveType = CopyDirectiveType.CopyReplacing;
                                     }
