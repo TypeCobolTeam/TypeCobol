@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.Directives
         public CopyNameMapFile? CpyCopyNameMap { get; set; }
 #else
         public bool EILegacy_RemoveFirst01Level { get; set; } = false;
-        public bool EILegacy_ApplyCopySuffixing { get; set; } = true;
+        public bool EILegacy_ApplyCopySuffixing { get; set; } = false;
 #endif
 
         /// <summary>
