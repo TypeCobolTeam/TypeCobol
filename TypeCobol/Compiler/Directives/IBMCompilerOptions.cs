@@ -184,7 +184,7 @@ namespace TypeCobol.Compiler.Directives
                 case IBMCompilerOptionName.RMODE: IsActivated = true; Value = "AUTO"; break;
                 case IBMCompilerOptionName.SEQUENCE: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.SIZE: IsActivated = true; Value = "5000000"; break;
-                case IBMCompilerOptionName.SOURCE: IsActivated = true; Value = null; break;
+                case IBMCompilerOptionName.SOURCE: IsActivated = true; Value = "DEC"; break;
                 case IBMCompilerOptionName.SPACE: IsActivated = true; Value = "1"; break;
                 case IBMCompilerOptionName.SQL: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.SQLCCSID: IsActivated = true; Value = null; break;
