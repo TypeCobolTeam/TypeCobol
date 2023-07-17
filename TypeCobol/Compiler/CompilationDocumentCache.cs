@@ -105,9 +105,9 @@ namespace TypeCobol.Compiler
                     {
                         _documents.Remove(keyToRemove);
                     }
-
-                    evicted.Add(textName);
                 }
+
+                evicted.Add(textName);
             }
         }
 
