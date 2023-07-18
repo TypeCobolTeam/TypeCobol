@@ -816,6 +816,19 @@ namespace TypeCobol.Compiler.Directives
         {
             return deprecatedOptions.TryGetValue(optionWord, out warningMessage);
         }
+
+        /// <summary>
+        /// Get the option name from an option word (which can be an abbreviation or a negation)
+        /// </summary>
+        public string? GetOptionName(string optionWord)
+        {
+            if (optionWordToOptionName.TryGetValue(optionWord.ToUpper(), out IBMCompilerOptionStatus? optionStatus))
+            {
+                return optionStatus.Name.ToString();
+            }
+
+            return null;
+        }
     }
 
     /// <summary>
