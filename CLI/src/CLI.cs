@@ -252,14 +252,7 @@ namespace TypeCobol.Server
         {
             foreach (var textNameVariation in usedCopies)
             {
-#if EUROINFO_RULES
-                string copyName = _configuration.EILegacy_ApplyCopySuffixing
-                    ? textNameVariation.TextName
-                    : textNameVariation.TextNameWithSuffix;
-#else
-                string copyName = textNameVariation.TextNameWithSuffix;
-#endif
-                _usedCopies.Add(copyName);
+                _usedCopies.Add(textNameVariation.GetFileName(_configuration));
             }
         }
 

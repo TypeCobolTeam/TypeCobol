@@ -805,7 +805,8 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var usedCopy in usedCopies)
                 {
-                    if (evicted.Contains(usedCopy.TextName))
+                    string fileName = usedCopy.GetFileName(openedDocument.FileCompiler.CompilerOptions);
+                    if (evicted.Contains(fileName))
                     {
                         dependentPrograms.Add(openedDocument);
                         break;
