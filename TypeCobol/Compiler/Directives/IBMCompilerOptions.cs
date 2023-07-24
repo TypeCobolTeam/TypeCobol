@@ -628,6 +628,9 @@ namespace TypeCobol.Compiler.Directives
         // Deprecated options which are not supported anymore with the corresponding warning message to be displayed
         private static readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
 
+        // Not allowed options with the corresponding error message to be displayed
+        private static readonly IDictionary<string, string> notAllowedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
+
         /// <summary>
         /// Initialize all compiler options to their default status and value
         /// </summary>
@@ -743,7 +746,6 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["LANGUAGE"] = LANGUAGE; optionWordToOptionName["LANG"] = LANGUAGE;
             optionWordToOptionName["LINECOUNT"] = LINECOUNT; optionWordToOptionName["LC"] = LINECOUNT;
             optionWordToOptionName["LIST"] = LIST; optionWordToOptionName["NOLIST"] = LIST;
-            optionWordToOptionName["LP"] = LP;
             optionWordToOptionName["MAP"] = MAP; optionWordToOptionName["NOMAP"] = MAP;
             optionWordToOptionName["MAXPCF"] = MAXPCF;
             optionWordToOptionName["MDECK"] = MDECK; optionWordToOptionName["MD"] = MDECK; optionWordToOptionName["NOMDECK"] = MDECK; optionWordToOptionName["NOMD"] = MDECK;
@@ -784,6 +786,8 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["ZWB"] = ZWB; optionWordToOptionName["NOZWB"] = ZWB; 
 
             deprecatedOptions["LIB"] = "the \"LIB\" option specification is no longer required. COBOL library processing is always in effect.";
+
+            notAllowedOptions["LP"] = "the \"LP\" option is not allowed because only AMODE 31 (31-bit) is supported.";
         }
 
         /// <summary>
@@ -793,7 +797,7 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public bool TrySetIBMOptionStatusAndValue(string optionWord, string? optionParameters)
         {
-            if (deprecatedOptions.ContainsKey(optionWord))
+            if (deprecatedOptions.ContainsKey(optionWord) || notAllowedOptions.ContainsKey(optionWord))
             {
                 return true;
             }
@@ -815,6 +819,14 @@ namespace TypeCobol.Compiler.Directives
         public bool IsOptionDeprecated(string optionWord, [MaybeNullWhen(false)] out string warningMessage)
         {
             return deprecatedOptions.TryGetValue(optionWord, out warningMessage);
+        }
+
+        /// <summary>
+        /// If optionWord is not an allowed option this method returns the corresponding error message to be displayed
+        /// </summary>
+        public bool IsOptionNotAllowed(string optionWord, [MaybeNullWhen(false)] out string errorMessage)
+        {
+            return notAllowedOptions.TryGetValue(optionWord, out errorMessage);
         }
 
         /// <summary>

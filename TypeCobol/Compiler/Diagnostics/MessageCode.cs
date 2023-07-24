@@ -65,6 +65,7 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidCharBeforePseudoTextDelimiter = 53,
         ShouldBePrecededBySpace = 54,
         InvalidCharInsidePseudoText = 55,
-        DirectiveSyntaxWarning = 56
+        DirectiveSyntaxWarning = 56,
+        DirectiveSyntaxError = 57
     }
 }

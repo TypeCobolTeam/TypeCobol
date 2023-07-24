@@ -2255,6 +2255,11 @@ namespace TypeCobol.Compiler.Scanner
             {            
                 tokensLine.AddDiagnostic(MessageCode.InvalidCblProcessCompilerDirective, compilerDirectiveToken);
             }
+            // Add an error in case of not allowed option (a line can contain both not allowed and invalid options)
+            if (optionWord != null && compilerOptions.IsOptionNotAllowed(optionWord, out var errorMessage))
+            {
+                tokensLine.AddDiagnostic(MessageCode.DirectiveSyntaxError, compilerDirectiveToken, errorMessage);
+            }
             // Add a warning in case of deprecated option (a line can contain both deprecated and invalid options)
             if (optionWord != null && compilerOptions.IsOptionDeprecated(optionWord, out var warningMessage))
             {

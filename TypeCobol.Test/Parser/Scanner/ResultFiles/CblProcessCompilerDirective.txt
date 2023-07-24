@@ -101,7 +101,8 @@ Line 0[1,32] <56, Warning, Directives> - Warning: the "LIB" option specification
 *** DIRECTIVE CBL|NOINVD ([1,10:CBL NOINVD]<COMPILER_DIRECTIVE>) ***
 
 -- Line 32 --
-*** DIRECTIVE CBL|LP=64 ([1,10:CBL LP(64)]<COMPILER_DIRECTIVE>) ***
+*** DIRECTIVE INVALID SYNTAX -> CBL|LP=64 ([1,10:CBL LP(64)]<COMPILER_DIRECTIVE>) ***
+Line 0[1,10] <57, Error, Directives> - Error: the "LP" option is not allowed because only AMODE 31 (31-bit) is supported.
 
 -- Line 33 --
 *** DIRECTIVE CBL|NUMCHECK ([1,12:CBL NUMCHECK]<COMPILER_DIRECTIVE>) ***
