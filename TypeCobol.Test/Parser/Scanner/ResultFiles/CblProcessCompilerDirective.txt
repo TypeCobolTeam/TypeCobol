@@ -184,10 +184,10 @@ Line 0[1,10] <57, Error, Directives> - Error: the "LP" option is not allowed bec
 Line 0[1,13] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 59 --
-*** DIRECTIVE INVALID SYNTAX -> CBL|ALLOWCOPYLOC ([1,16:CBL ALLOWCOPYLOC]<COMPILER_DIRECTIVE>) ***
-Line 0[1,16] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+*** DIRECTIVE INVALID SYNTAX -> CBL|ALOWCOPYLOC ([1,15:CBL ALOWCOPYLOC]<COMPILER_DIRECTIVE>) ***
+Line 0[1,15] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 60 --
-*** DIRECTIVE INVALID SYNTAX -> CBL|ALLOWDEFINE ([1,15:CBL ALLOWDEFINE]<COMPILER_DIRECTIVE>) ***
-Line 0[1,15] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+*** DIRECTIVE INVALID SYNTAX -> CBL|ALOWDEFINE ([1,14:CBL ALOWDEFINE]<COMPILER_DIRECTIVE>) ***
+Line 0[1,14] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
