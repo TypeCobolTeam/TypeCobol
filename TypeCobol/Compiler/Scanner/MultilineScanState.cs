@@ -548,9 +548,9 @@ namespace TypeCobol.Compiler.Scanner
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.CommentEntry; }
         }
 
-        public bool AfterFUNCTION
+        public bool AfterFUNCTIONOrIntrinsicFunctionName
         {
-            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.FUNCTION; }
+            get { return LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.FUNCTION || LastSignificantToken.TokenType == TokenType.IntrinsicFunctionName); }
         }
 
         /// <summary>

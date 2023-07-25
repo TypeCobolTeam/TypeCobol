@@ -1,0 +1,30 @@
+      ****** Support REPOSITORY PARAGRAPH *****
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. pgm2536.
+Line 4[8,15] <27, Error, Syntax> - Syntax error : extraneous input 'FUNCTION' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 4[30,30] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, EnvironmentDivisionHeader, DataDivisionHeader, ProcedureDivisionHeader, LibraryCopy}
+       FUNCTION ABS INTRINSIC.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       REPOSITORY.
+           Class Base is "java.lang.Object"
+           Class Customer is "com.ei.Customer"
+Line 11[25,27] <27, Error, Syntax> - Syntax error : rule repositoryFunctionDeclaration failed predicate: { string.Equals(CurrentToken.Text, "INTRINSIC", System.StringComparison.OrdinalIgnoreCase) }?
+           FUNCTION ALL ABS INTRINSIC
+Line 12[21,32] <27, Error, Syntax> - Syntax error : mismatched input 'INVALID-NAME' expecting {intrinsic function name, ALL}
+           FUNCTION INVALID-NAME INTRINSIC.
+       DATA DIVISION.
+Line 14[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'FUNCTION' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+           FUNCTION ABS INTRINSIC.
+       WORKING-STORAGE  SECTION.
+       PROCEDURE DIVISION.
+Line 17[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'FUNCTION' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+           FUNCTION ABS TRIM INTRINSIC.
+            
+Line 19[36,37] <27, Error, Syntax> - Syntax error : extraneous input '> ' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+            IF FUNCTION ABS(10) PI > 0
+              DISPLAY "PI OK"
+            END-IF
+            GOBACK.
+       END PROGRAM pgm2536.

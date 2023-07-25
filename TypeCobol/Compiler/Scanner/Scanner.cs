@@ -2046,7 +2046,7 @@ namespace TypeCobol.Compiler.Scanner
             //.WHEN_COMPILED |
             //.YEAR_TO_YYYY;
             Debug.Assert(tokensLine.ScanState != null);
-            if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.CobolIntrinsicFunctions.IsMatch(tokenText))
+            if (tokensLine.ScanState.AfterFUNCTIONOrIntrinsicFunctionName && TokenUtils.CobolIntrinsicFunctions.IsMatch(tokenText))
             {
                 tokenType = TokenType.IntrinsicFunctionName;
             }
