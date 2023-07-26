@@ -647,7 +647,7 @@ namespace TypeCobol.Compiler.Parser
             else if (context.IntrinsicFunctionName() != null)
             {
                 paragraph.IntrinsicFunctions ??= new List<string>();
-                paragraph.IntrinsicFunctions.AddRange(context.IntrinsicFunctionName().Select(f => f.GetText()).ToList());
+                paragraph.IntrinsicFunctions.AddRange(context.IntrinsicFunctionName().Select(f => f.GetText().ToUpper()).ToList());
             }
         }
 

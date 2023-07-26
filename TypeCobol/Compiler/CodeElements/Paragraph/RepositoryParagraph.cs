@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// The REPOSITORY paragraph is used in a program or class definition to identify all
     /// the object-oriented classes that are intended to be referenced in that program or
-    /// class definition.
+    /// class definition. It also allows declaration of intrinsic function names that may be used without
+    /// specifying the keyword FUNCTION.
     /// </summary>
     public class RepositoryParagraph : CodeElement
     {
+        /// <summary>
+        /// Intrinsic functions which are not allowed in the REPOSITORY paragraph
+        /// </summary>
+        public static readonly HashSet<string> NotAllowedIntrinsicFunctions = new[] { "WHEN-COMPILED" }.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
         public RepositoryParagraph() : base(CodeElementType.RepositoryParagraph)
         { }
 
@@ -27,5 +34,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// Optionally, the REPOSITORY paragraph allows to declare one or several intrinsic functions
         /// </summary>
         public List<string> IntrinsicFunctions { get; set; }
+
+        /// <summary>
+        /// Get the tokens corresponding to intrinsic functions
+        /// </summary>
+        internal IEnumerable<Token> GetIntrinsicFunctionTokens()
+        {
+            return ConsumedTokens.Where(t => t.TokenType == TokenType.IntrinsicFunctionName);
+        }
     }
 }

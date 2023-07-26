@@ -10,7 +10,9 @@
            FUNCTION EXP COMBINED-DATETIME FORMATTED-CURRENT-DATE
            FORMATTED-DATETIME SIGN INTRINSIC
            Class Base is "java.lang.Object"
+           FUNCTION when-compiled INTRINSIC
            Class Customer is "com.ei.Customer"
+           FUNCTION WHEN-COMPILED INTRINSIC
            FUNCTION PI TRIM INTRINSIC.
        DATA DIVISION.
        WORKING-STORAGE  SECTION.

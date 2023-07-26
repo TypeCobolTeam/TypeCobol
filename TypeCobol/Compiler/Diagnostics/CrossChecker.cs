@@ -1031,6 +1031,25 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Repository repository)
+        {
+            if (repository.CodeElement is RepositoryParagraph repositoryParagraph && repositoryParagraph.IntrinsicFunctions != null)
+            {
+                var notAllowedIntrinsicFunctions = RepositoryParagraph.NotAllowedIntrinsicFunctions;
+                var intrinsicFunctionTokens = repositoryParagraph.GetIntrinsicFunctionTokens();
+                foreach (var token in intrinsicFunctionTokens)
+                {
+                    string intrinsicFunctionName = token.SourceText.ToUpper();
+                    if (notAllowedIntrinsicFunctions.Contains(intrinsicFunctionName))
+                    {
+                        DiagnosticUtils.AddError(repository, $"\"{intrinsicFunctionName}\" was specified in the \"FUNCTION\" phrase of the \"REPOSITORY\" paragraph, but the keyword \"FUNCTION\" is always required for this function.", token);
+                    }
+                }
+            }
+
+            return true;
+        }
+
         private static void CheckEnvironmentNameOrMnemonicForEnvironmentName(Node node, SymbolReference environmentOrMnemonicReference)
         {
             var name = environmentOrMnemonicReference?.Name;
