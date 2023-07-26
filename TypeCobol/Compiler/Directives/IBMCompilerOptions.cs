@@ -623,7 +623,7 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus ZWB { get; private set; }
 
         // Conversion of option words in source text to option name enumeration
-        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(63);
+        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(194);
               
         // Deprecated options which are not supported anymore with the corresponding warning message to be displayed
         private static readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
@@ -832,11 +832,11 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Get the option name from an option word (which can be an abbreviation or a negation)
         /// </summary>
-        public string? GetOptionName(string optionWord)
+        public IBMCompilerOptionName? GetOptionName(string optionWord)
         {
             if (optionWordToOptionName.TryGetValue(optionWord.ToUpper(), out IBMCompilerOptionStatus? optionStatus))
             {
-                return optionStatus.Name.ToString();
+                return optionStatus.Name;
             }
 
             return null;
