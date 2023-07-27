@@ -213,7 +213,7 @@ namespace TypeCobol.Compiler.Directives
             // Special case QUOTE / APOST
             if(Name == IBMCompilerOptionName.QUOTE)
             {
-                if(optionWord == "APOST")
+                if(optionWord.Equals("APOST", StringComparison.OrdinalIgnoreCase))
                 {
                     IsActivated = false;
                 }
@@ -225,7 +225,7 @@ namespace TypeCobol.Compiler.Directives
             // For all other option words, the format is word/NOword or abbr/NOabbr
             else
             {
-                if(optionWord.StartsWith("NO"))
+                if(optionWord.StartsWith("NO", StringComparison.OrdinalIgnoreCase))
                 {
                     IsActivated = false;
                 }
@@ -623,7 +623,7 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus ZWB { get; private set; }
 
         // Conversion of option words in source text to option name enumeration
-        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(194);
+        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(194, StringComparer.OrdinalIgnoreCase);
               
         // Deprecated options which are not supported anymore with the corresponding warning message to be displayed
         private static readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
@@ -802,10 +802,9 @@ namespace TypeCobol.Compiler.Directives
                 return true;
             }
 
-            string optionWordUpper = optionWord.ToUpper();
-            if (optionWordToOptionName.TryGetValue(optionWordUpper, out var optionStatus))
+            if (optionWordToOptionName.TryGetValue(optionWord, out var optionStatus))
             {
-                return optionStatus.SetStatusAndValue(optionWordUpper, optionParameters);
+                return optionStatus.SetStatusAndValue(optionWord, optionParameters);
             }
             else
             {
@@ -837,7 +836,7 @@ namespace TypeCobol.Compiler.Directives
         /// <returns>true if there is an option name corresponding to the option word, false otherwise</returns>
         public bool TryGetOptionName(string optionWord, out IBMCompilerOptionName optionName)
         {
-            if (optionWordToOptionName.TryGetValue(optionWord.ToUpper(), out IBMCompilerOptionStatus? optionStatus))
+            if (optionWordToOptionName.TryGetValue(optionWord, out IBMCompilerOptionStatus? optionStatus))
             {
                 optionName = optionStatus.Name;
                 return true;
