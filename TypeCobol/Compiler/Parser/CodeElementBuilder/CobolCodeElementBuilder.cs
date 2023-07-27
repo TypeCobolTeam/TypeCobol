@@ -11,7 +11,6 @@ using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler.Sql.CodeElements;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Parser
 {
