@@ -12,11 +12,6 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class RepositoryParagraph : CodeElement
     {
-        /// <summary>
-        /// Intrinsic functions which are not allowed in the REPOSITORY paragraph
-        /// </summary>
-        public static readonly HashSet<string> NotAllowedIntrinsicFunctions = new[] { "WHEN-COMPILED" }.ToHashSet(StringComparer.OrdinalIgnoreCase);
-
         public RepositoryParagraph() : base(CodeElementType.RepositoryParagraph)
         { }
 
@@ -28,19 +23,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Optionally, the REPOSITORY paragraph allows to declare all intrinsic functions
         /// </summary>
-        public bool IsAllIntrinsicFunctions { get; set; }
+        public SyntaxProperty<bool> IsAllIntrinsicFunctions { get; set; }
 
         /// <summary>
         /// Optionally, the REPOSITORY paragraph allows to declare one or several intrinsic functions
         /// </summary>
-        public List<string> IntrinsicFunctions { get; set; }
-
-        /// <summary>
-        /// Get the tokens corresponding to intrinsic functions
-        /// </summary>
-        internal IEnumerable<Token> GetIntrinsicFunctionTokens()
-        {
-            return ConsumedTokens.Where(t => t.TokenType == TokenType.IntrinsicFunctionName);
-        }
+        public List<SymbolDefinitionOrReference> IntrinsicFunctions { get; set; }
     }
 }

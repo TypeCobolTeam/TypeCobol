@@ -411,6 +411,14 @@ namespace TypeCobol.Compiler.Parser
             return symbolDefinitionOrReference;
         }
 
+        internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(ITerminalNode node, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(node);
+            var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
+            AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
+            return symbolDefinitionOrReference;
+        }
+
         [CanBeNull]
         internal ExternalName CreateExternalName(CodeElementsParser.ExternalName1Context context, SymbolType symbolType, Type enumType)
         {

@@ -10,7 +10,7 @@
            FUNCTION EXP COMBINED-DATETIME FORMATTED-CURRENT-DATE
            FORMATTED-DATETIME SIGN INTRINSIC
            Class Base is "java.lang.Object"
-Line 13[21,33] <27, Error, Syntax> - Syntax error : "WHEN-COMPILED" was specified in the "FUNCTION" phrase of the "REPOSITORY" paragraph, but the keyword "FUNCTION" is always required for this function.
+Line 13[21,33] <27, Error, Syntax> - Syntax error : "when-compiled" was specified in the "FUNCTION" phrase of the "REPOSITORY" paragraph, but the keyword "FUNCTION" is always required for this function.
            FUNCTION when-compiled INTRINSIC
            Class Customer is "com.ei.Customer"
 Line 15[21,33] <27, Error, Syntax> - Syntax error : "WHEN-COMPILED" was specified in the "FUNCTION" phrase of the "REPOSITORY" paragraph, but the keyword "FUNCTION" is always required for this function.

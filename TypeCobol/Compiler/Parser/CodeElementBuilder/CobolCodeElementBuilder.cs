@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler.Sql.CodeElements;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -638,16 +639,16 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = paragraph;
         }
 
-        private static void AddFunctionDeclaration(RepositoryParagraph paragraph, CodeElementsParser.RepositoryFunctionDeclarationContext context)
+        private void AddFunctionDeclaration(RepositoryParagraph paragraph, CodeElementsParser.RepositoryFunctionDeclarationContext context)
         {
             if (context.ALL() != null)
             {
-                paragraph.IsAllIntrinsicFunctions = true;
+                paragraph.IsAllIntrinsicFunctions = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.ALL()));
             }
             else if (context.IntrinsicFunctionName() != null)
             {
-                paragraph.IntrinsicFunctions ??= new List<string>();
-                paragraph.IntrinsicFunctions.AddRange(context.IntrinsicFunctionName().Select(f => f.GetText().ToUpper()).ToList());
+                paragraph.IntrinsicFunctions ??= new List<SymbolDefinitionOrReference>();
+                paragraph.IntrinsicFunctions.AddRange(context.IntrinsicFunctionName().Select(f => _cobolWordsBuilder.CreateSymbolDefinitionOrReference(f, SymbolType.IntrinsicFunctionName)));
             }
         }
 
