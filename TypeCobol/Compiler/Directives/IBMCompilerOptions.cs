@@ -832,14 +832,19 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Get the option name from an option word (which can be an abbreviation or a negation)
         /// </summary>
-        public IBMCompilerOptionName? GetOptionName(string optionWord)
+        /// <param name="optionWord">the option word</param>
+        /// <param name="optionName">the option name (if any) corresponding to the option word, otherwise the enum's default value</param>
+        /// <returns>true if there is an option name corresponding to the option word, false otherwise</returns>
+        public bool TryGetOptionName(string optionWord, out IBMCompilerOptionName optionName)
         {
             if (optionWordToOptionName.TryGetValue(optionWord.ToUpper(), out IBMCompilerOptionStatus? optionStatus))
             {
-                return optionStatus.Name;
+                optionName = optionStatus.Name;
+                return true;
             }
 
-            return null;
+            optionName = default;
+            return false;
         }
     }
 
