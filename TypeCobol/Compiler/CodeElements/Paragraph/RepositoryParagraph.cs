@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
