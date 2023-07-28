@@ -707,6 +707,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
     static class RepositoryParagraphChecker
     {
+        // Intrinsic functions which are not allowed in the REPOSITORY paragraph
+        private static readonly HashSet<string> _NotAllowedIntrinsicFunctions = new(StringComparer.OrdinalIgnoreCase) { "WHEN-COMPILED" };
+
         public static void OnCodeElement(RepositoryParagraph paragraph, CodeElementsParser.RepositoryParagraphContext context)
         {
             List<SymbolDefinitionOrReference> intrinsicFunctions = paragraph.IntrinsicFunctions;
@@ -716,7 +719,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     Token token = intrinsicFunction.NameLiteral.Token;
                     var intrinsicFunctionName = intrinsicFunction.Name;
-                    if (!RepositoryParagraph.IsAllowedIntrinsicFunction(intrinsicFunctionName))
+                    if (_NotAllowedIntrinsicFunctions.Contains(intrinsicFunctionName))
                     {
                         DiagnosticUtils.AddError(paragraph, $"\"{intrinsicFunctionName}\" was specified in the \"FUNCTION\" phrase of the \"REPOSITORY\" paragraph, but the keyword \"FUNCTION\" is always required for this function.", token);
                     }

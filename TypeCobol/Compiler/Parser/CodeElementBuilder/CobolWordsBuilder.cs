@@ -398,22 +398,22 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference1Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericLiteralToken());
-            var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
-            return symbolDefinitionOrReference;
+            return CreateSymbolDefinitionOrReference(nameLiteral, symbolType);
         }
 
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference4Context context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
-            var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
-            return symbolDefinitionOrReference;
+            return CreateSymbolDefinitionOrReference(context.UserDefinedWord(), symbolType);
         }
 
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(ITerminalNode node, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(node);
+            return CreateSymbolDefinitionOrReference(nameLiteral, symbolType);
+        }
+
+        private SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(AlphanumericValue nameLiteral, SymbolType symbolType)
+        {
             var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
             return symbolDefinitionOrReference;
