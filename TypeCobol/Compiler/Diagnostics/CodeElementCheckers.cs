@@ -6,6 +6,7 @@ using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -704,5 +705,24 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    static class RepositoryParagraphChecker
+    {
+        public static void OnCodeElement(RepositoryParagraph paragraph, CodeElementsParser.RepositoryParagraphContext context)
+        {
+            List<SymbolDefinitionOrReference> intrinsicFunctions = paragraph.IntrinsicFunctions;
+            if (intrinsicFunctions != null)
+            {
+                foreach (var intrinsicFunction in intrinsicFunctions)
+                {
+                    Token token = intrinsicFunction.NameLiteral.Token;
+                    var intrinsicFunctionName = intrinsicFunction.Name;
+                    if (!RepositoryParagraph.IsAllowedIntrinsicFunction(intrinsicFunctionName))
+                    {
+                        DiagnosticUtils.AddError(paragraph, $"\"{intrinsicFunctionName}\" was specified in the \"FUNCTION\" phrase of the \"REPOSITORY\" paragraph, but the keyword \"FUNCTION\" is always required for this function.", token);
+                    }
+                }
+            }
+        }
+    }
     #endregion
 }
