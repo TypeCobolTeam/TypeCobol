@@ -646,8 +646,20 @@ namespace TypeCobol.Compiler.Parser
             }
             else if (context.IntrinsicFunctionName() != null)
             {
-                paragraph.IntrinsicFunctions ??= new List<SymbolDefinitionOrReference>();
-                paragraph.IntrinsicFunctions.AddRange(context.IntrinsicFunctionName().Select(f => _cobolWordsBuilder.CreateSymbolDefinitionOrReference(f, SymbolType.IntrinsicFunctionName)));
+                foreach (var intrinsicFunction in context.IntrinsicFunctionName())
+                {
+                    Token token = ParseTreeUtils.GetFirstToken(intrinsicFunction);
+                    var intrinsicFunctionName = token.SourceText;
+                    if (RepositoryParagraph.NotAllowedIntrinsicFunctions.Contains(intrinsicFunctionName))
+                    {
+                        DiagnosticUtils.AddError(paragraph, $"\"{intrinsicFunctionName}\" was specified in the \"FUNCTION\" phrase of the \"REPOSITORY\" paragraph, but the keyword \"FUNCTION\" is always required for this function.", token);
+                    }
+                    else
+                    {
+                        paragraph.IntrinsicFunctions ??= new List<SymbolDefinitionOrReference>();
+                        paragraph.IntrinsicFunctions.Add(_cobolWordsBuilder.CreateSymbolDefinitionOrReference(intrinsicFunction, SymbolType.IntrinsicFunctionName));
+                    }
+                }
             }
         }
 

@@ -12,6 +12,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class RepositoryParagraph : CodeElement
     {
+        // Intrinsic functions which are not allowed in the REPOSITORY paragraph
+        internal static readonly HashSet<string> NotAllowedIntrinsicFunctions = new(StringComparer.OrdinalIgnoreCase) { "WHEN-COMPILED" };
+
         public RepositoryParagraph() : base(CodeElementType.RepositoryParagraph)
         { }
 

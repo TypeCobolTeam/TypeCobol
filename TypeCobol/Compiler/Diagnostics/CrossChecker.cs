@@ -1031,13 +1031,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public override bool Visit(Repository repository)
-        {
-            RepositoryChecker.OnNode(repository);
-
-            return true;
-        }
-
         private static void CheckEnvironmentNameOrMnemonicForEnvironmentName(Node node, SymbolReference environmentOrMnemonicReference)
         {
             var name = environmentOrMnemonicReference?.Name;
@@ -1789,28 +1782,5 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-    }
-
-    static class RepositoryChecker
-    {
-        // Intrinsic functions which are not allowed in the REPOSITORY paragraph
-        private static readonly HashSet<string> _NotAllowedIntrinsicFunctions = new(StringComparer.OrdinalIgnoreCase){ "WHEN-COMPILED" };
-
-        public static void OnNode([NotNull] Repository repository)
-        {
-            List<SymbolDefinitionOrReference> intrinsicFunctions = repository.CodeElement.IntrinsicFunctions;
-            if (intrinsicFunctions != null)
-            {
-                foreach (var intrinsicFunction in intrinsicFunctions)
-                {
-                    Token token = intrinsicFunction.NameLiteral.Token;
-                    var intrinsicFunctionName = token.SourceText;
-                    if (_NotAllowedIntrinsicFunctions.Contains(intrinsicFunctionName))
-                    {
-                        DiagnosticUtils.AddError(repository, $"\"{intrinsicFunctionName}\" was specified in the \"FUNCTION\" phrase of the \"REPOSITORY\" paragraph, but the keyword \"FUNCTION\" is always required for this function.", token);
-                    }
-                }
-            }
-        }
     }
 }
