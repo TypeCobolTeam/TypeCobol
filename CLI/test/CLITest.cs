@@ -201,6 +201,8 @@ namespace CLI.Test
         {
 #if EUROINFO_RULES
             CLITestHelper.Test("replacingSyntaxOption", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("replacingSyntaxOption_OnlyApplyCopySuffixing", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("replacingSyntaxOption_OnlyRemoveFirst01Level", ReturnCode.MissingCopy);
 #endif
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 
@@ -69,10 +70,11 @@ namespace TypeCobol.Compiler
                 var importedCopies = document.Value.CopyTextNamesVariations;
                 foreach (var importedCopy in importedCopies)
                 {
-                    if (!importedBy.TryGetValue(importedCopy.TextName, out var dependentCopies))
+                    string fileName = importedCopy.GetFileName(document.Value.CompilerOptions);
+                    if (!importedBy.TryGetValue(fileName, out var dependentCopies))
                     {
                         dependentCopies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                        importedBy.Add(importedCopy.TextName, dependentCopies);
+                        importedBy.Add(fileName, dependentCopies);
                     }
 
                     dependentCopies.Add(copy);
@@ -105,9 +107,9 @@ namespace TypeCobol.Compiler
                     {
                         _documents.Remove(keyToRemove);
                     }
-
-                    evicted.Add(textName);
                 }
+
+                evicted.Add(textName);
             }
         }
 

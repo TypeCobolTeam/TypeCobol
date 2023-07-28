@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.Scanner
             int lastIndex = textLine.Source.EndIndex;
 
 #if EUROINFO_RULES
-            if (compilerOptions.UseEuroInformationLegacyReplacingSyntax && !compilerOptions.IsCobolLanguage)
+            if (compilerOptions.EILegacy_RemoveFirst01Level && compilerOptions.EILegacy_ApplyCopySuffixing && !compilerOptions.IsCobolLanguage)
             {
                 if (tokensLine.ScanState.LeavingRemarksDirective) //If last scanned line was the end of a remarksDirective then mark scanstate as outside of remarksDirective for this new line
                     tokensLine.ScanState.InsideRemarksDirective = tokensLine.ScanState.LeavingRemarksDirective = false;

@@ -71,54 +71,51 @@ namespace TypeCobol.Compiler.Preprocessor
             }
 
 #if EUROINFO_RULES
-            if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
+            // Support for legacy replacing syntax semantics : 
+            // Remove the first 01 level data item found in the COPY text
+            // before copying it into the main program
+            // But do not remove data from debug lines
+            if (_copyReplacingDirective.RemoveFirst01Level && nextToken.TokensLine.Type != CobolTextLineType.Debug)
             {
-                // Support for legacy replacing syntax semantics : 
-                // Remove the first 01 level data item found in the COPY text
-                // before copying it into the main program
-                // But do not remove data from debug lines
-                if (_copyReplacingDirective != null && _copyReplacingDirective.RemoveFirst01Level && nextToken.TokensLine.Type != CobolTextLineType.Debug)
+                //A Data description entry starts with an integer literal
+                if (nextToken.TokenType == TokenType.LevelNumber)
                 {
-                    //A Data description entry starts with an integer literal
-                    if (nextToken.TokenType == TokenType.LevelNumber)
+                    if (nextToken.Text == "01" && nextToken.Column < 10)
                     {
-                        if (nextToken.Text == "01" && nextToken.Column < 10)
+                        var firstLevelFound = true;
+                        // Skip all tokens after 01 until the next period separator 
+                        while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
                         {
-                            var firstLevelFound = true;
-                            // Skip all tokens after 01 until the next period separator 
-                            while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
+                            nextToken = SourceIteratorNextToken();
+
+                            if (nextToken.TokenType == TokenType.PeriodSeparator)
                             {
                                 nextToken = SourceIteratorNextToken();
-
-                                if (nextToken.TokenType == TokenType.PeriodSeparator)
-                                {
-                                    nextToken = SourceIteratorNextToken();
-                                    if (nextToken.Text != "01" || nextToken.Column > 9)
-                                        firstLevelFound = false;
-                                }
+                                if (nextToken.Text != "01" || nextToken.Column > 9)
+                                    firstLevelFound = false;
                             }
                         }
                     }
                 }
+            }
 
-                // Support for legacy replacing syntax semantics : 
-                // Insert Suffix before the first '-' in all user defined words found in the COPY text 
-                // before copying it into the main program
-                if (_copyReplacingDirective != null && _copyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
+            // Support for legacy replacing syntax semantics : 
+            // Insert Suffix before the first '-' in all user defined words found in the COPY text 
+            // before copying it into the main program
+            if (_copyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
+            {
+                string originalText = nextToken.Text;
+                if (originalText.IndexOf(_copyReplacingDirective.PreSuffix, StringComparison.Ordinal) > -1)
                 {
-                    string originalText = nextToken.Text;
-                    if (originalText.IndexOf(_copyReplacingDirective.PreSuffix, StringComparison.Ordinal) > -1)
+                    string replacement = _copyReplacingDirective.PreSuffix.Insert(3, _copyReplacingDirective.Suffix);
+                    string replacedText = originalText.Replace(_copyReplacingDirective.PreSuffix, replacement);
+                    int additionalSpaceRequired = replacedText.Length - originalText.Length;
+                    if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
                     {
-                        string replacement = _copyReplacingDirective.PreSuffix.Insert(3, _copyReplacingDirective.Suffix);
-                        string replacedText = originalText.Replace(_copyReplacingDirective.PreSuffix, replacement);
-                        int additionalSpaceRequired = replacedText.Length - originalText.Length;
-                        if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
-                        {
-                            TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText, nextToken.TokensLine.ColumnsLayout);
-                            Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
+                        TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText, nextToken.TokensLine.ColumnsLayout);
+                        Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
 
-                            nextToken = new ReplacedToken(replacementToken, nextToken);
-                        }
+                        nextToken = new ReplacedToken(replacementToken, nextToken);
                     }
                 }
             }

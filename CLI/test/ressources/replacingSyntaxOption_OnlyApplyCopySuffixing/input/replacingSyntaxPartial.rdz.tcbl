@@ -1,0 +1,41 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZS0OSM.
+       
+       data division.
+       working-storage section.
+       
+       COPY YCONVEA.
+       COPY YCONVEAL.
+       
+       PROCEDURE DIVISION.
+      * Data items from non-suffixed copy / 01 level is kept
+      * Ambiguous
+           DISPLAY CONVEA
+           DISPLAY CONVEA-VEA-VEA-OUT-VEA
+           DISPLAY CONVEA-VEA-VEA-OUT-VEA-2
+      * Ambiguous
+           DISPLAY CONVEA
+           DISPLAY CONVEA-VEA
+      * Ambiguous
+           DISPLAY ANOTHER-DATA
+           DISPLAY CONVEA-VEATEST
+           DISPLAY CONVEA-TESTVEA
+           DISPLAY CONVEA-TESTVEA-TEST
+           DISPLAY CONVEA-TESTVEATEST
+      * Data items from suffixed copy / 01 level is kept
+      * Ambiguous
+           DISPLAY CONVEA
+           DISPLAY CONVEAL-VEAL-VEAL-OUT-VEA
+           DISPLAY CONVEAL-VEAL-VEAL-OUT-VEAL-2
+      * Ambiguous
+           DISPLAY CONVEA
+           DISPLAY CONVEAL-VEA
+      * Ambiguous
+           DISPLAY ANOTHER-DATA
+           DISPLAY CONVEAL-VEATEST
+           DISPLAY CONVEAL-TESTVEA
+           DISPLAY CONVEAL-TESTVEAL-TEST
+           DISPLAY CONVEAL-TESTVEATEST
+           GOBACK
+           .
+       END PROGRAM DVZS0OSM.

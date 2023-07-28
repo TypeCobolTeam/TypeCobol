@@ -175,8 +175,6 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                                     // + count COPY directives
                                     CopyDirectiveType copyDirectiveType = CopyDirectiveType.Copy;
 #if EUROINFO_RULES
-                                if (compilationResult.CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
-                                {
                                     if (copyDirective.InsertSuffixChar)
                                     {
                                         copyDirectiveType = CopyDirectiveType.CopyReplacingRemarks;
@@ -185,8 +183,6 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                                     {
                                         copyDirectiveType = CopyDirectiveType.CopyRemarks;
                                     }
-                                }
-                                    
 #endif
                                     if (copyDirective.ReplaceOperations != null && copyDirective.ReplaceOperations.Count > 0)
                                     {

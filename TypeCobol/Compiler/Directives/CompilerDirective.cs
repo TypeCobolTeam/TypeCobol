@@ -3,6 +3,7 @@
 using System.Text;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Directives
 {
@@ -976,6 +977,41 @@ namespace TypeCobol.Compiler.Directives
         }
     }
 
+    public static class TextNameVariationExtensions
+    {
+        private static string GetFileName(RemarksDirective.TextNameVariation variation, bool applyCopySuffixing)
+        {
+#if EUROINFO_RULES
+            /*
+             * For regular copies, the file has the name of the text-name itself.
+             * However for suffixed copy with server-side copy suffixing enabled, there is no physical file.
+             * The content is derived from the corresponding base copy, so return text-name without suffix.
+             */
+            return applyCopySuffixing ? variation.TextName : variation.TextNameWithSuffix;
+#else
+            // No suffixing involved, return full text-name
+            return variation.TextNameWithSuffix;
+#endif
+        }
+
+        /// <summary>
+        /// Get the expected file name for the given variation.
+        /// </summary>
+        /// <param name="variation">TextNameVariation instance, must be non-null</param>
+        /// <param name="options">TypeCobolOptions instance, must be non-null</param>
+        /// <returns>The name of the physical file in which the content for this variation is expected to be found.</returns>
+        public static string GetFileName(this RemarksDirective.TextNameVariation variation, TypeCobolOptions options) =>
+            GetFileName(variation, options.EILegacy_ApplyCopySuffixing);
+
+        /// <summary>
+        /// Get the expected file name for the given variation.
+        /// </summary>
+        /// <param name="variation">TextNameVariation instance, must be non-null</param>
+        /// <param name="configuration">TypeCobolConfiguration instance, must be non-null</param>
+        /// <returns>The name of the physical file in which the content for this variation is expected to be found.</returns>
+        public static string GetFileName(this RemarksDirective.TextNameVariation variation, TypeCobolConfiguration configuration) =>
+            GetFileName(variation, configuration.EILegacy_ApplyCopySuffixing);
+    }
 
     /// <summary>
     /// p541: REPLACE statement

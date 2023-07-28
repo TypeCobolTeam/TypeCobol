@@ -43,10 +43,11 @@ namespace TypeCobol.Codegen.Actions
         public IList<Action> Execute()
         {
 #if EUROINFO_RULES
-            if (!CompilationDocument.CompilerOptions.UseEuroInformationLegacyReplacingSyntax || CompilationDocument.CompilerOptions.IsCobolLanguage)
+            bool useEuroInformationLegacyReplacingSyntax = CompilationDocument.CompilerOptions.EILegacy_RemoveFirst01Level && CompilationDocument.CompilerOptions.EILegacy_ApplyCopySuffixing;
+            if (!useEuroInformationLegacyReplacingSyntax || CompilationDocument.CompilerOptions.IsCobolLanguage)
             {
                 /*
-                 * The original REMARKS directive (if any) is parsed only when UseEuroInformationLegacyReplacingSyntax is active
+                 * The original REMARKS directive (if any) is parsed only when Euro-Information legacy REPLACING syntax is fully active
                  * and only for TypeCobol. So here we use the negation: if the legacy syntax is disabled or if we are in pure cobol mode,
                  * we do not attempt to generate the REMARKS directive.
                  *
