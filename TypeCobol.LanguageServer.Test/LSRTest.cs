@@ -435,6 +435,7 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("EI_ExtractRemarksData", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
             LSRTestHelper.Test("EI_ExtractRemarksData_CPYInsideCPX", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
+            LSRTestHelper.Test("EI_ExtractRemarksData_DebugLines", LsrTestingOptions.NoLsrTesting, true);
         }
 #endif
 

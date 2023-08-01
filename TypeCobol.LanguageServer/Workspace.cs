@@ -12,6 +12,7 @@ using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
 #if EUROINFO_RULES
+using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -953,8 +954,16 @@ namespace TypeCobol.LanguageServer
 #if EUROINFO_RULES
         public (string[], int) GetRemarksData(CompilationUnit compilationUnit)
         {
-            // Get used CPYs
-            var usedCPYs = compilationUnit.CopyTextNamesVariations
+            // Get used CPYs from parsed code
+            var usedCPYs = compilationUnit.CopyTextNamesVariations;
+
+            // Check for COPY instructions in Debug lines
+            var debugUsedCPYs = compilationUnit.CobolTextLines
+                .Where(line => line.Type == CobolTextLineType.Debug)
+                .SelectMany(FindTextNameVariations);
+
+            // Concat and filter
+            var allUsedCPYs = usedCPYs.Concat(debugUsedCPYs)
                 .Where(v => this.Configuration.IsCpyCopy(v.TextName))
                 .Select(v => v.TextNameWithSuffix.ToUpperInvariant())
                 .Distinct()
@@ -968,7 +977,20 @@ namespace TypeCobol.LanguageServer
                 insertionLine = programIdentification.LineEnd + 1;
             }
 
-            return (usedCPYs, insertionLine);
+            return (allUsedCPYs, insertionLine);
+
+            IEnumerable<RemarksDirective.TextNameVariation> FindTextNameVariations(ICobolTextLine debugLine)
+            {
+                const string textNameCaptureRegex = @"COPY\s+(\w+)";
+                var matches = Regex.Matches(debugLine.SourceText, textNameCaptureRegex, RegexOptions.IgnoreCase);
+                foreach (Match match in matches)
+                {
+                    if (match.Groups.Count > 1)
+                    {
+                        yield return new RemarksDirective.TextNameVariation(match.Groups[1].Value);
+                    }
+                }
+            }
         }
 #endif
     }
