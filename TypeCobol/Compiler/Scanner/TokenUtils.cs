@@ -1,16 +1,16 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿#nullable enable
+
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace TypeCobol.Compiler.Scanner
 {
     internal static class TokenUtils
     {
-        public static readonly Regex CobolIntrinsicFunctions = new Regex("^(ACOS|ANNUITY|ASIN|ATAN|CHAR|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|FACTORIAL|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|ORD|ORD-MAX|ORD-MIN|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        public static readonly Regex CobolIntrinsicFunctions = new Regex("^(ABS|ACOS|ANNUITY|ASIN|ATAN|BIT-OF|BIT-TO-CHAR|BYTE-LENGTH|CHAR|COMBINED-DATETIME|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|E|EXP|EXP10|FACTORIAL|FORMATTED-CURRENT-DATE|FORMATTED-DATE|FORMATTED-DATETIME|FORMATTED-TIME|HEX-OF|HEX-TO-CHAR|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-OF-FORMATTED-DATE|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|NUMVAL-F|ORD|ORD-MAX|ORD-MIN|PI|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SECONDS-FROM-FORMATTED-TIME|SECONDS-PAST-MIDNIGHT|SIGN|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|TEST-DATE-YYYYMMDD|TEST-DAY-YYYYDDD|TEST-FORMATTED-DATETIME|TEST-NUMVAL|TEST-NUMVAL-C|TEST-NUMVAL-F|TRIM|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UUID4|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly TokenFamily[] _TokenFamilyFromTokenType;
-        private static readonly string[] _TokenStringFromTokenType;
+        private static readonly string?[] _TokenStringFromTokenType;
         private static readonly IDictionary<string, TokenType> _TokenTypeFromTokenString;
         private static readonly IDictionary<string, TokenType> _SqlTokenTypeFromTokenString;
 
@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Scanner
             for (int c = keywordBegin; c <= keywordEnd; c++)
             {
                 var current = types[c];
-                _TokenStringFromTokenType[(int)current] = current.ToString().Replace('_', '-');
+                _TokenStringFromTokenType[(int)current] = NameForTokenType(current);
             }
             _TokenStringFromTokenType[(int)TokenType.ASTERISK_CBL] = "*CBL";
             _TokenStringFromTokenType[(int)TokenType.ASTERISK_CONTROL] = "*CONTROL";
@@ -57,7 +57,7 @@ namespace TypeCobol.Compiler.Scanner
             _SqlTokenTypeFromTokenString = new Dictionary<string, TokenType>(StringComparer.OrdinalIgnoreCase);
             for (int tokenType = 0; tokenType < _TokenStringFromTokenType.Length; tokenType++)
             {
-                string tokenString = _TokenStringFromTokenType[tokenType];
+                string? tokenString = _TokenStringFromTokenType[tokenType];
                 if (tokenString == null)
                 {
                     continue;
@@ -85,7 +85,7 @@ namespace TypeCobol.Compiler.Scanner
             return _TokenFamilyFromTokenType[(int)tokenType];
         }
 
-        public static string GetTokenStringFromTokenType(TokenType tokenType)
+        public static string? GetTokenStringFromTokenType(TokenType tokenType)
         {
             return _TokenStringFromTokenType[(int)tokenType];
         }
@@ -215,11 +215,19 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string NameForTokenType(TokenType tokenType)
+        {
+            // For conditional compilation tokens, enum names are prefixed with "COMPILERDIRECTIVE_"
+            // Note: will break if Cobol introduce a keyword starting with "COMPILERDIRECTIVE-"...
+            return tokenType.ToString().Replace('_', '-').Replace("COMPILERDIRECTIVE-", ">>");
+        }
+
         public static string GetDisplayNameForTokenType(TokenType tokenType)
         {
             if ((int)TokenFamily.TypeCobolOperators > (int)tokenType && (int)tokenType >= (int)TokenFamily.CompilerDirectiveStartingKeyword && tokenType != TokenType.SymbolicCharacter)
             {
-                return tokenType.ToString().Replace('_', '-');
+                return NameForTokenType(tokenType);
             }
             
             if (_TokenFamilyFromTokenType[(int)tokenType] == TokenFamily.SqlKeywords)

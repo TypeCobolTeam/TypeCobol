@@ -1,4 +1,6 @@
-﻿using TypeCobol.Tools.Options_Config;
+﻿#nullable enable
+
+using TypeCobol.Tools.Options_Config;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -15,7 +17,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Path to generate collected used copy names
         /// </summary>
-        public string ReportUsedCopyNamesPath { get; set; }
+        public string? ReportUsedCopyNamesPath { get; set; }
 #endif
         /// <summary>
         /// Option to create a missing copy file, it will stop the execution before semantic phase if a copy is missing
@@ -32,24 +34,25 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
 
-        /// <summary>
-        /// Shall we use EI legacy replacing mechanism when including copys ?
-        /// </summary>
-        public bool UseEuroInformationLegacyReplacingSyntax
-        {
-            get { return _useEuroInformationLegacyReplacingSyntax; }
-            set { _useEuroInformationLegacyReplacingSyntax = value; }
-        }
-
 #if EUROINFO_RULES
-        private bool _useEuroInformationLegacyReplacingSyntax = true;
+        /// <summary>
+        /// Euro-Information Legacy REPLACING syntax: automatically remove first 01 level from included CPY copies.
+        /// </summary>
+        public bool EILegacy_RemoveFirst01Level { get; set; } = true;
+
+        /// <summary>
+        /// Euro-Information Legacy REPLACING syntax: automatically suffix data items coming
+        /// from CPY copies when they are included using an additional char at the end of their text name.
+        /// </summary>
+        public bool EILegacy_ApplyCopySuffixing { get; set; } = true;
 
         /// <summary>
         /// Instance of the CPY Copy name map
         /// </summary>
-        public CopyNameMapFile CpyCopyNameMap { get; set; }
+        public CopyNameMapFile? CpyCopyNameMap { get; set; }
 #else
-        private bool _useEuroInformationLegacyReplacingSyntax = false;
+        public bool EILegacy_RemoveFirst01Level { get; set; } = false;
+        public bool EILegacy_ApplyCopySuffixing { get; set; } = false;
 #endif
 
         /// <summary>
@@ -99,7 +102,8 @@ namespace TypeCobol.Compiler.Directives
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
-            UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
+            EILegacy_RemoveFirst01Level = config.EILegacy_RemoveFirst01Level;
+            EILegacy_ApplyCopySuffixing = config.EILegacy_ApplyCopySuffixing;
 
 #if EUROINFO_RULES
             CpyCopyNameMap = config.CpyCopyNameMap;
@@ -118,7 +122,11 @@ namespace TypeCobol.Compiler.Directives
         public TypeCobolOptions()
         {
             // default values for checks
-            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+            CheckEndAlignment = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndAlignmentSeverity);
+            CheckEndProgram = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndProgramSeverity);
+            CheckPerformPrematureExits = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformPrematureExitsSeverity);
+            CheckPerformThruOrder = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformThruOrderSeverity);
+            CheckRecursivePerforms = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckRecursivePerformsSeverity);
         }
     }
 }

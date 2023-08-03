@@ -37,3 +37,157 @@ Line 0[1,14] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compi
 -- Line 11 --
 *** DIRECTIVE PROCESS|CP=1147|NOADV|C ([1,24:PROCESS CP(1147) NOADV C]<COMPILER_DIRECTIVE>) ***
 
+-- Line 12 --
+*** DIRECTIVE CBL|LIB ([1,7:CBL LIB]<COMPILER_DIRECTIVE>) ***
+Line 0[1,7] <56, Warning, Directives> - Warning: the "LIB" option specification is no longer required. COBOL library processing is always in effect.
+
+-- Line 13 --
+*** DIRECTIVE INVALID SYNTAX -> CBL|BOTH_INVALID_AND_WARNING|lib ([1,32:CBL BOTH_INVALID_AND_WARNING lib]<COMPILER_DIRECTIVE>) ***
+Line 0[1,32] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+Line 0[1,32] <56, Warning, Directives> - Warning: the "LIB" option specification is no longer required. COBOL library processing is always in effect.
+
+-- Line 14 --
+*** DIRECTIVE CBL|COPYLOC ([1,11:CBL COPYLOC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 15 --
+*** DIRECTIVE CBL|CPLC ([1,8:CBL CPLC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 16 --
+*** DIRECTIVE CBL|NOCOPYLOC ([1,13:CBL NOCOPYLOC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 17 --
+*** DIRECTIVE CBL|NOCPLC ([1,10:CBL NOCPLC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 18 --
+*** DIRECTIVE CBL|DEFINE=compilation-variable = 1 ([1,36:CBL DEFINE(compilation-variable = 1)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 19 --
+*** DIRECTIVE CBL|DEF=compilation-variable = 1 ([1,33:CBL DEF(compilation-variable = 1)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 20 --
+*** DIRECTIVE CBL|NODEFINE ([1,12:CBL NODEFINE]<COMPILER_DIRECTIVE>) ***
+
+-- Line 21 --
+*** DIRECTIVE CBL|NODEF ([1,9:CBL NODEF]<COMPILER_DIRECTIVE>) ***
+
+-- Line 22 --
+*** DIRECTIVE CBL|INITCHECK=LAX ([1,18:CBL INITCHECK(LAX)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 23 --
+*** DIRECTIVE CBL|IC=STRICT ([1,14:CBL IC(STRICT)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 24 --
+*** DIRECTIVE CBL|NOINITCHECK ([1,15:CBL NOINITCHECK]<COMPILER_DIRECTIVE>) ***
+
+-- Line 25 --
+*** DIRECTIVE CBL|NOIC ([1,8:CBL NOIC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 26 --
+*** DIRECTIVE CBL|INITIAL ([1,11:CBL INITIAL]<COMPILER_DIRECTIVE>) ***
+
+-- Line 27 --
+*** DIRECTIVE CBL|NOINITIAL ([1,13:CBL NOINITIAL]<COMPILER_DIRECTIVE>) ***
+
+-- Line 28 --
+*** DIRECTIVE CBL|INVDATA=FORCENUMCMP,NOCLEANSIGN ([1,36:CBL INVDATA(FORCENUMCMP,NOCLEANSIGN)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 29 --
+*** DIRECTIVE CBL|INVD=FNC,NOCS ([1,18:CBL INVD(FNC,NOCS)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 30 --
+*** DIRECTIVE CBL|NOINVDATA ([1,13:CBL NOINVDATA]<COMPILER_DIRECTIVE>) ***
+
+-- Line 31 --
+*** DIRECTIVE CBL|NOINVD ([1,10:CBL NOINVD]<COMPILER_DIRECTIVE>) ***
+
+-- Line 32 --
+*** DIRECTIVE INVALID SYNTAX -> CBL|LP=64 ([1,10:CBL LP(64)]<COMPILER_DIRECTIVE>) ***
+Line 0[1,10] <57, Error, Directives> - Error: the "LP" option is not allowed because only AMODE 31 (31-bit) is supported.
+
+-- Line 33 --
+*** DIRECTIVE CBL|NUMCHECK ([1,12:CBL NUMCHECK]<COMPILER_DIRECTIVE>) ***
+
+-- Line 34 --
+*** DIRECTIVE CBL|NUMCHECK=ABD ([1,17:CBL NUMCHECK(ABD)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 35 --
+*** DIRECTIVE CBL|NC=ZON(NOALPHNUM,LAX),NOPAC,BIN(NOTRUNCBIN),ABD ([1,52:CBL NC(ZON(NOALPHNUM,LAX),NOPAC,BIN(NOTRUNCBIN),ABD)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 36 --
+*** DIRECTIVE CBL|NONUMCHECK ([1,14:CBL NONUMCHECK]<COMPILER_DIRECTIVE>) ***
+
+-- Line 37 --
+*** DIRECTIVE CBL|NONC ([1,8:CBL NONC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 38 --
+*** DIRECTIVE CBL|PARMCHECK=ABD ([1,18:CBL PARMCHECK(ABD)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 39 --
+*** DIRECTIVE CBL|PC=ABD,500 ([1,15:CBL PC(ABD,500)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 40 --
+*** DIRECTIVE CBL|NOPARMCHECK ([1,15:CBL NOPARMCHECK]<COMPILER_DIRECTIVE>) ***
+
+-- Line 41 --
+*** DIRECTIVE CBL|NOPC ([1,8:CBL NOPC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 42 --
+*** DIRECTIVE CBL|SUPPRESS ([1,12:CBL SUPPRESS]<COMPILER_DIRECTIVE>) ***
+
+-- Line 43 --
+*** DIRECTIVE CBL|SUPP ([1,8:CBL SUPP]<COMPILER_DIRECTIVE>) ***
+
+-- Line 44 --
+*** DIRECTIVE CBL|NOSUPP ([1,10:CBL NOSUPP]<COMPILER_DIRECTIVE>) ***
+
+-- Line 45 --
+*** DIRECTIVE CBL|NOSUPPRESS ([1,14:CBL NOSUPPRESS]<COMPILER_DIRECTIVE>) ***
+
+-- Line 46 --
+*** DIRECTIVE CBL|ZONECHECK=MSG ([1,18:CBL ZONECHECK(MSG)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 47 --
+*** DIRECTIVE CBL|NOZONECHECK ([1,15:CBL NOZONECHECK]<COMPILER_DIRECTIVE>) ***
+
+-- Line 48 --
+*** DIRECTIVE CBL|ZC=ABD ([1,11:CBL ZC(ABD)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 49 --
+*** DIRECTIVE CBL|NOZC ([1,8:CBL NOZC]<COMPILER_DIRECTIVE>) ***
+
+-- Line 50 --
+*** DIRECTIVE CBL|ZONEDATA=NOPFD ([1,19:CBL ZONEDATA(NOPFD)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 51 --
+*** DIRECTIVE CBL|ZD=MIG ([1,11:CBL ZD(MIG)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 52 --
+*** DIRECTIVE CBL|LANGUAGE ([1,12:CBL LANGUAGE]<COMPILER_DIRECTIVE>) ***
+
+-- Line 53 --
+*** DIRECTIVE CBL|NOSTGOPT ([1,12:CBL NOSTGOPT]<COMPILER_DIRECTIVE>) ***
+
+-- Line 54 --
+*** DIRECTIVE CBL|SSRANGE ([1,11:CBL SSRANGE]<COMPILER_DIRECTIVE>) ***
+
+-- Line 55 --
+*** DIRECTIVE CBL|TEST ([1,8:CBL TEST]<COMPILER_DIRECTIVE>) ***
+
+-- Line 56 --
+*** DIRECTIVE CBL|SOURCE ([1,10:CBL SOURCE]<COMPILER_DIRECTIVE>) ***
+
+-- Line 57 --
+*** DIRECTIVE CBL|OFFSET ([1,10:CBL OFFSET]<COMPILER_DIRECTIVE>) ***
+
+-- Line 58 --
+*** DIRECTIVE INVALID SYNTAX -> CBL|AMODE=64 ([1,13:CBL AMODE(64)]<COMPILER_DIRECTIVE>) ***
+Line 0[1,13] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 59 --
+*** DIRECTIVE INVALID SYNTAX -> CBL|ALOWCOPYLOC ([1,15:CBL ALOWCOPYLOC]<COMPILER_DIRECTIVE>) ***
+Line 0[1,15] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 60 --
+*** DIRECTIVE INVALID SYNTAX -> CBL|ALOWDEFINE ([1,14:CBL ALOWDEFINE]<COMPILER_DIRECTIVE>) ***
+Line 0[1,14] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+

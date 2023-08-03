@@ -8,9 +8,6 @@
           05 item OCCURS 10 INDEXED BY idx.
              10 element PIC X.
        01 var2 PIC 9.
-       01 varCondition PIC X.
-          88 test1 VALUE 'A'.
-          88 test2 VALUE 'B'.
        PROCEDURE DIVISION.
        
       *SET statement for assignment
@@ -26,10 +23,4 @@
       *KO
            SET idx UP BY var2 - 3.
            SET idx DOWN BY 8 * var2.
-
-      *SET statement for conditions
-      *OK
-           SET test1 TO TRUE.
-      *KO (Only to test the syntax, it actually applies to BOOL variables)
-           SET test1 TO FALSE.
        END PROGRAM tcSet.

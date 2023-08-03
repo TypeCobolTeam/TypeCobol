@@ -1,0 +1,162 @@
+--- Diagnostics ---
+Line 10[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var2-KO]<UserDefinedWord>
+Line 14[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var3-KO]<UserDefinedWord>
+Line 20[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var4-KO]<UserDefinedWord>
+Line 28[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var6-KO]<UserDefinedWord>
+Line 41[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var8-KO]<UserDefinedWord>
+Line 47[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,17:Var9-KO]<UserDefinedWord>
+Line 53[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var10-KO]<UserDefinedWord>
+Line 62[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var13-KO]<UserDefinedWord>
+Line 68[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var14-KO]<UserDefinedWord>
+Line 74[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:Var15-KO]<UserDefinedWord>
+
+--- Program ---
+Level77AndUsage (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  Var1-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 77
+  IsFiller: False
+  Var2-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+  Level: 77
+  IsFiller: False
+  Var3-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Display
+  Level: 77
+  IsFiller: False
+  Var4-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Display1
+  Level: 77
+  IsFiller: False
+  Var5-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Index
+  Level: 77
+  IsFiller: False
+  Var6-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: National
+  Level: 77
+  IsFiller: False
+  Var8-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp
+  Level: 77
+  IsFiller: False
+  Var9-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp3
+  Level: 77
+  IsFiller: False
+  Var10-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp
+  Level: 77
+  IsFiller: False
+  Var11-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp1
+  Level: 77
+  IsFiller: False
+  Var12-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp2
+  Level: 77
+  IsFiller: False
+  Var13-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp3
+  Level: 77
+  IsFiller: False
+  Var14-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp
+  Level: 77
+  IsFiller: False
+  Var15-KO (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Comp5
+  Level: 77
+  IsFiller: False
+  Var16-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Pointer
+  Level: 77
+  IsFiller: False
+  Var17-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Pointer32
+  Level: 77
+  IsFiller: False
+  Var18-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: ProcedurePointer
+  Level: 77
+  IsFiller: False
+  Var19-OK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Level77AndUsage
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: FunctionPointer
+  Level: 77
+  IsFiller: False
+IsNested: False
+

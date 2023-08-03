@@ -1,0 +1,42 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. SetToFalse.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+      *                WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA
+           .
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 VarBool-1 TYPE BOOL.
+       01 VarBool-2 TYPE BOOL.
+       01 Var1 pic X.
+           88 Var88-1 value 'A' false 'B'.
+       01 Var2 pic X.
+           88 Var88-2 value 'C' false 'D'.
+           
+       procedure division.
+      *******************************************************
+      * SET TO FALSE OK
+      *******************************************************
+         set VarBool-1 to false
+         set Var88-1 to false
+         set VarBool-1 VarBool-2 to false
+         set Var88-1 Var88-2 to false
+
+      *******************************************************
+      * SET TO FALSE KO because of mix type Bool + Level88
+      *******************************************************
+         set Var88-1 VarBool-1 VarBool-2 to false
+         set VarBool-1 Var88-1 VarBool-2 to false
+         set VarBool-1 VarBool-2 Var88-1 to false
+         set VarBool-1 Var88-1 Var88-2 to false
+         set Var88-1 VarBool-1 Var88-2 to false
+         set Var88-1 Var88-2 VarBool-1 to false
+
+         goback.
+
+       END PROGRAM SetToFalse.

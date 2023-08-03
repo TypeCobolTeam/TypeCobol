@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -17,6 +12,7 @@ using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
 #if EUROINFO_RULES
+using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -128,12 +124,17 @@ namespace TypeCobol.LanguageServer
         public bool UseAntlrProgramParsing { get; set; }
 
         /// <summary>
-        /// True to use Euro-Information replacement rules
+        /// True to use EI Legacy automatic removal of first 01 level from CPY copy.
         /// </summary>
-        public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
+        public bool EILegacy_RemoveFirst01Level { get; set; }
 
         /// <summary>
-        /// Are we supporting Syntax Coloring Notifications.    
+        /// True to use EI Legacy copy suffixing mechanism
+        /// </summary>
+        public bool EILegacy_ApplyCopySuffixing { get; set; }
+
+        /// <summary>
+        /// Are we supporting Syntax Coloring Notifications.
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
 
@@ -646,8 +647,11 @@ namespace TypeCobol.LanguageServer
             if (Configuration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;
 
-            if (Configuration.UseEuroInformationLegacyReplacingSyntax)
-                UseEuroInformationLegacyReplacingSyntax = true;
+            if (Configuration.EILegacy_RemoveFirst01Level)
+                EILegacy_RemoveFirst01Level = true;
+
+            if (Configuration.EILegacy_ApplyCopySuffixing)
+                EILegacy_ApplyCopySuffixing = true;
 
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
                 Configuration.ExecToStep = ExecutionStep.CodeAnalysis; //Language Server does not support Cobol Generation for now
@@ -802,7 +806,8 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var usedCopy in usedCopies)
                 {
-                    if (evicted.Contains(usedCopy.TextName))
+                    string fileName = usedCopy.GetFileName(openedDocument.FileCompiler.CompilerOptions);
+                    if (evicted.Contains(fileName))
                     {
                         dependentPrograms.Add(openedDocument);
                         break;
@@ -949,8 +954,16 @@ namespace TypeCobol.LanguageServer
 #if EUROINFO_RULES
         public (string[], int) GetRemarksData(CompilationUnit compilationUnit)
         {
-            // Get used CPYs
-            var usedCPYs = compilationUnit.CopyTextNamesVariations
+            // Get used CPYs from parsed code
+            var usedCPYs = compilationUnit.CopyTextNamesVariations;
+
+            // Check for COPY instructions in Debug lines
+            var debugUsedCPYs = compilationUnit.CobolTextLines
+                .Where(line => line.Type == CobolTextLineType.Debug)
+                .SelectMany(FindTextNameVariations);
+
+            // Concat and filter
+            var allUsedCPYs = usedCPYs.Concat(debugUsedCPYs)
                 .Where(v => this.Configuration.IsCpyCopy(v.TextName))
                 .Select(v => v.TextNameWithSuffix.ToUpperInvariant())
                 .Distinct()
@@ -964,7 +977,20 @@ namespace TypeCobol.LanguageServer
                 insertionLine = programIdentification.LineEnd + 1;
             }
 
-            return (usedCPYs, insertionLine);
+            return (allUsedCPYs, insertionLine);
+
+            IEnumerable<RemarksDirective.TextNameVariation> FindTextNameVariations(ICobolTextLine debugLine)
+            {
+                const string textNameCaptureRegex = @"COPY\s+(\w+)";
+                var matches = Regex.Matches(debugLine.SourceText, textNameCaptureRegex, RegexOptions.IgnoreCase);
+                foreach (Match match in matches)
+                {
+                    if (match.Groups.Count > 1)
+                    {
+                        yield return new RemarksDirective.TextNameVariation(match.Groups[1].Value);
+                    }
+                }
+            }
         }
 #endif
     }

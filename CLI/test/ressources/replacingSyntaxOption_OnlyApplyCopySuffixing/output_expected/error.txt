@@ -1,0 +1,14 @@
+ReturnCode=ParsingDiagnostics_
+6 errors in "input\replacingSyntaxPartial.rdz.tcbl":
+Line 13[20,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CONVEA 
+Symbols found: DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA | DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA
+Line 17[20,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CONVEA 
+Symbols found: DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA | DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA
+Line 20[20,31] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol ANOTHER-DATA 
+Symbols found: DVZS0OSM::CONVEA::ANOTHER-DATA | DVZS0OSM::CONVEA::ANOTHER-DATA
+Line 27[20,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CONVEA 
+Symbols found: DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA | DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA
+Line 31[20,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CONVEA 
+Symbols found: DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA | DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA
+Line 34[20,31] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol ANOTHER-DATA 
+Symbols found: DVZS0OSM::CONVEA::ANOTHER-DATA | DVZS0OSM::CONVEA::ANOTHER-DATA

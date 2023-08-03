@@ -5,13 +5,15 @@
 
        WORKING-STORAGE SECTION.
        01 myPointerThatIsWayTooLong POINTER.
+       01 myPointer32ThatIsWayTooLong POINTER-32.
        COPY SetUpDownPointerCpyData.
 
 
        PROCEDURE DIVISION.
        SET myPointerThatIsWayTooLong UP BY 1.
+       SET myPointer32ThatIsWayTooLong UP BY 1.
 
        SET myPointer UP BY 1.
-      
+       SET myPointer32 UP BY 1.
 
        END PROGRAM MainProgram.

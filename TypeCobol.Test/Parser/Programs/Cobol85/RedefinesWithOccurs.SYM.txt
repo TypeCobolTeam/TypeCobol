@@ -1,0 +1,1256 @@
+--- Diagnostics ---
+Line 13[15,23] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,23:simple-KO]<UserDefinedWord>
+Line 16[15,25] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,25:simple-KO-R]<UserDefinedWord>
+Line 28[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
+Line 32[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A02-KO-R]<UserDefinedWord>
+Line 39[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
+Line 43[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A03-KO-R]<UserDefinedWord>
+Line 51[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
+Line 56[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A04-KO-R]<UserDefinedWord>
+Line 68[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
+Line 73[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A06-KO-R]<UserDefinedWord>
+Line 92[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
+Line 97[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A08-KO-R]<UserDefinedWord>
+Line 106[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
+Line 111[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A09-KO-R]<UserDefinedWord>
+Line 119[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
+Line 124[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A10-KO-R]<UserDefinedWord>
+Line 140[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
+Line 145[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A13-KO-R]<UserDefinedWord>
+Line 154[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
+Line 159[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A14-KO-R]<UserDefinedWord>
+Line 168[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
+Line 174[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-A15-KO-R]<UserDefinedWord>
+Line 201[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-B01-KO]<UserDefinedWord>
+Line 205[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-B01-KO-R]<UserDefinedWord>
+Line 215[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-B02-KO]<UserDefinedWord>
+Line 221[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-B02-KO-R]<UserDefinedWord>
+Line 235[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-B04-KO]<UserDefinedWord>
+Line 241[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-B04-KO-R]<UserDefinedWord>
+Line 261[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
+Line 267[16,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,29:Array-B06-KO-R]<UserDefinedWord>
+Line 277[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
+Line 283[16,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,29:Array-B07-KO-R]<UserDefinedWord>
+Line 293[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
+Line 299[16,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,29:Array-B08-KO-R]<UserDefinedWord>
+Line 318[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
+Line 323[16,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,29:Array-B11-KO-R]<UserDefinedWord>
+Line 332[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
+Line 337[16,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,29:Array-B12-KO-R]<UserDefinedWord>
+Line 347[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
+Line 352[16,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,29:Array-B13-KO-R]<UserDefinedWord>
+Line 384[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
+Line 391[15,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,28:Array-C01-KO-R]<UserDefinedWord>
+Line 416[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
+Line 421[20,32] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[20,32:Array-D2-KO-R]<UserDefinedWord>
+Line 441[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
+Line 447[24,36] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[24,36:Array-D4-KO-R]<UserDefinedWord>
+Line 468[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
+Line 470[24,36] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[24,36:Array-D5-KO-R]<UserDefinedWord>
+Line 482[20,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[20,27:VarChild]<UserDefinedWord>
+Line 487[20,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[20,29:VarChild-R]<UserDefinedWord>
+
+--- Program ---
+RedefinesWithOccurs (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  Group-A (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      simple-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      simple-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      Array-A01-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+      Array-A01-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+      Array-A02-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      Array-A02-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      Array-A03-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display
+      Level: 5
+      IsFiller: False
+      Array-A03-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display
+      Level: 5
+      IsFiller: False
+      Array-A04-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display1
+      Level: 5
+      IsFiller: False
+      Array-A04-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display1
+      Level: 5
+      IsFiller: False
+      Array-A05-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Index
+      Level: 5
+      IsFiller: False
+      Array-A05-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Index
+      Level: 5
+      IsFiller: False
+      Array-A06-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: National
+      Level: 5
+      IsFiller: False
+      Array-A06-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: National
+      Level: 5
+      IsFiller: False
+      Array-A08-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A08-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A09-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-A09-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-A10-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A10-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A11-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp1
+      Level: 5
+      IsFiller: False
+      Array-A11-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+      Level: 5
+      IsFiller: False
+      Array-A12-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp2
+      Level: 5
+      IsFiller: False
+      Array-A12-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp2
+      Level: 5
+      IsFiller: False
+      Array-A13-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-A13-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-A14-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A14-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A15-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp5
+      Level: 5
+      IsFiller: False
+      Array-A15-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp5
+      Level: 5
+      IsFiller: False
+      Array-A16-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer
+      Level: 5
+      IsFiller: False
+      Array-A16-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer
+      Level: 5
+      IsFiller: False
+      Array-A17-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer32
+      Level: 5
+      IsFiller: False
+      Array-A17-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer32
+      Level: 5
+      IsFiller: False
+      Array-A18-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+      Array-A18-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+      Array-A19-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+      Array-A19-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B01 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display
+    Fields:
+      Array-B01-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B01
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display
+      Level: 5
+      IsFiller: False
+      Array-B01-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B01
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B02 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display1
+    Fields:
+      Array-B02-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B02
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Display1
+      Level: 5
+      IsFiller: False
+      Array-B02-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B02
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B03 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Index
+    Fields:
+      Array-B03-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B03
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Index
+      Level: 5
+      IsFiller: False
+      Array-B03-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B03
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Index
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B04 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: National
+    Fields:
+      Array-B04-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B04
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: National
+      Level: 5
+      IsFiller: False
+      Array-B04-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B04
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: National
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B06 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B06-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B06
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-B06-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B06
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B07 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      Array-B07-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B07
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-B07-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B07
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B08 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B08-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B08
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-B08-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B08
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B09 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp1
+    Fields:
+      Array-B09-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B09
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp1
+      Level: 5
+      IsFiller: False
+      Array-B09-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B09
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B10 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp2
+    Fields:
+      Array-B10-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B10
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp2
+      Level: 5
+      IsFiller: False
+      Array-B10-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B10
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp2
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B11 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      Array-B11-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B11
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-B11-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B11
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B12 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B12-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B12
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-B12-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B12
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B13 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp5
+    Fields:
+      Array-B13-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B13
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp5
+      Level: 5
+      IsFiller: False
+      Array-B13-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B13
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp5
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B14 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer
+    Fields:
+      Array-B14-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B14
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer
+      Level: 5
+      IsFiller: False
+      Array-B14-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B14
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B15 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer32
+    Fields:
+      Array-B15-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B15
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer32
+      Level: 5
+      IsFiller: False
+      Array-B15-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B15
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer32
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B16 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: ProcedurePointer
+    Fields:
+      Array-B16-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B16
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+      Array-B16-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B16
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B17 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: FunctionPointer
+    Fields:
+      Array-B17-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-B17
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+      Array-B17-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-B17
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-C01 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, GroupUsageNational]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-C01-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, GroupUsageNational]
+      Owner: RedefinesWithOccurs::Group-C01
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: National
+      Level: 5
+      IsFiller: False
+      Array-C01-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, GroupUsageNational, Redefines]
+      Owner: RedefinesWithOccurs::Group-C01
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: National
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer
+    Fields:
+      Group-D11 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-D1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer
+        Fields:
+          Array-D1-OK (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesWithOccurs::Group-D1::Group-D11
+          Type:
+            (.NET Type=Type, Tag=Usage)
+            Usage: Pointer
+          Level: 10
+          IsFiller: False
+          Array-D1-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, Redefines]
+          Owner: RedefinesWithOccurs::Group-D1::Group-D11
+          Type:
+            (.NET Type=ArrayType, Tag=Array)
+            MinOccur: 1
+            MaxOccur: 1
+            ElementType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: Pointer
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp5
+    Fields:
+      Group-D21 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-D2
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp5
+        Fields:
+          Array-D2-KO (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesWithOccurs::Group-D2::Group-D21
+          Type:
+            (.NET Type=Type, Tag=Usage)
+            Usage: Comp5
+          Level: 10
+          IsFiller: False
+          Array-D2-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, Redefines]
+          Owner: RedefinesWithOccurs::Group-D2::Group-D21
+          Type:
+            (.NET Type=ArrayType, Tag=Array)
+            MinOccur: 1
+            MaxOccur: 1
+            ElementType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: Comp5
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: ProcedurePointer
+    Fields:
+      Group-D31 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-D3
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: ProcedurePointer
+        Fields:
+          Group-D311 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesWithOccurs::Group-D3::Group-D31
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: ProcedurePointer
+            Fields:
+              Array-D3-OK (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: RedefinesWithOccurs::Group-D3::Group-D31::Group-D311
+              Type:
+                (.NET Type=Type, Tag=Usage)
+                Usage: ProcedurePointer
+              Level: 15
+              IsFiller: False
+              Array-D3-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE, Redefines]
+              Owner: RedefinesWithOccurs::Group-D3::Group-D31::Group-D311
+              Type:
+                (.NET Type=ArrayType, Tag=Array)
+                MinOccur: 1
+                MaxOccur: 1
+                ElementType:
+                  (.NET Type=Type, Tag=Usage)
+                  Usage: ProcedurePointer
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display1
+    Fields:
+      Group-D41 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-D4
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display1
+        Fields:
+          Group-D411 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesWithOccurs::Group-D4::Group-D41
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: Display1
+            Fields:
+              Array-D4-KO (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: RedefinesWithOccurs::Group-D4::Group-D41::Group-D411
+              Type:
+                (.NET Type=Type, Tag=Usage)
+                Usage: Display1
+              Level: 15
+              IsFiller: False
+              Array-D4-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE, Redefines]
+              Owner: RedefinesWithOccurs::Group-D4::Group-D41::Group-D411
+              Type:
+                (.NET Type=ArrayType, Tag=Array)
+                MinOccur: 1
+                MaxOccur: 1
+                ElementType:
+                  (.NET Type=Type, Tag=Usage)
+                  Usage: Display1
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D5 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp1
+    Fields:
+      Array-D5-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-D5
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Comp1
+      Level: 5
+      IsFiller: False
+      Group-D51 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, GroupUsageNational]
+      Owner: RedefinesWithOccurs::Group-D5
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+        Fields:
+          Group-D511 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, GroupUsageNational]
+          Owner: RedefinesWithOccurs::Group-D5::Group-D51
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: National
+            Fields:
+              Array-D5-KO (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE, GroupUsageNational]
+              Owner: RedefinesWithOccurs::Group-D5::Group-D51::Group-D511
+              Type:
+                (.NET Type=Type, Tag=Usage)
+                Usage: National
+              Level: 15
+              IsFiller: False
+              Array-D5-KO-R (.NET Type=RedefinesSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE, GroupUsageNational, Redefines]
+              Owner: RedefinesWithOccurs::Group-D5::Group-D51::Group-D511
+              Type:
+                (.NET Type=ArrayType, Tag=Array)
+                MinOccur: 1
+                MaxOccur: 1
+                ElementType:
+                  (.NET Type=Type, Tag=Usage)
+                  Usage: National
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-E1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesWithOccurs
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-E1-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesWithOccurs::Group-E1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          VarChild (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesWithOccurs::Group-E1::Array-E1-OK
+          Type:
+            (.NET Type=Type, Tag=Usage)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+      Array-E1-OK-R (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesWithOccurs::Group-E1
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 1
+        ElementType:
+          (.NET Type=GroupType, Tag=Group)
+          Fields:
+            VarChild-R (.NET Type=VariableSymbol, Kind=Variable)
+            Flags: [WORKING_STORAGE]
+            Owner: RedefinesWithOccurs::Group-E1::Array-E1-OK-R
+            Type:
+              (.NET Type=Type, Tag=Usage)
+            Level: 10
+            IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

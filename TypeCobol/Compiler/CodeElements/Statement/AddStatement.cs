@@ -1,11 +1,11 @@
 ﻿namespace TypeCobol.Compiler.CodeElements {
 
-	using System.Collections.Generic;
+    using System.Collections.Generic;
 
 /// <summary>p298: The ADD statement sums two or more numeric operands and stores the result.</summary>
 public abstract class AddStatement: AbstractArithmeticStatement {
     protected AddStatement(StatementType statementType) : base(CodeElementType.AddStatement, statementType) { }
-	public abstract override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations { get; }
+    public abstract override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations { get; }
 }
 
 /// <summary>
@@ -14,15 +14,15 @@ public abstract class AddStatement: AbstractArithmeticStatement {
 /// This process is repeated for each successive occurrence of identifier-2 in the left-to-right order in which identifier-2 is specified.
 /// </summary>
 public class AddSimpleStatement: AddStatement {
-	public AddSimpleStatement(): base(StatementType.AddSimpleStatement) { }
+    public AddSimpleStatement(): base(StatementType.AddSimpleStatement) { }
 
-	public NumericVariable[] VariablesTogether { get; set; }
-	public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
+    public NumericVariable[] VariablesTogether { get; set; }
+    public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
 
-	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
-		get {
-			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
-			ArithmeticExpression left = null;
+    public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
+        get {
+            var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
+            ArithmeticExpression left = null;
                 if (VariablesTogether != null)
                 {
                     foreach (NumericVariable varTogether in VariablesTogether)
@@ -44,9 +44,9 @@ public class AddSimpleStatement: AddStatement {
                         if (rarea != null) map[rarea].Add(operation);
                     }
                 }
-			return map;
-		}
-	}
+            return map;
+        }
+    }
 
     public override bool VisitCodeElement(IASTVisitor astVisitor)
     {
@@ -61,31 +61,31 @@ public class AddSimpleStatement: AddStatement {
 /// and the sum is stored as the new value of each data item referenced by identifier-3.
 /// </summary>
 public class AddGivingStatement: AddStatement {
-	public AddGivingStatement(): base(StatementType.AddGivingStatement) { }
+    public AddGivingStatement(): base(StatementType.AddGivingStatement) { }
 
-	public NumericVariable[] VariablesTogether { get; set; }
-	public NumericVariable Operand { get; set; }
-	public RoundedResult[] ReceivingStorageAreas { get; set; }
+    public NumericVariable[] VariablesTogether { get; set; }
+    public NumericVariable Operand { get; set; }
+    public RoundedResult[] ReceivingStorageAreas { get; set; }
 
-	public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
-		get {
-			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
-			ArithmeticExpression left = null;
-			foreach (NumericVariable varTogether in VariablesTogether) {
-			    var right = new NumericVariableOperand(varTogether);
-			    if (left == null) left = right;
-			    else left = ArithmeticOperator.Plus.CreateOperation(left, right);
-			}
-			foreach(var receiver in ReceivingStorageAreas) {
-				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
-				var operation = left;
-				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			    if (rarea != null) map[rarea].Add(operation);
-			}
-			return map;
-		}
-	}
+    public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
+        get {
+            var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
+            ArithmeticExpression left = null;
+            foreach (NumericVariable varTogether in VariablesTogether) {
+                var right = new NumericVariableOperand(varTogether);
+                if (left == null) left = right;
+                else left = ArithmeticOperator.Plus.CreateOperation(left, right);
+            }
+            foreach(var receiver in ReceivingStorageAreas) {
+                var rarea = receiver.ReceivingStorageArea.StorageArea;
+                if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
+                var operation = left;
+                if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+                if (rarea != null) map[rarea].Add(operation);
+            }
+            return map;
+        }
+    }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
@@ -99,28 +99,28 @@ public class AddGivingStatement: AddStatement {
 /// Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
 /// </summary>
 public class AddCorrespondingStatement: AddStatement {
-	public AddCorrespondingStatement(): base(StatementType.AddCorrespondingStatement) { }
+    public AddCorrespondingStatement(): base(StatementType.AddCorrespondingStatement) { }
 
-	public StorageArea GroupItem { get; set; }
-	public StorageArea SendingAndReceivingGroupItem { get; set; }
-	public SyntaxProperty<bool> Rounded { get; set; }
-	public bool IsRounded { get { return Rounded != null && Rounded.Value; } }
+    public StorageArea GroupItem { get; set; }
+    public StorageArea SendingAndReceivingGroupItem { get; set; }
+    public SyntaxProperty<bool> Rounded { get; set; }
+    public bool IsRounded { get { return Rounded != null && Rounded.Value; } }
 
-	public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
-		get {
-			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
-		   
-			map[SendingAndReceivingGroupItem] = new List<ArithmeticExpression>();
-			var operation = new ArithmeticOperation(
-					new NumericVariableOperand(new NumericVariable(GroupItem)),
-					new SyntaxProperty<ArithmeticOperator>(ArithmeticOperator.Plus, null),
-					new NumericVariableOperand(new NumericVariable(SendingAndReceivingGroupItem))
-				);
-			if (IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			map[SendingAndReceivingGroupItem].Add(operation);
-			return map;
-		}
-	}
+    public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
+        get {
+            var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
+           
+            map[SendingAndReceivingGroupItem] = new List<ArithmeticExpression>();
+            var operation = new ArithmeticOperation(
+                    new NumericVariableOperand(new NumericVariable(GroupItem)),
+                    new SyntaxProperty<ArithmeticOperator>(ArithmeticOperator.Plus, null),
+                    new NumericVariableOperand(new NumericVariable(SendingAndReceivingGroupItem))
+                );
+            if (IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+            map[SendingAndReceivingGroupItem].Add(operation);
+            return map;
+        }
+    }
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)

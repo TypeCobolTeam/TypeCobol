@@ -1,0 +1,60 @@
+================================ ICobolTextLine ================================
+Line    5: LineUpdated     ->        COPY YReplace. 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineUpdated     ->        COPY YReplace. 
+================================= ITokensLine ==================================
+Line    5: LineUpdated     -> [8,11:COPY]<COPY> [13,20:YReplace]<UserDefinedWord> [21,22:. ]<PeriodSeparator> 
+Line    6: LineUpdated     -> [8,69:Second incremental change: add a space on copy line to trigger]<CommentLine> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineUpdated     -> [8,11:COPY]<COPY> [13,20:YReplace]<UserDefinedWord> [21,22:. ]<PeriodSeparator> 
+Line    6: LineUpdated     -> [8,69:Second incremental change: add a space on copy line to trigger]<CommentLine> 
+============================= IProcessedTokensLine =============================
+Line    5: LineUpdated     -> *** DIRECTIVE COPY YReplace ([8,11:COPY]<COPY>[13,20:YReplace]<UserDefinedWord>[21,22:. ]<PeriodSeparator>) *** 
+Line    6: LineUpdated     -> 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    5: LineUpdated     -> *** DIRECTIVE COPY YReplace ([8,11:COPY]<COPY>[13,20:YReplace]<UserDefinedWord>[21,22:. ]<PeriodSeparator>) *** 
+Line    6: LineUpdated     -> 
+============================== ICodeElementsLine ===============================
+Line    4: LineUpdated     -> 
+Line    8: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line   10: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [35,35+:.]<PeriodSeparator>
+ 
+Line   11: LineUpdated     -> [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = DVZF0OSM
+ 
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    8: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line   10: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [35,35+:.]<PeriodSeparator>
+ 
+Line   11: LineUpdated     -> [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = DVZF0OSM
+ 
+------------------ GetReducedAndOrderedChangesInNewerVersion -------------------
+Line    3: LineUpdated     -> [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+ 
+Line    4: LineUpdated     -> 
+Line    5: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [29,29+:.]<PeriodSeparator>
+ 
+Line    8: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line    9: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [21,21+:.]<PeriodSeparator>
+ 
+Line   10: LineUpdated     -> [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [35,35+:.]<PeriodSeparator>
+ 
+Line   11: LineUpdated     -> [[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = DVZF0OSM
+ 

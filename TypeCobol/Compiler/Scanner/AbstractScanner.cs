@@ -1,5 +1,7 @@
-﻿using System.Collections;
-using System.Linq;
+﻿#nullable enable
+
+using System.Collections;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Diagnostics;
@@ -40,21 +42,22 @@ namespace TypeCobol.Compiler.Scanner
         /// Scan from current index and return the token found.
         /// </summary>
         /// <returns>Token instance, null if no token could be scanned.</returns>
-        public Token GetNextToken() => GetTokenStartingFrom(currentIndex);
+        public Token? GetNextToken() => GetTokenStartingFrom(currentIndex);
 
         /// <summary>
         /// Scan from given index and return the token found.
         /// </summary>
         /// <param name="startIndex">Index to start scanning from.</param>
         /// <returns>Token instance, null if no token could be scanned.</returns>
-        public abstract Token GetTokenStartingFrom(int startIndex);
+        public abstract Token? GetTokenStartingFrom(int startIndex);
 
-        protected Token ScanWhitespace(int startIndex)
+        protected Token? ScanWhitespace(int startIndex)
         {
             // consume all whitespace chars available
             for (; currentIndex <= lastIndex && line[currentIndex] == ' '; currentIndex++) { }
             int endIndex = currentIndex - 1;
 
+            Debug.Assert(tokensLine.ScanState != null);
             if (tokensLine.ScanState.InsidePseudoText || !compilerOptions.OptimizeWhitespaceScanning)
             {
                 // SpaceSeparator has to be created
@@ -109,7 +112,7 @@ namespace TypeCobol.Compiler.Scanner
                 lookupEndIndex++;
             }
 
-            // then consume the following chars : digits many times, + -  e E . only once             
+            // then consume the following chars : digits many times, + -  e E . only once
             bool currentCharStillInLiteral;
             bool plusMinusFound = false;
             bool periodFound = false;
@@ -171,7 +174,7 @@ namespace TypeCobol.Compiler.Scanner
                     currentIndex += decMatch.Length;
                     int endIndex = startIndex + decMatch.Length - 1;
                     TokenType type;
-                    LiteralTokenValue value;
+                    LiteralTokenValue? value;
                     if (decMatch.Groups[3].Value.Length > 0)
                     {
                         type = TokenType.DecimalLiteral;
@@ -202,7 +205,7 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        protected Token ScanAlphanumericLiteral(int startIndex, TokenType tokenType, BitArray multiStringConcatBitPosition)
+        protected Token ScanAlphanumericLiteral(int startIndex, TokenType tokenType, BitArray? multiStringConcatBitPosition)
         {
             // p46: Alphanumeric Literals 
             //   Quotation marks {"} ... {"}
@@ -287,7 +290,8 @@ namespace TypeCobol.Compiler.Scanner
             int endIndex = (currentIndex > lastIndex) ? lastIndex : currentIndex - 1;
             Token token = new Token(tokenType, startIndex, endIndex, usingVirtualSpaceAtEndOfLine, tokensLine, true, closingDelimiterFound, delimiter);
 
-            // compute the value of the literal, depending on the exact literal type            
+            // compute the value of the literal, depending on the exact literal type
+            Debug.Assert(tokensLine.ScanState != null);
             AlphanumericLiteralTokenValue value;
             switch (tokenType)
             {
@@ -318,7 +322,7 @@ namespace TypeCobol.Compiler.Scanner
                         // p41: Hexadecimal notation for national literals
                         // The number of hexadecimal digits must be a multiple of four.
                         // Each group of four hexadecimal digits represents a single national
-                        // character and must represent a valid code point in UTF-16. 
+                        // character and must represent a valid code point in UTF-16.
 
                         string hexadecimalChars = sbValue.ToString();
                         if (hexadecimalChars.Length % 4 != 0)

@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. GlobalStorageTest.
        ENVIRONMENT DIVISION.
@@ -25,7 +25,7 @@
       *01 PgmInfo   TYPEDEF STRICT PUBLIC.
       *    05 ProgramName                     PIC X(08).
       *    05 TechnicalContext                type Date.
-       01  TC-GlobalSt-FctList-Loaded PIC X(02).
+       01  TC-GlobalSt-FctList-Loaded PIC X(02) VALUE space.
            88 TC-GlobalSt-FctList-IsLoaded      VALUE 'OK'.
        01 TC-GlobalSt-PntTab.
            05 TC-GlobalSt-PntNbr         PIC S9(04) COMP VALUE 1.

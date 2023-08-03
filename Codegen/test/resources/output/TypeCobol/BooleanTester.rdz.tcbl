@@ -6,7 +6,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-       01 MyGroupLevl.
+       01 MyGroupLevl PIC 9(2).
          88 My88Level VALUE 99.
 
        01 MyGroup.

@@ -56,11 +56,6 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
 
-        /// <summary>
-        /// true to use Euro-Information replacement rules
-        /// </summary>
-        public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
-
 #if EUROINFO_RULES
         /// <summary>
         /// The Cpy Copy names file
@@ -266,7 +261,6 @@ namespace TypeCobol.LanguageServer
             this.Workspace.LsrTestOptions = LsrTestingLevel;
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
             this.Workspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
-            this.Workspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
             this.Workspace.TimerDisabledOption = TimerDisabledOption;
 
             // Attach event handlers.
@@ -658,10 +652,10 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
                                          &&
-                                         ((v.CodeElement?.LevelNumber != null && v.CodeElement.LevelNumber.Value == 88)
+                                         ((v.CodeElement?.Type == CodeElementType.DataConditionEntry)
                                           //Level 88 Variable
                                           || v.DataType == DataType.Numeric //Numeric Integer Variable
-                                          || v.Usage == DataUsage.Pointer) //Or usage is pointer 
+                                          || v.Usage == DataUsage.Pointer || v.Usage == DataUsage.Pointer32) //Or usage is pointer/pointer-32 
                                 ));
                                 break;
                             }

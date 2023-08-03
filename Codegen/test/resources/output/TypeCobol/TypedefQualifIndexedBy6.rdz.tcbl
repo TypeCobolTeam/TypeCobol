@@ -6,11 +6,13 @@
       
       *01 MyType TYPEDEF STRICT.
       *    05 MyTab occurs 99 indexed by MyIdx.
+      *        10 myVar PIC X.
       
        01 Var1.
       *   05 Var2 type MyType.
           05 Var2.
            06 MyTab occurs 99 indexed by a39c8812MyIdx.
+             07 myVar PIC X.
                               
       
        procedure division.

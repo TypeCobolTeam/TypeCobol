@@ -253,7 +253,7 @@ namespace TypeCobol.Compiler.Parser
                 return new Value(CreateAlphanumericValue(context.alphanumericValue2()));
             if (context.repeatedCharacterValue2() != null)
                 return new Value(CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
-            throw new InvalidOperationException();
+            return null;
         }
 
         internal Value CreateValue(CodeElementsParser.Value2Context context)
@@ -1143,20 +1143,23 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public enum FunctionNameEnum
         {
-            ACOS, ANNUITY, ASIN, ATAN,
-            CHAR, COS, CURRENT_DATE,
-            DATE_OF_INTEGER, DATE_TO_YYYYMMDD, DAY_OF_INTEGER, DAY_TO_YYYYDDD,
-            DISPLAY_OF, FACTORIAL,
-            INTEGER, INTEGER_OF_DATE, INTEGER_OF_DAY, INTEGER_PART,
+            ABS, ACOS, ANNUITY, ASIN, ATAN,
+            BIT_OF, BIT_TO_CHAR, BYTE_LENGTH,
+            CHAR, COMBINED_DATETIME, COS, CURRENT_DATE,
+            DATE_OF_INTEGER, DATE_TO_YYYYMMDD, DAY_OF_INTEGER, DAY_TO_YYYYDDD, DISPLAY_OF,
+            E, EXP, EXP10,
+            FACTORIAL, FORMATTED_CURRENT_DATE, FORMATTED_DATE, FORMATTED_DATETIME, FORMATTED_TIME,
+            HEX_OF, HEX_TO_CHAR,
+            INTEGER, INTEGER_OF_DATE, INTEGER_OF_DAY, INTEGER_OF_FORMATTED_DATE, INTEGER_PART,
             LENGTH, LOG, LOG10, LOWER_CASE,
             MAX, MEAN, MEDIAN, MIDRANGE, MIN, MOD,
-            NATIONAL_OF, NUMVAL, NUMVAL_C,
+            NATIONAL_OF, NUMVAL, NUMVAL_C, NUMVAL_F,
             ORD, ORD_MAX, ORD_MIN,
-            PRESENT_VALUE,
+            PI, PRESENT_VALUE,
             RANDOM, RANGE, REM, REVERSE,
-            SIN, SQRT, STANDARD_DEVIATION, SUM,
-            TAN,
-            ULENGTH, UPOS, UPPER_CASE, USUBSTR, USUPPLEMENTARY, UVALID, UWIDTH,
+            SECONDS_FROM_FORMATTED_TIME, SECONDS_PAST_MIDNIGHT, SIGN, SIN, SQRT, STANDARD_DEVIATION, SUM,
+            TAN, TEST_DATE_YYYYMMDD, TEST_DAY_YYYYDDD, TEST_FORMATTED_DATETIME, TEST_NUMVAL, TEST_NUMVAL_C, TEST_NUMVAL_F, TRIM,
+            ULENGTH, UPOS, UPPER_CASE, USUBSTR, USUPPLEMENTARY, UUID4, UVALID, UWIDTH,
             VARIANCE,
             WHEN_COMPILED,
             YEAR_TO_YYYY

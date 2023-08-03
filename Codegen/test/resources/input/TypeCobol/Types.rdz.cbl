@@ -58,12 +58,10 @@
        01 A2   TYPEDEF STRICT PUBLIC comp-2.
        01 A3   TYPEDEF STRICT PUBLIC pointer.
        01 A4   TYPEDEF STRICT PUBLIC procedure-pointer.
-       01 A5   TYPEDEF STRICT PUBLIC comp-5.
        01 v1 type A1.
        01 v2 type A2.
        01 v3 type A3.
        01 v4 type A4.
-       01 v5 type A5.
 
 
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#nullable enable
 
 namespace TypeCobol.Compiler.Text
 {    
@@ -58,6 +54,6 @@ namespace TypeCobol.Compiler.Text
         /// This property returns an opaque reference to a line tracking object from the live text document,
         /// which will enable an efficient retrieval of the line number for this line in the document.
         /// </summary>
-        object LineTrackingReferenceInSourceDocument { get; }
+        object? LineTrackingReferenceInSourceDocument { get; }
     }
 }

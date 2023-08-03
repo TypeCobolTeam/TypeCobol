@@ -1,7 +1,4 @@
-
-using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -11,7 +8,6 @@ namespace TypeCobol.Compiler.Nodes {
 
     using System;
     using System.Collections.Generic;
-    using CodeElements.Expressions;
     using Scanner;
     using TypeCobol.Compiler.CodeElements;
 
@@ -20,13 +16,13 @@ namespace TypeCobol.Compiler.Nodes {
     public class DataDivision: GenericNode<DataDivisionHeader>, Parent<DataSection> {
 
         public const string NODE_ID = "data-division";
-	    public DataDivision(DataDivisionHeader header): base(header) { }
-	    public override string ID { get { return NODE_ID; } }
+        public DataDivision(DataDivisionHeader header): base(header) { }
+        public override string ID { get { return NODE_ID; } }
 
-	    public override void Add(Node child, int index = -1) {
-		    if (index <= 0) index = WhereShouldIAdd(child.GetType());
-		    base.Add(child,index);
-	    }
+        public override void Add(Node child, int index = -1) {
+            if (index <= 0) index = WhereShouldIAdd(child.GetType());
+            base.Add(child,index);
+        }
         private int WhereShouldIAdd(System.Type section) {
             if (Tools.Reflection.IsTypeOf(section, typeof(FileSection))) return 0;
             int ifile = -2;
@@ -61,8 +57,8 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
         public abstract class DataSection: GenericNode<DataSectionHeader>, Child<DataDivision>{
-	    protected DataSection(DataSectionHeader header): base(header) { }
-	    public virtual bool IsShared { get { return false; } }
+        protected DataSection(DataSectionHeader header): base(header) { }
+        public virtual bool IsShared { get { return false; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -70,8 +66,8 @@ namespace TypeCobol.Compiler.Nodes {
     }
     public class FileSection: DataSection {
         public FileSection(FileSectionHeader header): base(header) { }
-	    public override string ID { get { return "file"; } }
-	    public override bool IsShared { get { return true; } }
+        public override string ID { get { return "file"; } }
+        public override bool IsShared { get { return true; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
@@ -131,7 +127,7 @@ namespace TypeCobol.Compiler.Nodes {
     }
     public class LocalStorageSection: DataSection, Parent<DataDefinition>
         {
-	    public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
+        public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
 
         public override IEnumerable<ITextLine> Lines
         {
@@ -163,7 +159,7 @@ namespace TypeCobol.Compiler.Nodes {
     }
     public class LinkageSection: DataSection, Parent<DataDefinition>
     {
-	    public LinkageSection(LinkageSectionHeader header): base(header) { }
+        public LinkageSection(LinkageSectionHeader header): base(header) { }
 
         public override IEnumerable<ITextLine> Lines
         {
@@ -188,7 +184,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
         public override string ID { get { return "linkage"; } }
-	    public override bool IsShared { get { return true; } }
+        public override bool IsShared { get { return true; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
@@ -222,6 +218,7 @@ namespace TypeCobol.Compiler.Nodes {
             this.CodeElement = dataDefinitionEntry;
         }
 
+        [CanBeNull]
         private CommonDataDescriptionAndDataRedefines _CommonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
 
 
@@ -309,19 +306,34 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        [CanBeNull]
         private DataType _primitiveDataType;
+
+        [CanBeNull]
         public virtual DataType PrimitiveDataType
         {
             get
             {
                 if (_primitiveDataType != null) return _primitiveDataType;
-                if (this.Picture != null) //Get DataType based on Picture clause
-                    _primitiveDataType = DataType.Create(this.Picture.Value);
-                else if (this.Usage.HasValue) //Get DataType based on Usage clause
-                    _primitiveDataType = DataType.Create(this.Usage.Value);
-                else
-                    return null;
-
+                //If it's not a Typedef
+                if (_CommonDataDesc?.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
+                {
+                    _primitiveDataType = _CommonDataDesc.DataType;
+                }
+                else //It's a Typedef, its DataType doesn't reflect its picture or its usage but the Typedef
+                {
+                    if (_CommonDataDesc?.PictureValidationResult != null)
+                    {
+                        _primitiveDataType = DataType.Create(_CommonDataDesc.PictureValidationResult);
+                    }
+                    else
+                    {
+                        var dataUsage = Usage;
+                        if (dataUsage.HasValue)
+                            _primitiveDataType = DataType.Create(dataUsage.Value);
+                    }
+                }
+                
                 return _primitiveDataType;
             }
         }
@@ -345,7 +357,7 @@ namespace TypeCobol.Compiler.Nodes {
                     {
                         _physicalLength = GetPhysicalLength();
                     }
-                    else if (CodeElement?.LevelNumber?.Value == 88)
+                    else if (CodeElement?.Type == CodeElementType.DataConditionEntry)
                     {
                         //Exception case if this is a level 88
                         _physicalLength = 0;
@@ -487,6 +499,7 @@ namespace TypeCobol.Compiler.Nodes {
                             break;
                         case DataUsage.Index:
                         case DataUsage.Pointer:
+                        case DataUsage.Pointer32:
                         case DataUsage.ProcedurePointer:
                         case DataUsage.ObjectReference:
                         case DataUsage.FunctionPointer:
@@ -645,8 +658,13 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         #region TypeProperties
+
+        [CanBeNull]
         public AlphanumericValue Picture => _CommonDataDesc?.Picture;
+
+        [CanBeNull]
         internal PictureValidator.Result PictureValidationResult => _CommonDataDesc?.PictureValidationResult;
+
         public bool IsJustified { get {  if(_CommonDataDesc != null && _CommonDataDesc.IsJustified != null) return _CommonDataDesc.IsJustified.Value; else return false; } }
         public virtual DataUsage? Usage
         {
@@ -716,35 +734,11 @@ namespace TypeCobol.Compiler.Nodes {
         [NotNull]
         public new DataDescriptionEntry CodeElement => (DataDescriptionEntry) base.CodeElement;
 
-        public bool IsDataDescriptionGroup
-        {
-            get
-            {
-                if (this.CodeElement.LevelNumber?.Value < 50 && this.Picture == null && this.CodeElement.UserDefinedDataType == null)
-                {
-                    if (this.ChildrenCount > 0)
-                    {
-                        return true;
-                    }
-                    else if (!this.Usage.HasValue || this.Usage.Value != DataUsage.Pointer &&
-                             this.Usage.Value != DataUsage.FunctionPointer &&
-                             this.Usage.Value != DataUsage.ProcedurePointer &&
-                             this.Usage.Value != DataUsage.ObjectReference &&
-                             this.Usage.Value != DataUsage.FloatingPoint &&
-                             this.Usage.Value != DataUsage.LongFloatingPoint &&
-                             this.Usage.Value != DataUsage.Index)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
-
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+
         /// <summary>
         /// A Dictonary that gives for a Token that appears in a qualified name its subtitution.
         /// </summary>
@@ -950,7 +944,7 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override DataUsage? Usage
         {
-	        get { return DataUsage.Index; }
+            get { return DataUsage.Index; }
         }
 
         public override long PhysicalLength

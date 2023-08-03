@@ -1,4 +1,6 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+Line 7[67,76] <27, Error, Syntax> - Syntax error : extraneous input 'pointer-32' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[67,76:pointer-32]<POINTER_32>
+--- Code Elements ---
 UNSTRING toto
  INTO result
 
@@ -24,6 +26,10 @@ UNSTRING toto
  INTO resultresult2
  WITH POINTER ptr1
  TALLYING IN tallyingVar
+
+UNSTRING toto
+ DELIMITED BY var1 OR var2 OR var3
+ INTO resultresult2
 
 UNSTRING WS-CONTRAT
  DELIMITED BY ALL SPACES

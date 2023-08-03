@@ -252,14 +252,7 @@ namespace TypeCobol.Server
         {
             foreach (var textNameVariation in usedCopies)
             {
-#if EUROINFO_RULES
-                string copyName = _configuration.UseEuroInformationLegacyReplacingSyntax
-                    ? textNameVariation.TextName
-                    : textNameVariation.TextNameWithSuffix;
-#else
-                string copyName = textNameVariation.TextNameWithSuffix;
-#endif
-                _usedCopies.Add(copyName);
+                _usedCopies.Add(textNameVariation.GetFileName(_configuration));
             }
         }
 
@@ -579,14 +572,14 @@ namespace TypeCobol.Server
             //Avoid returning MissingCopy for users who are only interested in copies extraction
             if (_configuration.ExecToStep <= ExecutionStep.Preprocessor)
             {
-	            if (_configuration.ExtractedCopiesFilePath != null
+                if (_configuration.ExtractedCopiesFilePath != null
 #if EUROINFO_RULES
-	                || _configuration.ReportUsedCopyNamesPath != null
+                    || _configuration.ReportUsedCopyNamesPath != null
 #endif
-	               )
-	            {
-		            return returnCode;
-	            }
+                   )
+                {
+                    return returnCode;
+                }
             }
 
             //Return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once

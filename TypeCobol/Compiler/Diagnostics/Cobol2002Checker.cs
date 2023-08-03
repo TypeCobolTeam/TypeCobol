@@ -86,13 +86,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
 
-            if (typeDefinition.CodeElement.Picture == null && typeDefinition.Children.Count < 1 &&
-                !typeDefinition.Usage.HasValue)
-            {
-                string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
-                DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
-            }
-
             if (typeDefinition.IsInsideCopy())
             {
                 string copyName = typeDefinition.CodeElement.FirstCopyDirective.TextName;
@@ -240,7 +233,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (foundedType == null || data == null || data.LevelNumber == null)
                 return;
 
-            if (data.LevelNumber.Value == 88 || data.LevelNumber.Value == 66)
+            if (data.Type == CodeElementType.DataConditionEntry || data.Type == CodeElementType.DataRenamesEntry)
             {
                 DiagnosticUtils.AddError(dataDefinition,
                     string.Format("A {0} level variable cannot be typed", data.LevelNumber.Value),

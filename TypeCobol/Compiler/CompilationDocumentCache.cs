@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 
@@ -69,10 +70,11 @@ namespace TypeCobol.Compiler
                 var importedCopies = document.Value.CopyTextNamesVariations;
                 foreach (var importedCopy in importedCopies)
                 {
-                    if (!importedBy.TryGetValue(importedCopy.TextName, out var dependentCopies))
+                    string fileName = importedCopy.GetFileName(document.Value.CompilerOptions);
+                    if (!importedBy.TryGetValue(fileName, out var dependentCopies))
                     {
                         dependentCopies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                        importedBy.Add(importedCopy.TextName, dependentCopies);
+                        importedBy.Add(fileName, dependentCopies);
                     }
 
                     dependentCopies.Add(copy);
@@ -82,12 +84,6 @@ namespace TypeCobol.Compiler
             // Evict from this cache
             foreach (var textName in textNames)
             {
-                if (!evicted.Add(textName))
-                {
-                    // Already done
-                    continue;
-                }
-
                 Evict(textName);
 
                 // Evict dependent copies if any (no need to recurse as the list of dependent copies is already flattened)
@@ -105,10 +101,15 @@ namespace TypeCobol.Compiler
                 // Remove all variants of this document
                 string fullName = GetFullName(null, textName);
                 var keysToRemove = _documents.Keys.Where(key => key.StartsWith(fullName, StringComparison.OrdinalIgnoreCase)).ToArray();
-                foreach (var keyToRemove in keysToRemove)
+                if (keysToRemove.Length > 0)
                 {
-                    _documents.Remove(keyToRemove);
+                    foreach (var keyToRemove in keysToRemove)
+                    {
+                        _documents.Remove(keyToRemove);
+                    }
                 }
+
+                evicted.Add(textName);
             }
         }
 
