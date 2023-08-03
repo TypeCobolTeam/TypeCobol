@@ -1,6 +1,5 @@
-﻿using System;
-using System.Linq;
-using JetBrains.Annotations;
+﻿#nullable enable
+
 using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -15,9 +14,9 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             public static readonly Position Default = new Position(0, 0, 0, 0, null);
 
-            private readonly string _messageAdapter;
+            private readonly string? _messageAdapter;
 
-            public Position(int lineStart, int columnStart, int lineEnd, int columnEnd, CopyDirective includingDirective)
+            public Position(int lineStart, int columnStart, int lineEnd, int columnEnd, CopyDirective? includingDirective)
             {
                 if (includingDirective != null)
                 {
@@ -78,25 +77,22 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        public Diagnostic(MessageCode messageCode, [NotNull] Position position, params object[] messageArgs)
+        public Diagnostic(MessageCode messageCode, Position position, params object[] messageArgs)
             : this(DiagnosticMessage.GetFromCode(messageCode), position, messageArgs)
         {
 
         }
 
-        protected Diagnostic(DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
+        protected Diagnostic(DiagnosticMessage info, Position position, params object[] messageArgs)
         {
             Info = info;
-            messageArgs = messageArgs ?? Array.Empty<object>();
             Message = string.Format(Info.MessageTemplate, messageArgs);
             ApplyPosition(position);
             CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();
         }
 
-        protected Diagnostic([NotNull] Diagnostic other)
+        protected Diagnostic(Diagnostic other)
         {
-            System.Diagnostics.Debug.Assert(other != null);
-
             Info = other.Info;//DiagnosticMessage is a readonly class so it's ok to keep the same reference instead of creating a copy instance
             LineStart = other.LineStart;
             LineEnd = other.LineEnd;
@@ -112,7 +108,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public int ColumnStart { get; private set;  }
         public int ColumnEnd { get; private set; }
         public string Message { get; private set; }
-        public Exception CaughtException { get; }
+        public Exception? CaughtException { get; }
 
         /// <summary>
         /// Text representation of a diagnostic for debugging or test purposes
@@ -134,9 +130,8 @@ namespace TypeCobol.Compiler.Diagnostics
             return $"{location} <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
         }
 
-        private void ApplyPosition([NotNull] Position position)
+        private void ApplyPosition(Position position)
         {
-            System.Diagnostics.Debug.Assert(position != null);
             LineStart = position.LineStart;
             LineEnd = position.LineEnd;
             ColumnStart = position.ColumnStart;
@@ -166,7 +161,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <param name="newPosition">Non-null instance of Position to locate the diagnostic in code.</param>
         /// <returns>New instance of diagnostic, copied from this one.</returns>
-        public Diagnostic CopyAt([NotNull] Position newPosition)
+        public Diagnostic CopyAt(Position newPosition)
         {
             var copy = Duplicate();
             copy.ApplyPosition(newPosition);

@@ -160,4 +160,14 @@ namespace TypeCobol.Compiler.CodeElements
         Output,
         Returning
     }
+
+    /// <summary>
+    /// A keyword shall be specified in accordance with the intrinsic function definition.
+    /// For instance the keywords LEADING and TRAILING may be specified as the second and optional argument of TRIM.
+    /// </summary>
+    public enum IntrinsicFunctionKeywordArgument
+    {
+        Leading, // Only allowed for TRIM
+        Trailing // Only allowed for TRIM
+    }
 }

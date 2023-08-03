@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Text;
@@ -17,15 +18,12 @@ namespace TypeCobol.Compiler.Scanner
         private int startIndex;
         private int stopIndex;
 
-        /// <summary>Empty constructor for mock.</summary>
-        public Token() { }
-
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as Token);
         }
 
-        public bool Equals(Token tokenCompare)
+        public bool Equals(Token? tokenCompare)
         {
             if (Object.ReferenceEquals(this, tokenCompare)) return true;
             if (Object.ReferenceEquals(null, tokenCompare)) return false;
@@ -125,11 +123,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public virtual TokenFamily TokenFamily { get; private set; }
 
-        /// <summary>
-        /// True if this token is pseudo text in a REPLACE or COPY REPLACING directive
-        /// </summary>
-        public bool IsPseudoText { get; set; }
-
         public static int CHANNEL_SourceTokens = 0;    
         public static int CHANNEL_WhitespaceAndComments = 1;
         public static int CHANNEL_ContinuationTokens = 2;
@@ -218,7 +211,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Language Reference p54: If there is no hyphen (-) in the indicator area (column 7) of a line, the last character
         /// of the preceding line is assumed to be followed by a space.
         /// </summary>
-        public bool UsesVirtualSpaceAtEndOfLine { get; private set; }
+        public bool UsesVirtualSpaceAtEndOfLine { get; }
 
         /// <summary>
         /// Length of the token in the source text.
@@ -291,7 +284,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Enables the lexer to attach a strongly typed value for literals
         /// </summary>
-        public LiteralTokenValue LiteralValue { get; set; }
+        public LiteralTokenValue? LiteralValue { get; set; }
 
         // --- Ambiguous tokens resolved after having been created ---
 
@@ -364,12 +357,12 @@ namespace TypeCobol.Compiler.Scanner
             tokenSource = source;
         }
 
-        private Antlr4.Runtime.ITokenSource tokenSource;
+        private Antlr4.Runtime.ITokenSource? tokenSource;
 
         /// <summary>
         /// Returns null until SetAntlrTokenSource() is called
         /// </summary>
-        public Antlr4.Runtime.ITokenSource TokenSource
+        public Antlr4.Runtime.ITokenSource? TokenSource
         {
             get { return tokenSource; }
         }
@@ -404,7 +397,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Compare two tokens to implement the REPLACE directive
         /// </summary>
-        public bool CompareForReplace(Token comparisonToken)
+        public bool CompareForReplace(Token? comparisonToken)
         {
             //Nothing to compare
             if (comparisonToken == null)

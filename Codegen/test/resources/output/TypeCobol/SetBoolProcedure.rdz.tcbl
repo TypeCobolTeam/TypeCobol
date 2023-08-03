@@ -9,12 +9,15 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
                           
+       01 Var1 pic X.
+           88 var88 value 'A' false 'B'.
       
        procedure division.
            set IsOk to true
       *    set IsOk to false
            SET IsOk-false TO TRUE
                             
+           set var88 to false
            .
       
       *DECLARE PROCEDURE IsDateValid.

@@ -3,10 +3,13 @@
        DATA DIVISION .
        working-storage section.
        01  IsOk type bool.
+       01 Var1 pic X.
+           88 var88 value 'A' false 'B'.
       
        procedure division.
            set IsOk to true
            set IsOk to false
+           set var88 to false
            .
       
        DECLARE PROCEDURE IsDateValid.

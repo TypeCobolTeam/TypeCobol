@@ -50,6 +50,7 @@ namespace TypeCobol.Compiler.Types
             National,
             ObjectReference,
             Pointer,
+            Pointer32,
             ProcedurePointer,
             FunctionPointer
         }
@@ -87,6 +88,8 @@ namespace TypeCobol.Compiler.Types
                     return UsageFormat.ObjectReference;
                 case DataUsage.Pointer:
                     return UsageFormat.Pointer;
+                case DataUsage.Pointer32:
+                    return UsageFormat.Pointer32;
                 case DataUsage.ProcedurePointer:
                     return UsageFormat.ProcedurePointer;
                 default:
@@ -137,6 +140,7 @@ namespace TypeCobol.Compiler.Types
                     case UsageFormat.ObjectReference:
                     case UsageFormat.Index:
                     case UsageFormat.Pointer:
+                    case UsageFormat.Pointer32:
                         return 4;
                     //Long floating-point: Specifies for internal  floating point items(double precision)
                     //(i.e double in java or C)

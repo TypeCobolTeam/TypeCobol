@@ -1,11 +1,7 @@
 ﻿using Mono.Options;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
@@ -107,11 +103,6 @@ namespace TypeCobol.LanguageServer
         /// True to use ANTLR for parsing a program
         /// </summary>
         public static bool UseAntlrProgramParsing { get; set; }
-
-        /// <summary>
-        /// True to use Euro-Information replacement rules
-        /// </summary>
-        public static bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
         /// <summary>
         /// Are we supporting Syntax Coloring Notifications.    
@@ -236,7 +227,6 @@ namespace TypeCobol.LanguageServer
                 { "tsemantic",  "Semantic analysis testing mode.", _ => LsrSemanticTesting = true},
                 { "tcodeanalysis",  "Code quality analysis testing mode.", _ => LsrCodeAnalysisTesting = true},
                 { "antlrp",  "Use ANTLR to parse a Program.", _ => UseAntlrProgramParsing = true},
-                { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
 #if EUROINFO_RULES
@@ -332,7 +322,6 @@ namespace TypeCobol.LanguageServer
                 if (LsrCodeAnalysisTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrCodeAnalysisPhaseTesting;
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
                 typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
-                typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;

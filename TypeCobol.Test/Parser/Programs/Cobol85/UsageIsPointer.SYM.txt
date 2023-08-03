@@ -1,0 +1,91 @@
+--- Program ---
+Pgm2503 (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  Var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2503
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Pointer
+  Level: 1
+  IsFiller: False
+  Var2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2503
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Pointer
+  Level: 1
+  IsFiller: False
+  Var3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2503
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Pointer32
+  Level: 1
+  IsFiller: False
+  Var4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2503
+  Type:
+    (.NET Type=Type, Tag=Usage)
+    Usage: Pointer32
+  Level: 1
+  IsFiller: False
+  Group1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2503
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer32
+    Fields:
+      Var5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2503::Group1
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer32
+      Level: 5
+      IsFiller: False
+      Var6 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2503::Group1
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer32
+      Level: 5
+      IsFiller: False
+      Var7 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2503::Group1
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Usage: Pointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Var10 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2503
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+LinkageData:
+  Link1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LINKAGE]
+  Owner: Pgm2503
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(8)
+  Level: 1
+  IsFiller: False
+IsNested: False
+

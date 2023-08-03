@@ -197,33 +197,33 @@ namespace TypeCobol.Compiler.CodeElements
             ce.StorageAreaReads = this.StorageAreaReads;
         }
         
-		/// <summary>
-		/// Debug string
-		/// </summary>
-		public override string ToString()
-		{
-			StringBuilder sb = new StringBuilder("[[");
-			sb.Append(Type);
-			sb.Append("]] ");
-			if (ConsumedTokens == null || ConsumedTokens.Count < 1) {
-				sb.Append("No Consumed Tokens").AppendLine();
-			} else {
-				sb.Append(ConsumedTokens[0]).ToString();
-				sb.Append(" --> ");
-				sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
-				bool displayLineNumbers = false;
-				if (displayLineNumbers) {
-					int first = ConsumedTokens[0].Line;
-					int last  = ConsumedTokens[ConsumedTokens.Count-1].Line;
-					sb.Append(" on lines ");
-					sb.Append(first);
-					sb.Append(">");
-					sb.Append(last);
-				}
-			}
-			sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
-			return sb.ToString();
-		}
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("[[");
+            sb.Append(Type);
+            sb.Append("]] ");
+            if (ConsumedTokens == null || ConsumedTokens.Count < 1) {
+                sb.Append("No Consumed Tokens").AppendLine();
+            } else {
+                sb.Append(ConsumedTokens[0]).ToString();
+                sb.Append(" --> ");
+                sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
+                bool displayLineNumbers = false;
+                if (displayLineNumbers) {
+                    int first = ConsumedTokens[0].Line;
+                    int last  = ConsumedTokens[ConsumedTokens.Count-1].Line;
+                    sb.Append(" on lines ");
+                    sb.Append(first);
+                    sb.Append(">");
+                    sb.Append(last);
+                }
+            }
+            sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
+            return sb.ToString();
+        }
 
         public override bool Equals(object obj)
         {
@@ -351,35 +351,35 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public string SourceText {
-			get {
-				var str = new StringBuilder();
-				ITokensLine previous = null;
-				int end = -1;
-				foreach(var token in ConsumedTokens) {
-					var line = token.TokensLine;
-					string whitespace = "";
-					if (previous == null) { // first line
-						whitespace = GetIndent(line, token.StartIndex);
-					} else
-					if (previous == line) { // same line
-						whitespace = line.Text.Substring(end, token.StartIndex-end);
-					} else { // new line
-						str.AppendLine();
-						whitespace = GetIndent(line, token.StartIndex);
-					}
-					previous = line;
-					string text = line.Text.Substring(token.StartIndex, token.Length);
-					str.Append(whitespace+text);
-					end = token.StartIndex + token.Length;
-				}
-				return str.ToString();
-			}
-		}
+            get {
+                var str = new StringBuilder();
+                ITokensLine previous = null;
+                int end = -1;
+                foreach(var token in ConsumedTokens) {
+                    var line = token.TokensLine;
+                    string whitespace = "";
+                    if (previous == null) { // first line
+                        whitespace = GetIndent(line, token.StartIndex);
+                    } else
+                    if (previous == line) { // same line
+                        whitespace = line.Text.Substring(end, token.StartIndex-end);
+                    } else { // new line
+                        str.AppendLine();
+                        whitespace = GetIndent(line, token.StartIndex);
+                    }
+                    previous = line;
+                    string text = line.Text.Substring(token.StartIndex, token.Length);
+                    str.Append(whitespace+text);
+                    end = token.StartIndex + token.Length;
+                }
+                return str.ToString();
+            }
+        }
 
-		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
-			var lineStartIndex = line.Indicator.StartIndex + 1;
+        private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
+            var lineStartIndex = line.Indicator.StartIndex + 1;
             return new string(' ',  firstTokenStartIndex - lineStartIndex);
-		}
+        }
 
         // --- Antlr4.Runtime.IToken implementation ---
         // ... used by the ProgramClassParser  ...
@@ -431,47 +431,47 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-		public int Column {
-			get {
-				if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
-				return ConsumedTokens[0].Column;
-			}
-		}
+        public int Column {
+            get {
+                if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
+                return ConsumedTokens[0].Column;
+            }
+        }
 
-		public int TokenIndex {
-			get {
-				if (ConsumedTokens.Count < 1) return -1;
-				return ConsumedTokens[0].TokenIndex;
-			}
-		}
+        public int TokenIndex {
+            get {
+                if (ConsumedTokens.Count < 1) return -1;
+                return ConsumedTokens[0].TokenIndex;
+            }
+        }
 
-		public int StartIndex {
-			get {
-				if (ConsumedTokens.Count < 1) return -1;
-				return ConsumedTokens[0].StartIndex;
-			}
-		}
+        public int StartIndex {
+            get {
+                if (ConsumedTokens.Count < 1) return -1;
+                return ConsumedTokens[0].StartIndex;
+            }
+        }
 
-		public int StopIndex {
-			get {
-				if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
-				return ConsumedTokens[ConsumedTokens.Count-1].StopIndex;
-			}
-		}
+        public int StopIndex {
+            get {
+                if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
+                return ConsumedTokens[ConsumedTokens.Count-1].StopIndex;
+            }
+        }
 
-		public ITokenSource TokenSource {
-			get {
-				if (ConsumedTokens.Count < 1) return null;
-				return ConsumedTokens[0].TokenSource;
-			}
-		}
+        public ITokenSource TokenSource {
+            get {
+                if (ConsumedTokens.Count < 1) return null;
+                return ConsumedTokens[0].TokenSource;
+            }
+        }
 
-		public ICharStream InputStream {
-			get {
-				if (ConsumedTokens.Count < 1) return null;
-				return ConsumedTokens[0].InputStream;
-			}
-		}
+        public ICharStream InputStream {
+            get {
+                if (ConsumedTokens.Count < 1) return null;
+                return ConsumedTokens[0].InputStream;
+            }
+        }
 
         /// <summary>
         /// Describe how a CodeElement debugging is set

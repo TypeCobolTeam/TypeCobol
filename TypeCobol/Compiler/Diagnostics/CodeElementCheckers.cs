@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (data.LevelNumber != null &&
                     !((data.LevelNumber.Value >= 01 && data.LevelNumber.Value <= 49)
-                      || data.LevelNumber.Value == 66 || data.LevelNumber.Value == 77 || data.LevelNumber.Value == 88))
+                      || data.Type == CodeElementType.DataRenamesEntry || data.LevelNumber.Value == 77 || data.Type == CodeElementType.DataConditionEntry))
                 {
                     DiagnosticUtils.AddError(data,
                         "Data must be declared between level 01 to 49, or equals to 66, 77, 88",
@@ -122,6 +122,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
             //Store validation result for future usages
             codeElement.PictureValidationResult = pictureValidationResult;
+            if (codeElement.DataType == DataType.Unknown)
+            {
+                codeElement.DataType = DataType.Create(pictureValidationResult);
+            }
         }
 
         public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
@@ -167,7 +171,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void OnCodeElement(DataConditionEntry data, CodeElementsParser.DataConditionEntryContext context)
         {
-            if (data.LevelNumber?.Value != 88)
+            if (data.Type != CodeElementType.DataConditionEntry)
                 DiagnosticUtils.AddError(data, "Data conditions must be level 88", context?.levelNumber);
             if (data.DataName == null)
                 DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context?.levelNumber);
@@ -538,16 +542,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        public void Check(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
-        {
-            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
-
-            if (context.FALSE() != null)
-            {
-                AddError(statement, "SET TO FALSE statement is not supported.", context.FALSE());
-            }
-        }
-
         public void Check(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
         {
             if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
@@ -627,7 +621,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var intrinsicFunctionCall = context.intrinsicFunctionCall();
                 if (intrinsicFunctionCall.LeftParenthesisSeparator() != null
                     && intrinsicFunctionCall.RightParenthesisSeparator() != null
-                    && intrinsicFunctionCall.argument().Length == 0)
+                    && intrinsicFunctionCall.intrinsicArgument().Length == 0)
                 {
                     var name = intrinsicFunctionCall.IntrinsicFunctionName().GetText();
                     AddError(intrinsicFunctionCall, $"using empty brackets is not allowed, use 'FUNCTION {name}'.", intrinsicFunctionCall.IntrinsicFunctionName());

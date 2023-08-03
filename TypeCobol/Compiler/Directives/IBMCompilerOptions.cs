@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+#nullable enable
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace TypeCobol.Compiler.Directives
 {
@@ -25,6 +23,7 @@ namespace TypeCobol.Compiler.Directives
     // “SQL” on page 348 NOSQL None 
     // “SQLCCSID” on page 350 SQLCCSID SQLC|NOSQLC 
     // “SQLIMS” on page 349 NOSQLIMS None 
+    // “SUPPRESS” on page 378 SUPPRESS SUPP
     // “WORD” on page 360 NOWORD WD|NOWD 
     // --- Date processing ---
     // “INTDATE” on page 327 INTDATE(ANSI) None 
@@ -51,16 +50,24 @@ namespace TypeCobol.Compiler.Directives
     // “ARCH” on page 305 ARCH(6) None 
     // “AWO” on page 307 NOAWO None 
     // “BLOCK0” on page 307 NOBLOCK0 None 
+    // “DEFINE” on page 328 NODEFINE DEF | NODEF
     // “DISPSIGN” on page 317 DISPSIGN(COMPAT) DS(S|C) 
     // “DLL” on page 318 NODLL None 
     // “EXPORTALL” on page 323 NOEXPORTALL EXP|NOEXP 
     // “FASTSRT” on page 323 NOFASTSRT FSRT|NOFSRT 
     // “MAXPCF” on page 331 MAXPCF(60000) None 
     // “HGPR” on page 326 HGPR(PRESERVE) None 
+    // “INITIAL” on page 342 NOINITIAL None
+    // “INVDATA” on page 344 NOINVDATA NOINV | INVD(FNC | NOFNC, CS | NOCS)
+    // “LP” on page 349 LP(32) None
+    // “NUMCHECK” on page 355 NONUMCHECK NC | NONC
     // “NUMPROC” on page 336 NUMPROC(NOPFD) None 
     // “OPTIMIZE” on page 339 OPTIMIZE(0) OPT(n) 
     // “OUTDD” on page 340 OUTDD(SYSOUT) OUT 
+    // “PARMCHECK” on page 364 NOPARMCHECK PC | NOPC
     // “TRUNC” on page 357 TRUNC(STD) None 
+    // “ZONECHECK” on page 392 NOZONECHECK NOZC | ZC(MSG) | ZC(ABD)
+    //.“ZONEDATA” on page 393 ZONEDATA(PFD) ZD(PFD) | ZD(MIG) | ZD(NOPFD)
     // “ZWB” on page 362 ZWB None
     // --- Virtual storage usage ---
     // “BUFSIZE” on page 309 4096 BUF 
@@ -75,14 +82,19 @@ namespace TypeCobol.Compiler.Directives
     // “DUMP” on page 319 NODUMP DU|NODU 
     // “FLAG” on page 324 FLAG(I,I) F|NOF 
     // “FLAGSTD” on page 325 NOFLAGSTD None 
+    // “INITCHECK” on page 341 NOINITCHECK IC | NOIC
     // “SSRANGE” on page 351 NOSSRANGE SSR|NOSSR 
     // “TEST” on page 353 NOTEST None 
     // --- Other ---
     // “ADATA” on page 303 NOADATA None 
+    // “COPYLOC” on page 324 NOCOPYLOC CPLC
     // “EXIT” on page 320 NOEXIT NOEX|EX(INX|NOINX, LIBX|NOLIBX, PRTX|NOPRTX, ADX|NOADX, MSGX|NOMSGX) 
     // “MDECK” on page 332 NOMDECK NOMD|MD|MD(C|NOC) 
     // “OPTFILE” on page 338 None None 
     // “THREAD” on page 356 NOTHREAD None
+    // --- Deprecated ---
+    // “LIB”
+
 
     /// <summary>
     /// Current status and value for all the IBM compiler options
@@ -92,7 +104,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Name of the option
         /// </summary>
-        public IBMCompilerOptionName Name { get; private set; }
+        public IBMCompilerOptionName Name { get; }
 
         /// <summary>
         /// True if the option status is On (DBCS)
@@ -104,7 +116,7 @@ namespace TypeCobol.Compiler.Directives
         /// String parameter passed to configured the option
         /// Ex : FLAG(I,I) => Value = "I,I"
         /// </summary>
-        public string Value { get; private set; }
+        public string? Value { get; private set; }
 
         /// <summary>
         /// Initialize a compiler option directive to its default state
@@ -126,10 +138,12 @@ namespace TypeCobol.Compiler.Directives
                 case IBMCompilerOptionName.CICS: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.CODEPAGE: IsActivated = true; Value = "1140"; break;
                 case IBMCompilerOptionName.COMPILE: IsActivated = false; Value = "S"; break;
+                case IBMCompilerOptionName.COPYLOC: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.CURRENCY: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.DATA: IsActivated = true; Value = "31"; break;
                 case IBMCompilerOptionName.DBCS: IsActivated = true; Value = null; break;
                 case IBMCompilerOptionName.DECK: IsActivated = false; Value = null; break;
+                case IBMCompilerOptionName.DEFINE: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.DIAGTRUNC: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.DISPSIGN: IsActivated = true; Value = "COMPAT"; break;
                 case IBMCompilerOptionName.DLL: IsActivated = false; Value = null; break;
@@ -141,35 +155,43 @@ namespace TypeCobol.Compiler.Directives
                 case IBMCompilerOptionName.FLAG: IsActivated = true; Value = "I,I"; break;
                 case IBMCompilerOptionName.FLAGSTD: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.HGPR: IsActivated = true; Value = "PRESERVE"; break;
+                case IBMCompilerOptionName.INITCHECK: IsActivated = false; Value = null; break;
+                case IBMCompilerOptionName.INITIAL: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.INTDATE: IsActivated = true; Value = "ANSI"; break;
+                case IBMCompilerOptionName.INVDATA: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.LANGUAGE: IsActivated = true; Value = "ENGLISH"; break;
+                case IBMCompilerOptionName.LIB: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.LINECOUNT: IsActivated = true; Value = "60"; break;
                 case IBMCompilerOptionName.LIST: IsActivated = false; Value = null; break;
+                case IBMCompilerOptionName.LP: IsActivated = true; Value = "32"; break;
                 case IBMCompilerOptionName.MAP: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.MAXPCF: IsActivated = true; Value = "60000"; break;
                 case IBMCompilerOptionName.MDECK: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.NAME: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.NSYMBOL: IsActivated = true; Value = "NATIONAL"; break;
                 case IBMCompilerOptionName.NUMBER: IsActivated = false; Value = null; break;
+                case IBMCompilerOptionName.NUMCHECK: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.NUMPROC: IsActivated = true; Value = "NOPFD"; break;
                 case IBMCompilerOptionName.OBJECT: IsActivated = true; Value = null; break;
                 case IBMCompilerOptionName.OFFSET: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.OPTFILE: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.OPTIMIZE: IsActivated = true; Value = "0"; break;
                 case IBMCompilerOptionName.OUTDD: IsActivated = true; Value = "SYSOUT"; break;
+                case IBMCompilerOptionName.PARMCHECK: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.PGMNAME: IsActivated = true; Value = "COMPAT"; break;
                 case IBMCompilerOptionName.QUOTE: IsActivated = true; Value = null; break;
                 case IBMCompilerOptionName.RENT: IsActivated = true; Value = null; break;
                 case IBMCompilerOptionName.RMODE: IsActivated = true; Value = "AUTO"; break;
                 case IBMCompilerOptionName.SEQUENCE: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.SIZE: IsActivated = true; Value = "5000000"; break;
-                case IBMCompilerOptionName.SOURCE: IsActivated = true; Value = null; break;
+                case IBMCompilerOptionName.SOURCE: IsActivated = true; Value = "DEC"; break;
                 case IBMCompilerOptionName.SPACE: IsActivated = true; Value = "1"; break;
                 case IBMCompilerOptionName.SQL: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.SQLCCSID: IsActivated = true; Value = null; break;
                 case IBMCompilerOptionName.SQLIMS: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.SSRANGE: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.STGOPT: IsActivated = false; Value = null; break;
+                case IBMCompilerOptionName.SUPPRESS: IsActivated = true; Value = null; break;
                 case IBMCompilerOptionName.TERMINAL: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.TEST: IsActivated = false; Value = "NODWARF"; break;
                 case IBMCompilerOptionName.THREAD: IsActivated = false; Value = null; break;
@@ -177,6 +199,8 @@ namespace TypeCobol.Compiler.Directives
                 case IBMCompilerOptionName.VBREF: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.WORD: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.XREF: IsActivated = true; Value = "FULL"; break;
+                case IBMCompilerOptionName.ZONECHECK: IsActivated = false; Value = null; break;
+                case IBMCompilerOptionName.ZONEDATA: IsActivated = true; Value = "PFD"; break;
                 case IBMCompilerOptionName.ZWB: IsActivated = true; Value = null; break;
             }
         }
@@ -184,12 +208,12 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Set the option status and value from the word and parameters found in source text
         /// </summary>
-        public bool SetStatutsAndValue(string optionWord, string optionParameters)
+        public bool SetStatusAndValue(string optionWord, string? optionParameters)
         {
             // Special case QUOTE / APOST
             if(Name == IBMCompilerOptionName.QUOTE)
             {
-                if(optionWord == "APOST")
+                if(optionWord.Equals("APOST", StringComparison.OrdinalIgnoreCase))
                 {
                     IsActivated = false;
                 }
@@ -201,7 +225,7 @@ namespace TypeCobol.Compiler.Directives
             // For all other option words, the format is word/NOword or abbr/NOabbr
             else
             {
-                if(optionWord != null && optionWord.StartsWith("NO"))
+                if(optionWord.StartsWith("NO", StringComparison.OrdinalIgnoreCase))
                 {
                     IsActivated = false;
                 }
@@ -279,6 +303,11 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus CODEPAGE { get; private set; }
 
         /// <summary>
+        /// Use the COPYLOC compiler option to add either a PDSE (or PDS) dataset or z/OS UNIX directory as an additional location to be searched for copy members during the library phase.
+        /// </summary>
+        public IBMCompilerOptionStatus COPYLOC { get; private set; }
+
+        /// <summary>
         /// Use the COMPILE option only if you want to force full compilation even in the presence of serious errors. All diagnostics and object code will be generated. Do not try to run the object code if the compilation resulted in serious errors: the results could be unpredictable or an abnormal termination could occur.
         /// </summary>
         public IBMCompilerOptionStatus COMPILE { get; private set; }
@@ -302,6 +331,11 @@ namespace TypeCobol.Compiler.Directives
         /// Use DECK to produce object code in the form of 80-column records. If you use the DECK option, be certain that SYSPUNCH is defined in your JCL for compilation.
         /// </summary>
         public IBMCompilerOptionStatus DECK { get; private set; }
+
+        /// <summary>
+        /// Use the DEFINE compiler option to assign a literal value to a compilation variable that is defined in the program by using the DEFINE directive with the PARAMETER phrase.
+        /// </summary>
+        public IBMCompilerOptionStatus DEFINE { get; private set; }
 
         /// <summary>
         /// DIAGTRUNC causes the compiler to issue a severity-4 (Warning) diagnostic message for MOVE statements that have numeric receivers when the receiving data item has fewer integer positions than the sending data item or literal. In statements that have multiple receivers, the message is issued separately for each receiver that could be truncated.
@@ -359,6 +393,21 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus HGPR { get; private set; }
 
         /// <summary>
+        /// Use the INITCHECK option to have the compiler check for uninitialized data items and issue warning messages when they are used without being initialized.
+        /// </summary>
+        public IBMCompilerOptionStatus INITCHECK{ get; private set; }
+
+        /// <summary>
+        /// The INITIAL compiler option causes a program and all of its nested programs to behave as if the IS INITIAL clause was specified on the PROGRAM-ID paragraph.
+        /// </summary>
+        public IBMCompilerOptionStatus INITIAL { get; private set; }
+
+        /// <summary>
+        /// The INVDATA option tells the compiler whether the data in USAGE DISPLAY and PACKED-DECIMAL data items is valid, and if not, what the behavior of the compiler should be.
+        /// </summary>
+        public IBMCompilerOptionStatus INVDATA { get; private set; }
+
+        /// <summary>
         /// INTDATE(ANSI) instructs the compiler to use the Standard COBOL 85 starting date for integer dates used with date intrinsic functions. Day 1 is Jan 1, 1601. INTDATE(LILIAN) instructs the compiler to use the Language Environment Lilian starting date for integer dates used with date intrinsic functions. Day 1 is Oct 15, 1582.
         /// </summary>
         public IBMCompilerOptionStatus INTDATE { get; private set; }
@@ -377,6 +426,11 @@ namespace TypeCobol.Compiler.Directives
         /// Use the LIST compiler option to produce a listing of the assembler-language expansion of your source code.
         /// </summary>
         public IBMCompilerOptionStatus LIST { get; private set; }
+
+        /// <summary>
+        /// Use the LP compiler option to indicate whether a AMODE 31 (31-bit) or AMODE 64 (64-bit) program should be generated with the related language features enabled.
+        /// </summary>
+        public IBMCompilerOptionStatus LP { get; private set; }
 
         /// <summary>
         /// Use MAP to produce a listing of the items defined in the DATA DIVISION.
@@ -409,6 +463,11 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus NUMBER { get; private set; }
 
         /// <summary>
+        /// The NUMCHECK compiler option tells the compiler whether to generate extra code to validate data items when they are used as sending data items.
+        /// </summary>
+        public IBMCompilerOptionStatus NUMCHECK { get; private set; }
+
+        /// <summary>
         /// Use NUMPROC(NOPFD) if your internal decimal and zoned decimal data might use nonpreferred signs.
         /// </summary>
         public IBMCompilerOptionStatus NUMPROC { get; private set; }
@@ -437,6 +496,11 @@ namespace TypeCobol.Compiler.Directives
         /// Use OUTDD to specify that you want DISPLAY output that is directed to the system logical output device to go to a specific ddname.
         /// </summary>
         public IBMCompilerOptionStatus OUTDD { get; private set; }
+
+        /// <summary>
+        /// The PARMCHECK option tells the compiler to generate an extra data item following the last item in WORKING-STORAGE.
+        /// </summary>
+        public IBMCompilerOptionStatus PARMCHECK { get; private set; }
 
         /// <summary>
         /// The PGMNAME option controls the handling of program-names and entry-point names.
@@ -504,6 +568,11 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus STGOPT { get; private set; }
 
         /// <summary>
+        /// Use the NOSUPPRESS option to ignore the SUPPRESS phrase of all COPY statements in a program so that copybook information can appear in the listing.
+        /// </summary>
+        public IBMCompilerOptionStatus SUPPRESS { get; private set; }
+
+        /// <summary>
         /// Use TERMINAL to send progress and diagnostic messages to the SYSTERM ddname.
         /// </summary>
         public IBMCompilerOptionStatus TERMINAL { get; private set; }
@@ -539,13 +608,29 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus XREF { get; private set; }
 
         /// <summary>
+        /// Use the ZONECHECK option to have the compiler generate IF NUMERIC class tests for zoned decimal data items that are used as sending data items.
+        /// </summary>
+        public IBMCompilerOptionStatus ZONECHECK { get; private set; }
+
+        /// <summary>
+        /// The ZONEDATA option tells the compiler whether the data in USAGE DISPLAY and PACKED-DECIMAL data items is valid, and if not, what the behavior of the compiler should be.
+        /// </summary>
+        public IBMCompilerOptionStatus ZONEDATA { get; private set; }
+
+        /// <summary>
         /// If you compile using ZWB, the compiler removes the sign from a signed zoned decimal (DISPLAY) field before comparing this field to an alphanumeric elementary field during execution.
         /// </summary>
         public IBMCompilerOptionStatus ZWB { get; private set; }
 
         // Conversion of option words in source text to option name enumeration
-        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(63);
+        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(194, StringComparer.OrdinalIgnoreCase);
               
+        // Deprecated options which are not supported anymore with the corresponding warning message to be displayed
+        private static readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
+
+        // Not allowed options with the corresponding error message to be displayed
+        private static readonly IDictionary<string, string> notAllowedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
+
         /// <summary>
         /// Initialize all compiler options to their default status and value
         /// </summary>
@@ -561,11 +646,13 @@ namespace TypeCobol.Compiler.Directives
             BUFSIZE = new IBMCompilerOptionStatus(IBMCompilerOptionName.BUFSIZE);
             CICS = new IBMCompilerOptionStatus(IBMCompilerOptionName.CICS);
             CODEPAGE = new IBMCompilerOptionStatus(IBMCompilerOptionName.CODEPAGE);
+            COPYLOC = new IBMCompilerOptionStatus(IBMCompilerOptionName.COPYLOC);
             COMPILE = new IBMCompilerOptionStatus(IBMCompilerOptionName.COMPILE);
             CURRENCY = new IBMCompilerOptionStatus(IBMCompilerOptionName.CURRENCY);
             DATA = new IBMCompilerOptionStatus(IBMCompilerOptionName.DATA);
             DBCS = new IBMCompilerOptionStatus(IBMCompilerOptionName.DBCS);
             DECK = new IBMCompilerOptionStatus(IBMCompilerOptionName.DECK);
+            DEFINE = new IBMCompilerOptionStatus(IBMCompilerOptionName.DEFINE);
             DIAGTRUNC = new IBMCompilerOptionStatus(IBMCompilerOptionName.DIAGTRUNC);
             DISPSIGN = new IBMCompilerOptionStatus(IBMCompilerOptionName.DISPSIGN);
             DLL = new IBMCompilerOptionStatus(IBMCompilerOptionName.DLL);
@@ -577,22 +664,28 @@ namespace TypeCobol.Compiler.Directives
             FLAG = new IBMCompilerOptionStatus(IBMCompilerOptionName.FLAG);
             FLAGSTD = new IBMCompilerOptionStatus(IBMCompilerOptionName.FLAGSTD);
             HGPR = new IBMCompilerOptionStatus(IBMCompilerOptionName.HGPR);
+            INITCHECK = new IBMCompilerOptionStatus(IBMCompilerOptionName.INITCHECK);
+            INITIAL = new IBMCompilerOptionStatus(IBMCompilerOptionName.INITIAL);
+            INVDATA = new IBMCompilerOptionStatus(IBMCompilerOptionName.INVDATA);
             INTDATE = new IBMCompilerOptionStatus(IBMCompilerOptionName.INTDATE);
             LANGUAGE = new IBMCompilerOptionStatus(IBMCompilerOptionName.LANGUAGE);
             LINECOUNT = new IBMCompilerOptionStatus(IBMCompilerOptionName.LINECOUNT);
             LIST = new IBMCompilerOptionStatus(IBMCompilerOptionName.LIST);
+            LP = new IBMCompilerOptionStatus(IBMCompilerOptionName.LP);
             MAP = new IBMCompilerOptionStatus(IBMCompilerOptionName.MAP);
             MAXPCF = new IBMCompilerOptionStatus(IBMCompilerOptionName.MAXPCF);
             MDECK = new IBMCompilerOptionStatus(IBMCompilerOptionName.MDECK);
             NAME = new IBMCompilerOptionStatus(IBMCompilerOptionName.NAME);
             NSYMBOL = new IBMCompilerOptionStatus(IBMCompilerOptionName.NSYMBOL);
             NUMBER = new IBMCompilerOptionStatus(IBMCompilerOptionName.NUMBER);
+            NUMCHECK = new IBMCompilerOptionStatus(IBMCompilerOptionName.NUMCHECK);
             NUMPROC = new IBMCompilerOptionStatus(IBMCompilerOptionName.NUMPROC);
             OBJECT = new IBMCompilerOptionStatus(IBMCompilerOptionName.OBJECT);
             OFFSET = new IBMCompilerOptionStatus(IBMCompilerOptionName.OFFSET);
             OPTFILE = new IBMCompilerOptionStatus(IBMCompilerOptionName.OPTFILE);
             OPTIMIZE = new IBMCompilerOptionStatus(IBMCompilerOptionName.OPTIMIZE);
             OUTDD = new IBMCompilerOptionStatus(IBMCompilerOptionName.OUTDD);
+            PARMCHECK = new IBMCompilerOptionStatus(IBMCompilerOptionName.PARMCHECK);
             PGMNAME = new IBMCompilerOptionStatus(IBMCompilerOptionName.PGMNAME);
             QUOTE = new IBMCompilerOptionStatus(IBMCompilerOptionName.QUOTE);
             RENT = new IBMCompilerOptionStatus(IBMCompilerOptionName.RENT);
@@ -606,6 +699,7 @@ namespace TypeCobol.Compiler.Directives
             SQLIMS = new IBMCompilerOptionStatus(IBMCompilerOptionName.SQLIMS);
             SSRANGE = new IBMCompilerOptionStatus(IBMCompilerOptionName.SSRANGE);
             STGOPT = new IBMCompilerOptionStatus(IBMCompilerOptionName.STGOPT);
+            SUPPRESS = new IBMCompilerOptionStatus(IBMCompilerOptionName.SUPPRESS);
             TERMINAL = new IBMCompilerOptionStatus(IBMCompilerOptionName.TERMINAL);
             TEST = new IBMCompilerOptionStatus(IBMCompilerOptionName.TEST);
             THREAD = new IBMCompilerOptionStatus(IBMCompilerOptionName.THREAD);
@@ -613,6 +707,8 @@ namespace TypeCobol.Compiler.Directives
             VBREF = new IBMCompilerOptionStatus(IBMCompilerOptionName.VBREF);
             WORD = new IBMCompilerOptionStatus(IBMCompilerOptionName.WORD);
             XREF = new IBMCompilerOptionStatus(IBMCompilerOptionName.XREF);
+            ZONECHECK = new IBMCompilerOptionStatus(IBMCompilerOptionName.ZONECHECK);
+            ZONEDATA = new IBMCompilerOptionStatus(IBMCompilerOptionName.ZONEDATA);
             ZWB = new IBMCompilerOptionStatus(IBMCompilerOptionName.ZWB);
 
             optionWordToOptionName["ADATA"] = ADATA; optionWordToOptionName["NOADATA"] = ADATA;
@@ -625,11 +721,13 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["BUFSIZE"] = BUFSIZE; optionWordToOptionName["BUF"] = BUFSIZE;
             optionWordToOptionName["CICS"] = CICS; optionWordToOptionName["NOCICS"] = CICS;
             optionWordToOptionName["CODEPAGE"] = CODEPAGE; optionWordToOptionName["CP"] = CODEPAGE;
+            optionWordToOptionName["COPYLOC"] = COPYLOC; optionWordToOptionName["CPLC"] = COPYLOC; optionWordToOptionName["NOCOPYLOC"] = COPYLOC; optionWordToOptionName["NOCPLC"] = COPYLOC;
             optionWordToOptionName["COMPILE"] = COMPILE; optionWordToOptionName["C"] = COMPILE; optionWordToOptionName["NOCOMPILE"] = COMPILE; optionWordToOptionName["NOC"] = COMPILE;
             optionWordToOptionName["CURRENCY"] = CURRENCY; optionWordToOptionName["CURR"] = CURRENCY; optionWordToOptionName["NOCURRENCY"] = CURRENCY; optionWordToOptionName["NOCURR"] = CURRENCY;
             optionWordToOptionName["DATA"] = DATA;
             optionWordToOptionName["DBCS"] = DBCS; optionWordToOptionName["NODBCS"] = DBCS;
             optionWordToOptionName["DECK"] = DECK; optionWordToOptionName["D"] = DECK; optionWordToOptionName["NODECK"] = DECK; optionWordToOptionName["NOD"] = DECK;
+            optionWordToOptionName["DEFINE"] = DEFINE; optionWordToOptionName["DEF"] = DEFINE; optionWordToOptionName["NODEFINE"] = DEFINE; optionWordToOptionName["NODEF"] = DEFINE;
             optionWordToOptionName["DIAGTRUNC"] = DIAGTRUNC; optionWordToOptionName["DTR"] = DIAGTRUNC; optionWordToOptionName["NODIAGTRUNC"] = DIAGTRUNC; optionWordToOptionName["NODTR"] = DIAGTRUNC;
             optionWordToOptionName["DISPSIGN"] = DISPSIGN; optionWordToOptionName["DS"] = DISPSIGN;
             optionWordToOptionName["DLL"] = DLL; optionWordToOptionName["NODLL"] = DLL;
@@ -641,6 +739,9 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["FLAG"] = FLAG; optionWordToOptionName["F"] = FLAG; optionWordToOptionName["NOFLAG"] = FLAG; optionWordToOptionName["NOF"] = FLAG;
             optionWordToOptionName["FLAGSTD"] = FLAGSTD; optionWordToOptionName["NOFLAGSTD"] = FLAGSTD;
             optionWordToOptionName["HGPR"] = HGPR;
+            optionWordToOptionName["INITCHECK"] = INITCHECK; optionWordToOptionName["IC"] = INITCHECK; optionWordToOptionName["NOINITCHECK"] = INITCHECK; optionWordToOptionName["NOIC"] = INITCHECK;
+            optionWordToOptionName["INITIAL"] = INITIAL; optionWordToOptionName["NOINITIAL"] = INITIAL;
+            optionWordToOptionName["INVDATA"] = INVDATA; optionWordToOptionName["INVD"] = INVDATA; optionWordToOptionName["NOINVDATA"] = INVDATA; optionWordToOptionName["NOINVD"] = INVDATA;
             optionWordToOptionName["INTDATE"] = INTDATE;
             optionWordToOptionName["LANGUAGE"] = LANGUAGE; optionWordToOptionName["LANG"] = LANGUAGE;
             optionWordToOptionName["LINECOUNT"] = LINECOUNT; optionWordToOptionName["LC"] = LINECOUNT;
@@ -651,12 +752,14 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["NAME"] = NAME; optionWordToOptionName["NONAME"] = NAME;
             optionWordToOptionName["NSYMBOL"] = NSYMBOL; optionWordToOptionName["NS"] = NSYMBOL;
             optionWordToOptionName["NUMBER"] = NUMBER; optionWordToOptionName["NONUMBER"] = NUMBER;
+            optionWordToOptionName["NUMCHECK"] = NUMCHECK; optionWordToOptionName["NC"] = NUMCHECK; optionWordToOptionName["NONUMCHECK"] = NUMCHECK; optionWordToOptionName["NONC"] = NUMCHECK;
             optionWordToOptionName["NUMPROC"] = NUMPROC;
             optionWordToOptionName["OBJECT"] = OBJECT; optionWordToOptionName["OBJ"] = OBJECT; optionWordToOptionName["NOOBJECT"] = OBJECT; optionWordToOptionName["NOOBJ"] = OBJECT;
             optionWordToOptionName["OFFSET"] = OFFSET; optionWordToOptionName["OFF"] = OFFSET; optionWordToOptionName["NOOFFSET"] = OFFSET; optionWordToOptionName["NOOFF"] = OFFSET;
             optionWordToOptionName["OPTFILE"] = OPTFILE;
             optionWordToOptionName["OPTIMIZE"] = OPTIMIZE; optionWordToOptionName["OPT"] = OPTIMIZE;
             optionWordToOptionName["OUTDD"] = OUTDD; optionWordToOptionName["OUT"] = OUTDD;
+            optionWordToOptionName["PARMCHECK"] = PARMCHECK; optionWordToOptionName["PC"] = PARMCHECK; optionWordToOptionName["NOPARMCHECK"] = PARMCHECK; optionWordToOptionName["NOPC"] = PARMCHECK;
             optionWordToOptionName["PGMNAME"] = PGMNAME; optionWordToOptionName["PGMN"] = PGMNAME;
             optionWordToOptionName["QUOTE"] = QUOTE; optionWordToOptionName["Q"] = QUOTE; optionWordToOptionName["APOST"] = QUOTE;
             optionWordToOptionName["RENT"] = RENT; optionWordToOptionName["NORENT"] = RENT;
@@ -670,6 +773,7 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["SQLIMS"] = SQLIMS; optionWordToOptionName["NOSQLIMS"] = SQLIMS;
             optionWordToOptionName["SSRANGE"] = SSRANGE; optionWordToOptionName["SSR"] = SSRANGE; optionWordToOptionName["NOSSRANGE"] = SSRANGE; optionWordToOptionName["NOSSR"] = SSRANGE;
             optionWordToOptionName["STGOPT"] = STGOPT; optionWordToOptionName["SO"] = STGOPT; optionWordToOptionName["NOSTGOPT"] = STGOPT; optionWordToOptionName["NOSO"] = STGOPT;
+            optionWordToOptionName["SUPPRESS"] = SUPPRESS; optionWordToOptionName["SUPP"] = SUPPRESS; optionWordToOptionName["NOSUPPRESS"] = SUPPRESS; optionWordToOptionName["NOSUPP"] = SUPPRESS;
             optionWordToOptionName["TERMINAL"] = TERMINAL; optionWordToOptionName["TERM"] = TERMINAL; optionWordToOptionName["NOTERMINAL"] = TERMINAL; optionWordToOptionName["NOTERM"] = TERMINAL;
             optionWordToOptionName["TEST"] = TEST; optionWordToOptionName["NOTEST"] = TEST;
             optionWordToOptionName["THREAD"] = THREAD; optionWordToOptionName["NOTHREAD"] = THREAD;
@@ -677,25 +781,69 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["VBREF"] = VBREF; optionWordToOptionName["NOVBREF"] = VBREF;
             optionWordToOptionName["WORD"] = WORD; optionWordToOptionName["WD"] = WORD; optionWordToOptionName["NOWORD"] = WORD; optionWordToOptionName["NOWD"] = WORD;
             optionWordToOptionName["XREF"] = XREF; optionWordToOptionName["X"] = XREF; optionWordToOptionName["NOXREF"] = XREF; optionWordToOptionName["NOX"] = XREF;
+            optionWordToOptionName["ZONECHECK"] = ZONECHECK; optionWordToOptionName["ZC"] = ZONECHECK; optionWordToOptionName["NOZONECHECK"] = ZONECHECK; optionWordToOptionName["NOZC"] = ZONECHECK;
+            optionWordToOptionName["ZONEDATA"] = ZONEDATA; optionWordToOptionName["ZD"] = ZONEDATA;
             optionWordToOptionName["ZWB"] = ZWB; optionWordToOptionName["NOZWB"] = ZWB; 
+
+            deprecatedOptions["LIB"] = "the \"LIB\" option specification is no longer required. COBOL library processing is always in effect.";
+
+            notAllowedOptions["LP"] = "the \"LP\" option is not allowed because only AMODE 31 (31-bit) is supported.";
         }
 
         /// <summary>
-        /// If optionWord is a supported option name (EXIT)	or abbreviation (EX) or negation (NOEXIT / NOEX)
-        /// this method sets its status (IsActivated) and value (from parameters)
+        /// If optionWord is a supported option name (EXIT)    or abbreviation (EX) or negation (NOEXIT / NOEX)
+        /// this method sets its status (IsActivated) and value (from parameters).
+        /// <br>Deprecated options are simply ignored (but are considered as valid).</br>
         /// </summary>
-        public bool TrySetIBMOptionStatusAndValue(string optionWord, string optionParameters)
+        public bool TrySetIBMOptionStatusAndValue(string optionWord, string? optionParameters)
         {
-            IBMCompilerOptionStatus optionStatus = null;
-            String optionWordUpper = optionWord.ToUpper();
-            if (optionWordToOptionName.TryGetValue(optionWordUpper, out optionStatus))
+            if (deprecatedOptions.ContainsKey(optionWord) || notAllowedOptions.ContainsKey(optionWord))
             {
-                return optionStatus.SetStatutsAndValue(optionWordUpper, optionParameters);
+                return true;
+            }
+
+            if (optionWordToOptionName.TryGetValue(optionWord, out var optionStatus))
+            {
+                return optionStatus.SetStatusAndValue(optionWord, optionParameters);
             }
             else
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// If optionWord is a deprecated option this method returns the corresponding warning message to be displayed
+        /// </summary>
+        public bool IsOptionDeprecated(string optionWord, [MaybeNullWhen(false)] out string warningMessage)
+        {
+            return deprecatedOptions.TryGetValue(optionWord, out warningMessage);
+        }
+
+        /// <summary>
+        /// If optionWord is not an allowed option this method returns the corresponding error message to be displayed
+        /// </summary>
+        public bool IsOptionNotAllowed(string optionWord, [MaybeNullWhen(false)] out string errorMessage)
+        {
+            return notAllowedOptions.TryGetValue(optionWord, out errorMessage);
+        }
+
+        /// <summary>
+        /// Get the option name from an option word (which can be an abbreviation or a negation)
+        /// </summary>
+        /// <param name="optionWord">the option word</param>
+        /// <param name="optionName">the option name (if any) corresponding to the option word, otherwise the enum's default value</param>
+        /// <returns>true if there is an option name corresponding to the option word, false otherwise</returns>
+        public bool TryGetOptionName(string optionWord, out IBMCompilerOptionName optionName)
+        {
+            if (optionWordToOptionName.TryGetValue(optionWord, out IBMCompilerOptionStatus? optionStatus))
+            {
+                optionName = optionStatus.Name;
+                return true;
+            }
+
+            optionName = default;
+            return false;
         }
     }
 
@@ -726,6 +874,8 @@ namespace TypeCobol.Compiler.Directives
         CODEPAGE,
         /* Use the COMPILE option only if you want to force full compilation even in the presence of serious errors. All diagnostics and object code will be generated. Do not try to run the object code if the compilation resulted in serious errors: the results could be unpredictable or an abnormal termination could occur. */
         COMPILE,
+        /* Use the COPYLOC compiler option to add either a PDSE (or PDS) dataset or z/OS UNIX directory as an additional location to be searched for copy members during the library phase.*/
+        COPYLOC,
         /* You can use the CURRENCY option to provide an alternate default currency symbol to be used for a COBOL program. (The default currency symbol is the dollar sign ($).) */
         CURRENCY,
         /* The DATA option affects whether storage for dynamic data areas and other dynamic runtime storage is obtained from above or below the 16 MB line. */
@@ -734,6 +884,8 @@ namespace TypeCobol.Compiler.Directives
         DBCS,
         /* Use DECK to produce object code in the form of 80-column records. If you use the DECK option, be certain that SYSPUNCH is defined in your JCL for compilation. */
         DECK,
+        /* Use the DEFINE compiler option to assign a literal value to a compilation variable that is defined in the program by using the DEFINE directive with the PARAMETER phrase. */
+        DEFINE,
         /* DIAGTRUNC causes the compiler to issue a severity-4 (Warning) diagnostic message for MOVE statements that have numeric receivers when the receiving data item has fewer integer positions than the sending data item or literal. In statements that have multiple receivers, the message is issued separately for each receiver that could be truncated. */
         DIAGTRUNC,
         /* The DISPSIGN option controls output formatting for DISPLAY of signed numeric items. */
@@ -756,14 +908,24 @@ namespace TypeCobol.Compiler.Directives
         FLAGSTD,
         /* The HGPR option controls the compiler usage of the 64-bit registers provided by z/Architecture processors. */
         HGPR,
+        /* Use the INITCHECK option to have the compiler check for uninitialized data items and issue warning messages when they are used without being initialized. */
+        INITCHECK,
+        /* The INITIAL compiler option causes a program and all of its nested programs to behave as if the IS INITIAL clause was specified on the PROGRAM-ID paragraph. */
+        INITIAL,
+        /* The INVDATA option tells the compiler whether the data in USAGE DISPLAY and PACKED-DECIMAL data items is valid, and if not, what the behavior of the compiler should be. */
+        INVDATA,
         /* INTDATE(ANSI) instructs the compiler to use the Standard COBOL 85 starting date for integer dates used with date intrinsic functions. Day 1 is Jan 1, 1601. INTDATE(LILIAN) instructs the compiler to use the Language Environment Lilian starting date for integer dates used with date intrinsic functions. Day 1 is Oct 15, 1582. */
         INTDATE,
         /* Use the LANGUAGE option to select the language in which compiler output will be printed. The information that will be printed in the selected language includes diagnostic messages, source listing page and scale headers, FIPS message headers, message summary headers, compilation summary, and headers and notations that result from the selection of certain compiler options (MAP, XREF, VBREF, and FLAGSTD). */
         LANGUAGE,
+        /* The LIB option specification is no longer required. COBOL library processing is always in effect. We keep it only for compatibility with old versions. */
+        LIB,
         /* Use LINECOUNT(nnn) to specify the number of lines to be printed on each page of the compilation listing, or use LINECOUNT(0) to suppress pagination. */
         LINECOUNT,
         /* Use the LIST compiler option to produce a listing of the assembler-language expansion of your source code. */
         LIST,
+        /* Use the LP compiler option to indicate whether a AMODE 31 (31-bit) or AMODE 64 (64-bit) program should be generated with the related language features enabled. */
+        LP,
         /* Use MAP to produce a listing of the items defined in the DATA DIVISION. */
         MAP,
         /* Use the MAXPCF option to specify a maximum program complexity factor value. The program complexity factor (PCF) is computed by the compiler and the computed value is in the listing file. If the PCF of your program exceeds the maximum value, the compiler will automatically reduce the optimization level to speed up the compilation and use less storage. Therefore, when you compile a suite of programs, you do not have to specify an OPTIMIZE option value for each program. */
@@ -776,6 +938,8 @@ namespace TypeCobol.Compiler.Directives
         NSYMBOL,
         /* Use the NUMBER compiler option if you have line numbers in your source code and want those numbers to be used in error messages and SOURCE, MAP, LIST, and XREF listings. */
         NUMBER,
+        /* The NUMCHECK compiler option tells the compiler whether to generate extra code to validate data items when they are used as sending data items. */
+        NUMCHECK,
         /* Use NUMPROC(NOPFD) if your internal decimal and zoned decimal data might use nonpreferred signs. */
         NUMPROC,
         /* Use OBJECT to write the generated object code to a file to be used as input for the binder. */
@@ -788,6 +952,8 @@ namespace TypeCobol.Compiler.Directives
         OPTIMIZE,
         /* Use OUTDD to specify that you want DISPLAY output that is directed to the system logical output device to go to a specific ddname. */
         OUTDD,
+        /* The PARMCHECK option tells the compiler to generate an extra data item following the last item in WORKING-STORAGE. */
+        PARMCHECK,
         /* The PGMNAME option controls the handling of program-names and entry-point names. */
         PGMNAME,
         /* Use QUOTE if you want the figurative constant [ALL] QUOTE or [ALL] QUOTES to represent one or more quotation mark (") characters. Use APOST if you want the figurative constant [ALL] QUOTE or [ALL] QUOTES to represent one or more single quotation mark (') characters. */
@@ -814,6 +980,8 @@ namespace TypeCobol.Compiler.Directives
         SSRANGE,
         /* The STGOPT option controls storage optimization. */
         STGOPT,
+        /* Use the NOSUPPRESS option to ignore the SUPPRESS phrase of all COPY statements in a program so that copybook information can appear in the listing. */
+        SUPPRESS,
         /* Use TERMINAL to send progress and diagnostic messages to the SYSTERM ddname. */
         TERMINAL,
         /* Use TEST to produce object code that enables debugging and problem determination tools such as Debug Tool and Fault Analyzer. With TEST, you can also enable the inclusion of symbolic variables in the formatted dumps that are produced by Language Environment. */
@@ -828,6 +996,10 @@ namespace TypeCobol.Compiler.Directives
         WORD,
         /* Use XREF to produce a sorted cross-reference listing. */
         XREF,
+        /* Use the ZONECHECK option to have the compiler generate IF NUMERIC class tests for zoned decimal data items that are used as sending data items. */
+        ZONECHECK,
+        /* The ZONEDATA option tells the compiler whether the data in USAGE DISPLAY and PACKED-DECIMAL data items is valid, and if not, what the behavior of the compiler should be. */
+        ZONEDATA,
         /* If you compile using ZWB, the compiler removes the sign from a signed zoned decimal (DISPLAY) field before comparing this field to an alphanumeric elementary field during execution. */
         ZWB
     }

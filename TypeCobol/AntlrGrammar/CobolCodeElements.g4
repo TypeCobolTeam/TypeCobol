@@ -3097,7 +3097,7 @@ usageClause:
 					(NATIONAL NATIVE?) |
 					(OBJECT REFERENCE classNameReference?) |
 					(PACKED_DECIMAL NATIVE?) |
-					(POINTER |
+					(POINTER | POINTER_32 |
 					PROCEDURE_POINTER |
 					FUNCTION_POINTER)                            
 				);
@@ -3202,10 +3202,13 @@ valueClause:
 // p240: ... more details - Rules for condition-name entries ...
 
 valueClauseForCondition:
-	(VALUE | VALUES) (IS | ARE)? (value1 | valuesRange)+; 
+	(VALUE | VALUES) (IS | ARE)? (value1 | valuesRange)+ whenSetToFalse?;
 
 valuesRange: 
 	startValue=value1 (THROUGH | THRU) endValue=value1;
+
+whenSetToFalse:
+	WHEN? SET? TO? FALSE IS? value1;
 
 // p245: The PROCEDURE DIVISION is an optional division.
 // Program procedure division
@@ -6359,7 +6362,7 @@ setSwitchPosition:
 // Format 4: SET for condition names
 
 setStatementForConditions:
-	SET conditionStorageArea+ TO TRUE;
+	SET conditionStorageArea+ TO (TRUE | FALSE);
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according

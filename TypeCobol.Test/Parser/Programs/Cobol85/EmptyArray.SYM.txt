@@ -1,0 +1,928 @@
+--- Diagnostics ---
+Line 16[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A02-KO]<UserDefinedWord>
+Line 19[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A03-KO]<UserDefinedWord>
+Line 24[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A04-KO]<UserDefinedWord>
+Line 31[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A06-KO]<UserDefinedWord>
+Line 45[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A08-KO]<UserDefinedWord>
+Line 50[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A09-KO]<UserDefinedWord>
+Line 55[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A10-KO]<UserDefinedWord>
+Line 63[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A13-KO]<UserDefinedWord>
+Line 68[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A14-KO]<UserDefinedWord>
+Line 73[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A15-KO]<UserDefinedWord>
+Line 82[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-A20-KO]<UserDefinedWord>
+Line 92[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B01-KO]<UserDefinedWord>
+Line 99[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B02-KO]<UserDefinedWord>
+Line 107[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B04-KO]<UserDefinedWord>
+Line 115[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B05-KO]<UserDefinedWord>
+Line 121[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B06-KO]<UserDefinedWord>
+Line 128[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B07-KO]<UserDefinedWord>
+Line 135[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B08-KO]<UserDefinedWord>
+Line 146[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B11-KO]<UserDefinedWord>
+Line 153[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B12-KO]<UserDefinedWord>
+Line 160[16,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[16,27:Array-B13-KO]<UserDefinedWord>
+Line 181[15,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,26:Array-C01-KO]<UserDefinedWord>
+Line 202[20,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[20,30:Array-D2-KO]<UserDefinedWord>
+Line 217[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[24,34:Array-D4-KO]<UserDefinedWord>
+Line 228[24,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[24,34:Array-D5-KO]<UserDefinedWord>
+
+--- Program ---
+Pgm2358 (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  Group-A (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-A01-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+      Array-A02-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      Array-A03-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display
+      Level: 5
+      IsFiller: False
+      Array-A04-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display1
+      Level: 5
+      IsFiller: False
+      Array-A05-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Index
+      Level: 5
+      IsFiller: False
+      Array-A06-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: National
+      Level: 5
+      IsFiller: False
+      Array-A08-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A09-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-A10-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A11-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+      Level: 5
+      IsFiller: False
+      Array-A12-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp2
+      Level: 5
+      IsFiller: False
+      Array-A13-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+      Array-A14-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+      Array-A15-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp5
+      Level: 5
+      IsFiller: False
+      Array-A16-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer
+      Level: 5
+      IsFiller: False
+      Array-A17-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer32
+      Level: 5
+      IsFiller: False
+      Array-A18-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+      Array-A19-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+      Counter (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: 9(1)
+      Level: 5
+      IsFiller: False
+      Array-A20-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-A
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      Indexes:
+        MyIdxCustom (.NET Type=IndexSymbol, Kind=Index)
+        Flags: [WORKING_STORAGE]
+        Owner: Pgm2358::Group-A::Array-A20-KO
+        Type:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Index
+        Level: 0
+        IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B01 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display
+    Fields:
+      Array-B01-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B01
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B02 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display1
+    Fields:
+      Array-B02-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B02
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B03 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Index
+    Fields:
+      Array-B03-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B03
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Index
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B04 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: National
+    Fields:
+      Array-B04-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B04
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: National
+      Level: 5
+      IsFiller: False
+      Array-B05-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B04
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: National
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B06 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B06-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B06
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B07 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      Array-B07-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B07
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B08 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B08-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B08
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B09 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp1
+    Fields:
+      Array-B09-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B09
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B10 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp2
+    Fields:
+      Array-B10-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B10
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp2
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B11 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp3
+    Fields:
+      Array-B11-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B11
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp3
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B12 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp
+    Fields:
+      Array-B12-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B12
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B13 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp5
+    Fields:
+      Array-B13-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B13
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp5
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B14 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer
+    Fields:
+      Array-B14-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B14
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B15 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer32
+    Fields:
+      Array-B15-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B15
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer32
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B16 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: ProcedurePointer
+    Fields:
+      Array-B16-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B16
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: ProcedurePointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-B17 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: FunctionPointer
+    Fields:
+      Array-B17-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-B17
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: FunctionPointer
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-C01 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, GroupUsageNational]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-C01-KO (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, GroupUsageNational]
+      Owner: Pgm2358::Group-C01
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: National
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Pointer
+    Fields:
+      Group-D11 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-D1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Pointer
+        Fields:
+          Array-D1-OK (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: Pgm2358::Group-D1::Group-D11
+          Type:
+            (.NET Type=ArrayType, Tag=Array)
+            MinOccur: 1
+            MaxOccur: 50
+            ElementType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: Pointer
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp5
+    Fields:
+      Group-D21 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-D2
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp5
+        Fields:
+          Array-D2-KO (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: Pgm2358::Group-D2::Group-D21
+          Type:
+            (.NET Type=ArrayType, Tag=Array)
+            MinOccur: 1
+            MaxOccur: 50
+            ElementType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: Comp5
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: ProcedurePointer
+    Fields:
+      Group-D31 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-D3
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: ProcedurePointer
+        Fields:
+          Group-D311 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: Pgm2358::Group-D3::Group-D31
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: ProcedurePointer
+            Fields:
+              Array-D3-OK (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: Pgm2358::Group-D3::Group-D31::Group-D311
+              Type:
+                (.NET Type=ArrayType, Tag=Array)
+                MinOccur: 1
+                MaxOccur: 50
+                ElementType:
+                  (.NET Type=Type, Tag=Usage)
+                  Usage: ProcedurePointer
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Display1
+    Fields:
+      Group-D41 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-D4
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Display1
+        Fields:
+          Group-D411 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: Pgm2358::Group-D4::Group-D41
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: Display1
+            Fields:
+              Array-D4-KO (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: Pgm2358::Group-D4::Group-D41::Group-D411
+              Type:
+                (.NET Type=ArrayType, Tag=Array)
+                MinOccur: 1
+                MaxOccur: 50
+                ElementType:
+                  (.NET Type=Type, Tag=Usage)
+                  Usage: Display1
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-D5 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Usage: Comp1
+    Fields:
+      Array-D5-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-D5
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+      Level: 5
+      IsFiller: False
+      Group-D51 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, GroupUsageNational]
+      Owner: Pgm2358::Group-D5
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Usage: Comp1
+        Fields:
+          Group-D511 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, GroupUsageNational]
+          Owner: Pgm2358::Group-D5::Group-D51
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            LeadingType:
+              (.NET Type=Type, Tag=Usage)
+              Usage: National
+            Fields:
+              Array-D5-KO (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE, GroupUsageNational]
+              Owner: Pgm2358::Group-D5::Group-D51::Group-D511
+              Type:
+                (.NET Type=ArrayType, Tag=Array)
+                MinOccur: 1
+                MaxOccur: 50
+                ElementType:
+                  (.NET Type=Type, Tag=Usage)
+                  Usage: National
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  Group-E1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Pgm2358
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      Array-E1-OK (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: Pgm2358::Group-E1
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 50
+        ElementType:
+          (.NET Type=GroupType, Tag=Group)
+          Fields:
+            VarChild (.NET Type=VariableSymbol, Kind=Variable)
+            Flags: [WORKING_STORAGE]
+            Owner: Pgm2358::Group-E1::Array-E1-OK
+            Type:
+              (.NET Type=PictureType, Tag=Picture)
+              Picture: X(1)
+            Level: 10
+            IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

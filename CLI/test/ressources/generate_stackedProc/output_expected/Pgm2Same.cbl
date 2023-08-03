@@ -4,7 +4,7 @@
        DATA DIVISION.
                                                          
        WORKING-STORAGE SECTION.
-       01  TC-PGM2-FctList-Loaded PIC X(02).
+       01  TC-PGM2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-PGM2-PntTab.

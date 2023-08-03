@@ -163,7 +163,7 @@ namespace TypeCobol.Test.Parser.Scanner
                               //Use == at the end, so the scanner is again in a correct state
                 "==== ====.", //Correct
                 "==::==== ==.",   //Incorrect
-		                  //Use == at the end, so the scanner is again in a correct state
+                          //Use == at the end, so the scanner is again in a correct state
                 "==::== ==::==.", //Correct
             };
             string result = ScannerUtils.ScanLines(testLines);
@@ -246,6 +246,14 @@ namespace TypeCobol.Test.Parser.Scanner
             ScannerUtils.CompilerOptions.IsCobolLanguage = false;
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName + "-AsTypeCobol");
+
+            testName = "CompilerDirectiveKeywords";
+            testLines = new string[] {
+                ">>CALLINT >>CALLINTERFACE >>DATA >>DEFINE >>ELSE >>END-EVALUATE >>END-IF >>EVALUATE >>IF >>INLINE >>WHEN", //Keywords
+                ">>CALL >>DIVISION >>UNDEFINE" //Mix of GreaterThanOperators and Keywords
+            };
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName);
         }
 
         /// <summary>
@@ -400,7 +408,56 @@ namespace TypeCobol.Test.Parser.Scanner
                 "CBL (",
                 "CBL ARCH(5",
                 "CBL ARCH(5 B()",
-                "PROCESS CP(1147) NOADV C"
+                "PROCESS CP(1147) NOADV C",
+                "CBL LIB",
+                "CBL BOTH_INVALID_AND_WARNING lib",
+                "CBL COPYLOC",
+                "CBL CPLC",
+                "CBL NOCOPYLOC",
+                "CBL NOCPLC",
+                "CBL DEFINE(compilation-variable = 1)",
+                "CBL DEF(compilation-variable = 1)",
+                "CBL NODEFINE",
+                "CBL NODEF",
+                "CBL INITCHECK(LAX)",
+                "CBL IC(STRICT)",
+                "CBL NOINITCHECK",
+                "CBL NOIC",
+                "CBL INITIAL",
+                "CBL NOINITIAL",
+                "CBL INVDATA(FORCENUMCMP,NOCLEANSIGN)",
+                "CBL INVD(FNC,NOCS)",
+                "CBL NOINVDATA",
+                "CBL NOINVD",
+                "CBL LP(64)",
+                "CBL NUMCHECK",
+                "CBL NUMCHECK(ABD)",
+                "CBL NC(ZON(NOALPHNUM,LAX),NOPAC,BIN(NOTRUNCBIN),ABD)",
+                "CBL NONUMCHECK",
+                "CBL NONC",
+                "CBL PARMCHECK(ABD)",
+                "CBL PC(ABD,500)",
+                "CBL NOPARMCHECK",
+                "CBL NOPC",
+                "CBL SUPPRESS",
+                "CBL SUPP",
+                "CBL NOSUPP",
+                "CBL NOSUPPRESS",
+                "CBL ZONECHECK(MSG)",
+                "CBL NOZONECHECK",
+                "CBL ZC(ABD)",
+                "CBL NOZC",
+                "CBL ZONEDATA(NOPFD)",
+                "CBL ZD(MIG)",
+                "CBL LANGUAGE",
+                "CBL NOSTGOPT",
+                "CBL SSRANGE",
+                "CBL TEST",
+                "CBL SOURCE",
+                "CBL OFFSET",
+                "CBL AMODE(64)",
+                "CBL ALOWCOPYLOC",
+                "CBL ALOWDEFINE"
             };
             string result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);

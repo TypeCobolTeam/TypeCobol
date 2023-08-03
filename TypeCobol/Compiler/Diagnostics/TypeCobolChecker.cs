@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -44,27 +40,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(node, type + " properties are read-only");
             }
         }
-    }
-
-    class DataDefinitionChecker
-    {
-        public static void OnNode(Node node, DataDescriptionEntry dataEntry = null)
-        {
-            if (dataEntry == null && node is DataDefinition)
-            {
-                dataEntry = node.CodeElement as DataDescriptionEntry;
-            }
-
-
-            if (dataEntry?.Usage != null &&
-                (dataEntry.Usage.Value == DataUsage.FloatingPoint || dataEntry.Usage.Value == DataUsage.LongFloatingPoint) &&
-                dataEntry.Picture != null)
-            {
-                DiagnosticUtils.AddError(node,
-                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataEntry);
-            }
-        }
-
     }
 
     class FunctionCallChecker
@@ -287,13 +262,15 @@ namespace TypeCobol.Compiler.Diagnostics
                             }
 
                                // accepted format is "PIC [S]9(5..9) comp-5"
-                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.PhysicalLength != 4 || expected.Usage != DataUsage.NativeBinary)
+                            if (expected.PrimitiveDataType != DataType.Numeric || expected.PhysicalLength != 4 || expected.Usage != DataUsage.NativeBinary)
                             {
                                 DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5",
                                     actualSpecialRegister.SpecialRegisterName);
                                 continue;
                             }
                         }
+                        // Here we manage only DataUsage = POINTER (and not POINTER-32)
+                        // because POINTER-32 is not supported in TypeCobol specific syntax "DECLARE function/procedure"
                         else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer)
                         {
                             if (!actualDataDefinition.IsFlagSet(Node.Flag.LinkageSectionNode) &&
@@ -603,11 +580,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static string ToString(FunctionType type)
         {
-		    if (type == FunctionType.Undefined) return "symbol";
-		    if (type == FunctionType.Function) return "function";
-		    if (type == FunctionType.Procedure) return "procedure";
-		    return "function or procedure";
-	    }
+            if (type == FunctionType.Undefined) return "symbol";
+            if (type == FunctionType.Function) return "function";
+            if (type == FunctionType.Procedure) return "procedure";
+            return "function or procedure";
+        }
     }
     
 
@@ -774,35 +751,35 @@ namespace TypeCobol.Compiler.Diagnostics
         //A procedure or a function cannot contains another procedure or function declaration
         //So we only need to check ProcedureDivision of Program
             if (!(procedureDivision.Parent is Program))
-	        return;
+            return;
 
 
         //If the procedure division contains a PUBLIC procedure or function then it's considered as a "Library"
-	    bool isLibrary = procedureDivision.Children.Any(c =>
-		{
-		    var f = c.CodeElement as FunctionDeclarationHeader;
+        bool isLibrary = procedureDivision.Children.Any(c =>
+        {
+            var f = c.CodeElement as FunctionDeclarationHeader;
                 return f != null && f.Visibility == AccessModifier.Public;
             });
 
-	    if (isLibrary)
+        if (isLibrary)
         {
-	        bool firstParagraphChecked = false;
-	        foreach (var child in procedureDivision.Children)
+            bool firstParagraphChecked = false;
+            foreach (var child in procedureDivision.Children)
             {
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (child is Paragraph)
                 {
-	                if (!firstParagraphChecked &&
-	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
+                    if (!firstParagraphChecked &&
+                        !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
                             DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
                                 "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph " + child.Name + " is not allowed at this location.");
                     }
 
-	                firstParagraphChecked = true;
+                    firstParagraphChecked = true;
 
-	                continue; //A paragraph is always accepted as a child of ProcedureDivision
-	            }
+                    continue; //A paragraph is always accepted as a child of ProcedureDivision
+                }
 
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (!(child is FunctionDeclaration || child is Declaratives))
@@ -816,7 +793,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         // this case corresponds to SECTION declarations or statements not inside a paragraph
                         DiagnosticUtils.AddError(node,
-							"A program which contains public procedure cannot contain section or statement not under a paragraph.");
+                            "A program which contains public procedure cannot contain section or statement not under a paragraph.");
                     }
                     else
                     {
@@ -826,14 +803,14 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-		    var pdiv = procedureDivision.CodeElement;
+            var pdiv = procedureDivision.CodeElement;
 
             //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
             if (pdiv?.UsingParameters != null && pdiv.UsingParameters.Count > 0)
                     DiagnosticUtils.AddError(procedureDivision,
                         "Illegal " + pdiv.UsingParameters.Count + " USING in library PROCEDURE DIVISION.");
-		}
-	}
+        }
+    }
 }
 
     public class SetStatementChecker
@@ -851,7 +828,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 bool allArePointers = true;
                 foreach (var receiver in receivers)
                 {
-                    if (receiver.Usage == DataUsage.Pointer)
+                    if (receiver.Usage == DataUsage.Pointer || receiver.Usage == DataUsage.Pointer32)
                     {
                         containsPointers = true;
                         System.Diagnostics.Debug.Assert(receiver.CodeElement != null);
@@ -907,6 +884,41 @@ namespace TypeCobol.Compiler.Diagnostics
                         }
                     }
                 }
+            }
+
+            if (node.StorageAreaWritesDataDefinition != null && node.CodeElement is SetStatementForConditions setConditions && setConditions.IsSendingValueFalse)
+            {
+                // Statement is a SET TO FALSE: check whether it mixes variables of type BOOL and Level 88
+                bool hasBool = false;
+                bool hasLevel88 = false;
+                string errorMessage = "Mixing TypeCobol BOOL variables with Level 88 in the same \"SET\" statement is not allowed. Consider splitting it into 2 separate statements.";
+                foreach (var condition in setConditions.Conditions)
+                {
+                    if (condition.StorageArea != null && node.StorageAreaWritesDataDefinition.TryGetValue(condition.StorageArea, out var dataCondition))
+                    {
+                        if (dataCondition?.CodeElement.Type == CodeElementType.DataConditionEntry)
+                        {
+                            hasLevel88 = true;
+                            if (hasBool)
+                            {
+                                DiagnosticUtils.AddError(node, errorMessage);
+                                break;
+                            }
+                        }
+                        else if (dataCondition?.CodeElement is DataDescriptionEntry dataDescriptionEntry && dataDescriptionEntry.DataType == DataType.Boolean)
+                        {
+                            hasBool = true;
+                            if (hasLevel88)
+                            {
+                                DiagnosticUtils.AddError(node, errorMessage);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Set a flag to remember this check
+                node.SetFlag(Node.Flag.IsTypeCobolSetToFalse, hasBool && !hasLevel88);
             }
         }
     }

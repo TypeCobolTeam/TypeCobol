@@ -87,7 +87,7 @@ namespace TypeCobol.Test.ProjectMetrics
 
         private static void AddStats(IDictionary<string,FileStats> totalStats,IDictionary<string,FileStats> subdirStats)
         {
- 	        foreach(string extension in subdirStats.Keys)
+             foreach(string extension in subdirStats.Keys)
             {
                 if(totalStats.ContainsKey(extension))
                 {

@@ -3,7 +3,7 @@
        DATA DIVISION.
                                                          
        WORKING-STORAGE SECTION.
-       01  TC-PGM1-FctList-Loaded PIC X(02).
+       01  TC-PGM1-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
@@ -51,7 +51,7 @@
        DATA DIVISION.
                                                          
        WORKING-STORAGE SECTION.
-       01  TC-PGM2-FctList-Loaded PIC X(02).
+       01  TC-PGM2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM2-PntTab.
            05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.

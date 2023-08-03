@@ -7,27 +7,27 @@ using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	/// <summary>Value defined by a single token in the Cobol syntax</summary>
-	public abstract class SyntaxValue<T> : IVisitable {
-	    protected SyntaxValue(Token t) { Token = t; }
+    /// <summary>Value defined by a single token in the Cobol syntax</summary>
+    public abstract class SyntaxValue<T> : IVisitable {
+        protected SyntaxValue(Token t) { Token = t; }
 
-		/// <summary>Token defining the value</summary>
+        /// <summary>Token defining the value</summary>
         public Token Token { get; private set; }
 
-		/// <summary>Strongly typed value defined by the token</summary>
-		public abstract T Value { get; }
+        /// <summary>Strongly typed value defined by the token</summary>
+        public abstract T Value { get; }
 
-		public override string ToString() {
-			try { if (Value != null) return Value.ToString(); }
-			catch(InvalidOperationException) { }
-			if (Token != null) return "<illegal \""+Token.SourceText+"\">";
-			return base.ToString();
-		}
+        public override string ToString() {
+            try { if (Value != null) return Value.ToString(); }
+            catch(InvalidOperationException) { }
+            if (Token != null) return "<illegal \""+Token.SourceText+"\">";
+            return base.ToString();
+        }
 
-	    public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
-	        return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, Token);
-	    }
-	}
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, Token);
+        }
+    }
 
     /// <summary>
     /// Value for tokens : TRUE | FALSE
@@ -190,7 +190,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// TCFunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
     /// </summary>
-	public class AlphanumericValue : SyntaxValue<string> {
+    public class AlphanumericValue : SyntaxValue<string> {
         public AlphanumericValue(Token t) : base(t) { }
 
         public AlphanumericValue(SymbolReference symbolicCharacterReference) : base(symbolicCharacterReference.NameLiteral.Token)
@@ -505,7 +505,7 @@ namespace TypeCobol.Compiler.CodeElements
         private string generatedSymbolName;
 
         /// <summary>Generated symbol name</summary>
-		public override string Value { get { return generatedSymbolName; } }
+        public override string Value { get { return generatedSymbolName; } }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -518,6 +518,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// UserDefinedWord
     /// IntrinsicFunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
+    /// LEADING | TRAILING
     /// </summary>
     public class EnumeratedValue : AlphanumericValue
     {
@@ -534,6 +535,8 @@ namespace TypeCobol.Compiler.CodeElements
                 case TokenType.RANDOM:
                 case TokenType.WHEN_COMPILED:
                 case TokenType.ExecTranslatorName:
+                case TokenType.LEADING:
+                case TokenType.TRAILING:
                     break;
                 default:
                     throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
@@ -550,12 +553,22 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public object EnumValue
         {
-            get { return Enum.Parse(EnumType, Value); }
+            get { return Enum.Parse(EnumType, Value, true); }
         }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
+
+        // Enum value should logically depends on nothing
+        public override bool ValueNeedsCompilationContext => false;
+
+        public override bool ValueNeedsSymbolicCharactersMap => false;
+
+        public override bool ValueNeedsCharactersCountContext => false;
+
+        // Enum value should logically always be the token text
+        public override string Value => Token.Text;
     }
 
     /// <summary>
@@ -684,82 +697,82 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-	/// <summary>Value for tokens : NULL</summary>
-	public class NullPointerValue : SyntaxValue<bool> {
-		public NullPointerValue(Token t) : base(t) { }
+    /// <summary>Value for tokens : NULL</summary>
+    public class NullPointerValue : SyntaxValue<bool> {
+        public NullPointerValue(Token t) : base(t) { }
 
-		/// <summary>Returns true for token NULL</summary>
-		public override bool Value {
-			get {
-				switch (Token.TokenType) {
-					case TokenType.NULL:
-					case TokenType.NULLS:
-						return true;
-					default: throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
-				}
-			}
-		}
+        /// <summary>Returns true for token NULL</summary>
+        public override bool Value {
+            get {
+                switch (Token.TokenType) {
+                    case TokenType.NULL:
+                    case TokenType.NULLS:
+                        return true;
+                    default: throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
+                }
+            }
+        }
 
-		public override string ToString() {
-			return Token.SourceText;
-		}
+        public override string ToString() {
+            return Token.SourceText;
+        }
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
-	    }
-	}
+        }
+    }
 
     /// <summary>Union class used to store any type of LiteralValue</summary>
     public class Value : IVisitable {
-	    public Value(NumericValue value) {
-		    LiteralType = ValueLiteralType.Numeric;
-		    NumericValue = value;
-	    }
-	    public Value(AlphanumericValue value) {
-		    LiteralType = ValueLiteralType.Alphanumeric;
-		    AlphanumericValue = value;
-	    }
-	    public Value(RepeatedCharacterValue value) {
-		    LiteralType = ValueLiteralType.RepeatedAlphanumeric;
-		    RepeatedAlphanumericValue = value;
-	    }
-	    public Value(NullPointerValue value) {
-		    LiteralType = ValueLiteralType.NullPointer;
-		    NullPointerValue = value;
-	    }
+        public Value(NumericValue value) {
+            LiteralType = ValueLiteralType.Numeric;
+            NumericValue = value;
+        }
+        public Value(AlphanumericValue value) {
+            LiteralType = ValueLiteralType.Alphanumeric;
+            AlphanumericValue = value;
+        }
+        public Value(RepeatedCharacterValue value) {
+            LiteralType = ValueLiteralType.RepeatedAlphanumeric;
+            RepeatedAlphanumericValue = value;
+        }
+        public Value(NullPointerValue value) {
+            LiteralType = ValueLiteralType.NullPointer;
+            NullPointerValue = value;
+        }
 
         public Value(BooleanValue value) {
             LiteralType = ValueLiteralType.Boolean;
             BooleanValue = value;
         }
 
-	    public enum ValueLiteralType {
-		    Numeric,
-		    Alphanumeric,
-		    RepeatedAlphanumeric,
-		    NullPointer,
+        public enum ValueLiteralType {
+            Numeric,
+            Alphanumeric,
+            RepeatedAlphanumeric,
+            NullPointer,
             Boolean
         }
 
-	    public ValueLiteralType LiteralType { get; private set; }
+        public ValueLiteralType LiteralType { get; private set; }
 
-	    public NumericValue NumericValue { get; private set; }
-	    public AlphanumericValue AlphanumericValue { get; private set; }
-	    public RepeatedCharacterValue RepeatedAlphanumericValue { get; private set; }
-	    public NullPointerValue NullPointerValue { get; private set; }
+        public NumericValue NumericValue { get; private set; }
+        public AlphanumericValue AlphanumericValue { get; private set; }
+        public RepeatedCharacterValue RepeatedAlphanumericValue { get; private set; }
+        public NullPointerValue NullPointerValue { get; private set; }
         public BooleanValue BooleanValue { get; set; }
 
 
         public override string ToString() {
-		    switch(LiteralType) {
-			    case ValueLiteralType.Numeric: return NumericValue.Value.ToString();
-			    case ValueLiteralType.Alphanumeric: return AlphanumericValue.Value;
-			    case ValueLiteralType.RepeatedAlphanumeric: return RepeatedAlphanumericValue.Value;
-			    case ValueLiteralType.NullPointer: return NullPointerValue.Token.SourceText;
+            switch(LiteralType) {
+                case ValueLiteralType.Numeric: return NumericValue.Value.ToString();
+                case ValueLiteralType.Alphanumeric: return AlphanumericValue.Value;
+                case ValueLiteralType.RepeatedAlphanumeric: return RepeatedAlphanumericValue.Value;
+                case ValueLiteralType.NullPointer: return NullPointerValue.Token.SourceText;
                 case ValueLiteralType.Boolean: return BooleanValue.Token.SourceText;
-			    default: return base.ToString();
-		    }
-	    }
+                default: return base.ToString();
+            }
+        }
 
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
@@ -774,24 +787,24 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-	public class GeneratedBooleanValue: BooleanValue {
-		public GeneratedBooleanValue(bool value): base(null) {
-			this.value = value;
-		}
-		private bool value;
-		public override bool Value { get { return value; } }
+    public class GeneratedBooleanValue: BooleanValue {
+        public GeneratedBooleanValue(bool value): base(null) {
+            this.value = value;
+        }
+        private bool value;
+        public override bool Value { get { return value; } }
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
-	    }
-	}
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
-	public class GeneratedIntegerValue: IntegerValue {
-		public GeneratedIntegerValue(long value): base(null) {
-			this.value = value;
-		}
-		private long value;
-		public override long Value { get { return value; } }
+    public class GeneratedIntegerValue: IntegerValue {
+        public GeneratedIntegerValue(long value): base(null) {
+            this.value = value;
+        }
+        private long value;
+        public override long Value { get { return value; } }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -799,14 +812,14 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-	public class GeneratedNumericValue: NumericValue {
-		public GeneratedNumericValue(double value): base(null) {
-			this.value = value;
-		}
-		private double value;
-		public override double Value { get { return value; } }
-		public override bool IsInteger { get { return value % 1 == 0; } }
-		public override long IntegerValue { get { return (long)value; } }
+    public class GeneratedNumericValue: NumericValue {
+        public GeneratedNumericValue(double value): base(null) {
+            this.value = value;
+        }
+        private double value;
+        public override double Value { get { return value; } }
+        public override bool IsInteger { get { return value % 1 == 0; } }
+        public override long IntegerValue { get { return (long)value; } }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -814,20 +827,20 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-	public class GeneratedAlphanumericValue: AlphanumericValue {
+    public class GeneratedAlphanumericValue: AlphanumericValue {
         public GeneratedAlphanumericValue(string value): base((Token)null) {
-			this.value = value;
-			encoding = CharacterEncodingType.Alphanumeric;
-			IsSymbolicCharacterReference = false;
-		}
-		private string value;
-		private CharacterEncodingType encoding;
+            this.value = value;
+            encoding = CharacterEncodingType.Alphanumeric;
+            IsSymbolicCharacterReference = false;
+        }
+        private string value;
+        private CharacterEncodingType encoding;
 
-		public override bool ValueNeedsCompilationContext { get { return false; } }
-		public override bool ValueNeedsSymbolicCharactersMap { get { return false; } }
-		public override CharacterEncodingType CharacterEncodingType { get { return encoding; } }
-		public override string Value { get { return value; } }
-		public override string GetValueInContext(CollatingSequence sequence, bool option, IDictionary<string, string> map, int count) { return value; }
+        public override bool ValueNeedsCompilationContext { get { return false; } }
+        public override bool ValueNeedsSymbolicCharactersMap { get { return false; } }
+        public override CharacterEncodingType CharacterEncodingType { get { return encoding; } }
+        public override string Value { get { return value; } }
+        public override string GetValueInContext(CollatingSequence sequence, bool option, IDictionary<string, string> map, int count) { return value; }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {

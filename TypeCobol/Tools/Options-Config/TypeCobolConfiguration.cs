@@ -36,10 +36,12 @@ namespace TypeCobol.Tools.Options_Config
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
 
 #if EUROINFO_RULES
-        public bool UseEuroInformationLegacyReplacingSyntax = true;
+        public bool EILegacy_RemoveFirst01Level = true;
+        public bool EILegacy_ApplyCopySuffixing = true;
         public string ReportUsedCopyNamesPath;
 #else
-        public bool UseEuroInformationLegacyReplacingSyntax = false;
+        public bool EILegacy_RemoveFirst01Level = false;
+        public bool EILegacy_ApplyCopySuffixing = false;
 #endif
         // Checks
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
@@ -130,7 +132,11 @@ namespace TypeCobol.Tools.Options_Config
         public TypeCobolConfiguration()
         {
             // default values for checks
-            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+            CheckEndAlignment = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndAlignmentSeverity);
+            CheckEndProgram = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndProgramSeverity);
+            CheckPerformPrematureExits = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformPrematureExitsSeverity);
+            CheckPerformThruOrder = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformThruOrderSeverity);
+            CheckRecursivePerforms = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckRecursivePerformsSeverity);
         }
     }
 
@@ -239,23 +245,17 @@ namespace TypeCobol.Tools.Options_Config
 
     public interface ITypeCobolCheckOptions
     {
+        const Severity DefaultCheckEndAlignmentSeverity = Severity.Warning;
+        const Severity DefaultCheckEndProgramSeverity = Severity.Error;
+        const Severity DefaultCheckPerformPrematureExitsSeverity = Severity.Warning;
+        const Severity DefaultCheckPerformThruOrderSeverity = Severity.Warning;
+        const Severity DefaultCheckRecursivePerformsSeverity = Severity.Warning;
+
         TypeCobolCheckOption CheckEndAlignment { get; set; }
         TypeCobolCheckOption CheckEndProgram { get; set; }
         TypeCobolCheckOption CheckPerformPrematureExits { get; set; }
         TypeCobolCheckOption CheckPerformThruOrder { get; set; }
         TypeCobolCheckOption CheckRecursivePerforms { get; set; }
-    }
-
-    public static class TypeCobolCheckOptionsInitializer
-    {
-        public static void SetDefaultValues(ITypeCobolCheckOptions checkOptions)
-        {
-            checkOptions.CheckEndAlignment = new TypeCobolCheckOption(Severity.Warning);
-            checkOptions.CheckEndProgram = new TypeCobolCheckOption(Severity.Error);
-            checkOptions.CheckPerformPrematureExits = new TypeCobolCheckOption(Severity.Warning);
-            checkOptions.CheckPerformThruOrder = new TypeCobolCheckOption(Severity.Warning);
-            checkOptions.CheckRecursivePerforms = new TypeCobolCheckOption(Severity.Warning);
-        }
     }
 
     public static class TypeCobolOptionSet
@@ -284,7 +284,9 @@ namespace TypeCobol.Tools.Options_Config
                 { "alr|antlrprogparse", "Use ANTLR to parse a program.", v => typeCobolConfig.UseAntlrProgramParsing = true},
                 { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v },
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
-                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
+                { "dcs|disablecopysuffixing", "OBSOLETE - Use 'drfl' and 'dcsm' options instead.'.", v => { typeCobolConfig.EILegacy_RemoveFirst01Level = false; typeCobolConfig.EILegacy_ApplyCopySuffixing = false; } },
+                { "drfl|disableremovefirst01level", "Disable EI Legacy automatic removal of first 01 level from CPY copies.", v => typeCobolConfig.EILegacy_RemoveFirst01Level = false },
+                { "dcsm|disablecopysuffixingmechanism", "Disable EI Legacy automatic suffixing of data names from CPY copies.", v => typeCobolConfig.EILegacy_ApplyCopySuffixing = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "diag.cep|diagnostic.checkEndProgram=", "Indicate level of check end program: warning, error, info, ignore.", v => typeCobolConfig.CheckEndProgram = TypeCobolCheckOption.Parse(v) },
@@ -295,7 +297,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true },
 #if EUROINFO_RULES
-                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a programm.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
+                { "cpyr|cpyreport=", "{PATH} to report of all COPY names used by a program.", v => typeCobolConfig.ReportUsedCopyNamesPath = v }
 #endif
             };
             return commonOptions;

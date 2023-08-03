@@ -1,0 +1,24 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZS0OSM.
+       
+       data division.
+       working-storage section.
+       
+       01 group1. COPY YCONVEA.
+      * Missing copy
+       COPY YCONVEAL.
+       
+       PROCEDURE DIVISION.
+      * Data items from non-suffixed copy / 01 level is removed
+           DISPLAY CONVEA-VEA-VEA-OUT-VEA
+           DISPLAY CONVEA-VEA-VEA-OUT-VEA-2
+           DISPLAY CONVEA
+           DISPLAY CONVEA-VEA
+           DISPLAY ANOTHER-DATA
+           DISPLAY CONVEA-VEATEST
+           DISPLAY CONVEA-TESTVEA
+           DISPLAY CONVEA-TESTVEA-TEST
+           DISPLAY CONVEA-TESTVEATEST
+           GOBACK
+           .
+       END PROGRAM DVZS0OSM.
