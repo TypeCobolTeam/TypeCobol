@@ -138,7 +138,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times",
                             functionName,
-                            potentialVariables.Count() + functionDeclarations.Count);
+                            potentialVariablesCount + functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
