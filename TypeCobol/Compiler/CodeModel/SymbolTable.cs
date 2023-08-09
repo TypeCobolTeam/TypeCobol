@@ -272,9 +272,8 @@ namespace TypeCobol.Compiler.CodeModel
         {
             if (dataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
             {
-                if (variable.DataType == dataType) //TODO: need to evolve this check with type comparison not just text..
+                if (variable.DataType == dataType)
                 { 
-
                     foundedVariables.Add(variable);
                     return;
                 }

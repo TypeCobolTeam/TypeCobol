@@ -712,16 +712,17 @@ namespace TypeCobol.LanguageServer
 
 
             IEnumerable<DataDefinition> variablesWithoutSender;
-            ////Exclude all variables
+            //Exclude all sending variables
             if (senderDataDefinitions != null)
             {
                 variablesWithoutSender = potentialVariables.Except(senderDataDefinitions.Values);
             }
-            else if (firstSendingVar != null)
+            //Exclude sending variable
+            else if (firstSendingVar != null) 
             {
-                //Exclude sending variable
                 variablesWithoutSender = potentialVariables.Where(v => v!=firstSendingVar);
             }
+            //No sending variable resolved
             else
             {
                 variablesWithoutSender = potentialVariables;
