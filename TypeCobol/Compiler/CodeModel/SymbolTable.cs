@@ -208,11 +208,31 @@ namespace TypeCobol.Compiler.CodeModel
             return foundedVariables.Distinct(); //Distinct on object not on variable name
         }
 
-        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
+        
+        /// <summary>
+        /// Fill existingVariables with variables that match given dataType.
+        /// Also return existingVariables.
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <param name="existingVariables"></param>
+        /// <param name="maximalScope"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
+        public ISet<DataDefinition> GetVariablesByType(DataType dataType, ISet<DataDefinition> existingVariables, Scope maximalScope)
         {
+            //Performance tip: the ISet instead of List and manually check with Contains makes a real difference
 
-            var foundedVariables = new List<DataDefinition>();
-            if (existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
+            //TODO perhaps there is no need to return existingVariables
+            ISet<DataDefinition> foundedVariables;
+            
+            if (existingVariables != null)
+            {
+                foundedVariables = existingVariables;
+            }
+            else
+            {
+                foundedVariables = new HashSet<DataDefinition>();
+            }
 
             SymbolTable currentTable = this;
             while (currentTable != null && currentTable.CurrentScope >= maximalScope)
@@ -224,7 +244,7 @@ namespace TypeCobol.Compiler.CodeModel
                 if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
                     var references = currentTable.TypesReferences.Where(t => t.Key.DataType == dataType).SelectMany(t => t.Value);
-                    foundedVariables.AddRange(references);
+                    foundedVariables.UnionWith(references);
                 }
                 else
                 {
@@ -241,13 +261,34 @@ namespace TypeCobol.Compiler.CodeModel
             return foundedVariables;
         }
 
-        private void SeekVariableType(DataType dataType, DataDefinition variable, ref List<DataDefinition> foundedVariables)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <param name="variable"></param>
+        /// <param name="foundedVariables"></param>
+        /// <param name="recursive">No need to recurse by default for variables outside types</param>
+        private void SeekVariableType(DataType dataType, DataDefinition variable, ref ISet<DataDefinition> foundedVariables, bool recursive = false)
         {
-            if (Regex.Match(variable.DataType.Name, @"\b" + dataType.Name + @"\b", RegexOptions.IgnoreCase).Success) //TODO: need to evolve this check with type comparison not just text..
+            if (dataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
             {
-                if(!foundedVariables.Any(v => v == variable))
+                if (variable.DataType == dataType) //TODO: need to evolve this check with type comparison not just text..
+                { 
+
                     foundedVariables.Add(variable);
-                return;
+                    return;
+                }
+            }
+            else
+            {
+                //For type DataType.Name depends on how is written the reference to the type : Prefixed with the Program or not
+                //TODO use resolved TypeDefinition to compare Type
+                if (Regex.Match(variable.DataType.Name, @"\b" + dataType.Name + @"\b", RegexOptions.IgnoreCase).Success) //TODO: need to evolve this check with type comparison not just text..
+                { 
+                    foundedVariables.Add(variable);
+                    return;
+                }
+
             }
 
             if (variable.DataType != null && variable.DataType != DataType.Boolean && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
@@ -262,21 +303,20 @@ namespace TypeCobol.Compiler.CodeModel
                         {
                             if (childrenType is DataDefinition && childrenType.Name != null)
                             {
-                                SeekVariableType(dataType, childrenType as DataDefinition, ref foundedVariables);
+                                SeekVariableType(dataType, childrenType as DataDefinition, ref foundedVariables, true);
                             }
                         }
                     }
                 }
             }
 
-
-            if (variable.Children != null && variable.Children.Count > 0)
+            if (recursive && variable.Children?.Count > 0)
             {
                 foreach (var children in variable.Children)
                 {
-                    if (children is DataDefinition && children.Name != null)
+                    if (children is DataDefinition childDataDef && children.Name != null)
                     {
-                        SeekVariableType(dataType, children as DataDefinition, ref foundedVariables);
+                        SeekVariableType(dataType, childDataDef, ref foundedVariables);
                     }
                 }
             }
