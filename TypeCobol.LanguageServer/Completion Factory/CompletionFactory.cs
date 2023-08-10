@@ -557,13 +557,12 @@ namespace TypeCobol.LanguageServer
         public static List<CompletionItem> GetCompletionForTo(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
         {
             var compatibleDataTypes = new HashSet<DataType>();
-            var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             if (arrangedCodeElement == null)
-                return completionItems;
+                return new List<CompletionItem>();
             var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
-                return completionItems;
+                return new List<CompletionItem>();
 
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text.Trim();
             Func<DataDefinition, bool> variablePredicate =
@@ -720,7 +719,7 @@ namespace TypeCobol.LanguageServer
             //Exclude sending variable
             else if (firstSendingVar != null) 
             {
-                variablesWithoutSender = potentialVariables.Where(v => v!=firstSendingVar);
+                variablesWithoutSender = potentialVariables.Where(v => v != firstSendingVar);
             }
             //No sending variable resolved
             else
