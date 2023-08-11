@@ -272,7 +272,7 @@ namespace TypeCobol.Compiler.CodeModel
             return foundVariables;
         }
 
-        private bool DataTypeMatch(DataType dataType, DataDefinition variable)
+        private static bool DataTypeMatch(DataType dataType, DataDefinition variable)
         {
             if (variable.DataType == dataType)
             {
@@ -316,18 +316,24 @@ namespace TypeCobol.Compiler.CodeModel
                 return; //If a variable is matched don't search its children
             }
 
-            if (variable.TypeDefinition != null && variable.TypeDefinition != DataType.BooleanType)
+            if (variable.TypeDefinition != null)
             {
-                SearchChildren(variable.TypeDefinition.Children);
+                if (variable.TypeDefinition != DataType.BooleanType)
+                {
+                    SearchChildren(variable.TypeDefinition.Children);
+                }
+            }
+            else //Typed variable cannot have children
+            {
+                SearchChildren(variable.Children);
             }
 
-            SearchChildren(variable.Children);
 
             void SearchChildren(IReadOnlyList<Node> children)
             {
                 if (children?.Count > 0)
                 {
-                    foreach (var child in variable.Children)
+                    foreach (var child in children)
                     {
                         if (child is DataDefinition childDataDef && child.Name != null)
                         {
