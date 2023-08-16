@@ -308,7 +308,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="dataType"></param>
         /// <param name="variable"></param>
         /// <param name="foundVariables"></param>
-        private void SeekVariableType(DataType dataType, DataDefinition variable, ISet<DataDefinition> foundVariables)
+        private static void SeekVariableType(DataType dataType, DataDefinition variable, ISet<DataDefinition> foundVariables)
         {
             if (DataTypeMatch(dataType, variable))
             {
