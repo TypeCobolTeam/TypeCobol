@@ -583,15 +583,14 @@ namespace TypeCobol.LanguageServer
             //so both node.CodeElement.StorageReads and node.CodeElement.StorageWrites can be filled when completion is asked
 
             //SET can apply to multiple variables at once (set var1 var2 to true)
-            IDictionary<StorageArea, DataDefinition> senderDataDefinitions;
-            if (node is Set)
+            IDictionary<StorageArea, DataDefinition> senderDataDefinitions = node switch
             {
-                senderDataDefinitions = node.StorageAreaWritesDataDefinition;
-            }
-            else
-            {
-                senderDataDefinitions = node.StorageAreaReadsDataDefinition;
-            }
+                Set => node.StorageAreaWritesDataDefinition,
+                Move => node.StorageAreaReadsDataDefinition,
+                Add => node.StorageAreaReadsDataDefinition,
+                Inspect => node.StorageAreaReadsDataDefinition,
+                _ => null
+            };
 
             if (senderDataDefinitions?.Count > 0)
             {
