@@ -2091,13 +2091,10 @@ namespace TypeCobol.Compiler.Scanner
                         tokenType = TokenType.SymbolicCharacter;
                         tokensLine.ScanState.SpecialNames.AddSymbolicCharacter(tokenText);
                     }
-                    else if (tokensLine.ScanState.SpecialNames.SymbolicCharacters != null)
+                    else if (tokensLine.ScanState.SpecialNames.IsSymbolicCharacter(tokenText))
                     {
-                        // Try to match a previously defined SymbolicCharacter
-                        if (tokensLine.ScanState.SpecialNames.SymbolicCharacters.Contains(tokenText))
-                        {
-                            tokenType = TokenType.SymbolicCharacter;
-                        }
+                        // Previously defined SymbolicCharacter
+                        tokenType = TokenType.SymbolicCharacter;
                     }
 
                     // Section and paragraph names
