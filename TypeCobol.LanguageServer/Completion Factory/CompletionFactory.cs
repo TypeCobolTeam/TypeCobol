@@ -586,9 +586,7 @@ namespace TypeCobol.LanguageServer
             IDictionary<StorageArea, DataDefinition> senderDataDefinitions = node switch
             {
                 Set => node.StorageAreaWritesDataDefinition,
-                Move => node.StorageAreaReadsDataDefinition,
-                Add => node.StorageAreaReadsDataDefinition,
-                Inspect => node.StorageAreaReadsDataDefinition,
+                Move or Add or Inspect => node.StorageAreaReadsDataDefinition,
                 _ => null
             };
 
