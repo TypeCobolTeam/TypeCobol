@@ -11,11 +11,11 @@ using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using String = System.String;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Preprocessor;
 #endif
 
