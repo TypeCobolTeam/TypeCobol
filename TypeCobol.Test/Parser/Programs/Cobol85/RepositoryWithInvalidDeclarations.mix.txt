@@ -22,7 +22,7 @@ Line 14[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'FUNCTION' 
 Line 17[12,19] <27, Error, Syntax> - Syntax error : extraneous input 'FUNCTION' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
            FUNCTION ABS TRIM INTRINSIC.
             
-Line 19[36,37] <27, Error, Syntax> - Syntax error : extraneous input '> ' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 19[33,34] <27, Error, Syntax> - Syntax error : no viable alternative at input 'FUNCTION ... PI'
             IF FUNCTION ABS(10) PI > 0
               DISPLAY "PI OK"
             END-IF

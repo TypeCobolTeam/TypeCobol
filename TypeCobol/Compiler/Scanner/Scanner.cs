@@ -2046,7 +2046,7 @@ namespace TypeCobol.Compiler.Scanner
             //.WHEN_COMPILED |
             //.YEAR_TO_YYYY;
             Debug.Assert(tokensLine.ScanState != null);
-            if (tokensLine.ScanState.AfterFUNCTIONOrIntrinsicFunctionName && TokenUtils.CobolIntrinsicFunctions.IsMatch(tokenText))
+            if (IsTokenTextRepositoryFunctionDefinitionOrIntrinsicFunctionReference())
             {
                 tokenType = TokenType.IntrinsicFunctionName;
             }
@@ -2121,6 +2121,30 @@ namespace TypeCobol.Compiler.Scanner
 
             // Return a keyword or user defined word
             return new Token(tokenType, startIndex, endIndex, tokensLine);
+
+            bool IsTokenTextRepositoryFunctionDefinitionOrIntrinsicFunctionReference()
+            {
+                if (!CobolIntrinsicFunctions.IsFunctionName(tokenText))
+                {
+                    // Not an intrinsic name
+                    return false;
+                }
+
+                if (tokensLine.ScanState.InsideRepositoryDeclarations && (tokensLine.ScanState.AfterFUNCTION || tokensLine.ScanState.AfterIntrinsicFunctionName))
+                {
+                    // Name of an intrinsic declared in REPOSITORY
+                    tokensLine.ScanState.AddRepositoryFunction(tokenText);
+                    return true;
+                }
+
+                if (tokensLine.ScanState.AfterFUNCTION || tokensLine.ScanState.IsRepositoryFunction(tokenText))
+                {
+                    // Used after keyword FUNCTION or allowed to be used without keyword
+                    return true;
+                }
+
+                return false;
+            }
         }
 
         /// <summary>
