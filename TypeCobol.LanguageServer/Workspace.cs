@@ -11,6 +11,8 @@ using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
+using TypeCobol.Compiler.Nodes;
+using String = System.String;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
@@ -950,6 +952,203 @@ namespace TypeCobol.LanguageServer
 
             DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }
+
+        #region Data Layout
+        private const char SPACE = ' ';
+        private const string INDENT = "  "; // Indentation = 2 spaces
+        private const string UNDEFINED = "***";
+        private const string FILLER = "FILLER";
+        private const string GROUP = "GROUP";
+        private const string OCCURS = "OCCURS {0}";
+        private const string PIC = "PIC {0}";
+        private const string REDEFINES = "REDEFINES {0}";
+
+        /// <summary>
+        /// Get the Data Layout rows for a Program or a Copy (output = CSV)
+        /// </summary>
+        /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
+        /// <param name="separator">Separator to be used in the rows</param>
+        /// <returns></returns>
+        public string[] GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
+        {
+            var rows = new List<string>();
+            foreach (var dataDefinition in CollectDataLayoutDefinitions(compilationUnit))
+            {
+                var row = CreateRow(dataDefinition, separator);
+                if (row != null)
+                {
+                    rows.Add(row);
+                }
+            }
+
+            return rows.ToArray<string>();
+
+            static string CreateRow(DataDefinition dataDefinition, string separator)
+            {
+                if (IsIgnored(dataDefinition))
+                {
+                    // Ignore this node
+                    return null;
+                }
+
+                var row = new StringBuilder();
+
+                //TODO manage slack bytes (property is dataDefinition.SlackBytes)
+
+                // Line number (starting at 1)
+                AppendToRow(dataDefinition.CodeElement.GetLineInMainSource() + 1);
+
+                /// Level number
+                AppendToRow(dataDefinition.CodeElement.LevelNumber);
+
+                // Name (preceded by an indent depending on the level)
+                AppendToRow(GetIndent(dataDefinition) + GetName(dataDefinition));
+
+                // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
+                AppendToRow(GetDeclaration(dataDefinition));
+
+                // Start/End/Length
+                var start = dataDefinition.StartPosition;
+                var length = dataDefinition.PhysicalLength;
+                AppendToRow(start);
+                AppendToRow(GetEnd(start, length));
+                AppendToRow(length);
+
+                return row.ToString();
+
+                static bool IsIgnored(DataDefinition dataDefinition)
+                {
+                    DataDefinitionEntry codeElement = dataDefinition.CodeElement;
+                    return codeElement == null || codeElement.Line < 0;
+                }
+
+                void AppendToRow(object value)
+                {
+                    row.Append(value).Append(separator);
+                }
+
+                static string GetIndent(DataDefinition dataDefinition)
+                {
+                    var result = new StringBuilder();
+                    Node parentData = dataDefinition.Parent;
+                    while (parentData is not DataSection)
+                    {
+                        parentData = parentData.Parent;
+                        result.Append(INDENT);
+                    }
+
+                    return result.ToString();
+                }
+
+                static string GetName(DataDefinition dataDefinition)
+                {
+                    return dataDefinition.Name == null ? FILLER : dataDefinition.Name;
+                }
+
+                static string GetDeclaration(DataDefinition dataDefinition)
+                {
+                    string result = String.Empty;
+
+                    if (dataDefinition is DataRedefines dataRedefines)
+                    {
+                        result = string.Format(REDEFINES, dataRedefines.CodeElement.RedefinesDataName.Name);
+                    }
+                    else if (dataDefinition is DataDescription dataDescription && dataDescription.CodeElement is DataDescriptionEntry dataDescriptionEntry)
+                    {
+                        if (dataDescription.Picture != null)
+                        {
+                            result = string.Format(PIC, dataDescription.Picture.Value);
+                        }
+
+                        string usage = dataDescriptionEntry.Usage?.Token.Text;
+                        if (!String.IsNullOrWhiteSpace(usage))
+                        {
+                            AppendSpaceIfNotEmpty();
+                            result += usage;
+                        }
+
+                        if (result.Length == 0 && dataDefinition.ChildrenCount > 0)
+                        {
+                            result = GROUP;
+                        }
+                    }
+
+                    if (dataDefinition.IsTableOccurence)
+                    {
+                        AppendSpaceIfNotEmpty();
+                        result += string.Format(OCCURS, dataDefinition.MaxOccurencesCount);
+                    }
+
+                    return result;
+
+                    void AppendSpaceIfNotEmpty()
+                    {
+                        if (result.Length > 0)
+                        {
+                            result += SPACE;
+                        }
+                    }
+                }
+
+                static object GetEnd(long start, long length)
+                {
+                    var end = start + length - 1;
+                    return (end > 0) ? end : UNDEFINED;
+                }
+            }
+        }
+
+        private List<DataDefinition> CollectDataLayoutDefinitions(CompilationUnit compilationUnit)
+        {
+            var result = new List<DataDefinition>();
+            Node dataDivision = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.GetChildren<DataDivision>().FirstOrDefault();
+            if (dataDivision != null)
+            {
+                // Consider data declared in the Working storage
+                var workingStorage = dataDivision.GetChildren<WorkingStorageSection>().FirstOrDefault();
+                if (workingStorage != null)
+                {
+                    result.AddRange(CollectDataDefinitions(workingStorage));
+                }
+
+                // Consider also data declared in the Local storage
+                var localStorage = dataDivision.GetChildren<LocalStorageSection>().FirstOrDefault();
+                if (localStorage != null)
+                {
+                    result.AddRange(CollectDataDefinitions(localStorage));
+                }
+            }
+
+            return result;
+
+            static IEnumerable<DataDefinition> CollectDataDefinitions(Node node)
+            {
+                foreach (var child in node.Children)
+                {
+                    if (child is DataDefinition dataDefinition)
+                    {
+                        CodeElementType type = dataDefinition.CodeElement.Type;
+                        if (type == CodeElementType.DataConditionEntry || type == CodeElementType.DataRenamesEntry)
+                        {
+                            // Ignore level 88 and 66
+                            continue;
+                        }
+                        else
+                        {
+                            yield return dataDefinition;
+                        }
+                        if (child.Children.Count > 0)
+                        {
+                            foreach (var childDataDefinition in CollectDataDefinitions(child))
+                            {
+                                yield return childDataDefinition;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
 
 #if EUROINFO_RULES
         public (string[], int) GetRemarksData(CompilationUnit compilationUnit)

@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -471,6 +472,32 @@ namespace TypeCobol.Compiler.CodeElements
                 if (ConsumedTokens.Count < 1) return null;
                 return ConsumedTokens[0].InputStream;
             }
+        }
+
+        /// <summary>
+        /// Get the line number in the main source for this CodeElement.
+        /// If it belongs to an imported COPY, the line is the one declaring the COPY directive in the main source
+        /// </summary>
+        /// <returns>The line number</returns>
+        public int GetLineInMainSource()
+        {
+            if (ConsumedTokens.Count > 0)
+            {
+                var firstToken = ConsumedTokens[0];
+                if (firstToken is ImportedToken importedToken)
+                {
+                    if (importedToken.CopyDirective.TextNameSymbol.TokensLine is CodeElementsLine codeElementsLine)
+                    {
+                        return codeElementsLine.LineIndex;
+                    }
+                }
+                else if (firstToken.TokensLine is CodeElementsLine codeElementsLine)
+                {
+                    return codeElementsLine.LineIndex;
+                }
+            }
+
+            return Line;
         }
 
         /// <summary>

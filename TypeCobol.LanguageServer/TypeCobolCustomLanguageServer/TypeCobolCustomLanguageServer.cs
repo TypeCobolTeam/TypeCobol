@@ -24,6 +24,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             rpcServer.RegisterNotificationMethod(ExtractUseCopiesNotification.Type, ReceivedExtractUseCopiesNotification);
             rpcServer.RegisterNotificationMethod(DidOpenProjectTextDocumentNotification.Type, ReceivedDidOpenProjectTextDocument);
             rpcServer.RegisterNotificationMethod(DidChangeProjectConfigurationNotification.Type, ReceivedDidChangeProjectConfiguration);
+            rpcServer.RegisterRequestMethod(GetDataLayoutRequest.Type, ReceivedGetDataLayoutRequest);
 #if EUROINFO_RULES
             rpcServer.RegisterRequestMethod(ExtractRemarksDataRequest.Type, ReceivedExtractRemarksDataRequest);
 #endif
@@ -129,6 +130,22 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             return resultOrError;
         }
 
+        private ResponseResultOrError ReceivedGetDataLayoutRequest(RequestType requestType, object parameters, LSPProfiling lspProfiling)
+        {
+            ResponseResultOrError resultOrError;
+            try
+            {
+                var dataLayout = OnDidReceiveGetDataLayout((GetDataLayoutParams)parameters);
+                resultOrError = new ResponseResultOrError() { result = dataLayout };
+            }
+            catch (Exception e)
+            {
+                NotifyException(e);
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
+            }
+            return resultOrError;
+        }
+
 #if EUROINFO_RULES
         private ResponseResultOrError ReceivedExtractRemarksDataRequest(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
@@ -187,6 +204,26 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             {
                 this.Workspace.RefreshSyntaxTree(context.FileCompiler, Workspace.SyntaxTreeRefreshLevel.ForceFullRefresh);
             }
+        }
+
+        /// <summary>
+        /// The GetDataLayout request is sent from the client to the server
+        /// It asks to the server to return the data layout of the document
+        /// </summary>
+        /// <param name="parameter"></param>
+        protected virtual GetDataLayoutResult OnDidReceiveGetDataLayout(GetDataLayoutParams parameter)
+        {
+            string uri = parameter.textDocument.uri;
+
+            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            if (context != null && context.FileCompiler != null)
+            {
+                string[] rows = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, GetDataLayoutConstants.SEPARATOR);
+
+                return new GetDataLayoutResult(rows);
+            }
+
+            throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");
         }
 
 #if EUROINFO_RULES
