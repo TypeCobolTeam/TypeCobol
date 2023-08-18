@@ -149,7 +149,7 @@
       *   input mydate        TYPE Date
       *  .
        INIT-LIBRARY.
-          exit
+           exit
           .
        END PROGRAM Callee.
 

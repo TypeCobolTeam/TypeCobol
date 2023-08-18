@@ -14,7 +14,7 @@
        01 TypeOutputAccount TYPEDEF STRICT.
                 05 DueDate PIC 9.
        01 OutputAccount TYPE TypeOutputAccount.
-           PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            EVALUATE TRUE
            WHEN NOT ( RECCTR-DPO-DAT-FIN-CTR-CAT = 0 )
               MOVE UNSAFE RECCTR-DPO-DAT-FIN-CTR-CAT
@@ -26,5 +26,5 @@
            END-EVALUATE
            .
        END-DECLARE.
-       CALL InitFrom INPUT RECCTR-DPO-DAT-FIN-CTR-CAT.
+           CALL InitFrom INPUT RECCTR-DPO-DAT-FIN-CTR-CAT.
        END PROGRAM Functions.

@@ -4,7 +4,7 @@
        WORKING-STORAGE SECTION.
        01 var1 PIC X.
        PROCEDURE DIVISION.
-          MOVE 'A' TO var1
-          GOBACK
-          .
+           MOVE 'A' TO var1
+           GOBACK
+           .
        END PROGRAM DVZZMFT0.

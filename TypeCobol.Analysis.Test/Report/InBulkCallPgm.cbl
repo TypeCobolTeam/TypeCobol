@@ -10,22 +10,21 @@
       
        PROCEDURE DIVISION.
       
-       call 'zcallpgm' using PROGRAM_NAME
+            call 'zcallpgm' using PROGRAM_NAME
                                 PARAMETER_1
                                 PARAMETER_2.
       
-       call 'ZCALLPGM' using by content PROGRAM_NAME
+            call 'ZCALLPGM' using by content PROGRAM_NAME
                                 PARAMETER_1.
       
-       PERFORM CHANGEPGM1.
-       call 'zCaLlpgm' using by reference PROGRAM_NAME.
+            PERFORM CHANGEPGM1.
+            call 'zCaLlpgm' using by reference PROGRAM_NAME.
       
             call 'zCaLlpgm' using by value PROGRAM_NAME.
       
             call 'test' using by value PROGRAM_NAME.
-      
-       PERFORM CHANGETMP3.
-       call 'zCaLlpgF' using PROGRAM_NAME.
+            PERFORM CHANGETMP3.
+            call 'zCaLlpgF' using PROGRAM_NAME.
       
             call 'ZCALLPGG' using by content PROGRAM_NAME
                                 PARAMETER_1.
@@ -34,21 +33,21 @@
                                 PARAMETER_1
                                 PARAMETER_2.
       
-       MOVE 'PGML00003' TO PROGRAM_NAME
-       call 'zCaLlpgt' using by reference PROGRAM_NAME.
+           MOVE 'PGML00003' TO PROGRAM_NAME
+           call 'zCaLlpgt' using by reference PROGRAM_NAME.
       
-       PERFORM CHANGETMP.
-       call 'zCaLlpgx' using by reference PROGRAM_NAME.
+           PERFORM CHANGETMP.
+           call 'zCaLlpgx' using by reference PROGRAM_NAME.
       
             call 'zCaLlsrv' using by reference PGM_NAME_TMP.
       
-        evaluate true
+           evaluate true
             when "1" = "1"
                 continue
             when other
                 continue
-        end-evaluate.
-        EXIT.
+           end-evaluate.
+           EXIT.
        CHANGEPGM1.
            MOVE 'PGM00002' TO PROGRAM_NAME
            .

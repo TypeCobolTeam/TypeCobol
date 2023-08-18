@@ -30,11 +30,11 @@
                 paramScalar        TYPE ScalarType    VALUE 'E'
                 paramInline        PIC X(1)           VALUE 'F'.
        PROCEDURE DIVISION.
-          DISPLAY paramIntrinsicDate
-          DISPLAY paramIntrinsicRate
-          DISPLAY paramStructure
-          DISPLAY paramScalar
-          DISPLAY paramInline
+             DISPLAY paramIntrinsicDate
+             DISPLAY paramIntrinsicRate
+             DISPLAY paramStructure
+             DISPLAY paramScalar
+             DISPLAY paramInline
           .
        END-DECLARE.
           .

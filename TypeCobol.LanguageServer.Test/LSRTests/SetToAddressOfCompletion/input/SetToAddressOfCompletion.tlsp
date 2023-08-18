@@ -15,7 +15,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. TestingPgm.\\r\\n\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 W-Date TYPE DATE.\\r\\n       01 W-Bool TYPE Bool.\\r\\n       01 W-Numeric PIC 9(10).\\r\\n       01 W-Alphabetic PIC A(10).\\r\\n       01 W-Alphanum PIC X(10).\\r\\n       01 W-OutDate TYPE Date.\\r\\n       01 TestLevel PIC 9.\\r\\n           88 TestLevel88 VALUE 1.\\r\\n       01 Level1.\\r\\n          05 Level2.\\r\\n            06 VarLevel2 PIC X(10).\\r\\n          05 Level2-2.\\r\\n            06 VarLevel2-2 PIC X(10).\\r\\n          05 MyBool TYPE BOOL.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       SET\\r\\n\\r\\n\\r\\n\\r\\n       .\\r\\n       END PROGRAM TestingPgm.\"}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. TestingPgm.\\r\\n\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 W-Date TYPE DATE.\\r\\n       01 W-Bool TYPE Bool.\\r\\n       01 W-Numeric PIC 9(10).\\r\\n       01 W-Alphabetic PIC A(10).\\r\\n       01 W-Alphanum PIC X(10).\\r\\n       01 W-OutDate TYPE Date.\\r\\n       01 TestLevel PIC 9.\\r\\n           88 TestLevel88 VALUE 1.\\r\\n       01 Level1.\\r\\n          05 Level2.\\r\\n            06 VarLevel2 PIC X(10).\\r\\n          05 Level2-2.\\r\\n            06 VarLevel2-2 PIC X(10).\\r\\n          05 MyBool TYPE BOOL.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n           SET\\r\\n\\r\\n\\r\\n\\r\\n       .\\r\\n       END PROGRAM TestingPgm.\"}}"
     },
     {
       "category": 1,
@@ -23,7 +23,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":10},\"end\":{\"line\":21,\"character\":10}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":14},\"end\":{\"line\":21,\"character\":14}},\"rangeLength\":0,\"text\":\" \"}]}}"
     },
     {
       "category": 0,
@@ -39,7 +39,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"47\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":11}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"47\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":15}}}"
     },
     {
       "category": 2,
@@ -47,23 +47,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":11},\"end\":{\"line\":21,\"character\":11}},\"rangeLength\":0,\"text\":\"W-Numeric\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":15},\"end\":{\"line\":21,\"character\":15}},\"rangeLength\":0,\"text\":\"W-Numeric\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":20},\"end\":{\"line\":21,\"character\":20}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":21},\"end\":{\"line\":21,\"character\":21}},\"rangeLength\":0,\"text\":\"T\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":22},\"end\":{\"line\":21,\"character\":22}},\"rangeLength\":0,\"text\":\"O\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":23},\"end\":{\"line\":21,\"character\":23}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":24},\"end\":{\"line\":21,\"character\":24}},\"rangeLength\":0,\"text\":\" TO \"}]}}"
     },
     {
       "category": 0,
@@ -79,7 +67,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"49\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":24}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"49\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":28}}}"
     },
     {
       "category": 2,
@@ -87,7 +75,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":24},\"end\":{\"line\":21,\"character\":24}},\"rangeLength\":0,\"text\":\"W-Date::DD\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":28},\"end\":{\"line\":21,\"character\":28}},\"rangeLength\":0,\"text\":\"W-Date::DD\"}]}}"
     },
     {
       "category": 0,
@@ -100,6 +88,22 @@
     {
       "category": 2,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"50\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":37},\"end\":{\"line\":21,\"character\":38}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":36},\"end\":{\"line\":21,\"character\":37}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":35},\"end\":{\"line\":21,\"character\":36}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":34},\"end\":{\"line\":21,\"character\":35}},\"rangeLength\":1,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
@@ -127,64 +131,9 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":27},\"end\":{\"line\":21,\"character\":28}},\"rangeLength\":1,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":28},\"end\":{\"line\":21,\"character\":28}},\"rangeLength\":0,\"text\":\"ADDRESS OF \"}]}}"
     },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":26},\"end\":{\"line\":21,\"character\":27}},\"rangeLength\":1,\"text\":\"\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":25},\"end\":{\"line\":21,\"character\":26}},\"rangeLength\":1,\"text\":\"\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":24},\"end\":{\"line\":21,\"character\":25}},\"rangeLength\":1,\"text\":\"\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":24},\"end\":{\"line\":21,\"character\":24}},\"rangeLength\":0,\"text\":\"A\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":25},\"end\":{\"line\":21,\"character\":25}},\"rangeLength\":0,\"text\":\"D\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":26},\"end\":{\"line\":21,\"character\":26}},\"rangeLength\":0,\"text\":\"D\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":27},\"end\":{\"line\":21,\"character\":27}},\"rangeLength\":0,\"text\":\"R\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":28},\"end\":{\"line\":21,\"character\":28}},\"rangeLength\":0,\"text\":\"E\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":29},\"end\":{\"line\":21,\"character\":29}},\"rangeLength\":0,\"text\":\"S\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":30},\"end\":{\"line\":21,\"character\":30}},\"rangeLength\":0,\"text\":\"S\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":31},\"end\":{\"line\":21,\"character\":31}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":32},\"end\":{\"line\":21,\"character\":32}},\"rangeLength\":0,\"text\":\"O\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":33},\"end\":{\"line\":21,\"character\":33}},\"rangeLength\":0,\"text\":\"F\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":34},\"end\":{\"line\":21,\"character\":34}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
+    
     {
       "category": 0,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"51\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"}}}"
@@ -199,7 +148,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"52\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":35}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"52\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":39}}}"
     },
     {
       "category": 2,
@@ -207,11 +156,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":35},\"end\":{\"line\":21,\"character\":35}},\"rangeLength\":0,\"text\":\"W-Bool\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":39},\"end\":{\"line\":21,\"character\":39}},\"rangeLength\":0,\"text\":\"W-Bool\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":41},\"end\":{\"line\":21,\"character\":41}},\"rangeLength\":0,\"text\":\".\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":45},\"end\":{\"line\":21,\"character\":45}},\"rangeLength\":0,\"text\":\".\"}]}}"
     },
     {
       "category": 0,

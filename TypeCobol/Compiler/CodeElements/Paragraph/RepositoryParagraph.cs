@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -17,5 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Optionally, the REPOSITORY paragraph defines associations between class-names and external class-names.
         /// </summary>
         public IDictionary<SymbolDefinitionOrReference, SymbolDefinitionOrReference> ClassNames { get; set; }
+
+        public override TextAreaType StartingArea => TextAreaType.TODO;
     }
 }

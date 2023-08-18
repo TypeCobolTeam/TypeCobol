@@ -28,7 +28,8 @@
        01 DuplicatedVar     TYPE Bool.
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
-      *KO TypeDefs in Global-Storage Section are not referenced in SymbolTable
+      *KO TypeDefs in Global-Storage Section are not referenced in
+      *SymbolTable
        01 invalidTypedVar TYPE ForbiddenTypedef.
 
        01 DefInMainAsGlobalAndNested global pic X.
@@ -49,8 +50,8 @@
            MOVE G-TechCtx TO TestCtx.
        END-DECLARE.
 
-       MOVE G-Date TO G-Date.
-       MOVE DuplicatedVar TO G-TechCtx.
+           MOVE G-Date TO G-Date.
+           MOVE DuplicatedVar TO G-TechCtx.
 
        IDENTIFICATION DIVISION.
        PROGRAM-ID. NestedProc.
@@ -64,7 +65,7 @@
 
        PROCEDURE DIVISION.
       *G-Date is accessible in nested from Global Storage
-       MOVE G-Date TO MyDate.
+           MOVE G-Date TO MyDate.
        DECLARE PROCEDURE MyProc PRIVATE
             IN-OUT    myDate      TYPE DATE.
        Data division.
@@ -75,8 +76,8 @@
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accessible 
       * in nested procedure from Global Storage
-       MOVE G-Date TO myDate.
-       MOVE G-TechCtx TO TestCtx.
+           MOVE G-Date TO myDate.
+           MOVE G-TechCtx TO TestCtx.
 
       *KO Rule GLOBALSS_ALWAYS_RESOLVE
 	  *DefInGlobalStorageAndNested is defined twice
@@ -103,6 +104,6 @@
 
        PROCEDURE DIVISION.
       *G-Date is not accessible in StackedProgram
-       MOVE G-Date TO MyDate.
+           MOVE G-Date TO MyDate.
 
        END PROGRAM StackedProg.

@@ -1,9 +1,11 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using TypeCobol.Compiler.Text;
+
+namespace TypeCobol.Compiler.CodeElements {
 
     public class ProgramIdentification : CodeElement, INamedCodeElement
     {
         public ProgramIdentification() : base(CodeElementType.ProgramIdentification) { }
-
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
         /// <summary>
         /// program-name
         /// A user-defined word or alphanumeric literal, but not a figurative constant,

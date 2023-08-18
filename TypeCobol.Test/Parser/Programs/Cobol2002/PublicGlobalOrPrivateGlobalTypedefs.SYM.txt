@@ -1,10 +1,10 @@
 --- Diagnostics ---
-Line 5[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[36,41:global]<GLOBAL>
-Line 7[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[37,42:global]<GLOBAL>
-Line 18[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[36,41:global]<GLOBAL>
-Line 20[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[37,42:global]<GLOBAL>
-Line 35[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[36,41:global]<GLOBAL>
-Line 37[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[37,42:global]<GLOBAL>
+Line 5[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[32,37:global]<GLOBAL>
+Line 7[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[33,38:global]<GLOBAL>
+Line 18[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[32,37:global]<GLOBAL>
+Line 20[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[33,38:global]<GLOBAL>
+Line 35[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[32,37:global]<GLOBAL>
+Line 37[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier RuleStack=codeElement>dataDescriptionEntry>globalClause,  OffendingSymbol=[33,38:global]<GLOBAL>
 
 --- Program ---
 DVZFSCT0 (.NET Type=ProgramSymbol, Kind=Program)

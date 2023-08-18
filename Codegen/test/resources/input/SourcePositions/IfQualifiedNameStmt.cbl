@@ -13,24 +13,24 @@
            05  T1-B2   PIC X.
       
        PROCEDURE DIVISION.
-          IF ((T1-A :: T1-B1) > 1)
+           IF ((T1-A :: T1-B1) > 1)
              DISPLAY "IF1"
-          ELSE
+           ELSE
              CONTINUE
-          END-IF.
+           END-IF.
       
-          IF ((T1-A :: T1-B1) > 1 AND (T1-A :: T1-B2) > 15)
+           IF ((T1-A :: T1-B1) > 1 AND (T1-A :: T1-B2) > 15)
              DISPLAY "IF2"
-          ELSE
+           ELSE
              CONTINUE
-          END-IF.
+           END-IF.
       
-          IF ((T1-A :: T1-B1) > 1 AND
+           IF ((T1-A :: T1-B1) > 1 AND
                 (T1-A :: T1-B2) > 32)
              DISPLAY "IF3"
-          ELSE
+           ELSE
              CONTINUE
-          END-IF.
+           END-IF.
       
        END PROGRAM CASE_IF.
       

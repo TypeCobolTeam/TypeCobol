@@ -22,21 +22,21 @@
       *******************************************************
       * SET TO FALSE OK
       *******************************************************
-         set VarBool-1 to false
-         set Var88-1 to false
-         set VarBool-1 VarBool-2 to false
-         set Var88-1 Var88-2 to false
+           set VarBool-1 to false
+           set Var88-1 to false
+           set VarBool-1 VarBool-2 to false
+           set Var88-1 Var88-2 to false
 
       *******************************************************
       * SET TO FALSE KO because of mix type Bool + Level88
       *******************************************************
-         set Var88-1 VarBool-1 VarBool-2 to false
-         set VarBool-1 Var88-1 VarBool-2 to false
-         set VarBool-1 VarBool-2 Var88-1 to false
-         set VarBool-1 Var88-1 Var88-2 to false
-         set Var88-1 VarBool-1 Var88-2 to false
-         set Var88-1 Var88-2 VarBool-1 to false
+           set Var88-1 VarBool-1 VarBool-2 to false
+           set VarBool-1 Var88-1 VarBool-2 to false
+           set VarBool-1 VarBool-2 Var88-1 to false
+           set VarBool-1 Var88-1 Var88-2 to false
+           set Var88-1 VarBool-1 Var88-2 to false
+           set Var88-1 Var88-2 VarBool-1 to false
 
-         goback.
+           goback.
 
        END PROGRAM SetToFalse.

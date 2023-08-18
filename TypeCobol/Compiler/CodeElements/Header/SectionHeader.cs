@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public SectionHeader() : base(CodeElementType.SectionHeader)
         { }
-
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
         /// <summary>
         /// A user-defined word that identifies a section. A referenced
         /// section-name, because it cannot be qualified, must be unique

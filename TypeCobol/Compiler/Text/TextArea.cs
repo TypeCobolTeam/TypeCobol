@@ -33,4 +33,13 @@ namespace TypeCobol.Compiler.Text
             return "[" + StartIndex + "," + EndIndex + "]";
         }
     }
+
+    public enum TextAreaType
+    {
+        AreaA, AreaB, AreaAOrB, 
+        TODO,//Specs not done yet to know if the CodeElement is in Area A, B or both
+        SequenceNumber,
+        Indicator,
+        Comment
+    }
 }

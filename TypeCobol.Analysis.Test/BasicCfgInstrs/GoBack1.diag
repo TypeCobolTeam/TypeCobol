@@ -1,2 +1,2 @@
 --- Diagnostics ---
-Line 12[11,35] <37, Warning, General> - Warning: Unreachable code detected
+Line 12[12,36] <37, Warning, General> - Warning: Unreachable code detected

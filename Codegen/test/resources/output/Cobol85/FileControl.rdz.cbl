@@ -25,7 +25,7 @@
 000000 
 000000 PROCEDURE DIVISION.
 000000******************
-000000    evaluate true
+000000     evaluate true
 000000     when MyData = "A" 
 000000       move "1" to MyData
 000000     when MyData = "A"
@@ -34,5 +34,5 @@
 000000       move "3" to MyData
 000000     when other
 000000       move "4" to MyData
-000000    end-evaluate
+000000     end-evaluate
 000000  .

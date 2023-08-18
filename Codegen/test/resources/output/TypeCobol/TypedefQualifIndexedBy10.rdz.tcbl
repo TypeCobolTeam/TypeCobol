@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OS3.
        data DIVISION.
        working-storage section.
@@ -32,12 +32,12 @@
        procedure division.
 
 
-      *PERFORM VARYING Idx-nonQualified FROM 1 BY 1
+      *    PERFORM VARYING Idx-nonQualified FROM 1 BY 1
       *    UNTIL Idx-nonQualified > MyEventList::Idx
-       PERFORM VARYING Idx-nonQualified FROM 1 BY 1
+           PERFORM VARYING Idx-nonQualified FROM 1 BY 1
            UNTIL Idx-nonQualified > bd95262aIdx
              display "test"
-       END-PERFORM.
+           END-PERFORM.
       
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     IN-OUT EventList type EventList.

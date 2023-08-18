@@ -58,7 +58,7 @@
            .
                           
        INIT-LIBRARY.
-          CONTINUE
+           CONTINUE
           .
       *declare procedure MyProcedure2 public
       *            input myInput pic X.

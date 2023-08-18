@@ -5,6 +5,8 @@ Line 40[16,27] <37, Warning, General> - Warning: a End statement is not aligned 
 Line 45[14,24] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 51[14,23] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 96[10,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 99[8,25] <27, Error, Syntax> - Error in copy 'CPYALIGNPROC' at line 1 : Syntax error : declare should begin in AreaA. It was found in 'AreaB'.
+Line 99[8,25] <27, Error, Syntax> - Error in copy 'CPYALIGNPROC' at line 2 : Syntax error : end-declare should begin in AreaA. It was found in 'AreaB'.
 Line 107[14,23] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
 Line 109[14,17] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
 

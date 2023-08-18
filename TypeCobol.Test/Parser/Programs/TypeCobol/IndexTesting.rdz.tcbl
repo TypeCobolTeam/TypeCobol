@@ -59,26 +59,26 @@
        PROCEDURE DIVISION.
 
       *OK : Qualified Index works
-       SET Account1::Holders::Idx TO 1.
+           SET Account1::Holders::Idx TO 1.
 
       *KO : Qualified Index with OF
-       SET Idx OF Holders OF Account1 TO 1.
+           SET Idx OF Holders OF Account1 TO 1.
 
       *KO : BadIdx is duplicated inside TypeDef
-       SET BadIdx TO 1.
+           SET BadIdx TO 1.
       *KO Use qualification for an imported index
-       SET MyVar::MyIdx TO 1.
+           SET MyVar::MyIdx TO 1.
       *KO use qualification with index over 22chars
-       SET Tab3::MyIdx3azeazeazeazeazeazeazeaz       to 1.
+           SET Tab3::MyIdx3azeazeazeazeazeazeazeaz       to 1.
 
       *KO increment pointer and no pointer variables
-       SET myPointer,Account1,Bad UP BY 1.
+           SET myPointer,Account1,Bad UP BY 1.
       *KO increment can only be performed by integer variables
-       SET myPointerGroup::myPointer UP BY strVar.
+           SET myPointerGroup::myPointer UP BY strVar.
 
-       SET myPointer Down BY ((MyFinalIdxVar::Counter)**2).
+           SET myPointer Down BY ((MyFinalIdxVar::Counter)**2).
 
       *OK index is referenced
-       SET W003-INDX             To 1.
+           SET W003-INDX             To 1.
 
        END PROGRAM IndexTesting.

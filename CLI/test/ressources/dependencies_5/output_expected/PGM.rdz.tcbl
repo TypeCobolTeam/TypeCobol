@@ -54,12 +54,13 @@
            PERFORM TC-INITIALIZATIONS
 
                           
-      *MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
-       MOVE MyPicVar TO I OF Dec OF IrlQty OF IRLTest.
-      *MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
-       MOVE I OF Dec OF IRLQty OF MyGroup TO MyPicVar.
-      *CALL IRLLBIRL::ToSpan INPUT AlphaNum OUTPUT SpanArrayVar::span.
-       
+      *     MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
+            MOVE MyPicVar TO I OF Dec OF IrlQty OF IRLTest.
+      *     MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
+            MOVE I OF Dec OF IRLQty OF MyGroup TO MyPicVar.
+      *     CALL IRLLBIRL::ToSpan INPUT AlphaNum
+      *     OUTPUT SpanArrayVar::span.
+            
            IF ADDRESS OF TC-IRLLBIRL-abf66ff1-Item = NULL
              OR TC-IRLLBIRL-abf66ff1-Idt not = 'abf66ff1'
                PERFORM TC-LOAD-POINTERS-IRLLBIRL
@@ -69,7 +70,7 @@
                                  AlphaNum
                     by reference span IN SpanArrayVar
            end-call
-                                                                     .
+                                     .
       *=================================================================
        TC-INITIALIZATIONS.
       *=================================================================
