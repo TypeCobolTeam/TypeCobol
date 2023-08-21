@@ -345,6 +345,13 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void CompletionWithNestedType()
+        {
+            LSRTestHelper.Test("CompletionWithNestedType", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void MoveZeroSpaceCompletion()
         {
             LSRTestHelper.Test("MoveZeroSpaceCompletion", LsrTestingOptions.NoLsrTesting, true);
