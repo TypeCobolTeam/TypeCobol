@@ -175,21 +175,21 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void Check(SymbolReference renames, Node node)
         {
-            var founds = node.SymbolTable.GetVariables(renames);
-            if (founds.Count() > 1)
+            var founds = node.SymbolTable.GetVariables(renames).ToArray();
+            if (founds.Length > 1)
             {
                 string message = "Illegal RENAMES: Ambiguous reference to symbol \'" + renames + "\'";
                 DiagnosticUtils.AddError(node, message, renames, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
-            if (!founds.Any())
+            if (founds.Length == 0)
             {
                 string message = "Illegal RENAMES: Symbol \'" + renames + "\' is not referenced";
                 DiagnosticUtils.AddError(node, message, renames, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
 
-            var found = founds.First();
+            var found = founds[0];
             var foundCodeElement = found.CodeElement;
            
             if (found.IsStronglyTyped || found.IsStrictlyTyped)

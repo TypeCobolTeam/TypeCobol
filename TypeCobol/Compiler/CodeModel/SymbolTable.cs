@@ -208,11 +208,31 @@ namespace TypeCobol.Compiler.CodeModel
             return foundedVariables.Distinct(); //Distinct on object not on variable name
         }
 
-        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
+        
+        /// <summary>
+        /// Fill existingVariables with variables that match given dataType.
+        /// Also return existingVariables.
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <param name="existingVariables"></param>
+        /// <param name="maximalScope"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
+        public ISet<DataDefinition> GetVariablesByType(DataType dataType, ISet<DataDefinition> existingVariables, Scope maximalScope)
         {
+            //Performance tip: the ISet instead of List and manually check with Contains makes a real difference
 
-            var foundedVariables = new List<DataDefinition>();
-            if (existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
+            //TODO perhaps there is no need to return existingVariables
+            ISet<DataDefinition> foundVariables;
+            
+            if (existingVariables != null)
+            {
+                foundVariables = existingVariables;
+            }
+            else
+            {
+                foundVariables = new HashSet<DataDefinition>();
+            }
 
             SymbolTable currentTable = this;
             while (currentTable != null && currentTable.CurrentScope >= maximalScope)
@@ -224,13 +244,24 @@ namespace TypeCobol.Compiler.CodeModel
                 if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
                     var references = currentTable.TypesReferences.Where(t => t.Key.DataType == dataType).SelectMany(t => t.Value);
-                    foundedVariables.AddRange(references);
+                    foundVariables.UnionWith(references);
                 }
                 else
                 {
                     foreach (var variable in currentTable.DataEntries.Values.SelectMany(t => t))
                     {
-                        SeekVariableType(dataType, variable, ref foundedVariables);
+                        if (DataTypeMatch(dataType, variable))
+                        {
+                            foundVariables.Add(variable);
+                            continue; //If a variable is matched don't search its children
+                        }
+
+                        if (variable.TypeDefinition != null && variable.TypeDefinition != DataType.BooleanType)
+                        {
+                            //Search all children of the TypeDefinition recursively.
+                            //Variables under a TypeDefinition are not stored in currentTable.DataEntries.
+                            SeekVariableType(dataType, variable.TypeDefinition, foundVariables);
+                        }
                     }
                 }
 
@@ -238,45 +269,76 @@ namespace TypeCobol.Compiler.CodeModel
 
             }
             
-            return foundedVariables;
+            return foundVariables;
         }
 
-        private void SeekVariableType(DataType dataType, DataDefinition variable, ref List<DataDefinition> foundedVariables)
+        private static bool DataTypeMatch(DataType dataType, DataDefinition variable)
         {
-            if (Regex.Match(variable.DataType.Name, @"\b" + dataType.Name + @"\b", RegexOptions.IgnoreCase).Success) //TODO: need to evolve this check with type comparison not just text..
+            if (variable.DataType == dataType)
             {
-                if(!foundedVariables.Any(v => v == variable))
-                    foundedVariables.Add(variable);
-                return;
+                return true;
             }
 
-            if (variable.DataType != null && variable.DataType != DataType.Boolean && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
+            if (variable.TypeDefinition != null)
             {
-                var types = GetTypes(t => t.DataType == variable.DataType, Scope.Intrinsic);
-
-                foreach (var type in types)
+                if (dataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
                 {
-                    if (type.Children != null && type.Children.Count > 0)
+                    if (variable.PrimitiveDataType == dataType)
                     {
-                        foreach (var childrenType in type.Children)
-                        {
-                            if (childrenType is DataDefinition && childrenType.Name != null)
-                            {
-                                SeekVariableType(dataType, childrenType as DataDefinition, ref foundedVariables);
-                            }
-                        }
+                        return true;
+                    }
+                }
+                else
+                {
+                    //For type DataType.Name depends on how is written the reference to the type : Prefixed with the Program or not
+                    //TODO use resolved TypeDefinition to compare Type
+                    if (Regex.Match(variable.DataType.Name, @"\b" + dataType.Name + @"\b", RegexOptions.IgnoreCase).Success)
+                    {
+                        return true;
                     }
                 }
             }
 
+            return false;
+        }
 
-            if (variable.Children != null && variable.Children.Count > 0)
+        /// <summary>
+        /// Search all children variables recursively in the specified "variable" that match the specified "dataType".
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <param name="variable"></param>
+        /// <param name="foundVariables"></param>
+        private static void SeekVariableType(DataType dataType, DataDefinition variable, ISet<DataDefinition> foundVariables)
+        {
+            if (DataTypeMatch(dataType, variable))
             {
-                foreach (var children in variable.Children)
+                foundVariables.Add(variable);
+                return; //If a variable is matched don't search its children
+            }
+
+            if (variable.TypeDefinition != null)
+            {
+                if (variable.TypeDefinition != DataType.BooleanType)
                 {
-                    if (children is DataDefinition && children.Name != null)
+                    SearchChildren(variable.TypeDefinition.Children);
+                }
+            }
+            else //Typed variable cannot have children
+            {
+                SearchChildren(variable.Children);
+            }
+
+
+            void SearchChildren(IReadOnlyList<Node> children)
+            {
+                if (children?.Count > 0)
+                {
+                    foreach (var child in children)
                     {
-                        SeekVariableType(dataType, children as DataDefinition, ref foundedVariables);
+                        if (child is DataDefinition childDataDef && child.Name != null)
+                        {
+                            SeekVariableType(dataType, childDataDef, foundVariables);
+                        }
                     }
                 }
             }
