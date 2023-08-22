@@ -1,0 +1,43 @@
+{
+  "name": "CompletionWithNestedType.tlsp",
+  "session": "C:\\Users\\SMEDILOL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2023_08_14_15_02_22_016\\TestSuite_2023_08_14_15_02_22_016.slsp",
+  "user": "SMEDILOL",
+  "date": "2023/08/14 15:02:22 018",
+  "uri": "file:///C:/Users/SMEDILOL/workspaces/CompletionWithNestedType.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\",\"rootUri\":\"file:/C:/TypeCobol/Sources/Production/%23%23Latest_Release%23%23/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v1.5.13\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. ProcCall.\\r\\n\\r\\n       DATA DIVISION.\\r\\n\\r\\n       WORKING-STORAGE SECTION.\\r\\n\\r\\n\\r\\n       01 MyType typedef strict private.\\r\\n           05 len    pic 9(02).\\r\\n           05 myDate type Date.\\r\\n       01 MyUberType typedef strict private.\\r\\n           05 myType type MyType.\\r\\n       01 var2 PIC X(10).\\r\\n\\r\\n       01 len PIC 9(2).\\r\\n       01 MyLevel1Test.\\r\\n           05 buf.\\r\\n           07 occurs 1\\r\\n              depending on len.\\r\\n              10 char    pic X.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. NestedProg.\\r\\n\\r\\n       DATA DIVISION.\\r\\n\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 myTestVar type BOOL.\\r\\n       01 var2 PIC 9(10).\\r\\n       01 var3 PIC 9(10).\\r\\n       01 var4 PIC 9(10).\\r\\n       01 groupA-1.\\r\\n         02 groupA-2.\\r\\n           03 varA pic 9(02).\\r\\n       01 groupB-1.\\r\\n         02 groupB-2.\\r\\n           03 varB pic 9(02).\\r\\n\\r\\n       01 myUberType1 type MyUberType.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n\\r\\n\\r\\n           .\\r\\n       END PROGRAM NestedProg.\\r\\n       END PROGRAM ProcCall.\"}}}",
+  "messages": [
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":47,\"character\":0},\"end\":{\"line\":47,\"character\":0}},\"rangeLength\":0,\"text\":\"           move 2 to \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":50,\"character\":12},\"end\":{\"line\":50,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"position\":{\"line\":48,\"character\":22}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"var3 (Numeric) (var3)\",\"kind\":6,\"insertText\":\"var3\"},{\"label\":\"var4 (Numeric) (var4)\",\"kind\":6,\"insertText\":\"var4\"},{\"label\":\"varA (Numeric) (groupA-1::groupA-2::varA)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA\"},{\"label\":\"varB (Numeric) (groupB-1::groupB-2::varB)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB\"},{\"label\":\"len (Numeric) (myUberType1::len)\",\"kind\":6,\"insertText\":\"myUberType1::len\"},{\"label\":\"YYYY (Numeric) (myUberType1::YYYY)\",\"kind\":6,\"insertText\":\"myUberType1::YYYY\"},{\"label\":\"MM (Numeric) (myUberType1::MM)\",\"kind\":6,\"insertText\":\"myUberType1::MM\"},{\"label\":\"DD (Numeric) (myUberType1::DD)\",\"kind\":6,\"insertText\":\"myUberType1::DD\"}]}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\"}}}",
+  "IsValid": true
+}

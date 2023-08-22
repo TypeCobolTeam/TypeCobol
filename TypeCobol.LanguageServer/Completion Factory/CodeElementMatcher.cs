@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
+﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -12,10 +7,10 @@ namespace TypeCobol.LanguageServer
     public static class CodeElementMatcher
     {
         /// <summary>
-        /// This method will try to found the best significant token that code be used fo completion. It depends on the given CodeELements and Position. 
-        /// It will also return the CodeElemet that contains the significant token detected. 
+        /// This method will try to found the best significant token that code be used fo completion. It depends on the given CodeElements and Position.
+        /// It will also return the CodeElement that contains the significant token detected. 
         /// </summary>
-        /// <param name="position">Parameter that specifie the position of the cursor in the document</param>
+        /// <param name="position">Parameter that specified the position of the cursor in the document</param>
         /// <param name="codeElements">List of codeElements that are concerned by the completion</param>
         /// <param name="userFilterToken">Out parameter that returns a UserDefinedWork token</param>
         /// <param name="lastSignificantToken">Out parameter that returns the Significant token detected for completion</param>
@@ -26,6 +21,8 @@ namespace TypeCobol.LanguageServer
             lastSignificantToken = null;
             CodeElement significantCodeElement = null;
             userFilterToken = null;
+
+            var codeElementsArrangedTokensToRestore = new List<Tuple<CodeElementWrapper, List<Token>>>();
 
             //Filter CodeElements 
             codeElements =
@@ -41,13 +38,12 @@ namespace TypeCobol.LanguageServer
                         c =>
                             c.ArrangedConsumedTokens.LastOrDefault(
                                 t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character))).Where(t => t != null)
-                    .OrderBy(t => Math.Abs(position.character - t.StopIndex + 1)) //Allows to get the token closest to the cursor
-                    .FirstOrDefault();
+                    .MinBy(t => Math.Abs(position.character - t.StopIndex + 1)); //Allows to get the token closest to the cursor
 
             if (closestTokenToCursor != null && closestTokenToCursor.Line == position.line + 1 &&
                 position.character > closestTokenToCursor.StartIndex &&
                 closestTokenToCursor.StopIndex + 1 >= position.character)
-            //the cursor is at the end or in the middle of a token. 
+            //the cursor is at the end or in the middle of a token.
             {
                 if (closestTokenToCursor.StopIndex + 1 == position.character &&
                     CompletionElligibleTokens.IsCompletionElligibleToken(closestTokenToCursor) && CompletionElligibleTokens.DoesTokenAllowLastPos(closestTokenToCursor))
@@ -55,7 +51,7 @@ namespace TypeCobol.LanguageServer
                 {
                     //the completion has to start from this token and this codeElement
                     codeElements =
-                        codeElements.ToList()
+                        codeElements
                             .SkipWhile(c => !c.ArrangedConsumedTokens.Contains(closestTokenToCursor))
                             .ToList();
                 }
@@ -64,34 +60,34 @@ namespace TypeCobol.LanguageServer
                     var tempCodeElements =
                         codeElements.TakeWhile(c => !c.ArrangedConsumedTokens.Contains(closestTokenToCursor)).ToList();
 
-                    if (!tempCodeElements.Any())
-                        //In case there is only one codeElement the TakeWhile will not be able to get the last CodeElement, so we have to do it manually.
-                        tempCodeElements.Add(codeElements.FirstOrDefault());
-                    else
+                    if (tempCodeElements.Any())
                         codeElements = tempCodeElements;
 
-                    //The closestToken to cursor as to be added to this codeElement as a userdefinedword
+                    //The closestToken to cursor as to be added to this codeElement as a UserDefinedWord
                     if (closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
                     {
-                        codeElements.LastOrDefault()?.ArrangedConsumedTokens.Add(new Token(TokenType.UserDefinedWord,
-                                                        closestTokenToCursor.StartIndex,
-                                                        closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine));
-
-                        foreach (var codeElement in codeElements)
+                        var codeElement = codeElements.LastOrDefault();
+                        if (codeElement != null)
                         {
-                            if (codeElement.ArrangedConsumedTokens.Contains(closestTokenToCursor) && closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
-                                codeElement.ArrangedConsumedTokens.Remove(closestTokenToCursor);
+                            //As we are altering our input, keep track of changes for later restore
+                            codeElementsArrangedTokensToRestore.Add(new Tuple<CodeElementWrapper, List<Token>>(codeElement, codeElement.ArrangedConsumedTokens));
+                            codeElement.ArrangedConsumedTokens = codeElement.ArrangedConsumedTokens.ConvertAll(ReplaceClosestTokenToCursor);
                         }
 
+                        Token ReplaceClosestTokenToCursor(Token originalToken)
+                        {
+                            return closestTokenToCursor.Equals(originalToken)
+                                ? new Token(TokenType.UserDefinedWord, closestTokenToCursor.StartIndex, closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine)
+                                : originalToken;
+                        }
                     }
-
                 }
             }
             else if (closestTokenToCursor != null)
             {
                 //the completion has to start from this token and this codeElement
                 codeElements =
-                    codeElements.ToList()
+                    codeElements
                         .SkipWhile(c => !c.ArrangedConsumedTokens.Contains(closestTokenToCursor))
                         .ToList();
             }
@@ -103,12 +99,13 @@ namespace TypeCobol.LanguageServer
                         t =>
                             ((t.StartIndex <= position.character && t.Line <= position.line + 1) ||
                             t.Line < position.line + 1) &&
-                            t.TokenFamily != TokenFamily.Whitespace);
+                            t.TokenFamily != TokenFamily.Whitespace)
+                        .ToArray();
 
-                var significantTokensDectected = new Stack<Token>();
+                var significantTokensDetected = new Stack<Token>();
                 bool significantTokenChanged = false;
 
-                if (consumedTokens != null && consumedTokens.Any())
+                if (consumedTokens.Length > 0)
                 {
                     foreach (var finalToken in consumedTokens)
                     {
@@ -119,16 +116,16 @@ namespace TypeCobol.LanguageServer
                             (finalToken.StopIndex + 1 <= position.character || finalToken.Line <= position.line + 1))
                         {
                             lastSignificantToken = finalToken;
-                            significantTokensDectected.Push(lastSignificantToken);
-                            //If eveyrhing is Ok add the final token as LastSinificantToken
+                            significantTokensDetected.Push(lastSignificantToken);
+                            //If everything is Ok add the final token as LastSignificantToken
                             significantCodeElement = codeElement;
                             significantTokenChanged = true;
                         }
                     }
 
-                    if (significantTokenChanged) //In case many codeElements are analysed
+                    if (significantTokenChanged) //In case many codeElements are analyzed
                     {
-                        //Get the userdefinedword associated to the cursor position in the document
+                        //Get the UserDefinedWord associated to the cursor position in the document
                         userFilterToken =
                             consumedTokens.FirstOrDefault(
                                 t =>
@@ -139,24 +136,24 @@ namespace TypeCobol.LanguageServer
 
 
                     var isCorrectTokenFound = false;
-                    while (!isCorrectTokenFound && significantTokensDectected.Count >= 0)
+                    while (!isCorrectTokenFound && significantTokensDetected.Count >= 0)
                     {
                         //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
                         if ((lastSignificantToken != null &&
                               (!CompletionElligibleTokens.DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.character &&
                                lastSignificantToken.Line == position.line + 1)) 
                              ||
-                                 (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
-                                  !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
-                                    position.character >= consumedTokens.LastOrDefault().StartIndex)
+                                 (consumedTokens.Last().TokenType == TokenType.UserDefinedWord &&
+                                  !(position.character <= consumedTokens.Last().StopIndex + 1 &&
+                                    position.character >= consumedTokens.Last().StartIndex)
                                   &&
                                   lastSignificantToken != null &&
                                   !(lastSignificantToken.TokenType == TokenType.INPUT ||
                                     lastSignificantToken.TokenType == TokenType.OUTPUT ||
                                     lastSignificantToken.TokenType == TokenType.IN_OUT)))
                         {
-                            if (significantTokensDectected.Any())
-                                lastSignificantToken = significantTokensDectected.Pop();
+                            if (significantTokensDetected.Any())
+                                lastSignificantToken = significantTokensDetected.Pop();
                             else
                                 break;
                         }
@@ -169,6 +166,11 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
+            // Restore original ArrangedConsumedTokens if some have been modified
+            foreach (var tuple in codeElementsArrangedTokensToRestore)
+            {
+                tuple.Item1.ArrangedConsumedTokens = tuple.Item2;
+            }
 
             return significantCodeElement;
         }
