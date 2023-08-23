@@ -954,7 +954,7 @@ namespace TypeCobol.LanguageServer
 
         #region Data Layout
         private const char SPACE = ' ';
-        private const string INDENT = "  "; // Indentation = 2 spaces
+        private const int INDENT_SIZE = 2; // Indentation = 2 spaces
         private const string UNDEFINED = "***";
         private const string FILLER = "FILLER";
         private const string GROUP = "GROUP";
@@ -986,11 +986,6 @@ namespace TypeCobol.LanguageServer
             {
                 var nodeLevel = dataLayoutNode.Item1;
                 var dataDefinition = dataLayoutNode.Item2;
-                if (IsIgnored(dataDefinition))
-                {
-                    // Ignore this node
-                    return null;
-                }
 
                 var row = new StringBuilder();
 
@@ -1003,7 +998,7 @@ namespace TypeCobol.LanguageServer
                 AppendToRow(dataDefinition.CodeElement.LevelNumber);
 
                 // Name (preceded by an indent depending on the node level)
-                row.Append(SPACE, nodeLevel);
+                row.Append(SPACE, nodeLevel * INDENT_SIZE);
                 AppendToRow(GetName(dataDefinition));
 
                 // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
@@ -1017,12 +1012,6 @@ namespace TypeCobol.LanguageServer
                 AppendToRow(length);
 
                 return row.ToString();
-
-                static bool IsIgnored(DataDefinition dataDefinition)
-                {
-                    DataDefinitionEntry codeElement = dataDefinition.CodeElement;
-                    return codeElement == null || codeElement.Line < 0;
-                }
 
                 void AppendToRow(object value)
                 {
@@ -1096,43 +1085,45 @@ namespace TypeCobol.LanguageServer
                 var workingStorage = dataDivision.GetChildren<WorkingStorageSection>().FirstOrDefault();
                 if (workingStorage != null)
                 {
-                    result.AddRange(CollectDataLayoutNodes(0, workingStorage));
+                    CollectDataLayoutNodes(result, 0, workingStorage);
                 }
 
                 // Consider also data declared in the Local storage
                 var localStorage = dataDivision.GetChildren<LocalStorageSection>().FirstOrDefault();
                 if (localStorage != null)
                 {
-                    result.AddRange(CollectDataLayoutNodes(0, localStorage));
+                    CollectDataLayoutNodes(result, 0, localStorage);
                 }
             }
 
             return result;
 
-            static IEnumerable<Tuple<int, DataDefinition>> CollectDataLayoutNodes(int nodeLevel, Node node)
+            static void CollectDataLayoutNodes(List<Tuple<int, DataDefinition>> dataLayoutNodes, int nodeLevel, Node node)
             {
                 foreach (var child in node.Children)
                 {
-                    if (child is DataDefinition dataDefinition)
+                    if (child is DataDefinition dataDefinition && IsInScope(dataDefinition))
                     {
-                        CodeElementType type = dataDefinition.CodeElement.Type;
-                        if (type == CodeElementType.DataConditionEntry || type == CodeElementType.DataRenamesEntry)
+                        dataLayoutNodes.Add(new Tuple<int, DataDefinition>(nodeLevel, dataDefinition));
+                        if (dataDefinition.Children.Count > 0)
                         {
-                            // Ignore level 88 and 66
-                            continue;
-                        }
-                        else
-                        {
-                            yield return new Tuple<int, DataDefinition>(nodeLevel, dataDefinition);
-                        }
-                        if (child.Children.Count > 0)
-                        {
-                            foreach (var dataLayoutNode in CollectDataLayoutNodes(nodeLevel + 1, child))
-                            {
-                                yield return new Tuple<int, DataDefinition>(dataLayoutNode.Item1, dataLayoutNode.Item2);
-                            }
+                            CollectDataLayoutNodes(dataLayoutNodes, nodeLevel + 1, dataDefinition);
                         }
                     }
+                }
+
+                static bool IsInScope(DataDefinition dataDefinition)
+                {
+                    DataDefinitionEntry codeElement = dataDefinition.CodeElement;
+                    if (codeElement == null || codeElement.Line < 0)
+                    {
+                        // Ignore node without CodeElement or with negative line number
+                        return false;
+                    }
+
+                    // Ignore level 88 and 66
+                    CodeElementType type = codeElement.Type;
+                    return type != CodeElementType.DataConditionEntry && type != CodeElementType.DataRenamesEntry;
                 }
             }
         }
