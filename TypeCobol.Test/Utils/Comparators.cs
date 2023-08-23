@@ -69,21 +69,22 @@ namespace TypeCobol.Test.Utils
         {
             _Activators = new Dictionary<string, Func<ICompilationResultFormatter>>(StringComparer.OrdinalIgnoreCase)
                           {
-                              { "ANTLR",        () => new AntlrProfiling() },
-                              { "RPN",          () => new ArithmeticStatements() },
-                              { "CodeElements", () => new CodeElements() },
-                              { "NY",           () => new CodeElementsAndDiagnosticsCount() },
-                              { "DocJson",      () => new Documentation() },
-                              { "Doc",          () => new DocumentationProperties() },
-                              { "TEXT",         () => new FullText() },
-                              { "INC",          () => new IncrementalChanges() },
-                              { "MEM",          () => new MemoryMap() },
-                              { "Nodes",        () => new Nodes() },
-                              { "PGM",          () => new ProgramsClassesAndDiagnostics() },
-                              { "Mix",          () => new SourceMixedWithDiagnostics() },
-                              { "SQL",          () => new SqlStatements() },
-                              { "SYM",          () => new Symbols() },
-                              { "Tokens",       () => new Tokens() }
+                              { "ANTLR",            () => new AntlrProfiling() },
+                              { "RPN",              () => new ArithmeticStatements() },
+                              { "CodeElements",     () => new CodeElements() },
+                              { "NY",               () => new CodeElementsAndDiagnosticsCount() },
+                              { "DocJson",          () => new Documentation() },
+                              { "Doc",              () => new DocumentationProperties() },
+                              { "TEXT",             () => new FullText() },
+                              { "INC",              () => new IncrementalChanges() },
+                              { "MEM",              () => new MemoryMap() },
+                              { "Nodes",            () => new Nodes() },
+                              { "PGM",              () => new ProgramsClassesAndDiagnostics() },
+                              { "Mix",              () => new SourceMixedWithDiagnostics() },
+                              { "SQL",              () => new SqlStatements() },
+                              { "SYM",              () => new Symbols() },
+                              { "Tokens",           () => new Tokens() },
+                              { "ProcessedTokens",  () => new ProcessedTokens() }
                           };
         }
 
@@ -316,6 +317,50 @@ namespace TypeCobol.Test.Utils
                 {
                     result.AppendLine("    _" + sourceToken.SourceText + "_    " + sourceToken);
                 }
+            }
+
+            return result.ToString();
+        }
+    }
+
+    internal class ProcessedTokens : ICompilationResultFormatter
+    {
+        public string Format(CompilationUnit compilationResult, IncrementalChangesHistory history)
+        {
+            var result = new StringBuilder();
+
+            var diagnostics = compilationResult.AllDiagnostics();
+            foreach (var diagnostic in diagnostics)
+            {
+                result.AppendLine(diagnostic.ToString());
+            }
+
+            result.AppendLine("--- Processed Tokens ---");
+            var currentLine = 0;
+            var currentCol = 1;
+
+            foreach (var processedTokensLine in compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
+            {
+                if (currentLine < processedTokensLine.Line)
+                {
+                    result.AppendLine();
+                    while (currentLine < processedTokensLine.Line - 1)
+                    {
+                        result.AppendLine(compilationResult.ProcessedTokensDocumentSnapshot.Lines[currentLine].Text);
+                        currentLine++;
+                    }
+
+                    currentLine = processedTokensLine.Line;
+                    currentCol = 1;
+                }
+
+                var count = processedTokensLine.Column - currentCol;
+                if(count > 0) 
+                {
+                   result.Append(new string(' ', count));
+                }
+                result.Append(processedTokensLine.Text);
+                currentCol = processedTokensLine.Column + processedTokensLine.Text.Length;
             }
 
             return result.ToString();
