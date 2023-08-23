@@ -486,15 +486,10 @@ namespace TypeCobol.Compiler.CodeElements
                 var firstToken = ConsumedTokens[0];
                 if (firstToken is ImportedToken importedToken)
                 {
-                    if (importedToken.CopyDirective.TextNameSymbol.TokensLine is CodeElementsLine codeElementsLine)
-                    {
-                        return codeElementsLine.LineIndex;
-                    }
+                    return importedToken.CopyDirective.TextNameSymbol.TokensLine.LineIndex;
                 }
-                else if (firstToken.TokensLine is CodeElementsLine codeElementsLine)
-                {
-                    return codeElementsLine.LineIndex;
-                }
+
+                return firstToken.TokensLine.LineIndex;
             }
 
             return Line;

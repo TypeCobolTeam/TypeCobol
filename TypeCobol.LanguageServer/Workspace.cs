@@ -13,7 +13,6 @@ using TypeCobol.Tools;
 using System.Collections.Concurrent;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
-using String = System.String;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Preprocessor;
@@ -972,19 +971,21 @@ namespace TypeCobol.LanguageServer
         public string[] GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
         {
             var rows = new List<string>();
-            foreach (var dataDefinition in CollectDataLayoutDefinitions(compilationUnit))
+            foreach (var dataLayoutNode in CollectDataLayoutNodes(compilationUnit))
             {
-                var row = CreateRow(dataDefinition, separator);
+                var row = CreateRow(dataLayoutNode, separator);
                 if (row != null)
                 {
                     rows.Add(row);
                 }
             }
 
-            return rows.ToArray<string>();
+            return rows.ToArray();
 
-            static string CreateRow(DataDefinition dataDefinition, string separator)
+            static string CreateRow(Tuple<int, DataDefinition> dataLayoutNode, string separator)
             {
+                var nodeLevel = dataLayoutNode.Item1;
+                var dataDefinition = dataLayoutNode.Item2;
                 if (IsIgnored(dataDefinition))
                 {
                     // Ignore this node
@@ -1001,11 +1002,12 @@ namespace TypeCobol.LanguageServer
                 /// Level number
                 AppendToRow(dataDefinition.CodeElement.LevelNumber);
 
-                // Name (preceded by an indent depending on the level)
-                AppendToRow(GetIndent(dataDefinition) + GetName(dataDefinition));
+                // Name (preceded by an indent depending on the node level)
+                row.Append(SPACE, nodeLevel);
+                AppendToRow(GetName(dataDefinition));
 
                 // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
-                AppendToRow(GetDeclaration(dataDefinition));
+                AppendDeclarationToRow(dataDefinition);
 
                 // Start/End/Length
                 var start = dataDefinition.StartPosition;
@@ -1027,65 +1029,51 @@ namespace TypeCobol.LanguageServer
                     row.Append(value).Append(separator);
                 }
 
-                static string GetIndent(DataDefinition dataDefinition)
-                {
-                    var result = new StringBuilder();
-                    Node parentData = dataDefinition.Parent;
-                    while (parentData is not DataSection)
-                    {
-                        parentData = parentData.Parent;
-                        result.Append(INDENT);
-                    }
-
-                    return result.ToString();
-                }
-
                 static string GetName(DataDefinition dataDefinition)
                 {
                     return dataDefinition.Name == null ? FILLER : dataDefinition.Name;
                 }
 
-                static string GetDeclaration(DataDefinition dataDefinition)
+                void AppendDeclarationToRow(DataDefinition dataDefinition)
                 {
-                    string result = String.Empty;
+                    var initialRowLength = row.Length;
 
                     if (dataDefinition is DataRedefines dataRedefines)
                     {
-                        result = string.Format(REDEFINES, dataRedefines.CodeElement.RedefinesDataName.Name);
+                        row.Append(string.Format(REDEFINES, dataRedefines.CodeElement.RedefinesDataName.Name));
                     }
-                    else if (dataDefinition is DataDescription dataDescription && dataDescription.CodeElement is DataDescriptionEntry dataDescriptionEntry)
+                    else if (dataDefinition.CodeElement is DataDescriptionEntry dataDescriptionEntry)
                     {
-                        if (dataDescription.Picture != null)
+                        if (dataDefinition.Picture != null)
                         {
-                            result = string.Format(PIC, dataDescription.Picture.Value);
+                            row.Append(string.Format(PIC, dataDefinition.Picture.Value));
                         }
-
                         string usage = dataDescriptionEntry.Usage?.Token.Text;
-                        if (!String.IsNullOrWhiteSpace(usage))
+                        if (!string.IsNullOrWhiteSpace(usage))
                         {
-                            AppendSpaceIfNotEmpty();
-                            result += usage;
+                            AppendSpaceIfNeeded();
+                            row.Append(usage);
                         }
 
-                        if (result.Length == 0 && dataDefinition.ChildrenCount > 0)
+                        if (row.Length == initialRowLength && dataDefinition.ChildrenCount > 0)
                         {
-                            result = GROUP;
+                            row.Append(GROUP);
                         }
                     }
 
                     if (dataDefinition.IsTableOccurence)
                     {
-                        AppendSpaceIfNotEmpty();
-                        result += string.Format(OCCURS, dataDefinition.MaxOccurencesCount);
+                        AppendSpaceIfNeeded();
+                        row.Append(string.Format(OCCURS, dataDefinition.MaxOccurencesCount));
                     }
 
-                    return result;
+                    row.Append(separator);
 
-                    void AppendSpaceIfNotEmpty()
+                    void AppendSpaceIfNeeded()
                     {
-                        if (result.Length > 0)
+                        if (row.Length != initialRowLength)
                         {
-                            result += SPACE;
+                            row.Append(SPACE);
                         }
                     }
                 }
@@ -1098,9 +1086,9 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        private List<DataDefinition> CollectDataLayoutDefinitions(CompilationUnit compilationUnit)
+        private List<Tuple<int, DataDefinition>> CollectDataLayoutNodes(CompilationUnit compilationUnit)
         {
-            var result = new List<DataDefinition>();
+            var result = new List<Tuple<int, DataDefinition>>();
             Node dataDivision = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.GetChildren<DataDivision>().FirstOrDefault();
             if (dataDivision != null)
             {
@@ -1108,20 +1096,20 @@ namespace TypeCobol.LanguageServer
                 var workingStorage = dataDivision.GetChildren<WorkingStorageSection>().FirstOrDefault();
                 if (workingStorage != null)
                 {
-                    result.AddRange(CollectDataDefinitions(workingStorage));
+                    result.AddRange(CollectDataLayoutNodes(0, workingStorage));
                 }
 
                 // Consider also data declared in the Local storage
                 var localStorage = dataDivision.GetChildren<LocalStorageSection>().FirstOrDefault();
                 if (localStorage != null)
                 {
-                    result.AddRange(CollectDataDefinitions(localStorage));
+                    result.AddRange(CollectDataLayoutNodes(0, localStorage));
                 }
             }
 
             return result;
 
-            static IEnumerable<DataDefinition> CollectDataDefinitions(Node node)
+            static IEnumerable<Tuple<int, DataDefinition>> CollectDataLayoutNodes(int nodeLevel, Node node)
             {
                 foreach (var child in node.Children)
                 {
@@ -1135,13 +1123,13 @@ namespace TypeCobol.LanguageServer
                         }
                         else
                         {
-                            yield return dataDefinition;
+                            yield return new Tuple<int, DataDefinition>(nodeLevel, dataDefinition);
                         }
                         if (child.Children.Count > 0)
                         {
-                            foreach (var childDataDefinition in CollectDataDefinitions(child))
+                            foreach (var dataLayoutNode in CollectDataLayoutNodes(nodeLevel + 1, child))
                             {
-                                yield return childDataDefinition;
+                                yield return new Tuple<int, DataDefinition>(dataLayoutNode.Item1, dataLayoutNode.Item2);
                             }
                         }
                     }
