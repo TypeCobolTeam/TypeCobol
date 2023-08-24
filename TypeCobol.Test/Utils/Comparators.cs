@@ -344,6 +344,7 @@ namespace TypeCobol.Test.Utils
                 if (currentLine < processedTokensLine.Line)
                 {
                     result.AppendLine();
+                    //Append lines without tokens
                     while (currentLine < processedTokensLine.Line - 1)
                     {
                         result.AppendLine(compilationResult.ProcessedTokensDocumentSnapshot.Lines[currentLine].Text);
