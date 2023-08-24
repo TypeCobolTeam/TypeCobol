@@ -706,6 +706,41 @@ namespace TypeCobol.Compiler.Nodes {
         public NumericVariable OccursDependingOn { get { return _CommonDataDesc != null ? _CommonDataDesc.OccursDependingOn : null; } }
         public bool HasUnboundedNumberOfOccurences { get { if (_CommonDataDesc != null && _CommonDataDesc.HasUnboundedNumberOfOccurences != null) return _CommonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
         public bool IsTableOccurence { get { if (_CommonDataDesc != null) return _CommonDataDesc.IsTableOccurence; else return false; } }
+
+        private bool? _isUnderTable;
+        public bool IsUnderTable
+        {
+            get
+            {
+                if (_isUnderTable == null)
+                {
+                    if (IsTableOccurence)
+                    {
+                        _isUnderTable = false;
+                    }
+                    else
+                    {
+                        var currentParent = Parent;
+                        while (_isUnderTable == null && currentParent is DataDefinition parentDataDefinition)
+                        {
+                            if (parentDataDefinition.IsTableOccurence)
+                            {
+                                _isUnderTable = true;
+                            }
+
+                            currentParent = currentParent.Parent;
+                        }
+                        if (_isUnderTable == null)
+                        {
+                            _isUnderTable = false;
+                        }
+                    }
+                }
+
+                return (bool) _isUnderTable;
+            }
+        }
+
         public CodeElementType? Type { get { if (_CommonDataDesc != null) return _CommonDataDesc.Type; else return null; } }
         public bool SignIsSeparate { get { if (_CommonDataDesc != null && _CommonDataDesc.SignIsSeparate != null) return _CommonDataDesc.SignIsSeparate.Value; else return false; } }
         public SignPosition? SignPosition { get { if (_CommonDataDesc != null && _CommonDataDesc.SignPosition != null) return _CommonDataDesc.SignPosition.Value; else return null; } }

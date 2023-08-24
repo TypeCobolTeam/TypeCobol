@@ -959,6 +959,7 @@ namespace TypeCobol.LanguageServer
         private const string FILLER = "FILLER";
         private const string GROUP = "GROUP";
         private const string OCCURS = "OCCURS {0}";
+        private const string OCCURS_SUFFIX = " (1)";
         private const string PIC = "PIC {0}";
         private const string REDEFINES = "REDEFINES {0}";
 
@@ -1020,7 +1021,12 @@ namespace TypeCobol.LanguageServer
 
                 static string GetName(DataDefinition dataDefinition)
                 {
-                    return dataDefinition.Name == null ? FILLER : dataDefinition.Name;
+                    var name = dataDefinition.Name ?? FILLER;
+                    if (dataDefinition.IsUnderTable)
+                    {
+                        name += OCCURS_SUFFIX;
+                    }
+                    return name;
                 }
 
                 void AppendDeclarationToRow(DataDefinition dataDefinition)
