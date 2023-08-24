@@ -323,6 +323,11 @@ namespace TypeCobol.Test.Utils
         }
     }
 
+    /// <summary>
+    /// This allow to see the original source code with replaced token applied.
+    /// Lines without tokens are also copied.
+    /// COPY are not expanded.
+    /// </summary>
     internal class ProcessedTokens : ICompilationResultFormatter
     {
         public string Format(CompilationUnit compilationResult, IncrementalChangesHistory history)
@@ -339,29 +344,36 @@ namespace TypeCobol.Test.Utils
             var currentLine = 0;
             var currentCol = 1;
 
-            foreach (var processedTokensLine in compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
+            foreach (var processedTokens in compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
             {
-                if (currentLine < processedTokensLine.Line)
+                if (processedTokens is ImportedToken)
+                {
+                    continue;//TODO Handle token from COPY
+                             //Token from COPY require to expand the COPY correctly.
+                             //Then line number in the output document will not be synced with line number in original document
+                }
+
+                if (currentLine < processedTokens.Line)
                 {
                     result.AppendLine();
                     //Append lines without tokens
-                    while (currentLine < processedTokensLine.Line - 1)
+                    while (currentLine < processedTokens.Line - 1)
                     {
                         result.AppendLine(compilationResult.ProcessedTokensDocumentSnapshot.Lines[currentLine].Text);
                         currentLine++;
                     }
 
-                    currentLine = processedTokensLine.Line;
+                    currentLine = processedTokens.Line;
                     currentCol = 1;
                 }
 
-                var count = processedTokensLine.Column - currentCol;
+                var count = processedTokens.Column - currentCol;
                 if(count > 0) 
                 {
                    result.Append(new string(' ', count));
                 }
-                result.Append(processedTokensLine.Text);
-                currentCol = processedTokensLine.Column + processedTokensLine.Text.Length;
+                result.Append(processedTokens.Text);
+                currentCol = processedTokens.Column + processedTokens.Text.Length;
             }
 
             return result.ToString();
