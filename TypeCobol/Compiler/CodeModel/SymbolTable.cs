@@ -783,6 +783,14 @@ namespace TypeCobol.Compiler.CodeModel
             return EmptySectionList;
         }
 
+        /// <summary>
+        /// Get all sections in the current scope.
+        /// </summary>
+        /// <returns>The collection of section names</returns>
+        public IEnumerable<Section> GetSections(Func<Section, bool> predicate)
+        {
+            return Sections.Values.SelectMany(s => s).Where(predicate).Distinct();
+        }
         #endregion
 
         #region PARAGRAPHS
