@@ -789,7 +789,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <returns>The collection of section names</returns>
         public IEnumerable<Section> GetSections(Func<Section, bool> predicate)
         {
-            return Sections.Values.SelectMany(s => s).Where(predicate).Distinct();
+            return Sections.Values.SelectMany(s => s).Where(predicate);
         }
         #endregion
 
@@ -857,7 +857,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <returns>The collection of paragraph names</returns>
         public IEnumerable<Paragraph> GetParagraphs(Func<Paragraph, bool> predicate)
         {
-            return Paragraphs.Values.SelectMany(p => p).Where(predicate).Distinct();
+            return Paragraphs.Values.SelectMany(p => p).Where(predicate);
         }
 
         /// <summary>
