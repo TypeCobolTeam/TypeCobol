@@ -2,7 +2,7 @@
        PROGRAM-ID. MyPGM2.
        procedure division.
       * KO
-Line 5[13,75] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 5[20,82] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 Line 6[17,18] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -          ' er zer '

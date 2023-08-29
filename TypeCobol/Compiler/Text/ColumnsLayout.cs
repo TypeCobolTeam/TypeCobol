@@ -15,6 +15,7 @@ namespace TypeCobol.Compiler.Text
         /// Columns 73-> : Comment
         /// </summary>
         CobolReferenceFormat,
+        CobolReferenceFormatWithoutCommentText,
         /// <summary>
         /// Free-form format
         /// There is not limit on the size a source line.
