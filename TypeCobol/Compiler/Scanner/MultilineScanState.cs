@@ -560,15 +560,22 @@ namespace TypeCobol.Compiler.Scanner
         {
             get
             {
-                return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
-                  // Special cases : compiler directives sometimes without a final PeriodSeparator
-                  // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
-                  //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
-                  (BeforeLastSignificantToken != null && (BeforeLastSignificantToken.TokenType == TokenType.COPY || BeforeLastSignificantToken.TokenType == TokenType.EXEC_SQL) && LastSignificantToken.TokenType == TokenType.UserDefinedWord) ||
-                  // 2. EJECT | SKIP1 | SKIP2 | SKIP3 <= sometimes PeriodSeparator missing here.
-                  (LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EJECT || LastSignificantToken.TokenType == TokenType.SKIP1 || LastSignificantToken.TokenType == TokenType.SKIP2 || LastSignificantToken.TokenType == TokenType.SKIP3)) ||
-                  // 3. TITLE alphanumericValue2 <= sometimes PeriodSeparator missing here.
-                  (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken?.TokenFamily == TokenFamily.AlphanumericLiteral);
+                return LastSignificantToken == null 
+                       || (BeforeLastSignificantToken?.TokenType != TokenType.PROGRAM_ID 
+                           && BeforeLastSignificantToken?.TokenType != TokenType.CLASS_ID  
+                           && BeforeLastSignificantToken?.TokenType != TokenType.METHOD_ID
+                           && BeforeLastSignificantToken?.TokenType != TokenType.SPECIAL_NAMES
+                           && BeforeLastSignificantToken?.TokenType != TokenType.SOURCE_COMPUTER
+                           && LastSignificantToken.TokenType == TokenType.PeriodSeparator)
+                       || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
+                                                        // Special cases : compiler directives sometimes without a final PeriodSeparator
+                                                        // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
+                                                        //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
+                                                        (BeforeLastSignificantToken != null && (BeforeLastSignificantToken.TokenType == TokenType.COPY || BeforeLastSignificantToken.TokenType == TokenType.EXEC_SQL) && LastSignificantToken.TokenType == TokenType.UserDefinedWord) ||
+                                                        // 2. EJECT | SKIP1 | SKIP2 | SKIP3 <= sometimes PeriodSeparator missing here.
+                                                        (LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EJECT || LastSignificantToken.TokenType == TokenType.SKIP1 || LastSignificantToken.TokenType == TokenType.SKIP2 || LastSignificantToken.TokenType == TokenType.SKIP3)) ||
+                                                        // 3. TITLE alphanumericValue2 <= sometimes PeriodSeparator missing here.
+                                                        (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken?.TokenFamily == TokenFamily.AlphanumericLiteral);
             }
         }
 

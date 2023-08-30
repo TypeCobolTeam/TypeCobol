@@ -2100,8 +2100,16 @@ namespace TypeCobol.Compiler.Scanner
                         }
                     }
 
+                    bool currentTokenIsAtBeginningOfNewLine = tokensLine.LineIndex == 0 //First line
+                                                              || tokensLine.ScanState.LastSignificantToken == null //No info
+                                                              || tokensLine.LineIndex > tokensLine.ScanState.LastSignificantToken.TokensLine.LineIndex;
+
                     // Section and paragraph names
-                    if (tokensLine.ScanState.InsideProcedureDivision && tokensLine.ScanState.AtBeginningOfSentence)
+                    if (currentTokenIsAtBeginningOfNewLine
+                        && tokensLine.ScanState.AtBeginningOfSentence
+                        && (tokensLine.ColumnsLayout == ColumnsLayout.FreeTextFormat //TODO cannot find a rule about paragraph position in free format
+                            //Warning : startIndex is 0 based and CobolFormatAreas constants are 1 based
+                            || (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && startIndex >= ((int)CobolFormatAreas.Begin_A - 1) && startIndex <= (int)CobolFormatAreas.End_A - 1)))
                     {
                         tokenType = TokenType.SectionParagraphName;
                     }

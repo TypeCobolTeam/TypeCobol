@@ -1,0 +1,84 @@
+Line 13[12,18] <27, Error, Syntax> - Syntax error : extraneous input 'EXHIBIT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+--- Tokens ---
+---------------------------------
+_IDENTIFICATION DIVISION._
+    _IDENTIFICATION_    [8,21:IDENTIFICATION]<IDENTIFICATION>
+    _DIVISION_    [23,30:DIVISION]<DIVISION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_PROGRAM-ID. Pgm._
+    _PROGRAM-ID_    [8,17:PROGRAM-ID]<PROGRAM_ID>
+    _. _    [18,19:. ]<PeriodSeparator>
+    _Pgm_    [20,22:Pgm]<UserDefinedWord>
+    _._    [23,23+:.]<PeriodSeparator>
+---------------------------------
+_DATA DIVISION._
+    _DATA_    [8,11:DATA]<DATA>
+    _DIVISION_    [13,20:DIVISION]<DIVISION>
+    _._    [21,21+:.]<PeriodSeparator>
+---------------------------------
+_WORKING-STORAGE SECTION._
+    _WORKING-STORAGE_    [8,22:WORKING-STORAGE]<WORKING_STORAGE>
+    _SECTION_    [24,30:SECTION]<SECTION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_01 WS-FOO PIC X._
+    _01_    [8,9:01]<LevelNumber>{1}
+    _WS-FOO_    [11,16:WS-FOO]<UserDefinedWord>
+    _PIC_    [18,20:PIC]<PIC>
+    _X_    [22,22:X]<PictureCharacterString>
+    _._    [23,23+:.]<PeriodSeparator>
+---------------------------------
+_01 WS-BAR PIC X._
+    _01_    [8,9:01]<LevelNumber>{1}
+    _WS-BAR_    [11,16:WS-BAR]<UserDefinedWord>
+    _PIC_    [18,20:PIC]<PIC>
+    _X_    [22,22:X]<PictureCharacterString>
+    _._    [23,23+:.]<PeriodSeparator>
+---------------------------------
+_EXHIBIT, NAMED and CHANGED are not reserved keywords_
+    _EXHIBIT, NAMED and CHANGED are not reserved keywords_    [8,59:EXHIBIT, NAMED and CHANGED are not reserved keywords]<CommentLine>
+---------------------------------
+_01 EXHIBIT PIC X._
+    _01_    [8,9:01]<LevelNumber>{1}
+    _EXHIBIT_    [11,17:EXHIBIT]<UserDefinedWord>
+    _PIC_    [19,21:PIC]<PIC>
+    _X_    [23,23:X]<PictureCharacterString>
+    _._    [24,24+:.]<PeriodSeparator>
+---------------------------------
+_01 CHANGED PIC X._
+    _01_    [8,9:01]<LevelNumber>{1}
+    _CHANGED_    [11,17:CHANGED]<UserDefinedWord>
+    _PIC_    [19,21:PIC]<PIC>
+    _X_    [23,23:X]<PictureCharacterString>
+    _._    [24,24+:.]<PeriodSeparator>
+---------------------------------
+_01 NAMED PIC X._
+    _01_    [8,9:01]<LevelNumber>{1}
+    _NAMED_    [11,15:NAMED]<UserDefinedWord>
+    _PIC_    [17,19:PIC]<PIC>
+    _X_    [21,21:X]<PictureCharacterString>
+    _._    [22,22+:.]<PeriodSeparator>
+---------------------------------
+_PROCEDURE DIVISION._
+    _PROCEDURE_    [8,16:PROCEDURE]<PROCEDURE>
+    _DIVISION_    [18,25:DIVISION]<DIVISION>
+    _._    [26,26+:.]<PeriodSeparator>
+---------------------------------
+_EXHIBIT statement is not supported_
+    _EXHIBIT statement is not supported_    [8,41:EXHIBIT statement is not supported]<CommentLine>
+---------------------------------
+_    EXHIBIT NAMED WS-FOO WS-BAR_
+    _EXHIBIT_    [12,18:EXHIBIT]<UserDefinedWord>
+    _NAMED_    [20,24:NAMED]<UserDefinedWord>
+    _WS-FOO_    [26,31:WS-FOO]<UserDefinedWord>
+    _WS-BAR_    [33,38:WS-BAR]<UserDefinedWord>
+---------------------------------
+_    ._
+    _._    [12,12+:.]<PeriodSeparator>
+---------------------------------
+_END PROGRAM Pgm._
+    _END_    [8,10:END]<END>
+    _PROGRAM_    [12,18:PROGRAM]<PROGRAM>
+    _Pgm_    [20,22:Pgm]<UserDefinedWord>
+    _._    [23,23+:.]<PeriodSeparator>

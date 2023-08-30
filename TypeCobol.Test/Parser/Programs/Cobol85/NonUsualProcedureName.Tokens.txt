@@ -1,0 +1,238 @@
+Line 24[20,58] <27, Error, Syntax> - Syntax error : Number is too big : 300303030303030303030303030303030303030
+Line 29[12,17] <27, Error, Syntax> - Syntax error : missing TIMES at 'goback'
+Line 52[8,10] <27, Error, Syntax> - Syntax error : extraneous input '300' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+--- Tokens ---
+---------------------------------
+_IDENTIFICATION DIVISION._
+    _IDENTIFICATION_    [8,21:IDENTIFICATION]<IDENTIFICATION>
+    _DIVISION_    [23,30:DIVISION]<DIVISION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_PROGRAM-ID. MyPgm._
+    _PROGRAM-ID_    [8,17:PROGRAM-ID]<PROGRAM_ID>
+    _. _    [18,19:. ]<PeriodSeparator>
+    _MyPgm_    [20,24:MyPgm]<UserDefinedWord>
+    _._    [25,25+:.]<PeriodSeparator>
+---------------------------------
+_data division._
+    _data_    [8,11:data]<DATA>
+    _division_    [13,20:division]<DIVISION>
+    _._    [21,21+:.]<PeriodSeparator>
+---------------------------------
+_working-storage section._
+    _working-storage_    [8,22:working-storage]<WORKING_STORAGE>
+    _section_    [24,30:section]<SECTION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_01 TOTO pic 9._
+    _01_    [8,9:01]<LevelNumber>{1}
+    _TOTO_    [11,14:TOTO]<UserDefinedWord>
+    _pic_    [16,18:pic]<PIC>
+    _9_    [20,20:9]<PictureCharacterString>
+    _._    [21,21+:.]<PeriodSeparator>
+---------------------------------
+_procedure division._
+    _procedure_    [8,16:procedure]<PROCEDURE>
+    _division_    [18,25:division]<DIVISION>
+    _._    [26,26+:.]<PeriodSeparator>
+---------------------------------
+__
+    __    [7,6:]<SpaceSeparator>
+---------------------------------
+_REPLACE ==:-MAJ:== BY ====._
+    _REPLACE_    [8,14:REPLACE]<REPLACE>
+    _==_    [16,17:==]<PseudoTextDelimiter>
+    _:-MAJ:_    [18,23::-MAJ:]<PartialCobolWord>
+    _==_    [24,25:==]<PseudoTextDelimiter>
+    _BY_    [27,28:BY]<BY>
+    _==_    [30,31:==]<PseudoTextDelimiter>
+    _==_    [32,33:==]<PseudoTextDelimiter>
+    _._    [34,34+:.]<PeriodSeparator>
+---------------------------------
+_Ok_
+    _Ok_    [8,9:Ok]<CommentLine>
+---------------------------------
+_    PERFORM EACGAPEL-C0001:-MAJ:._
+    _PERFORM_    [12,18:PERFORM]<PERFORM>
+    _EACGAPEL-C0001:-MAJ:_    [20,39:EACGAPEL-C0001:-MAJ:]<PartialCobolWord>
+    _._    [40,40+:.]<PeriodSeparator>
+---------------------------------
+__
+---------------------------------
+_Ok_
+    _Ok_    [8,9:Ok]<CommentLine>
+---------------------------------
+_    perform_
+    _perform_    [12,18:perform]<PERFORM>
+---------------------------------
+_    300-000-PAR2_
+    _300-000-PAR2_    [12,23:300-000-PAR2]<UserDefinedWord>
+---------------------------------
+_Ok_
+    _Ok_    [8,9:Ok]<CommentLine>
+---------------------------------
+_    perform 300-000-SEC1_
+    _perform_    [12,18:perform]<PERFORM>
+    _300-000-SEC1_    [20,31:300-000-SEC1]<UserDefinedWord>
+---------------------------------
+_    perform 300 TIMES_
+    _perform_    [12,18:perform]<PERFORM>
+    _300_    [20,22:300]<IntegerLiteral>{300}
+    _TIMES_    [24,28:TIMES]<TIMES>
+---------------------------------
+_    perform 300-000-PAR2 THRU 300-000-SEC1_
+    _perform_    [12,18:perform]<PERFORM>
+    _300-000-PAR2_    [20,31:300-000-PAR2]<UserDefinedWord>
+    _THRU_    [33,36:THRU]<THRU>
+    _300-000-SEC1_    [38,49:300-000-SEC1]<UserDefinedWord>
+---------------------------------
+_    perform 300-000-PAR2 THRU 300-000-SEC1 300 TIMES_
+    _perform_    [12,18:perform]<PERFORM>
+    _300-000-PAR2_    [20,31:300-000-PAR2]<UserDefinedWord>
+    _THRU_    [33,36:THRU]<THRU>
+    _300-000-SEC1_    [38,49:300-000-SEC1]<UserDefinedWord>
+    _300_    [51,53:300]<IntegerLiteral>{300}
+    _TIMES_    [55,59:TIMES]<TIMES>
+---------------------------------
+_    perform 300-000-PAR3 OF 300-000-SEC1 300 TIMES_
+    _perform_    [12,18:perform]<PERFORM>
+    _300-000-PAR3_    [20,31:300-000-PAR3]<UserDefinedWord>
+    _OF_    [33,34:OF]<OF>
+    _300-000-SEC1_    [36,47:300-000-SEC1]<UserDefinedWord>
+    _300_    [49,51:300]<IntegerLiteral>{300}
+    _TIMES_    [53,57:TIMES]<TIMES>
+---------------------------------
+_    perform 300-000-PAR3 OF 300-000-SEC1 THRU _
+    _perform_    [12,18:perform]<PERFORM>
+    _300-000-PAR3_    [20,31:300-000-PAR3]<UserDefinedWord>
+    _OF_    [33,34:OF]<OF>
+    _300-000-SEC1_    [36,47:300-000-SEC1]<UserDefinedWord>
+    _THRU_    [49,52:THRU]<THRU>
+---------------------------------
+_            300-000-PAR3 OF 300-000-SEC1 300 TIMES_
+    _300-000-PAR3_    [20,31:300-000-PAR3]<UserDefinedWord>
+    _OF_    [33,34:OF]<OF>
+    _300-000-SEC1_    [36,47:300-000-SEC1]<UserDefinedWord>
+    _300_    [49,51:300]<IntegerLiteral>{300}
+    _TIMES_    [53,57:TIMES]<TIMES>
+---------------------------------
+_Ok Number too big_
+    _Ok Number too big_    [8,24:Ok Number too big]<CommentLine>
+---------------------------------
+_    perform 300303030303030303030303030303030303030 TIMES_
+    _perform_    [12,18:perform]<PERFORM>
+    _300303030303030303030303030303030303030_    [20,58:300303030303030303030303030303030303030]<IntegerLiteral>{300303030303030303030303030303030303030}
+    _TIMES_    [60,64:TIMES]<TIMES>
+---------------------------------
+__
+---------------------------------
+_TODO Numeric paragraph name are not supported yet_
+    _TODO Numeric paragraph name are not supported yet_    [8,56:TODO Numeric paragraph name are not supported yet]<CommentLine>
+---------------------------------
+_    perform 300_
+    _perform_    [12,18:perform]<PERFORM>
+    _300_    [20,22:300]<IntegerLiteral>{300}
+---------------------------------
+__
+---------------------------------
+_    goback._
+    _goback_    [12,17:goback]<GOBACK>
+    _._    [18,18+:.]<PeriodSeparator>
+---------------------------------
+_    REPLACE ==:PAR1:== BY ==PAR2==._
+    _REPLACE_    [12,18:REPLACE]<REPLACE>
+    _==_    [20,21:==]<PseudoTextDelimiter>
+    _:PAR1:_    [22,27::PAR1:]<PartialCobolWord>
+    _==_    [28,29:==]<PseudoTextDelimiter>
+    _BY_    [31,32:BY]<BY>
+    _==_    [34,35:==]<PseudoTextDelimiter>
+    _PAR2_    [36,39:PAR2]<UserDefinedWord>
+    _==_    [40,41:==]<PseudoTextDelimiter>
+    _._    [42,42+:.]<PeriodSeparator>
+---------------------------------
+_Ok_
+    _Ok_    [8,9:Ok]<CommentLine>
+---------------------------------
+__
+    __    [7,6:]<SpaceSeparator>
+---------------------------------
+_300-000-:PAR1:._
+    _300-000-:PAR1:_    [8,21:300-000-:PAR1:]<PartialCobolWord>
+    _._    [22,22+:.]<PeriodSeparator>
+---------------------------------
+_    exit._
+    _exit_    [12,15:exit]<EXIT>
+    _._    [16,16+:.]<PeriodSeparator>
+---------------------------------
+_---------------------------------------------------------------*_
+    _---------------------------------------------------------------*_    [8,71:---------------------------------------------------------------*]<CommentLine>
+---------------------------------
+_EACGAPEL-C0001-TRACE._
+    _EACGAPEL-C0001-TRACE_    [8,27:EACGAPEL-C0001-TRACE]<SectionParagraphName>
+    _._    [28,28+:.]<PeriodSeparator>
+---------------------------------
+_    continue_
+    _continue_    [12,19:continue]<CONTINUE>
+---------------------------------
+_    ._
+    _._    [12,12+:.]<PeriodSeparator>
+---------------------------------
+_---------------------------------------------------------------*_
+    _---------------------------------------------------------------*_    [8,71:---------------------------------------------------------------*]<CommentLine>
+---------------------------------
+_EACGAPEL-C0001._
+    _EACGAPEL-C0001_    [8,21:EACGAPEL-C0001]<SectionParagraphName>
+    _._    [22,22+:.]<PeriodSeparator>
+---------------------------------
+_    continue_
+    _continue_    [12,19:continue]<CONTINUE>
+---------------------------------
+_    ._
+    _._    [12,12+:.]<PeriodSeparator>
+---------------------------------
+_EACGAPEL-C0002._
+    _EACGAPEL-C0002_    [8,21:EACGAPEL-C0002]<SectionParagraphName>
+    _._    [22,22+:.]<PeriodSeparator>
+---------------------------------
+_    continue_
+    _continue_    [12,19:continue]<CONTINUE>
+---------------------------------
+_    ._
+    _._    [12,12+:.]<PeriodSeparator>
+---------------------------------
+_Ok_
+    _Ok_    [8,9:Ok]<CommentLine>
+---------------------------------
+_300-000-SEC1 section._
+    _300-000-SEC1_    [8,19:300-000-SEC1]<SectionParagraphName>
+    _section_    [21,27:section]<SECTION>
+    _._    [28,28+:.]<PeriodSeparator>
+---------------------------------
+_    DISPLAY "IN SECTION"._
+    _DISPLAY_    [12,18:DISPLAY]<DISPLAY>
+    _"IN SECTION"_    [20,31:"IN SECTION"]<AlphanumericLiteral>(",Y,Y){IN SECTION}
+    _._    [32,32+:.]<PeriodSeparator>
+---------------------------------
+_300-000-PAR3._
+    _300-000-PAR3_    [8,19:300-000-PAR3]<SectionParagraphName>
+    _._    [20,20+:.]<PeriodSeparator>
+---------------------------------
+_    exit._
+    _exit_    [12,15:exit]<EXIT>
+    _._    [16,16+:.]<PeriodSeparator>
+---------------------------------
+__
+---------------------------------
+_300._
+    _300_    [8,10:300]<IntegerLiteral>{300}
+    _._    [11,11+:.]<PeriodSeparator>
+---------------------------------
+_    exit._
+    _exit_    [12,15:exit]<EXIT>
+    _._    [16,16+:.]<PeriodSeparator>
+---------------------------------
+_END PROGRAM MyPgm._
+    _END_    [8,10:END]<END>
+    _PROGRAM_    [12,18:PROGRAM]<PROGRAM>
+    _MyPgm_    [20,24:MyPgm]<UserDefinedWord>
+    _._    [25,25+:.]<PeriodSeparator>
