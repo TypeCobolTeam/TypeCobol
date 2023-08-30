@@ -132,6 +132,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 var line = new StringBuilder();
                 if (_returnedTokensForCurrentLine.Count > 0)
                 {
+                    //Keep original spaces before first token
                     line.Append(new string(' ', _returnedTokensForCurrentLine[0].StartIndex));
                 }
                 for (; tokenIndex < _returnedTokensForCurrentLine.Count; tokenIndex++)
@@ -477,8 +478,8 @@ namespace TypeCobol.Compiler.Preprocessor
 
         internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, MultilineScanState scanState, TypeCobolOptions scanOptions)
         {
-            //Keep original column in text to scan
-            var textToScan = new string(' ', originalToken.StartIndex) + replacedTokenText;
+            var textToScan = new string(' ', originalToken.StartIndex) //Keep original spaces before first token
+                             + replacedTokenText;
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(originalToken.TokensLine.LineIndex, textToScan, originalToken.TokensLine.ColumnsLayout);
             tempTokensLine.InitializeScanState(scanState);
 
@@ -519,6 +520,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 int i = 0;
                 int[] columns = new int[replacementTokens.Length + 1];
                 StringBuilder sb = new StringBuilder();
+                //Keep original spaces before first token
                 sb.Append(new string(' ', firstOriginalToken.StartIndex));
                 foreach (var t in replacementTokens)
                 {
