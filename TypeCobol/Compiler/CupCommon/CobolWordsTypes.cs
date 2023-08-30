@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 
@@ -20,6 +21,37 @@ namespace TypeCobol.Compiler.CupCommon
     /// A list of Pair of list of tokens
     /// </summary>
     public class PairTokenListList : List<Tuple<List<Token>, List<Token>>> { };
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CupReplaceOperation
+    {
+        public List<Token> From { get; }
+        public List<Token> By { get; }
+
+        public Token Leading {get; }
+        public Token Trailing { get; }
+
+        public CupReplaceOperation(List<Token> from, List<Token> by, Token leading, Token trailing)
+        {
+            From = from;
+            By = by;
+            Leading = leading;
+            Trailing = trailing;
+        }
+    }
+
+    public class CupReplaceOperations : List<CupReplaceOperation>
+    {
+        public CupReplaceOperations()
+        {
+        }
+
+        public CupReplaceOperations([NotNull] IEnumerable<CupReplaceOperation> collection) : base(collection)
+        {
+        }
+    }
 
     /// <summary>
     /// Representation of:

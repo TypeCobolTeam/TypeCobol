@@ -398,7 +398,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Compare two tokens to implement the REPLACE directive
         /// </summary>
-        public bool CompareForReplace(Token? comparisonToken)
+        public bool CompareForReplace(Token? comparisonToken, bool leading, bool trailing)
         {
             //Nothing to compare
             if (comparisonToken == null)
@@ -445,15 +445,53 @@ namespace TypeCobol.Compiler.Scanner
 
                 var endIndex = startIndexFound + comparisonToken.NormalizedText.Length - 1;
 
-                //Check if comparisonToken.NormalizedText begin/end with replace separator or is surrounded with replace separator 
-                return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[0]))
-                       && (endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[comparisonToken.NormalizedText.Length-1]));
+                if (leading)
+                {
+                    //Check only char before
+                    return startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]);
+                } 
+                else if (trailing)
+                {
+                    return endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]);
+                }
+                else
+                {
+                    //Check if comparisonToken.NormalizedText begin/end with replace separator or is surrounded with replace separator 
+                    return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[0]))
+                           && (endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[comparisonToken.NormalizedText.Length - 1]));
+                }
+
+                
             }
 
             //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
             if (this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable())
             {
-                return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
+                var startIndexFound = NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase);
+                if (startIndexFound < 0)
+                {
+                    return false;
+                }
+
+                //PartialCobolWord are surrounded with separator for replace, no need to manually check
+                if (comparisonToken.TokenType == TokenType.PartialCobolWord)
+                {
+                    return true;
+                }
+
+                var endIndex = startIndexFound + comparisonToken.NormalizedText.Length - 1;
+
+                if (leading)
+                {
+                    //Check only char before
+                    return startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]);
+                }
+                else if (trailing)
+                {
+                    return endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]);
+                }
+
+                return true;
             }
 
             //Otherwise allow replace for same type tokens

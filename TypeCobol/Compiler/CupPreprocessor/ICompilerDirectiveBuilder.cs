@@ -138,9 +138,9 @@ namespace TypeCobol.Compiler.CupPreprocessor
         /// </summary>
         /// <param name="replaceTokn"></param>
         /// <param name="offToken"></param>
-        /// <param name="replacingOperands"></param>
+        /// <param name="cupReplacingOperands"></param>
         void EnterReplaceCompilerStatement(TypeCobol.Compiler.Scanner.Token replaceTokn,
-            TypeCobol.Compiler.Scanner.Token offToken, PairTokenListList replacingOperands);
+            TypeCobol.Compiler.Scanner.Token offToken, CupReplaceOperations cupReplacingOperands);
 
         /// <summary>
         /// Start a SERVICE LABEL compiler directive.

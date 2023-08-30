@@ -160,7 +160,9 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        private static bool BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens)
+        private static bool BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, 
+            ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens,
+            Token leading = null, Token trailing = null)
         {
             // Comparison tokens
             if (!replaceTokens)
@@ -205,20 +207,24 @@ namespace TypeCobol.Compiler.CupPreprocessor
                     {
                         if (comparisonToken == null || comparisonToken.TokenType != TokenType.PartialCobolWord)
                         {
-                            replaceOperation = new SingleTokenReplaceOperation(comparisonToken, replacementToken);
+                            replaceOperation = new SingleTokenReplaceOperation(comparisonToken, replacementToken, leading, trailing);
                         }
                         else
                         {
+                            //TODO LEADING and TRAILING forbidden here
+
                             replaceOperation = new PartialWordReplaceOperation(comparisonToken, replacementToken);
                         }
                     }
                     else
                     {
+                        //TODO LEADING and TRAILING forbidden here
                         replaceOperation = new SingleToMultipleTokensReplaceOperation(comparisonToken, replacementTokens);
                     }
                 }
                 else
                 {
+                    //TODO LEADING and TRAILING forbidden here
                     replaceOperation = new MultipleTokensReplaceOperation(comparisonToken, followingComparisonTokens, replacementTokens);
                 }
                 replaceOperations.Add(replaceOperation);
@@ -386,11 +392,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
             ReplaceDirective replaceDirective = new ReplaceDirective(type);
             CompilerDirective = replaceDirective;
         }
-        public virtual void EnterReplaceCompilerStatement(Token replaceTokn, Token offToken, PairTokenListList replacingOperands)
+        public virtual void EnterReplaceCompilerStatement(Token replaceTokn, Token offToken, CupReplaceOperations cupReplacingOperands)
         {
             ReplaceDirective replaceDirective = (ReplaceDirective)CompilerDirective;            
 
-            if (replacingOperands != null)
+            if (cupReplacingOperands != null)
             {
                 // Data used to build the current replace operation             
                 Token comparisonToken = null;
@@ -398,16 +404,16 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 Token replacementToken = null;
                 Token[] replacementTokens = null;
 
-                foreach (Tuple<List<Token>, List<Token>> copyReplacingOperands in replacingOperands)
+                foreach (var copyReplacingOperands in cupReplacingOperands)
                 {
                     // Get relevant tokens
-                    List<Token> relevantTokens = copyReplacingOperands.Item1;
-                    List<Token> replaceTokens = copyReplacingOperands.Item2;
+                    List<Token> relevantTokens = copyReplacingOperands.From;
+                    List<Token> replaceTokens = copyReplacingOperands.By;
                     BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
                         ref replacementToken, ref replacementTokens, false, relevantTokens);
 
                     BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, true, replaceTokens);
+                        ref replacementToken, ref replacementTokens, true, replaceTokens, copyReplacingOperands.Leading, copyReplacingOperands.Trailing);
                 }
             }
         }
