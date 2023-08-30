@@ -26,12 +26,6 @@ namespace TypeCobol.Compiler.Scanner
         public bool InsideDataDivision { get; private set; }
 
         /// <summary>
-        /// True if we know from the keyword stream that we are inside a PROCEDURE DIVISION.
-        /// Used by the Scanner to disambiguate similar keywords based on their context of appearance. 
-        /// </summary>
-        public bool InsideProcedureDivision { get; private set; }
-
-        /// <summary>
         /// True if we are between two PseudoTextDelimiters : tokens are in fact pseudo text
         /// </summary>
         public bool InsidePseudoText { get; private set; }
@@ -108,19 +102,18 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false, bool insideCopy = false) :
-            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false, false)
+            this(insideDataDivision, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false, false)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText,
+        private MultilineScanState(bool insideDataDivision, bool insidePseudoText,
             SpecialNamesContext specialNamesContext, bool insideFormalizedComment, bool insideMultilineComments,
             bool insideParamsField, bool withDebuggingMode, bool insideCopy,
             Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective, bool insideSql)
         {
             InsideDataDivision = insideDataDivision;
-            InsideProcedureDivision = insideProcedureDivision;
             InsidePseudoText = insidePseudoText;
             InsideFormalizedComment = insideFormalizedComment;
             InsideMultilineComments = insideMultilineComments;
@@ -139,7 +132,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, SpecialNames.Clone(),
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsidePseudoText, SpecialNames.Clone(),
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
                 WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective, InsideSql);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
@@ -185,19 +178,11 @@ namespace TypeCobol.Compiler.Scanner
                         if (LastSignificantToken.TokenType == TokenType.DATA)
                         {
                             InsideDataDivision = true;
-                            InsideProcedureDivision = false;
                         }
                         // Register the start of the PROCEDURE DIVISION and end of DATA DIVISION
                         else if (LastSignificantToken.TokenType == TokenType.PROCEDURE)
                         {
                             InsideDataDivision = false;
-                            InsideProcedureDivision = true;
-                        }
-                        // Register the end of PROCEDURE DIVISION
-                        else if (LastSignificantToken.TokenType == TokenType.ID ||
-                                 LastSignificantToken.TokenType == TokenType.IDENTIFICATION)
-                        {
-                            InsideProcedureDivision = false;
                         }
                     }
                     break;
@@ -593,7 +578,6 @@ namespace TypeCobol.Compiler.Scanner
             if (Object.ReferenceEquals(null, otherScanState)) return false;
 
             return InsideDataDivision == otherScanState.InsideDataDivision &&
-                   InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
                    InsidePseudoText == otherScanState.InsidePseudoText &&
                    SpecialNames.Equals(otherScanState.SpecialNames) &&
                    InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
@@ -623,7 +607,6 @@ namespace TypeCobol.Compiler.Scanner
                 int hash = 17;
                 // Suitable nullity checks etc, of course :)
                 hash = hash * 23 + InsideDataDivision.GetHashCode();
-                hash = hash * 23 + InsideProcedureDivision.GetHashCode();
                 hash = hash * 23 + InsidePseudoText.GetHashCode();
                 hash = hash * 23 + SpecialNames.GetHashCode();
                 hash = hash * 23 + InsideFormalizedComment.GetHashCode();

@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm1.
       *KO copy alters scan state by including DATA DIVISION
 Line 4[8,25] <27, Error, Syntax> - Error in copy 'DataDivision' at line 1 : Syntax error : Syntax not supported: 'DATA DIVISION' has been found inside COPY.
@@ -16,7 +16,6 @@ Line 5[21,21] <27, Error, Syntax> - Syntax error : extraneous input '.' expectin
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm2.
       *KO copy alters scan state by including PROCEDURE DIVISION
-Line 16[8,30] <27, Error, Syntax> - Error in copy 'ProcedureDivision' at line 1 : Syntax error : Syntax not supported: 'PROCEDURE DIVISION' has been found inside COPY.
        COPY ProcedureDivision.
            DISPLAY 'This statement comes from main source file'
            GOBACK
