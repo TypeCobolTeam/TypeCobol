@@ -69,7 +69,6 @@ namespace TypeCobol.Compiler.Preprocessor
 
             return new CheckTokenStatus()
                    {
-                       ApplyReplace = updatedReplaceOperations != null,
                        NextToken = nextToken,
                        UpdatedReplaceOperations = updatedReplaceOperations
                    };

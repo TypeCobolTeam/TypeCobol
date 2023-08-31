@@ -12,77 +12,36 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class AutoReplacePartialWordsTokensDocument : ProcessedTokensDocument
     {
-        private class TokensLinesIterator : ITokensLinesIterator
+        private class TokensLinesIterator : AbstractReplaceTokensLinesIterator
         {
-            private readonly ITokensLinesIterator _sourceIterator;
-            private readonly TypeCobolOptions _compilerOptions;
-
-            public TokensLinesIterator([NotNull] ITokensLinesIterator sourceIterator, [NotNull] TypeCobolOptions compilerOptions)
+            public TokensLinesIterator([NotNull] ITokensLinesIterator sourceIterator, [NotNull] TypeCobolOptions compilerOptions) : base(sourceIterator, compilerOptions)
             {
-                System.Diagnostics.Debug.Assert(sourceIterator != null);
-                System.Diagnostics.Debug.Assert(compilerOptions != null);
-                _sourceIterator = sourceIterator;
-                _compilerOptions = compilerOptions;
             }
 
-            public Token NextToken()
+            protected override CheckTokenStatus CheckNextTokenBeforeReplace(IReadOnlyList<ReplaceOperation> currentReplaceOperations)
             {
-                var nextToken = _sourceIterator.NextToken();
+                var nextToken = SourceIteratorNextToken();
+
+
+                // Reset previous replace operations
+                List<ReplaceOperation> updatedReplaceOperations = null;
                 if (nextToken.TokenType == TokenType.PartialCobolWord)
                 {
-                    //basic replacement mechanic, remove the ':' from the tag.
-                    //NOTE: Altered token is scanned as if it was located at the beginning of the line because we only have InitialScanState here.
-                    //NOTE: Does not handle '::-item' or 'item-::' partial names as '::' will turn into empty string and will produce invalid data names.
-                    var originalToken = nextToken;
-                    string replacedTokenText = originalToken.NormalizedText.Replace(":", string.Empty);
-                    var scanState = originalToken.TokensLine.InitialScanState;
-                    var generatedReplacementToken = ReplaceTokensLinesIterator.GenerateReplacementToken(originalToken, replacedTokenText, scanState, _compilerOptions);
+                    //TODO Don't reset replace but first try to check if it's the same than before
+                    updatedReplaceOperations = new List<ReplaceOperation>();
+                    var replacementText = new string(' ', nextToken.StartIndex)  //Keep original spaces before first token
+                                          + nextToken.NormalizedText.Replace(":", string.Empty);
+                    TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(nextToken.TokensLine.LineIndex, replacementText, nextToken.TokensLine.ColumnsLayout);
+                    var replacementToken = new Token(TokenType.UserDefinedWord, nextToken.StartIndex, tempTokensLine.Length - 1, tempTokensLine);
 
-                    nextToken = new ReplacedPartialCobolWord(generatedReplacementToken, null, originalToken);
+                    updatedReplaceOperations.Add(new SingleTokenReplaceOperation(nextToken, replacementToken));
                 }
 
-                return nextToken;
-            }
-
-            // Delegate the rest of the implementation to _sourceIterator
-
-            public string DocumentPath => _sourceIterator.DocumentPath;
-
-            public int LineIndexInMainDocument => _sourceIterator.LineIndexInMainDocument;
-
-            public int ColumnIndex => _sourceIterator.ColumnIndex;
-
-            public int LineIndex => _sourceIterator.LineIndex;
-
-            public ITokensLine CurrentLine => _sourceIterator.CurrentLine;
-
-            public ITokensLine LastLine => _sourceIterator.LastLine;
-
-            public Token CurrentToken => _sourceIterator.CurrentToken;
-
-            public object GetCurrentPosition()
-            {
-                return _sourceIterator.GetCurrentPosition();
-            }
-
-            public void SeekToPosition(object iteratorPosition)
-            {
-                _sourceIterator.SeekToPosition(iteratorPosition);
-            }
-
-            public void SeekToLineInMainDocument(int line)
-            {
-                _sourceIterator.SeekToLineInMainDocument(line);
-            }
-
-            public void SaveCurrentPositionSnapshot()
-            {
-                _sourceIterator.SaveCurrentPositionSnapshot();
-            }
-
-            public void ReturnToLastPositionSnapshot()
-            {
-                _sourceIterator.ReturnToLastPositionSnapshot();
+                return new CheckTokenStatus()
+                {
+                    NextToken = nextToken,
+                    UpdatedReplaceOperations = updatedReplaceOperations
+                };
             }
         }
 

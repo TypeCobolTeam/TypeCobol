@@ -124,7 +124,6 @@ namespace TypeCobol.Compiler.Preprocessor
             //Replacing directive never changes
             return new CheckTokenStatus()
                    {
-                       ApplyReplace = currentReplaceOperations != null,
                        NextToken = nextToken,
                        UpdatedReplaceOperations = currentReplaceOperations
                    };
