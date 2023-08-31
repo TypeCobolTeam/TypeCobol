@@ -43,7 +43,7 @@
          .
        END-DECLARE.
        INIT-LIBRARY.
-          exit
+           exit
           .
        END PROGRAM Callee.
 

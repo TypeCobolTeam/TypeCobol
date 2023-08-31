@@ -37,9 +37,9 @@
            MOVE G-TechCtx TO TestCtx.
        END-DECLARE.
       
-       MOVE G-Date TO  G-Date.
+           MOVE G-Date TO  G-Date.
       
-       MOVE DuplicatedVar TO G-TechCtx.
+           MOVE DuplicatedVar TO G-TechCtx.
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.

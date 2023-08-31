@@ -387,6 +387,11 @@ namespace TypeCobol.Compiler.Parser
                                 CodeElementWithTokensChecker.CheckIsScanStateAlteringCodeElement(codeElement);
                             }
 
+                            if (processedTokensDocument.TextSourceInfo.ColumnsLayout == ColumnsLayout.CobolReferenceFormat)
+                            {
+                                CodeElementWithTokensChecker.CheckAreaOfDeclaration(codeElement);
+                            }
+
                             //Report diagnostics if some incomplete CE have been encountered previously
                             if (diagnosticsToReport.Count > 0)
                             {

@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. MainProgram.
 
        DATA DIVISION.
@@ -12,12 +12,12 @@ Line 8[11,37] <27, Error, Syntax> - Syntax error : Pointer name 'myPointer32That
 
 
        PROCEDURE DIVISION.
-       SET myPointerThatIsWayTooLong UP BY 1.
-       SET myPointer32ThatIsWayTooLong UP BY 1.
+           SET myPointerThatIsWayTooLong UP BY 1.
+           SET myPointer32ThatIsWayTooLong UP BY 1.
 
-Line 16[8,28] <27, Error, Syntax> - Syntax error : Pointer 'myPointer' belongs to a copy.
-       SET myPointer UP BY 1.
-Line 17[8,30] <27, Error, Syntax> - Syntax error : Pointer 'myPointer32' belongs to a copy.
-       SET myPointer32 UP BY 1.
+Line 16[12,32] <27, Error, Syntax> - Syntax error : Pointer 'myPointer' belongs to a copy.
+           SET myPointer UP BY 1.
+Line 17[12,34] <27, Error, Syntax> - Syntax error : Pointer 'myPointer32' belongs to a copy.
+           SET myPointer32 UP BY 1.
 
        END PROGRAM MainProgram.

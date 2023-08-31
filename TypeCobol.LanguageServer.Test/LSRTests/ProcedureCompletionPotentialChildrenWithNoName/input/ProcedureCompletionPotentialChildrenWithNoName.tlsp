@@ -15,23 +15,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":0},\"end\":{\"line\":25,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":7},\"end\":{\"line\":25,\"character\":7}},\"rangeLength\":0,\"text\":\"i\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":8}},\"rangeLength\":0,\"text\":\"f\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":9},\"end\":{\"line\":25,\"character\":9}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":10},\"end\":{\"line\":25,\"character\":10}},\"rangeLength\":0,\"text\":\"(\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":0},\"end\":{\"line\":25,\"character\":0}},\"rangeLength\":0,\"text\":\"            if (\"}]}}"
     },
     {
       "category": 0,
@@ -39,7 +23,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":11}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":11}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -47,7 +31,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":11}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":16}}}"
     },
     {
       "category": 2,
@@ -55,15 +39,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":11},\"end\":{\"line\":25,\"character\":11}},\"rangeLength\":0,\"text\":\"0mydebug1\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":16},\"end\":{\"line\":25,\"character\":16}},\"rangeLength\":0,\"text\":\"0mydebug1\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":20},\"end\":{\"line\":25,\"character\":20}},\"rangeLength\":0,\"text\":\":\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\":\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":25},\"end\":{\"line\":25,\"character\":25}},\"rangeLength\":0,\"text\":\"::\"}]}}"
     },
     {
       "category": 0,
@@ -71,7 +51,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":22}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":22}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":27}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":27}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -79,7 +59,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":22}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":27}}}"
     },
     {
       "category": 2,
@@ -87,23 +67,20 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":22},\"end\":{\"line\":25,\"character\":22}},\"rangeLength\":0,\"text\":\"TestVar2\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":27},\"end\":{\"line\":25,\"character\":27}},\"rangeLength\":0,\"text\":\"TestVar2\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":30},\"end\":{\"line\":25,\"character\":30}},\"rangeLength\":0,\"text\":\":\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":35},\"end\":{\"line\":25,\"character\":35}},\"rangeLength\":0,\"text\":\"::\"}]}}"
     },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":31},\"end\":{\"line\":25,\"character\":31}},\"rangeLength\":0,\"text\":\":\"}]}}"
-    },
+
     {
       "category": 0,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":32}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":37}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -111,7 +88,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":32}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":37}}}"
     },
     {
       "category": 2,
@@ -119,43 +96,43 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":32},\"end\":{\"line\":25,\"character\":32}},\"rangeLength\":0,\"text\":\"TestVar3\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":37},\"end\":{\"line\":25,\"character\":37}},\"rangeLength\":0,\"text\":\"TestVar3\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":40},\"end\":{\"line\":25,\"character\":40}},\"rangeLength\":0,\"text\":\")\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":45},\"end\":{\"line\":25,\"character\":45}},\"rangeLength\":0,\"text\":\")\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":40},\"end\":{\"line\":25,\"character\":41}},\"rangeLength\":1,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":45},\"end\":{\"line\":25,\"character\":46}},\"rangeLength\":1,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":32},\"end\":{\"line\":25,\"character\":40}},\"rangeLength\":8,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":37},\"end\":{\"line\":25,\"character\":45}},\"rangeLength\":8,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":31},\"end\":{\"line\":25,\"character\":32}},\"rangeLength\":1,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":36},\"end\":{\"line\":25,\"character\":37}},\"rangeLength\":1,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":30},\"end\":{\"line\":25,\"character\":31}},\"rangeLength\":1,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":35},\"end\":{\"line\":25,\"character\":36}},\"rangeLength\":1,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":22},\"end\":{\"line\":25,\"character\":30}},\"rangeLength\":8,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":27},\"end\":{\"line\":25,\"character\":35}},\"rangeLength\":8,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":27}},\"rangeLength\":1,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":20},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":25},\"end\":{\"line\":25,\"character\":26}},\"rangeLength\":1,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":11},\"end\":{\"line\":25,\"character\":20}},\"rangeLength\":9,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":16},\"end\":{\"line\":25,\"character\":25}},\"rangeLength\":9,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
@@ -163,7 +140,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":11}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":11}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -171,7 +148,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":11}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":16}}}"
     },
     {
       "category": 2,
@@ -179,15 +156,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":11},\"end\":{\"line\":25,\"character\":11}},\"rangeLength\":0,\"text\":\"0mydebug\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":16},\"end\":{\"line\":25,\"character\":16}},\"rangeLength\":0,\"text\":\"0mydebug\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":19},\"end\":{\"line\":25,\"character\":19}},\"rangeLength\":0,\"text\":\":\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":20},\"end\":{\"line\":25,\"character\":20}},\"rangeLength\":0,\"text\":\":\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":24},\"end\":{\"line\":25,\"character\":24}},\"rangeLength\":0,\"text\":\"::\"}]}}"
     },
     {
       "category": 0,
@@ -195,7 +168,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -203,7 +176,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":26}}}"
     },
     {
       "category": 2,
@@ -211,11 +184,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar1\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":26}},\"rangeLength\":0,\"text\":\"TestVar1\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":29}},\"rangeLength\":8,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":34}},\"rangeLength\":8,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
@@ -223,7 +196,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -231,7 +204,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":26}}}"
     },
     {
       "category": 2,
@@ -239,11 +212,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar15\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":26}},\"rangeLength\":0,\"text\":\"TestVar15\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":30}},\"rangeLength\":9,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":35}},\"rangeLength\":9,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
@@ -251,7 +224,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -259,7 +232,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":26}}}"
     },
     {
       "category": 2,
@@ -267,11 +240,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar2\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":26}},\"rangeLength\":0,\"text\":\"TestVar2\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":29}},\"rangeLength\":8,\"text\":\"\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":34}},\"rangeLength\":8,\"text\":\"\"}]}}"
     },
     {
       "category": 0,
@@ -279,7 +252,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":21}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,
@@ -287,7 +260,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":65}}}"
     },
     {
       "category": 2,
@@ -295,11 +268,11 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar3\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":26},\"end\":{\"line\":25,\"character\":26}},\"rangeLength\":0,\"text\":\"TestVar3\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":29},\"end\":{\"line\":25,\"character\":29}},\"rangeLength\":0,\"text\":\")\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":34},\"end\":{\"line\":25,\"character\":34}},\"rangeLength\":0,\"text\":\")\"}]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}",

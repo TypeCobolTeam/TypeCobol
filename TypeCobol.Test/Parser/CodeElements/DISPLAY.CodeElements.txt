@@ -1,161 +1,161 @@
 --- Diagnostics ---
-Line 6[16,17] <27, Error, Syntax> - Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>displayStatement,  OffendingSymbol=[16,17:no]<NO>
-Line 16[49,52] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[49,52:toto]<UserDefinedWord>
-Line 45[20,20] <27, Error, Syntax> - Syntax error : mismatched input '9' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[20,20:9]<IntegerLiteral>{9}
-Line 46[20,23] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[20,23:Var1]<UserDefinedWord>
+Line 6[20,21] <27, Error, Syntax> - Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>displayStatement,  OffendingSymbol=[20,21:no]<NO>
+Line 16[53,56] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[53,56:toto]<UserDefinedWord>
+Line 45[24,24] <27, Error, Syntax> - Syntax error : mismatched input '9' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[24,24:9]<IntegerLiteral>{9}
+Line 46[24,27] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expecting {alphanumeric literal, figurative constant, keyword} RuleStack=codeElement>displayStatement>displayOperand>allFigurativeConstant,  OffendingSymbol=[24,27:Var1]<UserDefinedWord>
 --- Code Elements ---
-[[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
+[[DisplayStatement]] [12,18:Display]<DISPLAY> --> [20,23:toto]<UserDefinedWord>
 - variables = toto
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,21+:"toto"]<AlphanumericLiteral>(",Y,Y){toto}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,25+:"toto"]<AlphanumericLiteral>(",Y,Y){toto}
 - variables = "toto"
 
-[[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,21+:'toto']<AlphanumericLiteral>(',Y,Y){toto}
+[[DisplayStatement]] [12,18:Display]<DISPLAY> --> [20,25+:'toto']<AlphanumericLiteral>(',Y,Y){toto}
 - variables = 'toto'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [26,34:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [30,38:advancing]<ADVANCING>
 - variables = "toto"
 - WithNoAdvancing
 
-[[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [53,55+:'.']<AlphanumericLiteral>(',Y,Y){.}
+[[DisplayStatement]] [16,22:DISPLAY]<DISPLAY> --> [57,59+:'.']<AlphanumericLiteral>(',Y,Y){.}
 - variables = '*** WHATEVER *** : ' DEBUG-ITEM '.'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [37,45:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [41,49:advancing]<ADVANCING>
 - variables =
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,47:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [43,51:advancing]<ADVANCING>
 - variables = "no advancing"
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,47:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [43,51:advancing]<ADVANCING>
 - variables = 'no advancing'
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [41,49:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [45,53:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [53,61:advancing]<ADVANCING>
-- variables = var1 'lit1' var2
-- OutputDeviceName = SYSOUT
-- WithNoAdvancing
-
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [48,56:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [57,65:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - OutputDeviceName = SYSOUT
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [52,60:advancing]<ADVANCING>
+- variables = var1 'lit1' var2
+- OutputDeviceName = SYSOUT
+- WithNoAdvancing
+
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [55,63:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - OutputDeviceName = toto
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [46,54:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [50,58:advancing]<ADVANCING>
 - variables = var1 'lit1' var2
 - OutputDeviceName = toto
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,29+:"C'est à dire"]<AlphanumericLiteral>(",Y,Y){C'est à dire}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,33+:"C'est à dire"]<AlphanumericLiteral>(",Y,Y){C'est à dire}
 - variables = "C'est à dire"
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,29+:'C"est à dire']<AlphanumericLiteral>(',Y,Y){C"est à dire}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,33+:'C"est à dire']<AlphanumericLiteral>(',Y,Y){C"est à dire}
 - variables = 'C"est à dire'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [42,47:SYSOUT]<UserDefinedWord>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [46,51:SYSOUT]<UserDefinedWord>
 - variables = var1 'litError' var2
 - OutputDeviceName = SYSOUT
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [55,63:advancing]<ADVANCING>
 - variables = var1 'lit2' var2
 - OutputDeviceName = var2
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,28:when-compiled]<WHEN_COMPILED>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,32:when-compiled]<WHEN_COMPILED>
 - variables = when-compiled
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [32,32:)]<RightParenthesisSeparator>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [36,36:)]<RightParenthesisSeparator>
 - variables = max
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,44:mycopy]<UserDefinedWord>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [43,48:mycopy]<UserDefinedWord>
 - variables = toto toto mycopy.toto
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,25:high-value]<HIGH_VALUE>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,29:high-value]<HIGH_VALUE>
 - variables = high-value
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,21:spaces]<SPACES>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [20,25:spaces]<SPACES>
 - variables = spaces
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,22+:'a']<AlphanumericLiteral>(',Y,Y){a}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,26+:'a']<AlphanumericLiteral>(',Y,Y){a}
 - variables = 'a'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [44,52:advancing]<ADVANCING>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [48,56:advancing]<ADVANCING>
 - variables = 'a'
 - OutputDeviceName = SYSOUT
 - WithNoAdvancing
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24+:X'40']<HexadecimalAlphanumericLiteral>(',Y,Y){@}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,28+:X'40']<HexadecimalAlphanumericLiteral>(',Y,Y){@}
 - variables = X'40'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,29:HIGH-VALUE]<HIGH_VALUE>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,33:HIGH-VALUE]<HIGH_VALUE>
 - variables = HIGH-VALUE
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,30:HIGH-VALUES]<HIGH_VALUES>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,34:HIGH-VALUES]<HIGH_VALUES>
 - variables = HIGH-VALUES
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,28:LOW-VALUE]<LOW_VALUE>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,32:LOW-VALUE]<LOW_VALUE>
 - variables = LOW-VALUE
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,29:LOW-VALUES]<LOW_VALUES>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,33:LOW-VALUES]<LOW_VALUES>
 - variables = LOW-VALUES
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24:QUOTE]<QUOTE>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,28:QUOTE]<QUOTE>
 - variables = QUOTE
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,25:QUOTES]<QUOTES>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,29:QUOTES]<QUOTES>
 - variables = QUOTES
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24:SPACE]<SPACE>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,28:SPACE]<SPACE>
 - variables = SPACE
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,25:SPACES]<SPACES>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,29:SPACES]<SPACES>
 - variables = SPACES
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,23:ZERO]<ZERO>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,27:ZERO]<ZERO>
 - variables = ZERO
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,24:ZEROS]<ZEROS>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,28:ZEROS]<ZEROS>
 - variables = ZEROS
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,25:ZEROES]<ZEROES>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,29:ZEROES]<ZEROES>
 - variables = ZEROES
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,27+:"test\0"]<AlphanumericLiteral>(",Y,Y){test\0}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,31+:"test\0"]<AlphanumericLiteral>(",Y,Y){test\0}
 - variables = "test\0"
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [24,26+:"b"]<AlphanumericLiteral>(",Y,Y){b}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [28,30+:"b"]<AlphanumericLiteral>(",Y,Y){b}
 - variables = "a" "b"
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [28,30+:"c"]<AlphanumericLiteral>(",Y,Y){c}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [32,34+:"c"]<AlphanumericLiteral>(",Y,Y){c}
 - variables = "a" "b" "c"
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [28,28:9]<IntegerLiteral>{9}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [32,32:9]<IntegerLiteral>{9}
 - variables = "a" "b" 9
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [28,31:Var1]<UserDefinedWord>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [32,35:Var1]<UserDefinedWord>
 - variables = "a" "b" Var1
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [22,24+:'a']<AlphanumericLiteral>(',Y,Y){a}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [26,28+:'a']<AlphanumericLiteral>(',Y,Y){a}
 - variables = 9 'a'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [25,27+:'a']<AlphanumericLiteral>(',Y,Y){a}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [29,31+:'a']<AlphanumericLiteral>(',Y,Y){a}
 - variables = Var1 'a'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [52,60:LOW-VALUE]<LOW_VALUE>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [56,64:LOW-VALUE]<LOW_VALUE>
 - variables = 9 'a' 9 'a' Var1 "test" LOW-VALUE
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,20:9]<IntegerLiteral>{9}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,24:9]<IntegerLiteral>{9}
 - variables = TypeCobol.Compiler.CodeElements.Variable 9
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [20,23:Var1]<UserDefinedWord>
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,27:Var1]<UserDefinedWord>
 - variables = TypeCobol.Compiler.CodeElements.Variable Var1
 

@@ -9,28 +9,28 @@
           88 MyVar-B value "B".
 
        procedure division.
-        evaluate true
-            when MyVar-A
+           evaluate true
+             when MyVar-A
                 continue
-            when MyVar-B 
+             when MyVar-B
                 continue
-        end-evaluate
+           end-evaluate
            
 
-        evaluate MyVar
-          when "A"
-             continue
-          when "B"
-             continue
-        end-evaluate
-           
-        evaluate true
-          when MyVar-A
-             continue
-          when MyVar-B 
-             continue
-          when other
-             continue
-        end-evaluate
+           evaluate MyVar
+             when "A"
+               continue
+             when "B"
+               continue
+           end-evaluate
+      
+           evaluate true
+             when MyVar-A
+               continue
+             when MyVar-B
+               continue
+             when other
+               continue
+           end-evaluate
            .
        END PROGRAM DVZS0OSM.

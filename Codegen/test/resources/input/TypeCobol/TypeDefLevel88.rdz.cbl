@@ -30,9 +30,9 @@
        01  MyPM2 type ProcessingMode2.
 
        PROCEDURE DIVISION.
-          IF (MyPM::temp::IMSBatch = "TI" AND MyPM2::DB2Batch = "TD")
+           IF (MyPM::temp::IMSBatch = "TI" AND MyPM2::DB2Batch = "TD")
              DISPLAY "TI and TD"
-          ELSE
+           ELSE
              CONTINUE
-          END-IF.
+           END-IF.
        END PROGRAM TypeDefLevel88.

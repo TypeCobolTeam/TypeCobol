@@ -39,15 +39,15 @@
 004010     if b                                                         000000
 004020       CONTINUE                                                   000000
 004090     end-if                                                       000000
-      *   SET b TO FALSE
-000210    SET b-false TO TRUE
-                                                                        000210
+      *    SET b TO FALSE
+000210     SET b-false TO TRUE
+                                                                         000210
 000221     MOVE 'TOTO'                                                  000221
 000222             TO                                                   000222
 000223               mykey                                              000223
-000230*   MOVE GetValue(mykey) TO result.                               000230
-000240    GOBACK.                                                       000240
-00024E    EJECT                                                         00024E
+000230*    MOVE GetValue(mykey) TO result.                               000230
+000240     GOBACK.                                                       000240
+00024E     EJECT                                                         00024E
 000250 
 000260 END PROGRAM Codegen.                                             000260
       *

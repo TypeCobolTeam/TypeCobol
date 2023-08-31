@@ -24,24 +24,24 @@
        TRAITEMENT.
       * __________________________________________________
       * OK public procedures declared in "dependencies" file
-           CALL Callee::MyPublicProcedure
+              CALL Callee::MyPublicProcedure
                     INPUT      somedate
 
-           CALL Callee::MySecondPublicProcedure
+              CALL Callee::MySecondPublicProcedure
                     INPUT      vect2   
       * __________________________________________________
       *procedure declared in this program
-           CALL PGM2::check INPUT      somedate
+             CALL PGM2::check INPUT      somedate
 
       *procedure declared in this program
-          CALL check         INPUT      somedate
+             CALL check         INPUT      somedate
 
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call dump input mymessage
+             call dump input mymessage
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call MyIntrinsicFunctions::dump input mymessage
+             call MyIntrinsicFunctions::dump input mymessage
         .
        END PROGRAM PGM2.
 

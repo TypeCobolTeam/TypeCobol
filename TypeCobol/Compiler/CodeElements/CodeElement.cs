@@ -26,11 +26,14 @@ namespace TypeCobol.Compiler.CodeElements
             ConsumedTokens = new List<Token>();
             SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
         }
-
         /// <summary>
         /// The Cobol syntax can be decomposed in 116 elementary code elements
         /// </summary>
         public CodeElementType Type { get; }
+        /// <summary>
+        /// As most CodeElement must start in area B, the default StartingArea is B
+        /// </summary>
+        public virtual TextAreaType StartingArea => TextAreaType.AreaB;
 
         /// <summary>
         /// Describe how the CodeElement is debugged

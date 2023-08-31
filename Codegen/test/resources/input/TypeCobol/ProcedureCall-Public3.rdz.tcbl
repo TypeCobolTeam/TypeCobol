@@ -55,13 +55,13 @@
 
 
       *OK  call check of PGM1
-          call check input somedate
+           call check input somedate
       *OK 
-          call PGM1::check input somedate
+           call PGM1::check input somedate
       *OK 
-          call Callee::check input somedate
+           call Callee::check input somedate
       *OK 
-          call Callee::check2 input somedate
+           call Callee::check2 input somedate
         .
 
        END PROGRAM PGM1.

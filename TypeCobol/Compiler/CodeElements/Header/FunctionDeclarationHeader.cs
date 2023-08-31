@@ -32,7 +32,7 @@ namespace TypeCobol.Compiler.CodeElements {
         {
             this.Profile = new ParametersProfile();
         }
-
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
         // TO DO : remove this and move to second parsing phase
         private string libraryName;
         public string Name { get { return libraryName != null ? libraryName + "." + FunctionName.Name : FunctionName.Name; } }
@@ -315,5 +315,6 @@ namespace TypeCobol.Compiler.CodeElements {
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
         }
+        public override TextAreaType StartingArea => TextAreaType.AreaA;
     }
 }
