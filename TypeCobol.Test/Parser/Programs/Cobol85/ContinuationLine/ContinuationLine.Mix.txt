@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
        data division.
        working-storage section.
@@ -30,11 +30,11 @@ Line 10[19,21] <30, Error, Semantics> - Semantic error: Symbol foo is not refere
 
       
       *    KO
-Line 32[13,75] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 32[20,82] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 Line 33[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            ' er zer '
-Line 34[13,74] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 34[20,81] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 Line 35[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            " er zer '
@@ -42,11 +42,11 @@ Line 35[19,20] <21, Error, Tokens> - The delimiter character of this continuatio
 Line 37[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            ' er zer "
       
-Line 39[13,75] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 39[20,82] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
            display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 Line 40[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            " er zer "
-Line 41[13,74] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 41[20,81] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
            display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 Line 42[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            ' er zer "
@@ -70,7 +70,7 @@ Line 52[19,20] <21, Error, Tokens> - The delimiter character of this continuatio
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 Line 57[21,22] <27, Error, Syntax> - Syntax error : Starting delimiter of the continuation line is missing.
       -              er zer "
-Line 58[13,72] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
+Line 58[20,79] <27, Error, Syntax> - Syntax error : Literal is not correctly delimited.
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 Line 59[20,21] <27, Error, Syntax> - Syntax error : Closing delimiter of the continuation line is missing.
       -             " er zer
