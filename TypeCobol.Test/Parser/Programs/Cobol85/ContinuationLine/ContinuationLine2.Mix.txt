@@ -1,4 +1,4 @@
-       IDENTIFICATION division.
+﻿       IDENTIFICATION division.
        PROGRAM-ID. MyPGM2.
        procedure division.
       * KO
