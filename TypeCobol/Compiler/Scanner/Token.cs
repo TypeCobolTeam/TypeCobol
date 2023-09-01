@@ -460,8 +460,6 @@ namespace TypeCobol.Compiler.Scanner
                     return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[0]))
                            && (endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[comparisonToken.NormalizedText.Length - 1]));
                 }
-
-                
             }
 
             //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
@@ -491,12 +489,7 @@ namespace TypeCobol.Compiler.Scanner
                     return endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]);
                 }
 
-                //TODO switch back to text Equals here ?
-                //OR do
-                // //Check if comparisonToken.NormalizedText begin/end with replace separator or is surrounded with replace separator 
-                //  return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[0]))
-                //       && (endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[comparisonToken.NormalizedText.Length - 1]));
-                return true;
+                return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }
 
             //Otherwise allow replace for same type tokens

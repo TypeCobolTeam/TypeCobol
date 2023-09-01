@@ -160,7 +160,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        private static bool BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, 
+        private bool BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, 
             ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens,
             Token leading = null, Token trailing = null)
         {
@@ -209,25 +209,40 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         {
                             replaceOperation = new SingleTokenReplaceOperation(comparisonToken, replacementToken, leading, trailing);
                         }
-                        else
+                        else if (leading == null && trailing == null)
                         {
-                            //TODO LEADING and TRAILING forbidden here
-
                             replaceOperation = new PartialWordReplaceOperation(comparisonToken, replacementToken);
                         }
+                        else
+                        {
+                            // LEADING and TRAILING forbidden here
+                            AddError(comparisonToken);
+                        }
+                    }
+                    else if (leading == null && trailing == null)
+                    {
+                        replaceOperation = new SingleToMultipleTokensReplaceOperation(comparisonToken, replacementTokens);
                     }
                     else
                     {
-                        //TODO LEADING and TRAILING forbidden here
-                        replaceOperation = new SingleToMultipleTokensReplaceOperation(comparisonToken, replacementTokens);
+                        // LEADING and TRAILING forbidden here
+                        AddError(replacementTokens[0]);
                     }
+                }
+                else if (leading == null && trailing == null)
+                {
+                    replaceOperation = new MultipleTokensReplaceOperation(comparisonToken, followingComparisonTokens, replacementTokens);
                 }
                 else
                 {
-                    //TODO LEADING and TRAILING forbidden here
-                    replaceOperation = new MultipleTokensReplaceOperation(comparisonToken, followingComparisonTokens, replacementTokens);
+                    // LEADING and TRAILING forbidden here
+                    AddError(comparisonToken);
                 }
-                replaceOperations.Add(replaceOperation);
+
+                if (replaceOperation != null)
+                {
+                    replaceOperations.Add(replaceOperation);
+                }
 
                 // Reset everything for the next replace operation    
                 comparisonToken = null;
@@ -236,6 +251,13 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 replacementTokens = null;
             }
             return true;
+
+            void AddError(Token token)
+            {
+                Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
+                    "\"LEADING\" and \"TRAILING\" can only be used to replace one single text word. This REPLACE operation cannot be applied and it is discarded.");
+                CompilerDirective.AddParsingDiagnostic(error);
+            }
         }
 
         public virtual void StartDeleteCompilerStatement()

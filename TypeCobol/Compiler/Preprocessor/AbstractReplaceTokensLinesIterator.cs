@@ -417,7 +417,6 @@ namespace TypeCobol.Compiler.Preprocessor
                         // Special case for PictureCharacterString, handle as PartialWord
                         if (originalToken.TokenType == TokenType.PictureCharacterString || singleTokenReplaceOperation.LeadingToken != null || singleTokenReplaceOperation.TrailingToken != null)
                         {
-                            //TODO bug here generatedTokenForSingleToken contains too much space with LEADING option ?
                             var generatedTokenForSingleToken = TextReplace(singleTokenReplaceOperation.ComparisonToken, singleTokenReplaceOperation.ReplacementToken);
                             return new ReplacedToken(generatedTokenForSingleToken, originalToken);
                         }
