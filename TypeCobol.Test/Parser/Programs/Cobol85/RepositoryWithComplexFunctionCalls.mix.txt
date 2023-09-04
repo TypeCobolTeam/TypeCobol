@@ -32,7 +32,8 @@ Line 22[19,19] <27, Error, Syntax> - Syntax error : extraneous input '.' expecti
 
        01 .
            05 Array1 occurs 9 pic 9.
-
+       01 .
+           05 LOG occurs 9 pic 9.
        01 .
            05 Array2 occurs 9.
                 10 Array3 occurs 9 pic 9.
@@ -76,12 +77,13 @@ Line 22[19,19] <27, Error, Syntax> - Syntax error : extraneous input '.' expecti
            compute Var4 = Array3(Var2 Var2)
            compute Var4 = Array3(Var2, Var2)
            compute Var4 = Array3(Var2; Var2)
-
+      *Ok it's an array
+           compute Var4 = LOG( Var2)
       *Combine function and Array
            compute Var4 = ABS (Array3(Var2, Var2))
       *KO Expected a numeric literal or an index-name in the"COMPUTE"
       *   statement, but found"FUNCTION".  The statement was discarded.
-Line 82[31,31] <27, Error, Syntax> - Syntax error : extraneous input '(' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
+Line 84[31,31] <27, Error, Syntax> - Syntax error : extraneous input '(' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
            compute Var4 = ABS (Array3(FUNCTION LENGTH(Var2(1:2)), Var2))
            move VarX1(2:2) to VarX2
       *KO on IBM but OK in our parser. Should we recreate this limitation ?

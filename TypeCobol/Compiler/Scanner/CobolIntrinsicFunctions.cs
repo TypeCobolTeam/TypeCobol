@@ -38,8 +38,13 @@ namespace TypeCobol.Compiler.Scanner
             .Select(name => name.Replace("_", "-"))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+        // Intrinsic functions which are not allowed in the REPOSITORY paragraph
+        private static readonly HashSet<string> _NotAllowedIntrinsicFunctions = new(StringComparer.OrdinalIgnoreCase) { "WHEN-COMPILED" };
+
         public static IEnumerable<string> FunctionNames => _Names;
 
         public static bool IsFunctionName(string name) => _Names.Contains(name);
+
+        public static bool IsAllowedInRepositoryParagraph(string functionName) => !_NotAllowedIntrinsicFunctions.Contains(functionName);
     }
 }

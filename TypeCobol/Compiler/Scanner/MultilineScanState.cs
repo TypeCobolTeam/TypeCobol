@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             _repositoryFunctions ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             // WHEN-COMPILED always requires the keyword FUNCTION to be used so ignore it
-            if (!string.Equals(functionName, "WHEN-COMPILED", StringComparison.OrdinalIgnoreCase))
+            if (CobolIntrinsicFunctions.IsAllowedInRepositoryParagraph(functionName))
             {
                 _repositoryFunctions.Add(functionName);
             }

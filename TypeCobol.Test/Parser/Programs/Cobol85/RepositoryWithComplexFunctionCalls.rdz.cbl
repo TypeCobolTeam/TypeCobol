@@ -30,7 +30,8 @@
 
        01 .
            05 Array1 occurs 9 pic 9.
-
+       01 .
+           05 LOG occurs 9 pic 9.
        01 .
            05 Array2 occurs 9.
                 10 Array3 occurs 9 pic 9.
@@ -74,7 +75,8 @@
            compute Var4 = Array3(Var2 Var2)
            compute Var4 = Array3(Var2, Var2)
            compute Var4 = Array3(Var2; Var2)
-
+      *Ok it's an array
+           compute Var4 = LOG( Var2)
       *Combine function and Array
            compute Var4 = ABS (Array3(Var2, Var2))
       *KO Expected a numeric literal or an index-name in the"COMPUTE"
