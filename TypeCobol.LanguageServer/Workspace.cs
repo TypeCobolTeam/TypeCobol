@@ -954,12 +954,13 @@ namespace TypeCobol.LanguageServer
 
         #region Data Layout
         private const char SPACE = ' ';
-        private const int INDENT_SIZE = 2; // Indentation = 2 spaces
         private const string UNDEFINED = "***";
         private const string FILLER = "FILLER";
         private const string GROUP = "GROUP";
         private const string OCCURS = "OCCURS {0}";
-        private const string OCCURS_SUFFIX = " (1)";
+        private const string OCCURS_SUFFIX_START = " (";
+        private const string OCCURS_SUFFIX = "1";
+        private const string OCCURS_SUFFIX_END = ")";
         private const string PIC = "PIC {0}";
         private const string REDEFINES = "REDEFINES {0}";
 
@@ -983,10 +984,11 @@ namespace TypeCobol.LanguageServer
 
             return rows.ToArray();
 
-            static string CreateRow(Tuple<int, DataDefinition> dataLayoutNode, string separator)
+            static string CreateRow(Tuple<int, DataDefinition, int> dataLayoutNode, string separator)
             {
                 var nodeLevel = dataLayoutNode.Item1;
                 var dataDefinition = dataLayoutNode.Item2;
+                var occursDimension = dataLayoutNode.Item3;
 
                 var row = new StringBuilder();
 
@@ -995,12 +997,14 @@ namespace TypeCobol.LanguageServer
                 // Line number (starting at 1)
                 AppendToRow(dataDefinition.CodeElement.GetLineInMainSource() + 1);
 
-                /// Level number
+                // Node level
+                AppendToRow(nodeLevel);
+
+                // Level number
                 AppendToRow(dataDefinition.CodeElement.LevelNumber);
 
-                // Name (preceded by an indent depending on the node level)
-                row.Append(SPACE, nodeLevel * INDENT_SIZE);
-                AppendToRow(GetName(dataDefinition));
+                // Name
+                AppendNameToRow(dataDefinition, occursDimension);
 
                 // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
                 AppendDeclarationToRow(dataDefinition);
@@ -1010,7 +1014,7 @@ namespace TypeCobol.LanguageServer
                 var length = dataDefinition.PhysicalLength;
                 AppendToRow(start);
                 AppendToRow(GetEnd(start, length));
-                AppendToRow(length);
+                row.Append(length);
 
                 return row.ToString();
 
@@ -1019,31 +1023,43 @@ namespace TypeCobol.LanguageServer
                     row.Append(value).Append(separator);
                 }
 
-                static string GetName(DataDefinition dataDefinition)
+                void AppendNameToRow(DataDefinition dataDefinition, int occursDimension)
                 {
-                    var name = dataDefinition.Name ?? FILLER;
-                    if (dataDefinition.IsUnderTable)
+                    row.Append(dataDefinition.Name ?? FILLER);
+                    if (occursDimension > 0)
                     {
-                        name += OCCURS_SUFFIX;
+                        AppendOccursSuffixToRow(occursDimension);
                     }
-                    return name;
+                    row.Append(separator);
+                }
+
+                void AppendOccursSuffixToRow(int occursDimension)
+                {
+                    row.Append(OCCURS_SUFFIX_START);
+                    row.Append(OCCURS_SUFFIX);
+                    for (int i = 1; i < occursDimension; i++)
+                    {
+                        row.Append(SPACE).Append(OCCURS_SUFFIX);
+                    }
+                    row.Append(OCCURS_SUFFIX_END);
                 }
 
                 void AppendDeclarationToRow(DataDefinition dataDefinition)
                 {
                     var initialRowLength = row.Length;
 
-                    if (dataDefinition is DataRedefines dataRedefines)
+                    CodeElementType type = dataDefinition.CodeElement.Type;
+                    if (type == CodeElementType.DataRedefinesEntry)
                     {
-                        row.Append(string.Format(REDEFINES, dataRedefines.CodeElement.RedefinesDataName.Name));
+                        row.Append(string.Format(REDEFINES, ((DataRedefines) dataDefinition).CodeElement.RedefinesDataName.Name));
                     }
-                    else if (dataDefinition.CodeElement is DataDescriptionEntry dataDescriptionEntry)
+                    else if (type == CodeElementType.DataDescriptionEntry)
                     {
                         if (dataDefinition.Picture != null)
                         {
                             row.Append(string.Format(PIC, dataDefinition.Picture.Value));
                         }
-                        string usage = dataDescriptionEntry.Usage?.Token.Text;
+                        string usage = ((DataDescriptionEntry) dataDefinition.CodeElement).Usage?.Token.Text;
                         if (!string.IsNullOrWhiteSpace(usage))
                         {
                             AppendSpaceIfNeeded();
@@ -1081,9 +1097,9 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        private List<Tuple<int, DataDefinition>> CollectDataLayoutNodes(CompilationUnit compilationUnit)
+        private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodes(CompilationUnit compilationUnit)
         {
-            var result = new List<Tuple<int, DataDefinition>>();
+            var result = new List<Tuple<int, DataDefinition, int>>();
             Node dataDivision = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.GetChildren<DataDivision>().FirstOrDefault();
             if (dataDivision != null)
             {
@@ -1091,29 +1107,33 @@ namespace TypeCobol.LanguageServer
                 var workingStorage = dataDivision.GetChildren<WorkingStorageSection>().FirstOrDefault();
                 if (workingStorage != null)
                 {
-                    CollectDataLayoutNodes(result, 0, workingStorage);
+                    CollectDataLayoutNodes(result, 0, workingStorage, 0);
                 }
 
                 // Consider also data declared in the Local storage
                 var localStorage = dataDivision.GetChildren<LocalStorageSection>().FirstOrDefault();
                 if (localStorage != null)
                 {
-                    CollectDataLayoutNodes(result, 0, localStorage);
+                    CollectDataLayoutNodes(result, 0, localStorage, 0);
                 }
             }
 
             return result;
 
-            static void CollectDataLayoutNodes(List<Tuple<int, DataDefinition>> dataLayoutNodes, int nodeLevel, Node node)
+            static void CollectDataLayoutNodes(List<Tuple<int, DataDefinition, int>> dataLayoutNodes, int nodeLevel, Node node, int occursDimension)
             {
                 foreach (var child in node.Children)
                 {
-                    if (child is DataDefinition dataDefinition && IsInScope(dataDefinition))
+                    if (child is DataDefinition childDefinition)
                     {
-                        dataLayoutNodes.Add(new Tuple<int, DataDefinition>(nodeLevel, dataDefinition));
-                        if (dataDefinition.Children.Count > 0)
+                        var childOccursDimension = childDefinition.IsTableOccurence ? occursDimension + 1 : occursDimension;
+                        if (IsInScope(childDefinition))
                         {
-                            CollectDataLayoutNodes(dataLayoutNodes, nodeLevel + 1, dataDefinition);
+                            dataLayoutNodes.Add(new Tuple<int, DataDefinition, int>(nodeLevel, childDefinition, childOccursDimension));
+                        }
+                        if (childDefinition.Children.Count > 0)
+                        {
+                            CollectDataLayoutNodes(dataLayoutNodes, nodeLevel + 1, childDefinition, childOccursDimension);
                         }
                     }
                 }

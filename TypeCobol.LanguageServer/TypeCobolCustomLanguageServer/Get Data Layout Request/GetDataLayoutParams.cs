@@ -5,6 +5,9 @@
     /// </summary>
     class GetDataLayoutParams
     {
+        // Output types (add TREE in the future?)
+        internal const string OUTPUT_TYPE_CSV = "CSV";
+
         /// <summary>
         /// The current document in edition
         /// </summary>

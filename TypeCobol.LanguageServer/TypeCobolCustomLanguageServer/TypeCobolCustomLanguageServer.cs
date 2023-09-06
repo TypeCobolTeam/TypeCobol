@@ -218,7 +218,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (context != null && context.FileCompiler != null)
             {
-                string[] rows = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, GetDataLayoutConstants.SEPARATOR);
+                // We only support CSV for now. In the future outputType should be checked here
+                string[] rows = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, GetDataLayoutCSVResult.SEPARATOR);
 
                 return new GetDataLayoutResult(rows);
             }
