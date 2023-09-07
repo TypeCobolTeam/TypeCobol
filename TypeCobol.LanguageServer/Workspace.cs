@@ -1099,7 +1099,7 @@ namespace TypeCobol.LanguageServer
 
         private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodes(CompilationUnit compilationUnit)
         {
-            var result = new List<Tuple<int, DataDefinition, int>>();
+            var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
             Node dataDivision = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.GetChildren<DataDivision>().FirstOrDefault();
             if (dataDivision != null)
             {
@@ -1107,20 +1107,20 @@ namespace TypeCobol.LanguageServer
                 var workingStorage = dataDivision.GetChildren<WorkingStorageSection>().FirstOrDefault();
                 if (workingStorage != null)
                 {
-                    CollectDataLayoutNodes(result, 0, workingStorage, 0);
+                    CollectDataLayoutNodes(0, workingStorage, 0);
                 }
 
                 // Consider also data declared in the Local storage
                 var localStorage = dataDivision.GetChildren<LocalStorageSection>().FirstOrDefault();
                 if (localStorage != null)
                 {
-                    CollectDataLayoutNodes(result, 0, localStorage, 0);
+                    CollectDataLayoutNodes(0, localStorage, 0);
                 }
             }
 
-            return result;
+            return dataLayoutNodes;
 
-            static void CollectDataLayoutNodes(List<Tuple<int, DataDefinition, int>> dataLayoutNodes, int nodeLevel, Node node, int occursDimension)
+            void CollectDataLayoutNodes(int nodeLevel, Node node, int occursDimension)
             {
                 foreach (var child in node.Children)
                 {
@@ -1133,7 +1133,7 @@ namespace TypeCobol.LanguageServer
                         }
                         if (childDefinition.Children.Count > 0)
                         {
-                            CollectDataLayoutNodes(dataLayoutNodes, nodeLevel + 1, childDefinition, childOccursDimension);
+                            CollectDataLayoutNodes(nodeLevel + 1, childDefinition, childOccursDimension);
                         }
                     }
                 }
