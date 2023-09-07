@@ -888,6 +888,7 @@ namespace TypeCobol.LanguageServer
                             case TokenType.PERFORM:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetParagraphs(MatchName));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetSections(MatchName));
                                 break;
                             }
 
