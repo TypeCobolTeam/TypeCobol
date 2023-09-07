@@ -105,10 +105,39 @@ namespace TypeCobol.Compiler.Scanner
         public bool InsideSql { get; set; }
 
         /// <summary>
+        /// True when inside the REPOSITORY paragraph from CONFIGURATION SECTION
+        /// </summary>
+        public bool InsideRepositoryDeclarations { get; private set; }
+
+        private HashSet<string>? _repositoryFunctions;
+
+        /// <summary>
+        /// Add a function name as a REPOSITORY function. REPOSITORY functions
+        /// can be called without using the keyword FUNCTION.
+        /// </summary>
+        /// <param name="functionName">Name of the function to add.</param>
+        internal void AddRepositoryFunction(string functionName)
+        {
+            _repositoryFunctions ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            // WHEN-COMPILED always requires the keyword FUNCTION to be used so ignore it
+            if (CobolIntrinsicFunctions.IsAllowedInRepositoryParagraph(functionName))
+            {
+                _repositoryFunctions.Add(functionName);
+            }
+        }
+
+        /// <summary>
+        /// Indicate whether the given name is a REPOSITORY function or not.
+        /// </summary>
+        /// <param name="functionName">Name to test.</param>
+        /// <returns>True when the name is stored in current REPOSITORY function set, False otherwise.</returns>
+        public bool IsRepositoryFunction(string functionName) => _repositoryFunctions != null && _repositoryFunctions.Contains(functionName);
+
+        /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false, bool insideCopy = false) :
-            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false, false)
+            this(insideDataDivision, false, false, new SpecialNamesContext(decimalPointIsComma), false, false, false, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals, false, false, false, false, null)
         { }
 
         /// <summary>
@@ -117,7 +146,8 @@ namespace TypeCobol.Compiler.Scanner
         private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText,
             SpecialNamesContext specialNamesContext, bool insideFormalizedComment, bool insideMultilineComments,
             bool insideParamsField, bool withDebuggingMode, bool insideCopy,
-            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective, bool insideSql)
+            Encoding encodingForAlphanumericLiterals, bool afterReplacementPseudoText, bool insideReplaceDirective, bool insideSql,
+            bool insideRepositoryDeclarations, HashSet<string>? repositoryFunctions)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -132,6 +162,8 @@ namespace TypeCobol.Compiler.Scanner
             _afterReplacementPseudoText = afterReplacementPseudoText;
             InsideReplaceDirective = insideReplaceDirective;
             InsideSql = insideSql;
+            InsideRepositoryDeclarations = insideRepositoryDeclarations;
+            _repositoryFunctions = repositoryFunctions;
         }
 
         /// <summary>
@@ -139,9 +171,11 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
+            var repositoryFunctions = _repositoryFunctions != null ? new HashSet<string>(_repositoryFunctions, StringComparer.OrdinalIgnoreCase) : null;
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, SpecialNames.Clone(),
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective, InsideSql);
+                WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals, _afterReplacementPseudoText, InsideReplaceDirective, InsideSql,
+                InsideRepositoryDeclarations, repositoryFunctions);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
 
@@ -299,6 +333,16 @@ namespace TypeCobol.Compiler.Scanner
                         InsideReplaceDirective = false;
                     }
                     break;
+                case TokenType.ALL:
+                    if (LastSignificantToken?.TokenType == TokenType.FUNCTION && InsideRepositoryDeclarations)
+                    {
+                        // ALL following FUNCTION: this means all intrinsic should be added in repository functions set
+                        foreach (string functionName in CobolIntrinsicFunctions.FunctionNames)
+                        {
+                            AddRepositoryFunction(functionName);
+                        }
+                    }
+                    break;
             }
 
             // Avoid setting last significative token for multiline Comments
@@ -333,6 +377,32 @@ namespace TypeCobol.Compiler.Scanner
                         SpecialNames.EndAllCurrencySignClauses();
                         break;
                 }
+            }
+
+            // Track the start and end of REPOSITORY paragraph
+            if (InsideRepositoryDeclarations)
+            {
+                switch (newToken.TokenType)
+                {
+                    case TokenType.PeriodSeparator:
+                    case TokenType.CLASS:
+                    case TokenType.UserDefinedWord:
+                    case TokenType.IS:
+                    case TokenType.FUNCTION:
+                    case TokenType.IntrinsicFunctionName:
+                    case TokenType.ALL:
+                    case TokenType.AlphanumericLiteral:
+                    case TokenType.HexadecimalAlphanumericLiteral:
+                    case TokenType.NullTerminatedAlphanumericLiteral:
+                        break;
+                    default:
+                        InsideRepositoryDeclarations = false;
+                        break;
+                }
+            }
+            else if (newToken.TokenType == TokenType.REPOSITORY)
+            {
+                InsideRepositoryDeclarations = true;
             }
 
             // Register the last significant token 
@@ -553,6 +623,11 @@ namespace TypeCobol.Compiler.Scanner
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.FUNCTION; }
         }
 
+        public bool AfterIntrinsicFunctionName
+        {
+            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.IntrinsicFunctionName; }
+        }
+
         /// <summary>
         /// True at the beggining of a parse section, or after PeriodSeparator, or after END-EXEC
         /// </summary>
@@ -582,8 +657,8 @@ namespace TypeCobol.Compiler.Scanner
 
         public bool Equals(MultilineScanState? otherScanState)
         {
-            if (Object.ReferenceEquals(this, otherScanState)) return true;
-            if (Object.ReferenceEquals(null, otherScanState)) return false;
+            if (ReferenceEquals(this, otherScanState)) return true;
+            if (ReferenceEquals(null, otherScanState)) return false;
 
             return InsideDataDivision == otherScanState.InsideDataDivision &&
                    InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
@@ -603,7 +678,9 @@ namespace TypeCobol.Compiler.Scanner
                    EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
                    _afterReplacementPseudoText == otherScanState._afterReplacementPseudoText &&
                    InsideReplaceDirective == otherScanState.InsideReplaceDirective &&
-                   InsideSql == otherScanState.InsideSql;
+                   InsideSql == otherScanState.InsideSql &&
+                   InsideRepositoryDeclarations == otherScanState.InsideRepositoryDeclarations &&
+                   _repositoryFunctions?.Count == otherScanState._repositoryFunctions?.Count;
         }
 
         /// <summary>
@@ -632,6 +709,8 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + _afterReplacementPseudoText.GetHashCode();
                 hash = hash * 23 + InsideReplaceDirective.GetHashCode();
                 hash = hash * 23 + InsideSql.GetHashCode();
+                hash = hash * 23 + InsideRepositoryDeclarations.GetHashCode();
+                hash = hash * 23 + _repositoryFunctions?.Count ?? 0;
                 return hash;
             }
         }

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using Antlr4.Runtime.Tree;
+﻿using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
-using System.Collections.Generic;
 using Antlr4.Runtime;
 using JetBrains.Annotations;
 
@@ -398,14 +395,22 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference1Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericLiteralToken());
-            var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
-            return symbolDefinitionOrReference;
+            return CreateSymbolDefinitionOrReference(nameLiteral, symbolType);
         }
 
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference4Context context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
+            return CreateSymbolDefinitionOrReference(context.UserDefinedWord(), symbolType);
+        }
+
+        internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(ITerminalNode node, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(node);
+            return CreateSymbolDefinitionOrReference(nameLiteral, symbolType);
+        }
+
+        private SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(AlphanumericValue nameLiteral, SymbolType symbolType)
+        {
             var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
             return symbolDefinitionOrReference;
@@ -1136,33 +1141,6 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return CreateExternalNameOrSymbolReference(context.externalNameOrSymbolReference5(), new SymbolType[] { SymbolType.AssignmentName, SymbolType.FileName });
-        }
-
-        /// <summary>
-        /// Intrinsic function names defined by the Cobol language.
-        /// </summary>
-        public enum FunctionNameEnum
-        {
-            ABS, ACOS, ANNUITY, ASIN, ATAN,
-            BIT_OF, BIT_TO_CHAR, BYTE_LENGTH,
-            CHAR, COMBINED_DATETIME, COS, CURRENT_DATE,
-            DATE_OF_INTEGER, DATE_TO_YYYYMMDD, DAY_OF_INTEGER, DAY_TO_YYYYDDD, DISPLAY_OF,
-            E, EXP, EXP10,
-            FACTORIAL, FORMATTED_CURRENT_DATE, FORMATTED_DATE, FORMATTED_DATETIME, FORMATTED_TIME,
-            HEX_OF, HEX_TO_CHAR,
-            INTEGER, INTEGER_OF_DATE, INTEGER_OF_DAY, INTEGER_OF_FORMATTED_DATE, INTEGER_PART,
-            LENGTH, LOG, LOG10, LOWER_CASE,
-            MAX, MEAN, MEDIAN, MIDRANGE, MIN, MOD,
-            NATIONAL_OF, NUMVAL, NUMVAL_C, NUMVAL_F,
-            ORD, ORD_MAX, ORD_MIN,
-            PI, PRESENT_VALUE,
-            RANDOM, RANGE, REM, REVERSE,
-            SECONDS_FROM_FORMATTED_TIME, SECONDS_PAST_MIDNIGHT, SIGN, SIN, SQRT, STANDARD_DEVIATION, SUM,
-            TAN, TEST_DATE_YYYYMMDD, TEST_DAY_YYYYDDD, TEST_FORMATTED_DATETIME, TEST_NUMVAL, TEST_NUMVAL_C, TEST_NUMVAL_F, TRIM,
-            ULENGTH, UPOS, UPPER_CASE, USUBSTR, USUPPLEMENTARY, UUID4, UVALID, UWIDTH,
-            VARIANCE,
-            WHEN_COMPILED,
-            YEAR_TO_YYYY
         }
 
         [CanBeNull]
