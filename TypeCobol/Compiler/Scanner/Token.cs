@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Text;
@@ -405,10 +406,50 @@ namespace TypeCobol.Compiler.Scanner
                 return false;
             }
 
+            /*
+             Replace ==C-Nb==   by ==xxx==
+             X(C-Nb)  -> Ok because parenthesis around
+             X(C-NbX) -> Ko because followed by X
+
+             Replace ==C-Nb)=== by ==xxx==
+             X(C-Nb)  -> Ok because parenthesis before and end of token after
+             X(C-NbX) -> Ko IndexOf don't match
+
+             Replace ==C-Nb==   by ==xxx==
+             X:C-Nb:  -> Ok because semicolon around
+             X:C-NbX: -> Ko because followed by X
+
+             Replace ==C-Nb)==  by ==xxx==
+             X:C-Nb:  -> Ko IndexOf don't match
+             X:C-NbX: -> Ko IndexOf don't match
+
+             Replace ==C-Nb:==  by ==xxx==
+             X:C-Nb:  -> Ok because semicolon before and end of token after
+             X:C-NbX: -> Ko IndexOf don't match
+             */
+
             //PartialCobolWord and PictureCharacterString are text based (and must be rescanned later as a whole)
             if (TokenType == TokenType.PartialCobolWord || TokenType == TokenType.PictureCharacterString)
             {
-                return NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase) >= 0;
+                var normalizedText = NormalizedText;
+                var comparisonNormalizedText = comparisonToken.NormalizedText;
+                var startIndexFound = normalizedText.IndexOf(comparisonNormalizedText, StringComparison.OrdinalIgnoreCase);
+                if (startIndexFound < 0)
+                {
+                    return false;
+                }
+
+                //PartialCobolWord are surrounded with separator for replace, no need to manually check
+                if (comparisonToken.TokenType == TokenType.PartialCobolWord)
+                {
+                    return true;
+                }
+
+                var endIndex = startIndexFound + comparisonNormalizedText.Length - 1;
+
+                //Check if comparisonToken.NormalizedText begin/end with replace separator or is surrounded with replace separator 
+                return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(normalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonNormalizedText[0]))
+                       && (endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonNormalizedText[comparisonNormalizedText.Length - 1]));
             }
 
             //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
