@@ -12,6 +12,6 @@
 
        procedure division.
 
-           move W-Person2::LastName  to W-Person1::LastName.            99999
+           move W-Person2::LastName  to W-Person1::LastName.            999999
 
        END PROGRAM No72ColOverflowCheck.

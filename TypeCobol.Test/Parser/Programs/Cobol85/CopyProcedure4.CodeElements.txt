@@ -1,11 +1,11 @@
 --- Code Elements ---
-[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [29,29+:.]<PeriodSeparator>
+[[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [22,22+:.]<PeriodSeparator>
 - ProgramName = TypeCobol
 - IsInitial = False
 - IsRecursive = False
 - IsCommon = False
 
-[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+[[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
 
 [[MoveStatement]] [12,15:move]<MOVE> --> [22,22:b]<UserDefinedWord>
 
@@ -13,5 +13,5 @@
 
 [[MoveStatement]] [12,15:move]<MOVE> --> [22,22:d]<UserDefinedWord>
 
-[[SentenceEnd]] [8,8+:.]<PeriodSeparator> --> [8,8+:.]<PeriodSeparator>
+[[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
 

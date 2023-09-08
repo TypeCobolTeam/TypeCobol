@@ -1,3 +1,3 @@
-            if MyCondition
-                display "test_copy"
+           if MyCondition
+               display "test_copy"
             end-if

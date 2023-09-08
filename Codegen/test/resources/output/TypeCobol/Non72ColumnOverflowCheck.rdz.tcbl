@@ -39,7 +39,7 @@
        procedure division.
 
       *    move W-Person2::LastName  to W-Person1::LastName.
-           move LastName OF W-Person2  to LastName OF W-Person1.        
+           move LastName OF W-Person2  to LastName OF W-Person1.         
 
        END PROGRAM No72ColOverflowCheck.
 

@@ -13,7 +13,7 @@
 
 [[WhenCondition]] [14,17:WHEN]<WHEN> --> [34,35:20]<IntegerLiteral>{20}
 
-[[WhenCondition]] [14,17:WHEN]<WHEN> --> [71,72:FA]<UserDefinedWord>
+[[WhenCondition]] [14,17:WHEN]<WHEN> --> [67,71:FALSE]<FALSE>
 
 [[WhenCondition]] [14,17:WHEN]<WHEN> --> [23,25+:'a']<AlphanumericLiteral>(',Y,Y){a}
 
