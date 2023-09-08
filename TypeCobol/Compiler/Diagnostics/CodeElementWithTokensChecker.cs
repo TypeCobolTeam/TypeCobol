@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var actualStartingArea = DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(token);
                 if (actualStartingArea != expectedTextAreaType)
                 {
-                    DiagnosticUtils.AddError(codeElement, token.SourceText + $" should begin in {expectedTextAreaType}. It was found in '{actualStartingArea}'.");
+                    DiagnosticUtils.AddError(codeElement, token.SourceText + $" should begin in '{expectedTextAreaType}'. It was found in '{actualStartingArea}'.");
                 }
             }
         }
