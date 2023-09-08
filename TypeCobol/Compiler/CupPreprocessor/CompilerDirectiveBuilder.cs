@@ -255,7 +255,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             void AddError(Token token)
             {
                 Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
-                    "\"LEADING\" and \"TRAILING\" can only be used to replace one single text word. This REPLACE operation cannot be applied and it is discarded.");
+                    "\"LEADING\" and \"TRAILING\" can only be used to replace one single text word. This REPLACE operation cannot be applied and is discarded.");
                 CompilerDirective.AddParsingDiagnostic(error);
             }
         }

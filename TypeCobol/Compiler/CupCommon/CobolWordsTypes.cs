@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.CupCommon
         public List<Token> From { get; }
         public List<Token> By { get; }
 
-        public Token Leading {get; }
+        public Token Leading { get; }
         public Token Trailing { get; }
 
         public CupReplaceOperation(List<Token> from, List<Token> by, Token leading, Token trailing)
