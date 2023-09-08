@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ExecStatement() : base(CodeElementType.ExecStatement, StatementType.ExecStatement)
         { }
-        public override TextAreaType StartingArea => TextAreaType.AreaAOrB;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaAOrB;
         /// <summary>
         /// Secondary compiler used to translate CodeLines
         /// </summary>
@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.CodeElements
     public class ExecStatementText : CodeElement
     {
         public ExecStatementText() : base(CodeElementType.ExecStatementText) { }
-        public override TextAreaType StartingArea => TextAreaType.AreaAOrB;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaAOrB;
         /// <summary>
         /// Source code to be analyzed by the secondary compiler
         /// </summary>

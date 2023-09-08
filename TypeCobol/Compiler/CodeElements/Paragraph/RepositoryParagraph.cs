@@ -30,6 +30,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public List<SymbolDefinitionOrReference> IntrinsicFunctions { get; set; }
 
-        public override TextAreaType StartingArea => TextAreaType.TODO;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 }

@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             this.FormalizedCommentDocumentation = formalizedCommentDocumentation;
         }
-        public override TextAreaType StartingArea => TextAreaType.AreaA;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
 
         /// <summary>
         /// The USING phrase specifies the parameters that a program or method receives

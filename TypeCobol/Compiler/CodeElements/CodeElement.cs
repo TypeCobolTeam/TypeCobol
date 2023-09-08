@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// As most CodeElement must start in area B, the default StartingArea is B
         /// </summary>
-        public virtual TextAreaType StartingArea => TextAreaType.AreaB;
+        public virtual CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaB;
 
         /// <summary>
         /// Describe how the CodeElement is debugged

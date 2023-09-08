@@ -10,6 +10,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public EnvironmentDivisionHeader() : base(CodeElementType.EnvironmentDivisionHeader)
         { }
-        public override TextAreaType StartingArea => TextAreaType.AreaA;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
     }
 }

@@ -12,6 +12,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public FactoryIdentification() : base(CodeElementType.FactoryIdentification)
         { }
-        public override TextAreaType StartingArea => TextAreaType.AreaA;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
     }
 }

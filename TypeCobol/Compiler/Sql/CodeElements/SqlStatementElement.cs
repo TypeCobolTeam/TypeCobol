@@ -44,6 +44,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
         }
 
-        public override TextAreaType StartingArea => TextAreaType.TODO;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 }

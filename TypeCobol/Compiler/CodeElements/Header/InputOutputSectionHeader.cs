@@ -11,6 +11,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public InputOutputSectionHeader() : base(CodeElementType.InputOutputSectionHeader)
         { }
-        public override TextAreaType StartingArea => TextAreaType.TODO;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 }

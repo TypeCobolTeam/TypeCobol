@@ -76,24 +76,12 @@ namespace TypeCobol.Compiler.CodeElements {
         /// </summary>
         public SymbolDefinition DataName { get; set; }
 
-        public override TextAreaType StartingArea
-        {
-            get
+        public override CodeElementStartingAreaType StartingArea =>
+            LevelNumber?.Value switch
             {
-                if (ConsumedTokens == null || LevelNumber == null) //Cannot decide without ConsumedTokens
-                {
-                    return TextAreaType.AreaAOrB;
-                } 
-                else if (LevelNumber.Value == 01 || LevelNumber.Value == 77)
-                {
-                    return TextAreaType.AreaA;
-                }
-                else
-                {
-                    return TextAreaType.AreaAOrB;
-                }
-            }
-        }
+                01 or 77 => CodeElementStartingAreaType.AreaA,
+                _ => CodeElementStartingAreaType.AreaAOrB
+            };
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {

@@ -5,7 +5,7 @@ namespace TypeCobol.Compiler.CodeElements {
     public abstract class CodeElementEnd: CodeElement {
         protected CodeElementEnd(CodeElementType type) : base(type) { }
 
-        public override TextAreaType StartingArea => TextAreaType.TODO;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 
 }

@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ParagraphHeader() : base(CodeElementType.ParagraphHeader)
         { }
-        public override TextAreaType StartingArea => TextAreaType.AreaA;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
 
         /// <summary>
         /// A user-defined word that identifies a paragraph. 

@@ -11,6 +11,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public DeclarativesHeader() : base(CodeElementType.DeclarativesHeader)
         { }
-        public override TextAreaType StartingArea => TextAreaType.TODO;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 }

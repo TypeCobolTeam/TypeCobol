@@ -12,12 +12,13 @@ namespace TypeCobol.Compiler.CodeElements
         public FileDescriptionEntry() : base(CodeElementType.FileDescriptionEntry)
         { }
 
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
+
         /// <summary>
         /// A level indicator, with its descriptive entry, identifies each file in a program. 
         /// Level indicators represent the highest level of any data hierarchy with which they are associated. 
         /// FD is the file description level indicator and SD is the sort-merge file description level indicator.
         /// </summary>
-        public override TextAreaType StartingArea => TextAreaType.AreaA;
         public SyntaxProperty<FileDescriptionType> LevelIndicator { get; set; }
 
         /// <summary>

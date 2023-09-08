@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var expectedStartingArea = codeElement.StartingArea;
             switch (expectedStartingArea)
             {
-                case TextAreaType.AreaA:
+                case CodeElementStartingAreaType.AreaA:
                     //First token must be in AreaA, others on the first line can be in A or B.
                     //On second line, specifications are not clear
 
@@ -54,11 +54,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         codeElement.ConsumedTokens.FirstOrDefault(t => !IsFormalizedOrMultilineCommentToken(t));
                     if (firstMeaningfulToken != null)
                     {
-                        CheckToken(firstMeaningfulToken, expectedStartingArea);
+                        CheckToken(firstMeaningfulToken, TextAreaType.AreaA);
                     }
 
                     break;
-                case TextAreaType.AreaB:
+                case CodeElementStartingAreaType.AreaB:
                     //All tokens must be in AreaB, check every first token of each line
                     var lineNumberToCheck = codeElement.Line;
                     foreach (var token in codeElement.ConsumedTokens.SkipWhile(IsFormalizedOrMultilineCommentToken))
@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             if (token.TokensLine.Type is CobolTextLineType.Source or CobolTextLineType.Continuation
                                 || (token.TokensLine.Type == CobolTextLineType.Debug && token.TokensLine.InitialScanState != null && token.TokensLine.InitialScanState.WithDebuggingMode))
                             {
-                                CheckToken(token, expectedStartingArea);
+                                CheckToken(token, TextAreaType.AreaB);
                             }
                         }
                     }

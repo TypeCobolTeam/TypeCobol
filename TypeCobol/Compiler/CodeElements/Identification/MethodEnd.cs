@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public MethodEnd() : base(CodeElementType.MethodEnd)
         { }
-        public override TextAreaType StartingArea => TextAreaType.AreaA;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
         /// <summary>
         /// method-name
         /// An alphanumeric literal or national literal that contains the name of the

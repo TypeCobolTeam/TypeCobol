@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ObjectComputerParagraph() : base(CodeElementType.ObjectComputerParagraph)
         { }
-        public override TextAreaType StartingArea => TextAreaType.TODO;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
         /// <summary>
         /// computer-name
         /// A system-name. For example: IBM-system

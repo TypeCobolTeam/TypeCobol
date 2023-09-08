@@ -11,6 +11,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ObjectEnd() : base(CodeElementType.ObjectEnd)
         { }
-        public override TextAreaType StartingArea => TextAreaType.AreaA;
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
     }
 }
