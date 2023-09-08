@@ -381,7 +381,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (concatenatedLine.Length > 0)
                 {
                     // Scan the continuation text, and get its last token so far
-                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, firstSourceLine.ColumnsLayout == ColumnsLayout.FreeTextFormat ? ColumnsLayout.FreeTextFormat : ColumnsLayout.CobolReferenceFormatWithoutCommentText);
+                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, firstSourceLine.ColumnsLayout == ColumnsLayout.FreeTextFormat ? ColumnsLayout.FreeTextFormat : ColumnsLayout.CobolReferenceFormatUnlimitedLength);
                     Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
                     Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
@@ -546,7 +546,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // Scan the complete continuation text as a whole
-            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, firstSourceLine.ColumnsLayout == ColumnsLayout.FreeTextFormat ? ColumnsLayout.FreeTextFormat : ColumnsLayout.CobolReferenceFormatWithoutCommentText);
+            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, firstSourceLine.ColumnsLayout == ColumnsLayout.FreeTextFormat ? ColumnsLayout.FreeTextFormat : ColumnsLayout.CobolReferenceFormatUnlimitedLength);
             // Create a BitArray of Multi String Positions based on the length of the concatenated line.
             BitArray? multiStringConcatBitPosition = null;
             if (multiStringConcatPositions.Count > 0)
