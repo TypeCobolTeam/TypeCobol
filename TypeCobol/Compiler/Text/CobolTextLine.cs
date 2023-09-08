@@ -237,7 +237,7 @@ namespace TypeCobol.Compiler.Text
         {
             string line = textLine.Text;
             int lastIndexOfLine = line.Length - 1;
-            int endIndex = !unlimitedLength && lastIndexOfLine > 71 ? 71 : lastIndexOfLine;
+            int maxEndIndex = !unlimitedLength && lastIndexOfLine > 71 ? 71 : lastIndexOfLine;
 
             // Test for free format compiler directives embedded in a reference format file
             int compilerDirectiveIndex = FindFirstCharOfCompilerDirectiveBeforeColumn8(line);
@@ -245,7 +245,7 @@ namespace TypeCobol.Compiler.Text
             {
                 // Free text format line embedded in reference format file
                 indicator = new TextArea(compilerDirectiveIndex, compilerDirectiveIndex - 1);
-                source = new TextArea(compilerDirectiveIndex, endIndex);
+                source = new TextArea(compilerDirectiveIndex, maxEndIndex);
             }
             else
             {
@@ -253,7 +253,7 @@ namespace TypeCobol.Compiler.Text
                 if (lastIndexOfLine >= 7)
                 {
                     indicator = new TextArea(6, 6);
-                    source = new TextArea(7, endIndex);
+                    source = new TextArea(7, maxEndIndex);
                 }
                 else if (lastIndexOfLine == 6)
                 {
