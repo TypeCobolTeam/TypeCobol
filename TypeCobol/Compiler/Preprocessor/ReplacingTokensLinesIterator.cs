@@ -112,7 +112,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     int additionalSpaceRequired = replacedText.Length - originalText.Length;
                     if (CheckTokensLineOverflow(nextToken, additionalSpaceRequired))
                     {
-                        TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText, nextToken.TokensLine.ColumnsLayout);
+                        TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(nextToken.TokensLine.LineIndex, replacedText, nextToken.TokensLine.ColumnsLayout);
                         Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
 
                         nextToken = new ReplacedToken(replacementToken, nextToken);

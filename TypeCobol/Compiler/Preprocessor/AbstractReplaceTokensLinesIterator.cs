@@ -476,7 +476,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, MultilineScanState scanState, TypeCobolOptions scanOptions)
+        private static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, MultilineScanState scanState, TypeCobolOptions scanOptions)
         {
             var textToScan = new string(' ', originalToken.StartIndex) //Keep original spaces before first token
                              + replacedTokenText;
