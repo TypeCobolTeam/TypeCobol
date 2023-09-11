@@ -1,5 +1,5 @@
-Line 7[27,27] <27, Error, Syntax> - Syntax error : "LEADING" and "TRAILING" can only be used to replace one single text word. This REPLACE operation cannot be applied and it is discarded.
-Line 8[55,55] <27, Error, Syntax> - Syntax error : "LEADING" and "TRAILING" can only be used to replace one single text word. This REPLACE operation cannot be applied and it is discarded.
+Line 7[27,27] <27, Error, Syntax> - Syntax error : "LEADING" and "TRAILING" can only be used to replace one single text word. This REPLACE operation cannot be applied and is discarded.
+Line 8[55,55] <27, Error, Syntax> - Syntax error : "LEADING" and "TRAILING" can only be used to replace one single text word. This REPLACE operation cannot be applied and is discarded.
 Line 13[24,31] <27, Error, Syntax> - Syntax error : Missing '(' or ')' in PICTURE string
 Line 16[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
 Line 17[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
