@@ -303,9 +303,13 @@ namespace TypeCobol.Compiler.Scanner
             // Initialize the continuation text with the complete source text of the first source line
             int firstSourceLineIndex = i;
             TokensLine firstSourceLine = continuationLinesGroup[firstSourceLineIndex];
-            string concatenatedLine = firstSourceLine.SourceText;
+            var concatenatedLineLayout = firstSourceLine.ColumnsLayout == ColumnsLayout.FreeTextFormat ? ColumnsLayout.FreeTextFormat : ColumnsLayout.CobolReferenceFormatUnlimitedLength;
+            // Take the line without Comment TextArea
+            string concatenatedLine =   (firstSourceLine.SequenceNumberText ?? string.Empty)
+                                      + (firstSourceLine.Indicator.IsMissing ? string.Empty : firstSourceLine.IndicatorChar)
+                                      + firstSourceLine.SourceText;
             textAreasForOriginalLinesInConcatenatedLine[firstSourceLineIndex] = new TextArea(0, concatenatedLine.Length -1);
-            startIndexForTextAreasInOriginalLines[firstSourceLineIndex] = firstSourceLine.Source.StartIndex;
+            startIndexForTextAreasInOriginalLines[firstSourceLineIndex] = 0;
             offsetForLiteralContinuationInOriginalLines[firstSourceLineIndex] = 0;
 
             // Find the index of the last ContinuationLine in the group
@@ -380,7 +384,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (concatenatedLine.Length > 0)
                 {
                     // Scan the continuation text, and get its last token so far
-                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, ColumnsLayout.FreeTextFormat);
+                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, concatenatedLineLayout);
                     Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
                     Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
@@ -470,7 +474,7 @@ namespace TypeCobol.Compiler.Scanner
                             if (lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                             {
                                 bool continuationStartsWithTwoDelimiters = ((startOfContinuationIndex + 1) <= lastIndex && line[startOfContinuationIndex + 1] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
-                                bool previousDelimiterIsNotAtEnd = (lastTokenOfConcatenatedLineSoFar.EndColumn + CobolFormatAreas.Indicator) != CobolFormatAreas.End_B;
+                                bool previousDelimiterIsNotAtEnd = lastTokenOfConcatenatedLineSoFar.EndColumn != (int) CobolFormatAreas.End_B;
 
                                 if (format == ColumnsLayout.CobolReferenceFormat ? continuationStartsWithTwoDelimiters && previousDelimiterIsNotAtEnd : !continuationStartsWithTwoDelimiters)
                                 {
@@ -545,7 +549,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // Scan the complete continuation text as a whole
-            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, ColumnsLayout.FreeTextFormat);
+            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine, concatenatedLineLayout);
             // Create a BitArray of Multi String Positions based on the length of the concatenated line.
             BitArray? multiStringConcatBitPosition = null;
             if (multiStringConcatPositions.Count > 0)

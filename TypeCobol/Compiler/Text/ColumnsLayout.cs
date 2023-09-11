@@ -16,6 +16,11 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         CobolReferenceFormat,
         /// <summary>
+        /// Like CobolReferenceFormat but with unlimited line length.
+        /// This column layout should only be used by continuation line
+        /// </summary>
+        CobolReferenceFormatUnlimitedLength,
+        /// <summary>
         /// Free-form format
         /// There is not limit on the size a source line.
         /// The first seven characters of each line are considered part of the normal source line and may contain COBOL source code.

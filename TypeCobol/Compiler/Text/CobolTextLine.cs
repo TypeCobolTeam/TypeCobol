@@ -61,7 +61,11 @@ namespace TypeCobol.Compiler.Text
             TextArea source;
             if (columnsLayout == ColumnsLayout.CobolReferenceFormat)
             {
-                MapVariableLengthLineWithReferenceFormat(out indicator, out source);
+                MapVariableLengthLineWithReferenceFormat(false, out indicator, out source);
+            }
+            else if (columnsLayout == ColumnsLayout.CobolReferenceFormatUnlimitedLength)
+            {
+                MapVariableLengthLineWithReferenceFormat(true, out indicator, out source);
             }
             // - free format and unlimited line length
             else
@@ -229,10 +233,11 @@ namespace TypeCobol.Compiler.Text
 
         // --- Cobol text line scanner
 
-        private void MapVariableLengthLineWithReferenceFormat(out TextArea indicator, out TextArea source)
+        private void MapVariableLengthLineWithReferenceFormat(bool unlimitedLength, out TextArea indicator, out TextArea source)
         {
             string line = textLine.Text;
             int lastIndexOfLine = line.Length - 1;
+            int maxEndIndex = !unlimitedLength && lastIndexOfLine > 71 ? 71 : lastIndexOfLine;
 
             // Test for free format compiler directives embedded in a reference format file
             int compilerDirectiveIndex = FindFirstCharOfCompilerDirectiveBeforeColumn8(line);
@@ -240,7 +245,7 @@ namespace TypeCobol.Compiler.Text
             {
                 // Free text format line embedded in reference format file
                 indicator = new TextArea(compilerDirectiveIndex, compilerDirectiveIndex - 1);
-                source = new TextArea(compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                source = new TextArea(compilerDirectiveIndex, maxEndIndex);
             }
             else
             {
@@ -248,7 +253,7 @@ namespace TypeCobol.Compiler.Text
                 if (lastIndexOfLine >= 7)
                 {
                     indicator = new TextArea(6, 6);
-                    source = new TextArea(7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                    source = new TextArea(7, maxEndIndex);
                 }
                 else if (lastIndexOfLine == 6)
                 {
