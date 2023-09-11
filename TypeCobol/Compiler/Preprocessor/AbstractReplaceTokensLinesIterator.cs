@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
@@ -129,6 +130,11 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 // Build text to scan from accumulated tokens
                 var line = new StringBuilder();
+                if (_returnedTokensForCurrentLine.Count > 0)
+                {
+                    //Keep original spaces before first token
+                    line.Append(new string(' ', _returnedTokensForCurrentLine[0].StartIndex));
+                }
                 for (; tokenIndex < _returnedTokensForCurrentLine.Count; tokenIndex++)
                 {
                     line.Append(_returnedTokensForCurrentLine[tokenIndex].Text);
@@ -136,7 +142,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
 
                 // Scan
-                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(0, line.ToString(), ColumnsLayout.FreeTextFormat);
+                var virtualLine = TokensLine.CreateVirtualLineForInsertedToken(_currentLine.LineIndex, line.ToString(), _currentLine.ColumnsLayout);
                 Scanner.Scanner.ScanTokensLine(virtualLine, initialScanState, _parentIterator.CompilerOptions, new List<RemarksDirective.TextNameVariation>());
 
                 // Update state variables
@@ -223,7 +229,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 Token nextToken = check.NextToken;
                 _currentPosition.ReplaceOperations = check.UpdatedReplaceOperations;
 
-                if (!check.ApplyReplace)
+                if (!check.HasReplaceOperations)
                 {
                     _currentPosition.CurrentToken = nextToken;
                     _scanStateTracker.AccumulateToken(nextToken);
@@ -288,10 +294,10 @@ namespace TypeCobol.Compiler.Preprocessor
 
         protected struct CheckTokenStatus
         {
-            //TODO wait to rewrite AutoReplace iterator with this class to see if this bool is useful or not
-            public bool ApplyReplace;
             public Token NextToken;
             public IReadOnlyList<ReplaceOperation> UpdatedReplaceOperations;
+
+            public bool HasReplaceOperations => UpdatedReplaceOperations != null && UpdatedReplaceOperations.Count > 0;
         }
 
         protected abstract CheckTokenStatus CheckNextTokenBeforeReplace(IReadOnlyList<ReplaceOperation> currentReplaceOperations);
@@ -470,15 +476,17 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, MultilineScanState scanState, TypeCobolOptions scanOptions)
+        private static Token GenerateReplacementToken(Token originalToken, string replacedTokenText, MultilineScanState scanState, TypeCobolOptions scanOptions)
         {
-            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedTokenText, originalToken.TokensLine.ColumnsLayout);
+            var textToScan = new string(' ', originalToken.StartIndex) //Keep original spaces before first token
+                             + replacedTokenText;
+            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(originalToken.TokensLine.LineIndex, textToScan, originalToken.TokensLine.ColumnsLayout);
             tempTokensLine.InitializeScanState(scanState);
 
             Token generatedToken;
             if (replacedTokenText.Length > 0)
             {
-                Scanner.Scanner tempScanner = new Scanner.Scanner(replacedTokenText, 0, replacedTokenText.Length - 1, tempTokensLine, scanOptions);
+                Scanner.Scanner tempScanner = new Scanner.Scanner(textToScan, originalToken.StartIndex, textToScan.Length - 1, tempTokensLine, scanOptions);
                 generatedToken = tempScanner.GetNextToken();
             }
             else
@@ -488,6 +496,11 @@ namespace TypeCobol.Compiler.Preprocessor
             }
 
             // TODO scanning may have produced errors, they are lost here.
+            //It may be tricky to report these Diagnostics as they are created on a virtual line with replaced tokens
+            //They could have no real meaning on the original source code for the end user
+            //Idea : prefix diagnostic message with "During Replace operation" or something like this.
+            //For now just check if don't actually lose Diagnostics
+            Debug.Assert(tempTokensLine.ScannerDiagnostics.Count == 0);
 
             return generatedToken;
         }
@@ -507,6 +520,8 @@ namespace TypeCobol.Compiler.Preprocessor
                 int i = 0;
                 int[] columns = new int[replacementTokens.Length + 1];
                 StringBuilder sb = new StringBuilder();
+                //Keep original spaces before first token
+                sb.Append(new string(' ', firstOriginalToken.StartIndex));
                 foreach (var t in replacementTokens)
                 {
                     columns[i++] = sb.Length;
@@ -517,10 +532,11 @@ namespace TypeCobol.Compiler.Preprocessor
                 int startTokIdx = 0;
                 int endTokIdx;
                 List<T> newReplacedTokens = new List<T>(replacementTokens.Length);
-                TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText, firstOriginalToken.TokensLine.ColumnsLayout);
+
+                TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstOriginalToken.TokensLine.LineIndex, tokenText, firstOriginalToken.TokensLine.ColumnsLayout);
                 var initialScanState = _scanStateTracker.GetCurrentScanState() ?? firstOriginalToken.TokensLine.InitialScanState;
                 tempTokensLine.InitializeScanState(initialScanState);
-                var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, CompilerOptions);
+                var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, firstOriginalToken.StartIndex, tokenText.Length - 1, tempTokensLine, CompilerOptions);
                 Token rescannedToken;
                 List<Token> tokens = new List<Token>((replacementTokens.Length / 2) + 1);
                 while ((rescannedToken = tempScanner.GetNextToken()) != null)
