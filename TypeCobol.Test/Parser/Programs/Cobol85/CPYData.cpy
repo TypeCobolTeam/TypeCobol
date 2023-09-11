@@ -1,1 +1,1 @@
-﻿01 myVar pic X.
+﻿       01 myVar pic X.

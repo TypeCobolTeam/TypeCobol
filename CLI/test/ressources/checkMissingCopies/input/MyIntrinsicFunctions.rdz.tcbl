@@ -11,6 +11,6 @@
           input msg pic X(80)
          .
        PROCEDURE DIVISION.
-          CONTINUE.
+           CONTINUE.
        END-DECLARE.
        END PROGRAM MyIntrinsicFunctions.

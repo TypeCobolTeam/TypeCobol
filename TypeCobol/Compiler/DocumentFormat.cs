@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler
@@ -55,5 +56,18 @@ namespace TypeCobol.Compiler
         // Retrieving the 1252 codepage encoding works here because of provider registered by IBMCodePages static constructor
         public static DocumentFormat FreeTextFormat = new DocumentFormat(Encoding.GetEncoding(1252), EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
         public static DocumentFormat FreeUTF8Format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+
+        /// <summary>
+        /// Used to retrieve TextArea type in Cobol reference format from token position
+        ///
+        /// </summary>
+        public static TextAreaType GetTextAreaTypeInCobolReferenceFormat(Token token)
+        {
+            if (token.Column < 7) return TextAreaType.SequenceNumber;
+            else if (token.Column == 7) return TextAreaType.Indicator;
+            else if (token.Column is > 7 and < 12) return TextAreaType.AreaA;
+            else if (token.Column is > 11 and < 73) return TextAreaType.AreaB;
+            else return TextAreaType.Comment;
+        }
     }
 }

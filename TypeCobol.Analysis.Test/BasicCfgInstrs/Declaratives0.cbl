@@ -21,7 +21,7 @@
       DX.  EXIT.
       DEND DECLARATIVES.
       
-       DISPLAY "TOTO".
+             DISPLAY "TOTO".
       
        END PROGRAM DeclarativesTest.
       

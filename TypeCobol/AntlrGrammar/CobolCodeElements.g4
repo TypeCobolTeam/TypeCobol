@@ -1051,6 +1051,8 @@ xmlSchemaClause:
 // the object-oriented classes that are intended to be referenced in that program or
 // class definition. Optionally, the REPOSITORY paragraph defines associations
 // between class-names and external class-names.
+// It also allows declaration of intrinsic function names that may be used without
+// specifying the keyword FUNCTION.
 
 // p122: See the general rules of the REPOSITORY paragraph.
 // 1. All referenced class-names must have an entry in the repository paragraph of
@@ -1112,12 +1114,24 @@ xmlSchemaClause:
 // Class Employee is "com.acme.Employee" 
 // Class Department is "jobjectArray:com.acme.Employee". 
 
+// ALL
+// If ALL is specified, it is as if all supported Enterprise COBOL intrinsic function names were specified.
+
+// IntrinsicFunctionName
+// The name of a supported Enterprise COBOL intrinsic function.
+
 repositoryParagraph: 
     REPOSITORY PeriodSeparator 
-    ( repositoryClassDeclaration+ PeriodSeparator )?;
+    ( repositoryDeclaration+ PeriodSeparator )?;
+
+repositoryDeclaration:
+    repositoryClassDeclaration | repositoryFunctionDeclaration;
 
 repositoryClassDeclaration:
-	CLASS classNameDefOrRef (IS? externalClassNameDefOrRef)?;
+    CLASS classNameDefOrRef (IS? externalClassNameDefOrRef)?;
+
+repositoryFunctionDeclaration:
+    FUNCTION (IntrinsicFunctionName+ | ALL) ({ string.Equals(CurrentToken.Text, "INTRINSIC", System.StringComparison.OrdinalIgnoreCase) }? KeywordINTRINSIC=UserDefinedWord);
 
 // p122: java-array-class-reference
 // A reference that enables a COBOL program to access a class that represents

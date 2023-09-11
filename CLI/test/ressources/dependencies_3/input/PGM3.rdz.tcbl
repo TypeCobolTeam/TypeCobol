@@ -23,26 +23,26 @@
 
       * __________________________________________________
       * KO, MyPublicProcedure is not an intrinsic procedure
-           CALL MyPublicProcedure
+             CALL MyPublicProcedure
                     INPUT      somedate 
       * __________________________________________________
       * OK public procedure declared in "dependencies" file
-           CALL Callee::MyPublicProcedure
+             CALL Callee::MyPublicProcedure
                     INPUT      somedate
 	   
       * __________________________________________________
       *procedure declared in this program
-           CALL PGM3::check INPUT      somedate
+            CALL PGM3::check INPUT      somedate
 
       *procedure declared in this program
-          CALL check         INPUT      somedate
+            CALL check         INPUT      somedate
 
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call dump input mymessage
+            call dump input mymessage
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call MyIntrinsicFunctions::dump input mymessage
+            call MyIntrinsicFunctions::dump input mymessage
         .
        END PROGRAM PGM3.
 

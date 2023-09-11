@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,6 +11,8 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public FileDescriptionEntry() : base(CodeElementType.FileDescriptionEntry)
         { }
+
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
 
         /// <summary>
         /// A level indicator, with its descriptive entry, identifies each file in a program. 

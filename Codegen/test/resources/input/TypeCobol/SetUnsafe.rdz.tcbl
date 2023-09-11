@@ -18,10 +18,10 @@
        PROCEDURE DIVISION.
 
 
-       SET  ADDRESS OF L-PICVar TO myPointer.
-       SET  MyPointer TO ADDRESS OF W-PicVar.
-       SET  UNSAFE ADDRESS OF L-Date TO MyPointer.
-       SET  W-myDate TO ADDRESS OF L-Date.
+           SET  ADDRESS OF L-PICVar TO myPointer.
+           SET  MyPointer TO ADDRESS OF W-PicVar.
+           SET  UNSAFE ADDRESS OF L-Date TO MyPointer.
+           SET  W-myDate TO ADDRESS OF L-Date.
 
            .
 

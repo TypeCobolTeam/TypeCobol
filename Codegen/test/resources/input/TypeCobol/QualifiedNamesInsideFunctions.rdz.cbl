@@ -24,10 +24,10 @@
        PROCEDURE DIVISION.
 
       *Problem with this line in codegen
-       COMPUTE LK-RETENTION = FUNCTION MAX(Event::Periodicity(ALL)).
-       DISPLAY LK-RETENTION.
+           COMPUTE LK-RETENTION = FUNCTION MAX(Event::Periodicity(ALL)).
+           DISPLAY LK-RETENTION.
 
-       call 'subPgm' using AccountOwner::lastName
+           call 'subPgm' using AccountOwner::lastName
                             Group1::BirthDate
                             AccountOwner::BirthDate::YYYY.
 

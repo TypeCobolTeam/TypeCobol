@@ -1,10 +1,10 @@
 --- Diagnostics ---
-Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 1 : Semantic error: Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord> in COPY CPYProc
-Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 1 : Semantic error: Symbol b is not referenced OffendingSymbol=[11,11:b]<UserDefinedWord> in COPY CPYProc
-Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 2 : Semantic error: Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord> in COPY CPYProc
-Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 2 : Semantic error: Symbol c is not referenced OffendingSymbol=[11,11:c]<UserDefinedWord> in COPY CPYProc
-Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 3 : Semantic error: Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord> in COPY CPYProc
-Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 3 : Semantic error: Symbol d is not referenced OffendingSymbol=[11,11:d]<UserDefinedWord> in COPY CPYProc
+Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 1 : Semantic error: Symbol a is not referenced OffendingSymbol=[17,17:a]<UserDefinedWord> in COPY CPYProc
+Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 1 : Semantic error: Symbol b is not referenced OffendingSymbol=[22,22:b]<UserDefinedWord> in COPY CPYProc
+Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 2 : Semantic error: Symbol a is not referenced OffendingSymbol=[17,17:a]<UserDefinedWord> in COPY CPYProc
+Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 2 : Semantic error: Symbol c is not referenced OffendingSymbol=[22,22:c]<UserDefinedWord> in COPY CPYProc
+Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 3 : Semantic error: Symbol a is not referenced OffendingSymbol=[17,17:a]<UserDefinedWord> in COPY CPYProc
+Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 3 : Semantic error: Symbol d is not referenced OffendingSymbol=[22,22:d]<UserDefinedWord> in COPY CPYProc
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False

@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeElements {
@@ -75,8 +76,16 @@ namespace TypeCobol.Compiler.CodeElements {
         /// </summary>
         public SymbolDefinition DataName { get; set; }
 
-        public override bool VisitCodeElement(IASTVisitor astVisitor) {
-            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this) 
+        public override CodeElementStartingAreaType StartingArea =>
+            LevelNumber?.Value switch
+            {
+                01 or 77 => CodeElementStartingAreaType.AreaA,
+                _ => CodeElementStartingAreaType.AreaAOrB
+            };
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, LevelNumber, DataName);
         }
 

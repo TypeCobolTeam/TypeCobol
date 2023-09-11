@@ -142,20 +142,20 @@
 
 
       *OK  call check of PGM1
-      *   call check input somedate
-          CALL 'a0508f35' USING
+      *    call check input somedate
+           CALL 'a0508f35' USING
                                  somedate
            end-call
-                                   
+                                    
       *OK 
-      *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+      *    call PGM1::check input somedate
+           CALL 'a0508f35' USING
                                  somedate
            end-call
-                                         
+                                          
       *OK 
-      *   call Callee::check input somedate
-          
+      *    call Callee::check input somedate
+           
            IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -164,10 +164,10 @@
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
-                                           
+                                            
       *OK 
-      *   call Callee::check2 input somedate
-          
+      *    call Callee::check2 input somedate
+           
            IF ADDRESS OF TC-Callee-d0a59141-Item = NULL
              OR TC-Callee-d0a59141-Idt not = 'd0a59141'
                PERFORM TC-LOAD-POINTERS-Callee
@@ -176,7 +176,7 @@
            CALL TC-Callee-d0a59141 USING
                                  somedate
            end-call
-                                            
+                                             
         .
       *=================================================================
        TC-INITIALIZATIONS.

@@ -8,7 +8,7 @@
        INIT-LIBRARY.
            Continue.
       *Must resolve dependency function acepting alphanumeric
-       call DPDCY01::FunTest input alpha.
+            call DPDCY01::FunTest input alpha.
       *Must resolve dependency function acepting Type01
-       call DPDCY01::FunTest input myVar::subType.
+            call DPDCY01::FunTest input myVar::subType.
        end program PGMTEST.

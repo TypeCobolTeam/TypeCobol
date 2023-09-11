@@ -344,36 +344,36 @@ namespace TypeCobol.Test.Utils
             var currentLine = 0;
             var currentCol = 1;
 
-            foreach (var processedTokens in compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
+            foreach (var processedToken in compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
             {
-                if (processedTokens is ImportedToken)
+                if (processedToken is ImportedToken)
                 {
                     continue;//TODO Handle token from COPY
                              //Token from COPY require to expand the COPY correctly.
                              //Then line number in the output document will not be synced with line number in original document
                 }
 
-                if (currentLine < processedTokens.Line)
+                if (currentLine < processedToken.Line)
                 {
                     result.AppendLine();
                     //Append lines without tokens
-                    while (currentLine < processedTokens.Line - 1)
+                    while (currentLine < processedToken.Line - 1)
                     {
                         result.AppendLine(compilationResult.ProcessedTokensDocumentSnapshot.Lines[currentLine].Text);
                         currentLine++;
                     }
 
-                    currentLine = processedTokens.Line;
+                    currentLine = processedToken.Line;
                     currentCol = 1;
                 }
 
-                var count = processedTokens.Column - currentCol;
-                if(count > 0) 
+                var count = processedToken.Column - currentCol;
+                if (count > 0)
                 {
                    result.Append(new string(' ', count));
                 }
-                result.Append(processedTokens.Text);
-                currentCol = processedTokens.Column + processedTokens.Text.Length;
+                result.Append(processedToken.Text);
+                currentCol = processedToken.Column + processedToken.Text.Length;
             }
 
             return result.ToString();

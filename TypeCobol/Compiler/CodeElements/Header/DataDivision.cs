@@ -1,15 +1,19 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using TypeCobol.Compiler.Text;
+
+namespace TypeCobol.Compiler.CodeElements {
 
 /// <summary>
 /// The DATA DIVISION of a COBOL source program describes, in a structured manner, all the data to be processed by the program. 
 /// </summary>
 public class DataDivisionHeader: CodeElement {
     public DataDivisionHeader() : base(CodeElementType.DataDivisionHeader) { }
+    public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
 }
 
 
 public abstract class DataSectionHeader: CodeElement {
-    protected DataSectionHeader(CodeElementType type): base(type) { }
+    protected DataSectionHeader(CodeElementType type) : base(type) { }
+    public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
 }
 
 /// <summary>
@@ -50,7 +54,5 @@ public class LocalStorageSectionHeader: DataSectionHeader {
 public class LinkageSectionHeader: DataSectionHeader {
     public LinkageSectionHeader() : base(CodeElementType.LinkageSectionHeader) { }
 }
-
-
 
 } // end of namespace TypeCobol.Compiler.CodeElements

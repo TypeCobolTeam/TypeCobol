@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -15,7 +16,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public MethodIdentification() : base(CodeElementType.MethodIdentification)
         { }
-
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
         /// <summary>
         /// method-name
         /// An alphanumeric literal or national literal that contains the name of the

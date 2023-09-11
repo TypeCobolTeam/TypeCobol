@@ -615,27 +615,56 @@ namespace TypeCobol.Compiler.Parser
 
         // --- REPOSITORY PARAGRAPH ---
 
-        public override void EnterRepositoryParagraph(CodeElementsParser.RepositoryParagraphContext context) {
+        public override void EnterRepositoryParagraph(CodeElementsParser.RepositoryParagraphContext context)
+        {
             var paragraph = new RepositoryParagraph();
-            if(context.repositoryClassDeclaration() != null &  context.repositoryClassDeclaration().Length > 0) {
-                if(paragraph.ClassNames == null) {
-                    paragraph.ClassNames = new Dictionary<SymbolDefinitionOrReference, SymbolDefinitionOrReference>();
-                }
-                foreach(var c in context.repositoryClassDeclaration()) {
-                    var className = _cobolWordsBuilder.CreateClassNameDefOrRef(c.classNameDefOrRef());
-                    SymbolDefinitionOrReference externalClassName = null;
-                    if(c.externalClassNameDefOrRef() != null) {
-                        externalClassName = _cobolWordsBuilder.CreateExternalClassNameDefOrRef(c.externalClassNameDefOrRef());
+            if (context.repositoryDeclaration() != null)
+            {
+                var repositoryDeclarations = context.repositoryDeclaration();
+                foreach (var repositoryDeclaration in repositoryDeclarations)
+                {
+                    if (repositoryDeclaration.repositoryClassDeclaration() != null)
+                    {
+                        AddClassDeclaration(repositoryDeclaration.repositoryClassDeclaration());
                     }
-                    paragraph.ClassNames.Add(className, externalClassName);
+                    else if (repositoryDeclaration.repositoryFunctionDeclaration() != null)
+                    {
+                        AddFunctionDeclaration(repositoryDeclaration.repositoryFunctionDeclaration());
+                    }
                 }
             }
 
             Context = context;
             CodeElement = paragraph;
+            RepositoryParagraphChecker.OnCodeElement(paragraph, context);
+
+            void AddClassDeclaration(CodeElementsParser.RepositoryClassDeclarationContext context)
+            {
+                var className = _cobolWordsBuilder.CreateClassNameDefOrRef(context.classNameDefOrRef());
+
+                SymbolDefinitionOrReference externalClassName = null;
+                if (context.externalClassNameDefOrRef() != null)
+                {
+                    externalClassName = _cobolWordsBuilder.CreateExternalClassNameDefOrRef(context.externalClassNameDefOrRef());
+                }
+
+                paragraph.ClassNames ??= new Dictionary<SymbolDefinitionOrReference, SymbolDefinitionOrReference>();
+                paragraph.ClassNames.Add(className, externalClassName);
+            }
+
+            void AddFunctionDeclaration(CodeElementsParser.RepositoryFunctionDeclarationContext context)
+            {
+                if (context.ALL() != null)
+                {
+                    paragraph.IsAllIntrinsicFunctions = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.ALL()));
+                }
+                else if (context.IntrinsicFunctionName() != null)
+                {
+                    paragraph.IntrinsicFunctions ??= new List<SymbolDefinitionOrReference>();
+                    paragraph.IntrinsicFunctions.AddRange(context.IntrinsicFunctionName().Select(f => _cobolWordsBuilder.CreateSymbolDefinitionOrReference(f, SymbolType.IntrinsicFunctionName)));
+                }
+            }
         }
-
-
 
          // INPUT-OUTPUT SECTION
         //////////////////////////

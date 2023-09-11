@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,5 +11,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public IOControlParagraphHeader() : base(CodeElementType.IOControlParagraphHeader)
         { }
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 }

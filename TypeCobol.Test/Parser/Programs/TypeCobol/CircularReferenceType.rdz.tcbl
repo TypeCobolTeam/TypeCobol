@@ -88,11 +88,12 @@
 
        01 MyVar type A5.
        procedure division.
-          move MyVar::A5var::B5Var::C5Var to MyVar::A5var::B5Var::C5Var
+           move MyVar::A5var::B5Var::C5Var to MyVar::A5var::B5Var::C5Var
  
-      *KO, A5Var must not be a valid child of C5Var as it's a circular reference
-          move MyVar::A5var::B5Var::C5Var::A5Var 
+      *KO, A5Var must not be a valid child of C5Var as it's a circular
+      * reference
+           move MyVar::A5var::B5Var::C5Var::A5Var 
             to MyVar::A5var::B5Var::C5Var::A5Var
-          .
+           .
        end-declare.
        END PROGRAM CircularRefCheck.

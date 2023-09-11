@@ -42,7 +42,7 @@
            .
                           
        INIT-LIBRARY.
-          EXIT.
+           EXIT.
       *DECLARE PROCEDURE InFct PUBLIC
       *        INPUT     d PIC X(9)
       *        .
@@ -78,10 +78,10 @@
       *      S
            EVALUATE S OF GRP2 OF 
              GRP
-          WHEN 'CRE'
+           WHEN 'CRE'
            continue
-          WHEN 'RCM'
+           WHEN 'RCM'
            continue
-          WHEN OTHER
+           WHEN OTHER
            continue.
        END PROGRAM af117577.

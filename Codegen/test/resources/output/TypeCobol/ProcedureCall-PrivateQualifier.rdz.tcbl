@@ -61,17 +61,17 @@
 
 
       *OK  call check of PGM1
-      *   call check input somedate
-          CALL 'a0508f35' USING
+      *    call check input somedate
+           CALL 'a0508f35' USING
                                  somedate
            end-call
-                                   
+                                    
       *OK 
-      *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+      *    call PGM1::check input somedate
+           CALL 'a0508f35' USING
                                  somedate
            end-call
-                                         
+                                          
           .
 
        END PROGRAM PGM1.

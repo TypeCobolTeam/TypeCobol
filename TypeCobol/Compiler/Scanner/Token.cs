@@ -428,10 +428,13 @@ namespace TypeCobol.Compiler.Scanner
              X:C-NbX: -> Ko IndexOf don't match
              */
 
+            var normalizedText = NormalizedText;
+            var comparisonNormalizedText = comparisonToken.NormalizedText;
+
             //PartialCobolWord and PictureCharacterString are text based (and must be rescanned later as a whole)
             if (TokenType == TokenType.PartialCobolWord || TokenType == TokenType.PictureCharacterString)
             {
-                var startIndexFound = NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase);
+                var startIndexFound = normalizedText.IndexOf(comparisonNormalizedText, StringComparison.OrdinalIgnoreCase);
                 if (startIndexFound < 0)
                 {
                     return false;
@@ -443,29 +446,29 @@ namespace TypeCobol.Compiler.Scanner
                     return true;
                 }
 
-                var endIndex = startIndexFound + comparisonToken.NormalizedText.Length - 1;
+                var endIndex = startIndexFound + comparisonNormalizedText.Length - 1;
 
                 if (leading)
                 {
                     //Check only char before
-                    return startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]);
+                    return startIndexFound == 0 || CobolChar.IsReplaceSeparator(normalizedText[startIndexFound - 1]);
                 } 
                 else if (trailing)
                 {
-                    return endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]);
+                    return endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]);
                 }
                 else
                 {
                     //Check if comparisonToken.NormalizedText begin/end with replace separator or is surrounded with replace separator 
-                    return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[0]))
-                           && (endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonToken.NormalizedText[comparisonToken.NormalizedText.Length - 1]));
+                    return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(normalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonNormalizedText[0]))
+                           && (endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonNormalizedText[comparisonNormalizedText.Length - 1]));
                 }
             }
 
             //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
             if (this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable())
             {
-                var startIndexFound = NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase);
+                var startIndexFound = normalizedText.IndexOf(comparisonNormalizedText, StringComparison.OrdinalIgnoreCase);
                 if (startIndexFound < 0)
                 {
                     return false;
@@ -477,16 +480,16 @@ namespace TypeCobol.Compiler.Scanner
                     return true;
                 }
 
-                var endIndex = startIndexFound + comparisonToken.NormalizedText.Length - 1;
+                var endIndex = startIndexFound + comparisonNormalizedText.Length - 1;
 
                 if (leading)
                 {
                     //Check only char before
-                    return startIndexFound == 0 || CobolChar.IsReplaceSeparator(NormalizedText[startIndexFound - 1]);
+                    return startIndexFound == 0 || CobolChar.IsReplaceSeparator(normalizedText[startIndexFound - 1]);
                 }
                 else if (trailing)
                 {
-                    return endIndex >= NormalizedText.Length - 1 || CobolChar.IsReplaceSeparator(NormalizedText[endIndex + 1]);
+                    return endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]);
                 }
 
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
