@@ -5,7 +5,7 @@
       
        procedure division.
        INIT-LIBRARY.
-          EXIT.
+           EXIT.
        DECLARE PROCEDURE InFct PUBLIC
                INPUT     d PIC X(9)
                .
@@ -19,11 +19,11 @@
        PROCEDURE DIVISION.
            EVALUATE GRP::GRP2::
              S
-          WHEN 'CRE'
+           WHEN 'CRE'
            continue
-          WHEN 'RCM'
+           WHEN 'RCM'
            continue
-          WHEN OTHER
+           WHEN OTHER
            continue.
       
        END-DECLARE

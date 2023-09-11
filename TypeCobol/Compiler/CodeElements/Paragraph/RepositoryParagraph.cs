@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -28,5 +29,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Optionally, the REPOSITORY paragraph allows to declare one or several intrinsic functions
         /// </summary>
         public List<SymbolDefinitionOrReference> IntrinsicFunctions { get; set; }
+
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 }

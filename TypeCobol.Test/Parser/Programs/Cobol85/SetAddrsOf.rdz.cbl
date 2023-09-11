@@ -20,34 +20,34 @@
 
 
       * OF for now but should be KO
-       SET LENGTH OF W-mydate2 to ADDRESS OF W-mydate.
+              SET LENGTH OF W-mydate2 to ADDRESS OF W-mydate.
 
       * Create error because it's in working-storage
-       SET ADDRESS OF W-mydate2 to ADDRESS OF W-mydate.
+              SET ADDRESS OF W-mydate2 to ADDRESS OF W-mydate.
       * Create error because it's in working-storage
-       SET ADDRESS OF W-myDate TO ADDRESS OF W-PicVar
+              SET ADDRESS OF W-myDate TO ADDRESS OF W-PicVar
       * Create error because it's in working-storage
-       SET ADDRESS OF W-PicVar TO ADDRESS OF W-mydate.
+              SET ADDRESS OF W-PicVar TO ADDRESS OF W-mydate.
 
 
       * Ok, because the left part of SET use a linkage variable
-       SET ADDRESS OF mydate2 to ADDRESS OF W-mydate.
+              SET ADDRESS OF mydate2 to ADDRESS OF W-mydate.
       * Ok, because the left part of SET use a linkage variable
-       SET ADDRESS OF myDate TO ADDRESS OF W-PicVar
+              SET ADDRESS OF myDate TO ADDRESS OF W-PicVar
       * Ok, because the left part of SET use a linkage variable
-       SET ADDRESS OF PicVar TO ADDRESS OF W-mydate.
+              SET ADDRESS OF PicVar TO ADDRESS OF W-mydate.
 
 
       * Should not create error
-       SET ADDRESS OF mydate2 to ADDRESS OF mydate.
+              SET ADDRESS OF mydate2 to ADDRESS OF mydate.
       * Should not create error
-       SET ADDRESS OF myDate TO ADDRESS OF PicVar
+              SET ADDRESS OF myDate TO ADDRESS OF PicVar
       * No error
-       SET ADDRESS OF PicVar TO ADDRESS OF mydate.
+              SET ADDRESS OF PicVar TO ADDRESS OF mydate.
       *OK
-       SET ADDRESS OF myDate TO W-PointerVar.
+              SET ADDRESS OF myDate TO W-PointerVar.
       *OK
-       SET W-PointerVar TO ADDRESS OF myDate.
+              SET W-PointerVar TO ADDRESS OF myDate.
 
            .
 

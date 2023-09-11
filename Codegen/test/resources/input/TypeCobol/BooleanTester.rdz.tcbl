@@ -22,29 +22,29 @@
        DECLARE PROCEDURE MyProc PRIVATE
            INPUT    NumericInput PIC S9(9) COMP-5.
        END-DECLARE.
-
-
-       CALL MyProc INPUT ADDRESS OF MyBool.
-       CALL MyProc INPUT LENGTH OF MyBool.
-
-       MOVE My88Level TO My88Level.
-       MOVE myBool TO myBool. 
-       MOVE MyGroup::levelBool TO myBool. 
-       IF myBool = myBool
-         continue
-       END-IF.
-       IF ADDRESS OF myBool = "AnyAlpha"
-         continue
-       END-IF.
-       SET myBool TO TRUE.
-       SET myBool TO FALSE.
-
-        EVALUATE TRUE
-         WHEN myBool CONTINUE
-        END-EVALUATE
-
-          display var2 "rtzerz" var3 "zerzerze"
-             'zrzr' var2
+      
+      
+            CALL MyProc INPUT ADDRESS OF MyBool.
+            CALL MyProc INPUT LENGTH OF MyBool.
+      
+             MOVE My88Level TO My88Level.
+             MOVE myBool TO myBool.
+             MOVE MyGroup::levelBool TO myBool.
+             IF myBool = myBool
+               continue
+             END-IF.
+             IF ADDRESS OF myBool = "AnyAlpha"
+               continue
+             END-IF.
+             SET myBool TO TRUE.
+             SET myBool TO FALSE.
+      
+              EVALUATE TRUE
+               WHEN myBool CONTINUE
+              END-EVALUATE
+      
+                display var2 "rtzerz" var3 "zerzerze"
+                   'zrzr' var2
       
            string var2 var3 Var4
                 delimited by size
@@ -72,6 +72,6 @@
            end-search.
        TRAITEMENT.
        .
-        PERFORM TRAITEMENT UNTIL MyBool.
+           PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.

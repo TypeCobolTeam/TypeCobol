@@ -61,11 +61,11 @@
            exit.
        TRAITEMENT.
       *OK  call check of PGM1
-      *   call check input mydate1
-          CALL 'a0508f35' USING
+      *    call check input mydate1
+           CALL 'a0508f35' USING
                                  mydate1
            end-call
-                                  
+                                   
       
         .
   

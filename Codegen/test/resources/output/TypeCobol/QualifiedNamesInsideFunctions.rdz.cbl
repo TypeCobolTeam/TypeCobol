@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID.   Test-Name-Qualification.
        
        DATA DIVISION.
@@ -36,14 +36,15 @@
        PROCEDURE DIVISION.
 
       *Problem with this line in codegen
-      *COMPUTE LK-RETENTION = FUNCTION MAX(Event::Periodicity(ALL)).
-       COMPUTE LK-RETENTION = FUNCTION MAX(Periodicity OF Event(ALL)).
-       DISPLAY LK-RETENTION.
+      *    COMPUTE LK-RETENTION = FUNCTION MAX(Event::Periodicity(ALL)).
+           COMPUTE LK-RETENTION = FUNCTION MAX(Periodicity OF Event
+                                               (ALL)).
+           DISPLAY LK-RETENTION.
 
-      *call 'subPgm' using AccountOwner::lastName
+      *    call 'subPgm' using AccountOwner::lastName
       *                     Group1::BirthDate
       *                     AccountOwner::BirthDate::YYYY.
-       call 'subPgm' using lastName OF AccountOwner
+           call 'subPgm' using lastName OF AccountOwner
                             BirthDate OF Group1
                             YYYY OF BirthDate OF AccountOwner.
 

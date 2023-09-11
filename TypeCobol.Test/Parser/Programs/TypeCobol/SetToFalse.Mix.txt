@@ -22,27 +22,27 @@
       *******************************************************
       * SET TO FALSE OK
       *******************************************************
-         set VarBool-1 to false
-         set Var88-1 to false
-         set VarBool-1 VarBool-2 to false
-         set Var88-1 Var88-2 to false
+           set VarBool-1 to false
+           set Var88-1 to false
+           set VarBool-1 VarBool-2 to false
+           set Var88-1 Var88-2 to false
 
       *******************************************************
       * SET TO FALSE KO because of mix type Bool + Level88
       *******************************************************
-Line 33[10,49] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
-         set Var88-1 VarBool-1 VarBool-2 to false
-Line 34[10,49] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
-         set VarBool-1 Var88-1 VarBool-2 to false
-Line 35[10,49] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
-         set VarBool-1 VarBool-2 Var88-1 to false
-Line 36[10,47] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
-         set VarBool-1 Var88-1 Var88-2 to false
-Line 37[10,47] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
-         set Var88-1 VarBool-1 Var88-2 to false
-Line 38[10,47] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
-         set Var88-1 Var88-2 VarBool-1 to false
+Line 33[12,51] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
+           set Var88-1 VarBool-1 VarBool-2 to false
+Line 34[12,51] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
+           set VarBool-1 Var88-1 VarBool-2 to false
+Line 35[12,51] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
+           set VarBool-1 VarBool-2 Var88-1 to false
+Line 36[12,49] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
+           set VarBool-1 Var88-1 Var88-2 to false
+Line 37[12,49] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
+           set Var88-1 VarBool-1 Var88-2 to false
+Line 38[12,49] <27, Error, Syntax> - Syntax error : Mixing TypeCobol BOOL variables with Level 88 in the same "SET" statement is not allowed. Consider splitting it into 2 separate statements.
+           set Var88-1 Var88-2 VarBool-1 to false
 
-         goback.
+           goback.
 
        END PROGRAM SetToFalse.

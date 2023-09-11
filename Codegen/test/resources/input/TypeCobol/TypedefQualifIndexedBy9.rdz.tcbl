@@ -23,10 +23,10 @@
        procedure division.
 
 
-       PERFORM VARYING Idx-nonQualified FROM 1 BY 1
+           PERFORM VARYING Idx-nonQualified FROM 1 BY 1
            UNTIL Idx-nonQualified > MyEventList::Idx
              display "test"
-       END-PERFORM.
+           END-PERFORM.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
             IN-OUT EventList type EventList.

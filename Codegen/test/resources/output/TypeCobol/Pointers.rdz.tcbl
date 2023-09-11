@@ -37,51 +37,52 @@
        PROCEDURE DIVISION.
 
       * Normal case
-      *SET pointer1 UP BY 3.
-       ADD 3 to pointer1fe930f3e
-                           .
+      *    SET pointer1 UP BY 3.
+           ADD 3 to pointer1fe930f3e
+                               .
 
       * Increment with variable
-      *SET pointer1 DOWN BY pointer0::increment.
-       SUBTRACT increment OF pointer0 from pointer1fe930f3e
-                                               .
+      *    SET pointer1 DOWN BY pointer0::increment.
+           SUBTRACT increment OF pointer0 from pointer1fe930f3e
+                                                   .
 
       * Usage of qualified Name
-      *SET pointer0::pntr UP BY noPointer.
-       ADD noPointer to pntrc20a8a84 OF pointer0
-                                         .
+      *    SET pointer0::pntr UP BY noPointer.
+           ADD noPointer to pntrc20a8a84 OF pointer0
+                                             .
       * Usage of qualified Name
-      *SET pointer0::pointerStat::backupPointer UP BY noPointer.
-       ADD noPointer to backupPointera4fc7f95 OF pointerStat OF pointer0
-                                                               .
+      *    SET pointer0::pointerStat::backupPointer UP BY noPointer.
+           ADD noPointer to backupPointera4fc7f95 OF pointerStat OF poin
+      -    ter0                                                                          
+                                                                   .
 
       * Multiple Increment 
-      *SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY 12.
-       SUBTRACT 12 from pntrc20a8a84 OF pointer0, backupPointera4fc7f95 
-           OF pointer0, pointer1fe930f3e                                                 
-                                                                      .
-
+      *    SET pointer0::pntr,pointer0::backupPointer, pointer1
+      *    DOWN BY 12.
+           SUBTRACT 12 from pntrc20a8a84 OF pointer0, backupPointera4fc7
+      -    f95 OF pointer0, pointer1fe930f3e                                             
+                     .
       * Arithmetic expression 
-      *SET pointer0::pntr, pointer0::backupPointer UP BY ((4 + 8)/2**2).
-       COMPUTE pntrc20a8a84 OF pointer0 = pntrc20a8a84 OF pointer0 + ((4
-            + 8)/2**2).                                                                  
+      *    SET pointer0::pntr, pointer0::backupPointer
+      *    UP BY ((4 + 8)/2*2**2).
+           COMPUTE pntrc20a8a84 OF pointer0 = pntrc20a8a84 OF pointer0 +
+      -     ((4 + 8)/2*2**2).                                                            
        COMPUTE backupPointera4fc7f95 OF pointer0 = backupPointera4fc7f95
-            OF pointer0 + ((4 + 8)/2**2)
-                                                                       .
-
+            OF pointer0 + ((4 + 8)/2*2**2)
+                                 .
       * Arithmetic expression using variables
-      *SET pointer0::pntr Down BY (pointer0::counter + increment).
-       COMPUTE pntrc20a8a84 OF pointer0 = pntrc20a8a84 OF pointer0 - (po
-      -    inter0::counter + increment)                                                  
-                                                                 .
+      *    SET pointer0::pntr Down BY (pointer0::counter + increment).
+           COMPUTE pntrc20a8a84 OF pointer0 = pntrc20a8a84 OF pointer0 -
+      -     (pointer0::counter + increment)                                              
+                                                                     .
 
       * Procedure
       *declare procedure PointerProcedure PRIVATE
-      *  in-out ptr pointer.
+      *     in-out ptr pointer.
        END PROGRAM Pointers.
       *
       *declare procedure PointerProcedure PRIVATE
-      *  in-out ptr pointer.
+      *     in-out ptr pointer.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. cbb07024.

@@ -2,11 +2,11 @@
        PROGRAM-ID. DVZFSCT0.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 5[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
-           01 type1 typedef public global.
+Line 5[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
+       01 type1 typedef public global.
               05 champ1 pic x.
-Line 7[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
-           01 type2 typedef private global.
+Line 7[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
+       01 type2 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       
@@ -17,11 +17,11 @@ Line 7[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be speci
        PROGRAM-ID. Nested.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 18[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
-           01 type3 typedef public global.
+Line 18[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
+       01 type3 typedef public global.
               05 champ1 pic x.
-Line 20[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
-           01 type4 typedef private global.
+Line 20[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
+       01 type4 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       
@@ -36,11 +36,11 @@ Line 20[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be spec
        PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 35[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
-           01 type5 typedef public global.
+Line 35[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
+       01 type5 typedef public global.
               05 champ1 pic x.
-Line 37[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
-           01 type6 typedef private global.
+Line 37[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
+       01 type6 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       

@@ -19,5 +19,5 @@
            03 varB type DateDB2.
       
        PROCEDURE DIVISION.           
-          SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
+           SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
        END PROGRAM MOVECORR.

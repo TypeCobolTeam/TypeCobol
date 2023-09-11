@@ -47,12 +47,12 @@
                                       
 
        PROCEDURE DIVISION.
-      *   IF (MyPM::temp::IMSBatch = "TI" AND MyPM2::DB2Batch = "TD")
-          IF (IMSBatch OF temp OF MyPM = "TI" AND DB2Batch OF MyPM2
-               = "TD")
+      *    IF (MyPM::temp::IMSBatch = "TI" AND MyPM2::DB2Batch = "TD")
+           IF (IMSBatch OF temp OF MyPM = "TI" AND DB2Batch OF MyPM2
+                = "TD")
              DISPLAY "TI and TD"
-          ELSE
+           ELSE
              CONTINUE
-          END-IF.
+           END-IF.
        END PROGRAM TypeDefLevel88.
 

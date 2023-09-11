@@ -32,31 +32,31 @@ Block7 [
 label = "{DEPT-HEAD-PROC. Block7|    display \"--------------------------------------\"\l}"
 ]
 Block8 [
-label = "{DEPT-HEAD-EXIT. Block8|EXIT\l}"
+label = "{DEPT-HEAD-EXIT. Block8|      EXIT\l}"
 ]
 Block9 [
 label = "{EMPL-FOOT-USE. Block9|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block10 [
-label = "{EMPL-FOOT-PROC. Block10|MOVE NUM(1) TO NBJ(1)\l}"
+label = "{EMPL-FOOT-PROC. Block10|      MOVE NUM(1) TO NBJ(1)\l}"
 ]
 Block11 [
-label = "{EMPL-FOOT-PROC. Block11|MOVE NBJ(2) TO NUM(2)\l}"
+label = "{EMPL-FOOT-PROC. Block11|      MOVE NBJ(2) TO NUM(2)\l}"
 ]
 Block12 [
-label = "{EMPL-FOOT-EXIT. Block12|EXIT\l}"
+label = "{EMPL-FOOT-EXIT. Block12|      EXIT\l}"
 ]
 Block13 [
 label = "{DEPT-FOOT-USE. Block13|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block14 [
-label = "{DEPT-FOOT-PROC. Block14|MOVE NUM(3) TO NBJ(3)\l}"
+label = "{DEPT-FOOT-PROC. Block14|      MOVE NUM(3) TO NBJ(3)\l}"
 ]
 Block15 [
-label = "{DEPT-FOOT-PROC. Block15|MOVE NBJ(4) TO NUM(4)\l}"
+label = "{DEPT-FOOT-PROC. Block15|      MOVE NBJ(4) TO NUM(4)\l}"
 ]
 Block16 [
-label = "{DEPT-FOOT-EXIT. Block16|EXIT\l}"
+label = "{DEPT-FOOT-EXIT. Block16|      EXIT\l}"
 ]
 Block17 [
 label = "{COMP-FOOT-USE. Block17|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
@@ -65,16 +65,16 @@ Block18 [
 label = "{COMP-FOOT-PROC. Block18|}"
 ]
 Block19 [
-label = "{Block19|PERFORM COMP-FOOT-CALC  VARYING IDX FROM +1 BY +1  UNTIL IDX \> +6\l}"
+label = "{Block19|      PERFORM COMP-FOOT-CALC        VARYING IDX FROM +1 BY +1        UNTIL IDX \> +6\l}"
 ]
 subgraph cluster_1{
 color = blue;
 label = "COMP-FOOT-CALC";
 Block27 [
-label = "{COMP-FOOT-CALC. Block27|MOVE NUM(5) TO NBJ(5)\l}"
+label = "{COMP-FOOT-CALC. Block27|      MOVE NUM(5) TO NBJ(5)\l}"
 ]
 Block28 [
-label = "{COMP-FOOT-CALC. Block28|MOVE NBJ(6) TO NUM(6)\l}"
+label = "{COMP-FOOT-CALC. Block28|      MOVE NBJ(6) TO NUM(6)\l}"
 ]
 
 }
@@ -84,10 +84,10 @@ Block20 [
 label = "{Block20|}"
 ]
 Block21 [
-label = "{COMP-FOOT-PROC. Block21|GO TO COMP-FOOT-EXIT\l}"
+label = "{COMP-FOOT-PROC. Block21|      GO TO COMP-FOOT-EXIT\l}"
 ]
 Block25 [
-label = "{COMP-FOOT-EXIT. Block25|EXIT\l}"
+label = "{COMP-FOOT-EXIT. Block25|      EXIT\l}"
 ]
 Block26 [
 label = "{Block26|}"

@@ -25,31 +25,31 @@
                                     INDEXED BY Idx-OthElmTax.
 
        PROCEDURE DIVISION.
-        SET Idx-OthElm  TO 1
-        SEARCH Table-OthElm::OthElm
+           SET Idx-OthElm  TO 1
+           SEARCH Table-OthElm::OthElm
                     AT END
                         SET MyBool  TO TRUE
                     WHEN Table-OthElm::OthElm::ElmErID (Idx-OthElm)
                         = Table-OthElm::OthElm::LnkErId
                                 (Idx-perform1)
                         PERFORM DoSomething
-        END-SEARCH
-         SET Table-OthElm::OthElm::ElmTaxes::Idx-OthElmTax
+           END-SEARCH
+            SET Table-OthElm::OthElm::ElmTaxes::Idx-OthElmTax
                             TO Table-OthElm::OthElm::ElmTaxes::
                             ElmTaxNbr(Idx-OthElm)
 
-           SEARCH Table-OthElm::OthElm::ElmTaxes::ElmTax
+              SEARCH Table-OthElm::OthElm::ElmTaxes::ElmTax
                 AT END
                     PERFORM DoSomething
                 WHEN Table-OthElm::OthElm::ElmTaxes::ElmTax::
                 TaxErID (Idx-OthElm Idx-OthElmTax) = 1
                     PERFORM DoSomething
-           END-SEARCH.
+              END-SEARCH.
 
-        SET Table-OthElm::OthElm::Idx-OthElm
+           SET Table-OthElm::OthElm::Idx-OthElm
              TO Table-OthElm::OthElmNbr.
 
-           DoSomething.
+       DoSomething.
            .
 
        END PROGRAM AYIMCPFD.

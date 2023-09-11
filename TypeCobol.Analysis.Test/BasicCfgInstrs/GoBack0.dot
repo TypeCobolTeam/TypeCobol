@@ -7,10 +7,10 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|   COMPUTE IPC = IPC1 * IPC2\l}"
+label = "{START|    COMPUTE IPC = IPC1 * IPC2\l}"
 ]
 Block1 [
-label = "{Block1|   GOBACK\l}"
+label = "{Block1|    GOBACK\l}"
 ]
 Block0 -> Block1
 

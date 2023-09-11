@@ -1,4 +1,4 @@
-﻿--- Code Elements ---
+--- Code Elements ---
 [[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [22,22+:.]<PeriodSeparator>
 - ProgramName = TypeCobol
 - IsInitial = False
@@ -9,7 +9,7 @@
 
 [[WorkingStorageSectionHeader]] [1,15:WORKING-storage]<WORKING_STORAGE> --> [24,24+:.]<PeriodSeparator>
 
-[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [15,15+:.]<PeriodSeparator>
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [22,22+:.]<PeriodSeparator>
 
 [[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
 
