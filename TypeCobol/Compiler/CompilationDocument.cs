@@ -44,7 +44,6 @@ namespace TypeCobol.Compiler
         // - the tree nodes do not store a pointer to their father node, enabling efficient snapshots of the tree
         // - iterating on the elements of this list requires the allocation of an external stack object, which is retrieved from a pool
         // - accessing an element by index requires traversing the tree from its root, a O(log n) operation
-        // TODO Migrate to System.Collections.Immutable.ImmutableList<T> from .NET
         private ImmutableList<CodeElementsLine>.Builder compilationDocumentLines;
 
         /// <summary>
