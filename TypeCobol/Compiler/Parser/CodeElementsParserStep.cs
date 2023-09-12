@@ -503,7 +503,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 int previousLineIndex = lineIndex;
                 int lastLineIndexReset = lastParseSection != null ? lastParseSection.StopLineIndex : -1;
-                IEnumerator<CodeElementsLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
+                IEnumerator<CodeElementsLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, true);
                 foundStopCodeElement = false;
                 while (reversedEnumerator.MoveNext() && (--previousLineIndex > lastLineIndexReset))
                 {
@@ -566,7 +566,7 @@ namespace TypeCobol.Compiler.Parser
             if (lineIndex < (documentLines.Count - 1))
             {
                 int nextLineIndex = lineIndex;
-                IEnumerator<CodeElementsLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
+                IEnumerator<CodeElementsLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, false);
                 bool stopOnNextCodeElement = false;
                 foundStopCodeElement = false;
                 while (enumerator.MoveNext())

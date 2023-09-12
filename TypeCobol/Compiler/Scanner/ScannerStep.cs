@@ -289,7 +289,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Navigate backwards to the start of the multiline continuation
                 if (lineToScan.Type == CobolTextLineType.Continuation && lineToScanIndex > 0)
                 {
-                    using (var reversedEnumerator = documentLines.GetEnumerator(lineToScanIndex - 1, -1, true))
+                    using (var reversedEnumerator = documentLines.GetEnumerator(lineToScanIndex - 1, true))
                     {
                         while (reversedEnumerator.MoveNext())
                         {
@@ -326,7 +326,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Navigate forwards to the end of the multiline continuation 
                 if (lineToScanIndex < (documentLines.Count - 1))
                 {
-                    using (var enumerator = documentLines.GetEnumerator(lineToScanIndex + 1, -1, false))
+                    using (var enumerator = documentLines.GetEnumerator(lineToScanIndex + 1, false))
                     {
                         while (enumerator.MoveNext())
                         {

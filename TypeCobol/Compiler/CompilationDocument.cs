@@ -44,6 +44,7 @@ namespace TypeCobol.Compiler
         // - the tree nodes do not store a pointer to their father node, enabling efficient snapshots of the tree
         // - iterating on the elements of this list requires the allocation of an external stack object, which is retrieved from a pool
         // - accessing an element by index requires traversing the tree from its root, a O(log n) operation
+        // TODO Migrate to System.Collections.Immutable.ImmutableList<T> from .NET
         private ImmutableList<CodeElementsLine>.Builder compilationDocumentLines;
 
         /// <summary>
@@ -514,7 +515,7 @@ namespace TypeCobol.Compiler
         private void ShiftLines(int startIndex, int offset)
         {
             Debug.Assert(offset != 0);
-            using (var enumerator = compilationDocumentLines.GetEnumerator(startIndex, -1, false))
+            using (var enumerator = compilationDocumentLines.GetEnumerator(startIndex, false))
             {
                 //Loop on every line that appear after target line and shift them according to given offset
                 while (enumerator.MoveNext())
@@ -755,7 +756,7 @@ namespace TypeCobol.Compiler
                     if (tokensDocument != null)
                     {
                         // Process all lines of the document for the first time
-                        PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), _documentImporter, perfStatsForParserInvocation, out missingCopies);
+                        PreprocessorStep.ProcessDocument(this, (ISearchableReadOnlyList<ProcessedTokensLine>)tokensDocument.Lines, _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
                         ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ISearchableReadOnlyList<CodeElementsLine>) tokensDocument.Lines);
@@ -768,9 +769,8 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>) tokensDocument.Lines).ToBuilder();
                     IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessChanges(this,
-                        processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate,
+                        (ISearchableReadOnlyList<ProcessedTokensLine>)tokensDocument.Lines, tokensLineChanges, PrepareDocumentLineForUpdate,
                         _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
@@ -783,7 +783,7 @@ namespace TypeCobol.Compiler
                     currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
 
                     // Update the processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
+                    ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(currentProcessedTokensLineVersion, (ISearchableReadOnlyList<CodeElementsLine>)tokensDocument.Lines);
                 }
 
                 ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)
