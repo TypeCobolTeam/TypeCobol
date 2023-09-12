@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
         /// <param name="suppress">The Suppress Token if any null otherwise</param>
         /// <param name="replacingOperands">The Replacing operands</param>
         void EnterCopyCompilerStatementBody(QualifiedTextName qualifiedTextName,
-            TypeCobol.Compiler.Scanner.Token suppress, PairTokenListList replacingOperands);
+            TypeCobol.Compiler.Scanner.Token suppress, CupReplaceOperations replacingOperands);
 
         /// <summary>
         /// Start a Delete Compiler directive
@@ -138,9 +138,9 @@ namespace TypeCobol.Compiler.CupPreprocessor
         /// </summary>
         /// <param name="replaceTokn"></param>
         /// <param name="offToken"></param>
-        /// <param name="replacingOperands"></param>
+        /// <param name="cupReplacingOperands"></param>
         void EnterReplaceCompilerStatement(TypeCobol.Compiler.Scanner.Token replaceTokn,
-            TypeCobol.Compiler.Scanner.Token offToken, PairTokenListList replacingOperands);
+            TypeCobol.Compiler.Scanner.Token offToken, CupReplaceOperations cupReplacingOperands);
 
         /// <summary>
         /// Start a SERVICE LABEL compiler directive.

@@ -341,8 +341,20 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         private bool TryMatchReplaceOperation(Token originalToken, ReplaceOperation replaceOperation, out IList<Token> originalMatchingTokens)
         {
+            bool leading, trailing;
+            if (replaceOperation.Type == ReplaceOperationType.SingleToken)
+            {
+                var singleTokenReplaceOperation = (SingleTokenReplaceOperation)replaceOperation;
+                leading = singleTokenReplaceOperation.LeadingToken != null;
+                trailing = singleTokenReplaceOperation.TrailingToken != null;
+            }
+            else
+            {
+                leading = trailing = false;
+            }
+
             // Check if the first token matches the replace pattern
-            if (originalToken.CompareForReplace(replaceOperation.ComparisonToken))
+            if (originalToken.CompareForReplace(replaceOperation.ComparisonToken, leading, trailing))
             {
                 // Multiple tokens pattern => check if the following tokens returned by the underlying iterator all match the pattern
                 if (replaceOperation.Type == ReplaceOperationType.MultipleTokens)
@@ -355,7 +367,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     foreach (Token comparisonToken in multipleTokensReplaceOperation.FollowingComparisonTokens)
                     {
                         Token nextCandidateToken = _sourceIterator.NextToken();
-                        if (!nextCandidateToken.CompareForReplace(comparisonToken))
+                        if (!nextCandidateToken.CompareForReplace(comparisonToken, false, false))
                         {
                             comparisonInterrupted = true;
                             break;
@@ -409,7 +421,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     if (singleTokenReplaceOperation.ReplacementToken != null)
                     {
                         // Special case for PictureCharacterString, handle as PartialWord
-                        if (originalToken.TokenType == TokenType.PictureCharacterString)
+                        if (originalToken.TokenType == TokenType.PictureCharacterString || singleTokenReplaceOperation.LeadingToken != null || singleTokenReplaceOperation.TrailingToken != null)
                         {
                             var generatedTokenForSingleToken = TextReplace(singleTokenReplaceOperation.ComparisonToken, singleTokenReplaceOperation.ReplacementToken);
                             return new ReplacedToken(generatedTokenForSingleToken, originalToken);
