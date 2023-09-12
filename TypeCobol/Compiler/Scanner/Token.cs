@@ -428,12 +428,17 @@ namespace TypeCobol.Compiler.Scanner
              X:C-NbX: -> Ko IndexOf don't match
              */
 
-            var normalizedText = NormalizedText;
-            var comparisonNormalizedText = comparisonToken.NormalizedText;
-
             //PartialCobolWord and PictureCharacterString are text based (and must be rescanned later as a whole)
-            if (TokenType == TokenType.PartialCobolWord || TokenType == TokenType.PictureCharacterString)
+            bool compareTextUsingSeparators = TokenType == TokenType.PartialCobolWord || TokenType == TokenType.PictureCharacterString;
+
+            //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
+            bool compareFullText = this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable();
+
+            if (compareTextUsingSeparators || compareFullText)
             {
+                var normalizedText = NormalizedText;
+                var comparisonNormalizedText = comparisonToken.NormalizedText;
+
                 var startIndexFound = normalizedText.IndexOf(comparisonNormalizedText, StringComparison.OrdinalIgnoreCase);
                 if (startIndexFound < 0)
                 {
@@ -446,52 +451,27 @@ namespace TypeCobol.Compiler.Scanner
                     return true;
                 }
 
-                var endIndex = startIndexFound + comparisonNormalizedText.Length - 1;
-
                 if (leading)
                 {
                     //Check only char before
                     return startIndexFound == 0 || CobolChar.IsReplaceSeparator(normalizedText[startIndexFound - 1]);
-                } 
-                else if (trailing)
+                }
+
+                var endIndex = startIndexFound + comparisonNormalizedText.Length - 1;
+                if (trailing)
                 {
                     return endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]);
                 }
-                else
+
+                if (compareTextUsingSeparators)
                 {
                     //Check if comparisonToken.NormalizedText begin/end with replace separator or is surrounded with replace separator 
                     return (startIndexFound == 0 || CobolChar.IsReplaceSeparator(normalizedText[startIndexFound - 1]) || CobolChar.IsReplaceSeparator(comparisonNormalizedText[0]))
-                           && (endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonNormalizedText[comparisonNormalizedText.Length - 1]));
-                }
-            }
-
-            //Text-based comparison for AlphanumericLiteral, NumericLiteral, Symbol and SyntaxLiteral families
-            if (this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable())
-            {
-                var startIndexFound = normalizedText.IndexOf(comparisonNormalizedText, StringComparison.OrdinalIgnoreCase);
-                if (startIndexFound < 0)
-                {
-                    return false;
+                           &&
+                           (endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]) || CobolChar.IsReplaceSeparator(comparisonNormalizedText[comparisonNormalizedText.Length - 1]));
                 }
 
-                //PartialCobolWord are surrounded with separator for replace, no need to manually check
-                if (comparisonToken.TokenType == TokenType.PartialCobolWord)
-                {
-                    return true;
-                }
-
-                var endIndex = startIndexFound + comparisonNormalizedText.Length - 1;
-
-                if (leading)
-                {
-                    //Check only char before
-                    return startIndexFound == 0 || CobolChar.IsReplaceSeparator(normalizedText[startIndexFound - 1]);
-                }
-                else if (trailing)
-                {
-                    return endIndex >= normalizedText.Length - 1 || CobolChar.IsReplaceSeparator(normalizedText[endIndex + 1]);
-                }
-
+                //Full text comparison
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }
 
