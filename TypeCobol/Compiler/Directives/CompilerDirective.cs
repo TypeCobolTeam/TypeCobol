@@ -705,7 +705,7 @@ namespace TypeCobol.Compiler.Directives
     /// </summary>
     public class SingleTokenReplaceOperation : ReplaceOperation
     {
-        public SingleTokenReplaceOperation(Token? comparisonToken, Token? replacementToken, Token? leadingToken = null, Token? trailingToken = null)
+        public SingleTokenReplaceOperation(Token? comparisonToken, Token? replacementToken, Token? leadingToken, Token? trailingToken)
             : base(ReplaceOperationType.SingleToken, comparisonToken)
         {
             ReplacementToken = replacementToken;

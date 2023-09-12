@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
-using TypeCobol.Compiler.Nodes;
+﻿using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupCommon
@@ -13,14 +7,6 @@ namespace TypeCobol.Compiler.CupCommon
     /// Type that represents a list of tokens.
     /// </summary>
     public class TokenList : List<Token> {};
-    /// <summary>
-    /// A list of Pair of tokens.
-    /// </summary>
-    public class PairTokenList : List<Tuple<Token,Token>> { };
-    /// <summary>
-    /// A list of Pair of list of tokens
-    /// </summary>
-    public class PairTokenListList : List<Tuple<List<Token>, List<Token>>> { };
 
     /// <summary>
     /// 

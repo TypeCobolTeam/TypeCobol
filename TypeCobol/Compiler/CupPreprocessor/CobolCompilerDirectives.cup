@@ -196,8 +196,8 @@ non terminal controlCblCompilerStatement;
 
 non terminal copyCompilerStatement;
 non terminal copyCompilerStatementBody;
-non terminal PairTokenListList replacingCopyReplacingOperandOpts;
-non terminal PairTokenListList copyReplacingOperands;
+non terminal CupReplaceOperations replacingCopyReplacingOperandOpts;
+non terminal CupReplaceOperations copyReplacingOperands;
 non terminal TokenList copyReplacingOperand;
 non terminal TokenList pseudoText;
 non terminal pseudoTextDelimiter;
@@ -715,12 +715,18 @@ replacing_by ::= BY
 ;
 
 copyReplacingOperands ::= 
-	 copyReplacingOperand:from 
-	 replacing_by 	 
-	 copyReplacingOperand:by
-	{:  RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; :}
+	 copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, null)}; :}
+| LEADING:leading copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), leading, null)}; :}
+| TRAILING:trailing copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, trailing)}; :}
 | copyReplacingOperands:operands copyReplacingOperand:from replacing_by copyReplacingOperand:by
-	{: operands.Add(new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = operands; :}
+	{: operands.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, null)); RESULT = operands; :}
+| copyReplacingOperands:operands LEADING:leading copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: operands.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), leading, null)); RESULT = operands; :}
+| copyReplacingOperands:operands TRAILING:trailing copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: operands.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, trailing)); RESULT = operands; :}
 ;
 
 copyReplacingOperand ::= pseudoText:tokens

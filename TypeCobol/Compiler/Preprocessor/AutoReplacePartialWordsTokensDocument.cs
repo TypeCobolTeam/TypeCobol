@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(nextToken.TokensLine.LineIndex, replacementText, nextToken.TokensLine.ColumnsLayout);
                     var replacementToken = new Token(TokenType.UserDefinedWord, nextToken.StartIndex, tempTokensLine.Length - 1, tempTokensLine);
 
-                    updatedReplaceOperations.Add(new SingleTokenReplaceOperation(nextToken, replacementToken));
+                    updatedReplaceOperations.Add(new SingleTokenReplaceOperation(nextToken, replacementToken, null, null));
                 }
 
                 return new CheckTokenStatus()

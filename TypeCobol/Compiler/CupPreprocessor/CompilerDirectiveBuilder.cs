@@ -18,9 +18,12 @@ namespace TypeCobol.Compiler.CupPreprocessor
         public CompilerDirectiveBuilder(CompilationDocument document)
         {
             _document = document;
+            _replaceOperationBuilder = new ReplaceOperationBuilder(this);
         }
 
         private readonly CompilationDocument _document;
+        private readonly ReplaceOperationBuilder _replaceOperationBuilder;
+
         private TypeCobolOptions TypeCobolOptions => _document.CompilerOptions;
         private List<RemarksDirective.TextNameVariation> CopyTextNameVariations => _document.CopyTextNamesVariations;
         /// <summary>
@@ -85,7 +88,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
         }
 
         public virtual void EnterCopyCompilerStatementBody(QualifiedTextName qualifiedTextName, 
-            TypeCobol.Compiler.Scanner.Token suppress, PairTokenListList replacingOperands)
+            TypeCobol.Compiler.Scanner.Token suppress, CupReplaceOperations replacingOperands)
         {
             var copy = (CopyDirective)CompilerDirective;
             copy.TextName = GetName(qualifiedTextName.TextName);
@@ -131,132 +134,10 @@ namespace TypeCobol.Compiler.CupPreprocessor
             // REPLACING
             if (replacingOperands != null)
             {
-                // Data used to build the current replace operation             
-                Token comparisonToken = null;
-                Token[] followingComparisonTokens = null;
-                Token replacementToken = null;
-                Token[] replacementTokens = null;
-
-                bool bReported = false;
-                foreach (Tuple<List<Token>,List<Token>> copyReplacingOperands in replacingOperands)
+                foreach (CupReplaceOperation cupReplaceOperation in replacingOperands)
                 {
-                    // Get relevant tokens
-                    List<Token> relevantTokens = copyReplacingOperands.Item1;
-                    List<Token> replaceTokens = copyReplacingOperands.Item2;
-                    if (!BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, false, relevantTokens))
-                    {
-                        if (!bReported)
-                        {
-                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Position(), "\"REPLACE\" Empty Comparison Pseudo Text.");
-                            CompilerDirective.AddParsingDiagnostic(error);
-                            bReported = true;
-                        }
-                    }
-
-                    BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, true, replaceTokens);
+                    _replaceOperationBuilder.BuildFromCupReplaceOperation(copy.ReplaceOperations, cupReplaceOperation, copy.COPYToken);
                 }
-            }
-        }
-
-        private bool BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, 
-            ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens,
-            Token leading = null, Token trailing = null)
-        {
-            // Comparison tokens
-            if (!replaceTokens)
-            {
-                if (operandTokens != null && operandTokens.Count > 0)
-                {
-                    comparisonToken = (Token)operandTokens[0];
-                    if (operandTokens.Count > 1)
-                    {
-                        followingComparisonTokens = new Token[operandTokens.Count - 1];
-                        for (int i = 1; i < operandTokens.Count; i++)
-                        {
-                            followingComparisonTokens[i - 1] = (Token)operandTokens[i];
-                        }
-                    }
-                }
-                else
-                {//It cannot be empty
-                    return false;
-                }
-            }
-            // Replacement tokens
-            else
-            {
-                if (operandTokens != null && operandTokens.Count > 0)
-                {
-                    if (followingComparisonTokens == null && operandTokens.Count == 1)
-                    {
-                        replacementToken = operandTokens[0];
-                    }
-                    else
-                    {
-                        replacementTokens = operandTokens.Where(t => t.TokenFamily != TokenFamily.Comments).ToArray();
-                    }
-                }
-
-                // Build replace operation
-                ReplaceOperation replaceOperation = null;
-                if (followingComparisonTokens == null)
-                {
-                    if (replacementTokens == null)
-                    {
-                        if (comparisonToken == null || comparisonToken.TokenType != TokenType.PartialCobolWord)
-                        {
-                            replaceOperation = new SingleTokenReplaceOperation(comparisonToken, replacementToken, leading, trailing);
-                        }
-                        else if (leading == null && trailing == null)
-                        {
-                            replaceOperation = new PartialWordReplaceOperation(comparisonToken, replacementToken);
-                        }
-                        else
-                        {
-                            // LEADING and TRAILING forbidden here
-                            AddError(comparisonToken);
-                        }
-                    }
-                    else if (leading == null && trailing == null)
-                    {
-                        replaceOperation = new SingleToMultipleTokensReplaceOperation(comparisonToken, replacementTokens);
-                    }
-                    else
-                    {
-                        // LEADING and TRAILING forbidden here
-                        AddError(replacementTokens[0]);
-                    }
-                }
-                else if (leading == null && trailing == null)
-                {
-                    replaceOperation = new MultipleTokensReplaceOperation(comparisonToken, followingComparisonTokens, replacementTokens);
-                }
-                else
-                {
-                    // LEADING and TRAILING forbidden here
-                    AddError(comparisonToken);
-                }
-
-                if (replaceOperation != null)
-                {
-                    replaceOperations.Add(replaceOperation);
-                }
-
-                // Reset everything for the next replace operation    
-                comparisonToken = null;
-                followingComparisonTokens = null;
-                replacementToken = null;
-                replacementTokens = null;
-            }
-            return true;
-
-            void AddError(Token token)
-            {
-                Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, token.Position(),
-                    "\"LEADING\" and \"TRAILING\" can only be used to replace one single text word. This REPLACE operation cannot be applied and is discarded.");
-                CompilerDirective.AddParsingDiagnostic(error);
             }
         }
 
@@ -414,28 +295,14 @@ namespace TypeCobol.Compiler.CupPreprocessor
             ReplaceDirective replaceDirective = new ReplaceDirective(type);
             CompilerDirective = replaceDirective;
         }
-        public virtual void EnterReplaceCompilerStatement(Token replaceTokn, Token offToken, CupReplaceOperations cupReplacingOperands)
+        public virtual void EnterReplaceCompilerStatement(Token replaceToken, Token offToken, CupReplaceOperations cupReplacingOperands)
         {
-            ReplaceDirective replaceDirective = (ReplaceDirective)CompilerDirective;            
-
+            ReplaceDirective replaceDirective = (ReplaceDirective)CompilerDirective;
             if (cupReplacingOperands != null)
             {
-                // Data used to build the current replace operation             
-                Token comparisonToken = null;
-                Token[] followingComparisonTokens = null;
-                Token replacementToken = null;
-                Token[] replacementTokens = null;
-
-                foreach (var copyReplacingOperands in cupReplacingOperands)
+                foreach (var cupReplaceOperation in cupReplacingOperands)
                 {
-                    // Get relevant tokens
-                    List<Token> relevantTokens = copyReplacingOperands.From;
-                    List<Token> replaceTokens = copyReplacingOperands.By;
-                    BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, false, relevantTokens);
-
-                    BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, true, replaceTokens, copyReplacingOperands.Leading, copyReplacingOperands.Trailing);
+                    _replaceOperationBuilder.BuildFromCupReplaceOperation(replaceDirective.ReplaceOperations, cupReplaceOperation, replaceToken);
                 }
             }
         }
