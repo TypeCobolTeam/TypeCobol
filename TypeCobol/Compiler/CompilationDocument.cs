@@ -697,6 +697,7 @@ namespace TypeCobol.Compiler
                 // Create a new snapshot only if things changed since last snapshot
                 if (TokensDocumentSnapshot == null || TokensDocumentSnapshot.CurrentVersion != currentTokensLinesVersion)
                 {
+                    // Freeze compilationDocumentLines into an ImmutableList as further steps won't need to modify it
                     TokensDocumentSnapshot = new TokensDocument(TextSourceInfo, textLinesVersionForCurrentTokensLines, currentTokensLinesVersion, compilationDocumentLines.ToImmutable());
                 }
             }
