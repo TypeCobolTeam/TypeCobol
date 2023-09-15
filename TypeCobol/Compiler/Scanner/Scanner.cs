@@ -2102,7 +2102,14 @@ namespace TypeCobol.Compiler.Scanner
                     }
 
                     // Section and paragraph names
-                    if (tokensLine.ScanState.InsideProcedureDivision && tokensLine.ScanState.AtBeginningOfSentence)
+                    bool currentTokenIsAtBeginningOfNewLine = tokensLine.LineIndex == 0 // First line
+                                                              || tokensLine.ScanState.LastSignificantToken == null // No info
+                                                              || tokensLine.LineIndex > tokensLine.ScanState.LastSignificantToken.TokensLine.LineIndex; // On new line
+                    if (currentTokenIsAtBeginningOfNewLine
+                        && tokensLine.ScanState.AtBeginningOfSentence
+                        && (tokensLine.ColumnsLayout == ColumnsLayout.FreeTextFormat //TODO Define rule about paragraph position in free format
+                            || (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat
+                                && DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(startIndex + 1) == TextAreaType.AreaA))) //Warning : startIndex is 0 based
                     {
                         tokenType = TokenType.SectionParagraphName;
                     }

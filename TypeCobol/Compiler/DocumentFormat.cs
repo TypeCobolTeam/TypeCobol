@@ -59,15 +59,25 @@ namespace TypeCobol.Compiler
 
         /// <summary>
         /// Used to retrieve TextArea type in Cobol reference format from token position
-        ///
         /// </summary>
-        public static TextAreaType GetTextAreaTypeInCobolReferenceFormat(Token token)
+        public static TextAreaType GetTextAreaTypeInCobolReferenceFormat(Token token) => GetTextAreaTypeInCobolReferenceFormat(token.Column);
+
+        /// <summary>
+        /// Used to retrieve TextArea type in Cobol reference format from column (1-based)
+        /// </summary>
+        public static TextAreaType GetTextAreaTypeInCobolReferenceFormat(int column)
         {
-            if (token.Column < 7) return TextAreaType.SequenceNumber;
-            else if (token.Column == 7) return TextAreaType.Indicator;
-            else if (token.Column is > 7 and < 12) return TextAreaType.AreaA;
-            else if (token.Column is > 11 and < 73) return TextAreaType.AreaB;
-            else return TextAreaType.Comment;
+            const int indicator = (int)CobolFormatAreas.Indicator; // Column 7
+            const int endA = (int)CobolFormatAreas.End_A; // Column 11
+            const int endB = (int)CobolFormatAreas.End_B; // Column 72
+            return column switch
+            {
+                < indicator => TextAreaType.SequenceNumber,
+                indicator => TextAreaType.Indicator,
+                > indicator and <= endA => TextAreaType.AreaA,
+                > endA and <= endB => TextAreaType.AreaB,
+                _ => TextAreaType.Comment
+            };
         }
     }
 }

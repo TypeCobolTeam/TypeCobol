@@ -629,13 +629,16 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// True at the beggining of a parse section, or after PeriodSeparator, or after END-EXEC
+        /// True at the beginning of a parse section, or after PeriodSeparator, or after END-EXEC
         /// </summary>
         public bool AtBeginningOfSentence
         {
             get
             {
-                return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
+                return LastSignificantToken == null ||
+                  LastSignificantTokenIsPeriodSeparator() ||
+                  LastSignificantToken.TokenType == TokenType.END_EXEC ||
+                  LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
                   // Special cases : compiler directives sometimes without a final PeriodSeparator
                   // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
                   //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
@@ -644,6 +647,17 @@ namespace TypeCobol.Compiler.Scanner
                   (LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EJECT || LastSignificantToken.TokenType == TokenType.SKIP1 || LastSignificantToken.TokenType == TokenType.SKIP2 || LastSignificantToken.TokenType == TokenType.SKIP3)) ||
                   // 3. TITLE alphanumericValue2 <= sometimes PeriodSeparator missing here.
                   (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken?.TokenFamily == TokenFamily.AlphanumericLiteral);
+
+                bool LastSignificantTokenIsPeriodSeparator()
+                {
+                    var beforeLast = BeforeLastSignificantToken?.TokenType;
+                    return LastSignificantToken.TokenType == TokenType.PeriodSeparator &&
+                           beforeLast != TokenType.PROGRAM_ID &&
+                           beforeLast != TokenType.CLASS_ID &&
+                           beforeLast != TokenType.METHOD_ID &&
+                           beforeLast != TokenType.SPECIAL_NAMES &&
+                           beforeLast != TokenType.SOURCE_COMPUTER;
+                }
             }
         }
 
