@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Types
@@ -29,7 +26,8 @@ namespace TypeCobol.Compiler.Types
         private const string WRONG_P_POSITION = "P must appears at the head or tail position of a PICTURE string";
         private const string Z_STAR_MUTUALLY_EXCLUSIVE = "Z and * symbols are mutually exclusive in a PICTURE string";
         private const string SYMBOL_CAN_APPEAR_ONLY_ONCE = "Only one occurrence of '{0}' symbol can appear in a PICTURE string";
-        private const string AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT = "At least one of symbols A, G, N, X, Z, 9, or *, or at least two of symbols +, -, or CS must be present";
+        private const string AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT = "At least one of symbols A, G, N, X, U, Z, 9, or *, or at least two of symbols +, -, or CS must be present";
+        private const string U_SYMBOL_NOT_SUPPORTED = "PICTURE string symbol 'U' is not supported";
 
         /// <summary>
         /// Picture string constructor.
@@ -207,7 +205,7 @@ namespace TypeCobol.Compiler.Types
         //static part of the splitter alphabet
         private static readonly string[] _Alphabet =
         {
-            "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "V", "v", "X", "x", "Z", "z",
+            "A", "a", "B", "b", "E", "e", "G", "g", "N", "n", "P", "p", "S", "s", "U", "u", "V", "v", "X", "x", "Z", "z",
             "9", "0", "/", ",", ".", "+", "-", "CR", "cR", "Cr", "cr", "DB", "dB", "Db", "db", "*"
         };
 
@@ -363,12 +361,18 @@ namespace TypeCobol.Compiler.Types
                 }
             }
             bool atLeastOneAGNXZNineStar = symbolCounts[SC.A] + symbolCounts[SC.G] + symbolCounts[SC.N] +
-                                           symbolCounts[SC.X] + symbolCounts[SC.Z] + symbolCounts[SC.NINE] +
-                                           symbolCounts[SC.STAR] >= 1;
+                                           symbolCounts[SC.X] + symbolCounts[SC.U] + symbolCounts[SC.Z] +
+                                           symbolCounts[SC.NINE] + symbolCounts[SC.STAR] >= 1;
             bool atLeastTwoPlusMinusCs = symbolCounts[SC.PLUS] >= 2 || symbolCounts[SC.MINUS] >= 2 || symbolCounts[SC.CS] >= 2;
             if (!(atLeastOneAGNXZNineStar || atLeastTwoPlusMinusCs))
             {
                 validationMessages.Add(AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT);
+            }
+
+            //Forbid use of symbol U: not supported by this parser
+            if (symbolCounts[SC.U] > 0)
+            {
+                validationMessages.Add(U_SYMBOL_NOT_SUPPORTED);
             }
 
             return sequence.ToArray();
