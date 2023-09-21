@@ -73,6 +73,8 @@ tokens
     NationalLiteral,
     HexadecimalNationalLiteral,
     DBCSLiteral,
+    UTF8Literal,
+    HexadecimalUTF8Literal,
     // Literals - Numeric
     LevelNumber,
     IntegerLiteral,
@@ -568,6 +570,7 @@ tokens
     END_JSON,
     JSON,
     VOLATILE,
+    UTF_8,
     // Keywords - Cobol 2002
     TYPEDEF,
     STRONG,
