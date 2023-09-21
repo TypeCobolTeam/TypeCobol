@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ClassEnd() : base(CodeElementType.ClassEnd)
         { }
-
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
         /// <summary>
         /// class-name
         /// A user-defined word that identifies the class.

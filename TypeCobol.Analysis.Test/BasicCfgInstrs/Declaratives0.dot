@@ -22,7 +22,7 @@ Block4 [
 label = "{Block4|}"
 ]
 Block5 [
-label = "{Block5|DISPLAY \"TOTO\"\l}"
+label = "{Block5|      DISPLAY \"TOTO\"\l}"
 ]
 Block0 -> Block1
 Block0 -> Block4

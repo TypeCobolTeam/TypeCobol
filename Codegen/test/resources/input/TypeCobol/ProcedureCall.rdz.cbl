@@ -58,10 +58,10 @@
 
        TRAITEMENT.
 
-       CALL GetPtrFn 
+           CALL GetPtrFn 
              INPUT funcPointer procPointer.
 
-       CALL ProcedureWithANameOver22Chars.
+           CALL ProcedureWithANameOver22Chars.
 
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)

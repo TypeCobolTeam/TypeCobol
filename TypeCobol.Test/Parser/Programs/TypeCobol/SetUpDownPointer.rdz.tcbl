@@ -10,10 +10,10 @@
 
 
        PROCEDURE DIVISION.
-       SET myPointerThatIsWayTooLong UP BY 1.
-       SET myPointer32ThatIsWayTooLong UP BY 1.
+           SET myPointerThatIsWayTooLong UP BY 1.
+           SET myPointer32ThatIsWayTooLong UP BY 1.
 
-       SET myPointer UP BY 1.
-       SET myPointer32 UP BY 1.
+           SET myPointer UP BY 1.
+           SET myPointer32 UP BY 1.
 
        END PROGRAM MainProgram.

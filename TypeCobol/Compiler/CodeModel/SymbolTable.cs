@@ -14,9 +14,9 @@ namespace TypeCobol.Compiler.CodeModel
 {
     public class SymbolTable
     {
-        private static readonly IList<Section> EmptySectionList = new ImmutableList<Section>();
-        private static readonly IList<Paragraph> EmptyParagraphList = new ImmutableList<Paragraph>();
-        private static readonly IList<TypeDefinition> EmptyTypeDefinitionList = new ImmutableList<TypeDefinition>();
+        private static readonly IList<Section> EmptySectionList = ImmutableList<Section>.Empty;
+        private static readonly IList<Paragraph> EmptyParagraphList = ImmutableList<Paragraph>.Empty;
+        private static readonly IList<TypeDefinition> EmptyTypeDefinitionList = ImmutableList<TypeDefinition>.Empty;
 
         public Scope CurrentScope { get; }
         public SymbolTable EnclosingScope { get; }
@@ -783,6 +783,14 @@ namespace TypeCobol.Compiler.CodeModel
             return EmptySectionList;
         }
 
+        /// <summary>
+        /// Get all sections in the current scope.
+        /// </summary>
+        /// <returns>The collection of section names</returns>
+        public IEnumerable<Section> GetSections(Func<Section, bool> predicate)
+        {
+            return Sections.Values.SelectMany(s => s).Where(predicate);
+        }
         #endregion
 
         #region PARAGRAPHS
@@ -849,7 +857,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <returns>The collection of paragraph names</returns>
         public IEnumerable<Paragraph> GetParagraphs(Func<Paragraph, bool> predicate)
         {
-            return Paragraphs.Values.SelectMany(p => p).Where(predicate).Distinct();
+            return Paragraphs.Values.SelectMany(p => p).Where(predicate);
         }
 
         /// <summary>

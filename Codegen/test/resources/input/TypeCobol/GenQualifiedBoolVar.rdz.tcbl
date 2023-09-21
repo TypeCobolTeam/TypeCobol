@@ -18,8 +18,8 @@
        END-DECLARE.
 
 
-       CALL check Output local::overflw.
-       CALL check Output local::grp::overflw2.
+           CALL check Output local::overflw.
+           CALL check Output local::grp::overflw2.
       *MOVE false TO local::overflw
            .
        END PROGRAM MyPgm.

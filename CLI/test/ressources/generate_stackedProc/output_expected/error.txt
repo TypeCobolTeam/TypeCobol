@@ -1,7 +1,7 @@
 ReturnCode=ParsingDiagnostics_
 3 errors in "input\Pgm1.tcbl":
-Line 21[11,40] <30, Error, Semantics> - Semantic error: Function not found 'STACKED.FooPgm2' input(Alphanumeric)
-Line 24[11,37] <30, Error, Semantics> - Semantic error: Function not found 'STACKED2.Foo' input(Alphanumeric)
-Line 29[11,35] <31, Error, Semantics> - Runtime error: Same function 'Pgm2.Proc1' input(Alphanumeric) declared '2' times
+Line 21[12,41] <30, Error, Semantics> - Semantic error: Function not found 'STACKED.FooPgm2' input(Alphanumeric)
+Line 24[12,38] <30, Error, Semantics> - Semantic error: Function not found 'STACKED2.Foo' input(Alphanumeric)
+Line 29[12,36] <31, Error, Semantics> - Runtime error: Same function 'Pgm2.Proc1' input(Alphanumeric) declared '2' times
 No error in "input\Pgm2.tcbl".
 No error in "input\Pgm2Same.tcbl".

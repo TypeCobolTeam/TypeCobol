@@ -116,7 +116,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated
             int lineIndex = minLineIndex;
-            var linesEnumerator = documentLines.GetEnumerator(lineIndex, -1, false);
+            var linesEnumerator = documentLines.GetEnumerator(lineIndex, false);
             while (linesEnumerator.MoveNext() && lineIndex <= maxLineIndex)
             {
                 var line = linesEnumerator.Current;
@@ -410,7 +410,7 @@ namespace TypeCobol.Compiler.Preprocessor
             if (lineIndex > 0)
             {
                 int previousLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
+                IEnumerator<ProcessedTokensLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, true);
                 while (reversedEnumerator.MoveNext())
                 {
                     // Get the previous line until a non continued line is encountered
@@ -459,7 +459,7 @@ namespace TypeCobol.Compiler.Preprocessor
             if (lineIndex < documentLines.Count - 1)
             {
                 int nextLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
+                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, false);
                 while (enumerator.MoveNext())
                 {
                     // Get the next line until non continuation line is encountered

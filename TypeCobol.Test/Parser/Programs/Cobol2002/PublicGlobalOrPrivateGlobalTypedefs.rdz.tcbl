@@ -2,9 +2,9 @@
        PROGRAM-ID. DVZFSCT0.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-           01 type1 typedef public global.
+       01 type1 typedef public global.
               05 champ1 pic x.
-           01 type2 typedef private global.
+       01 type2 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       
@@ -15,9 +15,9 @@
        PROGRAM-ID. Nested.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-           01 type3 typedef public global.
+       01 type3 typedef public global.
               05 champ1 pic x.
-           01 type4 typedef private global.
+       01 type4 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       
@@ -32,9 +32,9 @@
        PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-           01 type5 typedef public global.
+       01 type5 typedef public global.
               05 champ1 pic x.
-           01 type6 typedef private global.
+       01 type6 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       

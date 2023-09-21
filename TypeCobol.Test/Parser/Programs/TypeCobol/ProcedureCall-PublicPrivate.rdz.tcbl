@@ -77,13 +77,13 @@
                     INPUT      somedate someformat
                     OUTPUT     flag     realformat
       *OK  call check of PGM1
-          call check input somedate
+           call check input somedate
       *OK 
-          call PGM1::check input somedate
+           call PGM1::check input somedate
       *OK 
-          call PGM2::check input somedate
+           call PGM2::check input somedate
       *OK 
-          call PGM2::check2 input somedate
+           call PGM2::check2 input somedate
         .
        END PROGRAM PGM1.
 

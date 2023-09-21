@@ -447,6 +447,13 @@ namespace TypeCobol.LanguageServer.Test
 #endif
 
         [TestMethod]
+        [TestCategory("GetDataLayout")]
+        public void GetDataLayoutRequest()
+        {
+            LSRTestHelper.Test("GetDataLayoutRequest", LsrTestingOptions.NoLsrTesting);
+        }
+
+        [TestMethod]
         [TestCategory("Completion")]
         public void GlobalStorageCompletion()
         {

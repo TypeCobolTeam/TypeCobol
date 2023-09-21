@@ -12,7 +12,7 @@
        
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm2.
-      *KO copy alters scan state by including PROCEDURE DIVISION
+      *OK See #2316, copys can now use PROCEDURE DIVISION code element
        COPY ProcedureDivision.
            DISPLAY 'This statement comes from main source file'
            GOBACK

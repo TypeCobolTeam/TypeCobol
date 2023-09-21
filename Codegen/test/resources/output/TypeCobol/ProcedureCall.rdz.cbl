@@ -73,18 +73,18 @@
 
        TRAITEMENT.
 
-      *CALL GetPtrFn
+      *    CALL GetPtrFn
       *      INPUT funcPointer procPointer.
-       CALL 'd03c3701' USING
+           CALL 'd03c3701' USING
                                  funcPointer
                                  procPointer
            end-call
                                           .
 
-      *CALL ProcedureWithANameOver22Chars.
-       CALL 'eb292c28'
+      *    CALL ProcedureWithANameOver22Chars.
+           CALL 'eb292c28'
            end-call
-                                         .
+                                             .
 
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)

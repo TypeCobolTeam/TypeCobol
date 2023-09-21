@@ -571,7 +571,7 @@ namespace TypeCobol.LanguageServer
                     {
                         case TokenType.PERFORM:
                             {
-                                items = CompletionFactory.GetCompletionPerformParagraph(docContext.FileCompiler,
+                                items = CompletionFactory.GetCompletionPerformParagraphAndSection(docContext.FileCompiler,
                                     matchingCodeElement, userFilterToken);
                                 break;
                             }
@@ -888,6 +888,7 @@ namespace TypeCobol.LanguageServer
                             case TokenType.PERFORM:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetParagraphs(MatchName));
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetSections(MatchName));
                                 break;
                             }
 

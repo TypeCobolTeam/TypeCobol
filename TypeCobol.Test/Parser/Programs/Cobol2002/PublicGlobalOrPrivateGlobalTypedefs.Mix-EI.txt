@@ -2,13 +2,13 @@
        PROGRAM-ID. DVZFSCT0.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 5[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
-Line 5[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type1' must be marked as STRICT.
-           01 type1 typedef public global.
+Line 5[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
+Line 5[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type1' must be marked as STRICT.
+       01 type1 typedef public global.
               05 champ1 pic x.
-Line 7[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
-Line 7[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type2' must be marked as STRICT.
-           01 type2 typedef private global.
+Line 7[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
+Line 7[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type2' must be marked as STRICT.
+       01 type2 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       
@@ -19,13 +19,13 @@ Line 7[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type2'
        PROGRAM-ID. Nested.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 18[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
-Line 18[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type3' must be marked as STRICT.
-           01 type3 typedef public global.
+Line 18[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
+Line 18[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type3' must be marked as STRICT.
+       01 type3 typedef public global.
               05 champ1 pic x.
-Line 20[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
-Line 20[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type4' must be marked as STRICT.
-           01 type4 typedef private global.
+Line 20[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
+Line 20[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type4' must be marked as STRICT.
+       01 type4 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       
@@ -40,13 +40,13 @@ Line 20[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type4
        PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 35[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
-Line 35[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type5' must be marked as STRICT.
-           01 type5 typedef public global.
+Line 35[32,37] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier
+Line 35[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type5' must be marked as STRICT.
+       01 type5 typedef public global.
               05 champ1 pic x.
-Line 37[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
-Line 37[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type6' must be marked as STRICT.
-           01 type6 typedef private global.
+Line 37[33,38] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PRIVATE access modifier
+Line 37[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type6' must be marked as STRICT.
+       01 type6 typedef private global.
               05 champ1 pic x.
        PROCEDURE DIVISION.
       

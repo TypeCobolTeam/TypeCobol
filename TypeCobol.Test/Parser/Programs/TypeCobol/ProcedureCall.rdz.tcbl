@@ -124,27 +124,27 @@
 
       * __________________________________________________
       * KO Empty Call 
-       CALL 
+             CALL 
        .
 
       * __________________________________________________
       * OK : function-pointer procedure-pointer
-       CALL GetPtrFn 
+             CALL GetPtrFn 
              INPUT funcPointer procPointer.
 
       * __________________________________________________
       * KO : Bad parameter entry
-       CALL GetPtrFn 
+           CALL GetPtrFn 
              OUTPUT funcPointer procPointer.
 
       * __________________________________________________
       * KO : Bad parameter entry
-       CALL GetPtrFn 
+             CALL GetPtrFn 
              IN-OUT funcPointer procPointer.
 
       * __________________________________________________
       * KO : wrong params awaited func/proc-pointer
-       CALL GetPtrFn 
+           CALL GetPtrFn 
              INPUT someformat someformat.
 
       * __________________________________________________
@@ -258,7 +258,7 @@
            .
 
       *OK
-       call proc1 input  MyToto
+           call proc1 input  MyToto
                   output MyToto.
 
       * KO contains an unknown Type

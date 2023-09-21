@@ -57,7 +57,7 @@
            IN-OUT   myBool      TYPE BOOL
            OUTPUT   toto        TYPE BOOL
                     bli         Pic PPP999PPP.
-           PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 

@@ -33,4 +33,27 @@ namespace TypeCobol.Compiler.Text
             return "[" + StartIndex + "," + EndIndex + "]";
         }
     }
+
+    /// <summary>
+    /// Describe expected starting area of a CodeElement
+    /// </summary>
+    public enum CodeElementStartingAreaType
+    {
+        AreaA,
+        AreaB,
+        AreaAOrB,   // Not constrained
+        Unspecified // TODO: specs not done yet to know if the CodeElement is in Area A, B or both
+    }
+
+    /// <summary>
+    /// Name of text areas defined in Cobol ReferenceFormat
+    /// </summary>
+    public enum TextAreaType
+    {
+        SequenceNumber,
+        Indicator,
+        AreaA,
+        AreaB,
+        Comment
+    }
 }

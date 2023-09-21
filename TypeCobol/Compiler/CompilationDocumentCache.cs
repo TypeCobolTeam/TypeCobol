@@ -22,8 +22,7 @@ namespace TypeCobol.Compiler
             // Add string flags based on scan state
             key += (scanState.SpecialNames.DecimalPointIsComma ? "D1" : "__") +
                    (scanState.WithDebuggingMode ? "D2" : "__") +
-                   (scanState.InsideDataDivision ? "D3" : "__") +
-                   (scanState.InsideProcedureDivision ? "D4" : "__");
+                   (scanState.InsideDataDivision ? "D3" : "__");
             // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
             // because a COPY is always cleanly delimited at CodeElement boundaries.
 

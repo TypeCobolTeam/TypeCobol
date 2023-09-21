@@ -18,7 +18,7 @@
         01 tctx TYPE BOOL.
         01 rtcCode TYPE DATE.
        PROCEDURE DIVISION.
-        CALL DVZFSCTX2::GetTechnicalContext2 
+            CALL DVZFSCTX2::GetTechnicalContext2 
             OUTPUT tctx rtcCode.
        end-declare.
 

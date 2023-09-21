@@ -19,19 +19,23 @@ namespace TypeCobol.Compiler.Scanner
             /// NB : value will be null until at least one symbolic character is defined
             /// => only use method AddSymbolicCharacter to safely add an element to this list
             /// </summary>
-            public IList<string>? SymbolicCharacters { get; private set; }
+            private HashSet<string>? _symbolicCharacters;
 
             /// <summary>
             /// Register a new symbolic character name found in the source file
             /// </summary>
             internal void AddSymbolicCharacter(string tokenText)
             {
-                if (SymbolicCharacters == null)
-                {
-                    SymbolicCharacters = new List<string>();
-                }
-                SymbolicCharacters.Add(tokenText);
+                _symbolicCharacters ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                _symbolicCharacters.Add(tokenText);
             }
+
+            /// <summary>
+            /// Indicate whether the given text is a known symbolic character.
+            /// </summary>
+            /// <param name="tokenText">Text to compare with symbolic characters.</param>
+            /// <returns>True when it is a symbolic character, False otherwise.</returns>
+            internal bool IsSymbolicCharacter(string tokenText) => _symbolicCharacters != null && _symbolicCharacters.Contains(tokenText);
 
             private bool _nextLiteralIsCurrencySign;
             private bool _nextLiteralIsCurrencySymbol;
@@ -181,7 +185,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             private SpecialNamesContext(bool insideSymbolicCharacterDefinitions,
-                IList<string>? symbolicCharacters,
+                HashSet<string>? symbolicCharacters,
                 bool nextLiteralIsCurrencySign,
                 bool nextLiteralIsCurrencySymbol,
                 Token? lastCurrencySignToken,
@@ -190,7 +194,7 @@ namespace TypeCobol.Compiler.Scanner
                 bool decimalPointIsComma)
             {
                 InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
-                SymbolicCharacters = symbolicCharacters;
+                _symbolicCharacters = symbolicCharacters;
                 _nextLiteralIsCurrencySign = nextLiteralIsCurrencySign;
                 _nextLiteralIsCurrencySymbol = nextLiteralIsCurrencySymbol;
                 _lastCurrencySignToken = lastCurrencySignToken;
@@ -201,7 +205,7 @@ namespace TypeCobol.Compiler.Scanner
 
             public SpecialNamesContext Clone()
             {
-                var symbolicCharacters = SymbolicCharacters != null ? new List<string>(SymbolicCharacters) : null;
+                var symbolicCharacters = _symbolicCharacters != null ? new HashSet<string>(_symbolicCharacters, StringComparer.OrdinalIgnoreCase) : null;
                 var customCurrencyDescriptors = CustomCurrencyDescriptors != null ? new Dictionary<char, PictureValidator.CurrencyDescriptor>(CustomCurrencyDescriptors) : null;
                 return new SpecialNamesContext(InsideSymbolicCharacterDefinitions,
                     symbolicCharacters,
@@ -219,7 +223,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (ReferenceEquals(null, other)) return false;
 
                 return InsideSymbolicCharacterDefinitions == other.InsideSymbolicCharacterDefinitions
-                       && SymbolicCharacters?.Count == other.SymbolicCharacters?.Count
+                       && _symbolicCharacters?.Count == other._symbolicCharacters?.Count
                        && _nextLiteralIsCurrencySign == other._nextLiteralIsCurrencySign
                        && _nextLiteralIsCurrencySymbol == other._nextLiteralIsCurrencySymbol
                        && CustomCurrencyDescriptors?.Count == other.CustomCurrencyDescriptors?.Count
@@ -235,7 +239,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     int hash = 17;
                     hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
-                    hash = hash * 23 + SymbolicCharacters?.Count ?? 0;
+                    hash = hash * 23 + _symbolicCharacters?.Count ?? 0;
                     hash = hash * 23 + _nextLiteralIsCurrencySign.GetHashCode();
                     hash = hash * 23 + _nextLiteralIsCurrencySymbol.GetHashCode();
                     hash = hash * 23 + CustomCurrencyDescriptors?.Count ?? 0;

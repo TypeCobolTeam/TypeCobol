@@ -250,7 +250,7 @@ lengthOfSpecialRegister:
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier: 
-	FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator (intrinsicArgument)+ RightParenthesisSeparator)?;
+	FUNCTION? IntrinsicFunctionName (LeftParenthesisSeparator (intrinsicArgument)+ RightParenthesisSeparator)?;
 
 // A keyword shall be specified in accordance with the intrinsic function definition.
 // The TRIM intrinsic function is an example of an intrinsic function with a keyword argument.

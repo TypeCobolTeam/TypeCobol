@@ -1,5 +1,5 @@
-﻿--- Code Elements ---
-[[AtEndCondition]] [8,10:END]<END> --> [8,10:END]<END>
+--- Code Elements ---
+[[AtEndCondition]] [12,14:END]<END> --> [12,14:END]<END>
 
 [[ClassEnd]] [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>
 - ClassName = MyClass

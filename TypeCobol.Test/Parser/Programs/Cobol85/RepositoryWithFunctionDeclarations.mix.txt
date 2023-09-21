@@ -1,0 +1,23 @@
+      ****** Support REPOSITORY PARAGRAPH *****
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. pgm2536.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       REPOSITORY.
+           FUNCTION ABS INTRINSIC
+           Class Dummy
+           FUNCTION EXP COMBINED-DATETIME FORMATTED-CURRENT-DATE
+           FORMATTED-DATETIME SIGN INTRINSIC
+           Class Base is "java.lang.Object"
+Line 13[21,33] <27, Error, Syntax> - Syntax error : "when-compiled" was specified in the "FUNCTION" phrase of the "REPOSITORY" paragraph, but the keyword "FUNCTION" is always required for this function.
+           FUNCTION when-compiled INTRINSIC
+           Class Customer is "com.ei.Customer"
+Line 15[21,33] <27, Error, Syntax> - Syntax error : "WHEN-COMPILED" was specified in the "FUNCTION" phrase of the "REPOSITORY" paragraph, but the keyword "FUNCTION" is always required for this function.
+           FUNCTION WHEN-COMPILED INTRINSIC
+           FUNCTION PI TRIM INTRINSIC.
+       DATA DIVISION.
+       WORKING-STORAGE  SECTION.
+       PROCEDURE DIVISION.
+            GOBACK.
+       END PROGRAM pgm2536.

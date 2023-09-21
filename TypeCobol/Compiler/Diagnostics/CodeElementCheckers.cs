@@ -704,5 +704,24 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    static class RepositoryParagraphChecker
+    {
+        public static void OnCodeElement(RepositoryParagraph paragraph, CodeElementsParser.RepositoryParagraphContext context)
+        {
+            List<SymbolDefinitionOrReference> intrinsicFunctions = paragraph.IntrinsicFunctions;
+            if (intrinsicFunctions != null)
+            {
+                foreach (var intrinsicFunction in intrinsicFunctions)
+                {
+                    Token token = intrinsicFunction.NameLiteral.Token;
+                    var intrinsicFunctionName = intrinsicFunction.Name;
+                    if (!CobolIntrinsicFunctions.IsAllowedInRepositoryParagraph(intrinsicFunctionName))
+                    {
+                        DiagnosticUtils.AddError(paragraph, $"\"{intrinsicFunctionName}\" was specified in the \"FUNCTION\" phrase of the \"REPOSITORY\" paragraph, but the keyword \"FUNCTION\" is always required for this function.", token);
+                    }
+                }
+            }
+        }
+    }
     #endregion
 }

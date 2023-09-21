@@ -42,9 +42,9 @@
 
 
       *OK  call check of PGM1
-          call check input somedate
+           call check input somedate
       *OK 
-          call PGM1::check input somedate
+           call PGM1::check input somedate
           .
 
        END PROGRAM PGM1.

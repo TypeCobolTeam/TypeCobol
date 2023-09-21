@@ -40,15 +40,15 @@
        PROCEDURE DIVISION.
       
       *KO var1 ambiguous with var1 in GS
-          MOVE var1 TO result
+           MOVE var1 TO result
       *KO var2 ambiguous with parent's GS
-          MOVE var2 TO result
+           MOVE var2 TO result
       *KO var3 ambiguous with parent's GS
-          MOVE var3 TO result
+           MOVE var3 TO result
       
       *OK
-          MOVE var4 to result
-          .
+           MOVE var4 to result
+           .
       
        END PROGRAM NestedProc.
       
