@@ -66,6 +66,7 @@ namespace TypeCobol.Compiler.Diagnostics
         ShouldBePrecededBySpace = 54,
         InvalidCharInsidePseudoText = 55,
         DirectiveSyntaxWarning = 56,
-        DirectiveSyntaxError = 57
+        DirectiveSyntaxError = 57,
+        InvalidNumberOfCharsInHexaUTF8Literal = 58
     }
 }

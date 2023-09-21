@@ -1,0 +1,42 @@
+-- Line 1 --
+[1,46+:U"This text does not include any escaped char"]<UTF8Literal>(",Y,Y){This text does not include any escaped char}
+
+-- Line 2 --
+[1,102+:U'This text has one char from the Basic Multilingual Plane: \u03BB, the lowercase Greek letter Lambda']<UTF8Literal>(',Y,Y){This text has one char from the Basic Multilingual Plane: λ, the lowercase Greek letter Lambda}
+
+-- Line 3 --
+[1,62+:u"Now with something from Supplementary Planes: \U0001F4A9..."]<UTF8Literal>(",Y,Y){Now with something from Supplementary Planes: 💩...}
+
+-- Line 4 --
+[1,108+:u'\U00ABCDEF is not part of Unicode range and both \\u1234 and \\U00ABCDEF are not Unicode escape sequences']<UTF8Literal>(',Y,Y){� is not part of Unicode range and both \u1234 and \U00ABCDEF are not Unicode escape sequences}
+
+-- Line 5 --
+[1,10+:UX"E2ADA1"]<HexadecimalUTF8Literal>(",Y,Y){⭡}
+
+-- Line 6 --
+[1,10+:UX'E2ADA1']<HexadecimalUTF8Literal>(',Y,Y){⭡}
+
+-- Line 7 --
+[1,10+:uX"E2ADA3"]<HexadecimalUTF8Literal>(",Y,Y){⭣}
+
+-- Line 8 --
+[1,10+:uX'E2ADA3']<HexadecimalUTF8Literal>(',Y,Y){⭣}
+
+-- Line 9 --
+[1,10+:Ux"E2ADA0"]<HexadecimalUTF8Literal>(",Y,Y){⭠}
+
+-- Line 10 --
+[1,10+:Ux'E2ADA2']<HexadecimalUTF8Literal>(',Y,Y){⭢}
+
+-- Line 11 --
+[1,10+:ux"E2ADA0"]<HexadecimalUTF8Literal>(",Y,Y){⭠}
+
+-- Line 12 --
+[1,10+:ux'E2ADA2']<HexadecimalUTF8Literal>(',Y,Y){⭢}
+
+-- Line 13 --
+[1,1:B]<UserDefinedWord>
+
+-- Line 14 --
+[1,1:A]<UserDefinedWord>
+

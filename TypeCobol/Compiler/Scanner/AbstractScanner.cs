@@ -361,12 +361,78 @@ namespace TypeCobol.Compiler.Scanner
                         value = new AlphanumericLiteralTokenValue(graphicString, encoding);
                         break;
                     }
+                case TokenType.UTF8Literal:
+                    {
+                        // UTF-8 literals can contain escaped chars non-representable in EBCDIC
+                        value = new AlphanumericLiteralTokenValue(UnescapeUnicodeCodePoints(sbValue.ToString()));
+                        // TODO add maximum length check
+                        break;
+                    }
+                case TokenType.HexadecimalUTF8Literal:
+                    {
+                        string hexadecimalChars = sbValue.ToString();
+                        if (hexadecimalChars.Length % 2 != 0 || hexadecimalChars.Length > 320)
+                        {
+                            tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaUTF8Literal, token);
+                        }
+                        value = new AlphanumericLiteralTokenValue(hexadecimalChars, Encoding.UTF8);
+                        break;
+                    }
                 default:
                     value = new AlphanumericLiteralTokenValue(sbValue.ToString());
                     break;
             }
             token.LiteralValue = value;
             return token;
+        }
+
+        private static readonly Regex _UnicodeEscapeSequenceRegex = new Regex(@"\\u(?<CodePoint>[a-fA-F0-9]{4})|\\U00(?<CodePoint>[a-fA-F0-9]{6})", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Replace escaped Unicode sequences from given character data.
+        /// Escape sequence can be either of the form:
+        /// 
+        /// • \uhhhh, where each h represents a hexadecimal digit in the range '0' to '9', 'a' to 'f', and 'A'
+        /// to 'F', inclusive. This Unicode escape sequence represents a Unicode code point from the Basic
+        /// Multilingual Plane (i.e., Unicode code points in the range U+0000 through U+FFFF).
+        ///
+        /// • \U00hhhhh, where each h represents a hexadecimal digit in the range '0' to '9', 'a' to 'f', and 'A' to 'F'.
+        /// This Unicode escape sequence can represent any legal Unicode code point, including code points
+        /// from the Supplementary Planes, specifically, Unicode code points in the range U+10000 through
+        /// U+10FFFF (e.g., an emoji symbol).
+        ///
+        /// To avoid having a string of characters of the form \uhhhh or \U00hhhhhh in a UTF-8 literal be
+        /// interpreted as a Unicode escape sequence, the escape character ‘\’ can itself be escaped with ‘\’
+        /// to cause it to be interpreted literally. Thus, the sequence \\u00E9 will not be treated as a Unicode
+        /// escape sequence.
+        /// </summary>
+        /// <param name="characterData">Character data of an UTF-8 literal as found directly in source code.</param>
+        /// <returns>UTF-8 literal value with escaped sequences replaced by their actual Unicode character.</returns>
+        private static string UnescapeUnicodeCodePoints(string characterData)
+        {
+            return _UnicodeEscapeSequenceRegex.Replace(characterData, EvaluateMatch);
+
+            string EvaluateMatch(Match match)
+            {
+                // Check previous character, if it's a '\' this is an escaped escape sequence...
+                if (match.Index > 0 && characterData[match.Index - 1] == '\\')
+                {
+                    // Remove first '\' and return what follows
+                    return match.Value.Substring(1);
+                }
+
+                // Capture Unicode code point and translate to corresponding char
+                string hexCodePoint = match.Groups["CodePoint"].Value;
+                int codePoint = int.Parse(hexCodePoint, System.Globalization.NumberStyles.HexNumber);
+                if (Rune.IsValid(codePoint))
+                {
+                    var rune = new Rune(codePoint);
+                    return rune.ToString();
+                }
+
+                // Invalid code point (not in Unicode range), use standard replacement char
+                return Rune.ReplacementChar.ToString();
+            }
         }
     }
 }
