@@ -20,9 +20,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 case CodeElementType.DataDivisionHeader:
                     AddError("DATA DIVISION");
                     break;
-                case CodeElementType.ProcedureDivisionHeader:
-                    AddError("PROCEDURE DIVISION");
-                    break;
                 case CodeElementType.SourceComputerParagraph:
                     var sourceComputerParagraph = (SourceComputerParagraph)codeElement;
                     if (sourceComputerParagraph.DebuggingMode?.Value == true)

@@ -1,5 +1,5 @@
 Line 20[12,20] <27, Error, Syntax> - Syntax error : extraneous input ''name = '' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
-Line 26[12,17] <27, Error, Syntax> - Syntax error : no viable alternative at input 'yyyy ... GOBACK'
+Line 25[17,20] <27, Error, Syntax> - Syntax error : extraneous input 'yyyy' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
 --- Nodes ---
 ?
   Pgm

@@ -10,7 +10,7 @@
        01 NAMED PIC X.
        PROCEDURE DIVISION.
       *EXHIBIT statement is not supported
-Line 13[20,24] <27, Error, Syntax> - Syntax error : 'EXHIBIT' is not supported
+Line 13[12,18] <27, Error, Syntax> - Syntax error : extraneous input 'EXHIBIT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
            EXHIBIT NAMED WS-FOO WS-BAR
            .
        END PROGRAM Pgm.

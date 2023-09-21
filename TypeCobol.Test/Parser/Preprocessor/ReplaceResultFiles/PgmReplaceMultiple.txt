@@ -1,20 +1,20 @@
 ﻿** Document path PgmReplaceMultiple **
 -- Line 5 --
-[8,24:TOTO]<UserDefinedWord>
+[8,24:TOTO]<SectionParagraphName>
 [25,25+:.]<PeriodSeparator>
 -- Line 6 --
-[8,18:TOTO2]<UserDefinedWord>
+[8,18:TOTO2]<SectionParagraphName>
 [8,18:TOTO]<UserDefinedWord>
 [8,18:3]<IntegerLiteral>{3}
 [20,24:TOTO4]<UserDefinedWord>
 [25,25+:.]<PeriodSeparator>
 -- Line 7 --
-[8,18:TOTO1]<UserDefinedWord>
+[8,18:TOTO1]<SectionParagraphName>
 [8,18:TOTO2]<UserDefinedWord>
 [8,18:TOTO3]<UserDefinedWord>
 [31,31+:.]<PeriodSeparator>
 -- Line 8 --
-[8,12:TOTO2]<UserDefinedWord>
+[8,12:TOTO2]<SectionParagraphName>
 [14,24:TOTO1]<UserDefinedWord>
 [14,24:TOTO2]<UserDefinedWord>
 [14,24:TOTO3]<UserDefinedWord>
