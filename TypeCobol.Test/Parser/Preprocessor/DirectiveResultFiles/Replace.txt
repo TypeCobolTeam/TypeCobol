@@ -36,18 +36,18 @@
 [21,22:by]<BY>
 [24,27:titi]<UserDefinedWord>
 [28,28+:.]<PeriodSeparator>
-Line 12[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'toto' expecting  expecting {'==', OFF}
+Line 12[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'toto' expecting  expecting {'==', LEADING, OFF, TRAILING}
 
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[27,28:by]<BY>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39+:==]<PseudoTextDelimiter>) ***
-Line 14[8,14] <27, Error, Syntax> - Syntax error : mismatched input 'REPLACE' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY}
+Line 14[8,14] <27, Error, Syntax> - Syntax error : mismatched input 'REPLACE' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY, LEADING, TRAILING}
 
 -- Line 14 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:= ]<EqualOperator>[26,27:by]<BY>[28,28: ]<SpaceSeparator>[29,30:==]<PseudoTextDelimiter>) ***
 [32,35:titi]<UserDefinedWord>
 [37,38:==]<PseudoTextDelimiter>
 [39,39+:.]<PeriodSeparator>
-Line 14[32,35] <27, Error, Syntax> - Syntax error : mismatched input 'titi' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY}
+Line 14[32,35] <27, Error, Syntax> - Syntax error : mismatched input 'titi' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY, LEADING, TRAILING}
 
 -- Line 15 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,22:toto]<UserDefinedWord>[24,25:==]<PseudoTextDelimiter>[26,26+:.]<PeriodSeparator>) ***
@@ -58,7 +58,7 @@ Line 15[26,26] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
 [40,40: ]<SpaceSeparator>
 [41,45:tutu1]<UserDefinedWord>
 [46,46+:.]<PeriodSeparator>
-Line 16[41,45] <27, Error, Syntax> - Syntax error : mismatched input 'tutu1' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY}
+Line 16[41,45] <27, Error, Syntax> - Syntax error : mismatched input 'tutu1' expecting  expecting {Literal, UserDefinedWord, ReservedWord, '.', '==', END-EXEC, BY, LEADING, TRAILING}
 
 -- Line 17 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[19,22:toto]<UserDefinedWord>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[33,36:titi]<UserDefinedWord>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:==]<PseudoTextDelimiter>[44,48:tutu2]<UserDefinedWord>[49,50:==]<PseudoTextDelimiter>[51,51+:.]<PeriodSeparator>) ***
@@ -78,11 +78,11 @@ Line 18[54,54] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
 [52,53:==]<PseudoTextDelimiter>
 [54,54: ]<SpaceSeparator>
 [55,55+:.]<PeriodSeparator>
-Line 19[41,42] <27, Error, Syntax> - Syntax error : mismatched input 'by' expecting  expecting {'.', '=='}
+Line 19[41,42] <27, Error, Syntax> - Syntax error : mismatched input 'by' expecting  expecting {'.', '==', LEADING, TRAILING}
 
 -- Line 20 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>) ***
-Line 21[8,14] <27, Error, Syntax> - Syntax error : mismatched input 'REPLACE' expecting  expecting {'==', OFF}
+Line 21[8,14] <27, Error, Syntax> - Syntax error : mismatched input 'REPLACE' expecting  expecting {'==', LEADING, OFF, TRAILING}
 
 -- Line 21 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE_OFF ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,18:off]<OFF>) ***

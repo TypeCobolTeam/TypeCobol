@@ -1,0 +1,62 @@
+Line 5[38,46] <37, Warning, General> - Warning: Debugging mode is active
+Line 21[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 22[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 24[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... ('
+Line 25[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... ('
+Line 29[11,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... 1'
+Line 30[11,20] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... 3'
+Line 40[15,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... 1'
+Line 41[15,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... 3'
+Line 21[28,28] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+--- Processed Tokens ---
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZS0OSM.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       data division.
+       working-storage section.
+       REPLACE
+          ==C-Nb==                 BY ==1==
+          ==C-NbX==                BY ==3==
+          ==3== by ==4==
+      
+          ==:TOTO:==              BY ==3==
+          .
+      
+      *Parenthesis separator  -  Replace APPLY
+       01 Var         pic X(1)   .
+       01 Var         pic X(3)    .
+       
+      *Semi colon separator   -  Replace APPLY
+       01 Var:1       pic X.
+       01 Var:3       pic X.
+      *Parenthesis separator  -  Replace APPLY
+       01 Var(1       pic X.
+       01 Var(3       pic X.
+      *Semi colon separator  -  Replace APPLY
+      *Bug: replace mechanism will replace the whole token
+      *since the replace operation is considered a single replacement token
+       01 1            pic X.
+       01 3            pic X.
+      
+
+      *No separator     -  Replace don't apply
+       01 VarC-Nb     PIC X.
+       01 VarC-NbX    PIC X.
+      
+      *Comma separator  -  Replace don't apply
+      *Bug: our parser will produce 3 tokens here and the replace
+      *mechanism will match the replace operation on 1 token at a time
+       01 Var 1       pic X.
+       01 Var 3       pic X.
+      
+      
+      
+      
+       procedure division.
+      
+           goback
+           .
+       end program DVZS0OSM.

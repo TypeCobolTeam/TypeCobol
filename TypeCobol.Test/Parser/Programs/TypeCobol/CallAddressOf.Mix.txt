@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. CallLinkage.
 
        DATA DIVISION.
@@ -17,7 +17,7 @@
                         .
        END-DECLARE.
 
-        CALL MyProc
+           CALL MyProc
 Line 21[18,24] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
            INPUT ADDRESS OF W-Date
 Line 22[19,25] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
@@ -25,7 +25,7 @@ Line 22[19,25] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used 
 Line 23[19,25] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
            OUTPUT ADDRESS OF W-Date.
 
-        CALL MyProc
+           CALL MyProc
            INPUT BY CONTENT ADDRESS OF W-Date
 Line 27[20,26] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
            IN-OUT  ADDRESS OF W-Date
@@ -33,26 +33,26 @@ Line 28[20,26] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used 
            OUTPUT  ADDRESS OF W-Date.
 
 
-        CALL MyProc
+           CALL MyProc
            INPUT BY VALUE ADDRESS OF W-Date
 Line 33[19,25] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
            IN-OUT ADDRESS OF W-Date
 Line 34[19,25] <27, Error, Syntax> - Syntax error : ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
            OUTPUT ADDRESS OF W-Date.
 
-        CALL MyProc
+           CALL MyProc
            INPUT  ADDRESS OF L-Date
            IN-OUT ADDRESS OF L-Date
            OUTPUT ADDRESS OF L-Date.
 
 
-        CALL 'SomePGM' using BY CONTENT ADDRESS OF W-Date.
-        CALL 'SomePGM' using BY VALUE ADDRESS OF W-Date.
-Line 44[9,59] <27, Error, Syntax> - Syntax error : CALL with ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
-        CALL 'SomePGM' using BY REFERENCE ADDRESS OF W-Date.
-Line 45[9,46] <27, Error, Syntax> - Syntax error : CALL with ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
-        CALL 'SomePGM' using ADDRESS OF W-Date.
-        CALL 'SomePGM' using ADDRESS OF L-Date.
+           CALL 'SomePGM' using BY CONTENT ADDRESS OF W-Date.
+           CALL 'SomePGM' using BY VALUE ADDRESS OF W-Date.
+Line 44[12,62] <27, Error, Syntax> - Syntax error : CALL with ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
+           CALL 'SomePGM' using BY REFERENCE ADDRESS OF W-Date.
+Line 45[12,49] <27, Error, Syntax> - Syntax error : CALL with ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE
+           CALL 'SomePGM' using ADDRESS OF W-Date.
+           CALL 'SomePGM' using ADDRESS OF L-Date.
 
 
        END PROGRAM CallLinkage.

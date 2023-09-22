@@ -196,8 +196,8 @@ non terminal controlCblCompilerStatement;
 
 non terminal copyCompilerStatement;
 non terminal copyCompilerStatementBody;
-non terminal PairTokenListList replacingCopyReplacingOperandOpts;
-non terminal PairTokenListList copyReplacingOperands;
+non terminal CupReplaceOperations replacingCopyReplacingOperandOpts;
+non terminal CupReplaceOperations copyReplacingOperands;
 non terminal TokenList copyReplacingOperand;
 non terminal TokenList pseudoText;
 non terminal pseudoTextDelimiter;
@@ -222,7 +222,7 @@ non terminal readyOrResetTraceCompilerStatement;
 
 non terminal Token replaceToken;
 non terminal replaceCompilerStatement;
-non terminal PairTokenListList pseudoTextReplaces;
+non terminal CupReplaceOperations pseudoTextReplaces;
 
 non terminal serviceLabelCompilerStatement;
 
@@ -715,12 +715,18 @@ replacing_by ::= BY
 ;
 
 copyReplacingOperands ::= 
-	 copyReplacingOperand:from 
-	 replacing_by 	 
-	 copyReplacingOperand:by
-	{:  RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; :}
+	 copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, null)}; :}
+| LEADING:leading copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), leading, null)}; :}
+| TRAILING:trailing copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, trailing)}; :}
 | copyReplacingOperands:operands copyReplacingOperand:from replacing_by copyReplacingOperand:by
-	{: operands.Add(new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = operands; :}
+	{: operands.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, null)); RESULT = operands; :}
+| copyReplacingOperands:operands LEADING:leading copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: operands.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), leading, null)); RESULT = operands; :}
+| copyReplacingOperands:operands TRAILING:trailing copyReplacingOperand:from replacing_by copyReplacingOperand:by
+	{: operands.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from), my_parser.TrimLeftRightSpaceTokens(by), null, trailing)); RESULT = operands; :}
 ;
 
 copyReplacingOperand ::= pseudoText:tokens
@@ -1045,9 +1051,17 @@ replaceCompilerStatement ::= replaceToken:r
 
 
 pseudoTextReplaces ::= pseudoText:from BY pseudoText:by
-	{: RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))}; :}
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by), null, null)}; :}
+| LEADING:leading pseudoText:from BY pseudoText:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by), leading, null)}; :}
+| TRAILING:trailing pseudoText:from BY pseudoText:by
+	{: RESULT = new CupReplaceOperations() {new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by), null, trailing)}; :}
 | pseudoTextReplaces:replaces pseudoText:from BY pseudoText:by
-	{: replaces.Add(new Tuple<List<Token>, List<Token>>(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by))); RESULT = replaces; :}
+	{: replaces.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by), null, null)); RESULT = replaces; :}
+| pseudoTextReplaces:replaces LEADING:leading pseudoText:from BY pseudoText:by
+	{: replaces.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by), leading, null)); RESULT = replaces; :}
+| pseudoTextReplaces:replaces TRAILING:trailing pseudoText:from BY pseudoText:by
+	{: replaces.Add(new CupReplaceOperation(my_parser.NormalizeComparisonTokens(from),my_parser.TrimLeftRightSpaceTokens(by), null, trailing)); RESULT = replaces; :}
 ;
 
 // p544: SERVICE LABEL statement

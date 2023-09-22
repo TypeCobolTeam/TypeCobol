@@ -21,10 +21,11 @@ namespace TypeCobol.LanguageServer
         /// <param name="codeElement">The PERFORM CodeElement</param>
         /// <param name="userFilterToken">The PERFORM token</param>
         /// <returns></returns>
-        public static List<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
+        public static List<CompletionItem> GetCompletionPerformParagraphAndSection(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
             var performNode = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
-            IEnumerable<Paragraph> pargraphs = null;
+            IEnumerable<Paragraph> paragraphs = null;
+            IEnumerable<Section> sections = null;
             IEnumerable<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
 
@@ -33,7 +34,8 @@ namespace TypeCobol.LanguageServer
                 if (performNode.SymbolTable != null)
                 {
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    pargraphs = performNode.SymbolTable.GetParagraphs(p => p.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
+                    paragraphs = performNode.SymbolTable.GetParagraphs(p => p.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase));
+                    sections = performNode.SymbolTable.GetSections(s => s.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase));
                     variables = performNode.SymbolTable.GetVariables(da => da.Picture != null &&
                                                                            da.DataType ==
                                                                            Compiler.CodeElements.DataType.Numeric &&
@@ -42,10 +44,8 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            if (pargraphs != null)
-            {
-                completionItems.AddRange(pargraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference }));
-            }
+            completionItems.AddRange(paragraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference }));
+            completionItems.AddRange(sections.Select(s => new CompletionItem(s.Name) { kind = CompletionItemKind.Reference }));
             if (variables != null)
             {
                 foreach (var variable in variables)

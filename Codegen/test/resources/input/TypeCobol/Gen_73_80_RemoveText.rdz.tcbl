@@ -46,7 +46,7 @@
           01  I                            PIC 9(4) COMP-5.             12360000
           01  enr-lu                         TYPE CTGCPL-Enreg.         12370000
       * 01  enr-a-chercher                 TYPE CTGCPL-Enreg.           12370001
-               01  L-I                            PIC 9(4) COMP-5.      12370002
+          01  L-I                            PIC 9(4) COMP-5.           12370002
        REPLACE ==:MAX-TBL-RCH:== BY ==10==.                             12370003
        REPLACE ==:MAX-TBL-MCTGCPL:== BY ==500==.                        12370004
                                                                         12370005
@@ -78,16 +78,16 @@
            END-IF                                                       12710000
 
 
-        MOVE 'O' TO
-       lis-trouvee::TBL10-CTGCPL-RTA-tbl::TVR(I)                        12710000
-       MOVE enr-lu::TYP TO                                              12710000
-       lis-trouvee::TBL10-CTGCPL-RTA-tbl::TYP(I)                        12710000
-       MOVE enr-lu::IDTOBJ TO                                           12730000
-       lis-trouvee::TBL10-CTGCPL-RTA-tbl::IDTOBJ(I)                     12710000
-       MOVE enr-lu::NOMCLN TO                                           12750000
-       lis-trouvee::TBL10-CTGCPL-RTA-tbl::NOMCLN(I)                     12710000
-       MOVE enr-lu::VALCLN TO                                           12770000
-       lis-trouvee::TBL10-CTGCPL-RTA-tbl::VALCLN(I)                     12710000
+           MOVE 'O' TO
+           lis-trouvee::TBL10-CTGCPL-RTA-tbl::TVR(I)                    12710000
+           MOVE enr-lu::TYP TO                                          12710000
+           lis-trouvee::TBL10-CTGCPL-RTA-tbl::TYP(I)                    12710000
+           MOVE enr-lu::IDTOBJ TO                                       12730000
+           lis-trouvee::TBL10-CTGCPL-RTA-tbl::IDTOBJ(I)                 12710000
+           MOVE enr-lu::NOMCLN TO                                       12750000
+           lis-trouvee::TBL10-CTGCPL-RTA-tbl::NOMCLN(I)                 12710000
+           MOVE enr-lu::VALCLN TO                                       12770000
+           lis-trouvee::TBL10-CTGCPL-RTA-tbl::VALCLN(I)                 12710000
 
              GOBACK                                                     12930000
            .                                                            12940000

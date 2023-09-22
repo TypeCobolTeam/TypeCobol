@@ -17,33 +17,33 @@
                         .
        END-DECLARE.
 
-        CALL MyProc
+           CALL MyProc
            INPUT ADDRESS OF W-Date
            IN-OUT ADDRESS OF W-Date
            OUTPUT ADDRESS OF W-Date.
 
-        CALL MyProc
+           CALL MyProc
            INPUT BY CONTENT ADDRESS OF W-Date
            IN-OUT  ADDRESS OF W-Date
            OUTPUT  ADDRESS OF W-Date.
 
 
-        CALL MyProc
+           CALL MyProc
            INPUT BY VALUE ADDRESS OF W-Date
            IN-OUT ADDRESS OF W-Date
            OUTPUT ADDRESS OF W-Date.
 
-        CALL MyProc
+           CALL MyProc
            INPUT  ADDRESS OF L-Date
            IN-OUT ADDRESS OF L-Date
            OUTPUT ADDRESS OF L-Date.
 
 
-        CALL 'SomePGM' using BY CONTENT ADDRESS OF W-Date.
-        CALL 'SomePGM' using BY VALUE ADDRESS OF W-Date.
-        CALL 'SomePGM' using BY REFERENCE ADDRESS OF W-Date.
-        CALL 'SomePGM' using ADDRESS OF W-Date.
-        CALL 'SomePGM' using ADDRESS OF L-Date.
+           CALL 'SomePGM' using BY CONTENT ADDRESS OF W-Date.
+           CALL 'SomePGM' using BY VALUE ADDRESS OF W-Date.
+           CALL 'SomePGM' using BY REFERENCE ADDRESS OF W-Date.
+           CALL 'SomePGM' using ADDRESS OF W-Date.
+           CALL 'SomePGM' using ADDRESS OF L-Date.
 
 
        END PROGRAM CallLinkage.

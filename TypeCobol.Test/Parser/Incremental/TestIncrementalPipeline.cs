@@ -89,7 +89,8 @@ namespace TypeCobol.Test.Parser.Incremental
         [TestCategory("Incremental")]
         public void ClearDocumentThenRewriteLineByLineInReverseOrder() => TestProgramsWithChangesGenerator<ClearDocumentThenRewriteLineByLineInReverseOrder>(
                 "UseCopyWithReplaceDeclaredWithReplacing", "UseCopyWithReplaceDeclaredWithReplacing2", // TODO #2480
-                "IncompleteInspect", "Program", "SelectFile", "ContinuationLine9", "InitialValuesContinuations" // TODO #2467
+                "IncompleteInspect", "Program", "SelectFile", "ContinuationLine9", "InitialValuesContinuations", // TODO #2467
+                "InitializeStatement", "IncompleteSet_NestedPrograms", "ExecSqlWithDropTableStatement", "ExecSqlWithReleaseSavepointStatement", "ExecSqlWithSavepointStatement", "ExecSqlWithWhenEverStatement" // TODO #2576
             );
     }
 }

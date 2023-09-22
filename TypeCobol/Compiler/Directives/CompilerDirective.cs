@@ -705,16 +705,21 @@ namespace TypeCobol.Compiler.Directives
     /// </summary>
     public class SingleTokenReplaceOperation : ReplaceOperation
     {
-        public SingleTokenReplaceOperation(Token? comparisonToken, Token? replacementToken)
+        public SingleTokenReplaceOperation(Token? comparisonToken, Token? replacementToken, Token? leadingToken, Token? trailingToken)
             : base(ReplaceOperationType.SingleToken, comparisonToken)
         {
             ReplacementToken = replacementToken;
+            LeadingToken = leadingToken;
+            TrailingToken = trailingToken;
         }
 
         /// <summary>
         /// Imported token injected in source text to replace matched token
         /// </summary>
         public Token? ReplacementToken { get; }
+
+        public Token? LeadingToken { get; }
+        public Token? TrailingToken { get; }
 
         public override IList<Token> GetComparisonTokens()
         {

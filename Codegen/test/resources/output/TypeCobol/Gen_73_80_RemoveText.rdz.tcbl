@@ -89,7 +89,7 @@
            02 VALCLN PIC X(50).
                                                                         12370000
       * 01  enr-a-chercher                 TYPE CTGCPL-Enreg.           12370001
-               01  L-I                            PIC 9(4) COMP-5.      12370002
+          01  L-I                            PIC 9(4) COMP-5.           12370002
        REPLACE ==:MAX-TBL-RCH:== BY ==10==.                             12370003
        REPLACE ==:MAX-TBL-MCTGCPL:== BY ==500==.                        12370004
                                                                         12370005
@@ -191,26 +191,26 @@
            END-IF                                                       12710000
 
 
-      * MOVE 'O' TO
-      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::TVR(I)
-        MOVE 'O' TO
-       TVR OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                    
-      *MOVE enr-lu::TYP TO
-      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::TYP(I)
-       MOVE TYP OF enr-lu TO                                            
-       TYP OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                    
-      *MOVE enr-lu::IDTOBJ TO
-      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::IDTOBJ(I)
-       MOVE IDTOBJ OF enr-lu TO                                         
-       IDTOBJ OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                 
-      *MOVE enr-lu::NOMCLN TO
-      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::NOMCLN(I)
-       MOVE NOMCLN OF enr-lu TO                                         
-       NOMCLN OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                 
-      *MOVE enr-lu::VALCLN TO
-      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::VALCLN(I)
-       MOVE VALCLN OF enr-lu TO                                         
-       VALCLN OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                 
+      *    MOVE 'O' TO
+      *    lis-trouvee::TBL10-CTGCPL-RTA-tbl::TVR(I)
+           MOVE 'O' TO
+           TVR OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                
+      *    MOVE enr-lu::TYP TO
+      *    lis-trouvee::TBL10-CTGCPL-RTA-tbl::TYP(I)
+           MOVE TYP OF enr-lu TO                                        
+           TYP OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                
+      *    MOVE enr-lu::IDTOBJ TO
+      *    lis-trouvee::TBL10-CTGCPL-RTA-tbl::IDTOBJ(I)
+           MOVE IDTOBJ OF enr-lu TO                                     
+           IDTOBJ OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)             
+      *    MOVE enr-lu::NOMCLN TO
+      *    lis-trouvee::TBL10-CTGCPL-RTA-tbl::NOMCLN(I)
+           MOVE NOMCLN OF enr-lu TO                                     
+           NOMCLN OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)             
+      *    MOVE enr-lu::VALCLN TO
+      *    lis-trouvee::TBL10-CTGCPL-RTA-tbl::VALCLN(I)
+           MOVE VALCLN OF enr-lu TO                                     
+           VALCLN OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)             
 
              GOBACK                                                     12930000
            .                                                            12940000

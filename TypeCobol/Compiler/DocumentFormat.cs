@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler
@@ -55,5 +56,28 @@ namespace TypeCobol.Compiler
         // Retrieving the 1252 codepage encoding works here because of provider registered by IBMCodePages static constructor
         public static DocumentFormat FreeTextFormat = new DocumentFormat(Encoding.GetEncoding(1252), EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
         public static DocumentFormat FreeUTF8Format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+
+        /// <summary>
+        /// Used to retrieve TextArea type in Cobol reference format from token position
+        /// </summary>
+        public static TextAreaType GetTextAreaTypeInCobolReferenceFormat(Token token) => GetTextAreaTypeInCobolReferenceFormat(token.Column);
+
+        /// <summary>
+        /// Used to retrieve TextArea type in Cobol reference format from column (1-based)
+        /// </summary>
+        public static TextAreaType GetTextAreaTypeInCobolReferenceFormat(int column)
+        {
+            const int indicator = (int)CobolFormatAreas.Indicator; // Column 7
+            const int endA = (int)CobolFormatAreas.End_A; // Column 11
+            const int endB = (int)CobolFormatAreas.End_B; // Column 72
+            return column switch
+            {
+                < indicator => TextAreaType.SequenceNumber,
+                indicator => TextAreaType.Indicator,
+                > indicator and <= endA => TextAreaType.AreaA,
+                > endA and <= endB => TextAreaType.AreaB,
+                _ => TextAreaType.Comment
+            };
+        }
     }
 }

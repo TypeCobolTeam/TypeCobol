@@ -1,21 +1,21 @@
-﻿--- Diagnostics ---
-Line 6[21,24] <27, Error, Syntax> - Syntax error : no viable alternative at input 'cycl' RuleStack=codeElement>exitPerformStatement,  OffendingSymbol=[21,24:cycl]<UserDefinedWord>
+--- Diagnostics ---
+Line 6[25,28] <27, Error, Syntax> - Syntax error : no viable alternative at input 'cycl' RuleStack=codeElement>exitPerformStatement,  OffendingSymbol=[25,28:cycl]<UserDefinedWord>
 --- Code Elements ---
-[[ExitStatement]] [8,11:EXIT]<EXIT> --> [8,11:EXIT]<EXIT>
+[[ExitStatement]] [12,15:EXIT]<EXIT> --> [12,15:EXIT]<EXIT>
 
-[[ExitMethodStatement]] [8,11:EXIT]<EXIT> --> [13,18:METHOD]<METHOD>
+[[ExitMethodStatement]] [12,15:EXIT]<EXIT> --> [17,22:METHOD]<METHOD>
 
-[[ExitParagraphStatement]] [8,11:EXIT]<EXIT> --> [13,21:PARAGRAPH]<UserDefinedWord>
+[[ExitParagraphStatement]] [12,15:EXIT]<EXIT> --> [17,25:PARAGRAPH]<UserDefinedWord>
 
-[[ExitSectionStatement]] [8,11:EXIT]<EXIT> --> [13,19:SECTION]<SECTION>
+[[ExitSectionStatement]] [12,15:EXIT]<EXIT> --> [17,23:SECTION]<SECTION>
 
-[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [13,19:PERFORM]<PERFORM>
+[[ExitPerformStatement]] [12,15:EXIT]<EXIT> --> [17,23:PERFORM]<PERFORM>
 
-[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [21,24:cycl]<UserDefinedWord>
+[[ExitPerformStatement]] [12,15:EXIT]<EXIT> --> [25,28:cycl]<UserDefinedWord>
 
-[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [21,25:CYCLE]<UserDefinedWord>
+[[ExitPerformStatement]] [12,15:EXIT]<EXIT> --> [25,29:CYCLE]<UserDefinedWord>
 
-[[ExitPerformStatement]] [8,11:EXIT]<EXIT> --> [21,25:cycle]<UserDefinedWord>
+[[ExitPerformStatement]] [12,15:EXIT]<EXIT> --> [25,29:cycle]<UserDefinedWord>
 
-[[ExitProgramStatement]] [8,11:EXIT]<EXIT> --> [13,19:PROGRAM]<PROGRAM>
+[[ExitProgramStatement]] [12,15:EXIT]<EXIT> --> [17,23:PROGRAM]<PROGRAM>
 

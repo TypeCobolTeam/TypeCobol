@@ -13,7 +13,7 @@
        PROCEDURE DIVISION.
 
 
-       MOVE W-TechCtx::Site::SiteName TO someformat.
+           MOVE W-TechCtx::Site::SiteName TO someformat.
 
        declare procedure check private
           input mydate        TYPE Date
@@ -35,32 +35,32 @@
        TRAITEMENT.
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
-           CALL Callee::MyPublicProcedure
+              CALL Callee::MyPublicProcedure
                     INPUT      somedate someformat
                     OUTPUT     flag     realformat 
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
-           CALL CALLEE::MyPublicProcedure
+              CALL CALLEE::MyPublicProcedure
                     INPUT      somedate someformat
                     OUTPUT     flag     realformat 
          
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PRIVATE_ONLY_SAME_PGM)
-           CALL Pgm1PrivateValidateDateFormat
+              CALL Pgm1PrivateValidateDateFormat
                     INPUT      somedate someformat
                     OUTPUT     flag     realformat
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PRIVATE_ONLY_SAME_PGM)
-           CALL PGM1::Pgm1PrivateValidateDateFormat
+             CALL PGM1::Pgm1PrivateValidateDateFormat
                     INPUT      somedate someformat
                     OUTPUT     flag     realformat
 
 
       *OK  call check of PGM1
-          call check input somedate
+             call check input somedate
       *OK 
-          call PGM1::check input somedate
+             call PGM1::check input somedate
       *OK 
-          call Callee::check input somedate
+             call Callee::check input somedate
         .
        END PROGRAM PGM1.
 

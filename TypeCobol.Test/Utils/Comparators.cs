@@ -69,21 +69,22 @@ namespace TypeCobol.Test.Utils
         {
             _Activators = new Dictionary<string, Func<ICompilationResultFormatter>>(StringComparer.OrdinalIgnoreCase)
                           {
-                              { "ANTLR",        () => new AntlrProfiling() },
-                              { "RPN",          () => new ArithmeticStatements() },
-                              { "CodeElements", () => new CodeElements() },
-                              { "NY",           () => new CodeElementsAndDiagnosticsCount() },
-                              { "DocJson",      () => new Documentation() },
-                              { "Doc",          () => new DocumentationProperties() },
-                              { "TEXT",         () => new FullText() },
-                              { "INC",          () => new IncrementalChanges() },
-                              { "MEM",          () => new MemoryMap() },
-                              { "Nodes",        () => new Nodes() },
-                              { "PGM",          () => new ProgramsClassesAndDiagnostics() },
-                              { "Mix",          () => new SourceMixedWithDiagnostics() },
-                              { "SQL",          () => new SqlStatements() },
-                              { "SYM",          () => new Symbols() },
-                              { "Tokens",       () => new Tokens() }
+                              { "ANTLR",            () => new AntlrProfiling() },
+                              { "RPN",              () => new ArithmeticStatements() },
+                              { "CodeElements",     () => new CodeElements() },
+                              { "NY",               () => new CodeElementsAndDiagnosticsCount() },
+                              { "DocJson",          () => new Documentation() },
+                              { "Doc",              () => new DocumentationProperties() },
+                              { "TEXT",             () => new FullText() },
+                              { "INC",              () => new IncrementalChanges() },
+                              { "MEM",              () => new MemoryMap() },
+                              { "Nodes",            () => new Nodes() },
+                              { "PGM",              () => new ProgramsClassesAndDiagnostics() },
+                              { "Mix",              () => new SourceMixedWithDiagnostics() },
+                              { "SQL",              () => new SqlStatements() },
+                              { "SYM",              () => new Symbols() },
+                              { "Tokens",           () => new Tokens() },
+                              { "ProcessedTokens",  () => new ProcessedTokens() }
                           };
         }
 
@@ -316,6 +317,63 @@ namespace TypeCobol.Test.Utils
                 {
                     result.AppendLine("    _" + sourceToken.SourceText + "_    " + sourceToken);
                 }
+            }
+
+            return result.ToString();
+        }
+    }
+
+    /// <summary>
+    /// This allow to see the original source code with replaced token applied.
+    /// Lines without tokens are also copied.
+    /// COPY are not expanded.
+    /// </summary>
+    internal class ProcessedTokens : ICompilationResultFormatter
+    {
+        public string Format(CompilationUnit compilationResult, IncrementalChangesHistory history)
+        {
+            var result = new StringBuilder();
+
+            var diagnostics = compilationResult.AllDiagnostics();
+            foreach (var diagnostic in diagnostics)
+            {
+                result.AppendLine(diagnostic.ToString());
+            }
+
+            result.AppendLine("--- Processed Tokens ---");
+            var currentLine = 0;
+            var currentCol = 1;
+
+            foreach (var processedToken in compilationResult.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
+            {
+                if (processedToken is ImportedToken)
+                {
+                    continue;//TODO Handle token from COPY
+                             //Token from COPY require to expand the COPY correctly.
+                             //Then line number in the output document will not be synced with line number in original document
+                }
+
+                if (currentLine < processedToken.Line)
+                {
+                    result.AppendLine();
+                    //Append lines without tokens
+                    while (currentLine < processedToken.Line - 1)
+                    {
+                        result.AppendLine(compilationResult.ProcessedTokensDocumentSnapshot.Lines[currentLine].Text);
+                        currentLine++;
+                    }
+
+                    currentLine = processedToken.Line;
+                    currentCol = 1;
+                }
+
+                var count = processedToken.Column - currentCol;
+                if (count > 0)
+                {
+                   result.Append(new string(' ', count));
+                }
+                result.Append(processedToken.Text);
+                currentCol = processedToken.Column + processedToken.Text.Length;
             }
 
             return result.ToString();

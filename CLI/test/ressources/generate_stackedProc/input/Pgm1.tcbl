@@ -8,27 +8,27 @@
            continue.
 
       *OK: local nested
-          Call NESTED::Foo input tt
+           Call NESTED::Foo input tt
       *OK: Foo is common STACKED.Pgm1 and STACKED.Pgm2
       *   STACKED.Pgm1 is considered inside Pgm1
-          call STACKED::Foo input tt
+           call STACKED::Foo input tt
       *OK: FooPgm1 declared only in Pgm1
-          call STACKED::FooPgm1 input tt
+           call STACKED::FooPgm1 input tt
       *OK: GetTechnicalContext declared in Pgm2 main
-          Call Pgm2::GetTechnicalContext input tt
+           Call Pgm2::GetTechnicalContext input tt
       *KO: FooPgm2 is declared in Pgm2 stacked
       *   STACKED.Pgm2 is not considered inside Pgm1
-          Call STACKED::FooPgm2 input tt
+           Call STACKED::FooPgm2 input tt
       *KO: Foo is declared in Pgm2 stacked
       *   STACKED2.Pgm2 is not considered inside Pgm1
-          Call STACKED2::Foo input tt
+           Call STACKED2::Foo input tt
 
       *OK: GetTechnicalContext declared in Pgm2 main (Pgm2)
-          Call Pgm2::GetTechnicalContext input tt
+           Call Pgm2::GetTechnicalContext input tt
       *KO: Proc1 declared in Pgm2 main (Pgm2 and Pgm2Same)
-          Call Pgm2::Proc1 input tt
+           Call Pgm2::Proc1 input tt
 
-          goback.
+           goback.
       
        declare procedure Proc1 public
            input t pic x.

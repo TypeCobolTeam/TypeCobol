@@ -3,8 +3,8 @@
       
        DATA DIVISION.
          WORKING-STORAGE SECTION.
-           77 n   PIC 99.
-           77 counter PIC 99.
+         77 n   PIC 99.
+         77 counter PIC 99.
       
        PROCEDURE DIVISION.
            DISPLAY "n : " NO ADVANCING ACCEPT n

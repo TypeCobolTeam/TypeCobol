@@ -1,5 +1,5 @@
 -- Line 1 --
-[1,7:TYPEDEF]<UserDefinedWord>
+[1,7:TYPEDEF]<SectionParagraphName>
 [9,14:STRONG]<UserDefinedWord>
 [16,21:UNSAFE]<UserDefinedWord>
 [23,28:PUBLIC]<UserDefinedWord>

@@ -205,176 +205,8 @@ namespace TypeCobol.Compiler.Concurrency
         IImmutableList<T> Replace(T oldValue, T newValue, IEqualityComparer<T> equalityComparer);
     }
 
-    /// <summary>
-    /// An interface that describes the methods that the <see cref="ImmutableList{T}"/> and <see cref="ImmutableList{T}.Builder"/> types have in common.
-    /// </summary>
-    /// <typeparam name="T">The type of element in the collection.</typeparam>
-    internal interface IImmutableListQueries<T> : ISearchableReadOnlyList<T>
-    {
-        /// <summary>
-        /// Creates a shallow copy of a range of elements in the source <see cref="ImmutableList{T}"/>.
-        /// </summary>
-        /// <param name="index">
-        /// The zero-based <see cref="ImmutableList{T}"/> index at which the range
-        /// starts.
-        /// </param>
-        /// <param name="count">
-        /// The number of elements in the range.
-        /// </param>
-        /// <returns>
-        /// A shallow copy of a range of elements in the source <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        ImmutableList<T> GetRange(int index, int count);
-
-        /// <summary>
-        /// Copies the entire <see cref="ImmutableList{T}"/> to a compatible one-dimensional
-        /// array, starting at the beginning of the target array.
-        /// </summary>
-        /// <param name="array">
-        /// The one-dimensional <see cref="Array"/> that is the destination of the elements
-        /// copied from <see cref="ImmutableList{T}"/>. The <see cref="Array"/> must have
-        /// zero-based indexing.
-        /// </param>
-        void CopyTo(T[] array);
-
-        /// <summary>
-        /// Copies the entire <see cref="ImmutableList{T}"/> to a compatible one-dimensional
-        /// array, starting at the specified index of the target array.
-        /// </summary>
-        /// <param name="array">
-        /// The one-dimensional <see cref="Array"/> that is the destination of the elements
-        /// copied from <see cref="ImmutableList{T}"/>. The <see cref="Array"/> must have
-        /// zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// The zero-based index in <paramref name="array"/> at which copying begins.
-        /// </param>
-        void CopyTo(T[] array, int arrayIndex);
-
-        /// <summary>
-        /// Copies a range of elements from the <see cref="ImmutableList{T}"/> to
-        /// a compatible one-dimensional array, starting at the specified index of the
-        /// target array.
-        /// </summary>
-        /// <param name="index">
-        /// The zero-based index in the source <see cref="ImmutableList{T}"/> at
-        /// which copying begins.
-        /// </param>
-        /// <param name="array">
-        /// The one-dimensional <see cref="Array"/> that is the destination of the elements
-        /// copied from <see cref="ImmutableList{T}"/>. The <see cref="Array"/> must have
-        /// zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
-        /// <param name="count">The number of elements to copy.</param>
-        void CopyTo(int index, T[] array, int arrayIndex, int count);
-        
-        /// <summary>
-        /// Retrieves all the elements that match the conditions defined by the specified
-        /// predicate.
-        /// </summary>
-        /// <param name="match">
-        /// The <see cref="Predicate{T}"/> delegate that defines the conditions of the elements
-        /// to search for.
-        /// </param>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> containing all the elements that match
-        /// the conditions defined by the specified predicate, if found; otherwise, an
-        /// empty <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        ImmutableList<T> FindAll(Predicate<T> match);
-
-        /// <summary>
-        /// Searches the entire sorted <see cref="IReadOnlyList{T}"/> for an element
-        /// using the default comparer and returns the zero-based index of the element.
-        /// </summary>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <returns>
-        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
-        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
-        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// The default comparer <see cref="Comparer{T}.Default"/> cannot
-        /// find an implementation of the <see cref="IComparable{T}"/> generic interface or
-        /// the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        int BinarySearch(T item);
-
-        /// <summary>
-        ///  Searches the entire sorted <see cref="IReadOnlyList{T}"/> for an element
-        ///  using the specified comparer and returns the zero-based index of the element.
-        /// </summary>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <param name="comparer">
-        /// The <see cref="IComparer{T}"/> implementation to use when comparing
-        /// elements.-or-null to use the default comparer <see cref="Comparer{T}.Default"/>.
-        /// </param>
-        /// <returns>
-        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
-        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
-        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
-        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
-        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        int BinarySearch(T item, IComparer<T> comparer);
-
-        /// <summary>
-        /// Searches a range of elements in the sorted <see cref="IReadOnlyList{T}"/>
-        /// for an element using the specified comparer and returns the zero-based index
-        /// of the element.
-        /// </summary>
-        /// <param name="index">The zero-based starting index of the range to search.</param>
-        /// <param name="count"> The length of the range to search.</param>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <param name="comparer">
-        /// The <see cref="IComparer{T}"/> implementation to use when comparing
-        /// elements, or null to use the default comparer <see cref="Comparer{T}.Default"/>.
-        /// </param>
-        /// <returns>
-        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
-        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
-        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is less than 0.-or-<paramref name="count"/> is less than 0.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="index"/> and <paramref name="count"/> do not denote a valid range in the <see cref="IReadOnlyList{T}"/>.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
-        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
-        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        int BinarySearch(int index, int count, T item, IComparer<T> comparer);
-    }
-
     /*UPDATE to MICROSOFT code ->*/ public interface ISearchableReadOnlyList<out T> : IReadOnlyList<T>
     {
-        /// <summary>
-        /// Converts the elements in the current <see cref="ImmutableList{T}"/> to
-        /// another type, and returns a list containing the converted elements.
-        /// </summary>
-        /// <param name="converter">
-        /// A <see cref="Func{T, TResult}"/> delegate that converts each element from
-        /// one type to another type.
-        /// </param>
-        /// <typeparam name="TOutput">
-        /// The type of the elements of the target array.
-        /// </typeparam>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> of the target type containing the converted
-        /// elements from the current <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter);
-
         /// <summary>
         /// Performs the specified action on each element of the list.
         /// </summary>
@@ -538,9 +370,8 @@ namespace TypeCobol.Compiler.Concurrency
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <param name="startIndex">The index of the first element to enumerate.</param>
-        /// <param name="count">The number of elements in this collection.</param>
         /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
-        IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed);
+        IEnumerator<T> GetEnumerator(int startIndex, bool reversed);
 
         /// <summary>
         /// Searches for the specified object around the initial index of the object 
@@ -1020,7 +851,7 @@ namespace TypeCobol.Compiler.Concurrency
     /// <typeparam name="T">The type of elements in the set.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(ImmutableListDebuggerProxy<>))]
-    public sealed partial class ImmutableList<T> : IImmutableList<T>, IList<T>, IList, IOrderedCollection<T>, IImmutableListQueries<T>, IStrongEnumerable<T, ImmutableList<T>.Enumerator>
+    public sealed partial class ImmutableList<T> : IImmutableList<T>, IList<T>, IList, IOrderedCollection<T>, ISearchableReadOnlyList<T>, IStrongEnumerable<T, ImmutableList<T>.Enumerator>
     {
         /// <summary>
         /// An empty immutable list.
@@ -1036,7 +867,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// <summary>
         /// Initializes a new instance of the <see cref="ImmutableList{T}"/> class.
         /// </summary>
-        internal ImmutableList()
+        private ImmutableList()
         {
             _root = Node.EmptyNode;
         }
@@ -1061,86 +892,6 @@ namespace TypeCobol.Compiler.Concurrency
             Contract.Ensures(Contract.Result<ImmutableList<T>>() != null);
             Contract.Ensures(Contract.Result<ImmutableList<T>>().IsEmpty);
             return Empty;
-        }
-
-        /// <summary>
-        /// Searches the entire sorted <see cref="ImmutableList{T}"/> for an element
-        /// using the default comparer and returns the zero-based index of the element.
-        /// </summary>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <returns>
-        /// The zero-based index of item in the sorted <see cref="ImmutableList{T}"/>,
-        /// if item is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than item or, if there is
-        /// no larger element, the bitwise complement of <see cref="ImmutableList{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// The default comparer <see cref="Comparer{T}.Default"/> cannot
-        /// find an implementation of the <see cref="IComparable{T}"/> generic interface or
-        /// the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        public int BinarySearch(T item)
-        {
-            return this.BinarySearch(item, null);
-        }
-
-        /// <summary>
-        ///  Searches the entire sorted <see cref="ImmutableList{T}"/> for an element
-        ///  using the specified comparer and returns the zero-based index of the element.
-        /// </summary>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <param name="comparer">
-        /// The <see cref="IComparer{T}"/> implementation to use when comparing
-        /// elements.-or-null to use the default comparer <see cref="Comparer{T}.Default"/>.
-        /// </param>
-        /// <returns>
-        /// The zero-based index of item in the sorted <see cref="ImmutableList{T}"/>,
-        /// if item is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than item or, if there is
-        /// no larger element, the bitwise complement of <see cref="ImmutableList{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
-        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
-        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        public int BinarySearch(T item, IComparer<T> comparer)
-        {
-            return this.BinarySearch(0, this.Count, item, comparer);
-        }
-
-        /// <summary>
-        /// Searches a range of elements in the sorted <see cref="ImmutableList{T}"/>
-        /// for an element using the specified comparer and returns the zero-based index
-        /// of the element.
-        /// </summary>
-        /// <param name="index">The zero-based starting index of the range to search.</param>
-        /// <param name="count"> The length of the range to search.</param>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <param name="comparer">
-        /// The <see cref="IComparer{T}"/> implementation to use when comparing
-        /// elements, or null to use the default comparer <see cref="Comparer{T}.Default"/>.
-        /// </param>
-        /// <returns>
-        /// The zero-based index of item in the sorted <see cref="ImmutableList{T}"/>,
-        /// if item is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than item or, if there is
-        /// no larger element, the bitwise complement of <see cref="ImmutableList{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is less than 0.-or-<paramref name="count"/> is less than 0.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="index"/> and <paramref name="count"/> do not denote a valid range in the <see cref="ImmutableList{T}"/>.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
-        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
-        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        public int BinarySearch(int index, int count, T item, IComparer<T> comparer)
-        {
-            return _root.BinarySearch(index, count, item, comparer);
         }
 
         #region IImmutableList<T> Properties
@@ -1580,7 +1331,7 @@ namespace TypeCobol.Compiler.Concurrency
 
         #endregion
 
-        #region IImmutableListQueries<T> Methods
+        #region ISearchableReadOnlyList<T> Methods
 
         /// <summary>
         /// Performs the specified action on each element of the list.
@@ -1594,105 +1345,6 @@ namespace TypeCobol.Compiler.Concurrency
             {
                 action(item);
             }
-        }
-
-        /// <summary>
-        /// Copies the entire <see cref="ImmutableList{T}"/> to a compatible one-dimensional
-        /// array, starting at the beginning of the target array.
-        /// </summary>
-        /// <param name="array">
-        /// The one-dimensional <see cref="Array"/> that is the destination of the elements
-        /// copied from <see cref="ImmutableList{T}"/>. The <see cref="Array"/> must have
-        /// zero-based indexing.
-        /// </param>
-        public void CopyTo(T[] array)
-        {
-            Requires.NotNull(array, "array");
-            Requires.Range(array.Length >= this.Count, "array");
-            _root.CopyTo(array);
-        }
-
-        /// <summary>
-        /// Copies the entire <see cref="ImmutableList{T}"/> to a compatible one-dimensional
-        /// array, starting at the specified index of the target array.
-        /// </summary>
-        /// <param name="array">
-        /// The one-dimensional <see cref="Array"/> that is the destination of the elements
-        /// copied from <see cref="ImmutableList{T}"/>. The <see cref="Array"/> must have
-        /// zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// The zero-based index in array at which copying begins.
-        /// </param>
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            Requires.NotNull(array, "array");
-            Requires.Range(arrayIndex >= 0, "arrayIndex");
-            Requires.Range(array.Length >= arrayIndex + this.Count, "arrayIndex");
-            _root.CopyTo(array, arrayIndex);
-        }
-
-        /// <summary>
-        /// Copies a range of elements from the <see cref="ImmutableList{T}"/> to
-        /// a compatible one-dimensional array, starting at the specified index of the
-        /// target array.
-        /// </summary>
-        /// <param name="index">
-        /// The zero-based index in the source <see cref="ImmutableList{T}"/> at
-        /// which copying begins.
-        /// </param>
-        /// <param name="array">
-        /// The one-dimensional <see cref="Array"/> that is the destination of the elements
-        /// copied from <see cref="ImmutableList{T}"/>. The <see cref="Array"/> must have
-        /// zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
-        /// <param name="count">The number of elements to copy.</param>
-        public void CopyTo(int index, T[] array, int arrayIndex, int count)
-        {
-            _root.CopyTo(index, array, arrayIndex, count);
-        }
-
-        /// <summary>
-        /// Creates a shallow copy of a range of elements in the source <see cref="ImmutableList{T}"/>.
-        /// </summary>
-        /// <param name="index">
-        /// The zero-based <see cref="ImmutableList{T}"/> index at which the range
-        /// starts.
-        /// </param>
-        /// <param name="count">
-        /// The number of elements in the range.
-        /// </param>
-        /// <returns>
-        /// A shallow copy of a range of elements in the source <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        public ImmutableList<T> GetRange(int index, int count)
-        {
-            Requires.Range(index >= 0, "index");
-            Requires.Range(count >= 0, "count");
-            Requires.Range(index + count <= this.Count, "count");
-            return this.Wrap(Node.NodeTreeFromList(this, index, count));
-        }
-
-        /// <summary>
-        /// Converts the elements in the current <see cref="ImmutableList{T}"/> to
-        /// another type, and returns a list containing the converted elements.
-        /// </summary>
-        /// <param name="converter">
-        /// A <see cref="Func{T, TResult}"/> delegate that converts each element from
-        /// one type to another type.
-        /// </param>
-        /// <typeparam name="TOutput">
-        /// The type of the elements of the target array.
-        /// </typeparam>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> of the target type containing the converted
-        /// elements from the current <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        public ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter)
-        {
-            Requires.NotNull(converter, "converter");
-            return ImmutableList<TOutput>.WrapNode(_root.ConvertAll(converter));
         }
 
         /// <summary>
@@ -1730,25 +1382,6 @@ namespace TypeCobol.Compiler.Concurrency
         {
             Requires.NotNull(match, "match");
             return _root.Find(match);
-        }
-
-        /// <summary>
-        /// Retrieves all the elements that match the conditions defined by the specified
-        /// predicate.
-        /// </summary>
-        /// <param name="match">
-        /// The <see cref="Predicate{T}"/> delegate that defines the conditions of the elements
-        /// to search for.
-        /// </param>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> containing all the elements that match
-        /// the conditions defined by the specified predicate, if found; otherwise, an
-        /// empty <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        public ImmutableList<T> FindAll(Predicate<T> match)
-        {
-            Requires.NotNull(match, "match");
-            return _root.FindAll(match);
         }
 
         /// <summary>
@@ -2230,6 +1863,26 @@ namespace TypeCobol.Compiler.Concurrency
             _root.CopyTo(array, arrayIndex);
         }
 
+        /// <summary>
+        /// Copies the entire <see cref="ImmutableList{T}"/> to a compatible one-dimensional
+        /// array, starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">
+        /// The one-dimensional <see cref="Array"/> that is the destination of the elements
+        /// copied from <see cref="ImmutableList{T}"/>. The <see cref="Array"/> must have
+        /// zero-based indexing.
+        /// </param>
+        /// <param name="arrayIndex">
+        /// The zero-based index in array at which copying begins.
+        /// </param>
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            Requires.NotNull(array, "array");
+            Requires.Range(arrayIndex >= 0, "arrayIndex");
+            Requires.Range(array.Length >= arrayIndex + this.Count, "arrayIndex");
+            _root.CopyTo(array, arrayIndex);
+        }
+
         #endregion
 
         #region IList members
@@ -2376,11 +2029,10 @@ namespace TypeCobol.Compiler.Concurrency
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <param name="startIndex">The index of the first element to enumerate.</param>
-        /// <param name="count">The number of elements in this collection.</param>
         /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
-        public IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed)
+        public IEnumerator<T> GetEnumerator(int startIndex, bool reversed)
         {
-            return _root.GetEnumerator(startIndex, count, reversed);
+            return _root.GetEnumerator(startIndex, reversed);
         }
 
         /// <summary>
@@ -3069,9 +2721,19 @@ namespace TypeCobol.Compiler.Concurrency
             /// Returns an enumerator that iterates through the collection.
             /// </summary>
             /// <param name="startIndex">The index of the first element to enumerate.</param>
+            /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
+            internal Enumerator GetEnumerator(int startIndex, bool reversed)
+            {
+                return new Enumerator(this, null, startIndex, -1, reversed);
+            }
+
+            /// <summary>
+            /// Returns an enumerator that iterates through the collection.
+            /// </summary>
+            /// <param name="startIndex">The index of the first element to enumerate.</param>
             /// <param name="count">The number of elements in this collection.</param>
             /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
-            internal Enumerator GetEnumerator(int startIndex, int count, bool reversed)
+            private Enumerator GetEnumerator(int startIndex, int count, bool reversed)
             {
                 return new Enumerator(this, null, startIndex, count, reversed);
             }
@@ -4419,7 +4081,7 @@ namespace TypeCobol.Compiler.Concurrency
         [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Ignored")]
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(ImmutableListBuilderDebuggerProxy<>))]
-        public sealed class Builder : IList<T>, IList, IOrderedCollection<T>, IImmutableListQueries<T>, IReadOnlyList<T>
+        public sealed class Builder : IList<T>, IList, IOrderedCollection<T>, ISearchableReadOnlyList<T>, IReadOnlyList<T>
         {
             /// <summary>
             /// The binary tree used to store the contents of the list.  Contents are typically not entirely frozen.
@@ -4650,11 +4312,10 @@ namespace TypeCobol.Compiler.Concurrency
             /// Returns an enumerator that iterates through the collection.
             /// </summary>
             /// <param name="startIndex">The index of the first element to enumerate.</param>
-            /// <param name="count">The number of elements in this collection.</param>
             /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
-            public IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed)
+            public IEnumerator<T> GetEnumerator(int startIndex, bool reversed)
             {
-                return this.Root.GetEnumerator(startIndex, count, reversed);
+                return this.Root.GetEnumerator(startIndex, reversed);
             }
 
             /// <summary>
@@ -4684,7 +4345,7 @@ namespace TypeCobol.Compiler.Concurrency
 
             // --- END of EXTENSION to MICROSOFT code ---
 
-            #region IImmutableListQueries<T> methods
+            #region ISearchableReadOnlyList<T> methods
 
             /// <summary>
             /// Performs the specified action on each element of the list.
@@ -4698,104 +4359,6 @@ namespace TypeCobol.Compiler.Concurrency
                 {
                     action(item);
                 }
-            }
-
-            /// <summary>
-            /// Copies the entire ImmutableList&lt;T&gt; to a compatible one-dimensional
-            /// array, starting at the beginning of the target array.
-            /// </summary>
-            /// <param name="array">
-            /// The one-dimensional System.Array that is the destination of the elements
-            /// copied from ImmutableList&lt;T&gt;. The System.Array must have
-            /// zero-based indexing.
-            /// </param>
-            public void CopyTo(T[] array)
-            {
-                Requires.NotNull(array, "array");
-                Requires.Range(array.Length >= this.Count, "array");
-                _root.CopyTo(array);
-            }
-
-            /// <summary>
-            /// Copies the entire ImmutableList&lt;T&gt; to a compatible one-dimensional
-            /// array, starting at the specified index of the target array.
-            /// </summary>
-            /// <param name="array">
-            /// The one-dimensional System.Array that is the destination of the elements
-            /// copied from ImmutableList&lt;T&gt;. The System.Array must have
-            /// zero-based indexing.
-            /// </param>
-            /// <param name="arrayIndex">
-            /// The zero-based index in array at which copying begins.
-            /// </param>
-            public void CopyTo(T[] array, int arrayIndex)
-            {
-                Requires.NotNull(array, "array");
-                Requires.Range(array.Length >= arrayIndex + this.Count, "arrayIndex");
-                _root.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// Copies a range of elements from the ImmutableList&lt;T&gt; to
-            /// a compatible one-dimensional array, starting at the specified index of the
-            /// target array.
-            /// </summary>
-            /// <param name="index">
-            /// The zero-based index in the source ImmutableList&lt;T&gt; at
-            /// which copying begins.
-            /// </param>
-            /// <param name="array">
-            /// The one-dimensional System.Array that is the destination of the elements
-            /// copied from ImmutableList&lt;T&gt;. The System.Array must have
-            /// zero-based indexing.
-            /// </param>
-            /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
-            /// <param name="count">The number of elements to copy.</param>
-            public void CopyTo(int index, T[] array, int arrayIndex, int count)
-            {
-                _root.CopyTo(index, array, arrayIndex, count);
-            }
-
-            /// <summary>
-            /// Creates a shallow copy of a range of elements in the source ImmutableList&lt;T&gt;.
-            /// </summary>
-            /// <param name="index">
-            /// The zero-based ImmutableList&lt;T&gt; index at which the range
-            /// starts.
-            /// </param>
-            /// <param name="count">
-            /// The number of elements in the range.
-            /// </param>
-            /// <returns>
-            /// A shallow copy of a range of elements in the source ImmutableList&lt;T&gt;.
-            /// </returns>
-            public ImmutableList<T> GetRange(int index, int count)
-            {
-                Requires.Range(index >= 0, "index");
-                Requires.Range(count >= 0, "count");
-                Requires.Range(index + count <= this.Count, "count");
-                return ImmutableList<T>.WrapNode(Node.NodeTreeFromList(this, index, count));
-            }
-
-            /// <summary>
-            /// Converts the elements in the current ImmutableList&lt;T&gt; to
-            /// another type, and returns a list containing the converted elements.
-            /// </summary>
-            /// <param name="converter">
-            /// A System.Converter&lt;TInput,TOutput&gt; delegate that converts each element from
-            /// one type to another type.
-            /// </param>
-            /// <typeparam name="TOutput">
-            /// The type of the elements of the target array.
-            /// </typeparam>
-            /// <returns>
-            /// A ImmutableList&lt;T&gt; of the target type containing the converted
-            /// elements from the current ImmutableList&lt;T&gt;.
-            /// </returns>
-            public ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter)
-            {
-                Requires.NotNull(converter, "converter");
-                return ImmutableList<TOutput>.WrapNode(_root.ConvertAll(converter));
             }
 
             /// <summary>
@@ -4833,25 +4396,6 @@ namespace TypeCobol.Compiler.Concurrency
             {
                 Requires.NotNull(match, "match");
                 return _root.Find(match);
-            }
-
-            /// <summary>
-            /// Retrieves all the elements that match the conditions defined by the specified
-            /// predicate.
-            /// </summary>
-            /// <param name="match">
-            /// The System.Predicate&lt;T&gt; delegate that defines the conditions of the elements
-            /// to search for.
-            /// </param>
-            /// <returns>
-            /// A ImmutableList&lt;T&gt; containing all the elements that match
-            /// the conditions defined by the specified predicate, if found; otherwise, an
-            /// empty ImmutableList&lt;T&gt;.
-            /// </returns>
-            public ImmutableList<T> FindAll(Predicate<T> match)
-            {
-                Requires.NotNull(match, "match");
-                return _root.FindAll(match);
             }
 
             /// <summary>
@@ -5344,86 +4888,6 @@ namespace TypeCobol.Compiler.Concurrency
             }
 
             /// <summary>
-            /// Searches the entire sorted System.Collections.Generic.List&lt;T&gt; for an element
-            /// using the default comparer and returns the zero-based index of the element.
-            /// </summary>
-            /// <param name="item">The object to locate. The value can be null for reference types.</param>
-            /// <returns>
-            /// The zero-based index of item in the sorted System.Collections.Generic.List&lt;T&gt;,
-            /// if item is found; otherwise, a negative number that is the bitwise complement
-            /// of the index of the next element that is larger than item or, if there is
-            /// no larger element, the bitwise complement of System.Collections.Generic.List&lt;T&gt;.Count.
-            /// </returns>
-            /// <exception cref="InvalidOperationException">
-            /// The default comparer System.Collections.Generic.Comparer&lt;T&gt;.Default cannot
-            /// find an implementation of the System.IComparable&lt;T&gt; generic interface or
-            /// the System.IComparable interface for type T.
-            /// </exception>
-            public int BinarySearch(T item)
-            {
-                return this.BinarySearch(item, null);
-            }
-
-            /// <summary>
-            ///  Searches the entire sorted System.Collections.Generic.List&lt;T&gt; for an element
-            ///  using the specified comparer and returns the zero-based index of the element.
-            /// </summary>
-            /// <param name="item">The object to locate. The value can be null for reference types.</param>
-            /// <param name="comparer">
-            /// The System.Collections.Generic.IComparer&lt;T&gt; implementation to use when comparing
-            /// elements.-or-null to use the default comparer System.Collections.Generic.Comparer&lt;T&gt;.Default.
-            /// </param>
-            /// <returns>
-            /// The zero-based index of item in the sorted System.Collections.Generic.List&lt;T&gt;,
-            /// if item is found; otherwise, a negative number that is the bitwise complement
-            /// of the index of the next element that is larger than item or, if there is
-            /// no larger element, the bitwise complement of System.Collections.Generic.List&lt;T&gt;.Count.
-            /// </returns>
-            /// <exception cref="InvalidOperationException">
-            /// comparer is null, and the default comparer System.Collections.Generic.Comparer&lt;T&gt;.Default
-            /// cannot find an implementation of the System.IComparable&lt;T&gt; generic interface
-            /// or the System.IComparable interface for type T.
-            /// </exception>
-            public int BinarySearch(T item, IComparer<T> comparer)
-            {
-                return this.BinarySearch(0, this.Count, item, comparer);
-            }
-
-            /// <summary>
-            /// Searches a range of elements in the sorted System.Collections.Generic.List&lt;T&gt;
-            /// for an element using the specified comparer and returns the zero-based index
-            /// of the element.
-            /// </summary>
-            /// <param name="index">The zero-based starting index of the range to search.</param>
-            /// <param name="count"> The length of the range to search.</param>
-            /// <param name="item">The object to locate. The value can be null for reference types.</param>
-            /// <param name="comparer">
-            /// The System.Collections.Generic.IComparer&lt;T&gt; implementation to use when comparing
-            /// elements, or null to use the default comparer System.Collections.Generic.Comparer&lt;T&gt;.Default.
-            /// </param>
-            /// <returns>
-            /// The zero-based index of item in the sorted System.Collections.Generic.List&lt;T&gt;,
-            /// if item is found; otherwise, a negative number that is the bitwise complement
-            /// of the index of the next element that is larger than item or, if there is
-            /// no larger element, the bitwise complement of System.Collections.Generic.List&lt;T&gt;.Count.
-            /// </returns>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// index is less than 0.-or-count is less than 0.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// index and count do not denote a valid range in the System.Collections.Generic.List&lt;T&gt;.
-            /// </exception>
-            /// <exception cref="InvalidOperationException">
-            /// comparer is null, and the default comparer System.Collections.Generic.Comparer&lt;T&gt;.Default
-            /// cannot find an implementation of the System.IComparable&lt;T&gt; generic interface
-            /// or the System.IComparable interface for type T.
-            /// </exception>
-            public int BinarySearch(int index, int count, T item, IComparer<T> comparer)
-            {
-                return this.Root.BinarySearch(index, count, item, comparer);
-            }
-
-            /// <summary>
             /// Creates an immutable list based on the contents of this instance.
             /// </summary>
             /// <returns>An immutable list.</returns>
@@ -5565,6 +5029,21 @@ namespace TypeCobol.Compiler.Concurrency
             /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
             /// <exception cref="System.NotImplementedException"></exception>
             void ICollection.CopyTo(Array array, int arrayIndex)
+            {
+                this.Root.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
+            /// </summary>
+            /// <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+            /// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+            /// <exception cref="T:System.ArgumentNullException">
+            /// <paramref name="array" /> is <see langword="null" />.</exception>
+            /// <exception cref="T:System.ArgumentOutOfRangeException">
+            /// <paramref name="arrayIndex" /> is less than 0.</exception>
+            /// <exception cref="T:System.ArgumentException">The number of elements in the source <see cref="T:System.Collections.Generic.ICollection`1" /> is greater than the available space from <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.</exception>
+            public void CopyTo(T[] array, int arrayIndex)
             {
                 this.Root.CopyTo(array, arrayIndex);
             }

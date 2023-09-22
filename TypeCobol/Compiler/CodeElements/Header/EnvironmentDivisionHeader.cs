@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -9,5 +10,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public EnvironmentDivisionHeader() : base(CodeElementType.EnvironmentDivisionHeader)
         { }
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaA;
     }
 }

@@ -1,0 +1,92 @@
+Line 7[27,27] <27, Error, Syntax> - Syntax error : "LEADING" and "TRAILING" can only be used to replace one single text word. This REPLACE operation cannot be applied and is discarded.
+Line 8[55,55] <27, Error, Syntax> - Syntax error : "LEADING" and "TRAILING" can only be used to replace one single text word. This REPLACE operation cannot be applied and is discarded.
+Line 13[24,31] <27, Error, Syntax> - Syntax error : Missing '(' or ')' in PICTURE string
+Line 16[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 17[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 20[11,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... 1'
+Line 21[16,16] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 24[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 25[20,20] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 28[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 29[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... :'
+Line 32[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... ('
+Line 33[14,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... ('
+Line 36[18,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... )'
+Line 37[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... )'
+Line 40[11,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... Var:1:'
+Line 41[11,20] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... Var:X1:'
+Line 60[15,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... 1'
+Line 61[15,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... X1'
+Line 65[11,14] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... 1'
+Line 66[17,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... Var'
+Line 16[28,29] <27, Error, Syntax> - Syntax error : extraneous input '. ' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+--- Processed Tokens ---
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZS0OSM.
+       data division.
+       working-storage section.
+       REPLACE TRAILING ==C-Nb==                 BY ==1==
+               TRAILING ==C-NbX==                BY ==3==
+               TRAILING ==(C-Nb)==               BY ==5==
+               TRAILING ==Nb==                   BY ==7 9==
+          .
+      
+      *Parenthesis separator  -  Replace OK
+       01 Var1     PIC X(1)   . 
+       01 Var1     PIC X(X1)   . 
+      
+      *Semi colon BEFORE - Word to replace at end -  Replace OK
+       01 Var:1       pic X. 
+       01 Var:X1      pic X. 
+      
+      *Semi colon AFTER - Word to replace before -  Replace OK
+       01 1   :Var    pic X. 
+       01 X1   :Var   pic X. 
+      
+      *Semi colon AFTER -  Word to replace at end -  Replace OK
+       01  Var1   :    pic X. 
+       01  VarX1   :   pic X. 
+      
+      *Semi colon AFTER -  Word to replace before -  Replace KO
+       01 C-NbVar:    pic X.
+       01 XC-NbVar:   pic X.
+      
+      *Parenthesis BEFORE  -  Replace OK
+       01 Var(1       pic X. 
+       01 Var(X1      pic X. 
+      
+      *Parenthesis AFTER  -  Replace OK
+       01 Var1   )    pic X. 
+       01 VarX1   )   pic X. 
+      
+      *Semi colons AROUND -  Replace OK
+       01 Var:1:       pic X. 
+       01 Var:X1:      pic X. 
+      
+      *Literals  -  Replace KO
+       01 Var0    pic X(10) value ' C-Nb' .
+       01 Var0    pic X(10) value 'C-Nb'.
+      
+       01 Var0    pic X(10) value " C-Nb" .
+       01 Var0    pic X(10) value " C-Nb".
+      
+      *No separator     -  Replace KO
+       01 C-NbVar     PIC X.
+       01 XC-NbVar    PIC X.
+      
+      *No separator     -  Replace OK
+       01 Var1        PIC X. 
+       01 VarX1       PIC X. 
+      
+      *Comma separator  -  Replace OK
+      *It's a known bug in our parser
+       01 Var 1       pic X. 
+       01 Var X1      pic X. 
+      
+      *Comma separator  -  Replace KO
+      *It's a known bug in our parser
+       01 1    Var    pic X.
+       01 X1    Var   pic X.
+      
+       end program DVZS0OSM.

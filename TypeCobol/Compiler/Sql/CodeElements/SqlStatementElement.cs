@@ -1,5 +1,6 @@
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Sql.CodeElements
 {
@@ -42,5 +43,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             : base(codeElementType, statementType)
         {
         }
+
+        public override CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.Unspecified;
     }
 }

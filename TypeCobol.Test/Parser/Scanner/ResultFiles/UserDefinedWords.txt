@@ -1,5 +1,5 @@
 -- Line 1 --
-[1,17:laurent_prud-on10]<UserDefinedWord>
+[1,17:laurent_prud-on10]<SectionParagraphName>
 
 -- Line 2 --
 [1,17:!super-_@#1254540]<UserDefinedWord>

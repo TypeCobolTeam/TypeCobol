@@ -51,6 +51,26 @@ namespace TypeCobol.Compiler.Text
         }
 
         /// <summary>
+        /// Separators allowed around the target of a replace inside a single word (token).
+        /// See "Comparison rules" of REPLACE in IBM Enterprise Cobol specifications.
+        /// </summary>
+        /// <param name="chr"></param>
+        /// <returns></returns>
+        public static bool IsReplaceSeparator(char chr)
+        {
+            switch (chr)
+            {
+                case ' ':
+                case ':':
+                case '(':
+                case ')':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
         /// True if the current char is allowed in a PseudoText
         /// </summary>
         public static bool IsAllowedInsidePseudoText(char chr)

@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -26,11 +27,14 @@ namespace TypeCobol.Compiler.CodeElements
             ConsumedTokens = new List<Token>();
             SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
         }
-
         /// <summary>
         /// The Cobol syntax can be decomposed in 116 elementary code elements
         /// </summary>
         public CodeElementType Type { get; }
+        /// <summary>
+        /// As most CodeElement must start in area B, the default StartingArea is B
+        /// </summary>
+        public virtual CodeElementStartingAreaType StartingArea => CodeElementStartingAreaType.AreaB;
 
         /// <summary>
         /// Describe how the CodeElement is debugged
@@ -471,6 +475,27 @@ namespace TypeCobol.Compiler.CodeElements
                 if (ConsumedTokens.Count < 1) return null;
                 return ConsumedTokens[0].InputStream;
             }
+        }
+
+        /// <summary>
+        /// Get the line number in the main source for this CodeElement.
+        /// If it belongs to an imported COPY, the line is the one declaring the COPY directive in the main source
+        /// </summary>
+        /// <returns>The line number</returns>
+        public int GetLineInMainSource()
+        {
+            if (ConsumedTokens.Count > 0)
+            {
+                var firstToken = ConsumedTokens[0];
+                if (firstToken is ImportedToken importedToken)
+                {
+                    return importedToken.CopyDirective.TextNameSymbol.TokensLine.LineIndex;
+                }
+
+                return firstToken.TokensLine.LineIndex;
+            }
+
+            return Line;
         }
 
         /// <summary>

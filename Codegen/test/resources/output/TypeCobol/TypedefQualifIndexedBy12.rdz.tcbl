@@ -1,5 +1,5 @@
-﻿      * 1 errors
-      * Line 52[12,23] <37, Warning, General> - Warning: Paragraph 'DoSomething' is empty
+      * 1 errors
+      * Line 52[8,19] <37, Warning, General> - Warning: Paragraph 'DoSomething' is empty
        IDENTIFICATION DIVISION.
        PROGRAM-ID. AYIMCPFD.
 
@@ -40,10 +40,10 @@
                                                              
 
        PROCEDURE DIVISION.
-      * SET Idx-OthElm  TO 1
-        SET e20bcf03Idx-OthElm  TO 1
-      * SEARCH Table-OthElm::OthElm
-        SEARCH OthElm OF Table-OthElm
+      *    SET Idx-OthElm  TO 1
+           SET e20bcf03Idx-OthElm  TO 1
+      *    SEARCH Table-OthElm::OthElm
+           SEARCH OthElm OF Table-OthElm
                     AT END
                         SET MyBool  TO TRUE
       *             WHEN Table-OthElm::OthElm::ElmErID (Idx-OthElm)
@@ -54,16 +54,16 @@
                         = LnkErId OF OthElm OF Table-OthElm
                                 (Idx-perform1)
                         PERFORM DoSomething
-        END-SEARCH
-      *  SET Table-OthElm::OthElm::ElmTaxes::Idx-OthElmTax
+           END-SEARCH
+      *     SET Table-OthElm::OthElm::ElmTaxes::Idx-OthElmTax
       *                     TO Table-OthElm::OthElm::ElmTaxes::
       *                     ElmTaxNbr(Idx-OthElm)
-         SET acb93b7aIdx-OthElmTax
+            SET acb93b7aIdx-OthElmTax
                             TO ElmTaxNbr OF ElmTaxes OF OthElm OF 
                             Table-OthElm(e20bcf03Idx-OthElm)
 
-      *    SEARCH Table-OthElm::OthElm::ElmTaxes::ElmTax
-           SEARCH ElmTax OF ElmTaxes OF OthElm OF Table-OthElm
+      *       SEARCH Table-OthElm::OthElm::ElmTaxes::ElmTax
+              SEARCH ElmTax OF ElmTaxes OF OthElm OF Table-OthElm
                 AT END
                     PERFORM DoSomething
       *         WHEN Table-OthElm::OthElm::ElmTaxes::ElmTax::
@@ -72,14 +72,14 @@
                 Table-OthElm
                  (e20bcf03Idx-OthElm acb93b7aIdx-OthElmTax) = 1
                     PERFORM DoSomething
-           END-SEARCH.
+              END-SEARCH.
 
-      * SET Table-OthElm::OthElm::Idx-OthElm
+      *    SET Table-OthElm::OthElm::Idx-OthElm
       *      TO Table-OthElm::OthElmNbr.
-        SET e20bcf03Idx-OthElm
+           SET e20bcf03Idx-OthElm
              TO OthElmNbr OF Table-OthElm.
 
-           DoSomething.
+       DoSomething.
            .
 
        END PROGRAM AYIMCPFD.

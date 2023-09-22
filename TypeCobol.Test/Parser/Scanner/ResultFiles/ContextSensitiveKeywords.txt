@@ -1,5 +1,5 @@
 -- Line 1 --
-[1,4:toto]<UserDefinedWord>
+[1,4:toto]<SectionParagraphName>
 [6,13:FUNCTION]<FUNCTION>
 [15,18:toto]<UserDefinedWord>
 [20,23:toto]<UserDefinedWord>

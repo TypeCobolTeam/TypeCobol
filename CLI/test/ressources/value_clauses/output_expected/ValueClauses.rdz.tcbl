@@ -88,10 +88,10 @@
       *     input(paramIntrinsicDate: DATE, paramIntrinsicRate: Rate, pa
       *ramStructure: StructureType, paramScalar: ScalarType, paramInline
       *: pic X(1))
-          DISPLAY paramIntrinsicDate
-          DISPLAY paramIntrinsicRate
-          DISPLAY paramStructure
-          DISPLAY paramScalar
-          DISPLAY paramInline
+             DISPLAY paramIntrinsicDate
+             DISPLAY paramIntrinsicRate
+             DISPLAY paramStructure
+             DISPLAY paramScalar
+             DISPLAY paramInline
           .
        END PROGRAM a08ffb8d.
