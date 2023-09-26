@@ -324,7 +324,7 @@ namespace TypeCobol.Compiler.Parser
                 parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTION_MARK()));
             }
 
-            DataDescriptionChecker.CheckPicture(parameter, context);
+            DataDescriptionChecker.CheckPictureAndUsage(parameter, context);
             return parameter;
         }
 
