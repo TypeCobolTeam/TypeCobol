@@ -278,6 +278,10 @@ namespace TypeCobol.Compiler.CodeElements {
         /// A GROUP-USAGE clause with the NATIONAL phrase specifies that the group
         /// item defined by the entry is a national group item. A national group item contains
         /// national characters in all subordinate data items and subordinate group items.
+        /// A GROUP-USAGE clause with the UTF-8 phrase specifies that the group
+        /// item defined by the entry is a UTF-8 group item. A UTF-8 group item contains UTF-8 characters in all
+        /// subordinate data items and subordinate group items.
+        /// 
         /// When GROUP-USAGE NATIONAL is specified:
         /// * The subject of the entry is a national group item. The class and category of a
         /// national group are national.
@@ -296,6 +300,22 @@ namespace TypeCobol.Compiler.CodeElements {
         /// Unless stated otherwise, a national group item is processed as though it were an
         /// elementary data item of usage national, class and category national, described with
         /// PICTURE N(m), where m is the length of the group in national character positions.
+        ///
+        /// When GROUP-USAGE UTF-8 is specified:
+        /// * The subject of the entry is a UTF-8 group item. The class and category of a UTF-8 group are UTF-8.
+        /// * A USAGE clause must not be specified for the subject of the entry. A USAGE UTF-8 clause is implied.
+        /// * A USAGE UTF-8 clause is implied for any subordinate elementary data items that are not described with
+        /// a USAGE UTF-8 clause.
+        /// * All subordinate elementary data items must be explicitly or implicitly described with USAGE UTF-8 and
+        /// must be defined with the BYTE-LENGTH phrase of the PICTURE clause.
+        /// * A GROUP-USAGE UTF-8 clause is implied for any subordinate group items that are not described with a
+        /// GROUP-USAGE UTF-8 clause.
+        /// * All subordinate group items must be explicitly or implicitly described with a GROUP-USAGE UTF-8
+        /// clause.
+        /// * The JUSTIFIED clause must not be specified.
+        /// Unless stated otherwise, a UTF-8 group item is processed as though it were an elementary data item of
+        /// usage UTF-8, class and category UTF-8, and defined with PICTURE U BYTE-LENGTH m, where m is the
+        /// length of the group in bytes.
         ///
         /// p191:
         /// Usage note: When you use national groups, the compiler can ensure proper
@@ -331,7 +351,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// within the national group are processed the same as they would be if defined
         /// within an alphanumeric group.
         /// </summary>
-        public SyntaxProperty<bool> IsGroupUsageNational { get; set; }
+        public SyntaxProperty<DataUsage> GroupUsage { get; set; }
 
         /// <summary>
         /// p191:
@@ -809,7 +829,7 @@ namespace TypeCobol.Compiler.CodeElements {
                                                                 External,
                                                                 Global,
                                                                 IsJustified,
-                                                                IsGroupUsageNational,
+                                                                GroupUsage,
                                                                 MinOccurencesCount,
                                                                 MaxOccurencesCount,
                                                                 HasUnboundedNumberOfOccurences,
@@ -1276,6 +1296,10 @@ namespace TypeCobol.Compiler.CodeElements {
         /// p234: NATIONAL phrase
         /// </summary>
         National,
+        /// <summary>
+        /// UTF-8 data usage
+        /// </summary>
+        UTF8,
         /// <summary>
         /// p234: OBJECT REFERENCE phrase 
         /// </summary>

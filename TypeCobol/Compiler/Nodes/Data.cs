@@ -679,26 +679,31 @@ namespace TypeCobol.Compiler.Nodes {
                 }
 
                 DataDefinition parent = Parent as DataDefinition;
-                if (parent != null && parent.IsGroupUsageNational)
-                    return DataUsage.National;
+                if (parent != null && parent.GroupUsage.HasValue)
+                    return parent.GroupUsage.Value;
 
                 return parent?.Usage;
             }
         }
 
-        public bool IsGroupUsageNational
+        public bool IsGroupUsageNational => GroupUsage.HasValue && GroupUsage.Value == DataUsage.National;
+
+        public bool IsGroupUsageUTF8 => GroupUsage.HasValue && GroupUsage.Value == DataUsage.UTF8;
+
+        public DataUsage? GroupUsage
         {
             get
             {
-                if (_CommonDataDesc?.IsGroupUsageNational != null)
-                    return _CommonDataDesc.IsGroupUsageNational.Value;
+                if (_CommonDataDesc?.GroupUsage != null)
+                    return _CommonDataDesc.GroupUsage.Value;
 
-                else if (Parent is DataDefinition parent)
-                    return parent.IsGroupUsageNational;
+                if (Parent is DataDefinition parent)
+                    return parent.GroupUsage;
 
-                else return false;
+                return null;
             }
         }
+
         public long MinOccurencesCount { get { if (_CommonDataDesc != null && _CommonDataDesc.MinOccurencesCount != null) return _CommonDataDesc.MinOccurencesCount.Value; else return 1; } }
         public long MaxOccurencesCount { get { return _CommonDataDesc != null && _CommonDataDesc.MaxOccurencesCount != null ? _CommonDataDesc.MaxOccurencesCount.Value : 1; } }
 

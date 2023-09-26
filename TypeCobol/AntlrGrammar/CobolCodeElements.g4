@@ -2492,7 +2492,7 @@ justifiedClause:
 // within an alphanumeric group.
 
 groupUsageClause:
-    GROUP_USAGE IS? NATIONAL;
+    GROUP_USAGE IS? (NATIONAL | UTF_8);
 
 // p191: The DATA DIVISION language elements used for table handling are the OCCURS
 // clause and the INDEXED BY phrase.
@@ -3109,6 +3109,7 @@ usageClause:
 					(DISPLAY_1 NATIVE?) |
 					INDEX |
 					(NATIONAL NATIVE?) |
+					UTF_8 |
 					(OBJECT REFERENCE classNameReference?) |
 					(PACKED_DECIMAL NATIVE?) |
 					(POINTER | POINTER_32 |

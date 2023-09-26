@@ -407,18 +407,23 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node, m);
                     }
 
-                    if (actualDataDefinition.IsGroupUsageNational != expected.IsGroupUsageNational)
+                    if (actualDataDefinition.GroupUsage != expected.GroupUsage)
                     {
-                        var m =
-                           string.Format(
-                               "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                functionName, expected.Name,
-                                expected.IsGroupUsageNational ? "national group-usage" : "non national group-usage",
-                                callArgName ?? string.Format("position {0}", c + 1),
-                                actualDataDefinition.IsGroupUsageNational
-                                    ? "national group-usage"
-                                    : "non national group-usage");
+                        var m = string.Format("Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
+                                functionName,
+                                expected.Name,
+                                DescribeGroupUsage(expected.GroupUsage),
+                                callArgName ?? $"position {c + 1}",
+                                DescribeGroupUsage(actualDataDefinition.GroupUsage));
                         DiagnosticUtils.AddError(node, m);
+
+                        static string DescribeGroupUsage(DataUsage? groupUsage)
+                        {
+                            if (!groupUsage.HasValue)
+                                return "non national, non UTF-8 group-usage";
+
+                            return $"{(groupUsage.Value == DataUsage.National ? "national" : "UTF-8")} group-usage";
+                        }
                     }
 
 

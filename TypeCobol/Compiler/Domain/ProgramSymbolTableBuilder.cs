@@ -796,6 +796,8 @@ namespace TypeCobol.Compiler.Domain
                 sym.SetFlag(Symbol.Flags.Justified, true);
             if (dataDef.IsGroupUsageNational)
                 sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
+            else if (dataDef.IsGroupUsageUTF8)
+                sym.SetFlag(Symbol.Flags.GroupUsageUTF8, true);
             if (dataDef.SignIsSeparate)
                 sym.SetFlag(Symbol.Flags.SeparateSign, true);
             switch (dataDef.SignPosition)
