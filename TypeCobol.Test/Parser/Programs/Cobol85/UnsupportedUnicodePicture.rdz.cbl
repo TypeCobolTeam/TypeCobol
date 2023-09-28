@@ -1,0 +1,13 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOFM117.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC U USAGE IS UTF-8.
+       01 group1 GROUP-USAGE IS UTF-8.
+          05 part1 PIC U BYTE-LENGTH 20.
+          05 part2 PIC U BYTE-LENGTH 40.
+          05 part3 PIC U BYTE-LENGTH 20.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM TCOFM117.
