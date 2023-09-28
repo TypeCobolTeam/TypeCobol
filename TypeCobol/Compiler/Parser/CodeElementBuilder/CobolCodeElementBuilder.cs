@@ -1223,6 +1223,12 @@ namespace TypeCobol.Compiler.Parser
                     //TokenType is PictureCharacterString so it's ok to create an AlphanumericValue
                     entry.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
                 }
+
+                if (pictureClauseContext.byteLengthPhrase() != null && pictureClauseContext.byteLengthPhrase().IntegerLiteral() != null)
+                {
+                    var integerLiteral = pictureClauseContext.byteLengthPhrase().IntegerLiteral();
+                    entry.ByteLength = CobolWordsBuilder.CreateIntegerValue(integerLiteral);
+                }
             }
 
 // [COBOL 2002]

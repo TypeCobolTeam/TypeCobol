@@ -128,6 +128,12 @@ namespace TypeCobol.Compiler.Parser
                     parameter.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
                     //Don't set parameter.DataType here, it will be set in CodeElementChecker
                 }
+
+                if (pictureClauseContext.byteLengthPhrase() != null && pictureClauseContext.byteLengthPhrase().IntegerLiteral() != null)
+                {
+                    var integerLiteral = pictureClauseContext.byteLengthPhrase().IntegerLiteral();
+                    parameter.ByteLength = CobolWordsBuilder.CreateIntegerValue(integerLiteral);
+                }
             }
             else if (context.cobol2002TypeClause() != null)
             {

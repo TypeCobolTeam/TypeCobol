@@ -176,6 +176,28 @@ namespace TypeCobol.Compiler.CodeElements {
         public AlphanumericValue Picture { get; set; }
 
         /// <summary>
+        /// The BYTE-LENGTH phrase is only allowed for UTF-8 data items (i.e., data items defined with the U
+        /// picture symbol) and indicates that the UTF-8 data item has a fixed byte-length but a varying number
+        /// of characters. The number of bytes occupied by a UTF-8 data item defined with the BYTE-LENGTH
+        /// phrase of the PICTURE clause is indicated by integer-1. The number of UTF-8 characters that can
+        /// be stored in a data item defined with the BYTE-LENGTH phrase of the PICTURE clause depends on
+        /// the size of each character. The maximum number of characters that can be stored is integer-1, which
+        /// happens when each UTF-8 character is a single byte in length.
+        /// The BYTE-LENGTH phrase can only be specified when the picture string consists of a single ‘U’
+        /// symbol. The DYNAMIC LENGTH clause must not also be specified.
+        /// UTF-8 data items defined with the BYTE-LENGTH phrase of the PICTURE clause are truncated on
+        /// UTF-8 character boundaries when truncation is needed and are always padded with UTF-8 spaces
+        /// (x'20') to a byte length of integer-1.
+        /// Only UTF-8 data items defined with the BYTE-LENGTH phrase of the PICTURE clause can be used as
+        /// Db2® host variables and only UTF-8 data items defined with the BYTE-LENGTH phrase of the PICTURE
+        /// clause can be part of a group defined with the GROUP-USAGE UTF-8 clause.
+        /// UTF-8 data items defined with the BYTE-LENGTH phrase of the PICTURE clause are strongly
+        /// recommended for UTF-8 items that need to function as a sort key or record key
+        /// </summary>
+        [CanBeNull]
+        public IntegerValue ByteLength { get; set; }
+
+        /// <summary>
         /// Stores the result of Picture validation process
         /// </summary>
         [CanBeNull]

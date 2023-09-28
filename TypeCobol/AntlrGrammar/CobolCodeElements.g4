@@ -2760,7 +2760,10 @@ tableSortingKeys:
 // elementary data item.
 
 pictureClause:
-    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString;
+    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString byteLengthPhrase?;
+
+byteLengthPhrase:
+	({ string.Equals(CurrentToken.Text, "BYTE-LENGTH", System.StringComparison.InvariantCultureIgnoreCase) }? BYTE_LENGTHKeyword=UserDefinedWord) IS? IntegerLiteral;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
