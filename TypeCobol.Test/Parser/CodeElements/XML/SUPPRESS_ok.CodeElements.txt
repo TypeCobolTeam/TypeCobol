@@ -17,3 +17,25 @@
 
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [37,47:HIGH-VALUES]<HIGH_VALUES>
 
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [69,78:HIGH-VALUE]<HIGH_VALUE>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [69,78:HIGH-VALUE]<HIGH_VALUE>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [69,78:HIGH-VALUE]<HIGH_VALUE>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [69,78:HIGH-VALUE]<HIGH_VALUE>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [73,78:SPACES]<SPACES>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [73,78:SPACES]<SPACES>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [73,78:SPACES]<SPACES>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [73,78:SPACES]<SPACES>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [74,78:SPACE]<SPACE>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [74,78:SPACE]<SPACE>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [74,78:SPACE]<SPACE>
+

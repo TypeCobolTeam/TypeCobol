@@ -1615,17 +1615,17 @@ namespace TypeCobol.Compiler.Parser
             typeMapping.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
             if (context.attribute() != null)
             {
-                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ATTRIBUTE,
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlSyntaxType.ATTRIBUTE,
                     context.attribute().UserDefinedWord());
             }
             if (context.element() != null)
             {
-                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ELEMENT,
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlSyntaxType.ELEMENT,
                     context.element().UserDefinedWord());
             }
             if (context.CONTENT() != null)
             {
-                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.CONTENT,
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlSyntaxType.CONTENT,
                     context.CONTENT());
             }
             return typeMapping;
@@ -1635,36 +1635,51 @@ namespace TypeCobol.Compiler.Parser
             var suppressDirective = new XmlSuppressDirective();
             if (context.subordinateDataItem != null)
             {
+                System.Diagnostics.Debug.Assert(context.whenPhrase() != null);
                 suppressDirective.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
+                suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
             }
             else
             {
-                if (context.attribute() != null)
+                System.Diagnostics.Debug.Assert(context.genericSuppressionPhrase() != null);
+                var suppression = context.genericSuppressionPhrase();
+
+                if (suppression.EVERY() != null)
                 {
-                    if (context.NUMERIC() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ATTRIBUTE,
-                            context.NUMERIC());
-                    else if (context.nonnumeric() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ATTRIBUTE,
-                            context.nonnumeric().UserDefinedWord());
+                    if (suppression.NUMERIC() != null)
+                    {
+                        suppressDirective.XmlItemTypeToSuppress = CreateSyntaxProperty(XmlItemType.NUMERIC, suppression.NUMERIC());
+                    }
+                    else if (suppression.nonnumeric() != null)
+                    {
+                        suppressDirective.XmlItemTypeToSuppress = CreateSyntaxProperty(XmlItemType.NONNUMERIC, suppression.nonnumeric().UserDefinedWord());
+                    }
                     else
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ATTRIBUTE,
-                            context.attribute().UserDefinedWord());
+                    {
+                        System.Diagnostics.Debug.Assert(suppression.attributeOrContentOrElement() != null);
+                    }
+
+                    if (suppression.attributeOrContentOrElement() != null)
+                    {
+                        if (suppression.attributeOrContentOrElement().attribute() != null)
+                        {
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ATTRIBUTE, suppression.attributeOrContentOrElement().attribute().UserDefinedWord());
+                        }
+                        else if (suppression.attributeOrContentOrElement().CONTENT() != null)
+                        {
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.CONTENT, suppression.attributeOrContentOrElement().CONTENT());
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(suppression.attributeOrContentOrElement().element() != null);
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ELEMENT, suppression.attributeOrContentOrElement().element().UserDefinedWord());
+                        }
+                    }
                 }
-                else if (context.element() != null)
-                {
-                    if (context.NUMERIC() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ELEMENT,
-                            context.NUMERIC());
-                    else if (context.nonnumeric() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ELEMENT,
-                            context.nonnumeric().UserDefinedWord());
-                    else
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ELEMENT,
-                            context.element().UserDefinedWord());
-                }
+                
+                suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(suppression.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
             }
-            suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+            
             return suppressDirective;
         }
 
