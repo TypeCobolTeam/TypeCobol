@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// p457:
@@ -306,6 +303,42 @@ namespace TypeCobol.Compiler.CodeElements
     }
 
     /// <summary>
+    /// Identifies an XML syntax type for either an <code>XmlTypeMapping</code> or an <code>XmlSuppressDirective</code>
+    /// </summary>
+    public enum XmlSyntaxType
+    {
+        /// <summary>
+        /// p463:
+        /// When ATTRIBUTE is specified, identifier-7 must be eligible to be an XML
+        /// attribute. identifier-7 is expressed in the generated XML as an attribute of
+        /// the XML element immediately superordinate to identifier-7 rather than as
+        /// a child element.
+        /// </summary>
+        ATTRIBUTE,
+        /// <summary>
+        /// p463:
+        /// When ELEMENT is specified, identifier-7 is expressed in the generated
+        /// XML as an element. The XML element name is derived from identifier-7
+        /// and the element character content is derived from the converted content
+        /// of identifier-7 as described in “Operation of XML GENERATE” on page 465.
+        /// </summary>
+        ELEMENT,
+        /// <summary>
+        /// p463:
+        /// When CONTENT is specified, identifier-7 is expressed in the generated
+        /// XML as element character content of the XML element that corresponds
+        /// to the data item immediately superordinate to identifier-7. The value of
+        /// the element character content is derived from the converted content of
+        /// identifier-7 as described in “Operation of XML GENERATE” on page 465.
+        ///
+        /// When CONTENT is specified for multiple identifiers all corresponding
+        /// to the same superordinate identifier, the multiple contributions to the
+        /// element character content are concatenated.
+        /// </summary>
+        CONTENT
+    }
+
+    /// <summary>
     /// p462:
     /// TYPE phrase
     /// Allows you to control attribute and element generation.
@@ -328,43 +361,25 @@ namespace TypeCobol.Compiler.CodeElements
 
         public SyntaxProperty<XmlSyntaxType> XmlSyntaxTypeToGenerate { get; set; }
 
-        public enum XmlSyntaxType
-        {
-            UNKNOWN,
-            /// <summary>
-            /// p463:
-            /// When ATTRIBUTE is specified, identifier-7 must be eligible to be an XML
-            /// attribute. identifier-7 is expressed in the generated XML as an attribute of
-            /// the XML element immediately superordinate to identifier-7 rather than as
-            /// a child element.
-            /// </summary>
-            ATTRIBUTE,
-            /// <summary>
-            /// p463:
-            /// When ELEMENT is specified, identifier-7 is expressed in the generated
-            /// XML as an element. The XML element name is derived from identifier-7
-            /// and the element character content is derived from the converted content
-            /// of identifier-7 as described in “Operation of XML GENERATE” on page 465.
-            /// </summary>
-            ELEMENT,
-            /// <summary>
-            /// p463:
-            /// When CONTENT is specified, identifier-7 is expressed in the generated
-            /// XML as element character content of the XML element that corresponds
-            /// to the data item immediately superordinate to identifier-7. The value of
-            /// the element character content is derived from the converted content of
-            /// identifier-7 as described in “Operation of XML GENERATE” on page 465.
-            ///
-            /// When CONTENT is specified for multiple identifiers all corresponding
-            /// to the same superordinate identifier, the multiple contributions to the
-            /// element character content are concatenated.
-            /// </summary>
-            CONTENT
-        }
-
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return this.ContinueVisitToChildren(astVisitor, DataItemName, XmlSyntaxTypeToGenerate);
         }
+    }
+
+    /// <summary>
+    /// For SUPPRESS clauses using data item type matching
+    /// </summary>
+    public enum XmlItemType
+    {
+        /// <summary>
+        /// Suppress only NUMERIC items
+        /// </summary>
+        NUMERIC,
+
+        /// <summary>
+        /// Suppress only NON-NUMERIC items
+        /// </summary>
+        NONNUMERIC
     }
 
     /// <summary>
@@ -379,20 +394,23 @@ namespace TypeCobol.Compiler.CodeElements
     public class XmlSuppressDirective : IVisitable
     {
         /// <summary>
-        /// p463:
-        /// With the generic-suppression-phrase, elementary items subordinate to
-        /// identifier-2 that are not otherwise ignored by XML GENERATE operations
-        /// are identified generically for potential suppression. Either items of class
-        /// numeric, if the NUMERIC keyword is specified, or items that are not of
-        /// class numeric, if the NONNUMERIC keyword is specified, or both, may be
-        /// suppressed. If the ATTRIBUTE keyword is specified, only items that would
-        /// be expressed in the generated XML document as an XML attribute are
-        /// identified for potential suppression. If the ELEMENT keyword is specified,
-        /// only items that would be expressed in the generated XML document as an
-        /// XML element are identified.
-        ///
+        /// With the generic-suppression-phrase, elementary items subordinate to identifier-2 that are not
+        /// otherwise ignored by XML GENERATE operations are identified generically for potential suppression.
+        /// Either items of class numeric, if the NUMERIC keyword is specified, or items that are not of class
+        /// numeric, if the NONNUMERIC keyword is specified, or both, might be suppressed.
+        /// </summary>
+        public SyntaxProperty<XmlItemType> XmlItemTypeToSuppress { get; set; }
+
+        /// <summary>
+        /// If the ATTRIBUTE keyword is specified, only items that would be expressed in the generated XML document as an
+        /// XML attribute are identified for potential suppression. If the ELEMENT keyword is specified, only
+        /// items that would be expressed in the generated XML document as an XML element are identified for
+        /// potential suppression. If the CONTENT keyword is specified, only items that would be expressed in
+        /// the generated XML document as element character content of the XML element corresponding to the
+        /// data item superordinate to the CONTENT data item are identified for potential suppression.
+        /// 
         /// If multiple generic-suppression-phrase are specified, the effect is cumulative.
-        /// </summary>        
+        /// </summary>
         public SyntaxProperty<XmlSyntaxType> XmlSyntaxTypeToSuppress { get; set; }
 
         /// <summary>
@@ -437,19 +455,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public RepeatedCharacterValue[] ItemValuesToSuppress;
 
-        public enum XmlSyntaxType
-        {
-            UNKNOWN,
-            NUMERIC_ATTRIBUTE,
-            NUMERIC_ELEMENT,
-            NONNUMERIC_ATTRIBUTE,
-            NONNUMERIC_ELEMENT,
-            ATTRIBUTE,
-            ELEMENT,
-        }
-
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return this.ContinueVisitToChildren(astVisitor, XmlSyntaxTypeToSuppress, DataItemName)
+            return this.ContinueVisitToChildren(astVisitor, XmlItemTypeToSuppress, XmlSyntaxTypeToSuppress, DataItemName)
                 && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) ItemValuesToSuppress);
         }
     }
