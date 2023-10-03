@@ -17,6 +17,10 @@
 
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [37,47:HIGH-VALUES]<HIGH_VALUES>
 
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [32,32:a]<UserDefinedWord>
+
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [39,42:ZERO]<ZERO>
+
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [69,78:HIGH-VALUE]<HIGH_VALUE>
 
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [69,78:HIGH-VALUE]<HIGH_VALUE>

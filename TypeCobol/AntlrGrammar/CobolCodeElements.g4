@@ -7733,7 +7733,7 @@ xmlTypeMapping:
 	subordinateDataItem=variable1 IS? (attribute | element | CONTENT);
 
 xmlSuppressDirective:	
-	(subordinateDataItem=variable1 whenPhrase) | genericSuppressionPhrase;
+	(subordinateDataItem=variable1 whenPhrase?) | genericSuppressionPhrase;
 
 whenPhrase:
 	// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES

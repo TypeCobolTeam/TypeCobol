@@ -1,7 +1,4 @@
 ﻿using Antlr4.Runtime.Tree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
@@ -1635,9 +1632,11 @@ namespace TypeCobol.Compiler.Parser
             var suppressDirective = new XmlSuppressDirective();
             if (context.subordinateDataItem != null)
             {
-                System.Diagnostics.Debug.Assert(context.whenPhrase() != null);
                 suppressDirective.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
-                suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+                if (context.whenPhrase() != null)
+                {
+                    suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+                }
             }
             else
             {
@@ -1661,22 +1660,24 @@ namespace TypeCobol.Compiler.Parser
 
                     if (suppression.attributeOrContentOrElement() != null)
                     {
-                        if (suppression.attributeOrContentOrElement().attribute() != null)
+                        var attributeOrContentOrElement = suppression.attributeOrContentOrElement();
+                        if (attributeOrContentOrElement.attribute() != null)
                         {
-                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ATTRIBUTE, suppression.attributeOrContentOrElement().attribute().UserDefinedWord());
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ATTRIBUTE, attributeOrContentOrElement.attribute().UserDefinedWord());
                         }
-                        else if (suppression.attributeOrContentOrElement().CONTENT() != null)
+                        else if (attributeOrContentOrElement.CONTENT() != null)
                         {
-                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.CONTENT, suppression.attributeOrContentOrElement().CONTENT());
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.CONTENT, attributeOrContentOrElement.CONTENT());
                         }
                         else
                         {
-                            System.Diagnostics.Debug.Assert(suppression.attributeOrContentOrElement().element() != null);
-                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ELEMENT, suppression.attributeOrContentOrElement().element().UserDefinedWord());
+                            System.Diagnostics.Debug.Assert(attributeOrContentOrElement.element() != null);
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ELEMENT, attributeOrContentOrElement.element().UserDefinedWord());
                         }
                     }
                 }
-                
+
+                System.Diagnostics.Debug.Assert(suppression.whenPhrase() != null);
                 suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(suppression.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
             }
             
