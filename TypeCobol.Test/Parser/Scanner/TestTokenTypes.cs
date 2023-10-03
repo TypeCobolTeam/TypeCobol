@@ -143,7 +143,7 @@ namespace TypeCobol.Test.Parser.Scanner
             testLines = new string[] {
                 @"U""This text does not include any escaped char""",
                 @"U'This text has one char from the Basic Multilingual Plane: \u03BB, the lowercase Greek letter Lambda'",
-                @"u""Now with something from Supplementary Planes: \U0001F4A9...""",
+                @"u""Now with something from Supplementary Planes: \U0001F43F...""",
                 @"u'\U00ABCDEF is not part of Unicode range and both \\u1234 and \\U00ABCDEF are not Unicode escape sequences'",
                 // Playing with some emojis in hexadecimal notation
                 @"UX""E2ADA1""",
