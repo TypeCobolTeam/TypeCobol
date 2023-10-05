@@ -360,11 +360,11 @@ namespace TypeCobol.Compiler.Types
                     validationMessages.Add(string.Format(SYMBOL_CAN_APPEAR_ONLY_ONCE, SC2String(sc)));
                 }
             }
-            bool atLeastOneAGNXZNineStar = symbolCounts[SC.A] + symbolCounts[SC.G] + symbolCounts[SC.N] +
+            bool atLeastOneAGNXUZNineStar = symbolCounts[SC.A] + symbolCounts[SC.G] + symbolCounts[SC.N] +
                                            symbolCounts[SC.X] + symbolCounts[SC.U] + symbolCounts[SC.Z] +
                                            symbolCounts[SC.NINE] + symbolCounts[SC.STAR] >= 1;
             bool atLeastTwoPlusMinusCs = symbolCounts[SC.PLUS] >= 2 || symbolCounts[SC.MINUS] >= 2 || symbolCounts[SC.CS] >= 2;
-            if (!(atLeastOneAGNXZNineStar || atLeastTwoPlusMinusCs))
+            if (!(atLeastOneAGNXUZNineStar || atLeastTwoPlusMinusCs))
             {
                 validationMessages.Add(AT_LEAST_ONE_OR_TWO_OF_SYMBOLS_MUST_BE_PRESENT);
             }

@@ -13,7 +13,16 @@ Line 8[24,24] <27, Error, Syntax> - Syntax error : PICTURE string symbol 'U' is 
           05 part2 PIC U BYTE-LENGTH 40.
 Line 9[24,24] <27, Error, Syntax> - Syntax error : PICTURE string symbol 'U' is not supported
           05 part3 PIC U BYTE-LENGTH 20.
+Line 10[20,24] <27, Error, Syntax> - Syntax error : PICTURE string symbol 'U' is not supported
+       01 lit1 PIC U(80) VALUE U"This text has no escape char".
+Line 11[20,24] <27, Error, Syntax> - Syntax error : PICTURE string symbol 'U' is not supported
+       01 lit2 PIC U(80) VALUE U'\u03BB is Lambda'.
+Line 12[20,24] <27, Error, Syntax> - Syntax error : PICTURE string symbol 'U' is not supported
+       01 lit3 PIC U(80) VALUE u"\U0001F43F is a chipmunk emoji".
        PROCEDURE DIVISION.
+           MOVE U"This text has no escape char" TO group1
+           MOVE U'\u03BB is Lambda' TO group1
+           MOVE u"\U0001F43F is a chipmunk emoji" TO group1
            GOBACK
            .
        END PROGRAM TCOFM117.

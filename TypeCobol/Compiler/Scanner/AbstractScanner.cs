@@ -396,7 +396,7 @@ namespace TypeCobol.Compiler.Scanner
         /// to 'F', inclusive. This Unicode escape sequence represents a Unicode code point from the Basic
         /// Multilingual Plane (i.e., Unicode code points in the range U+0000 through U+FFFF).
         ///
-        /// • \U00hhhhh, where each h represents a hexadecimal digit in the range '0' to '9', 'a' to 'f', and 'A' to 'F'.
+        /// • \U00hhhhhh, where each h represents a hexadecimal digit in the range '0' to '9', 'a' to 'f', and 'A' to 'F'.
         /// This Unicode escape sequence can represent any legal Unicode code point, including code points
         /// from the Supplementary Planes, specifically, Unicode code points in the range U+10000 through
         /// U+10FFFF (e.g., an emoji symbol).
