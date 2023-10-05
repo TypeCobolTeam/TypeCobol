@@ -72,7 +72,7 @@ jsonGenerateStatement:
 	(SUPPRESS excludedDataItem+)?;
 
 jsonNameMapping:
-	dataItem=variable1 IS? outputName=alphanumericValue2;
+	dataItem=variable1 IS? (outputName=alphanumericValue2 | OMITTED);
 
 excludedDataItem:
 	variable1;

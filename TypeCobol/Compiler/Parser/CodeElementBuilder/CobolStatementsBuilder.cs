@@ -759,7 +759,8 @@ namespace TypeCobol.Compiler.Parser
             return new JsonNameMapping
                    {
                        DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
-                       OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName)
+                       OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName),
+                       Omitted = context.OMITTED() != null
                    };
         }
 

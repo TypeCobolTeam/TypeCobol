@@ -1,9 +1,10 @@
 --- Diagnostics ---
 Line 2[16,16] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting FROM RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement,  OffendingSymbol=[16,16+:.]<PeriodSeparator>
 Line 12[28,28] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement,  OffendingSymbol=[28,28+:.]<PeriodSeparator>
-Line 14[30,30] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, IS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonNameMapping,  OffendingSymbol=[30,30+:.]<PeriodSeparator>
-Line 20[33,33] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, IS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonNameMapping,  OffendingSymbol=[33,33+:.]<PeriodSeparator>
+Line 14[30,30] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonNameMapping,  OffendingSymbol=[30,30+:.]<PeriodSeparator>
+Line 20[33,33] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonNameMapping,  OffendingSymbol=[33,33+:.]<PeriodSeparator>
 Line 30[32,32] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement,  OffendingSymbol=[32,32+:.]<PeriodSeparator>
+Line 43[24,30] <27, Error, Syntax> - Syntax error : extraneous input 'OMITTED' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[24,30:OMITTED]<OMITTED>
 --- Code Elements ---
 [[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [15,15:x]<UserDefinedWord>
 
@@ -60,4 +61,24 @@ Line 30[32,32] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
 [[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [39,40:t3]<UserDefinedWord>
 
 [[SentenceEnd]] [41,41+:.]<PeriodSeparator> --> [41,41+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [37,43:OMITTED]<OMITTED>
+
+[[SentenceEnd]] [44,44+:.]<PeriodSeparator> --> [44,44+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [34,40:OMITTED]<OMITTED>
+
+[[SentenceEnd]] [41,41+:.]<PeriodSeparator> --> [41,41+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [34,40:OMITTED]<OMITTED>
+
+[[SentenceEnd]] [41,41+:.]<PeriodSeparator> --> [41,41+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [31,37:OMITTED]<OMITTED>
+
+[[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [22,22:y]<UserDefinedWord>
+
+[[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
 

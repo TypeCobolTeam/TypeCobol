@@ -22,6 +22,10 @@
            JSON GENERATE result FROM elt NAME var1 'Nom'
            JSON GENERATE result FROM elt NAME OF var1 'Nom'
            JSON GENERATE result FROM elt NAME OF var1 IS 'Nom'
+           JSON GENERATE result FROM elt NAME OF elt IS OMITTED
+           JSON GENERATE result FROM elt NAME OF elt OMITTED
+           JSON GENERATE result FROM elt NAME elt IS OMITTED
+           JSON GENERATE result FROM elt NAME elt OMITTED
            JSON GENERATE result FROM elt
              NAME OF var1 IS 'Nom'
              var2 'Age'

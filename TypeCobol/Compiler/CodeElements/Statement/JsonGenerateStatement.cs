@@ -134,6 +134,9 @@
         /// the NAME phrase, the last specification is used.
         /// literal-1 must be an alphanumeric or national literal containing the name
         /// to be generated in the JSON text corresponding to identifier-4.
+        /// With PTF for APAR PH18641 installed, alternatively, you can specify
+        /// OMITTED to generate an anonymous JSON object, whose top-level parent name is not generated.
+        /// When you specify OMITTED, identifier-4 must reference identifier-2.
         /// </summary>
         public JsonNameMapping[] NameMappings { get; set; }
 
@@ -212,6 +215,12 @@
         /// Expected name in JSON.
         /// </summary>
         public AlphanumericValue OutputName { get; set; }
+
+        /// <summary>
+        /// Is expected name omitted?
+        /// To generate an anonymous JSON object, whose top-level parent name is not generated.
+        /// </summary>
+        public bool Omitted { get; set; }
 
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
