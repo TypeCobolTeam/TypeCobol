@@ -1,13 +1,7 @@
-﻿* neither USING not GIVING
-SORT x    ASCENDING      d.
-SORT x ON DESCENDING KEY d.
-SORT x    ASCENDING      d1 d2 d3.
-SORT x    DESCENDING     d1 d2 d3.
-SORT x ASCENDING d1 d2 ASCENDING d3 DESCENDING d4 ASCENDING d5 d6 DESCENDING d7 d8 d9.
-* missing USING
+﻿* missing USING: invalid but not checked by ANTLR grammar
 SORT x DESCENDING d GIVING filename1 filename2 filename3.
 SORT x ASCENDING  d1 d2 d3 GIVING filename.
-* missing GIVING
+* missing GIVING: invalid but not checked by ANTLR grammar
 SORT x DESCENDING d USING filename1 filename2 filename3.
 SORT x ASCENDING  d1 d2 d3 USING filename.
 * either USING or INPUT PROCEDURE

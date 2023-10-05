@@ -40,6 +40,10 @@ dataItemReferenceOrConditionReferenceOrIndexName:
 // [Type ambiguity] : fileName cannot be distinguished from identifier at this parsing stage
 dataItemReferenceOrConditionReferenceOrFileName: 
 	qualifiedDataNameOrQualifiedConditionNameOrFileName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+// [Type ambiguity] : fileName cannot be distinguished from identifier at this parsing stage
+dataItemReferenceOrFileName: 
+	qualifiedDataNameOrFileName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 	
 // [Type ambiguity] : className cannot be distinguished from identifier at this parsing stage
 dataItemReferenceOrConditionReferenceOrClassName: 

@@ -95,3 +95,73 @@
 
 [[SentenceEnd]] [196,196+:.]<PeriodSeparator> --> [196,196+:.]<PeriodSeparator>
 
+[[SortStatement]] [1,4:SORT]<SORT> --> [6,6:x]<UserDefinedWord>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [26,26:d]<UserDefinedWord>
+
+[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [26,26:d]<UserDefinedWord>
+
+[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [32,33:d3]<UserDefinedWord>
+
+[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [32,33:d3]<UserDefinedWord>
+
+[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [84,85:d9]<UserDefinedWord>
+
+[[SentenceEnd]] [86,86+:.]<PeriodSeparator> --> [86,86+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [27,31:ORDER]<ORDER>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [27,31:ORDER]<ORDER>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [27,31:ORDER]<ORDER>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [24,25:IN]<IN>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [27,31:ORDER]<ORDER>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [13,22:DUPLICATES]<DUPLICATES>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [24,25:IN]<IN>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [13,22:DUPLICATES]<DUPLICATES>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [30,41:alphabetname]<UserDefinedWord>
+
+[[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [30,41:alphabetname]<UserDefinedWord>
+
+[[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [30,41:alphabetname]<UserDefinedWord>
+
+[[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [30,41:alphabetname]<UserDefinedWord>
+
+[[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>
+

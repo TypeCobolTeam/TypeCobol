@@ -143,6 +143,21 @@ namespace TypeCobol.Compiler.Parser
             return storageArea;
         }
 
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrFileName(CodeElementsParser.DataItemReferenceOrFileNameContext context)
+        {
+            SymbolReference qualifiedDataNameOrFileName = CobolWordsBuilder.CreateQualifiedDataNameOrFileName(context.qualifiedDataNameOrFileName());
+            DataOrConditionStorageArea storageArea;
+            if (context.subscript() == null || context.subscript().Length == 0)
+            {
+                storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrFileName, _insideFunctionArgument);
+            }
+            else
+            {
+                storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrFileName, CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
+            }
+            return storageArea;
+        }
+
         internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrClassName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrClassNameContext context)
         {
             SymbolReference qualifiedDataNameOrQualifiedConditionNameOrClassName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionNameOrClassName(context.qualifiedDataNameOrQualifiedConditionNameOrClassName());

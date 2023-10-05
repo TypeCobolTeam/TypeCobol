@@ -117,6 +117,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Sort sort)
         {
+            // TODO: determine nature of sort target (file or table) and check format here
+
             var sortStatement = sort.CodeElement;
 
             (sort.InputProcedureParagraphSymbol, sort.InputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.InputProcedure, _currentSection);
