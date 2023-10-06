@@ -170,7 +170,7 @@
 
     /// <summary>
     /// Represents an association between a data item in source and a name to be used to represent
-    /// this data item in the resulting generated JSON.
+    /// this data item in the resulting generated JSON (for GENERATE and PARSE statement).
     /// </summary>
     public class JsonNameMapping : IVisitable
     {

@@ -121,7 +121,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// parent name called "top":
         /// ’{"top":{"A":"value1","B":"value2"}}’
         /// </summary>
-        public JsonParseNameMapping[] NameMappings { get; set; }
+        public JsonNameMapping[] NameMappings { get; set; }
 
         /// <summary>
         /// Allows you to identify and unconditionally exclude items that are
@@ -144,29 +144,6 @@ namespace TypeCobol.Compiler.CodeElements
                    && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, this.Destination, this.Source)
                    && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.ExcludedDataItems);
-        }
-    }
-
-    /// <summary>
-    /// Represents an association between a data item in source and a name to be used to represent
-    /// this data item in the resulting generated JSON.
-    /// </summary>
-    public class JsonParseNameMapping : IVisitable
-    {
-        /// <summary>
-        /// Data item to be renamed.
-        /// </summary>
-        public Variable DataItem { get; set; }
-
-        /// <summary>
-        /// Expected name in JSON.
-        /// </summary>
-        [CanBeNull]
-        public AlphanumericValue InputName { get; set; }
-
-        public bool AcceptASTVisitor(IASTVisitor astVisitor)
-        {
-            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.InputName);
         }
     }
 }

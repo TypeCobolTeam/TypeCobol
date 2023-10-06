@@ -816,16 +816,8 @@ namespace TypeCobol.Compiler.Parser
             {
                 Source = CobolExpressionsBuilder.CreateStorageArea(context.source),
                 Destination = CobolExpressionsBuilder.CreateVariable(context.destination),
-                NameMappings = context.jsonParseNameMapping().Select(CreateJsonParseNameMapping).ToArray(),
+                NameMappings = context.jsonNameMapping().Select(CreateJsonNameMapping).ToArray(),
                 ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
-            };
-        }
-        private JsonParseNameMapping CreateJsonParseNameMapping(CodeElementsParser.JsonParseNameMappingContext context)
-        {
-            return new JsonParseNameMapping
-            {
-                DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
-                InputName = CobolWordsBuilder.CreateAlphanumericValue(context.inputName)
             };
         }
 
