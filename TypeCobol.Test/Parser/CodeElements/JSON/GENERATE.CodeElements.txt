@@ -3,8 +3,14 @@ Line 2[16,16] <27, Error, Syntax> - Syntax error : mismatched input '.' expectin
 Line 12[28,28] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement,  OffendingSymbol=[28,28+:.]<PeriodSeparator>
 Line 14[30,30] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonNameMapping,  OffendingSymbol=[30,30+:.]<PeriodSeparator>
 Line 20[33,33] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonNameMapping,  OffendingSymbol=[33,33+:.]<PeriodSeparator>
-Line 30[32,32] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement,  OffendingSymbol=[32,32+:.]<PeriodSeparator>
+Line 30[32,32] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, statement starting keyword, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement,  OffendingSymbol=[32,32+:.]<PeriodSeparator>
 Line 43[24,30] <27, Error, Syntax> - Syntax error : extraneous input 'OMITTED' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[24,30:OMITTED]<OMITTED>
+Line 64[39,42] <27, Error, Syntax> - Syntax error : mismatched input 'WHEN' expecting {user defined word, NUMERIC} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase,  OffendingSymbol=[39,42:WHEN]<WHEN>
+Line 65[33,39] <27, Error, Syntax> - Syntax error : extraneous input 'NUMERIC' expecting {symbol, statement starting keyword, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement,  OffendingSymbol=[33,39:NUMERIC]<NUMERIC>
+Line 68[38,42] <27, Error, Syntax> - Syntax error : mismatched input 'QUOTE' expecting {HIGH-VALUE, HIGH-VALUES, LOW-VALUE, LOW-VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase>whenPhrase>repeatedCharacterValue3>figurativeConstantForXMLGenerate,  OffendingSymbol=[38,42:QUOTE]<QUOTE>
+Line 69[38,43] <27, Error, Syntax> - Syntax error : mismatched input 'QUOTES' expecting {HIGH-VALUE, HIGH-VALUES, LOW-VALUE, LOW-VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase>whenPhrase>repeatedCharacterValue3>figurativeConstantForXMLGenerate,  OffendingSymbol=[38,43:QUOTES]<QUOTES>
+Line 70[38,41] <27, Error, Syntax> - Syntax error : mismatched input 'NULL' expecting {HIGH-VALUE, HIGH-VALUES, LOW-VALUE, LOW-VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase>whenPhrase>repeatedCharacterValue3>figurativeConstantForXMLGenerate,  OffendingSymbol=[38,41:NULL]<NULL>
+Line 71[38,42] <27, Error, Syntax> - Syntax error : mismatched input 'NULLS' expecting {HIGH-VALUE, HIGH-VALUES, LOW-VALUE, LOW-VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase>whenPhrase>repeatedCharacterValue3>figurativeConstantForXMLGenerate,  OffendingSymbol=[38,42:NULLS]<NULLS>
 --- Code Elements ---
 [[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [15,15:x]<UserDefinedWord>
 
@@ -81,4 +87,48 @@ Line 43[24,30] <27, Error, Syntax> - Syntax error : extraneous input 'OMITTED' e
 [[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [22,22:y]<UserDefinedWord>
 
 [[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,41:ZERO]<ZERO>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,42:ZEROS]<ZEROS>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,43:ZEROES]<ZEROES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,42:SPACE]<SPACE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,43:SPACES]<SPACES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,46:LOW-VALUE]<LOW_VALUE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,47:LOW-VALUES]<LOW_VALUES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,47:HIGH-VALUE]<HIGH_VALUE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,48:HIGH-VALUES]<HIGH_VALUES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [40,43:ZERO]<ZERO>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [57,66:HIGH-VALUE]<HIGH_VALUE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [60,69:HIGH-VALUE]<HIGH_VALUE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [71,81:HIGH-VALUES]<HIGH_VALUES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [69,74:ZEROES]<ZEROES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [61,66:SPACES]<SPACES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [64,69:SPACES]<SPACES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [52,56:SPACE]<SPACE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [54,63:HIGH-VALUE]<HIGH_VALUE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,42:QUOTE]<QUOTE>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,43:QUOTES]<QUOTES>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,41:NULL]<NULL>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,42:NULLS]<NULLS>
 

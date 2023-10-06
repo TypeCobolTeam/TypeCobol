@@ -744,14 +744,20 @@ namespace TypeCobol.Compiler.Parser
 
         internal JsonGenerateStatement CreateJsonGenerateStatement(CodeElementsParser.JsonGenerateStatementContext context)
         {
-            return new JsonGenerateStatement
-                   {
-                       Destination = CobolExpressionsBuilder.CreateStorageArea(context.destination),
-                       Source = CobolExpressionsBuilder.CreateVariable(context.source),
-                       CharactersCount = CobolExpressionsBuilder.CreateStorageArea(context.charactersCount),
-                       NameMappings = context.jsonNameMapping().Select(CreateJsonNameMapping).ToArray(),
-                       ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
-                   };
+            var statement = new JsonGenerateStatement();
+            statement.Destination = CobolExpressionsBuilder.CreateStorageArea(context.destination);
+            statement.Source = CobolExpressionsBuilder.CreateVariable(context.source);
+            statement.CharactersCount = CobolExpressionsBuilder.CreateStorageArea(context.charactersCount);
+            if (context.jsonNameMapping() != null)
+            {
+                statement.NameMappings = BuildObjectArrayFromParserRules(context.jsonNameMapping(), ctx => CreateJsonNameMapping(ctx));
+            }
+            if (context.jsonSuppressDirective() != null)
+            {
+                statement.JsonSuppressDirectives = BuildObjectArrayFromParserRules(context.jsonSuppressDirective(), ctx => CreateJsonSuppressDirective(ctx));
+            }
+
+            return statement;
         }
 
         private JsonNameMapping CreateJsonNameMapping(CodeElementsParser.JsonNameMappingContext context)
@@ -762,6 +768,42 @@ namespace TypeCobol.Compiler.Parser
                        OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName),
                        Omitted = context.OMITTED() != null
                    };
+        }
+
+        private JsonSuppressDirective CreateJsonSuppressDirective(CodeElementsParser.JsonSuppressDirectiveContext context)
+        {
+            var suppressDirective = new JsonSuppressDirective();
+            if (context.subordinateDataItem != null)
+            {
+                suppressDirective.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
+                if (context.whenPhrase() != null)
+                {
+                    suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+                }
+            }
+            else if (context.jsonGenericSuppressionPhrase() != null)
+            {
+                var suppression = context.jsonGenericSuppressionPhrase();
+
+                if (suppression.EVERY() != null)
+                {
+                    if (suppression.NUMERIC() != null)
+                    {
+                        suppressDirective.JsonItemTypeToSuppress = CreateSyntaxProperty(JsonItemType.NUMERIC, suppression.NUMERIC());
+                    }
+                    else if (suppression.nonnumeric() != null)
+                    {
+                        suppressDirective.JsonItemTypeToSuppress = CreateSyntaxProperty(JsonItemType.NONNUMERIC, suppression.nonnumeric().UserDefinedWord());
+                    }
+                }
+
+                if (suppression.whenPhrase() != null)
+                {
+                    suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(suppression.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+                }
+            }
+
+            return suppressDirective;
         }
 
         /////////////////////////////
