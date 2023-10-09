@@ -6651,7 +6651,7 @@ setStatementForConditions:
 // referenced by data-name-2.
 
 sortStatement:
-	SORT dataItemReferenceOrFileName onAscendingDescendingKey*
+	SORT dataVariableOrFileName onAscendingDescendingKey*
 	(WITH? DUPLICATES IN? ORDER?)?
 	collatingSequence?
 	(usingFilenames  | inputProcedure)?
