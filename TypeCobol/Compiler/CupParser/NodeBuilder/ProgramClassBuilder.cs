@@ -532,7 +532,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
-            var node = new FileDescriptionEntryNode(entry);
+            var node = new FileDescription(entry);
             Enter(node, entry);
             node.SymbolTable.AddVariable(node);
             Dispatcher.StartFileDescriptionEntry(entry);
@@ -543,8 +543,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             ExitLastLevel1Definition();
 
             // FileDescription works as a top level data definition for ProgramSymbolTableBuilder
-            System.Diagnostics.Debug.Assert(CurrentNode is FileDescriptionEntryNode);
-            Dispatcher.OnTopLevelDataDefinition((FileDescriptionEntryNode)CurrentNode);
+            System.Diagnostics.Debug.Assert(CurrentNode is FileDescription);
+            Dispatcher.OnTopLevelDataDefinition((FileDescription)CurrentNode);
             Exit();
 
             Dispatcher.EndFileDescriptionEntry();

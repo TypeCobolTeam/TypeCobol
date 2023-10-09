@@ -74,8 +74,8 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class FileDescriptionEntryNode : DataDefinition {
-        public FileDescriptionEntryNode(FileDescriptionEntry entry): base(entry) { }
+    public class FileDescription : DataDefinition {
+        public FileDescription(FileDescriptionEntry entry): base(entry) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
