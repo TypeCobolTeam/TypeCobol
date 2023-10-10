@@ -1056,7 +1056,6 @@ variableOrIndex: identifierOrIndexName | numericValue | alphanumericValue2 | rep
 
 variableOrExpression2: identifier | numericValue | alphanumericValue2 | repeatedCharacterValue1 | arithmeticExpression;
 
-dataVariableOrFileName: dataItemReferenceOrFileName; // For SORT statement
 
 // --- Receiving data items : storage areas where statements results are saved ---
 

@@ -36,7 +36,7 @@
         /// by the rules in the OCCURS clause. The sorted table elements are placed in the same table that is
         /// referenced by data-name-2.
         /// </summary>
-        public Variable FileNameOrTableName { get; set; }
+        public DataOrConditionStorageArea FileNameOrTableName { get; set; }
 
         /// <summary>
         /// p423:

@@ -1223,7 +1223,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new SortStatement();
 
-            statement.FileNameOrTableName = CobolExpressionsBuilder.CreateDataVariableOrFileName(context.dataVariableOrFileName());
+            statement.FileNameOrTableName = CobolExpressionsBuilder.CreateDataItemReferenceOrFileName(context.dataItemReferenceOrFileName());
             statement.SortingKeys = CreateSortingKeys(context.onAscendingDescendingKey());
             if (context.DUPLICATES() != null)
             {
