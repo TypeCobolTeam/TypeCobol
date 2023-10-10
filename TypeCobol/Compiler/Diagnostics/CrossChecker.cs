@@ -118,6 +118,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Sort sort)
         {
             // Check nature of SORT target
+            DataDefinition sortTarget = null;
             var sortStatement = sort.CodeElement;
             if (sortStatement.FileNameOrTableName.SymbolReference != null)
             {
@@ -154,7 +155,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         break;
                     case 1:
                         // Ok
-                        var sortTarget = candidateVariables[0];
+                        sortTarget = candidateVariables[0];
                         Debug.Assert(sortTarget.CodeElement != null);
                         sort.Nature = sortTarget.CodeElement.Type == CodeElementType.FileDescriptionEntry ? SortNature.FileSort : SortNature.TableSort;
                         break;
@@ -170,7 +171,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 // File SORT must have at least one sorting KEY (ASCENDING or DESCENDING)
                 if (sortStatement.SortingKeys == null || sortStatement.SortingKeys.Count == 0)
                 {
-                    DiagnosticUtils.AddError(sort, "SORT file statement requires at least one sorting key.", sortStatement);
+                    DiagnosticUtils.AddError(sort, "SORT file statement requires at least one sorting KEY.", sortStatement);
                 }
 
                 // Requires an INPUT (PROCEDURE or USING file)
@@ -196,6 +197,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 if ((sortStatement.OutputFiles != null && sortStatement.OutputFiles.Length > 0) || sortStatement.OutputProcedure != null)
                 {
                     DiagnosticUtils.AddError(sort, "SORT table statement does not allow output definition.", sortStatement);
+                }
+
+                // The KEY must be defined on SORT if no key is already defined on target
+                if (sortStatement.SortingKeys == null || sortStatement.SortingKeys.Count == 0)
+                {
+                    Debug.Assert(sortTarget != null);
+                    var tableSortingKeys = sortTarget.GetTableSortingKeys();
+                    if (tableSortingKeys == null || tableSortingKeys.Length == 0)
+                    {
+                        DiagnosticUtils.AddError(sort, $"SORT table statement has no sorting KEY and the sorted table '{sortTarget.Name}' does not define any KEY clause.", sortStatement);
+                    }
                 }
             }
         }
