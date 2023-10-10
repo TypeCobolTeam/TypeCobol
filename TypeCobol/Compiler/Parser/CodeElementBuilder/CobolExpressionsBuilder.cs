@@ -1528,39 +1528,6 @@ namespace TypeCobol.Compiler.Parser
             return variable;
         }
 
-        internal Variable CreateVariableOrIndex(CodeElementsParser.VariableOrIndexContext context)
-        {
-            Variable variable = null;
-            if(context.identifierOrIndexName() != null)
-            {
-                variable = new Variable(
-                    CreateIdentifierOrIndexName(context.identifierOrIndexName()));
-            }
-            else if (context.numericValue() != null)
-            {
-                variable = new Variable(
-                    CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-            }
-            else if (context.alphanumericValue2() != null)
-            {
-                variable = new Variable(
-                    CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-            }
-            else
-            {
-                variable = new Variable(
-                    CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
-            }
-
-            // Collect storage area read/writes at the code element level
-            if (variable.StorageArea != null)
-            {
-                this.storageAreaReads.Add(variable.StorageArea);
-            }
-
-            return variable;
-        }
-
         [CanBeNull]
         internal VariableOrExpression CreateVariableOrExpression([CanBeNull] CodeElementsParser.VariableOrExpression2Context context)
         {

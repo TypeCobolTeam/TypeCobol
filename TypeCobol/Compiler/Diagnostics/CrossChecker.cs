@@ -117,17 +117,87 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Sort sort)
         {
-            // TODO: determine nature of sort target (file or table) and check format here
-
+            // Check nature of SORT target
             var sortStatement = sort.CodeElement;
+            if (sortStatement.FileNameOrTableName.SymbolReference != null)
+            {
+                CheckSortNature(sortStatement.FileNameOrTableName.SymbolReference);
+            }
 
+            // Check format based on nature of target
+            switch (sort.Nature)
+            {
+                case SortNature.FileSort:
+                    CheckFileSort();
+                    break;
+                case SortNature.TableSort:
+                    CheckTableSort();
+                    break;
+            }
+
+            // Resolve input and output procedures
             (sort.InputProcedureParagraphSymbol, sort.InputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.InputProcedure, _currentSection);
             (sort.InputThroughProcedureParagraphSymbol, sort.InputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughInputProcedure, _currentSection);
-
             (sort.OutputProcedureParagraphSymbol, sort.OutputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.OutputProcedure, _currentSection);
             (sort.OutputThroughProcedureParagraphSymbol, sort.OutputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughOutputProcedure, _currentSection);
 
             return true;
+
+            void CheckSortNature(SymbolReference tableOrFileReference)
+            {
+                var candidateVariables = sort.SymbolTable.GetVariables(tableOrFileReference).ToList(); // Will get the FileDescription as it is also a DataDefinition
+                switch (candidateVariables.Count)
+                {
+                    case 0:
+                        // Nothing found
+                        DiagnosticUtils.AddError(sort, $"Unable to resolve reference to SORT target '{tableOrFileReference.Name}'.", tableOrFileReference);
+                        break;
+                    case 1:
+                        // Ok
+                        var sortTarget = candidateVariables[0];
+                        Debug.Assert(sortTarget.CodeElement != null);
+                        sort.Nature = sortTarget.CodeElement.Type == CodeElementType.FileDescriptionEntry ? SortNature.FileSort : SortNature.TableSort;
+                        break;
+                    default:
+                        // Ambiguous reference
+                        DiagnosticUtils.AddError(sort, $"Ambiguous reference to SORT target '{tableOrFileReference.Name}'.", tableOrFileReference);
+                        break;
+                }
+            }
+
+            void CheckFileSort()
+            {
+                // File SORT must have at least one sorting KEY (ASCENDING or DESCENDING)
+                if (sortStatement.SortingKeys == null || sortStatement.SortingKeys.Count == 0)
+                {
+                    DiagnosticUtils.AddError(sort, "SORT file statement requires at least one sorting key.", sortStatement);
+                }
+
+                // Requires an INPUT (PROCEDURE or USING file)
+                if ((sortStatement.InputFiles == null || sortStatement.InputFiles.Length == 0) && sortStatement.InputProcedure == null)
+                {
+                    DiagnosticUtils.AddError(sort, "Missing input definition in SORT file statement: either add INPUT PROCEDURE phrase or USING file phrase to define required input.", sortStatement);
+                }
+
+                // Requires an OUTPUT (PROCEDURE or GIVING file)
+                if ((sortStatement.OutputFiles == null || sortStatement.OutputFiles.Length == 0) && sortStatement.OutputProcedure == null)
+                {
+                    DiagnosticUtils.AddError(sort, "Missing output definition in SORT file statement: either add OUTPUT PROCEDURE phrase or GIVING file phrase to define required output.", sortStatement);
+                }
+            }
+
+            void CheckTableSort()
+            {
+                // No input or output allowed on SORT table statement
+                if ((sortStatement.InputFiles != null && sortStatement.InputFiles.Length > 0) || sortStatement.InputProcedure != null)
+                {
+                    DiagnosticUtils.AddError(sort, "SORT table statement does not allow input definition.", sortStatement);
+                }
+                if ((sortStatement.OutputFiles != null && sortStatement.OutputFiles.Length > 0) || sortStatement.OutputProcedure != null)
+                {
+                    DiagnosticUtils.AddError(sort, "SORT table statement does not allow output definition.", sortStatement);
+                }
+            }
         }
 
         public override bool Visit(Paragraph paragraph)
