@@ -1,9 +1,6 @@
 ﻿using JetBrains.Annotations;
-using System;
 using System.Text;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
@@ -761,6 +758,21 @@ namespace TypeCobol.Compiler.CodeModel
 
             // No more parts to compare and all parts tested are equal, we return True
             return true;
+        }
+
+        // File descriptions
+        private readonly IDictionary<string, List<FileDescription>> _fileDescriptionEntries = new Dictionary<string, List<FileDescription>>(StringComparer.OrdinalIgnoreCase);
+
+        public void AddFileDescription([NotNull] FileDescription fileDescription)
+        {
+            AddNode(_fileDescriptionEntries, fileDescription);
+        }
+
+        [NotNull]
+        public IList<FileDescription> GetFileDescription([NotNull] string fileName)
+        {
+            var name = new URI(fileName);
+            return GetFromTableAndEnclosing(name, table => table._fileDescriptionEntries, MatchUsingName, Scope.Global);
         }
 
         #endregion

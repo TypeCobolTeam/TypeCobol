@@ -532,9 +532,21 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
+            var currentProg = CurrentProgram;
+            if (currentProg.FileDescriptions == null)
+            {
+                currentProg.FileDescriptions = new Dictionary<SymbolReference, FileDescriptionEntry>();
+            }
+
+            if (entry.FileName != null)
+            {
+                currentProg.FileDescriptions.Add(entry.FileName, entry);
+            }
+
             var node = new FileDescription(entry);
             Enter(node, entry);
             node.SymbolTable.AddVariable(node);
+            node.SymbolTable.AddFileDescription(node);
             Dispatcher.StartFileDescriptionEntry(entry);
         }
 

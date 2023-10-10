@@ -121,7 +121,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// More than one record description entry can be specified; each is an alternative description of the same record storage area.
         /// Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
         /// </summary>
-        public IDictionary<SymbolDefinition, FileDescriptionEntry> FileDescriptions { get; set; }
+        public IDictionary<SymbolReference, FileDescriptionEntry> FileDescriptions { get; set; }
 
 
         /// <summary>
