@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// More than one record description entry can be specified; each is an alternative description of the same record storage area.
         /// Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
         /// </summary>
-        public IDictionary<SymbolReference, FileDescriptionEntry> FileDescriptions { get; set; }
+        public IDictionary<SymbolDefinition, FileDescriptionEntry> FileDescriptions { get; set; }
 
         /// <summary>
         /// A single copy of the WORKING-STORAGE for a method is statically allocated on the first invocation of the method and persists in a last-used state for the duration of the run unit. 
