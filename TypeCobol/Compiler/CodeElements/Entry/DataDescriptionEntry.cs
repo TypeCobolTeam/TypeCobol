@@ -212,6 +212,21 @@ namespace TypeCobol.Compiler.CodeElements {
         public SyntaxProperty<bool> IsBlankWhenZero { get; set; }
 
         /// <summary>
+        /// The DYNAMIC LENGTH clause specifies a dynamic-length elementary item. The LENGTH keyword is
+        /// optional.
+        /// </summary>
+        public SyntaxProperty<bool> HasDynamicLength { get; internal set; }
+
+        /// <summary>
+        /// For dynamic-length items an integer may optionally specify the maximum number of alphanumeric or national characters that the data item
+        /// can contain.
+        /// When the PICTURE clause is PIC U, integer-1 represents the maximum bytes that the data item can
+        /// contain. integer-1 must be an integer greater than or equal to 1, and less than or equal to 999999999
+        /// for alphanumeric class and 999999999 for UTF-8 class dynamic-length elementary items.
+        /// </summary>
+        public IntegerValue DynamicLengthLimit { get; internal set; }
+
+        /// <summary>
         /// p189:
         /// The GLOBAL clause specifies that a data-name is available to every program
         /// contained within the program that declares it, as long as the contained program

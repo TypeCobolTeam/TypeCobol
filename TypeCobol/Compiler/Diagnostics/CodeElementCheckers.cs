@@ -126,6 +126,12 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 codeElement.DataType = DataType.Create(pictureValidationResult);
             }
+
+            //Unsupported dynamic-length items
+            if (codeElement.HasDynamicLength != null && codeElement.HasDynamicLength.Value)
+            {
+                DiagnosticUtils.AddError(codeElement, "dynamic-length data items are not supported.", codeElement.HasDynamicLength.Token);
+            }
         }
 
         public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)

@@ -1250,6 +1250,14 @@ namespace TypeCobol.Compiler.Parser
                 }
                 entry.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
             }
+
+            if (context.dynamicLengthClause() != null && context.dynamicLengthClause().Length > 0)
+            {
+                var dynamicLengthContext = context.dynamicLengthClause()[0];
+                entry.HasDynamicLength = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(dynamicLengthContext.DYNAMIC()));
+                entry.DynamicLengthLimit = CobolWordsBuilder.CreateIntegerValue(dynamicLengthContext.IntegerLiteral());
+            }
+
             if (context.globalClause() != null && context.globalClause().Length > 0)
             {
                 entry.Global = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.globalClause()[0].GLOBAL()));
