@@ -55,3 +55,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 2;55;1;Non-COBOL character "{0}" was found in column {1}.;0;0;
 3;56;2;Warning: {0};0;0;
 3;57;1;Error: {0};0;0;
+2;58;2;The number of characters in an hexadecimal UTF-8 literal should be a multiple of 2 and must not exceed 320;1;36;An even number of hexadecimal digits must be specified. Each group of two hexadecimal digits represents a single encoding unit of a UTF-8 character.

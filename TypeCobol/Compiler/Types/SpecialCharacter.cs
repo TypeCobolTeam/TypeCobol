@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TypeCobol.Compiler.Types
+﻿namespace TypeCobol.Compiler.Types
 {
     public partial class PictureValidator
     {
@@ -28,6 +26,8 @@ namespace TypeCobol.Compiler.Types
                     return SC.P;
                 case 'S':
                     return SC.S;
+                case 'U':
+                    return SC.U;
                 case 'V':
                     return SC.V;
                 case 'X':
@@ -79,6 +79,8 @@ namespace TypeCobol.Compiler.Types
                     return "P";
                 case SC.S:
                     return "S";
+                case SC.U:
+                    return "U";
                 case SC.V:
                     return "V";
                 case SC.X:
@@ -137,6 +139,7 @@ namespace TypeCobol.Compiler.Types
         NINE, // 9
         A,
         X,
+        U,
         S,
         V,
         P,

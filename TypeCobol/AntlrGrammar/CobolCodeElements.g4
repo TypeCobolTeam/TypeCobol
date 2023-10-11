@@ -2492,7 +2492,7 @@ justifiedClause:
 // within an alphanumeric group.
 
 groupUsageClause:
-    GROUP_USAGE IS? NATIONAL;
+    GROUP_USAGE IS? (NATIONAL | UTF_8);
 
 // p191: The DATA DIVISION language elements used for table handling are the OCCURS
 // clause and the INDEXED BY phrase.
@@ -2760,7 +2760,10 @@ tableSortingKeys:
 // elementary data item.
 
 pictureClause:
-    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString;
+    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString byteLengthPhrase?;
+
+byteLengthPhrase:
+	({ string.Equals(CurrentToken.Text, "BYTE-LENGTH", System.StringComparison.InvariantCultureIgnoreCase) }? BYTE_LENGTHKeyword=UserDefinedWord) IS? IntegerLiteral;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
@@ -3109,6 +3112,7 @@ usageClause:
 					(DISPLAY_1 NATIVE?) |
 					INDEX |
 					(NATIONAL NATIVE?) |
+					(UTF_8 NATIVE?) |
 					(OBJECT REFERENCE classNameReference?) |
 					(PACKED_DECIMAL NATIVE?) |
 					(POINTER | POINTER_32 |
