@@ -50,7 +50,7 @@ Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any des
     {
       "DocDataType": {
         "MaxOccurence": 1,
-        "Usage": 12
+        "Usage": 13
       },
       "Info": "this is an inout param",
       "Name": "param3",
@@ -85,7 +85,7 @@ Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any des
     {
       "DocDataType": {
         "MaxOccurence": 1,
-        "Usage": 12
+        "Usage": 13
       },
       "Name": "param3",
       "PassingType": 3

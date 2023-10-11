@@ -288,6 +288,10 @@ namespace TypeCobol.Compiler.Scanner
                     return "hexadecimal national literal";
                 case TokenType.DBCSLiteral:
                     return "DBCS literal";
+                case TokenType.UTF8Literal:
+                    return "UTF-8 literal";
+                case TokenType.HexadecimalUTF8Literal:
+                    return "hexadecimal UTF-8 literal";
                 case TokenType.LevelNumber:
                     return "level number";
                 case TokenType.IntegerLiteral:

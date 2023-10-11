@@ -1416,6 +1416,27 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         return ScanCharacterString(startIndex);
                     }
+                case 'U':
+                case 'u':
+                    //UTF8Literal = 28,
+                    //HexadecimalUTF8Literal = 29,
+                    if (currentIndex < lastIndex && (line[currentIndex + 1] == '"' || line[currentIndex + 1] == '\''))
+                    {
+                        // consume U char
+                        currentIndex++;
+                        return ScanAlphanumericLiteral(startIndex, TokenType.UTF8Literal, _multiStringConcatBitPosition);
+                    }
+                    else if (currentIndex < lastIndex && (line[currentIndex + 1] == 'X' || line[currentIndex + 1] == 'x') &&
+                        currentIndex < (lastIndex + 1) && (line[currentIndex + 2] == '"' || line[currentIndex + 2] == '\''))
+                    {
+                        // consume U and X chars
+                        currentIndex += 2;
+                        return ScanAlphanumericLiteral(startIndex, TokenType.HexadecimalUTF8Literal, _multiStringConcatBitPosition);
+                    }
+                    else
+                    {
+                        return ScanCharacterString(startIndex);
+                    }
                 // p9: COBOL words with single-byte characters
                 // A COBOL word is a character-string that forms a user-defined word, a system-name, or a reserved word. 
                 // Each character of a COBOL word is selected from the following set: 
