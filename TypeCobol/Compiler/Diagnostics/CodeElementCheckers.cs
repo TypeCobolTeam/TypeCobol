@@ -90,41 +90,57 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            //Check Picture character string format
-            CheckPicture(data, context);
+            //Check Picture character string format and usage if any
+            CheckPictureAndUsage(data, context);
         }
 
-        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement, ParserRuleContextWithDiagnostics context)
+        public static void CheckPictureAndUsage([NotNull] CommonDataDescriptionAndDataRedefines codeElement, ParserRuleContextWithDiagnostics context)
         {
-            if (codeElement.Picture == null) return;
-
-            /*
-             * Validate using PictureValidator
-             * We use the scan state of the first token in ANTLR context for this code element to retrieve special-names information,
-             * namely DecimalPointIsComma and the custom currency descriptors (if any).
-             */
-            bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
-            var specialNamesContext = (context?.Start as Token)?.TokensLine.ScanState.SpecialNames;
-            bool decimalPointIsComma = specialNamesContext?.DecimalPointIsComma ?? false;
-            var customCurrencyDescriptors = specialNamesContext?.CustomCurrencyDescriptors;
-            var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate, decimalPointIsComma, customCurrencyDescriptors);
-            var pictureValidationResult = pictureValidator.Validate(out var validationMessages);
-
-            //Report validation errors as diagnostics
-            if (!pictureValidationResult.IsValid)
+            // Picture checks
+            if (codeElement.Picture != null)
             {
-                var pictureToken = codeElement.Picture.Token;
-                foreach (var validationMessage in validationMessages)
+                /*
+                 * Validate using PictureValidator
+                 * We use the scan state of the first token in ANTLR context for this code element to retrieve special-names information,
+                 * namely DecimalPointIsComma and the custom currency descriptors (if any).
+                 */
+                bool signIsSeparate = codeElement.SignIsSeparate?.Value ?? false;
+                var specialNamesContext = (context?.Start as Token)?.TokensLine.ScanState.SpecialNames;
+                bool decimalPointIsComma = specialNamesContext?.DecimalPointIsComma ?? false;
+                var customCurrencyDescriptors = specialNamesContext?.CustomCurrencyDescriptors;
+                var pictureValidator = new PictureValidator(codeElement.Picture.Value, signIsSeparate, decimalPointIsComma, customCurrencyDescriptors);
+                var pictureValidationResult = pictureValidator.Validate(out var validationMessages);
+
+                //Report validation errors as diagnostics
+                if (!pictureValidationResult.IsValid)
                 {
-                    DiagnosticUtils.AddError(codeElement, validationMessage, pictureToken);
+                    var pictureToken = codeElement.Picture.Token;
+                    foreach (var validationMessage in validationMessages)
+                    {
+                        DiagnosticUtils.AddError(codeElement, validationMessage, pictureToken);
+                    }
+                }
+
+                //Store validation result for future usages
+                codeElement.PictureValidationResult = pictureValidationResult;
+                if (codeElement.DataType == DataType.Unknown)
+                {
+                    codeElement.DataType = DataType.Create(pictureValidationResult);
                 }
             }
 
-            //Store validation result for future usages
-            codeElement.PictureValidationResult = pictureValidationResult;
-            if (codeElement.DataType == DataType.Unknown)
+            // Usage checks
+
+            // Unsupported UTF-8 usage
+            if (codeElement.Usage != null && codeElement.Usage.Value == DataUsage.UTF8)
             {
-                codeElement.DataType = DataType.Create(pictureValidationResult);
+                DiagnosticUtils.AddError(codeElement, "USAGE UTF-8 is not supported.", codeElement.Usage.Token);
+            }
+
+            // Unsupported UTF-8 group usage
+            if (codeElement.GroupUsage != null && codeElement.GroupUsage.Value == DataUsage.UTF8)
+            {
+                DiagnosticUtils.AddError(codeElement, "GROUP-USAGE UTF-8 is not supported.", codeElement.GroupUsage.Token);
             }
 
             //Unsupported dynamic-length items
@@ -137,7 +153,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
         {
             TypeDefinitionEntryChecker.CheckRedefines(redefines, context);
-            CheckPicture(redefines, context);
+            CheckPictureAndUsage(redefines, context);
         }
 
         public static void CheckOccurs([NotNull] CommonDataDescriptionAndDataRedefines codeElement,

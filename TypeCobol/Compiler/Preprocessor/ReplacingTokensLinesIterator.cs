@@ -177,6 +177,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     case TokenType.NullTerminatedAlphanumericLiteral:
                     case TokenType.DBCSLiteral:
                     case TokenType.NationalLiteral:
+                    case TokenType.UTF8Literal:
                         return true;
                     default:
                         return false;

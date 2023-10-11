@@ -123,6 +123,7 @@ tcfuncParameterUsageClause:
 					(DISPLAY_1 NATIVE?) |
 					INDEX |
 					(NATIONAL NATIVE?) |
+					(UTF_8 NATIVE?) |
 					//not implemented yet
 					//(OBJECT REFERENCE classNameReference?) |        
 					(PACKED_DECIMAL NATIVE?) |              
