@@ -159,12 +159,17 @@
         /// </summary>
         public JsonSuppressDirective[] JsonSuppressDirectives { get; set; }
 
+        /// <summary>
+        /// Allows you to specify items that will be generated as JSON BOOLEAN name/value pairs.
+        /// </summary>
+        public JsonGenerateConvertingDirective[] JsonConvertingDirectives { get; set; }
+
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor)
                    && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, this.Destination, this.Source, this.CharactersCount)
-                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.ExcludedDataItems);
+                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.ExcludedDataItems, this.JsonSuppressDirectives, this.JsonConvertingDirectives);
         }
     }
 
@@ -269,6 +274,34 @@
         {
             return this.ContinueVisitToChildren(astVisitor, JsonItemTypeToSuppress, DataItemName)
                 && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>)ItemValuesToSuppress);
+        }
+    }
+
+    /// <summary>
+    /// Represents an association between a data item in source and its TRUE value when converting it to a JSON boolean.
+    /// </summary>
+    public class JsonGenerateConvertingDirective : IVisitable
+    {
+        /// <summary>
+        /// identifier-6 must be a single-byte alphanumeric elementary data item whose data definition entry
+        /// contains PICTURE X.
+        /// </summary>
+        public Variable DataItem { get; set; }
+
+        /// <summary>
+        /// condition-name-1 and literal-2 represent values of identifier-6 that will be generated as a JSON
+        /// BOOLEAN true value.All other values of identifier-6 will be generated as a JSON BOOLEAN false value.
+        /// condition-name-1 must be a level-88 item directly subordinate to identifier-6 and can be specified
+        /// with multiple values or value ranges.literal-2 must be a single-byte alphanumeric literal.
+        /// </summary>
+        public Variable TrueValue { get; set; }
+
+        public JsonGenerateConvertingDirective(Variable dataItem, Variable trueValue) =>
+            (DataItem, TrueValue) = (dataItem, trueValue);
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.TrueValue);
         }
     }
 }

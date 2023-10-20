@@ -11,6 +11,12 @@ Line 68[38,42] <27, Error, Syntax> - Syntax error : mismatched input 'QUOTE' exp
 Line 69[38,43] <27, Error, Syntax> - Syntax error : mismatched input 'QUOTES' expecting {HIGH-VALUE, HIGH-VALUES, LOW-VALUE, LOW-VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase>whenPhrase>repeatedCharacterValue3>figurativeConstantForXMLGenerate,  OffendingSymbol=[38,43:QUOTES]<QUOTES>
 Line 70[38,41] <27, Error, Syntax> - Syntax error : mismatched input 'NULL' expecting {HIGH-VALUE, HIGH-VALUES, LOW-VALUE, LOW-VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase>whenPhrase>repeatedCharacterValue3>figurativeConstantForXMLGenerate,  OffendingSymbol=[38,41:NULL]<NULL>
 Line 71[38,42] <27, Error, Syntax> - Syntax error : mismatched input 'NULLS' expecting {HIGH-VALUE, HIGH-VALUES, LOW-VALUE, LOW-VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonSuppressDirective>jsonGenericSuppressionPhrase>whenPhrase>repeatedCharacterValue3>figurativeConstantForXMLGenerate,  OffendingSymbol=[38,42:NULLS]<NULLS>
+Line 80[34,34] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonGenerateConvertingPhrase>jsonGenerateConvertingDirective>variable1>identifier>storageAreaReferenceOrConditionReference,  OffendingSymbol=[34,34+:.]<PeriodSeparator>
+Line 81[36,36] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {user defined word, TO, JSON} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonGenerateConvertingPhrase>jsonGenerateConvertingDirective,  OffendingSymbol=[36,36+:.]<PeriodSeparator>
+Line 82[6,13] <27, Error, Syntax> - Syntax error : extraneous input 'GENERATE' expecting user defined word RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonGenerateConvertingPhrase>jsonGenerateConvertingDirective,  OffendingSymbol=[6,13:GENERATE]<GENERATE>
+Line 82[15,15] <27, Error, Syntax> - Syntax error : no viable alternative at input 'x' RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonGenerateConvertingPhrase>jsonGenerateConvertingDirective,  OffendingSymbol=[15,15:x]<UserDefinedWord>
+Line 83[53,53] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonGenerateConvertingPhrase>jsonGenerateConvertingDirective>variable1>identifier>storageAreaReferenceOrConditionReference,  OffendingSymbol=[53,53+:.]<PeriodSeparator>
+Line 84[91,91] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word} RuleStack=codeElement>cobol2002Statement>jsonGenerateStatement>jsonGenerateConvertingPhrase>jsonGenerateConvertingDirective,  OffendingSymbol=[91,91+:.]<PeriodSeparator>
 --- Code Elements ---
 [[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [15,15:x]<UserDefinedWord>
 
@@ -131,4 +137,40 @@ Line 71[38,42] <27, Error, Syntax> - Syntax error : mismatched input 'NULLS' exp
 [[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,41:NULL]<NULL>
 
 [[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [38,42:NULLS]<NULLS>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [61,66:b-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [67,67+:.]<PeriodSeparator> --> [67,67+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [83,88:a-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [89,89+:.]<PeriodSeparator> --> [89,89+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [56,58:'T']<AlphanumericLiteral>(',Y,Y){T}
+
+[[SentenceEnd]] [59,59+:.]<PeriodSeparator> --> [59,59+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [92,102:data-b-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [103,103+:.]<PeriodSeparator> --> [103,103+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [24,33:CONVERTING]<CONVERTING>
+
+[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [37,40:BOOL]<UserDefinedWord>
+
+[[SentenceEnd]] [41,41+:.]<PeriodSeparator> --> [41,41+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [49,52:ALSO]<ALSO>
+
+[[SentenceEnd]] [53,53+:.]<PeriodSeparator> --> [53,53+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [86,90:USING]<USING>
+
+[[SentenceEnd]] [91,91+:.]<PeriodSeparator> --> [91,91+:.]<PeriodSeparator>
+
+[[JsonGenerateStatement]] [1,4:JSON]<JSON> --> [108,113:b-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [114,114+:.]<PeriodSeparator> --> [114,114+:.]<PeriodSeparator>
 

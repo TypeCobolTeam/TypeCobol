@@ -708,6 +708,7 @@ non terminal TypeCobol.Compiler.Scanner.Token dataNameReferenceOrConditionNameRe
 non terminal TypeCobol.Compiler.Scanner.Token dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference;
 non terminal TypeCobol.Compiler.Scanner.Token conditionNameDefinition;
 non terminal TypeCobol.Compiler.Scanner.Token conditionNameReferenceOrConditionForUPSISwitchNameReference;
+non terminal TypeCobol.Compiler.Scanner.Token conditionNameReference;
 non terminal TypeCobol.Compiler.Scanner.Token indexNameDefinition;
 non terminal TypeCobol.Compiler.Scanner.Token indexNameReference;
 non terminal TypeCobol.Compiler.Scanner.Token fileNameDefinition;
