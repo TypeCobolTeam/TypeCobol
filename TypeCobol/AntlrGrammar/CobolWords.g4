@@ -73,6 +73,8 @@ tokens
     NationalLiteral,
     HexadecimalNationalLiteral,
     DBCSLiteral,
+    UTF8Literal,
+    HexadecimalUTF8Literal,
     // Literals - Numeric
     LevelNumber,
     IntegerLiteral,
@@ -568,6 +570,7 @@ tokens
     END_JSON,
     JSON,
     VOLATILE,
+    UTF_8,
     // Keywords - Cobol 2002
     TYPEDEF,
     STRONG,
@@ -971,10 +974,12 @@ alphanumericLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral 
 
 
 alphanumericOrNationalLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral |
-                                     DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
+                                     DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral |
+									 UTF8Literal | HexadecimalUTF8Literal);
 
 notNullTerminatedAlphanumericOrNationalLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral |
-                                                      DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
+                                                      DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral |
+													  UTF8Literal | HexadecimalUTF8Literal);
 
 // p13: Figurative constants are reserved words that name and refer to specific constant values.
 // p15: The singular and plural forms of NULL, ZERO, SPACE, HIGH-VALUE, LOW-VALUE, and QUOTE can be used interchangeably.
