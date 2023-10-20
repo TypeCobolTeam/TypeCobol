@@ -164,6 +164,8 @@ namespace TypeCobol.Compiler.Parser
                 parameter.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
             }
 
+            // DYNAMIC LENGTH not allowed on TC function parameters
+
             if (context.justifiedClause() != null)
             {
                 var justifiedClauseContext = context.justifiedClause();

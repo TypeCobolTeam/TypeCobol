@@ -2193,6 +2193,7 @@ dataDescriptionEntry:
 	levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
+	| dynamicLengthClause
 	| externalClause
 	| globalClause
 	| justifiedClause
@@ -2359,6 +2360,47 @@ dataConditionEntry: { CurrentToken.Text == "88" }?
 
 blankWhenZeroClause:
     BLANK WHEN? (ZERO | ZEROS | ZEROES);
+
+// The DYNAMIC LENGTH clause specifies a dynamic-length elementary item. The LENGTH keyword is
+// optional.
+//
+// If the LIMIT phrase is not specified, then the limit is set to the maximum value according to the data
+// item class. Attempts to receive into a dynamic-length elementary item more characters over the limit
+// will result in truncation at a character boundary on the right.
+// Note: In practice, the maximum length of a dynamic-length elementary item might be limited by
+// available runtime memory or other runtime environment limits.
+// integer-1
+// An integer specifies the maximum number of alphanumeric or national characters that the data item
+// can contain.
+// When the PICTURE clause is PIC U, integer-1 represents the maximum bytes that the data item can
+// contain. integer-1 must be an integer greater than or equal to 1, and less than or equal to 999999999
+// for alphanumeric class and 999999999 for UTF-8 class dynamic-length elementary items.
+// A dynamic-length elementary item is a data item whose length can vary at runtime. The length of a data
+// item is the current number of characters contained by this data item.
+// A dynamic-length elementary item has a minimum length of zero, and a maximum length that is the
+// smallest of the following limitations:
+// - integer-1 characters of the LIMIT phrase
+// - 999999999 characters if the PICTURE clause is 'X' (alphanumeric class) or 999999999 bytes if the
+// PICTURE clause is 'U' (UTF-8 class)
+// - The available runtime memory.
+// The PICTURE clause of a dynamic-length elementary item must be either PIC X or PIC U, making this
+// a data item of class alphanumeric or UTF-8 respectively. No other PICTURE clause strings other than a
+// single instance of 'X' or 'U' are allowed. PIC N is not supported in a dynamic-length elementary item.
+// Dynamic-length elementary items can be specified in the WORKING-STORAGE SECTION or LOCALSTORAGE
+// SECTION.
+// Dynamic-length elementary items can be specified as subordinate items within a group. The existence
+// of a dynamic-length elementary item within a group item will make it a dynamic-length group item (See
+// "Dynamic-length group items" on page 163).
+// Dynamic-length elementary items cannot be variably located or a subordinate data item within a table
+// containing the OCCURS DEPENDING ON phrase. When a dynamic-length elementary item appears within
+// a group, the content of the item can be considered logically inline within this group, even if the physical
+// location of the content is remotely located. Comparisons and moves between groups where one or both
+// groups contains a subordinate dynamic-length elementary item is not allowed. Moving a dynamic-length
+// elementary item to a fixed-length group is allowed, and moving any group (dynamic-length or not) to a
+// dynamic-length elementary item is allowed.
+
+dynamicLengthClause:
+	DYNAMIC LENGTH? (LIMIT IS? IntegerLiteral)?;
 
 // p188: The EXTERNAL clause specifies that the storage associated with a data item is
 // associated with the run unit rather than with any particular program or method

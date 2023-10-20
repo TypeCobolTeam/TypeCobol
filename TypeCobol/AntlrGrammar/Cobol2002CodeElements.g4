@@ -13,6 +13,7 @@ dataDescriptionEntry:
 		levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
 		( pictureClause
 		| blankWhenZeroClause
+		| dynamicLengthClause
 		| externalClause
 		| globalClause
 		| justifiedClause
