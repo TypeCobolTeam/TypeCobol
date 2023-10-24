@@ -1,13 +1,9 @@
 ﻿using Antlr4.Runtime.Tree;
-using System.Diagnostics.Metrics;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
-using static TypeCobol.Compiler.CodeElements.JsonParseStatement;
-using static TypeCobol.Compiler.CodeElements.JsonSuppressDirective;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -774,12 +770,17 @@ namespace TypeCobol.Compiler.Parser
 
         private JsonNameMapping CreateJsonNameMapping(CodeElementsParser.JsonNameMappingContext context)
         {
-            return new JsonNameMapping
-                   {
-                       DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
-                       OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName),
-                       Omitted = context.OMITTED() != null
-                   };
+            var jsonNameMapping = new JsonNameMapping
+            {
+                DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
+                OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName)
+            };
+            if (context.OMITTED() != null)
+            {
+                jsonNameMapping.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.OMITTED()));
+            }
+
+            return jsonNameMapping;
         }
 
         private JsonSuppressDirective CreateJsonSuppressDirective(CodeElementsParser.JsonSuppressDirectiveContext context)

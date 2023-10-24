@@ -141,15 +141,6 @@
         public JsonNameMapping[] NameMappings { get; set; }
 
         /// <summary>
-        /// Allows you to identify and unconditionally exclude items that are
-        /// subordinate to identifier-2, and thus selectively generate output for the
-        /// JSON GENERATE statement. If the SUPPRESS phrase is specified,
-        /// identifier-1 must be large enough to contain the generated JSON document
-        /// before any suppression.
-        /// </summary>
-        public Variable[] ExcludedDataItems { get; set; }
-
-        /// <summary>
         /// SUPPRESS phrase
         /// Allows you to identify and unconditionally exclude items that are
         /// subordinate to identifier-2, and thus selectively generate output for the
@@ -169,7 +160,7 @@
             return base.VisitCodeElement(astVisitor)
                    && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, this.Destination, this.Source, this.CharactersCount)
-                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.ExcludedDataItems, this.JsonSuppressDirectives, this.JsonConvertingDirectives);
+                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.JsonSuppressDirectives, this.JsonConvertingDirectives);
         }
     }
 
@@ -193,11 +184,11 @@
         /// Is expected name omitted?
         /// To generate an anonymous JSON object, whose top-level parent name is not generated.
         /// </summary>
-        public bool Omitted { get; set; }
+        public SyntaxProperty<bool> Omitted { get; set; }
 
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
-            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.OutputName);
+            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.OutputName, this.Omitted);
         }
     }
 
