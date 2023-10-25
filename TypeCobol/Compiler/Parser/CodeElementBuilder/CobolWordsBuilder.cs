@@ -766,11 +766,6 @@ namespace TypeCobol.Compiler.Parser
             return CreateAmbiguousSymbolReference(context.UserDefinedWord(), new SymbolType[] { SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName });
         }
 
-        internal SymbolReference CreateConditionNameReference(CodeElementsParser.ConditionNameReferenceContext context)
-        {
-            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.ConditionName);
-        }
-
         internal SymbolDefinition CreateIndexNameDefinition(CodeElementsParser.IndexNameDefinitionContext context)
         {
             return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.IndexName);

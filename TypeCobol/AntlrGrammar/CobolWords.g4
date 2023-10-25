@@ -1509,9 +1509,6 @@ conditionNameDefinition: UserDefinedWord;
 // [Type ambiguity] at this parsing stage
 conditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
 
-// Condition-name must be a level-88 item
-conditionNameReference: UserDefinedWord;
-
 // p194: index-name-1
 // Each index-name specifies an index to be created by the compiler for use
 // by the program. These index-names are not data-names and are not
