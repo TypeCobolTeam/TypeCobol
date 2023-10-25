@@ -10,7 +10,8 @@
           02 var4 PIC X(20).
           02 var5 PIC X(7).
           02 var6 PIC 9(18).
-
+          02 var7 PIC X.
+            88 var7-flag VALUE 'T'.
        01 char-count PIC 9(3).
        01 result PIC X(256).
        01 ret-code PIC 9(1).
@@ -62,6 +63,12 @@
              ON EXCEPTION MOVE 1 TO ret-code
              NOT ON EXCEPTION MOVE 0 TO ret-code
            END-JSON
+
+           JSON GENERATE result FROM elt
+                COUNT char-count
+                NAME elt::var1 'Nom'
+                SUPPRESS elt::var4 WHEN ZERO
+                CONVERTING elt::var7 BOOL var7::var7-flag.
            .
       
        END PROGRAM JsonTest.

@@ -86,7 +86,7 @@ jsonGenerateConvertingPhrase:
 	jsonGenerateConvertingDirective (ALSO jsonGenerateConvertingDirective)*;
 
 jsonGenerateConvertingDirective:
-	convertingDataItem=variable1 TO? JSON? (booleanWord | boolWord) USING? (conditionNameReference | alphanumericLiteralToken);
+	convertingDataItem=variable1 TO? JSON? (booleanWord | boolWord) USING? (qualifiedConditionName | alphanumericLiteralToken);
 
 booleanWord:
 	{string.Equals(CurrentToken.Text, "BOOLEAN", System.StringComparison.InvariantCultureIgnoreCase)}? BOOLEANKeyword=UserDefinedWord;
@@ -119,10 +119,10 @@ jsonParseUsingDirective:
 	USING? (jsonParseUsingDirective1 | jsonParseUsingDirective2 | jsonParseUsingDirective3);
 	
 jsonParseUsingDirective1:
-	conditionNameReference;
+	qualifiedConditionName;
 
 jsonParseUsingDirective2: 
-	conditionNameReference AND? conditionNameReference;
+	qualifiedConditionName AND? qualifiedConditionName;
 	
 jsonParseUsingDirective3:
 	alphanumericLiteralToken AND? alphanumericLiteralToken;

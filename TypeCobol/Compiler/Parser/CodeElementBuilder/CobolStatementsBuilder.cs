@@ -824,9 +824,9 @@ namespace TypeCobol.Compiler.Parser
             var dataItem = CobolExpressionsBuilder.CreateVariable(context.convertingDataItem);
             Variable trueValue = null;
 
-            if (context.conditionNameReference() != null)
+            if (context.qualifiedConditionName() != null)
             {
-                var symbolReference = CobolWordsBuilder.CreateConditionNameReference(context.conditionNameReference());
+                var symbolReference = CobolWordsBuilder.CreateQualifiedConditionName(context.qualifiedConditionName());
                 StorageArea storageArea = new DataOrConditionStorageArea(symbolReference, false);
                 trueValue = new Variable(storageArea);
             }
@@ -871,7 +871,7 @@ namespace TypeCobol.Compiler.Parser
             if (usingContext?.jsonParseUsingDirective1() != null)
             {
                 // True and False values are defined by the same Level 88 item
-                var symbolReference = CobolWordsBuilder.CreateConditionNameReference(usingContext.jsonParseUsingDirective1().conditionNameReference());
+                var symbolReference = CobolWordsBuilder.CreateQualifiedConditionName(usingContext.jsonParseUsingDirective1().qualifiedConditionName());
                 StorageArea trueStorageArea = new DataOrConditionStorageArea(symbolReference, false);
                 trueValue = new Variable(trueStorageArea);
                 StorageArea falseStorageArea = new DataOrConditionStorageArea(symbolReference, false);
@@ -880,15 +880,15 @@ namespace TypeCobol.Compiler.Parser
             else if (usingContext?.jsonParseUsingDirective2() != null)
             {
                 // True and False values are defined by 2 Level 88 items
-                var referenceContext = usingContext.jsonParseUsingDirective2().conditionNameReference();
+                var referenceContext = usingContext.jsonParseUsingDirective2().qualifiedConditionName();
                 if (referenceContext.Length > 0)
                 {
-                    var trueSymbolReference = CobolWordsBuilder.CreateConditionNameReference(referenceContext[0]);
+                    var trueSymbolReference = CobolWordsBuilder.CreateQualifiedConditionName(referenceContext[0]);
                     StorageArea trueStorageArea = new DataOrConditionStorageArea(trueSymbolReference, false);
                     trueValue = new Variable(trueStorageArea);
                     if (referenceContext.Length > 1)
                     {
-                        var falseSymbolReference = CobolWordsBuilder.CreateConditionNameReference(referenceContext[1]);
+                        var falseSymbolReference = CobolWordsBuilder.CreateQualifiedConditionName(referenceContext[1]);
                         StorageArea falseStorageArea = new DataOrConditionStorageArea(falseSymbolReference, false);
                         falseValue = new Variable(falseStorageArea);
                     }

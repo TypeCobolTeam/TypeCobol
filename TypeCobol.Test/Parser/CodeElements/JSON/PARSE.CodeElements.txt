@@ -9,7 +9,7 @@ Line 39[33,33] <27, Error, Syntax> - Syntax error : extraneous input '.' expecti
 Line 40[6,10] <27, Error, Syntax> - Syntax error : no viable alternative at input 'PARSE' RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective,  OffendingSymbol=[6,10:PARSE]<UserDefinedWord>
 Line 41[38,38] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word, USING} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>jsonParseUsingDirective,  OffendingSymbol=[38,38+:.]<PeriodSeparator>
 Line 42[44,44] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>jsonParseUsingDirective,  OffendingSymbol=[44,44+:.]<PeriodSeparator>
-Line 43[56,56] <27, Error, Syntax> - Syntax error : missing user defined word at '.' RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>jsonParseUsingDirective>jsonParseUsingDirective2>conditionNameReference,  OffendingSymbol=[56,56+:.]<PeriodSeparator>
+Line 43[56,56] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting user defined word RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>jsonParseUsingDirective>jsonParseUsingDirective2>qualifiedConditionName,  OffendingSymbol=[56,56+:.]<PeriodSeparator>
 Line 44[74,74] <27, Error, Syntax> - Syntax error : missing user defined word at '.' RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>storageArea2>dataNameReference,  OffendingSymbol=[74,74+:.]<PeriodSeparator>
 --- Code Elements ---
 [[JsonParseStatement]] [1,4:JSON]<JSON> --> [12,12:x]<UserDefinedWord>
@@ -104,7 +104,7 @@ Line 44[74,74] <27, Error, Syntax> - Syntax error : missing user defined word at
 
 [[SentenceEnd]] [44,44+:.]<PeriodSeparator> --> [44,44+:.]<PeriodSeparator>
 
-[[JsonParseStatement]] [1,4:JSON]<JSON> --> [57,56:<missing UserDefinedWord>]<UserDefinedWord>
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [53,55:AND]<AND>
 
 [[SentenceEnd]] [56,56+:.]<PeriodSeparator> --> [56,56+:.]<PeriodSeparator>
 
