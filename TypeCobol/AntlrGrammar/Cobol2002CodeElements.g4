@@ -102,9 +102,12 @@ jsonParseStatement:
 	JSON parse source=storageArea1 // Re-use of contextual keyword PARSE defined for XML PARSE in CobolCodeElements.
 	INTO destination=variable1
 	(WITH? DETAIL)? 
-	(name OF? jsonNameMapping+)? // Re-use of contextual keyword NAME defined for XML GENERATE in CobolCodeElements.
+	(name OF? jsonParseNameMapping+)? // Re-use of contextual keyword NAME defined for XML GENERATE in CobolCodeElements.
 	(SUPPRESS excludedDataItem+)?
 	(CONVERTING jsonParseConvertingPhrase)?;
+
+jsonParseNameMapping:
+	dataItem=variable1 IS? (OMITTED|inputName=alphanumericValue2);
 
 excludedDataItem:
 	variable1;

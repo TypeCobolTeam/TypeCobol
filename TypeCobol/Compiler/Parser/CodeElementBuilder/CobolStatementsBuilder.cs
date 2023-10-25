@@ -848,7 +848,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 Source = CobolExpressionsBuilder.CreateStorageArea(context.source),
                 Destination = CobolExpressionsBuilder.CreateVariable(context.destination),
-                NameMappings = context.jsonNameMapping().Select(CreateJsonNameMapping).ToArray(),
+                NameMappings = context.jsonParseNameMapping().Select(CreateJsonParseNameMapping).ToArray(),
                 ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
             };
             if (context.jsonParseConvertingPhrase() != null)
@@ -859,6 +859,21 @@ namespace TypeCobol.Compiler.Parser
             }
 
             return statement;
+        }
+
+        private JsonParseNameMapping CreateJsonParseNameMapping(CodeElementsParser.JsonParseNameMappingContext context)
+        {
+            var jsonParseNameMapping = new JsonParseNameMapping
+            {
+                DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
+                InputName = CobolWordsBuilder.CreateAlphanumericValue(context.inputName)
+            };
+            if (context.OMITTED() != null)
+            {
+                jsonParseNameMapping.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.OMITTED()));
+            }
+
+            return jsonParseNameMapping;
         }
 
         private JsonParseConvertingDirective CreateJsonConvertingDirective(CodeElementsParser.JsonParseConvertingDirectiveContext context)
