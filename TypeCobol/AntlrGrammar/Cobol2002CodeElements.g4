@@ -104,10 +104,29 @@ jsonParseStatement:
 	INTO destination=variable1
 	(WITH? DETAIL)? 
 	(name OF? jsonParseNameMapping+)? // Re-use of contextual keyword NAME defined for XML GENERATE in CobolCodeElements.
-	(SUPPRESS excludedDataItem+)?;
+	(SUPPRESS excludedDataItem+)?
+	(CONVERTING jsonParseConvertingPhrase)?;
 
 jsonParseNameMapping:
 	dataItem=variable1 IS? (OMITTED|inputName=alphanumericValue2);
 
 excludedDataItem:
 	variable1;
+	
+jsonParseConvertingPhrase:
+	jsonParseConvertingDirective (ALSO jsonParseConvertingDirective)*;
+	
+jsonParseConvertingDirective:
+	convertingDataItem=storageArea2 FROM? JSON? (booleanWord | boolWord) jsonParseUsingDirective;
+
+jsonParseUsingDirective:
+	USING? (jsonParseUsingDirective1 | jsonParseUsingDirective2 | jsonParseUsingDirective3);
+	
+jsonParseUsingDirective1:
+	qualifiedConditionName;
+
+jsonParseUsingDirective2: 
+	qualifiedConditionName AND? qualifiedConditionName;
+	
+jsonParseUsingDirective3:
+	alphanumericLiteralToken AND? alphanumericLiteralToken;

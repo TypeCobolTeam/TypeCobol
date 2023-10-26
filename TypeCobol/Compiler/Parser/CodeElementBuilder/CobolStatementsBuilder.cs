@@ -844,21 +844,87 @@ namespace TypeCobol.Compiler.Parser
 
         internal JsonParseStatement CreateJsonParseStatement(CodeElementsParser.JsonParseStatementContext context)
         {
-            return new JsonParseStatement
+            var statement = new JsonParseStatement
             {
                 Source = CobolExpressionsBuilder.CreateStorageArea(context.source),
                 Destination = CobolExpressionsBuilder.CreateVariable(context.destination),
                 NameMappings = context.jsonParseNameMapping().Select(CreateJsonParseNameMapping).ToArray(),
                 ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
             };
+            if (context.jsonParseConvertingPhrase() != null)
+            {
+                statement.JsonConvertingDirectives = BuildObjectArrayFromParserRules(
+                    context.jsonParseConvertingPhrase().jsonParseConvertingDirective(),
+                    ctx => CreateJsonConvertingDirective(ctx));
+            }
+
+            return statement;
         }
+
         private JsonParseNameMapping CreateJsonParseNameMapping(CodeElementsParser.JsonParseNameMappingContext context)
         {
-            return new JsonParseNameMapping
+            var jsonParseNameMapping = new JsonParseNameMapping
             {
                 DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
                 InputName = CobolWordsBuilder.CreateAlphanumericValue(context.inputName)
             };
+            if (context.OMITTED() != null)
+            {
+                jsonParseNameMapping.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.OMITTED()));
+            }
+
+            return jsonParseNameMapping;
+        }
+
+        private JsonParseConvertingDirective CreateJsonConvertingDirective(CodeElementsParser.JsonParseConvertingDirectiveContext context)
+        {
+            var dataItem = CobolExpressionsBuilder.CreateStorageArea(context.convertingDataItem);
+            Variable trueValue = null;
+            Variable falseValue = null;
+
+            var usingContext = context.jsonParseUsingDirective();
+            if (usingContext?.jsonParseUsingDirective1() != null)
+            {
+                // True and False values are defined by the same Level 88 item
+                var symbolReference = CobolWordsBuilder.CreateQualifiedConditionName(usingContext.jsonParseUsingDirective1().qualifiedConditionName());
+                StorageArea trueStorageArea = new DataOrConditionStorageArea(symbolReference, false);
+                trueValue = new Variable(trueStorageArea);
+                StorageArea falseStorageArea = new DataOrConditionStorageArea(symbolReference, false);
+                falseValue = new Variable(falseStorageArea);
+            }
+            else if (usingContext?.jsonParseUsingDirective2() != null)
+            {
+                // True and False values are defined by 2 Level 88 items
+                var referenceContext = usingContext.jsonParseUsingDirective2().qualifiedConditionName();
+                if (referenceContext.Length > 0)
+                {
+                    var trueSymbolReference = CobolWordsBuilder.CreateQualifiedConditionName(referenceContext[0]);
+                    StorageArea trueStorageArea = new DataOrConditionStorageArea(trueSymbolReference, false);
+                    trueValue = new Variable(trueStorageArea);
+                    if (referenceContext.Length > 1)
+                    {
+                        var falseSymbolReference = CobolWordsBuilder.CreateQualifiedConditionName(referenceContext[1]);
+                        StorageArea falseStorageArea = new DataOrConditionStorageArea(falseSymbolReference, false);
+                        falseValue = new Variable(falseStorageArea);
+                    }
+                }
+            }
+            else if (usingContext?.jsonParseUsingDirective3() != null)
+            {
+                // True and False values are defined by 2 alphanumeric litterals
+                var alphanumericLiteralContext = usingContext.jsonParseUsingDirective3().alphanumericLiteralToken();
+                if (alphanumericLiteralContext.Length > 0)
+                {
+                    trueValue = new Variable(CobolWordsBuilder.CreateAlphanumericValue(alphanumericLiteralContext[0]));
+
+                    if (alphanumericLiteralContext.Length > 1)
+                    {
+                        falseValue = new Variable(CobolWordsBuilder.CreateAlphanumericValue(alphanumericLiteralContext[1]));
+                    }
+                }
+            }
+
+            return new JsonParseConvertingDirective(dataItem, trueValue, falseValue);
         }
 
         /////////////////////
