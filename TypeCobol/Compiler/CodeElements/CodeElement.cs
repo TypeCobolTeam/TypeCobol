@@ -212,9 +212,9 @@ namespace TypeCobol.Compiler.CodeElements
             if (ConsumedTokens == null || ConsumedTokens.Count < 1) {
                 sb.Append("No Consumed Tokens").AppendLine();
             } else {
-                sb.Append(ConsumedTokens[0]).ToString();
+                sb.Append(ConsumedTokens[0]);
                 sb.Append(" --> ");
-                sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
+                sb.Append(ConsumedTokens[ConsumedTokens.Count - 1]);
                 bool displayLineNumbers = false;
                 if (displayLineNumbers) {
                     int first = ConsumedTokens[0].Line;
