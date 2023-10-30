@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// p422:
@@ -21,17 +19,24 @@ namespace TypeCobol.Compiler.CodeElements
         { }
 
         /// <summary>
-        /// p422:
         /// file-name-1
         /// The name given in the SD entry that describes the records to be sorted.
-        ///
-        /// p423:
-        /// No pair of file-names in a SORT statement can be specified in the same SAME
-        /// SORT AREA clause or the SAME SORT-MERGE AREA clause. File-names
-        /// associated with the GIVING clause (file-name-3, ...) cannot be specified in the SAME
-        /// AREA clause; however, they can be associated with the SAME RECORD AREA clause.
+        /// No pair of file-names in a SORT statement can be specified in the same SAME SORT AREA clause or the
+        /// SAME SORT-MERGE AREA clause. File-names associated with the GIVING clause (file-name-3, ...) cannot
+        /// be specified in the SAME AREA clause; however, they can be associated with the SAME RECORD AREA
+        /// clause.
+        /// 
+        /// data-name-2
+        /// Specifies a table data-name that is subject to the following rules:
+        /// - data-name-2 must have an OCCURS clause in the data description entry.
+        /// - data-name-2 can be qualified.
+        /// - data-name-2 can be subscripted. The rightmost or only subscript of the table must be omitted or
+        /// replaced with the word ALL.
+        /// The number of occurrences of table elements that are referenced by data-name-2 is determined
+        /// by the rules in the OCCURS clause. The sorted table elements are placed in the same table that is
+        /// referenced by data-name-2.
         /// </summary>
-        public SymbolReference FileName { get; set; }
+        public DataOrConditionStorageArea FileNameOrTableName { get; set; }
 
         /// <summary>
         /// p423:
@@ -255,7 +260,7 @@ namespace TypeCobol.Compiler.CodeElements
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, FileName, WithDuplicates, CollatingSequence, 
+                   && this.ContinueVisitToChildren(astVisitor, FileNameOrTableName, WithDuplicates, CollatingSequence, 
                    InputProcedure, ThroughInputProcedure, OutputProcedure, ThroughOutputProcedure)
                    && this.ContinueVisitToChildren(astVisitor, SortingKeys, InputFiles, OutputFiles);
         }

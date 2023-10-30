@@ -1043,6 +1043,16 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
+        internal SymbolReference CreateQualifiedDataNameOrFileName(CodeElementsParser.QualifiedDataNameOrFileNameContext context)
+        {
+            if (context.dataNameReferenceOrFileNameReference() != null)
+            {
+                return CreateDataNameReferenceOrFileNameReference(context.dataNameReferenceOrFileNameReference());
+            }
+
+            return CreateQualifiedDataName(context.qualifiedDataName1());
+        }
+
         internal SymbolReference CreateQualifiedDataNameOrQualifiedConditionNameOrClassName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context)
         {
             if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference() != null)

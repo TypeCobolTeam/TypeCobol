@@ -1,62 +1,31 @@
 --- Diagnostics ---
-Line 2[27,27] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} RuleStack=codeElement>sortStatement,  OffendingSymbol=[27,27+:.]<PeriodSeparator>
-Line 3[27,27] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} RuleStack=codeElement>sortStatement,  OffendingSymbol=[27,27+:.]<PeriodSeparator>
-Line 4[34,34] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} RuleStack=codeElement>sortStatement,  OffendingSymbol=[34,34+:.]<PeriodSeparator>
-Line 5[34,34] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} RuleStack=codeElement>sortStatement,  OffendingSymbol=[34,34+:.]<PeriodSeparator>
-Line 6[86,86] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} RuleStack=codeElement>sortStatement,  OffendingSymbol=[86,86+:.]<PeriodSeparator>
-Line 8[21,26] <27, Error, Syntax> - Syntax error : extraneous input 'GIVING' expecting {ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} RuleStack=codeElement>sortStatement,  OffendingSymbol=[21,26:GIVING]<GIVING>
-Line 9[28,33] <27, Error, Syntax> - Syntax error : extraneous input 'GIVING' expecting {ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} RuleStack=codeElement>sortStatement,  OffendingSymbol=[28,33:GIVING]<GIVING>
-Line 11[56,56] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {GIVING, OUTPUT} RuleStack=codeElement>sortStatement,  OffendingSymbol=[56,56+:.]<PeriodSeparator>
-Line 12[42,42] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {GIVING, OUTPUT} RuleStack=codeElement>sortStatement,  OffendingSymbol=[42,42+:.]<PeriodSeparator>
-Line 14[57,61] <27, Error, Syntax> - Syntax error : mismatched input 'INPUT' expecting {GIVING, OUTPUT} RuleStack=codeElement>sortStatement,  OffendingSymbol=[57,61:INPUT]<INPUT>
-Line 14[73,85] <27, Error, Syntax> - Syntax error : mismatched input 'procedurename' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[73,85:procedurename]<UserDefinedWord>
-Line 15[44,48] <27, Error, Syntax> - Syntax error : mismatched input 'INPUT' expecting {GIVING, OUTPUT} RuleStack=codeElement>sortStatement,  OffendingSymbol=[44,48:INPUT]<INPUT>
-Line 15[60,61] <27, Error, Syntax> - Syntax error : mismatched input 'IS' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[60,61:IS]<IS>
-Line 17[54,59] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[54,59:OUTPUT]<OUTPUT>
-Line 17[71,83] <27, Error, Syntax> - Syntax error : mismatched input 'procedurename' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[71,83:procedurename]<UserDefinedWord>
-Line 18[71,76] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[71,76:OUTPUT]<OUTPUT>
-Line 18[88,89] <27, Error, Syntax> - Syntax error : mismatched input 'IS' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[88,89:IS]<IS>
-Line 20[68,81] <27, Error, Syntax> - Syntax error : extraneous input 'procedurename2' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[68,81:procedurename2]<UserDefinedWord>
-Line 21[89,98] <27, Error, Syntax> - Syntax error : extraneous input 'procedure3' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[89,98:procedure3]<UserDefinedWord>
-Line 22[50,63] <27, Error, Syntax> - Syntax error : extraneous input 'procedurename2' expecting {GIVING, OUTPUT} RuleStack=codeElement>sortStatement,  OffendingSymbol=[50,63:procedurename2]<UserDefinedWord>
-Line 22[19,23] <27, Error, Syntax> - Syntax error : mismatched input 'INPUT' expecting {user defined word, KEY} RuleStack=codeElement>sortStatement>onAscendingDescendingKey,  OffendingSymbol=[19,23:INPUT]<INPUT>
-Line 23[70,79] <27, Error, Syntax> - Syntax error : extraneous input 'procedure3' expecting {GIVING, OUTPUT} RuleStack=codeElement>sortStatement,  OffendingSymbol=[70,79:procedure3]<UserDefinedWord>
-Line 23[19,23] <27, Error, Syntax> - Syntax error : mismatched input 'INPUT' expecting {user defined word, KEY} RuleStack=codeElement>sortStatement>onAscendingDescendingKey,  OffendingSymbol=[19,23:INPUT]<INPUT>
-Line 25[25,26] <27, Error, Syntax> - Syntax error : missing DUPLICATES at 'IN' RuleStack=codeElement>sortStatement,  OffendingSymbol=[25,26:IN]<IN>
-Line 26[25,26] <27, Error, Syntax> - Syntax error : missing DUPLICATES at 'IN' RuleStack=codeElement>sortStatement,  OffendingSymbol=[25,26:IN]<IN>
-Line 28[55,56] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[55,56:IS]<IS>
-Line 29[55,56] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[55,56:IS]<IS>
-Line 31[84,89] <27, Error, Syntax> - Syntax error : mismatched input 'GIVING' expecting {INPUT, USING} RuleStack=codeElement>sortStatement,  OffendingSymbol=[84,89:GIVING]<GIVING>
-Line 31[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {user defined word, IS} RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[68,72:USING]<USING>
-Line 32[84,89] <27, Error, Syntax> - Syntax error : mismatched input 'GIVING' expecting {INPUT, USING} RuleStack=codeElement>sortStatement,  OffendingSymbol=[84,89:GIVING]<GIVING>
-Line 32[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference,  OffendingSymbol=[68,72:USING]<USING>
-Line 34[51,60] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {INPUT, USING} RuleStack=codeElement>sortStatement,  OffendingSymbol=[51,60:DUPLICATES]<DUPLICATES>
-Line 35[46,49] <27, Error, Syntax> - Syntax error : mismatched input 'WITH' expecting {INPUT, USING} RuleStack=codeElement>sortStatement,  OffendingSymbol=[46,49:WITH]<WITH>
-Line 37[66,75] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[66,75:DUPLICATES]<DUPLICATES>
-Line 38[61,64] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[61,64:WITH]<WITH>
-Line 39[142,151] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[142,151:DUPLICATES]<DUPLICATES>
-Line 40[137,140] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[137,140:WITH]<WITH>
+Line 8[57,61] <27, Error, Syntax> - Syntax error : extraneous input 'INPUT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[57,61:INPUT]<INPUT>
+Line 8[73,85] <27, Error, Syntax> - Syntax error : mismatched input 'procedurename' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[73,85:procedurename]<UserDefinedWord>
+Line 9[44,48] <27, Error, Syntax> - Syntax error : extraneous input 'INPUT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[44,48:INPUT]<INPUT>
+Line 9[60,61] <27, Error, Syntax> - Syntax error : mismatched input 'IS' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[60,61:IS]<IS>
+Line 11[54,59] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[54,59:OUTPUT]<OUTPUT>
+Line 11[71,83] <27, Error, Syntax> - Syntax error : mismatched input 'procedurename' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[71,83:procedurename]<UserDefinedWord>
+Line 12[71,76] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[71,76:OUTPUT]<OUTPUT>
+Line 12[88,89] <27, Error, Syntax> - Syntax error : mismatched input 'IS' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[88,89:IS]<IS>
+Line 14[68,81] <27, Error, Syntax> - Syntax error : extraneous input 'procedurename2' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[68,81:procedurename2]<UserDefinedWord>
+Line 15[89,98] <27, Error, Syntax> - Syntax error : extraneous input 'procedure3' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[89,98:procedure3]<UserDefinedWord>
+Line 16[50,63] <27, Error, Syntax> - Syntax error : extraneous input 'procedurename2' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[50,63:procedurename2]<UserDefinedWord>
+Line 16[19,23] <27, Error, Syntax> - Syntax error : mismatched input 'INPUT' expecting {user defined word, KEY} RuleStack=codeElement>sortStatement>onAscendingDescendingKey,  OffendingSymbol=[19,23:INPUT]<INPUT>
+Line 17[70,79] <27, Error, Syntax> - Syntax error : extraneous input 'procedure3' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[70,79:procedure3]<UserDefinedWord>
+Line 17[19,23] <27, Error, Syntax> - Syntax error : mismatched input 'INPUT' expecting {user defined word, KEY} RuleStack=codeElement>sortStatement>onAscendingDescendingKey,  OffendingSymbol=[19,23:INPUT]<INPUT>
+Line 19[25,26] <27, Error, Syntax> - Syntax error : missing DUPLICATES at 'IN' RuleStack=codeElement>sortStatement,  OffendingSymbol=[25,26:IN]<IN>
+Line 20[25,26] <27, Error, Syntax> - Syntax error : missing DUPLICATES at 'IN' RuleStack=codeElement>sortStatement,  OffendingSymbol=[25,26:IN]<IN>
+Line 22[55,56] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[55,56:IS]<IS>
+Line 23[55,56] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[55,56:IS]<IS>
+Line 25[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {user defined word, IS} RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[68,72:USING]<USING>
+Line 26[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference,  OffendingSymbol=[68,72:USING]<USING>
+Line 28[51,60] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[51,60:DUPLICATES]<DUPLICATES>
+Line 29[46,49] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[46,49:WITH]<WITH>
+Line 31[66,75] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[66,75:DUPLICATES]<DUPLICATES>
+Line 32[61,64] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[61,64:WITH]<WITH>
+Line 33[142,151] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[142,151:DUPLICATES]<DUPLICATES>
+Line 34[137,140] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[137,140:WITH]<WITH>
 --- Code Elements ---
-[[SortStatement]] [1,4:SORT]<SORT> --> [26,26:d]<UserDefinedWord>
-
-[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
-
-[[SortStatement]] [1,4:SORT]<SORT> --> [26,26:d]<UserDefinedWord>
-
-[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
-
-[[SortStatement]] [1,4:SORT]<SORT> --> [32,33:d3]<UserDefinedWord>
-
-[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
-
-[[SortStatement]] [1,4:SORT]<SORT> --> [32,33:d3]<UserDefinedWord>
-
-[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
-
-[[SortStatement]] [1,4:SORT]<SORT> --> [84,85:d9]<UserDefinedWord>
-
-[[SentenceEnd]] [86,86+:.]<PeriodSeparator> --> [86,86+:.]<PeriodSeparator>
-
 [[SortStatement]] [1,4:SORT]<SORT> --> [48,56:filename3]<UserDefinedWord>
 
 [[SentenceEnd]] [57,57+:.]<PeriodSeparator> --> [57,57+:.]<PeriodSeparator>
@@ -73,13 +42,13 @@ Line 40[137,140] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' ex
 
 [[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [57,61:INPUT]<INPUT>
+[[SortStatement]] [1,4:SORT]<SORT> --> [47,55:filename3]<UserDefinedWord>
 
 [[ProcedureDivisionHeader]] [63,71:PROCEDURE]<PROCEDURE> --> [94,101:filename]<UserDefinedWord>
 
 [[SentenceEnd]] [102,102+:.]<PeriodSeparator> --> [102,102+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [44,48:INPUT]<INPUT>
+[[SortStatement]] [1,4:SORT]<SORT> --> [34,42:filename1]<UserDefinedWord>
 
 [[ProcedureDivisionHeader]] [50,58:PROCEDURE]<PROCEDURE> --> [105,113:filename2]<UserDefinedWord>
 
@@ -105,11 +74,11 @@ Line 40[137,140] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' ex
 
 [[SentenceEnd]] [99,99+:.]<PeriodSeparator> --> [99,99+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [72,79:filename]<UserDefinedWord>
+[[SortStatement]] [1,4:SORT]<SORT> --> [35,48:procedurename1]<UserDefinedWord>
 
 [[SentenceEnd]] [80,80+:.]<PeriodSeparator> --> [80,80+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [88,95:filename]<UserDefinedWord>
+[[SortStatement]] [1,4:SORT]<SORT> --> [55,68:procedurename2]<UserDefinedWord>
 
 [[SentenceEnd]] [96,96+:.]<PeriodSeparator> --> [96,96+:.]<PeriodSeparator>
 
@@ -137,11 +106,11 @@ Line 40[137,140] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' ex
 
 [[SentenceEnd]] [100,100+:.]<PeriodSeparator> --> [100,100+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [104,112:filename2]<UserDefinedWord>
+[[SortStatement]] [1,4:SORT]<SORT> --> [33,44:alphabetname]<UserDefinedWord>
 
 [[SentenceEnd]] [113,113+:.]<PeriodSeparator> --> [113,113+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [104,112:filename2]<UserDefinedWord>
+[[SortStatement]] [1,4:SORT]<SORT> --> [33,44:alphabetname]<UserDefinedWord>
 
 [[SentenceEnd]] [113,113+:.]<PeriodSeparator> --> [113,113+:.]<PeriodSeparator>
 

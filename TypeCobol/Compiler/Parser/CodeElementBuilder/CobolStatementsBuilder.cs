@@ -1364,9 +1364,9 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new SortStatement();
 
-            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+            statement.FileNameOrTableName = CobolExpressionsBuilder.CreateDataItemReferenceOrFileName(context.dataItemReferenceOrFileName());
             statement.SortingKeys = CreateSortingKeys(context.onAscendingDescendingKey());
-            if(context.DUPLICATES() != null)
+            if (context.DUPLICATES() != null)
             {
                 statement.WithDuplicates = CreateSyntaxProperty(true, context.DUPLICATES());
             }
