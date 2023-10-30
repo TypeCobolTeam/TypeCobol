@@ -6684,12 +6684,24 @@ setStatementForConditions:
 // segment or wholly contained within the same independent segment as that SORT
 // statement.
 
+// Table SORT statements can appear anywhere in the PROCEDURE DIVISION. This format of the SORT
+// statement can be used with programs that are compiled with the THREAD option.
+// data-name-2
+// Specifies a table data-name that is subject to the following rules:
+// - data-name-2 must have an OCCURS clause in the data description entry.
+// - data-name-2 can be qualified.
+// - data-name-2 can be subscripted. The rightmost or only subscript of the table must be omitted or
+// replaced with the word ALL.
+// The number of occurrences of table elements that are referenced by data-name-2 is determined
+// by the rules in the OCCURS clause. The sorted table elements are placed in the same table that is
+// referenced by data-name-2.
+
 sortStatement:
-	SORT fileNameReference onAscendingDescendingKey+ 
+	SORT dataItemReferenceOrFileName onAscendingDescendingKey*
 	(WITH? DUPLICATES IN? ORDER?)?
 	collatingSequence?
-	(usingFilenames  | inputProcedure)
-	(givingFilenames | outputProcedure);
+	(usingFilenames  | inputProcedure)?
+	(givingFilenames | outputProcedure)?;
 
 // Rules shared with mergeStatement
 

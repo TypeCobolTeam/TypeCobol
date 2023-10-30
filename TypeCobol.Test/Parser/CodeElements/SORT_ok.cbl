@@ -30,3 +30,24 @@ SORT x ASCENDING  d1 d2 d3 INPUT PROCEDURE    procedurename1 THRU procedurename2
 * everything
 SORT x DESCENDING d             DUPLICATES                    SEQUENCE    alphabetname INPUT PROCEDURE    procedurename1                     OUTPUT PROCEDURE    procedurename2 THRU procedurename3.
 SORT x ASCENDING  d1 d2 d3 WITH DUPLICATES IN ORDER COLLATING SEQUENCE IS alphabetname INPUT PROCEDURE IS procedurename1 THRU procedurename2 OUTPUT PROCEDURE IS procedurename3 THRU procedurename4.
+* Table SORT format
+SORT x
+SORT x    ASCENDING      d.
+SORT x ON DESCENDING KEY d.
+SORT x    ASCENDING      d1 d2 d3.
+SORT x    DESCENDING     d1 d2 d3.
+SORT x ASCENDING d1 d2 ASCENDING d3 DESCENDING d4 ASCENDING d5 d6 DESCENDING d7 d8 d9.
+* WITH DUPLICATES clause
+SORT x WITH DUPLICATES IN ORDER.
+SORT x      DUPLICATES IN ORDER.
+SORT x WITH DUPLICATES    ORDER.
+SORT x WITH DUPLICATES IN      .
+SORT x      DUPLICATES    ORDER.
+SORT x WITH DUPLICATES         .
+SORT x      DUPLICATES IN      .
+SORT x      DUPLICATES         .
+* COLLATING SEQUENCE clause
+SORT x COLLATING SEQUENCE IS alphabetname.
+SORT x           SEQUENCE IS alphabetname.
+SORT x COLLATING SEQUENCE    alphabetname.
+SORT x           SEQUENCE    alphabetname.

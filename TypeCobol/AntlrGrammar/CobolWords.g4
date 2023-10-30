@@ -1716,6 +1716,10 @@ qualifiedDataNameOrQualifiedConditionNameOrFileName:
 	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference | qualifiedDataNameOrQualifiedConditionName1;
 
 // [Type ambiguity] at this parsing stage
+qualifiedDataNameOrFileName:
+	dataNameReferenceOrFileNameReference | qualifiedDataName1;
+
+// [Type ambiguity] at this parsing stage
 qualifiedDataNameOrQualifiedConditionNameOrClassName:
 	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference | qualifiedDataNameOrQualifiedConditionName1;
 
