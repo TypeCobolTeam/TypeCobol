@@ -87,13 +87,13 @@ jsonGenerateConvertingPhrase:
 	jsonGenerateConvertingDirective (ALSO jsonGenerateConvertingDirective)*;
 
 jsonGenerateConvertingDirective:
-	convertingDataItem=variable1 TO? JSON? (booleanWord | boolWord) USING? (qualifiedConditionName | alphanumericLiteralToken);
+	convertingDataItem=variable1 TO? JSON? (booleanWord | boolWord) USING? (conditionVariable | alphanumericLiteralToken);
 
 booleanWord:
-	{string.Equals(CurrentToken.Text, "BOOLEAN", System.StringComparison.InvariantCultureIgnoreCase)}? BOOLEANKeyword=UserDefinedWord;
+	{string.Equals(CurrentToken.Text, "BOOLEAN", System.StringComparison.OrdinalIgnoreCase)}? BOOLEANKeyword=UserDefinedWord;
 	
 boolWord:
-	{string.Equals(CurrentToken.Text, "BOOL", System.StringComparison.InvariantCultureIgnoreCase)}? BOOLKeyword=UserDefinedWord;
+	{string.Equals(CurrentToken.Text, "BOOL", System.StringComparison.OrdinalIgnoreCase)}? BOOLKeyword=UserDefinedWord;
 
 jsonStatementEnd:
 	END_JSON;
@@ -120,13 +120,13 @@ jsonParseConvertingDirective:
 	convertingDataItem=storageArea2 FROM? JSON? (booleanWord | boolWord) jsonParseUsingDirective;
 
 jsonParseUsingDirective:
-	USING? (jsonParseUsingDirective1 | jsonParseUsingDirective2 | jsonParseUsingDirective3);
+	USING? (usingSingleCondition | usingConditionPair | usingLiterals);
 	
-jsonParseUsingDirective1:
-	qualifiedConditionName;
+usingSingleCondition:
+	conditionVariable;
 
-jsonParseUsingDirective2: 
-	qualifiedConditionName AND? qualifiedConditionName;
+usingConditionPair: 
+	conditionVariable AND? conditionVariable;
 	
-jsonParseUsingDirective3:
+usingLiterals:
 	alphanumericLiteralToken AND? alphanumericLiteralToken;

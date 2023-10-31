@@ -211,20 +211,7 @@ namespace TypeCobol.Compiler.CodeElements
         public Variable TrueValue { get; set; }
 
         /// <summary>
-        /// The USING phrase provides various methods of specifying the values that shall be effectively moved
-        /// into identifier-5 when a JSON BOOLEAN true or false value is encountered during parsing.
-        /// condition-name-1 must be a level-88 item directly subordinate to identifier-5 and must be specified
-        /// with both the VALUE clause and the WHEN SET TO FALSE phrase.The first VALUE clause literal (of
-        /// possibly many values and ranges) will be used to populate identifier-5 when parsing a JSON BOOLEAN
-        /// true value.The FALSE value will be used to populate identifier-5 when parsing a JSON BOOLEAN false
-        /// value.
-        /// condition-name-2 and condition-name-3 must be level-88 items directly subordinate to identifier-5
-        /// whose VALUE clauses are used to populate identifier-5 when a JSON BOOLEAN true or false value is
-        /// parsed respectively.The first VALUE clause literal will be used in both cases.
-        /// literal-2 and literal-3 must be single-byte alphanumeric literals.literal-2 and literal-3 are used to
-        /// populate identifier-5 when a JSON BOOLEAN true or false value is parsed respectively.
-        /// The CONVERTING phrase can be specified with multiple items to be parsed as JSON BOOLEAN name/
-        /// value pairs by using the ALSO keyword.
+        /// See description on <see cref="TrueValue">TrueValue</see> property
         /// </summary>
         public Variable FalseValue { get; set; }
 

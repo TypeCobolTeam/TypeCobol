@@ -824,11 +824,9 @@ namespace TypeCobol.Compiler.Parser
             var dataItem = CobolExpressionsBuilder.CreateVariable(context.convertingDataItem);
             Variable trueValue = null;
 
-            if (context.qualifiedConditionName() != null)
+            if (context.conditionVariable() != null)
             {
-                var symbolReference = CobolWordsBuilder.CreateQualifiedConditionName(context.qualifiedConditionName());
-                StorageArea storageArea = new DataOrConditionStorageArea(symbolReference, false);
-                trueValue = new Variable(storageArea);
+                trueValue = CobolExpressionsBuilder.CreateConditionVariableContext(context.conditionVariable());
             }
             else if (context.alphanumericLiteralToken() != null)
             {
@@ -883,36 +881,29 @@ namespace TypeCobol.Compiler.Parser
             Variable falseValue = null;
 
             var usingContext = context.jsonParseUsingDirective();
-            if (usingContext?.jsonParseUsingDirective1() != null)
+            if (usingContext?.usingSingleCondition() != null)
             {
                 // True and False values are defined by the same Level 88 item
-                var symbolReference = CobolWordsBuilder.CreateQualifiedConditionName(usingContext.jsonParseUsingDirective1().qualifiedConditionName());
-                StorageArea trueStorageArea = new DataOrConditionStorageArea(symbolReference, false);
-                trueValue = new Variable(trueStorageArea);
-                StorageArea falseStorageArea = new DataOrConditionStorageArea(symbolReference, false);
-                falseValue = new Variable(falseStorageArea);
+                trueValue = CobolExpressionsBuilder.CreateConditionVariableContext(usingContext.usingSingleCondition().conditionVariable());
+                falseValue = CobolExpressionsBuilder.CreateConditionVariableContext(usingContext.usingSingleCondition().conditionVariable());
             }
-            else if (usingContext?.jsonParseUsingDirective2() != null)
+            else if (usingContext?.usingConditionPair() != null)
             {
                 // True and False values are defined by 2 Level 88 items
-                var referenceContext = usingContext.jsonParseUsingDirective2().qualifiedConditionName();
+                var referenceContext = usingContext.usingConditionPair().conditionVariable();
                 if (referenceContext.Length > 0)
                 {
-                    var trueSymbolReference = CobolWordsBuilder.CreateQualifiedConditionName(referenceContext[0]);
-                    StorageArea trueStorageArea = new DataOrConditionStorageArea(trueSymbolReference, false);
-                    trueValue = new Variable(trueStorageArea);
+                    trueValue = CobolExpressionsBuilder.CreateConditionVariableContext(referenceContext[0]);
                     if (referenceContext.Length > 1)
                     {
-                        var falseSymbolReference = CobolWordsBuilder.CreateQualifiedConditionName(referenceContext[1]);
-                        StorageArea falseStorageArea = new DataOrConditionStorageArea(falseSymbolReference, false);
-                        falseValue = new Variable(falseStorageArea);
+                        falseValue = CobolExpressionsBuilder.CreateConditionVariableContext(referenceContext[1]);
                     }
                 }
             }
-            else if (usingContext?.jsonParseUsingDirective3() != null)
+            else if (usingContext?.usingLiterals() != null)
             {
                 // True and False values are defined by 2 alphanumeric litterals
-                var alphanumericLiteralContext = usingContext.jsonParseUsingDirective3().alphanumericLiteralToken();
+                var alphanumericLiteralContext = usingContext.usingLiterals().alphanumericLiteralToken();
                 if (alphanumericLiteralContext.Length > 0)
                 {
                     trueValue = new Variable(CobolWordsBuilder.CreateAlphanumericValue(alphanumericLiteralContext[0]));

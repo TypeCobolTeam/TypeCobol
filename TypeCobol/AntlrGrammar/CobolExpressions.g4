@@ -1032,6 +1032,8 @@ classNameOrObjectReferenceVariable: identifierOrClassName;
 
 methodNameVariable: methodNameReference | identifier;
 
+conditionVariable: conditionReference;
+
 // Any type of data
 
 variable1: identifier;
