@@ -44,10 +44,6 @@
                        OUTPUT PROCEDURE outputProc
       *Ok, this is a valid SORT table
            SORT a ASCENDING item-a
-      *Ok, this is a valid SORT table (even if it is not relevant)
-           SORT a(10) ASCENDING item-a
-      *KO SORT table with wrong subscript
-           SORT a(30) ASCENDING item-a
            GOBACK
            .
        inputProc.

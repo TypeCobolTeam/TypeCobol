@@ -18,12 +18,9 @@
        01 AmbiguousName PIC X.
        PROCEDURE DIVISION.
       *KO unable to resolve SORT target
-Line 21[17,37] <30, Error, Semantics> - Semantic error: Symbol something-not-defined is not referenced
 Line 21[17,37] <27, Error, Syntax> - Syntax error : Unable to resolve reference to SORT target 'something-not-defined'.
            SORT something-not-defined
       *KO ambiguous reference
-Line 23[17,29] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol AmbiguousName 
-Symbols found: TCOMFL06::AmbiguousName | TCOMFL06::AmbiguousName
 Line 23[17,29] <27, Error, Syntax> - Syntax error : Ambiguous reference to SORT target 'AmbiguousName'.
            SORT AmbiguousName
       *KO SORT file without KEY
@@ -55,11 +52,6 @@ Line 40[12,15] <27, Error, Syntax> - Syntax error : SORT table statement has no 
                        OUTPUT PROCEDURE outputProc
       *Ok, this is a valid SORT table
            SORT a ASCENDING item-a
-      *Ok, this is a valid SORT table (even if it is not relevant)
-           SORT a(10) ASCENDING item-a
-      *KO SORT table with wrong subscript
-Line 50[19,20] <27, Error, Syntax> - Syntax error : Subscript value '30' exceeds the maximum occurrence count '20' of the table.
-           SORT a(30) ASCENDING item-a
            GOBACK
            .
        inputProc.

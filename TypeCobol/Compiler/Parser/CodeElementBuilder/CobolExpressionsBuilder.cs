@@ -155,10 +155,6 @@ namespace TypeCobol.Compiler.Parser
             {
                 storageArea = new DataOrConditionStorageArea(qualifiedDataNameOrFileName, CreateSubscriptExpressions(context.subscript()), _insideFunctionArgument);
             }
-
-            // Collect storage area read/writes at the code element level
-            this.storageAreaReads.Add(storageArea);
-
             return storageArea;
         }
 
