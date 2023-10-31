@@ -1320,7 +1320,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 return;
             }
 
-            switch (node.CodeElement?.Type)
+            var codeElementType = node.CodeElement?.Type;
+            switch (codeElementType)
             {
                 //Those have their own specific subscript checking
                 case CodeElementType.SearchStatement:
@@ -1333,7 +1334,8 @@ namespace TypeCobol.Compiler.Diagnostics
             //TC not supported
             if (tableDefinitions == null) return;
 
-            if (dataOrConditionStorageArea.Subscripts.Length < tableDefinitions.Count)
+            //Sort statement allows no subscript
+            if (codeElementType != CodeElementType.SortStatement && dataOrConditionStorageArea.Subscripts.Length < tableDefinitions.Count)
             {
                 //Not enough subscripts
                 DiagnosticUtils.AddError(node, $"Not enough subscripts for data item '{dataDefinition.Name}', check number of OCCURS clauses.", dataOrConditionStorageArea.SymbolReference);
