@@ -826,7 +826,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.conditionVariable() != null)
             {
-                trueValue = CobolExpressionsBuilder.CreateConditionVariableContext(context.conditionVariable());
+                trueValue = CobolExpressionsBuilder.CreateConditionVariable(context.conditionVariable());
             }
             else if (context.alphanumericLiteralToken() != null)
             {
@@ -884,8 +884,8 @@ namespace TypeCobol.Compiler.Parser
             if (usingContext?.usingSingleCondition() != null)
             {
                 // True and False values are defined by the same Level 88 item
-                trueValue = CobolExpressionsBuilder.CreateConditionVariableContext(usingContext.usingSingleCondition().conditionVariable());
-                falseValue = CobolExpressionsBuilder.CreateConditionVariableContext(usingContext.usingSingleCondition().conditionVariable());
+                trueValue = CobolExpressionsBuilder.CreateConditionVariable(usingContext.usingSingleCondition().conditionVariable());
+                falseValue = CobolExpressionsBuilder.CreateConditionVariable(usingContext.usingSingleCondition().conditionVariable());
             }
             else if (usingContext?.usingConditionPair() != null)
             {
@@ -893,10 +893,10 @@ namespace TypeCobol.Compiler.Parser
                 var referenceContext = usingContext.usingConditionPair().conditionVariable();
                 if (referenceContext.Length > 0)
                 {
-                    trueValue = CobolExpressionsBuilder.CreateConditionVariableContext(referenceContext[0]);
+                    trueValue = CobolExpressionsBuilder.CreateConditionVariable(referenceContext[0]);
                     if (referenceContext.Length > 1)
                     {
-                        falseValue = CobolExpressionsBuilder.CreateConditionVariableContext(referenceContext[1]);
+                        falseValue = CobolExpressionsBuilder.CreateConditionVariable(referenceContext[1]);
                     }
                 }
             }

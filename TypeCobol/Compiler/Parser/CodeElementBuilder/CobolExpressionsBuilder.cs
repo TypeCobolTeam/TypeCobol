@@ -1390,7 +1390,7 @@ namespace TypeCobol.Compiler.Parser
             return variable;
         }
 
-        internal Variable CreateConditionVariableContext(CodeElementsParser.ConditionVariableContext context)
+        internal Variable CreateConditionVariable(CodeElementsParser.ConditionVariableContext context)
         {
             StorageArea storageArea = CreateConditionReference(context.conditionReference());
 
