@@ -134,66 +134,33 @@
         /// the NAME phrase, the last specification is used.
         /// literal-1 must be an alphanumeric or national literal containing the name
         /// to be generated in the JSON text corresponding to identifier-4.
+        /// With PTF for APAR PH18641 installed, alternatively, you can specify
+        /// OMITTED to generate an anonymous JSON object, whose top-level parent name is not generated.
+        /// When you specify OMITTED, identifier-4 must reference identifier-2.
         /// </summary>
         public JsonNameMapping[] NameMappings { get; set; }
 
         /// <summary>
+        /// SUPPRESS phrase
         /// Allows you to identify and unconditionally exclude items that are
         /// subordinate to identifier-2, and thus selectively generate output for the
         /// JSON GENERATE statement. If the SUPPRESS phrase is specified,
         /// identifier-1 must be large enough to contain the generated JSON document
         /// before any suppression.
-        /// identifier-5 must reference a data item that is subordinate to identifier-2 and
-        /// that is not otherwise ignored by the operation of the JSON GENERATE
-        /// statement. identifier-5 cannot be a function identifier and cannot be
-        /// reference modified or subscripted. If identifier-5 specifies a group data item,
-        /// that group data item and all data items that are subordinate to the group
-        /// item are excluded. Duplicate specifications of identifier-5 are permitted.
-        /// When the SUPPRESS phrase is specified, a group item subordinate to
-        /// identifier-2 is excluded from the generated JSON text if all the eligible items
-        /// subordinate to the group item are excluded. The outermost object that
-        /// corresponds to identifier-2 itself is always generated, even if all the items
-        /// subordinate to identifier-2 are excluded. In this case, the value generated for
-        /// identifier-2 is an empty object, as follows:
-        ///   {"identifier-2":{}}
-        /// For example, consider the following data declaration:
-        /// 1 a.
-        ///   2 b.
-        ///     3 c occurs 0 to 2 depending j.
-        ///       4 d pic x.
-        ///   2 e pic x.
-        /// If the ODO object j contains the value 2 and group a is populated with all
-        /// ‘_’, the statement JSON GENERATE x FROM a (without the SUPPRESS phrase)
-        /// produces the following JSON text:
-        ///   {"a":{"b":{"c":[{"d":"_"},{"d":"_"}]},"e":"_"}}
-        /// Group item b is eliminated from the output if a SUPPRESS phrase specifies
-        /// any one of data items b, c or d, resulting in the following JSON text:
-        ///   {"a":{"e":"_"}}
-        /// As an example of complete recursive suppression, the statement JSON
-        /// GENERATE x FROM a SUPPRESS b e produces:
-        ///   {"a":{}}
-        /// JSON has an explicit representation of a table with no elements:
-        ///   {"table-name":[]}
-        /// which is thus retained in the generated JSON text unless explicitly
-        /// suppressed.
-        /// For example if ODO object j contains the value 0 and thus table d has no
-        /// occurrences, and group a is populated with all '_', the statement JSON
-        /// GENERATE x FROM a produces the following JSON text:
-        ///   {"a":{"b":{"c":[]},"e":"_"}}
-        /// Components of a zero-occurrence group table do not contribute any JSON
-        /// text to the output. As a result, a SUPPRESS phrase that specified only d
-        /// would have no effect on this generated output.
-        /// Suppressing data items b or c, and e, which do contribute JSON text, has
-        /// the same result as for non-zero occurrences of table c, illustrated above.
         /// </summary>
-        public Variable[] ExcludedDataItems { get; set; }
+        public JsonSuppressDirective[] JsonSuppressDirectives { get; set; }
+
+        /// <summary>
+        /// Allows you to specify items that will be generated as JSON BOOLEAN name/value pairs.
+        /// </summary>
+        public JsonGenerateConvertingDirective[] JsonConvertingDirectives { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor)
                    && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, this.Destination, this.Source, this.CharactersCount)
-                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.ExcludedDataItems);
+                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.JsonSuppressDirectives, this.JsonConvertingDirectives);
         }
     }
 
@@ -213,9 +180,119 @@
         /// </summary>
         public AlphanumericValue OutputName { get; set; }
 
+        /// <summary>
+        /// Is expected name omitted?
+        /// To generate an anonymous JSON object, whose top-level parent name is not generated.
+        /// </summary>
+        public SyntaxProperty<bool> Omitted { get; set; }
+
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
-            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.OutputName);
+            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.OutputName, this.Omitted);
+        }
+    }
+
+    /// <summary>
+    /// For SUPPRESS clauses using data item type matching
+    /// </summary>
+    public enum JsonItemType
+    {
+        /// <summary>
+        /// Suppress only NUMERIC items
+        /// </summary>
+        NUMERIC,
+
+        /// <summary>
+        /// Suppress only NON-NUMERIC items
+        /// </summary>
+        NONNUMERIC
+    }
+
+    /// <summary>
+    /// SUPPRESS phrase
+    /// Allows you to identify items that are subordinate to identifier-2 and must
+    /// be suppressed when generating the XML if they contain values that are
+    /// specified in the WHEN clause. If the SUPPRESS phrase is specified,
+    /// identifier-1 must be large enough to contain the generated XML document
+    /// before any suppression.
+    /// </summary>
+    public class JsonSuppressDirective : IVisitable
+    {
+        /// <summary>
+        /// With the generic-suppression-phrase, elementary items subordinate to identifier-2 that are not
+        /// otherwise ignored by JSON GENERATE operations are identified generically for potential suppression.
+        /// Either items of class numeric, if the NUMERIC keyword is specified, or items that are not of
+        /// class numeric, if the NONNUMERIC keyword is specified, or both if neither is specified, might be
+        /// suppressed.
+        /// If multiple generic-suppression-phrase are specified, the effect is cumulative.
+        /// </summary>
+        public SyntaxProperty<JsonItemType> JsonItemTypeToSuppress { get; set; }
+
+        /// <summary>
+        /// identifier-5 explicitly identifies items for potential suppression. identifier-5 must reference a data item
+        /// that is subordinate to identifier-2 and that is not otherwise ignored by the operation of the JSON
+        /// GENERATE statement.identifier-5 cannot be a function identifier and cannot be reference modified or
+        /// subscripted.If the WHEN phrase is specified, identifier-5 must reference an elementary data item. If
+        /// the WHEN phrase is omitted, identifier-5 may be a group item.If identifier-5 specifies a group data
+        /// item, that group data item and all data items that are subordinate to the group item are excluded.
+        /// Duplicate specifications of identifier-5 are permitted.
+        /// If identifier-5 is specified, the following rules apply to it:
+        /// * If ZERO, ZEROES, or ZEROS is specified in the WHEN phrase, identifier-5 must not be of USAGE
+        /// DISPLAY-1.
+        /// * If SPACE or SPACES is specified in the WHEN phrase, identifier-5 must be of USAGE DISPLAY,
+        /// DISPLAY-1, or NATIONAL. If identifier-5 is a zoned or national decimal item, it must be an integer.
+        /// * If LOW-VALUE, LOW-VALUES, HIGH-VALUE, or HIGH-VALUES is specified in the WHEN phrase,
+        /// identifier-5 must be of USAGE DISPLAY or NATIONAL.If identifier-5 is a zoned or national decimal
+        /// item, it must be an integer.
+        /// </summary>
+        public Variable DataItemName { get; set; }
+
+        /// <summary>
+        /// The comparison operation that determines whether an item will be suppressed is a relation condition
+        /// as shown in the table of Comparisons involving figurative constants.That is, the comparison is a
+        /// numeric comparison if the value specified is ZERO, ZEROS, or ZEROES, and the item is of class
+        /// numeric. For all other cases, the comparison operation is an alphanumeric, DBCS, or national
+        /// comparison, depending on whether the item is of usage DISPLAY, DISPLAY-1, or NATIONAL,
+        /// respectively.
+        /// When the SUPPRESS phrase is specified, a group item subordinate to identifier-2 is excluded from
+        /// the generated JSON text if all the eligible items subordinate to the group item are excluded.The
+        /// outermost object that corresponds to identifier-2 itself is always generated, even if all the items
+        /// subordinate to identifier-2 are excluded.
+        /// </summary>
+        public RepeatedCharacterValue[] ItemValuesToSuppress;
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return this.ContinueVisitToChildren(astVisitor, JsonItemTypeToSuppress, DataItemName)
+                && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>)ItemValuesToSuppress);
+        }
+    }
+
+    /// <summary>
+    /// Represents an association between a data item in source and its TRUE value when converting it to a JSON boolean.
+    /// </summary>
+    public class JsonGenerateConvertingDirective : IVisitable
+    {
+        /// <summary>
+        /// identifier-6 must be a single-byte alphanumeric elementary data item whose data definition entry
+        /// contains PICTURE X.
+        /// </summary>
+        public Variable DataItem { get; set; }
+
+        /// <summary>
+        /// condition-name-1 and literal-2 represent values of identifier-6 that will be generated as a JSON
+        /// BOOLEAN true value.All other values of identifier-6 will be generated as a JSON BOOLEAN false value.
+        /// condition-name-1 must be a level-88 item directly subordinate to identifier-6 and can be specified
+        /// with multiple values or value ranges.literal-2 must be a single-byte alphanumeric literal.
+        /// </summary>
+        public Variable TrueValue { get; set; }
+
+        public JsonGenerateConvertingDirective(Variable dataItem, Variable trueValue) =>
+            (DataItem, TrueValue) = (dataItem, trueValue);
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.TrueValue);
         }
     }
 }

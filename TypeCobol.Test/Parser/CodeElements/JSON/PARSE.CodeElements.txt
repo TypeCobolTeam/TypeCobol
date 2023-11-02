@@ -4,6 +4,13 @@ Line 10[25,25] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
 Line 11[27,27] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, UTF-8 literal, hexadecimal UTF-8 literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseNameMapping,  OffendingSymbol=[27,27+:.]<PeriodSeparator>
 Line 12[30,30] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, DBCS literal, UTF-8 literal, hexadecimal UTF-8 literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseNameMapping,  OffendingSymbol=[30,30+:.]<PeriodSeparator>
 Line 24[29,29] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonParseStatement,  OffendingSymbol=[29,29+:.]<PeriodSeparator>
+Line 38[31,31] <27, Error, Syntax> - Syntax error : missing user defined word at '.' RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>storageArea2>dataNameReference,  OffendingSymbol=[31,31+:.]<PeriodSeparator>
+Line 39[33,33] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {user defined word, FROM, JSON} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective,  OffendingSymbol=[33,33+:.]<PeriodSeparator>
+Line 40[6,10] <27, Error, Syntax> - Syntax error : no viable alternative at input 'PARSE' RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective,  OffendingSymbol=[6,10:PARSE]<UserDefinedWord>
+Line 41[38,38] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word, USING} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>jsonParseUsingDirective,  OffendingSymbol=[38,38+:.]<PeriodSeparator>
+Line 42[44,44] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>jsonParseUsingDirective,  OffendingSymbol=[44,44+:.]<PeriodSeparator>
+Line 43[56,56] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting user defined word RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>jsonParseUsingDirective>usingConditionPair>conditionVariable>conditionReference>qualifiedConditionName,  OffendingSymbol=[56,56+:.]<PeriodSeparator>
+Line 44[74,74] <27, Error, Syntax> - Syntax error : missing user defined word at '.' RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseConvertingPhrase>jsonParseConvertingDirective>storageArea2>dataNameReference,  OffendingSymbol=[74,74+:.]<PeriodSeparator>
 --- Code Elements ---
 [[JsonParseStatement]] [1,4:JSON]<JSON> --> [12,12:x]<UserDefinedWord>
 
@@ -64,4 +71,48 @@ Line 24[29,29] <27, Error, Syntax> - Syntax error : mismatched input '.' expecti
 [[JsonParseStatement]] [1,4:JSON]<JSON> --> [36,37:t3]<UserDefinedWord>
 
 [[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [39,44:a-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [45,45+:.]<PeriodSeparator> --> [45,45+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [56,62:a2-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [63,63+:.]<PeriodSeparator> --> [63,63+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [67,73:a2-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [74,74+:.]<PeriodSeparator> --> [74,74+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [169,171:'z']<AlphanumericLiteral>(',Y,Y){z}
+
+[[SentenceEnd]] [172,172+:.]<PeriodSeparator> --> [172,172+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [32,31:<missing UserDefinedWord>]<UserDefinedWord>
+
+[[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [34,34:b]<UserDefinedWord>
+
+[[SentenceEnd]] [35,35+:.]<PeriodSeparator> --> [35,35+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [34,37:BOOL]<UserDefinedWord>
+
+[[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [39,43:USING]<USING>
+
+[[SentenceEnd]] [44,44+:.]<PeriodSeparator> --> [44,44+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [53,55:AND]<AND>
+
+[[SentenceEnd]] [56,56+:.]<PeriodSeparator> --> [56,56+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [75,74:<missing UserDefinedWord>]<UserDefinedWord>
+
+[[SentenceEnd]] [74,74+:.]<PeriodSeparator> --> [74,74+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [106,112:a2-flag]<UserDefinedWord>
+
+[[SentenceEnd]] [113,113+:.]<PeriodSeparator> --> [113,113+:.]<PeriodSeparator>
 

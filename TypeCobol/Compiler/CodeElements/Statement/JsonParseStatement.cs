@@ -138,12 +138,17 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public Variable[] ExcludedDataItems { get; set; }
 
+        /// <summary>
+        /// Allows you to specify items that will be parsed as JSON BOOLEAN name/value pairs.
+        /// </summary>
+        public JsonParseConvertingDirective[] JsonConvertingDirectives { get; set; }
+
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor)
                    && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, this.Destination, this.Source)
-                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.ExcludedDataItems);
+                   && this.ContinueVisitToChildren(astVisitor, this.NameMappings, this.ExcludedDataItems, this.JsonConvertingDirectives);
         }
     }
 
@@ -164,9 +169,57 @@ namespace TypeCobol.Compiler.CodeElements
         [CanBeNull]
         public AlphanumericValue InputName { get; set; }
 
+        /// <summary>
+        /// Is expected name omitted?
+        /// To parse an anonymous JSON object, whose top parent name is not specified.
+        /// </summary>
+        public SyntaxProperty<bool> Omitted { get; set; }
+
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
-            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.InputName);
+            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.InputName, this.Omitted);
+        }
+    }
+
+    /// <summary>
+    /// Represents an association between a data item in source and its TRUE/FASE values when converting a JSON boolean to it.
+    /// </summary>
+    public class JsonParseConvertingDirective : IVisitable
+    {
+        /// <summary>
+        /// identifier-5 must be a single-byte alphanumeric elementary data item whose data definition entry
+        /// contains PICTURE X.
+        /// </summary>
+        public ReceivingStorageArea DataItem { get; set; }
+
+        /// <summary>
+        /// The USING phrase provides various methods of specifying the values that shall be effectively moved
+        /// into identifier-5 when a JSON BOOLEAN true or false value is encountered during parsing.
+        /// condition-name-1 must be a level-88 item directly subordinate to identifier-5 and must be specified
+        /// with both the VALUE clause and the WHEN SET TO FALSE phrase.The first VALUE clause literal (of
+        /// possibly many values and ranges) will be used to populate identifier-5 when parsing a JSON BOOLEAN
+        /// true value.The FALSE value will be used to populate identifier-5 when parsing a JSON BOOLEAN false
+        /// value.
+        /// condition-name-2 and condition-name-3 must be level-88 items directly subordinate to identifier-5
+        /// whose VALUE clauses are used to populate identifier-5 when a JSON BOOLEAN true or false value is
+        /// parsed respectively.The first VALUE clause literal will be used in both cases.
+        /// literal-2 and literal-3 must be single-byte alphanumeric literals.literal-2 and literal-3 are used to
+        /// populate identifier-5 when a JSON BOOLEAN true or false value is parsed respectively.
+        /// The CONVERTING phrase can be specified with multiple items to be parsed as JSON BOOLEAN name/
+        /// value pairs by using the ALSO keyword.
+        /// </summary>
+        public Variable TrueValue { get; set; }
+
+        /// <summary>
+        /// See description on <see cref="TrueValue">TrueValue</see> property
+        /// </summary>
+        public Variable FalseValue { get; set; }
+
+        public JsonParseConvertingDirective(ReceivingStorageArea dataItem, Variable trueValue, Variable falseValue) => (DataItem, TrueValue, FalseValue) = (dataItem, trueValue, falseValue);
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.TrueValue, this.FalseValue);
         }
     }
 }
