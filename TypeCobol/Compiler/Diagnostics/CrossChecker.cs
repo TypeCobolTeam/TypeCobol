@@ -117,12 +117,17 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Sort sort)
         {
+            //TODO Check subscripts !
+
             // Check nature of SORT target
-            DataDefinition sortTarget = null;
             var sortStatement = sort.CodeElement;
-            if (sortStatement.FileNameOrTableName.SymbolReference != null)
+            DataDefinition sortTarget = null;
+            if (sort.StorageAreaReadsDataDefinition != null &&
+                sort.StorageAreaReadsDataDefinition.TryGetValue(sortStatement.FileNameOrTableName, out sortTarget))
             {
-                CheckSortNature(sortStatement.FileNameOrTableName.SymbolReference);
+                // SORT target has been resolved, compute SORT nature from its target's CodeElementType
+                Debug.Assert(sortTarget.CodeElement != null);
+                sort.Nature = sortTarget.CodeElement.Type == CodeElementType.FileDescriptionEntry ? SortNature.FileSort : SortNature.TableSort;
             }
 
             // Check format based on nature of target
@@ -143,28 +148,6 @@ namespace TypeCobol.Compiler.Diagnostics
             (sort.OutputThroughProcedureParagraphSymbol, sort.OutputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughOutputProcedure, _currentSection);
 
             return true;
-
-            void CheckSortNature(SymbolReference tableOrFileReference)
-            {
-                var candidateVariables = sort.SymbolTable.GetVariables(tableOrFileReference).ToList(); // Will get the FileDescription as it is also a DataDefinition
-                switch (candidateVariables.Count)
-                {
-                    case 0:
-                        // Nothing found
-                        DiagnosticUtils.AddError(sort, $"Unable to resolve reference to SORT target '{tableOrFileReference.Name}'.", tableOrFileReference);
-                        break;
-                    case 1:
-                        // Ok
-                        sortTarget = candidateVariables[0];
-                        Debug.Assert(sortTarget.CodeElement != null);
-                        sort.Nature = sortTarget.CodeElement.Type == CodeElementType.FileDescriptionEntry ? SortNature.FileSort : SortNature.TableSort;
-                        break;
-                    default:
-                        // Ambiguous reference
-                        DiagnosticUtils.AddError(sort, $"Ambiguous reference to SORT target '{tableOrFileReference.Name}'.", tableOrFileReference);
-                        break;
-                }
-            }
 
             void CheckFileSort()
             {
@@ -1324,6 +1307,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 //Those have their own specific subscript checking
                 case CodeElementType.SearchStatement:
+                case CodeElementType.SortStatement:
                 case CodeElementType.ProcedureStyleCall:
                     return;
             }

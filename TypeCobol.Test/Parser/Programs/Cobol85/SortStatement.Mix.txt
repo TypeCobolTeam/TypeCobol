@@ -18,10 +18,11 @@
        01 AmbiguousName PIC X.
        PROCEDURE DIVISION.
       *KO unable to resolve SORT target
-Line 21[17,37] <27, Error, Syntax> - Syntax error : Unable to resolve reference to SORT target 'something-not-defined'.
+Line 21[17,37] <30, Error, Semantics> - Semantic error: Symbol something-not-defined is not referenced
            SORT something-not-defined
       *KO ambiguous reference
-Line 23[17,29] <27, Error, Syntax> - Syntax error : Ambiguous reference to SORT target 'AmbiguousName'.
+Line 23[17,29] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol AmbiguousName 
+Symbols found: TCOMFL06::AmbiguousName | TCOMFL06::AmbiguousName
            SORT AmbiguousName
       *KO SORT file without KEY
 Line 25[12,15] <27, Error, Syntax> - Syntax error : SORT file statement requires at least one sorting KEY.
