@@ -404,5 +404,20 @@ namespace TypeCobol.Test.Types
             result = (new PictureValidator("$v")).Validate(out _);
             Assert.IsFalse(result.IsValid);
         }
+
+        [TestMethod]
+        public void UnsupportedSymbolU()
+        {
+            // None of those are supported, but special chars sequence will be correctly built
+            string[] pictures = new[] { "U", "AU", "UA", "XU", "UX", "UU", "U(20)", "u", "u(9)" };
+            foreach (var picture in pictures)
+            {
+                var result = (new PictureValidator(picture)).Validate(out var validationMessages);
+                Assert.IsFalse(result.IsValid);
+                Assert.IsTrue(validationMessages != null);
+                Assert.IsTrue(validationMessages.Count == 1);
+                Assert.IsTrue(validationMessages[0] == "PICTURE string symbol 'U' is not supported");
+            }
+        }
     }
 }

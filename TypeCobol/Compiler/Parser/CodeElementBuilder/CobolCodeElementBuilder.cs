@@ -1183,7 +1183,7 @@ namespace TypeCobol.Compiler.Parser
                     CreateDataUsageProperty(DataUsage.Pointer32, c.POINTER_32()) ??
                     CreateDataUsageProperty(DataUsage.FunctionPointer, c.FUNCTION_POINTER()) ??
                     CreateDataUsageProperty(DataUsage.ProcedurePointer, c.PROCEDURE_POINTER()) ??
-                    null;
+                    CreateDataUsageProperty(DataUsage.UTF8, c.UTF_8());
         }
         private SyntaxProperty<DataUsage> CreateDataUsageProperty(DataUsage usage, ITerminalNode node) {
             if (node == null) return null;
@@ -1223,6 +1223,12 @@ namespace TypeCobol.Compiler.Parser
                     //TokenType is PictureCharacterString so it's ok to create an AlphanumericValue
                     entry.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
                 }
+
+                if (pictureClauseContext.byteLengthPhrase() != null && pictureClauseContext.byteLengthPhrase().IntegerLiteral() != null)
+                {
+                    var integerLiteral = pictureClauseContext.byteLengthPhrase().IntegerLiteral();
+                    entry.ByteLength = CobolWordsBuilder.CreateIntegerValue(integerLiteral);
+                }
             }
 
 // [COBOL 2002]
@@ -1250,6 +1256,14 @@ namespace TypeCobol.Compiler.Parser
                 }
                 entry.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
             }
+
+            if (context.dynamicLengthClause() != null && context.dynamicLengthClause().Length > 0)
+            {
+                var dynamicLengthContext = context.dynamicLengthClause()[0];
+                entry.HasDynamicLength = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(dynamicLengthContext.DYNAMIC()));
+                entry.DynamicLengthLimit = CobolWordsBuilder.CreateIntegerValue(dynamicLengthContext.IntegerLiteral());
+            }
+
             if (context.globalClause() != null && context.globalClause().Length > 0)
             {
                 entry.Global = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.globalClause()[0].GLOBAL()));
@@ -1271,8 +1285,17 @@ namespace TypeCobol.Compiler.Parser
             if (context.groupUsageClause() != null && context.groupUsageClause().Length > 0)
             {
                 var groupUsageClauseContext = context.groupUsageClause()[0];
-                entry.IsGroupUsageNational = new SyntaxProperty<bool>(true,
-                    ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
+                if (groupUsageClauseContext.NATIONAL() != null)
+                {
+                    var token = ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL());
+                    entry.GroupUsage = new SyntaxProperty<DataUsage>(DataUsage.National, token);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(groupUsageClauseContext.UTF_8() != null);
+                    var token = ParseTreeUtils.GetFirstToken(groupUsageClauseContext.UTF_8());
+                    entry.GroupUsage = new SyntaxProperty<DataUsage>(DataUsage.UTF8, token);
+                }
             }
             if (context.occursClause() != null && context.occursClause().Length > 0)
             {

@@ -1,7 +1,4 @@
 ﻿using Antlr4.Runtime.Tree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
@@ -747,23 +744,96 @@ namespace TypeCobol.Compiler.Parser
 
         internal JsonGenerateStatement CreateJsonGenerateStatement(CodeElementsParser.JsonGenerateStatementContext context)
         {
-            return new JsonGenerateStatement
-                   {
-                       Destination = CobolExpressionsBuilder.CreateStorageArea(context.destination),
-                       Source = CobolExpressionsBuilder.CreateVariable(context.source),
-                       CharactersCount = CobolExpressionsBuilder.CreateStorageArea(context.charactersCount),
-                       NameMappings = context.jsonNameMapping().Select(CreateJsonNameMapping).ToArray(),
-                       ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
-                   };
+            var statement = new JsonGenerateStatement
+            {
+                Destination = CobolExpressionsBuilder.CreateStorageArea(context.destination),
+                Source = CobolExpressionsBuilder.CreateVariable(context.source),
+                CharactersCount = CobolExpressionsBuilder.CreateStorageArea(context.charactersCount)
+            };
+            if (context.jsonNameMapping() != null)
+            {
+                statement.NameMappings = BuildObjectArrayFromParserRules(context.jsonNameMapping(), ctx => CreateJsonNameMapping(ctx));
+            }
+            if (context.jsonSuppressDirective() != null)
+            {
+                statement.JsonSuppressDirectives = BuildObjectArrayFromParserRules(context.jsonSuppressDirective(), ctx => CreateJsonSuppressDirective(ctx));
+            }
+            if (context.jsonGenerateConvertingPhrase() != null)
+            {
+                statement.JsonConvertingDirectives = BuildObjectArrayFromParserRules(
+                    context.jsonGenerateConvertingPhrase().jsonGenerateConvertingDirective(),
+                    ctx => CreateJsonConvertingDirective(ctx));
+            }
+
+            return statement;
         }
 
         private JsonNameMapping CreateJsonNameMapping(CodeElementsParser.JsonNameMappingContext context)
         {
-            return new JsonNameMapping
-                   {
-                       DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
-                       OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName)
-                   };
+            var jsonNameMapping = new JsonNameMapping
+            {
+                DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
+                OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName)
+            };
+            if (context.OMITTED() != null)
+            {
+                jsonNameMapping.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.OMITTED()));
+            }
+
+            return jsonNameMapping;
+        }
+
+        private JsonSuppressDirective CreateJsonSuppressDirective(CodeElementsParser.JsonSuppressDirectiveContext context)
+        {
+            var suppressDirective = new JsonSuppressDirective();
+            if (context.subordinateDataItem != null)
+            {
+                suppressDirective.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
+                if (context.whenPhrase() != null)
+                {
+                    suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+                }
+            }
+            else if (context.jsonGenericSuppressionPhrase() != null)
+            {
+                var suppression = context.jsonGenericSuppressionPhrase();
+
+                if (suppression.EVERY() != null)
+                {
+                    if (suppression.NUMERIC() != null)
+                    {
+                        suppressDirective.JsonItemTypeToSuppress = CreateSyntaxProperty(JsonItemType.NUMERIC, suppression.NUMERIC());
+                    }
+                    else if (suppression.nonnumeric() != null)
+                    {
+                        suppressDirective.JsonItemTypeToSuppress = CreateSyntaxProperty(JsonItemType.NONNUMERIC, suppression.nonnumeric().UserDefinedWord());
+                    }
+                }
+
+                if (suppression.whenPhrase() != null)
+                {
+                    suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(suppression.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+                }
+            }
+
+            return suppressDirective;
+        }
+
+        private JsonGenerateConvertingDirective CreateJsonConvertingDirective(CodeElementsParser.JsonGenerateConvertingDirectiveContext context)
+        {
+            var dataItem = CobolExpressionsBuilder.CreateVariable(context.convertingDataItem);
+            Variable trueValue = null;
+
+            if (context.conditionVariable() != null)
+            {
+                trueValue = CobolExpressionsBuilder.CreateConditionVariable(context.conditionVariable());
+            }
+            else if (context.alphanumericLiteralToken() != null)
+            {
+                trueValue = new Variable(CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericLiteralToken()));
+            }
+
+            return new JsonGenerateConvertingDirective(dataItem, trueValue);
         }
 
         /////////////////////////////
@@ -772,21 +842,80 @@ namespace TypeCobol.Compiler.Parser
 
         internal JsonParseStatement CreateJsonParseStatement(CodeElementsParser.JsonParseStatementContext context)
         {
-            return new JsonParseStatement
+            var statement = new JsonParseStatement
             {
                 Source = CobolExpressionsBuilder.CreateStorageArea(context.source),
                 Destination = CobolExpressionsBuilder.CreateVariable(context.destination),
                 NameMappings = context.jsonParseNameMapping().Select(CreateJsonParseNameMapping).ToArray(),
                 ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
             };
+            if (context.jsonParseConvertingPhrase() != null)
+            {
+                statement.JsonConvertingDirectives = BuildObjectArrayFromParserRules(
+                    context.jsonParseConvertingPhrase().jsonParseConvertingDirective(),
+                    ctx => CreateJsonConvertingDirective(ctx));
+            }
+
+            return statement;
         }
+
         private JsonParseNameMapping CreateJsonParseNameMapping(CodeElementsParser.JsonParseNameMappingContext context)
         {
-            return new JsonParseNameMapping
+            var jsonParseNameMapping = new JsonParseNameMapping
             {
                 DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
                 InputName = CobolWordsBuilder.CreateAlphanumericValue(context.inputName)
             };
+            if (context.OMITTED() != null)
+            {
+                jsonParseNameMapping.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.OMITTED()));
+            }
+
+            return jsonParseNameMapping;
+        }
+
+        private JsonParseConvertingDirective CreateJsonConvertingDirective(CodeElementsParser.JsonParseConvertingDirectiveContext context)
+        {
+            var dataItem = CobolExpressionsBuilder.CreateStorageArea(context.convertingDataItem);
+            Variable trueValue = null;
+            Variable falseValue = null;
+
+            var usingContext = context.jsonParseUsingDirective();
+            if (usingContext?.usingSingleCondition() != null)
+            {
+                // True and False values are defined by the same Level 88 item
+                trueValue = CobolExpressionsBuilder.CreateConditionVariable(usingContext.usingSingleCondition().conditionVariable());
+                falseValue = CobolExpressionsBuilder.CreateConditionVariable(usingContext.usingSingleCondition().conditionVariable());
+            }
+            else if (usingContext?.usingConditionPair() != null)
+            {
+                // True and False values are defined by 2 Level 88 items
+                var referenceContext = usingContext.usingConditionPair().conditionVariable();
+                if (referenceContext.Length > 0)
+                {
+                    trueValue = CobolExpressionsBuilder.CreateConditionVariable(referenceContext[0]);
+                    if (referenceContext.Length > 1)
+                    {
+                        falseValue = CobolExpressionsBuilder.CreateConditionVariable(referenceContext[1]);
+                    }
+                }
+            }
+            else if (usingContext?.usingLiterals() != null)
+            {
+                // True and False values are defined by 2 alphanumeric litterals
+                var alphanumericLiteralContext = usingContext.usingLiterals().alphanumericLiteralToken();
+                if (alphanumericLiteralContext.Length > 0)
+                {
+                    trueValue = new Variable(CobolWordsBuilder.CreateAlphanumericValue(alphanumericLiteralContext[0]));
+
+                    if (alphanumericLiteralContext.Length > 1)
+                    {
+                        falseValue = new Variable(CobolWordsBuilder.CreateAlphanumericValue(alphanumericLiteralContext[1]));
+                    }
+                }
+            }
+
+            return new JsonParseConvertingDirective(dataItem, trueValue, falseValue);
         }
 
         /////////////////////
@@ -1226,9 +1355,9 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new SortStatement();
 
-            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+            statement.FileNameOrTableName = CobolExpressionsBuilder.CreateDataItemReferenceOrFileName(context.dataItemReferenceOrFileName());
             statement.SortingKeys = CreateSortingKeys(context.onAscendingDescendingKey());
-            if(context.DUPLICATES() != null)
+            if (context.DUPLICATES() != null)
             {
                 statement.WithDuplicates = CreateSyntaxProperty(true, context.DUPLICATES());
             }
@@ -1615,17 +1744,17 @@ namespace TypeCobol.Compiler.Parser
             typeMapping.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
             if (context.attribute() != null)
             {
-                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ATTRIBUTE,
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlSyntaxType.ATTRIBUTE,
                     context.attribute().UserDefinedWord());
             }
             if (context.element() != null)
             {
-                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ELEMENT,
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlSyntaxType.ELEMENT,
                     context.element().UserDefinedWord());
             }
             if (context.CONTENT() != null)
             {
-                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.CONTENT,
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlSyntaxType.CONTENT,
                     context.CONTENT());
             }
             return typeMapping;
@@ -1636,35 +1765,54 @@ namespace TypeCobol.Compiler.Parser
             if (context.subordinateDataItem != null)
             {
                 suppressDirective.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
+                if (context.whenPhrase() != null)
+                {
+                    suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+                }
             }
             else
             {
-                if (context.attribute() != null)
+                System.Diagnostics.Debug.Assert(context.genericSuppressionPhrase() != null);
+                var suppression = context.genericSuppressionPhrase();
+
+                if (suppression.EVERY() != null)
                 {
-                    if (context.NUMERIC() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ATTRIBUTE,
-                            context.NUMERIC());
-                    else if (context.nonnumeric() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ATTRIBUTE,
-                            context.nonnumeric().UserDefinedWord());
+                    if (suppression.NUMERIC() != null)
+                    {
+                        suppressDirective.XmlItemTypeToSuppress = CreateSyntaxProperty(XmlItemType.NUMERIC, suppression.NUMERIC());
+                    }
+                    else if (suppression.nonnumeric() != null)
+                    {
+                        suppressDirective.XmlItemTypeToSuppress = CreateSyntaxProperty(XmlItemType.NONNUMERIC, suppression.nonnumeric().UserDefinedWord());
+                    }
                     else
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ATTRIBUTE,
-                            context.attribute().UserDefinedWord());
+                    {
+                        System.Diagnostics.Debug.Assert(suppression.attributeOrContentOrElement() != null);
+                    }
+
+                    if (suppression.attributeOrContentOrElement() != null)
+                    {
+                        var attributeOrContentOrElement = suppression.attributeOrContentOrElement();
+                        if (attributeOrContentOrElement.attribute() != null)
+                        {
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ATTRIBUTE, attributeOrContentOrElement.attribute().UserDefinedWord());
+                        }
+                        else if (attributeOrContentOrElement.CONTENT() != null)
+                        {
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.CONTENT, attributeOrContentOrElement.CONTENT());
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(attributeOrContentOrElement.element() != null);
+                            suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSyntaxType.ELEMENT, attributeOrContentOrElement.element().UserDefinedWord());
+                        }
+                    }
                 }
-                else if (context.element() != null)
-                {
-                    if (context.NUMERIC() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ELEMENT,
-                            context.NUMERIC());
-                    else if (context.nonnumeric() != null)
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ELEMENT,
-                            context.nonnumeric().UserDefinedWord());
-                    else
-                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ELEMENT,
-                            context.element().UserDefinedWord());
-                }
+
+                System.Diagnostics.Debug.Assert(suppression.whenPhrase() != null);
+                suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(suppression.whenPhrase().repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
             }
-            suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+            
             return suppressDirective;
         }
 

@@ -128,6 +128,12 @@ namespace TypeCobol.Compiler.Parser
                     parameter.Picture = new AlphanumericValue((Token) pictureClauseContext.pictureCharacterString);
                     //Don't set parameter.DataType here, it will be set in CodeElementChecker
                 }
+
+                if (pictureClauseContext.byteLengthPhrase() != null && pictureClauseContext.byteLengthPhrase().IntegerLiteral() != null)
+                {
+                    var integerLiteral = pictureClauseContext.byteLengthPhrase().IntegerLiteral();
+                    parameter.ByteLength = CobolWordsBuilder.CreateIntegerValue(integerLiteral);
+                }
             }
             else if (context.cobol2002TypeClause() != null)
             {
@@ -157,6 +163,8 @@ namespace TypeCobol.Compiler.Parser
                 }
                 parameter.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
             }
+
+            // DYNAMIC LENGTH not allowed on TC function parameters
 
             if (context.justifiedClause() != null)
             {
@@ -196,8 +204,17 @@ namespace TypeCobol.Compiler.Parser
             if (context.groupUsageClause() != null)
             {
                 var groupUsageClauseContext = context.groupUsageClause();
-                parameter.IsGroupUsageNational = new SyntaxProperty<bool>(true,
-                    ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
+                if (groupUsageClauseContext.NATIONAL() != null)
+                {
+                    var token = ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL());
+                    parameter.GroupUsage = new SyntaxProperty<DataUsage>(DataUsage.National, token);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(groupUsageClauseContext.UTF_8() != null);
+                    var token = ParseTreeUtils.GetFirstToken(groupUsageClauseContext.UTF_8());
+                    parameter.GroupUsage = new SyntaxProperty<DataUsage>(DataUsage.UTF8, token);
+                }
             }
 
             //No occurs clause because we only allow level 01
@@ -315,7 +332,7 @@ namespace TypeCobol.Compiler.Parser
                 parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTION_MARK()));
             }
 
-            DataDescriptionChecker.CheckPicture(parameter, context);
+            DataDescriptionChecker.CheckPictureAndUsage(parameter, context);
             return parameter;
         }
 
@@ -337,7 +354,8 @@ namespace TypeCobol.Compiler.Parser
                    CreateDataUsageProperty(DataUsage.Display, c.DISPLAY()) ??
                    CreateDataUsageProperty(DataUsage.DBCS, c.DISPLAY_1()) ??
                    CreateDataUsageProperty(DataUsage.Index, c.INDEX()) ??
-                   CreateDataUsageProperty(DataUsage.National, c.NATIONAL());
+                   CreateDataUsageProperty(DataUsage.National, c.NATIONAL()) ??
+                   CreateDataUsageProperty(DataUsage.UTF8, c.UTF_8());
         }
 
         public override void ExitFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context)

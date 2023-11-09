@@ -9,6 +9,9 @@
          03  az PIC X(15) VALUE "goodbye, world!".
          03  ab.
               05  abc PIC x(3) value spaces.
+       01 a PIC X.
+         88 a1-flag VALUE 't'.
+         88 a2-flag VALUE 'v'.
 
        PROCEDURE DIVISION.
            JSON PARSE x INTO y
@@ -46,6 +49,17 @@
            JSON PARSE x INTO y 
               ON EXCEPTION display "error"
               NOT EXCEPTION display "success"
+
+      *    JSON PARSE x INTO y DETAIL
+      *         NAME OF y::ab IS 'aaa'
+      *         SUPPRESS y::z y::ab
+      *         CONVERTING a FROM JSON BOOL USING
+      *         a::a1-flag AND a::a2-flag
+           JSON PARSE x INTO y DETAIL 
+                NAME OF ab OF y IS 'aaa'
+                SUPPRESS z OF y ab OF y
+                CONVERTING a FROM JSON BOOL USING
+                a1-flag OF a AND a2-flag OF a
 
            GOBACK.
        END PROGRAM Prog.
