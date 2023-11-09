@@ -2193,6 +2193,7 @@ dataDescriptionEntry:
 	levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
+	| dynamicLengthClause
 	| externalClause
 	| globalClause
 	| justifiedClause
@@ -2360,6 +2361,47 @@ dataConditionEntry: { CurrentToken.Text == "88" }?
 blankWhenZeroClause:
     BLANK WHEN? (ZERO | ZEROS | ZEROES);
 
+// The DYNAMIC LENGTH clause specifies a dynamic-length elementary item. The LENGTH keyword is
+// optional.
+//
+// If the LIMIT phrase is not specified, then the limit is set to the maximum value according to the data
+// item class. Attempts to receive into a dynamic-length elementary item more characters over the limit
+// will result in truncation at a character boundary on the right.
+// Note: In practice, the maximum length of a dynamic-length elementary item might be limited by
+// available runtime memory or other runtime environment limits.
+// integer-1
+// An integer specifies the maximum number of alphanumeric or national characters that the data item
+// can contain.
+// When the PICTURE clause is PIC U, integer-1 represents the maximum bytes that the data item can
+// contain. integer-1 must be an integer greater than or equal to 1, and less than or equal to 999999999
+// for alphanumeric class and 999999999 for UTF-8 class dynamic-length elementary items.
+// A dynamic-length elementary item is a data item whose length can vary at runtime. The length of a data
+// item is the current number of characters contained by this data item.
+// A dynamic-length elementary item has a minimum length of zero, and a maximum length that is the
+// smallest of the following limitations:
+// - integer-1 characters of the LIMIT phrase
+// - 999999999 characters if the PICTURE clause is 'X' (alphanumeric class) or 999999999 bytes if the
+// PICTURE clause is 'U' (UTF-8 class)
+// - The available runtime memory.
+// The PICTURE clause of a dynamic-length elementary item must be either PIC X or PIC U, making this
+// a data item of class alphanumeric or UTF-8 respectively. No other PICTURE clause strings other than a
+// single instance of 'X' or 'U' are allowed. PIC N is not supported in a dynamic-length elementary item.
+// Dynamic-length elementary items can be specified in the WORKING-STORAGE SECTION or LOCALSTORAGE
+// SECTION.
+// Dynamic-length elementary items can be specified as subordinate items within a group. The existence
+// of a dynamic-length elementary item within a group item will make it a dynamic-length group item (See
+// "Dynamic-length group items" on page 163).
+// Dynamic-length elementary items cannot be variably located or a subordinate data item within a table
+// containing the OCCURS DEPENDING ON phrase. When a dynamic-length elementary item appears within
+// a group, the content of the item can be considered logically inline within this group, even if the physical
+// location of the content is remotely located. Comparisons and moves between groups where one or both
+// groups contains a subordinate dynamic-length elementary item is not allowed. Moving a dynamic-length
+// elementary item to a fixed-length group is allowed, and moving any group (dynamic-length or not) to a
+// dynamic-length elementary item is allowed.
+
+dynamicLengthClause:
+	DYNAMIC LENGTH? (LIMIT IS? IntegerLiteral)?;
+
 // p188: The EXTERNAL clause specifies that the storage associated with a data item is
 // associated with the run unit rather than with any particular program or method
 // within the run unit.
@@ -2492,7 +2534,7 @@ justifiedClause:
 // within an alphanumeric group.
 
 groupUsageClause:
-    GROUP_USAGE IS? NATIONAL;
+    GROUP_USAGE IS? (NATIONAL | UTF_8);
 
 // p191: The DATA DIVISION language elements used for table handling are the OCCURS
 // clause and the INDEXED BY phrase.
@@ -2760,7 +2802,10 @@ tableSortingKeys:
 // elementary data item.
 
 pictureClause:
-    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString;
+    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString byteLengthPhrase?;
+
+byteLengthPhrase:
+	({ string.Equals(CurrentToken.Text, "BYTE-LENGTH", System.StringComparison.InvariantCultureIgnoreCase) }? BYTE_LENGTHKeyword=UserDefinedWord) IS? IntegerLiteral;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
@@ -3109,6 +3154,7 @@ usageClause:
 					(DISPLAY_1 NATIVE?) |
 					INDEX |
 					(NATIONAL NATIVE?) |
+					(UTF_8 NATIVE?) |
 					(OBJECT REFERENCE classNameReference?) |
 					(PACKED_DECIMAL NATIVE?) |
 					(POINTER | POINTER_32 |
@@ -6638,12 +6684,24 @@ setStatementForConditions:
 // segment or wholly contained within the same independent segment as that SORT
 // statement.
 
+// Table SORT statements can appear anywhere in the PROCEDURE DIVISION. This format of the SORT
+// statement can be used with programs that are compiled with the THREAD option.
+// data-name-2
+// Specifies a table data-name that is subject to the following rules:
+// - data-name-2 must have an OCCURS clause in the data description entry.
+// - data-name-2 can be qualified.
+// - data-name-2 can be subscripted. The rightmost or only subscript of the table must be omitted or
+// replaced with the word ALL.
+// The number of occurrences of table elements that are referenced by data-name-2 is determined
+// by the rules in the OCCURS clause. The sorted table elements are placed in the same table that is
+// referenced by data-name-2.
+
 sortStatement:
-	SORT fileNameReference onAscendingDescendingKey+ 
+	SORT dataItemReferenceOrFileName onAscendingDescendingKey*
 	(WITH? DUPLICATES IN? ORDER?)?
 	collatingSequence?
-	(usingFilenames  | inputProcedure)
-	(givingFilenames | outputProcedure);
+	(usingFilenames  | inputProcedure)?
+	(givingFilenames | outputProcedure)?;
 
 // Rules shared with mergeStatement
 
@@ -7733,10 +7791,17 @@ xmlTypeMapping:
 	subordinateDataItem=variable1 IS? (attribute | element | CONTENT);
 
 xmlSuppressDirective:	
-	( subordinateDataItem=variable1 |
-	(EVERY (attribute | element | ((NUMERIC | nonnumeric) (attribute | element)?)))?)
+	(subordinateDataItem=variable1 whenPhrase?) | genericSuppressionPhrase;
+
+whenPhrase:
 	// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 	WHEN repeatedCharacterValue3 (OR? repeatedCharacterValue3)*;
+
+genericSuppressionPhrase:
+	(EVERY ((NUMERIC attributeOrContentOrElement?) | (nonnumeric attributeOrContentOrElement?) | attributeOrContentOrElement))? whenPhrase;
+
+attributeOrContentOrElement:
+	attribute | CONTENT | element;
 	
 xmlStatementEnd: END_XML;
 

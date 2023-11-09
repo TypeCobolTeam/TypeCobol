@@ -138,6 +138,27 @@ namespace TypeCobol.Test.Parser.Scanner
             };
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
+
+            testName = "UTF8Literals";
+            testLines = new string[] {
+                @"U""This text does not include any escaped char""",
+                @"U'This text has one char from the Basic Multilingual Plane: \u03BB, the lowercase Greek letter Lambda'",
+                @"u""Now with something from Supplementary Planes: \U0001F43F...""",
+                @"u'\U00ABCDEF is not part of Unicode range and both \\u1234 and \\U00ABCDEF are not Unicode escape sequences'",
+                // Playing with some emojis in hexadecimal notation
+                @"UX""E2ADA1""",
+                @"UX'E2ADA1'",
+                @"uX""E2ADA3""",
+                @"uX'E2ADA3'",
+                @"Ux""E2ADA0""",
+                @"Ux'E2ADA2'",
+                @"ux""E2ADA0""",
+                @"ux'E2ADA2'",
+                @"B",
+                @"A"
+            };
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName);
         }
 
         public static void CheckPseudoText()

@@ -1,0 +1,64 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           Select Out001        Assign To SOR001.
+           Select AmbiguousName Assign To SOR001.
+       DATA DIVISION.
+       FILE SECTION.
+       SD Out001.
+       01 Out001Data PIC X(200).
+       SD AmbiguousName.
+       01 AmbiguousNameData PIC X(200).
+       WORKING-STORAGE SECTION.
+       01 tab1.
+          05 a OCCURS 20.
+             10 item-a PIC X.
+       01 AmbiguousName PIC X.
+       PROCEDURE DIVISION.
+      *KO unable to resolve SORT target
+Line 21[17,37] <30, Error, Semantics> - Semantic error: Symbol something-not-defined is not referenced
+           SORT something-not-defined
+      *KO ambiguous reference
+Line 23[17,29] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol AmbiguousName 
+Symbols found: TCOMFL06::AmbiguousName | TCOMFL06::AmbiguousName
+           SORT AmbiguousName
+      *KO SORT file without KEY
+Line 25[12,15] <27, Error, Syntax> - Syntax error : SORT file statement requires at least one sorting KEY.
+           SORT Out001 INPUT PROCEDURE  inputProc
+                       OUTPUT PROCEDURE outputProc
+      *KO SORT file without input
+Line 28[12,15] <27, Error, Syntax> - Syntax error : Missing input definition in SORT file statement: either add INPUT PROCEDURE phrase or USING file phrase to define required input.
+           SORT Out001 ASCENDING Out001Data
+                       OUTPUT PROCEDURE outputProc
+      *KO SORT file without output
+Line 31[12,15] <27, Error, Syntax> - Syntax error : Missing output definition in SORT file statement: either add OUTPUT PROCEDURE phrase or GIVING file phrase to define required output.
+           SORT Out001 ASCENDING Out001Data
+                       INPUT PROCEDURE  inputProc
+      *KO SORT table with input
+Line 34[12,15] <27, Error, Syntax> - Syntax error : SORT table statement does not allow input definition.
+           SORT a ASCENDING item-a
+                  INPUT PROCEDURE  inputProc
+      *KO SORT table with output
+Line 37[12,15] <27, Error, Syntax> - Syntax error : SORT table statement does not allow output definition.
+           SORT a ASCENDING item-a
+                  OUTPUT PROCEDURE outputProc
+      *KO SORT table without KEY
+Line 40[12,15] <27, Error, Syntax> - Syntax error : SORT table statement has no sorting KEY and the sorted table 'a' does not define any KEY clause.
+           SORT a
+      *Ok, this is a valid SORT file
+           SORT Out001 ASCENDING Out001Data
+                       INPUT PROCEDURE  inputProc
+                       OUTPUT PROCEDURE outputProc
+      *Ok, this is a valid SORT table
+           SORT a ASCENDING item-a
+           GOBACK
+           .
+       inputProc.
+           DISPLAY "input proc"
+           .
+       outputProc.
+           DISPLAY "output proc"
+           .
+       END PROGRAM TCOMFL06.

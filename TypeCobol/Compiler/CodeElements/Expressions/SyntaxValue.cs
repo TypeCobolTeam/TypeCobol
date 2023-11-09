@@ -169,8 +169,9 @@ namespace TypeCobol.Compiler.CodeElements
         Alphanumeric,
         DBCS,
         National,
-        AlphanumericOrNational,
-        AlphanumericOrDBCSOrNational
+        UTF_8,
+        AlphanumericOrNationalOrUTF_8,
+        AlphanumericOrDBCSOrNationalOrUTF_8
     }
 
     /// <summary>
@@ -221,7 +222,9 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.DBCSLiteral:
                     case TokenType.NationalLiteral:
                     case TokenType.HexadecimalNationalLiteral:
-                        return false; ;
+                    case TokenType.UTF8Literal:
+                    case TokenType.HexadecimalUTF8Literal:
+                        return false;
                     case TokenType.HIGH_VALUE:
                     case TokenType.HIGH_VALUES:
                     case TokenType.LOW_VALUE:
@@ -304,30 +307,33 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.NationalLiteral:
                     case TokenType.HexadecimalNationalLiteral:
                         return CharacterEncodingType.National;
+                    case TokenType.UTF8Literal:
+                    case TokenType.HexadecimalUTF8Literal:
+                        return CharacterEncodingType.UTF_8;
                     case TokenType.HIGH_VALUE:
                     case TokenType.HIGH_VALUES:
                     case TokenType.LOW_VALUE:
                     case TokenType.LOW_VALUES:
                         // treated as an alphanumeric literal in a context that requires an alphanumeric character
-                        // treated as a national literal when used in a context that requires a national literal
-                        return CharacterEncodingType.AlphanumericOrNational;
+                        // treated as a national or UTF-8 literal when used in a context that requires a national/UTF-8 literal
+                        return CharacterEncodingType.AlphanumericOrNationalOrUTF_8;
                     case TokenType.QUOTE:
                     case TokenType.QUOTES:
                         // represents an alphanumeric character when used in a context that requires an alphanumeric character
-                        // represents a national character when used in a context that requires a national character
-                        return CharacterEncodingType.AlphanumericOrNational;
+                        // represents a national or UTF-8 character when used in a context that requires a national/UTF-8 character
+                        return CharacterEncodingType.AlphanumericOrNationalOrUTF_8;
                     case TokenType.SPACE:
                     case TokenType.SPACES:
                         // treated as an alphanumeric literal when used in a context that requires an alphanumeric character
                         // as a DBCS literal when used in a context that requires a DBCS character
-                        // as a national literal when used in a context that requires a national character
-                        return CharacterEncodingType.AlphanumericOrDBCSOrNational;
+                        // as a national or UTF-8 literal when used in a context that requires a national/UTF-8 character
+                        return CharacterEncodingType.AlphanumericOrDBCSOrNationalOrUTF_8;
                     case TokenType.ZERO:
                     case TokenType.ZEROS:
                     case TokenType.ZEROES:
                         // used in a context that requires an alphanumeric character, an alphanumeric character zero is used
-                        // context requires a national character zero, a national character zero is used
-                        return CharacterEncodingType.AlphanumericOrNational;
+                        // context requires a national or UTF-8 character zero, a national/UTF-8 character zero is used
+                        return CharacterEncodingType.AlphanumericOrNationalOrUTF_8;
                     case TokenType.PictureCharacterString:
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
@@ -371,6 +377,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.DBCSLiteral:
                     case TokenType.NationalLiteral:
                     case TokenType.HexadecimalNationalLiteral:
+                    case TokenType.UTF8Literal:
+                    case TokenType.HexadecimalUTF8Literal:
                         return ((AlphanumericLiteralTokenValue)Token.LiteralValue).Text;
                     case TokenType.SPACE:
                     case TokenType.SPACES:
@@ -574,7 +582,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens : 
     /// AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral |
-    /// DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral |
+    /// DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral | UTF8Literal | HexadecimalUTF8Literal |
     /// HIGH_VALUE | HIGH_VALUES | LOW_VALUE  | LOW_VALUES | QUOTE | QUOTES | SPACE | SPACES | ZERO  | ZEROS  | ZEROES
     /// </summary>
     public class CharacterValue : AlphanumericValue
@@ -590,6 +598,8 @@ namespace TypeCobol.Compiler.CodeElements
                 case TokenType.DBCSLiteral:
                 case TokenType.NationalLiteral:
                 case TokenType.HexadecimalNationalLiteral:
+                case TokenType.UTF8Literal:
+                case TokenType.HexadecimalUTF8Literal:
                 case TokenType.HIGH_VALUE:
                 case TokenType.HIGH_VALUES:
                 case TokenType.LOW_VALUE:

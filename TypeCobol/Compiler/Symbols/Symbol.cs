@@ -55,25 +55,26 @@ namespace TypeCobol.Compiler.Symbols
             AnyLength = 0x01L << 20,
             GroupUsageBit = 0x01L << 21,
             GroupUsageNational = 0x01L << 22,
+            GroupUsageUTF8 = 0x01L << 23,
             //-------------------------------------------------
 
             //Symbols Modifiers that have Type Equality impact
             //along with PICTURE and USAGE.
-            BlankWhenZero = 0x01L << 23,
-            DynamicLength = 0x01L << 24,
-            Justified = 0x01L << 25,
-            SeparateSign = 0x01L << 26,
-            LeadingSign = 0x01L << 27,
-            TrailingSign = 0x01L << 28,
-            Sync = 0x01L << 29, //May be SYNC LEFT or SYNC RIGHT
+            BlankWhenZero = 0x01L << 24,
+            DynamicLength = 0x01L << 25,
+            Justified = 0x01L << 26,
+            SeparateSign = 0x01L << 27,
+            LeadingSign = 0x01L << 28,
+            TrailingSign = 0x01L << 29,
+            Sync = 0x01L << 30, //May be SYNC LEFT or SYNC RIGHT
             //-------------------------------------------------
 
-            Redefines = 0x01L << 30,
-            HasATypedefType = 0x01L << 31,//The symbol has a type that comes from a TypeDef.
-            Parameter = 0x01L << 32,//This a parameter variable.
-            Returning = 0x01L << 33,//A Return variable.
-            InsideTypedef = 0x01L << 34,//Flag of any symbol inside a Typedef definition.
-            BuiltinSymbol = 0x01L << 35, //This is a Builtin symbol.
+            Redefines = 0x01L << 31,
+            HasATypedefType = 0x01L << 32,//The symbol has a type that comes from a TypeDef.
+            Parameter = 0x01L << 33,//This a parameter variable.
+            Returning = 0x01L << 34,//A Return variable.
+            InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition.
+            BuiltinSymbol = 0x01L << 36, //This is a Builtin symbol.
             
             //Etc... (Max = 0x01L << 62)
         }

@@ -13,6 +13,7 @@ dataDescriptionEntry:
 		levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
 		( pictureClause
 		| blankWhenZeroClause
+		| dynamicLengthClause
 		| externalClause
 		| globalClause
 		| justifiedClause
@@ -69,13 +70,30 @@ jsonGenerateStatement:
 	FROM source=variable1
 	(COUNT IN? charactersCount=storageArea1)?
 	(name OF? jsonNameMapping+)? // Re-use of contextual keyword NAME defined for XML GENERATE in CobolCodeElements.
-	(SUPPRESS excludedDataItem+)?;
+	(SUPPRESS jsonSuppressDirective+)?
+	(CONVERTING jsonGenerateConvertingPhrase)?;
 
 jsonNameMapping:
-	dataItem=variable1 IS? outputName=alphanumericValue2;
+	dataItem=variable1 IS? (outputName=alphanumericValue2 | OMITTED);
 
-excludedDataItem:
-	variable1;
+// Re-use of whenPhrase and nonnumeric defined for XML GENERATE in CobolCodeElements.
+jsonSuppressDirective:
+	(subordinateDataItem=variable1 whenPhrase?) | jsonGenericSuppressionPhrase;
+
+jsonGenericSuppressionPhrase:
+	(EVERY (NUMERIC | nonnumeric))? whenPhrase;
+
+jsonGenerateConvertingPhrase:
+	jsonGenerateConvertingDirective (ALSO jsonGenerateConvertingDirective)*;
+
+jsonGenerateConvertingDirective:
+	convertingDataItem=variable1 TO? JSON? (booleanWord | boolWord) USING? (conditionVariable | alphanumericLiteralToken);
+
+booleanWord:
+	{string.Equals(CurrentToken.Text, "BOOLEAN", System.StringComparison.OrdinalIgnoreCase)}? BOOLEANKeyword=UserDefinedWord;
+	
+boolWord:
+	{string.Equals(CurrentToken.Text, "BOOL", System.StringComparison.OrdinalIgnoreCase)}? BOOLKeyword=UserDefinedWord;
 
 jsonStatementEnd:
 	END_JSON;
@@ -86,7 +104,29 @@ jsonParseStatement:
 	INTO destination=variable1
 	(WITH? DETAIL)? 
 	(name OF? jsonParseNameMapping+)? // Re-use of contextual keyword NAME defined for XML GENERATE in CobolCodeElements.
-	(SUPPRESS excludedDataItem+)?;
+	(SUPPRESS excludedDataItem+)?
+	(CONVERTING jsonParseConvertingPhrase)?;
 
 jsonParseNameMapping:
 	dataItem=variable1 IS? (OMITTED|inputName=alphanumericValue2);
+
+excludedDataItem:
+	variable1;
+	
+jsonParseConvertingPhrase:
+	jsonParseConvertingDirective (ALSO jsonParseConvertingDirective)*;
+	
+jsonParseConvertingDirective:
+	convertingDataItem=storageArea2 FROM? JSON? (booleanWord | boolWord) jsonParseUsingDirective;
+
+jsonParseUsingDirective:
+	USING? (usingSingleCondition | usingConditionPair | usingLiterals);
+	
+usingSingleCondition:
+	conditionVariable;
+
+usingConditionPair: 
+	conditionVariable AND? conditionVariable;
+	
+usingLiterals:
+	alphanumericLiteralToken AND? alphanumericLiteralToken;

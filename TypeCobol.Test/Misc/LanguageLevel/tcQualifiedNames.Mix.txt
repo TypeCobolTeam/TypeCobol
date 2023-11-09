@@ -47,6 +47,7 @@ Line 45[20,24] <27, Error, Syntax> - Syntax error : extraneous input 's1::b' exp
            PERFORM s1::b
       *KO qualifiedDataName1
 Line 47[42,67] <27, Error, Syntax> - Syntax error : mismatched input 'WORK-STUDENT::STUDENT-ID-W' expecting user defined word
+Line 47[12,15] <27, Error, Syntax> - Syntax error : SORT file statement requires at least one sorting KEY.
            SORT FILE-03 ON ASCENDING KEY WORK-STUDENT::STUDENT-ID-W
            USING FILE-01 GIVING FILE-02
       *KO qualifiedConditionName

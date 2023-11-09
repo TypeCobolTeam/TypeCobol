@@ -117,15 +117,82 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Sort sort)
         {
-            var sortStatement = sort.CodeElement;
+            //TODO Check subscripts !
 
+            // Check nature of SORT target
+            var sortStatement = sort.CodeElement;
+            DataDefinition sortTarget = null;
+            if (sort.StorageAreaReadsDataDefinition != null &&
+                sort.StorageAreaReadsDataDefinition.TryGetValue(sortStatement.FileNameOrTableName, out sortTarget))
+            {
+                // SORT target has been resolved, compute SORT nature from its target's CodeElementType
+                Debug.Assert(sortTarget.CodeElement != null);
+                sort.Nature = sortTarget.CodeElement.Type == CodeElementType.FileDescriptionEntry ? SortNature.FileSort : SortNature.TableSort;
+            }
+
+            // Check format based on nature of target
+            switch (sort.Nature)
+            {
+                case SortNature.FileSort:
+                    CheckFileSort();
+                    break;
+                case SortNature.TableSort:
+                    CheckTableSort();
+                    break;
+            }
+
+            // Resolve input and output procedures
             (sort.InputProcedureParagraphSymbol, sort.InputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.InputProcedure, _currentSection);
             (sort.InputThroughProcedureParagraphSymbol, sort.InputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughInputProcedure, _currentSection);
-
             (sort.OutputProcedureParagraphSymbol, sort.OutputProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.OutputProcedure, _currentSection);
             (sort.OutputThroughProcedureParagraphSymbol, sort.OutputThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(sort, sortStatement.ThroughOutputProcedure, _currentSection);
 
             return true;
+
+            void CheckFileSort()
+            {
+                // File SORT must have at least one sorting KEY (ASCENDING or DESCENDING)
+                if (sortStatement.SortingKeys == null || sortStatement.SortingKeys.Count == 0)
+                {
+                    DiagnosticUtils.AddError(sort, "SORT file statement requires at least one sorting KEY.", sortStatement);
+                }
+
+                // Requires an INPUT (PROCEDURE or USING file)
+                if ((sortStatement.InputFiles == null || sortStatement.InputFiles.Length == 0) && sortStatement.InputProcedure == null)
+                {
+                    DiagnosticUtils.AddError(sort, "Missing input definition in SORT file statement: either add INPUT PROCEDURE phrase or USING file phrase to define required input.", sortStatement);
+                }
+
+                // Requires an OUTPUT (PROCEDURE or GIVING file)
+                if ((sortStatement.OutputFiles == null || sortStatement.OutputFiles.Length == 0) && sortStatement.OutputProcedure == null)
+                {
+                    DiagnosticUtils.AddError(sort, "Missing output definition in SORT file statement: either add OUTPUT PROCEDURE phrase or GIVING file phrase to define required output.", sortStatement);
+                }
+            }
+
+            void CheckTableSort()
+            {
+                // No input or output allowed on SORT table statement
+                if ((sortStatement.InputFiles != null && sortStatement.InputFiles.Length > 0) || sortStatement.InputProcedure != null)
+                {
+                    DiagnosticUtils.AddError(sort, "SORT table statement does not allow input definition.", sortStatement);
+                }
+                if ((sortStatement.OutputFiles != null && sortStatement.OutputFiles.Length > 0) || sortStatement.OutputProcedure != null)
+                {
+                    DiagnosticUtils.AddError(sort, "SORT table statement does not allow output definition.", sortStatement);
+                }
+
+                // The KEY must be defined on SORT if no key is already defined on target
+                if (sortStatement.SortingKeys == null || sortStatement.SortingKeys.Count == 0)
+                {
+                    Debug.Assert(sortTarget != null);
+                    var tableSortingKeys = sortTarget.GetTableSortingKeys();
+                    if (tableSortingKeys == null || tableSortingKeys.Length == 0)
+                    {
+                        DiagnosticUtils.AddError(sort, $"SORT table statement has no sorting KEY and the sorted table '{sortTarget.Name}' does not define any KEY clause.", sortStatement);
+                    }
+                }
+            }
         }
 
         public override bool Visit(Paragraph paragraph)
@@ -1240,6 +1307,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 //Those have their own specific subscript checking
                 case CodeElementType.SearchStatement:
+                case CodeElementType.SortStatement:
                 case CodeElementType.ProcedureStyleCall:
                     return;
             }

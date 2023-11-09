@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TypeCobol.Compiler.Types
+﻿namespace TypeCobol.Compiler.Types
 {
     /// <summary>
     /// The representation of a character of the NFA alphabet.
@@ -51,6 +49,8 @@ namespace TypeCobol.Compiler.Types
                     s = "P"; break;
                 case SC.S:
                     s = "S"; break;
+                case SC.U:
+                    s = "U"; break;
                 case SC.V:
                     s = "V"; break;
                 case SC.X:
