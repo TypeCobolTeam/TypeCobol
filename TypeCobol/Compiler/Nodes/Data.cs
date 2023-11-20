@@ -461,11 +461,9 @@ namespace TypeCobol.Compiler.Nodes {
                     {
                         DataRedefines redefines = parent.Children[index] as DataRedefines;
                         //Get the original redefined node
-                        while (redefines != null)
+                        if (redefines != null)
                         {
                             redefinedDataDefinition = redefines.RedefinedVariable;
-
-                            redefines = redefinedDataDefinition as DataRedefines;
                         }
                         
                         //Sum up all physical lengths except these from DataRedefines and the node that is redefined by the current node (if he is a DataRedefines)

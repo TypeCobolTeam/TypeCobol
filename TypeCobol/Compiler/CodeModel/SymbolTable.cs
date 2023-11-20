@@ -353,11 +353,6 @@ namespace TypeCobol.Compiler.CodeModel
             while (index >= 0)
             {
                 var child = childrens[index];
-                if (child == null)
-                {
-                    return null;
-                }
-
                 if (child.Name != null)
                 {
                     var type = child.CodeElement?.Type;
@@ -368,10 +363,10 @@ namespace TypeCobol.Compiler.CodeModel
                             if (type == CodeElementType.DataRedefinesEntry)
                             {
                                 // Transitive REDEFINES => continue until root one is reached
-                                return (child as DataRedefines).RedefinedVariable;
+                                return ((DataRedefines)child).RedefinedVariable;
                             }
 
-                            return child as DataDefinition;
+                            return (DataDefinition)child;
                         }
 
                         // Name differs
