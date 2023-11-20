@@ -478,7 +478,9 @@ namespace TypeCobol.Test.Parser.Scanner
                 "CBL OFFSET",
                 "CBL AMODE(64)",
                 "CBL ALOWCOPYLOC",
-                "CBL ALOWDEFINE"
+                "CBL ALOWDEFINE",
+                "CBL VSAMOPENFS(S)",
+                "CBL VS(COMPAT)"
             };
             string result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
