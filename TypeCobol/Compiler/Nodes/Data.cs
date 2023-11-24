@@ -271,6 +271,8 @@ namespace TypeCobol.Compiler.Nodes {
 
         private IList<DataRedefines> _dataRedefines;
 
+        public IEnumerable<DataRedefines> DataRedefinitions => _dataRedefines;
+
         public void AddDataRedefinition(DataRedefines dataRedefines)
         {
             if (_dataRedefines == null)
@@ -459,12 +461,9 @@ namespace TypeCobol.Compiler.Nodes {
                     {
                         DataRedefines redefines = parent.Children[index] as DataRedefines;
                         //Get the original redefined node
-                        while (redefines != null)
+                        if (redefines != null)
                         {
-                            SymbolReference redefined = redefines.CodeElement.RedefinesDataName;
-                            redefinedDataDefinition = redefines.SymbolTable.GetRedefinedVariable(redefines, redefined);
-
-                            redefines = redefinedDataDefinition as DataRedefines;
+                            redefinedDataDefinition = redefines.RedefinedVariable;
                         }
                         
                         //Sum up all physical lengths except these from DataRedefines and the node that is redefined by the current node (if he is a DataRedefines)
@@ -537,8 +536,7 @@ namespace TypeCobol.Compiler.Nodes {
                 if (this is DataRedefines node)
                 {
                     //Get the start position from the node it redefines.
-                    SymbolReference redefined = node.CodeElement.RedefinesDataName;
-                    var result = SymbolTable.GetRedefinedVariable(node, redefined);
+                    var result = node.RedefinedVariable;
 
                     _startPosition = result.StartPosition + SlackBytes;
                     return _startPosition.Value;
@@ -764,10 +762,18 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     public class DataRedefines: DataDefinition {
-        public DataRedefines([NotNull] DataRedefinesEntry entry) : base(entry) { }
+        public DataRedefines([NotNull] DataRedefinesEntry entry)
+            : base(entry)
+        {
+            _redefinedVariable = new Lazy<DataDefinition>(() => SymbolTable.GetRedefinedVariable(this));
+        }
 
         [NotNull]
         public new DataRedefinesEntry CodeElement => (DataRedefinesEntry) base.CodeElement;
+
+        private readonly Lazy<DataDefinition> _redefinedVariable;
+
+        public DataDefinition RedefinedVariable => _redefinedVariable.Value;
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
