@@ -537,6 +537,7 @@ namespace TypeCobol.Compiler.Nodes {
                 {
                     //Get the start position from the node it redefines.
                     var result = node.RedefinedVariable;
+                    if (result == null) return 0;
 
                     _startPosition = result.StartPosition + SlackBytes;
                     return _startPosition.Value;
