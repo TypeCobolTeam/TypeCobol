@@ -537,10 +537,13 @@ namespace TypeCobol.Compiler.Nodes {
                 {
                     //Get the start position from the node it redefines.
                     var result = node.RedefinedVariable;
+                    if (result != null)
+                    {
+                        _startPosition = result.StartPosition + SlackBytes;
+                        return _startPosition.Value;
+                    }
 
-                    _startPosition = result.StartPosition + SlackBytes;
-                    return _startPosition.Value;
-                    
+                    // Redefined variable does not exist -> handle node as a DataDescription
                 }
 
                 if (Parent is DataSection)
@@ -557,8 +560,8 @@ namespace TypeCobol.Compiler.Nodes {
                         if (i == Parent.ChildIndex(this) - 1)
                         {
                             int siblingIndex = i;
-                            //Looks further up if the first position encountered is from a DataRedefines node.
-                            while (sibling is DataRedefines)
+                            //Looks further up if the first position encountered is from a DataRedefines node with an existing redefined variable.
+                            while (sibling is DataRedefines dataRedefines && dataRedefines.RedefinedVariable != null)
                             {
                                 sibling = Parent.Children[siblingIndex - 1];
 
