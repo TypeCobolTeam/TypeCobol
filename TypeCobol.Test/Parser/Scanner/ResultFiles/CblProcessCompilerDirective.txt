@@ -191,3 +191,9 @@ Line 0[1,15] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compi
 *** DIRECTIVE INVALID SYNTAX -> CBL|ALOWDEFINE ([1,14:CBL ALOWDEFINE]<COMPILER_DIRECTIVE>) ***
 Line 0[1,14] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
+-- Line 61 --
+*** DIRECTIVE CBL|VSAMOPENFS=S ([1,17:CBL VSAMOPENFS(S)]<COMPILER_DIRECTIVE>) ***
+
+-- Line 62 --
+*** DIRECTIVE CBL|VS=COMPAT ([1,14:CBL VS(COMPAT)]<COMPILER_DIRECTIVE>) ***
+

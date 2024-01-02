@@ -1,0 +1,14 @@
+Diagnostics
+------------
+  None
+   
+--------- FIELD LEVEL|NAME ---------- START     END  LENGTH
+1 group0                                                   1      21      21
+    5 group1                                               1      10      10
+        10 var1                                            1      10      10
+    5 group2                                               1      20      20
+        10 var2                                            1      20      20
+    5 group3                                               1       3       3
+        10 var3                                            1       3       3
+    5 next-group                                          21      21       1
+        10 next-var                                       21      21       1
