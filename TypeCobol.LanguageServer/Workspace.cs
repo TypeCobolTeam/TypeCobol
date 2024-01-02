@@ -1100,7 +1100,7 @@ namespace TypeCobol.LanguageServer
         private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodes(CompilationUnit compilationUnit)
         {
             var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
-            Node dataDivision = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.GetChildren<DataDivision>().FirstOrDefault();
+            Node dataDivision = compilationUnit?.TemporaryProgramClassDocumentSnapshot?.Root?.MainProgram?.GetChildren<DataDivision>()?.FirstOrDefault();
             if (dataDivision != null)
             {
                 // Consider data declared in the Working storage

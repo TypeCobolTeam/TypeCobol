@@ -92,6 +92,7 @@ namespace TypeCobol.Compiler.Directives
     // “MDECK” on page 332 NOMDECK NOMD|MD|MD(C|NOC) 
     // “OPTFILE” on page 338 None None 
     // “THREAD” on page 356 NOTHREAD None
+    // “VSAMOPENFS” on page 389 VSAMOPENFS(COMPAT) VS(C | S)
     // --- Deprecated ---
     // “LIB”
 
@@ -197,6 +198,7 @@ namespace TypeCobol.Compiler.Directives
                 case IBMCompilerOptionName.THREAD: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.TRUNC: IsActivated = true; Value = "STD"; break;
                 case IBMCompilerOptionName.VBREF: IsActivated = false; Value = null; break;
+                case IBMCompilerOptionName.VSAMOPENFS: IsActivated = true; Value = "COMPAT"; break;
                 case IBMCompilerOptionName.WORD: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.XREF: IsActivated = true; Value = "FULL"; break;
                 case IBMCompilerOptionName.ZONECHECK: IsActivated = false; Value = null; break;
@@ -598,6 +600,12 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus VBREF { get; private set; }
 
         /// <summary>
+        /// The VSAMOPENFS option affects the user file status reported from successful VSAM OPEN statements that
+        /// require verified file integrity check.
+        /// </summary>
+        public IBMCompilerOptionStatus VSAMOPENFS { get; private set; }
+
+        /// <summary>
         /// Use WORD(xxxx) to specify that an alternate reserved-word table is to be used during compilation.
         /// </summary>
         public IBMCompilerOptionStatus WORD { get; private set; }
@@ -623,7 +631,7 @@ namespace TypeCobol.Compiler.Directives
         public IBMCompilerOptionStatus ZWB { get; private set; }
 
         // Conversion of option words in source text to option name enumeration
-        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(194, StringComparer.OrdinalIgnoreCase);
+        private readonly IDictionary<string, IBMCompilerOptionStatus> optionWordToOptionName = new Dictionary<string, IBMCompilerOptionStatus>(196, StringComparer.OrdinalIgnoreCase);
               
         // Deprecated options which are not supported anymore with the corresponding warning message to be displayed
         private static readonly IDictionary<string, string> deprecatedOptions = new Dictionary<string, string>(1, StringComparer.OrdinalIgnoreCase);
@@ -705,6 +713,7 @@ namespace TypeCobol.Compiler.Directives
             THREAD = new IBMCompilerOptionStatus(IBMCompilerOptionName.THREAD);
             TRUNC = new IBMCompilerOptionStatus(IBMCompilerOptionName.TRUNC);
             VBREF = new IBMCompilerOptionStatus(IBMCompilerOptionName.VBREF);
+            VSAMOPENFS = new IBMCompilerOptionStatus(IBMCompilerOptionName.VSAMOPENFS);
             WORD = new IBMCompilerOptionStatus(IBMCompilerOptionName.WORD);
             XREF = new IBMCompilerOptionStatus(IBMCompilerOptionName.XREF);
             ZONECHECK = new IBMCompilerOptionStatus(IBMCompilerOptionName.ZONECHECK);
@@ -779,6 +788,7 @@ namespace TypeCobol.Compiler.Directives
             optionWordToOptionName["THREAD"] = THREAD; optionWordToOptionName["NOTHREAD"] = THREAD;
             optionWordToOptionName["TRUNC"] = TRUNC;
             optionWordToOptionName["VBREF"] = VBREF; optionWordToOptionName["NOVBREF"] = VBREF;
+            optionWordToOptionName["VSAMOPENFS"] = VSAMOPENFS; optionWordToOptionName["VS"] = VSAMOPENFS;
             optionWordToOptionName["WORD"] = WORD; optionWordToOptionName["WD"] = WORD; optionWordToOptionName["NOWORD"] = WORD; optionWordToOptionName["NOWD"] = WORD;
             optionWordToOptionName["XREF"] = XREF; optionWordToOptionName["X"] = XREF; optionWordToOptionName["NOXREF"] = XREF; optionWordToOptionName["NOX"] = XREF;
             optionWordToOptionName["ZONECHECK"] = ZONECHECK; optionWordToOptionName["ZC"] = ZONECHECK; optionWordToOptionName["NOZONECHECK"] = ZONECHECK; optionWordToOptionName["NOZC"] = ZONECHECK;
@@ -992,6 +1002,8 @@ namespace TypeCobol.Compiler.Directives
         TRUNC,
         /* Use VBREF to get a cross-reference between all verbs used in the source program and the line numbers in which they are used. VBREF also produces a summary of the number of times each verb was used in the program. */
         VBREF,
+        /* The VSAMOPENFS option affects the user file status reported from successful VSAM OPEN statements that require verified file integrity check. */
+        VSAMOPENFS,
         /* Use WORD(xxxx) to specify that an alternate reserved-word table is to be used during compilation. */
         WORD,
         /* Use XREF to produce a sorted cross-reference listing. */

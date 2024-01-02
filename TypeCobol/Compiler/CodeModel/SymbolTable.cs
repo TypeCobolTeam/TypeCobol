@@ -344,28 +344,39 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
-        public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
+        public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode)
         {
+            var redefinesDataName = redefinesNode.CodeElement.RedefinesDataName.Name;
             var childrens = redefinesNode.Parent.Children;
             int index = redefinesNode.Parent.IndexOf(redefinesNode);
 
             while (index >= 0)
             {
-                CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as CommonDataDescriptionAndDataRedefines;
-
-                if (child != null && (child is DataDescriptionEntry || child is DataRedefinesEntry))
+                var child = childrens[index];
+                if (child.Name != null)
                 {
-                    if (child.DataName != null &&
-                        string.Equals(child.DataName.Name, symbolReference.Name,
-                            StringComparison.OrdinalIgnoreCase))
-                        return childrens[index] as DataDefinition;
-                    else if (child.DataName != null && child is DataDescriptionEntry &&
-                             !string.Equals(child.DataName.Name, symbolReference.Name,
-                                 StringComparison.OrdinalIgnoreCase))
-                        return null;
+                    var type = child.CodeElement?.Type;
+                    if (type == CodeElementType.DataDescriptionEntry || type == CodeElementType.DataRedefinesEntry)
+                    {
+                        if (string.Equals(child.Name, redefinesDataName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (type == CodeElementType.DataRedefinesEntry)
+                            {
+                                // Transitive REDEFINES => continue until root one is reached
+                                return ((DataRedefines)child).RedefinedVariable;
+                            }
+
+                            return (DataDefinition)child;
+                        }
+
+                        // Name differs
+                        if (type == CodeElementType.DataDescriptionEntry)
+                        {
+                            // No more REDEFINES => not found
+                            return null;
+                        }
+                    }
                 }
-                else
-                    return null;
 
                 index--;
             }

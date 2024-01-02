@@ -143,7 +143,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             var redefinesSymbolReference = redefinesNode.CodeElement.RedefinesDataName;
-            var redefinedVariable = redefinesNode.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
+            var redefinedVariable = redefinesNode.RedefinedVariable;
 
             if (redefinedVariable == null)
             {
