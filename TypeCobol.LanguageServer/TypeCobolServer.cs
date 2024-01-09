@@ -89,7 +89,7 @@ namespace TypeCobol.LanguageServer
                 {
                     type = MessageType.Log,
                     message = message,
-                    textDocument = new TextDocumentIdentifier(uri.ToString())
+                    textDocument = new TextDocumentIdentifier(GetOriginalUri(uri))
                 };
                 this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
             }
@@ -187,7 +187,7 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            MissingCopiesDetected(new TextDocumentIdentifier(fileUri.ToString()), missingCopiesEvent.Copies);
+            MissingCopiesDetected(new TextDocumentIdentifier(GetOriginalUri((Uri)fileUri)), missingCopiesEvent.Copies);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace TypeCobol.LanguageServer
                     diag.Info.ReferenceText));
             }
 
-            diagParameter.uri = fileUri.ToString();
+            diagParameter.uri = GetOriginalUri((Uri)fileUri);
             diagParameter.diagnostics = diagList.ToArray();
             this.RpcServer.SendNotification(PublishDiagnosticsNotification.Type, diagParameter);
         }
@@ -237,6 +237,18 @@ namespace TypeCobol.LanguageServer
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets the original URI (which was set by the client)
+        /// DON'T use ToString() as it returns the canonically unescaped form of the URI
+        /// (it may cause issue if the path contains some blanks which need to be escaped)
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        private static string GetOriginalUri(Uri uri)
+        {
+            return uri.OriginalString;
         }
 
         /// <summary>
