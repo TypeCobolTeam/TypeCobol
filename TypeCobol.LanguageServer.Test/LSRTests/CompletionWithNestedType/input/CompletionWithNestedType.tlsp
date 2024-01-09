@@ -19,11 +19,11 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":50,\"character\":12},\"end\":{\"line\":50,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":50,\"character\":12},\"end\":{\"line\":50,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
       "category": 2,

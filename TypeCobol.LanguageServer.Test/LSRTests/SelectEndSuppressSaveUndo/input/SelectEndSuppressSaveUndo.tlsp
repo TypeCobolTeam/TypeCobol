@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -27,7 +27,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\"}}}",
