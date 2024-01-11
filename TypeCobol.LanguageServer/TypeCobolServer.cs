@@ -11,6 +11,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
+using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Tools;
 
 using Range = TypeCobol.LanguageServer.VsCodeProtocol.Range;
@@ -89,7 +90,7 @@ namespace TypeCobol.LanguageServer
                 {
                     type = MessageType.Log,
                     message = message,
-                    textDocument = new TextDocumentIdentifier(GetOriginalUri(uri))
+                    textDocument = new TextDocumentIdentifier(uri.GetOriginalUri())
                 };
                 this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
             }
@@ -187,7 +188,7 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            MissingCopiesDetected(new TextDocumentIdentifier(GetOriginalUri((Uri)fileUri)), missingCopiesEvent.Copies);
+            MissingCopiesDetected(new TextDocumentIdentifier(((Uri)fileUri).GetOriginalUri()), missingCopiesEvent.Copies);
         }
 
         /// <summary>
@@ -207,7 +208,8 @@ namespace TypeCobol.LanguageServer
                     diag.Info.ReferenceText));
             }
 
-            diagParameter.uri = GetOriginalUri((Uri)fileUri);
+            diagParameter.uri = ((Uri)fileUri).GetOriginalUri();
+            //diagParameter.uri = fileUri.ToString();
             diagParameter.diagnostics = diagList.ToArray();
             this.RpcServer.SendNotification(PublishDiagnosticsNotification.Type, diagParameter);
         }
@@ -237,18 +239,6 @@ namespace TypeCobol.LanguageServer
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Gets the original URI (which was set by the client)
-        /// DON'T use ToString() as it returns the canonically unescaped form of the URI
-        /// (it may cause issue if the path contains some blanks which need to be escaped)
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <returns></returns>
-        private static string GetOriginalUri(Uri uri)
-        {
-            return uri.OriginalString;
         }
 
         /// <summary>

@@ -50,5 +50,17 @@ namespace TypeCobol.LanguageServer.Utilities
                     return "";
             }
         }
+
+        /// <summary>
+        /// Gets the original URI (which was set by the client)
+        /// DON'T use ToString() as it returns the canonically unescaped form of the URI
+        /// (it may cause issue if the path contains some blanks which need to be escaped)
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        public static string GetOriginalUri(this Uri uri)
+        {
+            return uri.OriginalString;
+        }
     }
 }
