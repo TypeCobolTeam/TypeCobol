@@ -209,7 +209,6 @@ namespace TypeCobol.LanguageServer
             }
 
             diagParameter.uri = ((Uri)fileUri).GetOriginalUri();
-            //diagParameter.uri = fileUri.ToString();
             diagParameter.diagnostics = diagList.ToArray();
             this.RpcServer.SendNotification(PublishDiagnosticsNotification.Type, diagParameter);
         }
