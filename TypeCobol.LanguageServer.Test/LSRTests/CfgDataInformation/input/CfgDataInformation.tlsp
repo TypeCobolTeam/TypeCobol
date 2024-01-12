@@ -15,7 +15,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/workspaces/runtime-GEFTest2/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/RE/RE.MAYANJE2.SOURCE/DVZZJCM6.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MAYANJE/workspaces/runtime-GEFTest2/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/RE/RE.MAYANJE2.SOURCE/DVZZJCM6.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -23,7 +23,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/workspaces/runtime-GEFTest2/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/RE/RE.MAYANJE2.SOURCE/DVZZJCM6.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MAYANJE/workspaces/runtime-GEFTest2/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/RE/RE.MAYANJE2.SOURCE/DVZZJCM6.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/workspaces/runtime-GEFTest2/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/RE/RE.MAYANJE2.SOURCE/DVZZJCM6.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MAYANJE/workspaces/runtime-GEFTest2/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/RE/RE.MAYANJE2.SOURCE/DVZZJCM6.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,

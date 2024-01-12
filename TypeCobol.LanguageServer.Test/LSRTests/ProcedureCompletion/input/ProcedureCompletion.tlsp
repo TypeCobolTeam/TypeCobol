@@ -12,7 +12,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -20,7 +20,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -41,7 +41,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
       "category": 2,
@@ -73,7 +73,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'CALL ... .'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'CALL ... .'\"}]}}"
     },
     {
       "category": 2,
@@ -125,7 +125,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'CustomDep.MyProcedure' \"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param1' of type DATE and length 8\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param2' of type DATE and length 8\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'CustomDep.MyProcedure' \"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param1' of type DATE and length 8\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param2' of type DATE and length 8\"}]}}"
     },
     {
       "category": 2,
@@ -181,7 +181,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":59}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'CustomDep.MyProcedure' input(DATE)\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":59}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param2' of type DATE and length 8\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":59}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'CustomDep.MyProcedure' input(DATE)\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":59}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param2' of type DATE and length 8\"}]}}"
     },
     {
       "category": 2,
@@ -209,7 +209,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 2,

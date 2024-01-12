@@ -19,7 +19,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15711654946382997773.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":11,\"character\":12},\"end\":{\"line\":11,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15711654946382997773.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":11,\"character\":12},\"end\":{\"line\":11,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
       "category": 2,

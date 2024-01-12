@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
     },
     {
       "category": 0,
@@ -19,7 +19,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
     },
     {
       "category": 0,
@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'GOBACK' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"}]}}"
     },
     {
       "category": 2,
@@ -63,7 +63,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":13,\"character\":20},\"end\":{\"line\":13,\"character\":22}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol amb is not referenced\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":13,\"character\":20},\"end\":{\"line\":13,\"character\":22}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol amb is not referenced\"}]}}"
     },
     {
       "category": 2,
@@ -107,7 +107,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":13,\"character\":20},\"end\":{\"line\":13,\"character\":22}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol Lev is not referenced\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":13,\"character\":20},\"end\":{\"line\":13,\"character\":22}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol Lev is not referenced\"}]}}"
     },
     {
       "category": 2,

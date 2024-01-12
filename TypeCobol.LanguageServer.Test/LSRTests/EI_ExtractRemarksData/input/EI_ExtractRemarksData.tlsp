@@ -15,11 +15,11 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\",\"diagnostics\":[]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"}}}",

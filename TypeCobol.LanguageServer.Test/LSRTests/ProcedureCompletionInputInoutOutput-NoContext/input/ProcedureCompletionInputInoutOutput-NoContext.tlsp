@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -19,7 +19,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -59,7 +59,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":12},\"end\":{\"line\":35,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":31}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext(no arguments)'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":12},\"end\":{\"line\":35,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":31}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -87,7 +87,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":38}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":38}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -111,7 +111,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":36,\"character\":12},\"end\":{\"line\":36,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":35,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":36,\"character\":12},\"end\":{\"line\":36,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":35,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -139,7 +139,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":35,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":35,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -163,7 +163,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":12},\"end\":{\"line\":37,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":36,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":12},\"end\":{\"line\":37,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":36,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -187,7 +187,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -227,7 +227,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":52,\"character\":12},\"end\":{\"line\":52,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":46}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut(no arguments)'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":52,\"character\":12},\"end\":{\"line\":52,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":46}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -255,7 +255,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":53}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":53}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -279,7 +279,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":53,\"character\":12},\"end\":{\"line\":53,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":52,\"character\":47}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":53,\"character\":12},\"end\":{\"line\":53,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":52,\"character\":47}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -307,7 +307,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":52,\"character\":54}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE) output(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":52,\"character\":54}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE) output(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -331,7 +331,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -371,7 +371,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":68,\"character\":12},\"end\":{\"line\":68,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":44}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput(no arguments)'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":68,\"character\":12},\"end\":{\"line\":68,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":44}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -399,7 +399,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":51}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":51}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -423,7 +423,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":68,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":68,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -451,7 +451,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":68,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE) in-out(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":68,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE) in-out(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -475,7 +475,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}",

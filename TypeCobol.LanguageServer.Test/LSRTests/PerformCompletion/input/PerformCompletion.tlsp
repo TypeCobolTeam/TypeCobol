@@ -11,7 +11,7 @@
   "messages": [
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
     },
     {
         "category": 0,
@@ -19,7 +19,7 @@
     },
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":8},\"end\":{\"line\":22,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag1' is empty\"},{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag2' is empty\"},{\"range\":{\"start\":{\"line\":34,\"character\":8},\"end\":{\"line\":34,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag4' is empty\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag5' is empty\"}]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":8},\"end\":{\"line\":22,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag1' is empty\"},{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag2' is empty\"},{\"range\":{\"start\":{\"line\":34,\"character\":8},\"end\":{\"line\":34,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag4' is empty\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag5' is empty\"}]}}"
     },
     {
         "category": 0,
@@ -31,7 +31,7 @@
     },
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":8},\"end\":{\"line\":22,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag1' is empty\"},{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag2' is empty\"},{\"range\":{\"start\":{\"line\":34,\"character\":8},\"end\":{\"line\":34,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag4' is empty\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag5' is empty\"}]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":8},\"end\":{\"line\":22,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag1' is empty\"},{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag2' is empty\"},{\"range\":{\"start\":{\"line\":34,\"character\":8},\"end\":{\"line\":34,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag4' is empty\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":14}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Paragraph 'Parag5' is empty\"}]}}"
     },
     {
         "category": 2,
