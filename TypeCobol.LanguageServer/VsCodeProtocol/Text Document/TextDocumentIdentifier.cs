@@ -23,5 +23,17 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         {
             this.uri = uri;
         }
+
+        /// <summary>
+        /// Creates a new TextDocumentIdentifier literal.
+        /// @param uri The document's uri.
+        /// </summary>
+        internal TextDocumentIdentifier(Uri uri)
+        {
+            // Gets the original URI (which was set by the client)
+            // DON'T use ToString() as it returns the canonically unescaped form of the URI
+            // (it may cause issue if the path contains some blanks which need to be escaped)
+            this.uri = uri.OriginalString;
+        }
     }
 }
