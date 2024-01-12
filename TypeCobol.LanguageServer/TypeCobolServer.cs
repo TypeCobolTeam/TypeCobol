@@ -188,7 +188,7 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            MissingCopiesDetected(new TextDocumentIdentifier(((Uri)fileUri)), missingCopiesEvent.Copies);
+            MissingCopiesDetected(new TextDocumentIdentifier((Uri)fileUri), missingCopiesEvent.Copies);
         }
 
         /// <summary>
