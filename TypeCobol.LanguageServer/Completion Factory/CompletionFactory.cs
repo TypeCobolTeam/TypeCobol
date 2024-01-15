@@ -44,8 +44,16 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            completionItems.AddRange(paragraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference }));
-            completionItems.AddRange(sections.Select(s => new CompletionItem(s.Name) { kind = CompletionItemKind.Reference }));
+            if (paragraphs != null)
+            {
+                completionItems.AddRange(paragraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference }));
+            }
+
+            if (sections != null)
+            {
+                completionItems.AddRange(sections.Select(s => new CompletionItem(s.Name) { kind = CompletionItemKind.Reference }));
+            }
+
             if (variables != null)
             {
                 foreach (var variable in variables)
