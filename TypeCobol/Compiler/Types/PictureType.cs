@@ -113,6 +113,10 @@ namespace TypeCobol.Compiler.Types
                     {
                         add = Sequence.Sum(c => c.SpecialChar == SC.B ? c.Count : 0);
                     }
+                    else if (Category == PictureCategory.NationalEdited)
+                    {
+                        add = Sequence.Sum(c => c.SpecialChar == SC.B || c.SpecialChar == SC.ZERO || c.SpecialChar == SC.SLASH ? c.Count : 0);
+                    }
                     return Size + add;
                 }
                 if (Category == PictureCategory.ExternalFloatingPoint)
@@ -169,6 +173,7 @@ namespace TypeCobol.Compiler.Types
                                     case SC.S:
                                         break;
                                     case SC.B:
+                                        // Category cannot be NationalEdited if Usage is DISPLAY-1
                                         if (Category == PictureCategory.DBCS)
                                         {
                                             len += c.Count;//double the size of B.
@@ -197,9 +202,11 @@ namespace TypeCobol.Compiler.Types
                                     case SC.A:
                                     case SC.B:
                                     case SC.Z:
+                                    case SC.ZERO:
                                     case SC.NINE:
                                     case SC.DOT:
                                     case SC.COMMA:
+                                    case SC.SLASH:
                                         len += c.Count;//double the size.
                                         break;
                                 }
