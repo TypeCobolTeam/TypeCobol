@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -19,7 +19,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -27,7 +27,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\"}}}",

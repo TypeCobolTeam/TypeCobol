@@ -15,11 +15,11 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -35,7 +35,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -43,7 +43,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,

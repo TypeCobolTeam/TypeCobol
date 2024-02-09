@@ -15,7 +15,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,

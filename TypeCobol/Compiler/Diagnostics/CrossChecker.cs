@@ -1,7 +1,4 @@
 ﻿using JetBrains.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
@@ -839,7 +836,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     && dataDefinition.Picture == null
                     //commonDataDataDefinitionCodeElement.UserDefinedDataType is the type as written in the code. dataDefinition.TypeDefinition is the resolved type which can be null if the type cannot be found
                     && commonDataDataDefinitionCodeElement.UserDefinedDataType == null 
-                    && (!dataDefinition.Usage.HasValue || !IsUsageAllowedWithoutPicture(dataDefinition.Usage.Value)))
+                    && (!dataDefinition.Usage.HasValue || !IsUsageStandalone(dataDefinition.Usage.Value)))
                 {
                     DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).", commonDataDataDefinitionCodeElement);
 
@@ -849,17 +846,16 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             var usage = commonDataDataDefinitionCodeElement?.Usage;
-            if (usage != null && (usage.Value == DataUsage.FloatingPoint || usage.Value == DataUsage.LongFloatingPoint) &&
-                commonDataDataDefinitionCodeElement.Picture != null)
+            if (usage != null && IsUsageStandalone(usage.Value) && commonDataDataDefinitionCodeElement.Picture != null)
             {
                 DiagnosticUtils.AddError(dataDefinition,
-                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", commonDataDataDefinitionCodeElement);
+                    "Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE", commonDataDataDefinitionCodeElement);
             }
-
 
             return true;
 
-            static bool IsUsageAllowedWithoutPicture(DataUsage usage)
+            // Return true for usages which cannot have a PICTURE, false for usages requiring a PICTURE
+            static bool IsUsageStandalone(DataUsage usage)
             {
                 switch (usage)
                 {

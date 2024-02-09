@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -27,7 +27,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -47,7 +47,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":8},\"end\":{\"line\":16,\"character\":37}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'User' has already been declared\"},{\"range\":{\"start\":{\"line\":21,\"character\":8},\"end\":{\"line\":21,\"character\":37}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'User' has already been declared\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":34}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Ambiguous reference to TYPE 'User'\"},{\"range\":{\"start\":{\"line\":38,\"character\":52},\"end\":{\"line\":38,\"character\":60}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol user1.person.longName.firstName is not referenced\"},{\"range\":{\"start\":{\"line\":39,\"character\":51},\"end\":{\"line\":39,\"character\":58}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol user1.person.longName.lastName is not referenced\"},{\"range\":{\"start\":{\"line\":51,\"character\":52},\"end\":{\"line\":51,\"character\":60}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol user1.person.longName.firstName is not referenced\"},{\"range\":{\"start\":{\"line\":64,\"character\":23},\"end\":{\"line\":64,\"character\":48}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Ambiguous reference to TYPE 'DVZZBCO1.User'\"},{\"range\":{\"start\":{\"line\":64,\"character\":23},\"end\":{\"line\":64,\"character\":48}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Ambiguous reference to TYPE 'DVZZBCO1.User'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":8},\"end\":{\"line\":16,\"character\":37}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'User' has already been declared\"},{\"range\":{\"start\":{\"line\":21,\"character\":8},\"end\":{\"line\":21,\"character\":37}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'User' has already been declared\"},{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":34}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Ambiguous reference to TYPE 'User'\"},{\"range\":{\"start\":{\"line\":38,\"character\":52},\"end\":{\"line\":38,\"character\":60}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol user1.person.longName.firstName is not referenced\"},{\"range\":{\"start\":{\"line\":39,\"character\":51},\"end\":{\"line\":39,\"character\":58}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol user1.person.longName.lastName is not referenced\"},{\"range\":{\"start\":{\"line\":51,\"character\":52},\"end\":{\"line\":51,\"character\":60}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol user1.person.longName.firstName is not referenced\"},{\"range\":{\"start\":{\"line\":64,\"character\":23},\"end\":{\"line\":64,\"character\":48}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Ambiguous reference to TYPE 'DVZZBCO1.User'\"},{\"range\":{\"start\":{\"line\":64,\"character\":23},\"end\":{\"line\":64,\"character\":48}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Ambiguous reference to TYPE 'DVZZBCO1.User'\"}]}}"
     },
     {
       "category": 1,
@@ -67,7 +67,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -87,7 +87,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -107,7 +107,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -127,7 +127,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
@@ -147,7 +147,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":46,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'WriteName' only takes 2 parameter(s)\"},{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":46,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'WriteName' input(User) in-out(Numeric) output(Numeric)\"},{\"range\":{\"start\":{\"line\":58,\"character\":18},\"end\":{\"line\":58,\"character\":19}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any function parameter: tw\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":46,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'WriteName' only takes 2 parameter(s)\"},{\"range\":{\"start\":{\"line\":44,\"character\":12},\"end\":{\"line\":46,\"character\":48}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'WriteName' input(User) in-out(Numeric) output(Numeric)\"},{\"range\":{\"start\":{\"line\":58,\"character\":18},\"end\":{\"line\":58,\"character\":19}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: Parameter name does not match to any function parameter: tw\"}]}}"
     },
     {
       "category": 1,
@@ -167,7 +167,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,

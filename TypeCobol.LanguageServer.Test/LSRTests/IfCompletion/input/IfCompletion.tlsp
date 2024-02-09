@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -19,7 +19,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
@@ -43,7 +43,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {separator, arithmetic operator, alphanumeric literal, numeric literal, symbol, special register, figurative constant, special object identifier, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":13}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {separator, arithmetic operator, alphanumeric literal, numeric literal, symbol, special register, figurative constant, special object identifier, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":13}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
       "category": 2,

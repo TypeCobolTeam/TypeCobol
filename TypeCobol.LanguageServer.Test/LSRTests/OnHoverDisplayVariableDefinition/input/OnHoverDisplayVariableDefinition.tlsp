@@ -15,7 +15,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
