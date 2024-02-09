@@ -19,11 +19,11 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":24}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'Toto(no arguments)'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":24}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'Toto(no arguments)'\"}]}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
       "category": 0,
@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
       "category": 2,

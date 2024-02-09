@@ -3,7 +3,7 @@ Diagnostics
   None
    
 --------- FIELD LEVEL|NAME ---------- START     END  LENGTH
-1 ZONE                                                     1     478     478
+1 ZONE                                                     1     514     514
     5 ZONE01                                               1      20      20
     5 ZONE02                                              21     108      88
         10 ZONE03                                         21      30      10
@@ -40,3 +40,12 @@ Diagnostics
     5 ZONE60                                             435     454      20
     5 ZONE61                                             455     466      12
     5 ZONE62                                             467     478      12
+    5 ZONE70                                             479     482       4
+    5 ZONE71                                             483     486       4
+    5 ZONE72                                             487     490       4
+    5 ZONE80                                             491     494       4
+    5 ZONE81                                             495     498       4
+    5 ZONE82                                             499     502       4
+    5 ZONE90                                             503     506       4
+    5 ZONE91                                             507     510       4
+    5 ZONE92                                             511     514       4

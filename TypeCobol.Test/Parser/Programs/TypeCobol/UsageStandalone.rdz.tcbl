@@ -4,6 +4,11 @@
        WORKING-STORAGE SECTION.
        01 MyVar1 PIC 9(5) COMP-1.
        01 MyVar2 PIC 9(5) COMP-2.
+       01 MyVar3 PIC 9(4) INDEX.
+       01 MyVar4 PIC 9(4) POINTER.
+       01 MyVar5 PIC 9(4) POINTER-32.
+       01 MyVar6 PIC 9(8) PROCEDURE-POINTER.
+       01 MyVar7 PIC 9(4) FUNCTION-POINTER.
        PROCEDURE DIVISION.
 
        declare procedure KONotCorrectFormat private
@@ -11,7 +16,9 @@
                     var22 pic S9(06) comp
                     var23 pic S9(07) comp-1
                     var24 pic S9(08) comp-2
-                    var25 pic  9(10) comp-5.
+                    var25 pic  9(04) index
+      * POINTER-like vars are not allowed as TC function parameter
+                    var26 pic  9(10) comp-5.
        end-declare.
 
        END PROGRAM DVZF0OSM.

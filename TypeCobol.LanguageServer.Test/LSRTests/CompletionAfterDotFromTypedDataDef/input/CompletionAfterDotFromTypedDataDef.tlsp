@@ -15,11 +15,11 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":18,\"character\":16},\"end\":{\"line\":18,\"character\":20}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ListObjects ... equal'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":18,\"character\":16},\"end\":{\"line\":18,\"character\":20}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ListObjects ... equal'\"}]}}"
     },
     {
       "category": 0,
@@ -71,7 +71,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"diagnostics\":[]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\"}}}",

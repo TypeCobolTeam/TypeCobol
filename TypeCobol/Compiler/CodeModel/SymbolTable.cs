@@ -347,12 +347,12 @@ namespace TypeCobol.Compiler.CodeModel
         public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode)
         {
             var redefinesDataName = redefinesNode.CodeElement.RedefinesDataName.Name;
-            var childrens = redefinesNode.Parent.Children;
-            int index = redefinesNode.Parent.IndexOf(redefinesNode);
+            var children = redefinesNode.Parent.Children;
+            int index = redefinesNode.Parent.IndexOf(redefinesNode) - 1; // Start search just above the REDEFINES
 
             while (index >= 0)
             {
-                var child = childrens[index];
+                var child = children[index];
                 if (child.Name != null)
                 {
                     var type = child.CodeElement?.Type;
