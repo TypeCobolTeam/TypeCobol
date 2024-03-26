@@ -566,8 +566,7 @@ namespace TypeCobol.Compiler.Nodes {
                         //Looks further up if the first position encountered is from a DataRedefines node with an existing redefined variable.
                         while (sibling is DataRedefines dataRedefines && dataRedefines.RedefinedVariable != null)
                         {
-                            sibling = Parent.Children[siblingIndex - 1];
-                            siblingIndex--;
+                            sibling = Parent.Children[--siblingIndex];
                         }
 
                         DataDefinition siblingDefinition = (DataDefinition)sibling;
