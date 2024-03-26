@@ -528,61 +528,57 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                if (_startPosition.HasValue)
+                if (!_startPosition.HasValue)
                 {
-                    return _startPosition.Value;
+                    ComputeStartPosition();
                 }
 
-                if (this is DataRedefines node)
+                System.Diagnostics.Debug.Assert(_startPosition.HasValue);
+                return _startPosition.Value;
+
+                void ComputeStartPosition()
                 {
-                    //Get the start position from the node it redefines.
-                    var result = node.RedefinedVariable;
-                    if (result != null)
+                    if (this is DataRedefines node)
                     {
-                        _startPosition = result.StartPosition + SlackBytes;
-                        return _startPosition.Value;
-                    }
-
-                    // Redefined variable does not exist -> handle node as a DataDescription
-                }
-
-                if (Parent is DataSection)
-                {
-                    _startPosition = 1;
-                }
-                else
-                {
-                    //Searching for the first sibling with specified physical position, preceeding the current node.
-                    for (int i = 0; i < Parent.Children.Count; i++)
-                    {
-                        Node sibling = Parent.Children[i];
-
-                        if (i == Parent.ChildIndex(this) - 1)
+                        //Get the start position from the node it redefines.
+                        var result = node.RedefinedVariable;
+                        if (result != null)
                         {
-                            int siblingIndex = i;
-                            //Looks further up if the first position encountered is from a DataRedefines node with an existing redefined variable.
-                            while (sibling is DataRedefines dataRedefines && dataRedefines.RedefinedVariable != null)
-                            {
-                                sibling = Parent.Children[siblingIndex - 1];
-
-                                siblingIndex--;
-
-                            }
-
-                            DataDefinition siblingDefinition = (DataDefinition)sibling;
-                            //Add 1 for the next free Byte in memory
-                            _startPosition = Math.Max(siblingDefinition.GetBiggestRedefines()?.PhysicalPosition ?? 0, siblingDefinition.PhysicalPosition) + 1 + SlackBytes;
-                            
+                            _startPosition = result.StartPosition + SlackBytes;
+                            return;
                         }
 
+                        // Redefined variable does not exist -> handle node as a DataDescription
                     }
-                    if (_startPosition == null)
-                    {
-                        _startPosition = (Parent as DataDefinition)?.StartPosition;
-                    }
-                }
 
-                return _startPosition ?? 0;
+                    if (Parent is DataSection)
+                    {
+                        _startPosition = 1;
+                        return;
+                    }
+
+                    //Searching for the first sibling with specified physical position, preceding the current node.
+                    int siblingIndex = Parent.ChildIndex(this) - 1;
+                    if (siblingIndex >= 0)
+                    {
+                        Node sibling = Parent.Children[siblingIndex];
+
+                        //Looks further up if the first position encountered is from a DataRedefines node with an existing redefined variable.
+                        while (sibling is DataRedefines dataRedefines && dataRedefines.RedefinedVariable != null)
+                        {
+                            sibling = Parent.Children[--siblingIndex];
+                        }
+
+                        DataDefinition siblingDefinition = (DataDefinition)sibling;
+                        //Add 1 for the next free Byte in memory
+                        _startPosition = Math.Max(siblingDefinition.GetBiggestRedefines()?.PhysicalPosition ?? 0, siblingDefinition.PhysicalPosition) + 1 + SlackBytes;
+                        return;
+                    }
+
+                    // No previous data at same level, use position of parent
+                    // Default to 0, but it means we could not compute the actual start position
+                    _startPosition = (Parent as DataDefinition)?.StartPosition ?? 0;
+                }
             }
         }
 
