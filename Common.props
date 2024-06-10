@@ -5,8 +5,8 @@
 	<PropertyGroup>
 		<!-- Allow all build configurations for every project -->
 		<Configurations>Debug;Release;EI_Debug;EI_Release</Configurations>
-		<!-- Targeting .NET 6.0, with default language level (C# 10) -->
-		<TargetFramework>net6.0</TargetFramework>
+		<!-- Targeting .NET 8.0, with default language level (C# 12) -->
+		<TargetFramework>net8.0</TargetFramework>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<!-- Nullable checks as errors -->
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
