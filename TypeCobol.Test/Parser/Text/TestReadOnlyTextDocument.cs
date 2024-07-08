@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
@@ -49,7 +46,7 @@ namespace TypeCobol.Test.Parser.Text
 
         public static void Check_EmptyDocument()
         {
-            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("empty", Encoding.Default, ColumnsLayout.CobolReferenceFormat, false, String.Empty);
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("empty", IBMCodePages.DefaultEncodingForAlphanumericLiterals, ColumnsLayout.CobolReferenceFormat, false, String.Empty);
 
             Exception resultException = null;
             try
@@ -176,7 +173,7 @@ namespace TypeCobol.Test.Parser.Text
             }
                 
             // Load the CobolFile in a TextDocument
-            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
             
             if(textDocument.CharAt(0) != '0')
             {
@@ -269,7 +266,7 @@ namespace TypeCobol.Test.Parser.Text
             }
 
             // Load the CobolFile in a TextDocument
-            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCINP free format.cpy", docFormat.Encoding, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCINP free format.cpy", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
 
             if (textDocument.CharAt(0) != '/')
             {

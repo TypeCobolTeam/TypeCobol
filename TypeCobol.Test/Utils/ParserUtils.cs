@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Antlr4.Runtime;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
@@ -11,6 +7,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -60,7 +57,7 @@ namespace TypeCobol.Test.Utils
         public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy)
         {
             //Prepare
-            var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
+            var textDocument = new ReadOnlyTextDocument("Empty doc", IBMCodePages.DefaultEncodingForAlphanumericLiterals, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
             var typeCobolOptions = new TypeCobolOptions();

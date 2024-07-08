@@ -1,5 +1,4 @@
-﻿using System;
-using TypeCobol.Compiler.Scanner;
+﻿using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Test.Parser.Scanner
 {
@@ -136,6 +135,15 @@ namespace TypeCobol.Test.Parser.Scanner
                 "X\"A396A3960\"",
                 "NX'74007500740075000'"
             };
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName);
+
+#if EUROINFO_RULES
+            testName = "AlphanumericLiterals4-1147";
+#else
+            testName = "AlphanumericLiterals4-1140";
+#endif
+            testLines = new string[] { "X'C085D0'" }; // 'éeè' in EBCDIC 1147, '{e}' in EBCDIC 1140
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
 

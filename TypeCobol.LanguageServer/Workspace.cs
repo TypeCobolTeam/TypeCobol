@@ -12,6 +12,7 @@ using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Nodes;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
@@ -212,7 +213,7 @@ namespace TypeCobol.LanguageServer
             StopDocumentBackgroundCompilation(docContext);
             CompilationProject compilationProject = docContext.Project.Project;
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
-            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding,
+            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, IBMCodePages.DefaultEncodingForAlphanumericLiterals,
                 Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
             FileCompiler fileCompiler = null;
 

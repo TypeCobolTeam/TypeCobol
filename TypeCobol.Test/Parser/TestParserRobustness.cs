@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler;
+﻿using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Parser
@@ -22,7 +18,7 @@ namespace TypeCobol.Test.Compiler.Parser
         private static CodeElement[] ParseCodeElements(string cobolString, bool asPartOfACopy, out Diagnostic[] parserDiagnostics)
         {
             // Load text document from string
-            var textDocument = new ReadOnlyTextDocument("test string", Encoding.Default, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
+            var textDocument = new ReadOnlyTextDocument("test string", IBMCodePages.DefaultEncodingForAlphanumericLiterals, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
             // Create a compilation project and a compiler for this document

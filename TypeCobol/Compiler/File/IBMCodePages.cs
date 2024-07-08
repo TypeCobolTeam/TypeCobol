@@ -8,6 +8,18 @@ namespace TypeCobol.Compiler.File
     public static class IBMCodePages
     {
         /// <summary>
+        /// • The default encoding of literals in the source program
+        /// • The default encoding for data items described with USAGE DISPLAY or DISPLAY-1
+        /// • The default encoding for XML parsing and XML generation
+        ///
+        /// The encoding of national and UTF-8 data is not affected by the CODEPAGE compiler option. The encoding
+        /// for national literals and data items described with usage NATIONAL is UTF-16BE (big endian), CCSID
+        /// 1200. A reference to UTF-16 in this document is a reference to UTF-16BE. The encoding for UTF-8 literals
+        /// and data items described with usage UTF-8 is UTF-8, CCSID 1208.
+        /// </summary>
+        public static readonly Encoding DefaultEncodingForAlphanumericLiterals;
+
+        /// <summary>
         /// Gets the .Net Encoding equivalent to an IBM Coded Character Set ID
         /// (or throws a NotSupportedException)
         /// </summary>
@@ -186,6 +198,13 @@ namespace TypeCobol.Compiler.File
             {
                 IBMCCSIDFromDotNetCodePage.Add(codePageEquivalence.MS_CodePage, codePageEquivalence);
             }
+
+#if EUROINFO_RULES
+            const int defaultCodePage = 1147; //IBM EBCDIC (France-Euro)
+#else
+            const int defaultCodePage = 1140; //IBM EBCDIC (EU-Canada-Euro)
+#endif
+            DefaultEncodingForAlphanumericLiterals = GetDotNetEncodingFromIBMCCSID(defaultCodePage);
         }
 
         private class CodePageEquivalence

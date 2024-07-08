@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -165,7 +164,7 @@ namespace TypeCobol.Compiler
             {
                 // 2.a Load it in a new text document in memory
                 Debug.Assert(sourceFile != null);
-                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, fileInfo.Item3, fileInfo.Item4, sourceFile.ReadChars());
+                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, IBMCodePages.DefaultEncodingForAlphanumericLiterals, fileInfo.Item3, fileInfo.Item4, sourceFile.ReadChars());
             }
             else
             {
