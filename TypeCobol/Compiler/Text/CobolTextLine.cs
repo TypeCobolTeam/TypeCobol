@@ -2,7 +2,6 @@
 
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Text
@@ -193,7 +192,7 @@ namespace TypeCobol.Compiler.Text
                 }
             }
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line, layout);
-            tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(new MultilineScanState(scannerOptions.GetEncodingForAlphanumericLiterals()));
 
             Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, scannerOptions, false);
             Token? t;

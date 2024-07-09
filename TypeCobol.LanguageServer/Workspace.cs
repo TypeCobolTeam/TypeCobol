@@ -212,7 +212,8 @@ namespace TypeCobol.LanguageServer
             StopDocumentBackgroundCompilation(docContext);
             CompilationProject compilationProject = docContext.Project.Project;
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
-            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding,
+            var encodingForAlphanumericLiterals = compilationProject.CompilationOptions.GetEncodingForAlphanumericLiterals();
+            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, encodingForAlphanumericLiterals,
                 Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
             FileCompiler fileCompiler = null;
 

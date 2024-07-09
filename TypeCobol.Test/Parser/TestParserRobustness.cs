@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler;
+﻿using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -22,11 +17,11 @@ namespace TypeCobol.Test.Compiler.Parser
         private static CodeElement[] ParseCodeElements(string cobolString, bool asPartOfACopy, out Diagnostic[] parserDiagnostics)
         {
             // Load text document from string
-            var textDocument = new ReadOnlyTextDocument("test string", Encoding.Default, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
+            var typeCobolOptions = new TypeCobolOptions();
+            var textDocument = new ReadOnlyTextDocument("test string", typeCobolOptions.GetEncodingForAlphanumericLiterals(), ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
             // Create a compilation project and a compiler for this document
-            var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("test project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
             var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, project);

@@ -93,7 +93,7 @@ Line 46[24,27] <27, Error, Syntax> - Syntax error : mismatched input 'Var1' expe
 - OutputDeviceName = SYSOUT
 - WithNoAdvancing
 
-[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,28+:X'40']<HexadecimalAlphanumericLiteral>(',Y,Y){@}
+[[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,28+:X'40']<HexadecimalAlphanumericLiteral>(',Y,Y){ }
 - variables = X'40'
 
 [[DisplayStatement]] [12,18:display]<DISPLAY> --> [24,33:HIGH-VALUE]<HIGH_VALUE>
