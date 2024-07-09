@@ -7,7 +7,6 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -57,10 +56,10 @@ namespace TypeCobol.Test.Utils
         public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy)
         {
             //Prepare
-            var textDocument = new ReadOnlyTextDocument("Empty doc", IBMCodePages.DefaultEncodingForAlphanumericLiterals, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
+            var typeCobolOptions = new TypeCobolOptions();
+            var textDocument = new ReadOnlyTextDocument("Empty doc", typeCobolOptions.GetEncodingForAlphanumericLiterals(), ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
-            var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
 

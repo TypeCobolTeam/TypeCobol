@@ -42,8 +42,8 @@ namespace TypeCobol.Test.Parser.Scanner
 
     internal static class ScannerUtils
     {
-        public static TextSourceInfo TextSourceInfo = new TextSourceInfo("test", IBMCodePages.DefaultEncodingForAlphanumericLiterals, ColumnsLayout.FreeTextFormat, false);//Assuming a program here, not a copy.
         public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();
+        public static TextSourceInfo TextSourceInfo = new TextSourceInfo("test", CompilerOptions.GetEncodingForAlphanumericLiterals(), ColumnsLayout.FreeTextFormat, false);//Assuming a program here, not a copy.
         public static List<RemarksDirective.TextNameVariation> CopyTextNameVariations = new List<RemarksDirective.TextNameVariation>();
 
         public static string ScanLine(string testLine)

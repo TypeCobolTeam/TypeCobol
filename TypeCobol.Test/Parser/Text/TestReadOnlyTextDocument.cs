@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 
@@ -46,7 +47,8 @@ namespace TypeCobol.Test.Parser.Text
 
         public static void Check_EmptyDocument()
         {
-            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("empty", IBMCodePages.DefaultEncodingForAlphanumericLiterals, ColumnsLayout.CobolReferenceFormat, false, String.Empty);
+            var options = new TypeCobolOptions();
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("empty", options.GetEncodingForAlphanumericLiterals(), ColumnsLayout.CobolReferenceFormat, false, String.Empty);
 
             Exception resultException = null;
             try
@@ -173,7 +175,8 @@ namespace TypeCobol.Test.Parser.Text
             }
                 
             // Load the CobolFile in a TextDocument
-            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
+            var options = new TypeCobolOptions();
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", options.GetEncodingForAlphanumericLiterals(), docFormat.ColumnsLayout, true, cobolFile.ReadChars());
             
             if(textDocument.CharAt(0) != '0')
             {
@@ -266,7 +269,8 @@ namespace TypeCobol.Test.Parser.Text
             }
 
             // Load the CobolFile in a TextDocument
-            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCINP free format.cpy", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
+            var options = new TypeCobolOptions();
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCINP free format.cpy", options.GetEncodingForAlphanumericLiterals(), docFormat.ColumnsLayout, true, cobolFile.ReadChars());
 
             if (textDocument.CharAt(0) != '/')
             {

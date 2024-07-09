@@ -6,7 +6,14 @@ using TypeCobol.Test.Parser.Scanner;
 
 namespace TypeCobol.Test.Parser.FileFormat
 {
-    static class TestCobolFile {
+    static class TestCobolFile
+    {
+        private static readonly Encoding _EncodingForAlphanumericLiterals =
+#if EUROINFO_RULES
+            IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147);
+#else
+            IBMCodePages.GetDotNetEncodingFromIBMCCSID(1140);
+#endif
         public static readonly string SampleFolder = "Parser" + Path.DirectorySeparatorChar + "FileFormat" + Path.DirectorySeparatorChar + "Samples";
         public static void Check_EBCDICCobolFile()
         {
@@ -24,7 +31,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("EbcdicRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormat.TXT", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormat.TXT", _EncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -81,7 +88,7 @@ namespace TypeCobol.Test.Parser.FileFormat
                 try
                 {
                     // Load the CobolFile in a TextDocument;
-                    ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormatWithBadChars.TXT", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
+                    ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormatWithBadChars.TXT", _EncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 }
                 catch(Exception e)
                 {
@@ -114,7 +121,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("AsciiRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", _EncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -169,7 +176,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("AsciiLinuxFormat.14", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiLinuxFormat.14", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiLinuxFormat.14", _EncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -224,7 +231,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("AsciiFreeFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiFreeFormat.cpy", IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiFreeFormat.cpy", _EncodingForAlphanumericLiterals, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -304,7 +311,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile(filename, out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument(filename, IBMCodePages.DefaultEncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument(filename, _EncodingForAlphanumericLiterals, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();

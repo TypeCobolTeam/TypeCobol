@@ -164,7 +164,8 @@ namespace TypeCobol.Compiler
             {
                 // 2.a Load it in a new text document in memory
                 Debug.Assert(sourceFile != null);
-                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, IBMCodePages.DefaultEncodingForAlphanumericLiterals, fileInfo.Item3, fileInfo.Item4, sourceFile.ReadChars());
+                var encodingForAlphanumericLiterals = compilerOptions.GetEncodingForAlphanumericLiterals();
+                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, encodingForAlphanumericLiterals, fileInfo.Item3, fileInfo.Item4, sourceFile.ReadChars());
             }
             else
             {
