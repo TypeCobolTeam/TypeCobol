@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring
 {
@@ -27,7 +23,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxC
         /// <summary>
         /// Token range
         /// </summary>
-        public VsCodeProtocol.Range Range { get; set; }
+        public Range Range { get; set; }
 
         /// <summary>
         /// The Token lexeme, can be null
@@ -39,7 +35,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxC
         /// </summary>
         /// <param name="type">Token's type</param>
         /// <param name="range">Token's range</param>
-        public Token(TokenType type, VsCodeProtocol.Range range) : this(type, range, null)
+        public Token(TokenType type, Range range) : this(type, range, null)
         {
         }
 
@@ -49,7 +45,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxC
         /// <param name="type">Token's type</param>
         /// <param name="range">Token's range</param>
         /// <param name="lexeme">Token's lexeme</param>
-        public Token(TokenType type, VsCodeProtocol.Range range, String lexeme)
+        public Token(TokenType type, Range range, String lexeme)
         {
             this.Type = type;
             this.Range = range;

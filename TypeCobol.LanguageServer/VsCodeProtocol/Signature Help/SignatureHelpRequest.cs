@@ -3,6 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
@@ -14,6 +15,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class SignatureHelpRequest
     {
-        public static readonly RequestType Type = new RequestType("textDocument/signatureHelp", typeof(TextDocumentPosition), typeof(SignatureHelp), null);
+        public static readonly RequestType Type = new RequestType("textDocument/signatureHelp", typeof(TextDocumentPositionParams), typeof(SignatureHelp), null);
     }
 }

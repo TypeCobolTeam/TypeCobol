@@ -1,6 +1,6 @@
 ﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer
 {
@@ -30,22 +30,22 @@ namespace TypeCobol.LanguageServer
                     c =>
                         c.ArrangedConsumedTokens.Any(
                             t =>
-                                (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) ||
-                                (t.Line <= position.line + 1))).ToList();
+                                (t.Line == position.Line + 1 && t.StopIndex + 1 <= position.Character) ||
+                                (t.Line <= position.Line + 1))).ToList();
             //Select all the code elements that have a Consumed Tokens before the cursor.
             var closestTokenToCursor =
                 codeElements.Select(
                         c =>
                             c.ArrangedConsumedTokens.LastOrDefault(
-                                t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character))).Where(t => t != null)
-                    .MinBy(t => Math.Abs(position.character - t.StopIndex + 1)); //Allows to get the token closest to the cursor
+                                t => (t.Line == position.Line + 1 && t.StopIndex + 1 <= position.Character))).Where(t => t != null)
+                    .MinBy(t => Math.Abs(position.Character - t.StopIndex + 1)); //Allows to get the token closest to the cursor
 
-            if (closestTokenToCursor != null && closestTokenToCursor.Line == position.line + 1 &&
-                position.character > closestTokenToCursor.StartIndex &&
-                closestTokenToCursor.StopIndex + 1 >= position.character)
+            if (closestTokenToCursor != null && closestTokenToCursor.Line == position.Line + 1 &&
+                position.Character > closestTokenToCursor.StartIndex &&
+                closestTokenToCursor.StopIndex + 1 >= position.Character)
             //the cursor is at the end or in the middle of a token.
             {
-                if (closestTokenToCursor.StopIndex + 1 == position.character &&
+                if (closestTokenToCursor.StopIndex + 1 == position.Character &&
                     CompletionElligibleTokens.IsCompletionElligibleToken(closestTokenToCursor) && CompletionElligibleTokens.DoesTokenAllowLastPos(closestTokenToCursor))
                 //Detect if token is eligible and if the cursor is at the end of the token
                 {
@@ -97,8 +97,8 @@ namespace TypeCobol.LanguageServer
                 var consumedTokens =
                     codeElement.ArrangedConsumedTokens.Where(
                         t =>
-                            ((t.StartIndex <= position.character && t.Line <= position.line + 1) ||
-                            t.Line < position.line + 1) &&
+                            ((t.StartIndex <= position.Character && t.Line <= position.Line + 1) ||
+                            t.Line < position.Line + 1) &&
                             t.TokenFamily != TokenFamily.Whitespace)
                         .ToArray();
 
@@ -109,11 +109,11 @@ namespace TypeCobol.LanguageServer
                 {
                     foreach (var finalToken in consumedTokens)
                     {
-                        if (finalToken.StartIndex > position.character && !(finalToken.Line < position.line + 1))
+                        if (finalToken.StartIndex > position.Character && !(finalToken.Line < position.Line + 1))
                             break;
 
                         if (CompletionElligibleTokens.IsCompletionElligibleToken(finalToken) &&
-                            (finalToken.StopIndex + 1 <= position.character || finalToken.Line <= position.line + 1))
+                            (finalToken.StopIndex + 1 <= position.Character || finalToken.Line <= position.Line + 1))
                         {
                             lastSignificantToken = finalToken;
                             significantTokensDetected.Push(lastSignificantToken);
@@ -129,8 +129,8 @@ namespace TypeCobol.LanguageServer
                         userFilterToken =
                             consumedTokens.FirstOrDefault(
                                 t =>
-                                    position.character <= t.StopIndex + 1 && position.character > t.StartIndex
-                                    && t.Line == position.line + 1
+                                    position.Character <= t.StopIndex + 1 && position.Character > t.StartIndex
+                                    && t.Line == position.Line + 1
                                     && t.TokenType == TokenType.UserDefinedWord);
                     }
 
@@ -140,12 +140,12 @@ namespace TypeCobol.LanguageServer
                     {
                         //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
                         if ((lastSignificantToken != null &&
-                              (!CompletionElligibleTokens.DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.character &&
-                               lastSignificantToken.Line == position.line + 1)) 
+                              (!CompletionElligibleTokens.DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.Character &&
+                               lastSignificantToken.Line == position.Line + 1)) 
                              ||
                                  (consumedTokens.Last().TokenType == TokenType.UserDefinedWord &&
-                                  !(position.character <= consumedTokens.Last().StopIndex + 1 &&
-                                    position.character >= consumedTokens.Last().StartIndex)
+                                  !(position.Character <= consumedTokens.Last().StopIndex + 1 &&
+                                    position.Character >= consumedTokens.Last().StartIndex)
                                   &&
                                   lastSignificantToken != null &&
                                   !(lastSignificantToken.TokenType == TokenType.INPUT ||

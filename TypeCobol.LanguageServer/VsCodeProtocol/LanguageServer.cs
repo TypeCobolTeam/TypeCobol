@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.Logging;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
@@ -139,7 +140,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                IList<CompletionItem> result = OnCompletion((TextDocumentPosition)parameters);
+                IList<CompletionItem> result = OnCompletion((TextDocumentPositionParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -171,7 +172,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                List<DocumentHighlight> result = OnDocumentHighlight((TextDocumentPosition)parameters);
+                List<DocumentHighlight> result = OnDocumentHighlight((TextDocumentPositionParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -251,7 +252,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                Definition result =  OnDefinition((TextDocumentPosition)parameters);
+                Location result = OnDefinition((TextDocumentPositionParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -267,7 +268,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                Hover result =  OnHover((TextDocumentPosition)parameters);
+                Hover result =  OnHover((TextDocumentPositionParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -289,7 +290,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             catch (Exception e)
             {
                 NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message, data = new InitializeError() { retry = false } };
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message, data = new InitializeError() { Retry = false } };
             }
             return resultOrError;
         }
@@ -350,7 +351,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                SignatureHelp result = OnSignatureHelp((TextDocumentPosition)parameters);
+                SignatureHelp result = OnSignatureHelp((TextDocumentPositionParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -503,24 +504,24 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         protected virtual InitializeResult OnInitialize(InitializeParams parameters)
         {
             var capabilities = new ServerCapabilities();
-            capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
-            capabilities.hoverProvider = false;
-            capabilities.completionProvider = new CompletionOptions() { resolveProvider = true};
-            capabilities.signatureHelpProvider = null;
-            capabilities.definitionProvider = true;
-            capabilities.referencesProvider = false;
-            capabilities.documentHighlightProvider = false;
-            capabilities.documentSymbolProvider = false;
-            capabilities.workspaceSymbolProvider = false;
-            capabilities.codeActionProvider = false;
-            capabilities.codeLensProvider = null;
-            capabilities.documentFormattingProvider = false;
-            capabilities.documentRangeFormattingProvider = false;
-            capabilities.documentOnTypeFormattingProvider = null;
-            capabilities.renameProvider = false;
+            capabilities.TextDocumentSync = new TextDocumentSyncOptions() { Change = TextDocumentSyncKind.Incremental };
+            capabilities.HoverProvider = false;
+            capabilities.CompletionProvider = new CompletionOptions() { ResolveProvider = true};
+            capabilities.SignatureHelpProvider = null;
+            capabilities.DefinitionProvider = true;
+            capabilities.ReferencesProvider = false;
+            capabilities.DocumentHighlightProvider = false;
+            capabilities.DocumentSymbolProvider = false;
+            capabilities.WorkspaceSymbolProvider = false;
+            capabilities.CodeActionProvider = false;
+            capabilities.CodeLensProvider = null;
+            capabilities.DocumentFormattingProvider = false;
+            capabilities.DocumentRangeFormattingProvider = false;
+            capabilities.DocumentOnTypeFormattingProvider = null;
+            capabilities.RenameProvider = false;
 
             var result = new InitializeResult();
-            result.capabilities = capabilities;
+            result.Capabilities = capabilities;
             return result;
         }
 
@@ -610,7 +611,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response is of
         /// type[Hover](#Hover) or a Thenable that resolves to such.
         /// </summary>
-        protected virtual Hover OnHover(TextDocumentPosition parameters)
+        protected virtual Hover OnHover(TextDocumentPositionParams parameters)
         {
             return null;
         }
@@ -620,7 +621,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
         /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
         /// </summary>
-        protected virtual List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        protected virtual List<CompletionItem> OnCompletion(TextDocumentPositionParams parameters)
         {
             return null;
         }
@@ -640,7 +641,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// callable. There can be multiple signature but only one
         /// active and only one active parameter.
         /// </summary>
-        protected virtual SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
+        protected virtual SignatureHelp OnSignatureHelp(TextDocumentPositionParams parameters)
         {
             return null;
         }
@@ -651,7 +652,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// (#TextDocumentPosition) the response is of type [Definition](#Definition) or a
         /// Thenable that resolves to such.
         /// </summary>
-        protected virtual Definition OnDefinition(TextDocumentPosition parameters)
+        protected virtual Location OnDefinition(TextDocumentPositionParams parameters)
         {
             throw new ArgumentException("No definition");            
         }
@@ -673,7 +674,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// (#TextDocumentPosition) the request reponse is of type [DocumentHighlight[]]
         /// (#DocumentHighlight) or a Thenable that resolves to such.
         /// </summary>
-        protected virtual List<DocumentHighlight> OnDocumentHighlight(TextDocumentPosition parameters)
+        protected virtual List<DocumentHighlight> OnDocumentHighlight(TextDocumentPositionParams parameters)
         {
             return null;
         }

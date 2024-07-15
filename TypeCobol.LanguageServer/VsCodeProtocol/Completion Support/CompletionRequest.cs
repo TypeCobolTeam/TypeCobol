@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using TypeCobol.LanguageServer.JsonRPC;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
@@ -15,6 +16,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class CompletionRequest
     {
-        public readonly static RequestType Type = new RequestType("textDocument/completion", typeof(TextDocumentPosition), typeof(List<CompletionItem>), null);
+        public readonly static RequestType Type = new RequestType("textDocument/completion", typeof(TextDocumentPositionParams), typeof(List<CompletionItem>), null);
     }
 }

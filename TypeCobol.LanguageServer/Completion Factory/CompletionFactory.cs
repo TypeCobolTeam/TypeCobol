@@ -6,7 +6,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer
 {
@@ -46,22 +46,22 @@ namespace TypeCobol.LanguageServer
 
             if (paragraphs != null)
             {
-                completionItems.AddRange(paragraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference }));
+                completionItems.AddRange(paragraphs.Select(para => new CompletionItem() { Label = para.Name, Kind = CompletionItemKind.Reference }));
             }
 
             if (sections != null)
             {
-                completionItems.AddRange(sections.Select(s => new CompletionItem(s.Name) { kind = CompletionItemKind.Reference }));
+                completionItems.AddRange(sections.Select(s => new CompletionItem() { Label = s.Name, Kind = CompletionItemKind.Reference }));
             }
 
             if (variables != null)
             {
                 foreach (var variable in variables)
                 {
-                    var completionItem =
-                        new CompletionItem(string.Format("{0} PIC{1}", variable.Name, variable.Picture.NormalizedValue));
-                    completionItem.insertText = variable.Name;
-                    completionItem.kind = CompletionItemKind.Variable;
+                    var completionItem = new CompletionItem();
+                    completionItem.Label = string.Format("{0} PIC{1}", variable.Name, variable.Picture.NormalizedValue);
+                    completionItem.InsertText = variable.Name;
+                    completionItem.Kind = CompletionItemKind.Variable;
                     completionItems.Add(completionItem);
                 }
             }
@@ -103,9 +103,10 @@ namespace TypeCobol.LanguageServer
 
             foreach (var variable in variables)
             {
-                var completionItem = new CompletionItem(string.Format("{0}", variable.Name));
-                completionItem.insertText = variable.Name;
-                completionItem.kind = CompletionItemKind.Variable;
+                var completionItem = new CompletionItem();
+                completionItem.Label = string.Format("{0}", variable.Name);
+                completionItem.InsertText = variable.Name;
+                completionItem.Kind = CompletionItemKind.Variable;
                 completionItems.Add(completionItem);
             }
 
@@ -148,7 +149,7 @@ namespace TypeCobol.LanguageServer
                 .SkipWhile(t => t != lastSignificantToken).Skip(1)
                 .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
                 .Except(new List<Token>() { userFilterToken })
-                .Where(t => (t.StartIndex < position.character && t.Line == position.line + 1) || t.Line < position.line + 1);
+                .Where(t => (t.StartIndex < position.Character && t.Line == position.Line + 1) || t.Line < position.Line + 1);
 
             int alreadyGivenParametersCount = 0;
             TokenType? previousTokenType = null;
@@ -308,13 +309,13 @@ namespace TypeCobol.LanguageServer
         {
             //Use -1, because it seems LSP start counting at 1
             var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.InOut] + " ";
-            completionItems.ForEach(ci => ci.insertText += suffix);
+            completionItems.ForEach(ci => ci.InsertText += suffix);
         }
         private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
         {
             //Use -1, because it seems LSP start counting at 1
             var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.Output] + " ";
-            completionItems.ForEach(ci => ci.insertText += suffix);
+            completionItems.ForEach(ci => ci.InsertText += suffix);
         }
 
 
@@ -330,7 +331,7 @@ namespace TypeCobol.LanguageServer
             }
 
             IEnumerable<Program> programs = callNode.SymbolTable.GetPrograms(userFilterToken != null ? userFilterToken.Text : string.Empty);
-            return programs.Select(prog => new CompletionItem(prog.Name) { kind = CompletionItemKind.Module }).ToList();
+            return programs.Select(prog => new CompletionItem() { Label = prog.Name, Kind = CompletionItemKind.Module }).ToList();
         }
 
         #endregion
@@ -378,7 +379,7 @@ namespace TypeCobol.LanguageServer
             {
                 qualifiedNameTokens.AddRange(
                     arrangedCodeElement.ArrangedConsumedTokens?.Where(
-                        t => (t?.TokenType == TokenType.UserDefinedWord || t?.TokenType == TokenType.QualifiedNameSeparator) && (t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1));
+                        t => (t?.TokenType == TokenType.UserDefinedWord || t?.TokenType == TokenType.QualifiedNameSeparator) && (t.EndColumn <= position.Character && t.Line == position.Line + 1) || t.Line < position.Line + 1));
                 //Remove all the userdefinedword token and also QualifiedNameToken
                 arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
                 //We only wants the token that in front of any QualifiedName 
@@ -415,7 +416,7 @@ namespace TypeCobol.LanguageServer
                                   t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
                                 ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
                                 || firstSignificantToken == null) 
-                                && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
+                                && ((t.EndColumn <= position.Character && t.Line == position.Line + 1) || t.Line < position.Line + 1))
                         .Select(t => t.Text)
                         .ToArray();
 
@@ -742,7 +743,7 @@ namespace TypeCobol.LanguageServer
             var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, fileCompiler.CompilerOptions);
             if (userFilterText.Length > 0) //userFilterText is trimmed before
             {
-                return items.Where(c => c.insertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
+                return items.Where(c => c.InsertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
             }
 
             return items;
@@ -769,7 +770,7 @@ namespace TypeCobol.LanguageServer
 
             var tokensUntilCursor = arrangedCodeElement?.ArrangedConsumedTokens
             .Except(new List<Token>() { userFilterToken })
-            .Where(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)
+            .Where(t => (t.Line == position.Line + 1 && t.StopIndex + 1 <= position.Character) || t.Line < position.Line + 1)
             .Reverse()
             .ToList();
             

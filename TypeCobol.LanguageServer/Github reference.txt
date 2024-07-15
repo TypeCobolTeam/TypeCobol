@@ -1,4 +1,0 @@
-﻿https://github.com/Microsoft/vscode-languageserver-node
-
-commit 1e42ca3ab92194af9de28e62e54b6a640ccc8450
-22/01/2016 - 23h59

@@ -9,13 +9,13 @@ using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TypeCobol.Analysis;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.LanguageServer.Context;
 
 using TokenType = TypeCobol.Compiler.Scanner.TokenType;
-using Range = TypeCobol.LanguageServer.VsCodeProtocol.Range;
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace TypeCobol.LanguageServer
 {
@@ -137,8 +137,8 @@ namespace TypeCobol.LanguageServer
             int tcolumn = token.Column;
             int tcolumnEnd = token.EndColumn;
             Range currentFormaCommentTokenRange = new Range();
-            currentFormaCommentTokenRange.start = new Position(tline - 1, tcolumn - 1);
-            currentFormaCommentTokenRange.end = new Position(tline - 1, tcolumnEnd - 1);
+            currentFormaCommentTokenRange.Start = new Position(tline - 1, tcolumn - 1);
+            currentFormaCommentTokenRange.End = new Position(tline - 1, tcolumnEnd - 1);
             AddToken(tline - 1, new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token(
                 TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
                 currentFormaCommentTokenRange));
@@ -188,7 +188,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 if (bForced || _rootOutlineNode.Update(programClassDocument.Root))
-                    return new RefreshOutlineParams(new TextDocumentIdentifier(this.LspTextDocument.uri),
+                    return new RefreshOutlineParams(new TextDocumentIdentifier() { Uri = this.LspTextDocument.Uri },
                         _rootOutlineNode);
             }
             return null;
@@ -231,7 +231,7 @@ namespace TypeCobol.LanguageServer
                     var lastChange = maxChange;
                     Position firstPos = new Position(firstChange.LineIndex, 0);
                     Position lastPos = new Position(lastChange.LineIndex, lastChange.NewLine.Length - 1);
-                    docRange = new Range(firstPos, lastPos);
+                    docRange = new Range() { Start = firstPos, End = lastPos };
                 }
             }
             //Compute all interesting tokens
@@ -296,7 +296,7 @@ namespace TypeCobol.LanguageServer
                 string tempFile = Path.GetTempFileName();
                 using (TextWriter writer = writeToFile ? File.CreateText(tempFile)  : (TextWriter)new StringWriter())
                 {
-                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), writeToFile ? tempFile : null);
+                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier() { Uri = docContext.TextDocument.Uri }, writeToFile ? tempFile : null);
                     CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
                     gen.FullInstruction = true;
                     gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
@@ -311,7 +311,7 @@ namespace TypeCobol.LanguageServer
             else
             {
                 //An Empty
-                result = new CfgDfaParams(new TextDocumentIdentifier(docContext.TextDocument.uri));
+                result = new CfgDfaParams(new TextDocumentIdentifier() { Uri = docContext.TextDocument.Uri });
             }
             return result;
         }

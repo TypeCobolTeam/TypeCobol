@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -18,18 +18,6 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         public List<string> CopyFolders;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="textDocument"></param>
-        /// <param name="text"></param>
-        /// <param name="ProjectKey"></param>
-        /// <param name="CopyFolders"></param>
-        public DidOpenProjectTextDocumentParams(VsCodeProtocol.TextDocumentItem textDocument, string text, string projectKey, List<string> copyFolders)
-            : base(textDocument, text)
-        {
-            this.ProjectKey = projectKey;
-            this.CopyFolders = copyFolders;
-        }
+        //TODO LSP UPGRADE
     }
 }

@@ -3,6 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
@@ -13,6 +14,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class PublishDiagnosticsNotification
     {
-        public static readonly NotificationType Type = new NotificationType("textDocument/publishDiagnostics", typeof(PublishDiagnosticsParams));
+        public static readonly NotificationType Type = new NotificationType("textDocument/publishDiagnostics", typeof(PublishDiagnosticParams));
     }
 }

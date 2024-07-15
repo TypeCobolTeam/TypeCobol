@@ -4,6 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 using TypeCobol.LanguageServer.JsonRPC;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
 {

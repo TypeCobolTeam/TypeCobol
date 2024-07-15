@@ -5,7 +5,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.SignatureHelper;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer
 {
@@ -96,12 +96,12 @@ namespace TypeCobol.LanguageServer
                     
 
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
-                var completionItem = new CompletionItem(typeDisplayName);
+                var completionItem = new CompletionItem() { Label = typeDisplayName };
 
                 if (!(node is FunctionDeclaration))
                     if (typeIsPublic)
                     {
-                        completionItem.insertText =
+                        completionItem.InsertText =
                             //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
                             (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
                                 ? $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}" 
@@ -109,14 +109,14 @@ namespace TypeCobol.LanguageServer
                     }
                     else
                     {
-                        completionItem.insertText =
+                        completionItem.InsertText =
                             //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
                             (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
-                                ? completionItem.insertText = type.Name
-                                : completionItem.insertText = type.Name + ".";
+                                ? completionItem.InsertText = type.Name
+                                : completionItem.InsertText = type.Name + ".";
                     }
 
-                completionItem.kind = typeIsIntrinsic ? CompletionItemKind.IntrinsicType : CompletionItemKind.Class;
+                completionItem.Kind = typeIsIntrinsic ? CompletionItemKind.Folder : CompletionItemKind.Class; //TODO LSP UPGRADE
                 completionItems.Add(completionItem);
             }
             return completionItems;
@@ -164,9 +164,8 @@ namespace TypeCobol.LanguageServer
                                      //Ignore public if proc is in the current program
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.VisualQualifiedName.ToString() : proc.Name;
-                var completionItem =
-                    new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
-                completionItem.insertText = procIsPublic
+                var completionItem = new CompletionItem() { Label = string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams) };
+                completionItem.InsertText = procIsPublic
                     ? inputParams != null
                             ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Input])
                             : inoutParams != null
@@ -181,11 +180,11 @@ namespace TypeCobol.LanguageServer
                             : outputParams != null
                                 ? proc.Name + " " + paramWithCase[ParameterDescription.PassingTypes.Output]
                                 : proc.Name;
-                completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
+                completionItem.Kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
-                completionItem.data = new object[3];
+                completionItem.Data = new object[3];
                 var signatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
-                ((object[])completionItem.data)[1] = signatureInformation;
+                ((object[])completionItem.Data)[1] = signatureInformation;
 
                 //Store the link between the hash and the procedure. This will help to determine the procedure parameter completion context later. 
                 if (!functionDeclarationSignatureDictionary.ContainsKey(signatureInformation))
@@ -282,7 +281,7 @@ namespace TypeCobol.LanguageServer
             }
 
             string label = $"{name} ({type}) ({insertText})";
-            return new CompletionItem(label) { insertText = insertText, kind = CompletionItemKind.Variable };
+            return new CompletionItem() { Label = label, InsertText = insertText, Kind = CompletionItemKind.Variable };
         }
 
         public static Case GetTextCase(string tokenText)

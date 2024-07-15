@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
+
+namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     /// <summary>
     /// The parameters related to GetDataLayout request
@@ -11,7 +13,7 @@
         /// <summary>
         /// The current document in edition
         /// </summary>
-        public VsCodeProtocol.TextDocumentIdentifier textDocument { get; set; }
+        public TextDocumentIdentifier textDocument { get; set; }
 
         /// <summary>
         /// The output type expected by the client (only CSV is currently supported)

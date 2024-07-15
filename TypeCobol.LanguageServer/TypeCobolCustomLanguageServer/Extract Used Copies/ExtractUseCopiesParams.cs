@@ -1,4 +1,4 @@
-﻿using TypeCobol.LanguageServer.VsCodeProtocol;
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {

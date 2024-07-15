@@ -4,6 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 using System.Collections.Generic;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol

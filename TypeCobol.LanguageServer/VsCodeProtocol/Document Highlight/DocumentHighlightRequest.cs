@@ -4,6 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 using System.Collections.Generic;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
@@ -16,6 +17,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class DocumentHighlightRequest
     {
-        public static readonly RequestType Type = new RequestType("textDocument/documentHighlight", typeof(TextDocumentPosition), typeof(List<DocumentHighlight>), null);
+        public static readonly RequestType Type = new RequestType("textDocument/documentHighlight", typeof(TextDocumentPositionParams), typeof(List<DocumentHighlight>), null);
     }
 }

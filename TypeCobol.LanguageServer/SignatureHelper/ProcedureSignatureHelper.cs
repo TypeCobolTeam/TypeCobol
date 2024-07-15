@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.SignatureHelper
 {
@@ -24,7 +24,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             foreach (var parameter in procedure.Profile.InputParameters)
             {
                 var label = string.Format("{0}{1}({2})", firstPass ? "INPUT " : null, parameter.DataName, parameter.DataType.Name);
-                parametersInfo[i] = new ParameterInformation(label, null); //Replace null with commented documentation linked to parameter
+                parametersInfo[i] = new ParameterInformation() { Label = label }; //Replace null with commented documentation linked to parameter
 
                 i++; firstPass = false;
             }
@@ -32,7 +32,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             foreach (var parameter in procedure.Profile.InoutParameters)
             {
                 var label = string.Format("{0}{1}({2})", firstPass ? "IN-OUT " : null, parameter.DataName, parameter.DataType.Name);
-                parametersInfo[i] = new ParameterInformation(label, null);
+                parametersInfo[i] = new ParameterInformation() { Label = label };
 
                 i++; firstPass = false;
             }
@@ -40,12 +40,12 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             foreach (var parameter in procedure.Profile.OutputParameters)
             {
                 var label = string.Format("{0}{1}({2})", firstPass ? "OUTPUT " : null, parameter.DataName, parameter.DataType.Name);
-                parametersInfo[i] = new ParameterInformation(label, null);
+                parametersInfo[i] = new ParameterInformation() { Label = label };
 
                 i++; firstPass = false;
             }
 
-            return new SignatureInformation(procedure.QualifiedName.ToString(), null, parametersInfo); //Replace null with commented documentation linked to procedure declaration
+            return new SignatureInformation() { Label = procedure.QualifiedName.ToString(), Parameters = parametersInfo }; //Replace null with commented documentation linked to procedure declaration
         }
 
         /// <summary>
@@ -59,13 +59,13 @@ namespace TypeCobol.LanguageServer.SignatureHelper
         {
             int activeParameter = 0;
             var closestTokenToCursor = wrappedCodeElement.ArrangedConsumedTokens.Where(
-                                t => (t.Line == position.line + 1 && t.StartIndex <= position.character && t.StopIndex+1 > position.character))
-                                .OrderBy(t => Math.Abs(position.character - t.StopIndex + 1)) //Allows to get the token closest to the cursor and ignoring the one where the cursor is
+                                t => (t.Line == position.Line + 1 && t.StartIndex <= position.Character && t.StopIndex+1 > position.Character))
+                                .OrderBy(t => Math.Abs(position.Character - t.StopIndex + 1)) //Allows to get the token closest to the cursor and ignoring the one where the cursor is
                                 .FirstOrDefault();
 
             //Get the last significant token before cursor (INPUT / OUTPUT / IN-OUT)
             var closestSignificantTokenToCursor = wrappedCodeElement.ArrangedConsumedTokens.LastOrDefault(
-                t => (t.TokenType == TokenType.INPUT || t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT) && t.Line <= position.line + 1);
+                t => (t.TokenType == TokenType.INPUT || t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT) && t.Line <= position.Line + 1);
                 
 
             if (closestSignificantTokenToCursor == null)
@@ -74,7 +74,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             var alreadyGivenTokens = wrappedCodeElement.ArrangedConsumedTokens
                 .SkipWhile(t => t != closestSignificantTokenToCursor).Skip(1)
                 .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
-                .Where(t => (t.StartIndex < position.character && t.Line == position.line + 1) || t.Line < position.line + 1);
+                .Where(t => (t.StartIndex < position.Character && t.Line == position.Line + 1) || t.Line < position.Line + 1);
 
 
             int alreadyGivenParametersCount = 0;
@@ -108,7 +108,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             }
 
             if (closestTokenToCursor != null && (closestTokenToCursor.TokenType == TokenType.UserDefinedWord || closestTokenToCursor.TokenType == TokenType.QualifiedNameSeparator) &&
-                position.character <= closestTokenToCursor.StopIndex + 1 && activeParameter > 0)
+                position.Character <= closestTokenToCursor.StopIndex + 1 && activeParameter > 0)
             {
                 activeParameter--; //The cursor is still on this argument so the user is not willing the next argument. 
             }

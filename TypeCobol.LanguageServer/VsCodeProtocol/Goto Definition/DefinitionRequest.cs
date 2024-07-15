@@ -3,6 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
@@ -15,6 +16,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class DefinitionRequest
     {
-        public static readonly RequestType Type = new RequestType("textDocument/definition", typeof(TextDocumentPosition), typeof(Definition), null);
+        public static readonly RequestType Type = new RequestType("textDocument/definition", typeof(TextDocumentPositionParams), typeof(Location), null);
     }
 }

@@ -871,7 +871,8 @@ namespace TypeCobol.LanguageServer
 
                 if (MissingCopiesEvent != null && missingCopies.Count > 0)
                 {
-                    MissingCopiesEvent(missingCopies.First().Key, new MissingCopiesEvent() { Copies = missingCopies.SelectMany(c => c.Value).Distinct().ToList() });
+                    var uri = new Uri(missingCopies.First().Key);
+                    MissingCopiesEvent(uri, new MissingCopiesEvent() { Copies = missingCopies.SelectMany(c => c.Value).Distinct().ToList() });
                     return;//Do not report diagnostics if copies are missing
                 }
 

@@ -1,7 +1,6 @@
-﻿using System;
-using TypeCobol.Compiler;
+﻿using TypeCobol.Compiler;
 using TypeCobol.LanguageServer.Interfaces;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.Context
 {
@@ -46,7 +45,7 @@ namespace TypeCobol.LanguageServer.Context
         /// <summary>
         /// True if the text document is a Copy, False if it's a Program.
         /// </summary>
-        public bool IsCopy => TextDocument.languageId == LanguageIds.Copybook;
+        public bool IsCopy => TextDocument.LanguageId == VsCodeProtocol.LanguageIds.Copybook;
 
         /// <summary>
         /// Constructor.
@@ -55,7 +54,7 @@ namespace TypeCobol.LanguageServer.Context
         public DocumentContext(TextDocumentItem textDocument)
         {
             System.Diagnostics.Debug.Assert(textDocument != null);
-            this.Uri = new Uri(textDocument.uri);
+            this.Uri = textDocument.Uri;
             this.TextDocument = textDocument;
             this.FileCompiler = null;
             this.LanguageServer = null;

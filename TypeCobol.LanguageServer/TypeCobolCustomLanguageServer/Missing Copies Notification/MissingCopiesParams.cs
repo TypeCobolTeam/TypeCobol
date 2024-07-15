@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -10,7 +10,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <summary>
         /// The TextDocumentIdentifier for which diagnostic information is reported.
         /// </summary>
-        public VsCodeProtocol.TextDocumentIdentifier textDocument { get; set; }
+        public TextDocumentIdentifier textDocument { get; set; }
         /// <summary>
         /// List of missing copies
         /// </summary>

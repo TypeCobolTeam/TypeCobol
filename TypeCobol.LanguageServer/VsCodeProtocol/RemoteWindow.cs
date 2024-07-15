@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
@@ -48,7 +49,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         private void showMessage(MessageType type, string message)
         {
-            rpcServer.SendNotification(ShowMessageNotification.Type, new ShowMessageParams() { type = type, message = message });
+            rpcServer.SendNotification(ShowMessageNotification.Type, new ShowMessageParams() { MessageType = type, Message = message });
         }
     }
 }

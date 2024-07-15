@@ -5,7 +5,7 @@ using System.Linq;
 using TypeCobol.CustomExceptions;
 #endif
 using TypeCobol.LanguageServer.JsonRPC;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 #if EUROINFO_RULES
 using TypeCobol.Tools.Options_Config;
 #endif
@@ -84,9 +84,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 return;
             }
             base.OnDidSaveTextDocument(parameters, lspProfiling);
-            if (parameters.text != null && UseOutlineRefresh)
+            if (parameters.Text != null && UseOutlineRefresh)
             {
-                OnDidReceiveRefreshOutline(parameters.textDocument.uri, true);
+                OnDidReceiveRefreshOutline(parameters.TextDocument.Uri, true);
             }
         }
 
@@ -189,7 +189,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         protected virtual void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
         {
-            this.Workspace.UpdateMissingCopies(new Uri(parameter.textDocument.uri), parameter.Copies);
+            this.Workspace.UpdateMissingCopies(parameter.textDocument.Uri, parameter.Copies);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="parameter"></param>
         protected virtual void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
         {
-            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+            var context = GetDocumentContextFromUri(parameter.textDocument.Uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (context != null && context.FileCompiler != null)
             {
                 this.Workspace.RefreshSyntaxTree(context.FileCompiler, Workspace.SyntaxTreeRefreshLevel.ForceFullRefresh);
@@ -213,9 +213,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="parameter"></param>
         protected virtual GetDataLayoutResult OnDidReceiveGetDataLayout(GetDataLayoutParams parameter)
         {
-            string uri = parameter.textDocument.uri;
+            Uri uri = parameter.textDocument.Uri;
 
-            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var context = GetDocumentContextFromUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (context != null && context.FileCompiler != null)
             {
                 // We only support CSV for now. In the future outputType should be checked here
@@ -224,20 +224,20 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 return new GetDataLayoutResult(rows);
             }
 
-            throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");
+            throw new Exception($"Unknown document: '{uri}'");
         }
 
 #if EUROINFO_RULES
         protected virtual RemarksData OnDidReceiveExtractRemarksData(ExtractRemarksDataParams parameter)
         {
-            string uri = parameter.textDocument.uri;
-            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+            Uri uri = parameter.textDocument.Uri;
+            var context = GetDocumentContextFromUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (context != null && context.FileCompiler != null)
             {
                 var compilationResults = context.FileCompiler.CompilationResultsForProgram;
                 if (compilationResults.MissingCopies.Any())
                 {
-                    throw new MissingCopyException("Cannot find used copy before all copys are resolved", uri) { Logged = false };
+                    throw new MissingCopyException("Cannot find used copy before all copys are resolved", uri.ToString()) { Logged = false };
                 }
 
                 var data = this.Workspace.GetRemarksData(compilationResults);
@@ -248,7 +248,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                        };
             }
 
-            throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");
+            throw new Exception($"Unknown document: '{uri}'");
         }
 #endif
 
@@ -303,7 +303,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         protected virtual void OnDidReceiveExtractUseCopies(ExtractUseCopiesParams parameter)
         {
-            var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+            var docContext = GetDocumentContextFromUri(parameter.textDocument.Uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
                 var intrinsicTable = this.Workspace.CustomSymbols?.EnclosingScope;
@@ -338,11 +338,11 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="bForced">Force the server to send the program OutlineNodes</param>
-        protected virtual void OnDidReceiveRefreshOutline(string uri, bool bForced)
+        protected virtual void OnDidReceiveRefreshOutline(Uri uri, bool bForced)
         {
             if (this.UseOutlineRefresh)
             {
-                var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+                var context = GetDocumentContextFromUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
 
                 if (context != null && context.FileCompiler != null)
                 {
@@ -359,11 +359,11 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// Update Cfg/Dfa information to the client.
         /// </summary>
         /// <param name="uri">Uri of the document to update Cfg/Dfa Informations</param>
-        private void UpdateCfgDfaInformation(string uri)
+        private void UpdateCfgDfaInformation(Uri uri)
         {
             if (this.UseCfgDfaDataRefresh != UseCfgMode.No)
             {
-                var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+                var context = GetDocumentContextFromUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
                 if (context != null && context.FileCompiler != null)
                 {
                     var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context, this.UseCfgDfaDataRefresh == UseCfgMode.AsFile);
@@ -377,7 +377,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         public void DocumentModified(object sender, EventArgs args)
         {
-            string uri = sender.ToString();
+            Uri uri = (Uri)sender;
             OnDidReceiveRefreshOutline(uri, false);
             UpdateCfgDfaInformation(uri);
         }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using static TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.CfgDfaParams;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol

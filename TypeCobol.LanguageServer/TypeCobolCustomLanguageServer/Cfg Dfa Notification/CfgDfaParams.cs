@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
+
+namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     /// <summary>
     /// The parameters of CFG/DFA information notification
@@ -31,7 +33,7 @@
         /// <summary>
         /// The TextDocumentIdentifier for which cfg/dfa information is reported.
         /// </summary>
-        public VsCodeProtocol.TextDocumentIdentifier textDocument { get; set; }
+        public TextDocumentIdentifier textDocument { get; set; }
         /// <summary>
         /// The Path to the associated .dot File if any.
         /// The File if it exists is a temporary file it shall be deleted by the client.
@@ -46,7 +48,7 @@
         /// <summary>
         /// An array of instruction positions in the source document.
         /// </summary>
-        public VsCodeProtocol.Position[] instructionPositions { get; set; }   
+        public Position[] instructionPositions { get; set; }   
         /// <summary>
         /// An array of BasicBlock information.
         /// </summary>
@@ -59,7 +61,7 @@
         /// <param name="dotFilePath">The path of the dot file</param>
         /// <param name="instructionPositions">The array of instruction positions</param>
         /// <param name="basicBlockInfos">The Basic Block Information array</param>
-        public CfgDfaParams(VsCodeProtocol.TextDocumentIdentifier textDocument, string dotFilePath, VsCodeProtocol.Position[] instructionPositions, BasicBlockInfo[] basicBlockInfos)
+        public CfgDfaParams(TextDocumentIdentifier textDocument, string dotFilePath, Position[] instructionPositions, BasicBlockInfo[] basicBlockInfos)
         {
             this.textDocument = textDocument;
             this.dotFilePath = dotFilePath;
@@ -71,7 +73,7 @@
         /// Empty Constructor
         /// </summary>
         /// <param name="textDocument">The Target document identifier</param>
-        public CfgDfaParams(VsCodeProtocol.TextDocumentIdentifier textDocument)
+        public CfgDfaParams(TextDocumentIdentifier textDocument)
             : this(textDocument, null, null, null)
         {            
         }

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     class NodeRefreshParams
     {
-        public VsCodeProtocol.TextDocumentIdentifier textDocument { get; set; }
+        public TextDocumentIdentifier textDocument { get; set; }
     }
 }

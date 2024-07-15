@@ -1,5 +1,4 @@
 ﻿using TypeCobol.LanguageServer.JsonRPC;
-using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {

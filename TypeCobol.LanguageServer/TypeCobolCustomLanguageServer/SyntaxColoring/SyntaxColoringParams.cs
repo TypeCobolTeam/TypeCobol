@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
+
+using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring
 {
@@ -22,7 +18,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxC
         /// Range in the document concerned by this Syntax Coloring.
         /// If this parameter in null, then the whole document must be rescanned. 
         /// </summary>
-        public VsCodeProtocol.Range DocumentRange;
+        public Range DocumentRange;
 
         /// <summary>
         /// The List of token concerned
@@ -44,7 +40,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxC
         /// <param name="document">The Document's identifier</param>
         /// <param name="docRange">Document's range to refresh</param>
         /// <param name="tokens">The List of concerned tokens in the range</param>
-        public SyntaxColoringParams(TextDocumentItem document, VsCodeProtocol.Range docRange, List<Token> tokens)
+        public SyntaxColoringParams(TextDocumentItem document, Range docRange, List<Token> tokens)
         {
             this.textDocument = document;
             this.DocumentRange = docRange;

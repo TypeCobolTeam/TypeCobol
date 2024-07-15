@@ -1,5 +1,5 @@
 ﻿using TypeCobol.LanguageServer.JsonRPC;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -11,7 +11,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <summary>
         /// The message type. See {@link MessageType}
         /// </summary>
-        public VsCodeProtocol.MessageType type { get; set; }
+        public MessageType type { get; set; }
 
         /// <summary>
         /// The actual message
