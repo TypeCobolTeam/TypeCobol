@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.LanguageServer.Commands
+﻿using Newtonsoft.Json.Linq;
+
+namespace TypeCobol.LanguageServer.Commands
 {
     /// <summary>
     /// Describe any command implemented by this server.
@@ -52,6 +54,17 @@
     /// </summary>
     internal abstract class AbstractCommand : ICommand
     {
+        /// <summary>
+        /// Helper method for reading untyped args of the command.
+        /// </summary>
+        /// <typeparam name="T">Target type of the argument.</typeparam>
+        /// <param name="argument">Argument value.</param>
+        /// <returns>New instance of T converted from given argument value, default when given arg is not a JObject.</returns>
+        protected static T ReadArgAs<T>(object argument)
+        {
+            return argument is JObject jObject ? jObject.ToObject<T>() : default;
+        }
+
         protected TypeCobolServer Server { get; }
 
         protected AbstractCommand(TypeCobolServer typeCobolServer)
