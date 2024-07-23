@@ -9,6 +9,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Preprocessor;
+using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
 using TypeCobol.Tools;
@@ -928,6 +929,17 @@ namespace TypeCobol.LanguageServer
             }
 
             return defaultDefinition;
+        }
+
+        protected override object OnExecuteCommand(ExecuteCommandParams parameters)
+        {
+            string commandName = parameters.command;
+            if (ICommand.TryActivateCommand(commandName, this, out var command))
+            {
+                return command.Run(parameters.arguments);
+            }
+
+            throw new InvalidOperationException($"Command '{commandName}' is unknown.");
         }
     }
 
