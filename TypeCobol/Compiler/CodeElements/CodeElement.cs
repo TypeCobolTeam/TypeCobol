@@ -1,8 +1,5 @@
 using Antlr4.Runtime;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
@@ -11,7 +8,6 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -526,5 +522,22 @@ namespace TypeCobol.Compiler.CodeElements
     public interface ITypedCodeElement
     {
         DataType DataType { get; }
+    }
+
+    public static class CodeElementExtensions
+    {
+        /// <summary>
+        /// Indicates whether the given DataDefinitionEntry is a functional FILLER or not.
+        /// Functional FILLERs are data areas that may be used to accomodate with other data size changes/additions/removals.
+        /// </summary>
+        /// <param name="dataDefinitionEntry">DataDefinitionEntry instance, can be null.</param>
+        /// <returns>True when the DataDefinitionEntry is a functional FILLER, False otherwise.</returns>
+        public static bool IsFiller([CanBeNull] this DataDefinitionEntry dataDefinitionEntry)
+        {
+            return dataDefinitionEntry is CommonDataDescriptionAndDataRedefines codeElement
+                   && (codeElement.IsFiller // Uses the FILLER keyword
+                       || string.IsNullOrEmpty(codeElement.Name) // Anonymous
+                       || codeElement.Name.Contains("FILLER", StringComparison.OrdinalIgnoreCase)); // FILLER-like named data
+        }
     }
 }

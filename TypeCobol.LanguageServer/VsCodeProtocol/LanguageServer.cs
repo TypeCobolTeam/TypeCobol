@@ -63,7 +63,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         // RPC server used to send Remote Procedure Calls to the client
-        protected IRPCServer RpcServer { get; }
+        protected internal IRPCServer RpcServer { get; }
 
         /// <summary>
         /// Unhandled Exception Event Handler
