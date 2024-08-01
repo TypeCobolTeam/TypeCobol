@@ -135,7 +135,7 @@ namespace TypeCobol.LanguageServer.Commands
 
             // Compute edits asynchronously: create a message for ourselves
             Server.Workspace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(() => ComputeTextEdits(target.Uri, programClassDocument)));
-            return null;
+            return new object(); // Non-null blank response
         }
 
         private void ComputeTextEdits(Uri documentUri, ProgramClassDocument programClassDocument)
