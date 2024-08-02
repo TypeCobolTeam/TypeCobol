@@ -86,7 +86,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":24,\"character\":12},\"end\":{\"line\":24,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -94,7 +94,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\",\"position\":{\"line\":19,\"character\":24}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"len (Numeric) (len)\",\"kind\":6,\"insertText\":\"len\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}"
     },
     {
@@ -170,7 +170,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":12},\"end\":{\"line\":25,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -178,7 +178,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\",\"position\":{\"line\":20,\"character\":25}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}"
     },
     {
@@ -254,7 +254,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":12},\"end\":{\"line\":26,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -262,7 +262,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\",\"position\":{\"line\":21,\"character\":25}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"len (Numeric) (len)\",\"kind\":6,\"insertText\":\"len\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}"
     },
     {
@@ -290,7 +290,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL8019958258115485451.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
     }
   ],

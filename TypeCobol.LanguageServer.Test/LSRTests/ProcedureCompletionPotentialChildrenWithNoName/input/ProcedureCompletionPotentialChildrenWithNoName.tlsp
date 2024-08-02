@@ -26,7 +26,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}"
     },
     {
@@ -54,7 +54,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":27}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":27}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -62,7 +62,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":27}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"}]}"
     },
     {
@@ -83,7 +83,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":37}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -91,7 +91,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":37}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"TestVar3 (Level88) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
     },
     {
@@ -143,7 +143,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":16}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
     },
     {
@@ -151,7 +151,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}"
     },
     {
@@ -171,7 +171,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
     },
     {
@@ -179,7 +179,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
     },
     {
@@ -199,7 +199,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
     },
     {
@@ -207,7 +207,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
     },
     {
@@ -227,7 +227,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
     },
     {
@@ -235,7 +235,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
     },
     {
@@ -255,7 +255,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... END'\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement or NEXT SENTENCE after IF condition.\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Sentence is not correctly ended: a period was required.\"},{\"range\":{\"start\":{\"line\":26,\"character\":13},\"end\":{\"line\":26,\"character\":26}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"end-if\\\" is missing\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":true}"
     },
     {
@@ -263,7 +263,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":65}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
     },
     {

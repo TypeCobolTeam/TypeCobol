@@ -42,7 +42,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'MOVE ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -50,7 +50,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":17}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\"},{\"label\":\"W-Bool (BOOL) (W-Bool)\",\"kind\":6,\"insertText\":\"W-Bool\"},{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"W-OutDate (DATE) (W-OutDate)\",\"kind\":6,\"insertText\":\"W-OutDate\"},{\"label\":\"TestLevel (Numeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"},{\"label\":\"Level2 (Alphanumeric) (Level1::Level2)\",\"kind\":6,\"insertText\":\"Level1::Level2\"},{\"label\":\"VarLevel2 (Numeric) (Level1::Level2::VarLevel2)\",\"kind\":6,\"insertText\":\"Level1::Level2::VarLevel2\"},{\"label\":\"Level2-2 (Alphanumeric) (Level1::Level2-2)\",\"kind\":6,\"insertText\":\"Level1::Level2-2\"},{\"label\":\"VarLevel2-2 (Numeric) (Level1::Level2-2::VarLevel2-2)\",\"kind\":6,\"insertText\":\"Level1::Level2-2::VarLevel2-2\"},{\"label\":\"MyBool (BOOL) (Level1::MyBool)\",\"kind\":6,\"insertText\":\"Level1::MyBool\"}]}"
     },
     {
@@ -70,7 +70,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -78,7 +78,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":35}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"W-Bool (BOOL) (W-Bool)\",\"kind\":6,\"insertText\":\"W-Bool\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"},{\"label\":\"Level2 (Alphanumeric) (Level1::Level2)\",\"kind\":6,\"insertText\":\"Level1::Level2\"},{\"label\":\"Level2-2 (Alphanumeric) (Level1::Level2-2)\",\"kind\":6,\"insertText\":\"Level1::Level2-2\"}]}"
     },
     {
@@ -98,7 +98,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
     }
   ],

@@ -26,7 +26,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\",\"position\":{\"line\":8,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}}]}"
     },
     {
@@ -50,7 +50,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -58,7 +58,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\",\"position\":{\"line\":13,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}}]}"
     },
     {

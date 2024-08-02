@@ -38,7 +38,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/workspaces/RDz4EIv72_workspaceUAT/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOJCM02.cbl\"},\"uri\":\"file:/C:/Users/MAYANJE/workspaces/RDz4EIv72_workspaceUAT/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOJCM02.cbl\",\"position\":{\"line\":12,\"character\":20}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":[{\"label\":\"W-OPTION (Alphanumeric) (W-OPTION)\",\"kind\":6,\"insertText\":\"W-OPTION\"},{\"label\":\"W-OPTION-1 (Level88) (W-OPTION::W-OPTION-1)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-1\"},{\"label\":\"W-OPTION-2 (Level88) (W-OPTION::W-OPTION-2)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-2\"}]}"
     }
   ],

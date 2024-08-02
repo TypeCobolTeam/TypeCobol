@@ -54,7 +54,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL7987407785098902427.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":38,\"character\":12},\"end\":{\"line\":38,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'MOVE ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -62,7 +62,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL7987407785098902427.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL7987407785098902427.cee\",\"position\":{\"line\":34,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"zedzed (BOOL) (zedzed)\",\"kind\":6,\"insertText\":\"zedzed\"},{\"label\":\"MyDataGlobal (DATE) (MyDataGlobal)\",\"kind\":6,\"insertText\":\"MyDataGlobal\"},{\"label\":\"GlobalGroup (Alphanumeric) (GlobalGroup)\",\"kind\":6,\"insertText\":\"GlobalGroup\"},{\"label\":\"globalChildren1 (BOOL) (GlobalGroup::globalChildren1)\",\"kind\":6,\"insertText\":\"GlobalGroup::globalChildren1\"},{\"label\":\"globalChildren2 (Alphanumeric) (GlobalGroup::globalChildren2)\",\"kind\":6,\"insertText\":\"GlobalGroup::globalChildren2\"},{\"label\":\"childrenGlobal (DATE) (GlobalGroup::globalChildren2::childrenGlobal)\",\"kind\":6,\"insertText\":\"GlobalGroup::globalChildren2::childrenGlobal\"}]}"
     },
     {
@@ -98,7 +98,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL7987407785098902427.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":39,\"character\":12},\"end\":{\"line\":39,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -106,7 +106,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL7987407785098902427.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL7987407785098902427.cee\",\"position\":{\"line\":35,\"character\":19}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"MyDataGlobal (DATE) (MyDataGlobal)\",\"kind\":6,\"insertText\":\"MyDataGlobal\"},{\"label\":\"GlobalGroup (Alphanumeric) (GlobalGroup)\",\"kind\":6,\"insertText\":\"GlobalGroup\"},{\"label\":\"globalChildren2 (Alphanumeric) (GlobalGroup::globalChildren2)\",\"kind\":6,\"insertText\":\"GlobalGroup::globalChildren2\"}]}"
     },
     {
@@ -126,7 +126,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL7987407785098902427.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     }
   ],

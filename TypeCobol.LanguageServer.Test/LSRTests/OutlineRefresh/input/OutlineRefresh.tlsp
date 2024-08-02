@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":true,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":true}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":33,\"isUpdated\":true,\"childNodes\":[{\"name\":\"INIT-LIBRARY\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":34,\"isUpdated\":true},{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":47,\"isUpdated\":true},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;inout| tw:Numeric;out| rc:Numeric\",\"parentName\":\"\",\"line\":60,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":64,\"isUpdated\":true}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -54,7 +54,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":true,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":21,\"isUpdated\":true}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":36,\"isUpdated\":true,\"childNodes\":[{\"name\":\"INIT-LIBRARY\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":37,\"isUpdated\":true},{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":50,\"isUpdated\":true},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;inout| tw:Numeric;out| rc:Numeric\",\"parentName\":\"\",\"line\":63,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":67,\"isUpdated\":true}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":true}"
     },
     {
@@ -74,7 +74,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":true,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":false},{\"name\":\"Users\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":21,\"isUpdated\":true}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":36,\"isUpdated\":false,\"childNodes\":[{\"name\":\"INIT-LIBRARY\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":37,\"isUpdated\":false},{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":50,\"isUpdated\":false},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;inout| tw:Numeric;out| rc:Numeric\",\"parentName\":\"\",\"line\":63,\"isUpdated\":false,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":67,\"isUpdated\":false}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -94,7 +94,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":false,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":false,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":false},{\"name\":\"Users\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":21,\"isUpdated\":false}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":36,\"isUpdated\":true,\"childNodes\":[{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":50,\"isUpdated\":true},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;inout| tw:Numeric;out| rc:Numeric\",\"parentName\":\"\",\"line\":63,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":67,\"isUpdated\":true}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":true}"
     },
     {
@@ -114,7 +114,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":false,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":false,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":false},{\"name\":\"Users\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":21,\"isUpdated\":false}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":36,\"isUpdated\":true,\"childNodes\":[{\"name\":\"INIT-LIBRARY\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":37,\"isUpdated\":true},{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":50,\"isUpdated\":true},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;inout| tw:Numeric;out| rc:Numeric\",\"parentName\":\"\",\"line\":63,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":67,\"isUpdated\":false}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -134,7 +134,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":false,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":false,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":false},{\"name\":\"Users\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":21,\"isUpdated\":false}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":36,\"isUpdated\":true,\"childNodes\":[{\"name\":\"INIT-LIBRARY\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":37,\"isUpdated\":false},{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":51,\"isUpdated\":true},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;inout| tw:Numeric;out| rc:Numeric\",\"parentName\":\"\",\"line\":64,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":68,\"isUpdated\":true}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":true}"
     },
     {
@@ -154,7 +154,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":false,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":false,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":false},{\"name\":\"Users\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":21,\"isUpdated\":false}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":36,\"isUpdated\":true,\"childNodes\":[{\"name\":\"INIT-LIBRARY\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":37,\"isUpdated\":false},{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":51,\"isUpdated\":false},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;out| rc:Numeric\",\"parentName\":\"\",\"line\":64,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":68,\"isUpdated\":true}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
     },
     {
@@ -174,7 +174,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/refreshOutline\",\"params\":{\"outlineNodes\":[{\"name\":\"DVZZBCO1\",\"type\":\"SourceProgram\",\"parentName\":\"\",\"line\":1,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"DataDivision\",\"parentName\":\"DVZZBCO1\",\"line\":3,\"isUpdated\":false,\"childNodes\":[{\"name\":\"\",\"type\":\"WorkingStorageSection\",\"parentName\":\"\",\"line\":4,\"isUpdated\":false,\"childNodes\":[{\"name\":\"Person\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":9,\"isUpdated\":false},{\"name\":\"User\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":16,\"isUpdated\":false},{\"name\":\"Users\",\"type\":\"TypeDefinition\",\"parentName\":\"\",\"line\":21,\"isUpdated\":false}]}]},{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"DVZZBCO1\",\"line\":36,\"isUpdated\":true,\"childNodes\":[{\"name\":\"INIT-LIBRARY\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":37,\"isUpdated\":false},{\"name\":\"SOME-PARAGRAPH\",\"type\":\"Paragraph\",\"parentName\":\"\",\"line\":51,\"isUpdated\":false},{\"name\":\"WriteName\",\"type\":\"FunctionDeclaration\",\"arguments\":\"in| user:DVZZBCO1.User;inout| tw:Numeric;out| rc:Numeric\",\"parentName\":\"\",\"line\":64,\"isUpdated\":true,\"childNodes\":[{\"name\":\"\",\"type\":\"ProcedureDivision\",\"parentName\":\"WriteName\",\"line\":68,\"isUpdated\":true}]}]}]}],\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/DVZZBCO15049469394111530455.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":true}"
     }
   ],

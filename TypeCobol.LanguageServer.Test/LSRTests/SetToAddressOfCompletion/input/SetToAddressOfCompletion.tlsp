@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'SET ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"46\",\"result\":true}"
     },
     {
@@ -42,7 +42,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"47\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":15}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"47\",\"result\":[{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"TestLevel (Numeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"},{\"label\":\"TestLevel88 (Level88) (TestLevel::TestLevel88)\",\"kind\":6,\"insertText\":\"TestLevel::TestLevel88\"}]}"
     },
     {
@@ -62,7 +62,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'SET ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"48\",\"result\":true}"
     },
     {
@@ -70,7 +70,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"49\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":28}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"49\",\"result\":[{\"label\":\"YYYY (Numeric) (W-Date::YYYY)\",\"kind\":6,\"insertText\":\"W-Date::YYYY\"},{\"label\":\"YYYY (Numeric) (W-OutDate::YYYY)\",\"kind\":6,\"insertText\":\"W-OutDate::YYYY\"},{\"label\":\"MM (Numeric) (W-Date::MM)\",\"kind\":6,\"insertText\":\"W-Date::MM\"},{\"label\":\"MM (Numeric) (W-OutDate::MM)\",\"kind\":6,\"insertText\":\"W-OutDate::MM\"},{\"label\":\"DD (Numeric) (W-Date::DD)\",\"kind\":6,\"insertText\":\"W-Date::DD\"},{\"label\":\"DD (Numeric) (W-OutDate::DD)\",\"kind\":6,\"insertText\":\"W-OutDate::DD\"},{\"label\":\"TestLevel (Numeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}"
     },
     {
@@ -86,7 +86,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"50\",\"result\":true}"
     },
     {
@@ -143,7 +143,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":8},\"end\":{\"line\":26,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"51\",\"result\":true}"
     },
     {
@@ -151,7 +151,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"52\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"position\":{\"line\":21,\"character\":39}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"52\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\"},{\"label\":\"W-Bool (BOOL) (W-Bool)\",\"kind\":6,\"insertText\":\"W-Bool\"},{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"W-OutDate (DATE) (W-OutDate)\",\"kind\":6,\"insertText\":\"W-OutDate\"},{\"label\":\"TestLevel (Numeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"}]}"
     },
     {
@@ -171,7 +171,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL1017554363682126440.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"53\",\"result\":true}"
     }
   ],
