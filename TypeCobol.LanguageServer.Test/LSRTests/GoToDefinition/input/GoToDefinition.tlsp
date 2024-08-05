@@ -18,7 +18,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":9,\"character\":19}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":13,\"character\":0}}}}"
     },
     {
@@ -26,7 +26,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":5,\"character\":0}}}}"
     },
     {
@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":24}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":6,\"character\":0}}}}"
     },
     {
@@ -42,7 +42,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":32}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":5,\"character\":0}}}}"
     },
     {
@@ -50,7 +50,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":40}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":6,\"character\":0}}}}"
     },
     {
@@ -58,7 +58,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":11,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":6,\"character\":0}}}}"
     }
   ],

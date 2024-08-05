@@ -557,5 +557,12 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CopyEditAddDataItem", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Refactorings")]
+        public void ExecuteCommandRefactorAdjustFillers()
+        {
+            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers", LsrTestingOptions.NoLsrTesting);
+        }
     }
 }
