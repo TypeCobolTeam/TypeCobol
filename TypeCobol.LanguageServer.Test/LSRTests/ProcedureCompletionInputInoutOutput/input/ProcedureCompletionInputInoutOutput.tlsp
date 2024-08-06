@@ -58,7 +58,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"36\",\"result\":true}"
     },
     {
@@ -66,7 +66,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"37\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":15,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"37\",\"result\":[{\"label\":\"AProcedureTest input FirstName(Alphanumeric) in-out BirthDate(DATE) output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"IN-OUT BirthDate(DATE)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"AProcedureTest input FirstName(Alphanumeric), LastName(Alphanumeric)  output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"LastName(Alphanumeric)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"AProcedureTest input FirstName(Alphanumeric), LastName(Alphanumeric), MiddleName(Alphanumeric) in-out BirthDate(DATE) output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"LastName(Alphanumeric)\"},{\"label\":\"MiddleName(Alphanumeric)\"},{\"label\":\"IN-OUT BirthDate(DATE)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"AProcedureTest input FirstName(Alphanumeric), LastName(Alphanumeric), MiddleName(Alphanumeric), ImaginaryName(Alphanumeric)  output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"LastName(Alphanumeric)\"},{\"label\":\"MiddleName(Alphanumeric)\"},{\"label\":\"ImaginaryName(Alphanumeric)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"NoContext input param1(DATE), param2(DATE) in-out param3(DATE), param4(DATE) output param5(DATE)\",\"kind\":2,\"insertText\":\"NoContext input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContext\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"param2(DATE)\"},{\"label\":\"IN-OUT param3(DATE)\"},{\"label\":\"param4(DATE)\"},{\"label\":\"OUTPUT param5(DATE)\"}]},null]},{\"label\":\"NoContext input param1(DATE) in-out param2(DATE), param3(DATE) output param4(DATE)\",\"kind\":2,\"insertText\":\"NoContext input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContext\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"IN-OUT param2(DATE)\"},{\"label\":\"param3(DATE)\"},{\"label\":\"OUTPUT param4(DATE)\"}]},null]},{\"label\":\"NoContextAndWithoutInOut input param1(DATE), param2(DATE)  output param3(DATE), param4(DATE)\",\"kind\":2,\"insertText\":\"NoContextAndWithoutInOut input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextAndWithoutInOut\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"param2(DATE)\"},{\"label\":\"OUTPUT param3(DATE)\"},{\"label\":\"param4(DATE)\"}]},null]},{\"label\":\"NoContextAndWithoutInOut input param1(DATE)  output param2(DATE), param3(DATE)\",\"kind\":2,\"insertText\":\"NoContextAndWithoutInOut input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextAndWithoutInOut\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"OUTPUT param2(DATE)\"},{\"label\":\"param3(DATE)\"}]},null]},{\"label\":\"NoContextWithoutOutput input param1(DATE), param2(DATE) in-out param3(DATE), param4(DATE) \",\"kind\":2,\"insertText\":\"NoContextWithoutOutput input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextWithoutOutput\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"param2(DATE)\"},{\"label\":\"IN-OUT param3(DATE)\"},{\"label\":\"param4(DATE)\"}]},null]},{\"label\":\"NoContextWithoutOutput input param1(DATE) in-out param2(DATE), param3(DATE) \",\"kind\":2,\"insertText\":\"NoContextWithoutOutput input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextWithoutOutput\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"IN-OUT param2(DATE)\"},{\"label\":\"param3(DATE)\"}]},null]},{\"label\":\"FirstName\",\"kind\":6,\"insertText\":\"FirstName\"},{\"label\":\"LastName\",\"kind\":6,\"insertText\":\"LastName\"},{\"label\":\"MiddleName\",\"kind\":6,\"insertText\":\"MiddleName\"},{\"label\":\"Gender\",\"kind\":6,\"insertText\":\"Gender\"},{\"label\":\"Height\",\"kind\":6,\"insertText\":\"Height\"},{\"label\":\"DVZF0OSM\",\"kind\":9}]}"
     },
     {
@@ -86,7 +86,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":36}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest(no arguments)'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"38\",\"result\":true}"
     },
     {
@@ -94,7 +94,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"39\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"39\",\"result\":true}"
     },
     {
@@ -102,7 +102,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"40\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":15,\"character\":37}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"40\",\"result\":[{\"label\":\"Person (Alphanumeric) (Person)\",\"kind\":6,\"insertText\":\"Person\"},{\"label\":\"FirstName (Alphanumeric) (Person::FirstName)\",\"kind\":6,\"insertText\":\"Person::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Person::LastName)\",\"kind\":6,\"insertText\":\"Person::LastName\"},{\"label\":\"MiddleName (Alphanumeric) (Person::MiddleName)\",\"kind\":6,\"insertText\":\"Person::MiddleName\"},{\"label\":\"Gender (Alphanumeric) (Person::Gender)\",\"kind\":6,\"insertText\":\"Person::Gender\"},{\"label\":\"Height (Alphanumeric) (Person::Height)\",\"kind\":6,\"insertText\":\"Person::Height\"}]}"
     },
     {
@@ -118,7 +118,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":18,\"character\":12},\"end\":{\"line\":18,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":17,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"41\",\"result\":true}"
     },
     {
@@ -126,7 +126,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"42\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"42\",\"result\":true}"
     },
     {
@@ -134,7 +134,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"43\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":16,\"character\":38}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"43\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                               output \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                               output \"}]}"
     },
     {
@@ -150,7 +150,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":18,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric) in-out(DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"44\",\"result\":true}"
     },
     {
@@ -158,7 +158,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"45\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"45\",\"result\":true}"
     },
     {
@@ -166,7 +166,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"46\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":17,\"character\":38}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"46\",\"result\":[{\"label\":\"Person (Alphanumeric) (Person)\",\"kind\":6,\"insertText\":\"Person\"},{\"label\":\"FirstName (Alphanumeric) (Person::FirstName)\",\"kind\":6,\"insertText\":\"Person::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Person::LastName)\",\"kind\":6,\"insertText\":\"Person::LastName\"},{\"label\":\"MiddleName (Alphanumeric) (Person::MiddleName)\",\"kind\":6,\"insertText\":\"Person::MiddleName\"},{\"label\":\"Gender (Alphanumeric) (Person::Gender)\",\"kind\":6,\"insertText\":\"Person::Gender\"},{\"label\":\"Height (Alphanumeric) (Person::Height)\",\"kind\":6,\"insertText\":\"Person::Height\"}]}"
     },
     {
@@ -186,7 +186,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":18,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric) in-out(DATE) output(Alphanumeric)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"47\",\"result\":true}"
     },
     {
@@ -194,7 +194,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"48\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"48\",\"result\":true}"
     },
     {
@@ -202,7 +202,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"49\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":17,\"character\":53}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"49\",\"result\":[{\"label\":\"Person (Alphanumeric) (Person)\",\"kind\":6,\"insertText\":\"Person\"},{\"label\":\"FirstName (Alphanumeric) (Person::FirstName)\",\"kind\":6,\"insertText\":\"Person::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Person::LastName)\",\"kind\":6,\"insertText\":\"Person::LastName\"},{\"label\":\"MiddleName (Alphanumeric) (Person::MiddleName)\",\"kind\":6,\"insertText\":\"Person::MiddleName\"},{\"label\":\"Gender (Alphanumeric) (Person::Gender)\",\"kind\":6,\"insertText\":\"Person::Gender\"},{\"label\":\"Height (Alphanumeric) (Person::Height)\",\"kind\":6,\"insertText\":\"Person::Height\"}]}"
     },
     {
@@ -334,7 +334,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"50\",\"result\":true}"
     },
     {
@@ -342,7 +342,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"51\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":18,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"51\",\"result\":[{\"label\":\"AProcedureTest input FirstName(Alphanumeric) in-out BirthDate(DATE) output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"IN-OUT BirthDate(DATE)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"AProcedureTest input FirstName(Alphanumeric), LastName(Alphanumeric)  output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"LastName(Alphanumeric)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"AProcedureTest input FirstName(Alphanumeric), LastName(Alphanumeric), MiddleName(Alphanumeric) in-out BirthDate(DATE) output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"LastName(Alphanumeric)\"},{\"label\":\"MiddleName(Alphanumeric)\"},{\"label\":\"IN-OUT BirthDate(DATE)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"AProcedureTest input FirstName(Alphanumeric), LastName(Alphanumeric), MiddleName(Alphanumeric), ImaginaryName(Alphanumeric)  output Gender(Alphanumeric), Height(Alphanumeric)\",\"kind\":2,\"insertText\":\"AProcedureTest input\",\"data\":[null,{\"label\":\"DVZF0OSM.AProcedureTest\",\"parameters\":[{\"label\":\"INPUT FirstName(Alphanumeric)\"},{\"label\":\"LastName(Alphanumeric)\"},{\"label\":\"MiddleName(Alphanumeric)\"},{\"label\":\"ImaginaryName(Alphanumeric)\"},{\"label\":\"OUTPUT Gender(Alphanumeric)\"},{\"label\":\"Height(Alphanumeric)\"}]},null]},{\"label\":\"NoContext input param1(DATE), param2(DATE) in-out param3(DATE), param4(DATE) output param5(DATE)\",\"kind\":2,\"insertText\":\"NoContext input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContext\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"param2(DATE)\"},{\"label\":\"IN-OUT param3(DATE)\"},{\"label\":\"param4(DATE)\"},{\"label\":\"OUTPUT param5(DATE)\"}]},null]},{\"label\":\"NoContext input param1(DATE) in-out param2(DATE), param3(DATE) output param4(DATE)\",\"kind\":2,\"insertText\":\"NoContext input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContext\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"IN-OUT param2(DATE)\"},{\"label\":\"param3(DATE)\"},{\"label\":\"OUTPUT param4(DATE)\"}]},null]},{\"label\":\"NoContextAndWithoutInOut input param1(DATE), param2(DATE)  output param3(DATE), param4(DATE)\",\"kind\":2,\"insertText\":\"NoContextAndWithoutInOut input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextAndWithoutInOut\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"param2(DATE)\"},{\"label\":\"OUTPUT param3(DATE)\"},{\"label\":\"param4(DATE)\"}]},null]},{\"label\":\"NoContextAndWithoutInOut input param1(DATE)  output param2(DATE), param3(DATE)\",\"kind\":2,\"insertText\":\"NoContextAndWithoutInOut input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextAndWithoutInOut\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"OUTPUT param2(DATE)\"},{\"label\":\"param3(DATE)\"}]},null]},{\"label\":\"NoContextWithoutOutput input param1(DATE), param2(DATE) in-out param3(DATE), param4(DATE) \",\"kind\":2,\"insertText\":\"NoContextWithoutOutput input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextWithoutOutput\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"param2(DATE)\"},{\"label\":\"IN-OUT param3(DATE)\"},{\"label\":\"param4(DATE)\"}]},null]},{\"label\":\"NoContextWithoutOutput input param1(DATE) in-out param2(DATE), param3(DATE) \",\"kind\":2,\"insertText\":\"NoContextWithoutOutput input\",\"data\":[null,{\"label\":\"DVZF0OSM.NoContextWithoutOutput\",\"parameters\":[{\"label\":\"INPUT param1(DATE)\"},{\"label\":\"IN-OUT param2(DATE)\"},{\"label\":\"param3(DATE)\"}]},null]},{\"label\":\"FirstName\",\"kind\":6,\"insertText\":\"FirstName\"},{\"label\":\"LastName\",\"kind\":6,\"insertText\":\"LastName\"},{\"label\":\"MiddleName\",\"kind\":6,\"insertText\":\"MiddleName\"},{\"label\":\"Gender\",\"kind\":6,\"insertText\":\"Gender\"},{\"label\":\"Height\",\"kind\":6,\"insertText\":\"Height\"},{\"label\":\"DVZF0OSM\",\"kind\":9}]}"
     },
     {
@@ -362,7 +362,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":20,\"character\":12},\"end\":{\"line\":20,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":36}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest(no arguments)'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"52\",\"result\":true}"
     },
     {
@@ -370,7 +370,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"53\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"53\",\"result\":true}"
     },
     {
@@ -378,7 +378,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"54\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":18,\"character\":37}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"54\",\"result\":[{\"label\":\"Person (Alphanumeric) (Person)\",\"kind\":6,\"insertText\":\"Person\"},{\"label\":\"FirstName (Alphanumeric) (Person::FirstName)\",\"kind\":6,\"insertText\":\"Person::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Person::LastName)\",\"kind\":6,\"insertText\":\"Person::LastName\"},{\"label\":\"MiddleName (Alphanumeric) (Person::MiddleName)\",\"kind\":6,\"insertText\":\"Person::MiddleName\"},{\"label\":\"Gender (Alphanumeric) (Person::Gender)\",\"kind\":6,\"insertText\":\"Person::Gender\"},{\"label\":\"Height (Alphanumeric) (Person::Height)\",\"kind\":6,\"insertText\":\"Person::Height\"}]}"
     },
     {
@@ -398,7 +398,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":54}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"55\",\"result\":true}"
     },
     {
@@ -406,7 +406,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"56\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"56\",\"result\":true}"
     },
     {
@@ -414,7 +414,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"57\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":18,\"character\":55}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"57\",\"result\":[{\"label\":\"Person (Alphanumeric) (Person)\",\"kind\":6,\"insertText\":\"Person\"},{\"label\":\"FirstName (Alphanumeric) (Person::FirstName)\",\"kind\":6,\"insertText\":\"Person::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Person::LastName)\",\"kind\":6,\"insertText\":\"Person::LastName\"},{\"label\":\"MiddleName (Alphanumeric) (Person::MiddleName)\",\"kind\":6,\"insertText\":\"Person::MiddleName\"},{\"label\":\"Gender (Alphanumeric) (Person::Gender)\",\"kind\":6,\"insertText\":\"Person::Gender\"},{\"label\":\"Height (Alphanumeric) (Person::Height)\",\"kind\":6,\"insertText\":\"Person::Height\"}]}"
     },
     {
@@ -430,7 +430,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":20,\"character\":37}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric, Alphanumeric)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"58\",\"result\":true}"
     },
     {
@@ -438,7 +438,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"59\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"59\",\"result\":true}"
     },
     {
@@ -446,7 +446,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"60\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":19,\"character\":38}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"60\",\"result\":[{\"label\":\"Person (Alphanumeric) (Person)\",\"kind\":6,\"insertText\":\"Person\"},{\"label\":\"FirstName (Alphanumeric) (Person::FirstName)\",\"kind\":6,\"insertText\":\"Person::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Person::LastName)\",\"kind\":6,\"insertText\":\"Person::LastName\"},{\"label\":\"MiddleName (Alphanumeric) (Person::MiddleName)\",\"kind\":6,\"insertText\":\"Person::MiddleName\"},{\"label\":\"Gender (Alphanumeric) (Person::Gender)\",\"kind\":6,\"insertText\":\"Person::Gender\"},{\"label\":\"Height (Alphanumeric) (Person::Height)\",\"kind\":6,\"insertText\":\"Person::Height\"}]}"
     },
     {
@@ -466,7 +466,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":20,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'AProcedureTest' input(Alphanumeric, Alphanumeric) output(Alphanumeric)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"61\",\"result\":true}"
     },
     {
@@ -474,7 +474,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"62\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"62\",\"result\":true}"
     },
     {
@@ -482,7 +482,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"63\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM7141948854262812779.cee\",\"position\":{\"line\":19,\"character\":53}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"63\",\"result\":[{\"label\":\"Person (Alphanumeric) (Person)\",\"kind\":6,\"insertText\":\"Person\"},{\"label\":\"FirstName (Alphanumeric) (Person::FirstName)\",\"kind\":6,\"insertText\":\"Person::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Person::LastName)\",\"kind\":6,\"insertText\":\"Person::LastName\"},{\"label\":\"MiddleName (Alphanumeric) (Person::MiddleName)\",\"kind\":6,\"insertText\":\"Person::MiddleName\"},{\"label\":\"Gender (Alphanumeric) (Person::Gender)\",\"kind\":6,\"insertText\":\"Person::Gender\"},{\"label\":\"Height (Alphanumeric) (Person::Height)\",\"kind\":6,\"insertText\":\"Person::Height\"}]}"
     },
     {

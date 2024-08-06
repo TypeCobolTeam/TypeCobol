@@ -62,7 +62,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":12},\"end\":{\"line\":35,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":31}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext(no arguments)'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -70,7 +70,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":33,\"character\":32}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -90,7 +90,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":38}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -98,7 +98,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":33,\"character\":39}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                          in-out \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                          in-out \"}]}"
     },
     {
@@ -114,7 +114,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":36,\"character\":12},\"end\":{\"line\":36,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":35,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -122,7 +122,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":34,\"character\":33}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -142,7 +142,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":35,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
     },
     {
@@ -150,7 +150,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":34,\"character\":40}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                          output \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                          output \"}]}"
     },
     {
@@ -166,7 +166,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":12},\"end\":{\"line\":37,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":36,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE, DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
     },
     {
@@ -174,7 +174,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":35,\"character\":33}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -230,7 +230,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":52,\"character\":12},\"end\":{\"line\":52,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":46}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut(no arguments)'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
     },
     {
@@ -238,7 +238,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":50,\"character\":47}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -258,7 +258,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":53}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
     },
     {
@@ -266,7 +266,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":50,\"character\":54}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                                         output \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                                         output \"}]}"
     },
     {
@@ -282,7 +282,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":53,\"character\":12},\"end\":{\"line\":53,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":52,\"character\":47}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":true}"
     },
     {
@@ -290,7 +290,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":51,\"character\":48}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -310,7 +310,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":52,\"character\":54}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE) output(DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":true}"
     },
     {
@@ -318,7 +318,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":51,\"character\":55}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -374,7 +374,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":68,\"character\":12},\"end\":{\"line\":68,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":44}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput(no arguments)'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"result\":true}"
     },
     {
@@ -382,7 +382,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":66,\"character\":45}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -402,7 +402,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":51}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"result\":true}"
     },
     {
@@ -410,7 +410,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":66,\"character\":52}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                                       in-out \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                                       in-out \"}]}"
     },
     {
@@ -426,7 +426,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":68,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"result\":true}"
     },
     {
@@ -434,7 +434,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":67,\"character\":46}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
@@ -454,7 +454,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":68,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE) in-out(DATE)\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"25\",\"result\":true}"
     },
     {
@@ -462,7 +462,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":67,\"character\":53}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {

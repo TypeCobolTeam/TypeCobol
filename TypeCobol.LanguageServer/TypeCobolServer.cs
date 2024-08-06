@@ -33,7 +33,7 @@ namespace TypeCobol.LanguageServer
             this.FunctionDeclarations = new Dictionary<SignatureInformation, FunctionDeclaration>();
         }
 
-        protected Workspace Workspace { get; private set; }
+        protected internal Workspace Workspace { get; private set; }
 
         protected FunctionDeclaration SignatureCompletionContext { get; set; }
 
@@ -229,7 +229,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
+        protected internal DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var context))

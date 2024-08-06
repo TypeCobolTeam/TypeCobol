@@ -44,7 +44,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -52,7 +52,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"position\":{\"line\":21,\"character\":17}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"CustomDep.MyProcedure INPUT Param1(DATE)  OUTPUT Param2(DATE)\",\"kind\":2,\"insertText\":\"CustomDep::MyProcedure INPUT\",\"data\":[null,{\"label\":\"CustomDep.MyProcedure\",\"parameters\":[{\"label\":\"INPUT Param1(DATE)\"},{\"label\":\"OUTPUT Param2(DATE)\"}]},null]},{\"label\":\"W-Alphanum\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"CustomDep\",\"kind\":9},{\"label\":\"TestingPgm\",\"kind\":9}]}"
     },
     {
@@ -76,7 +76,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'CALL ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -84,7 +84,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"position\":{\"line\":21,\"character\":28}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"MyProcedure INPUT Param1(DATE)  OUTPUT Param2(DATE)\",\"kind\":2,\"insertText\":\"MyProcedure INPUT\",\"data\":[null,{\"label\":\"CustomDep.MyProcedure\",\"parameters\":[{\"label\":\"INPUT Param1(DATE)\"},{\"label\":\"OUTPUT Param2(DATE)\"}]},null]}]}"
     },
     {
@@ -128,7 +128,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'CustomDep.MyProcedure' \"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param1' of type DATE and length 8\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param2' of type DATE and length 8\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -136,7 +136,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"position\":{\"line\":21,\"character\":46}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\\n                                        OUTPUT \"},{\"label\":\"W-OutDate (DATE) (W-OutDate)\",\"kind\":6,\"insertText\":\"W-OutDate\\n                                        OUTPUT \"}]}"
     },
     {
@@ -184,7 +184,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":59}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'CustomDep.MyProcedure' input(DATE)\"},{\"range\":{\"start\":{\"line\":22,\"character\":13},\"end\":{\"line\":22,\"character\":59}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'CustomDep.MyProcedure' is missing parameter 'Param2' of type DATE and length 8\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
     },
     {
@@ -192,7 +192,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"position\":{\"line\":21,\"character\":60}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\"},{\"label\":\"W-OutDate (DATE) (W-OutDate)\",\"kind\":6,\"insertText\":\"W-OutDate\"}]}"
     },
     {
@@ -212,7 +212,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL9180248616523025894.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
     },
     {

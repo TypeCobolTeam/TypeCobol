@@ -75,7 +75,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":8},\"end\":{\"line\":35,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -83,7 +83,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":30,\"character\":46}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}"
     },
     {
@@ -107,7 +107,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":8},\"end\":{\"line\":35,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -115,7 +115,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":30,\"character\":57}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}"
     },
     {
@@ -143,7 +143,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":36,\"character\":8},\"end\":{\"line\":36,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -151,7 +151,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":31,\"character\":38}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}"
     },
     {
@@ -171,7 +171,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
     },
     {
@@ -207,7 +207,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'MOVE ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":true}"
     },
     {
@@ -215,7 +215,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":32,\"character\":16}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":[{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\"},{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"W-Bool (BOOL) (W-Bool)\",\"kind\":6,\"insertText\":\"W-Bool\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"},{\"label\":\"MyBoool (BOOL) (MyGroup::MyBoool)\",\"kind\":6,\"insertText\":\"MyGroup::MyBoool\"},{\"label\":\"MyDatePointer (Alphanumeric) (MyDatePointer)\",\"kind\":6,\"insertText\":\"MyDatePointer\"},{\"label\":\"TestType (MyType) (TestType)\",\"kind\":6,\"insertText\":\"TestType\"}]}"
     },
     {
@@ -247,7 +247,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":true}"
     },
     {
@@ -255,7 +255,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":32,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"Varia (DATE) (TestType::Varia)\",\"kind\":6,\"insertText\":\"TestType::Varia\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"},{\"label\":\"MyDatePointer (Alphanumeric) (MyDatePointer)\",\"kind\":6,\"insertText\":\"MyDatePointer\"},{\"label\":\"TestLevel (Alphanumeric) (TestType::TestLevel)\",\"kind\":6,\"insertText\":\"TestType::TestLevel\"}]}"
     },
     {
@@ -319,7 +319,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":true}"
     },
     {
@@ -327,7 +327,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":32,\"character\":49}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}"
     },
     {
@@ -359,7 +359,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":37,\"character\":8},\"end\":{\"line\":37,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":true}"
     },
     {
@@ -367,7 +367,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":32,\"character\":60}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}"
     },
     {
@@ -463,7 +463,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":38,\"character\":8},\"end\":{\"line\":38,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"},{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":true}"
     },
     {
@@ -471,7 +471,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":33,\"character\":42}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}"
     },
     {
@@ -495,7 +495,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":6},\"end\":{\"line\":34,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":true}"
     },
     {
@@ -619,7 +619,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"result\":true}"
     },
     {
@@ -627,7 +627,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":34,\"character\":24}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"MyTestLevel (Level88) (MyTestLevel)\",\"kind\":6,\"insertText\":\"MyTestLevel\"},{\"label\":\"MyBoool (BOOL) (MyBoool)\",\"kind\":6,\"insertText\":\"MyBoool\"}]}"
     },
     {
@@ -851,7 +851,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"result\":true}"
     },
     {
@@ -859,7 +859,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":34,\"character\":25}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}"
     },
     {
@@ -891,7 +891,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"result\":true}"
     },
     {
@@ -899,7 +899,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":34,\"character\":36}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}"
     },
     {
@@ -931,7 +931,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":6},\"end\":{\"line\":35,\"character\":6}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Line exceed 80 chars\"},{\"range\":{\"start\":{\"line\":39,\"character\":8},\"end\":{\"line\":39,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input 'ADD ... .'\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"25\",\"result\":true}"
     },
     {
@@ -939,7 +939,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"position\":{\"line\":34,\"character\":48}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}"
     },
     {
@@ -963,7 +963,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL649301154637190760.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"27\",\"result\":true}"
     }
   ],

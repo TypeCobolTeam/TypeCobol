@@ -30,7 +30,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"typecobol/euroinformation/ExtractRemarksData\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/runtime_RDz/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"usedCPYs\":[\"YLSCPYA\",\"YLSCPYA1\",\"YLSCPYA2\"],\"insertionLine\":3}}"
     },
     {

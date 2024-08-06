@@ -102,7 +102,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":8},\"end\":{\"line\":30,\"character\":9}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '01' expecting {user defined word, CURRENCY, DATE}\"},{\"range\":{\"start\":{\"line\":28,\"character\":11},\"end\":{\"line\":28,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -110,7 +110,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":27,\"character\":25}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"DateOrdinal\",\"kind\":19,\"insertText\":\"DateOrdinal.\"},{\"label\":\"DateDB2\",\"kind\":19,\"insertText\":\"DateDB2.\"},{\"label\":\"Time6\",\"kind\":19,\"insertText\":\"Time6.\"},{\"label\":\"Time8\",\"kind\":19,\"insertText\":\"Time8.\"},{\"label\":\"TimeDB2\",\"kind\":19,\"insertText\":\"TimeDB2.\"},{\"label\":\"TimeStampDB2\",\"kind\":19,\"insertText\":\"TimeStampDB2.\"},{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2.\"},{\"label\":\"SmallInt\",\"kind\":19,\"insertText\":\"SmallInt.\"},{\"label\":\"Integer\",\"kind\":19,\"insertText\":\"Integer.\"},{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt.\"},{\"label\":\"Real\",\"kind\":19,\"insertText\":\"Real.\"},{\"label\":\"Float\",\"kind\":19,\"insertText\":\"Float.\"},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL.\"},{\"label\":\"DATE\",\"kind\":19,\"insertText\":\"DATE.\"},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY.\"},{\"label\":\"STRING\",\"kind\":19,\"insertText\":\"STRING.\"},{\"label\":\"ProcCall\",\"kind\":9},{\"label\":\"NestedProg\",\"kind\":9}]}"
     },
     {
@@ -130,7 +130,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -146,7 +146,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":true}"
     },
     {
@@ -154,7 +154,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":21}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\"},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\"},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\"},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\"},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\"},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\"}]}"
     },
     {
@@ -170,7 +170,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":39,\"character\":22},\"end\":{\"line\":39,\"character\":22}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol v is not referenced\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":true}"
     },
     {
@@ -178,7 +178,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":22}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}}]}"
     },
     {
@@ -194,7 +194,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":true}"
     },
     {
@@ -218,7 +218,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
     },
     {
@@ -226,7 +226,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":31}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"groupA-2 (Alphanumeric) (groupA-2)\",\"kind\":6,\"insertText\":\"groupA-2\"}]}"
     },
     {
@@ -250,7 +250,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '.' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
     },
     {
@@ -258,7 +258,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":41}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"varA (DATE) (varA)\",\"kind\":6,\"insertText\":\"varA\"}]}"
     },
     {
@@ -290,7 +290,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
     }
   ],

@@ -26,7 +26,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":50,\"character\":12},\"end\":{\"line\":50,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/1/tcbl/DVZS00016431885148411321515.cee\",\"position\":{\"line\":48,\"character\":22}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"var3 (Numeric) (var3)\",\"kind\":6,\"insertText\":\"var3\"},{\"label\":\"var4 (Numeric) (var4)\",\"kind\":6,\"insertText\":\"var4\"},{\"label\":\"varA (Numeric) (groupA-1::groupA-2::varA)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA\"},{\"label\":\"varB (Numeric) (groupB-1::groupB-2::varB)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB\"},{\"label\":\"len (Numeric) (myUberType1::len)\",\"kind\":6,\"insertText\":\"myUberType1::len\"},{\"label\":\"YYYY (Numeric) (myUberType1::YYYY)\",\"kind\":6,\"insertText\":\"myUberType1::YYYY\"},{\"label\":\"MM (Numeric) (myUberType1::MM)\",\"kind\":6,\"insertText\":\"myUberType1::MM\"},{\"label\":\"DD (Numeric) (myUberType1::DD)\",\"kind\":6,\"insertText\":\"myUberType1::DD\"}]}"
     }
   ],
