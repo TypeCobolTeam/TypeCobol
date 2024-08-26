@@ -18,7 +18,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\",\"position\":{\"line\":7,\"character\":21}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"15 varC-1 pic 9.\\r\\n\"}],\"range\":{\"start\":{\"line\":8,\"character\":11},\"end\":{\"line\":8,\"character\":25}}}}"
     },
     {
@@ -26,7 +26,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\",\"position\":{\"line\":8,\"character\":21}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"10 groupC.\\r\\n   15 varC-1 pic 9.\\r\\n\"}],\"range\":{\"start\":{\"line\":9,\"character\":11},\"end\":{\"line\":9,\"character\":25}}}}"
     },
     {
@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\",\"position\":{\"line\":9,\"character\":22}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"05 groupB.\\r\\n   10 groupC.\\r\\n      15 varC-1 pic 9.\\r\\n   10 varB-1 pic X.\\r\\n   10 varB-2 pic X.\\r\\n\"}],\"range\":{\"start\":{\"line\":10,\"character\":11},\"end\":{\"line\":10,\"character\":25}}}}"
     },
     {
@@ -42,7 +42,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT04767119620262366036.cee\",\"position\":{\"line\":10,\"character\":22}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 groupA.\\r\\n   05 varA-1 pic X.\\r\\n   05 varA-2 pic X.\\r\\n   05 varA-3 pic X.\\r\\n   05 varA-4 pic X.\\r\\n   05 varA-5 pic 9.\\r\\n   05 groupB.\\r\\n      10 groupC.\\r\\n         15 varC-1 pic 9.\\r\\n      10 varB-1 pic X.\\r\\n      10 varB-2 pic X.\\r\\n\"}],\"range\":{\"start\":{\"line\":11,\"character\":11},\"end\":{\"line\":11,\"character\":25}}}}"
     }
   ],

@@ -1087,4 +1087,20 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
+    public static class DataDefinitionExtensions
+    {
+        /// <summary>
+        /// Indicates whether the given DataDefinition is a functional FILLER or not.
+        /// See <see cref="CodeElementExtensions.IsFiller"/> for details on functional FILLERs.
+        /// </summary>
+        /// <param name="dataDefinition">DataDefinition instance, can be null.</param>
+        /// <returns>True when the definition is a functional FILLER, False otherwise.</returns>
+        public static bool IsFiller([CanBeNull] this DataDefinition dataDefinition)
+        {
+            return dataDefinition != null
+                   && dataDefinition.ChildrenCount == 0 // No children
+                   && dataDefinition.CodeElement.IsFiller(); // Anonymous or FILLER (by using keyword or FILLER-like name)
+        }
+    }
+
 } // end of namespace TypeCobol.Compiler.Nodes

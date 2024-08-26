@@ -75,7 +75,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1103830253336368444.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1103830253336368444.cee\",\"position\":{\"line\":5,\"character\":21}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":[{\"label\":\"DVZZSTKD.Foo   \",\"kind\":3,\"insertText\":\"DVZZSTKD::Foo\",\"data\":[{\"start\":{\"line\":5,\"character\":16},\"end\":{\"line\":5,\"character\":21}},{\"label\":\"DVZZSTKD.Foo\",\"parameters\":[]},null]},{\"label\":\"DVZZSTKD\",\"kind\":9,\"data\":{\"start\":{\"line\":5,\"character\":16},\"end\":{\"line\":5,\"character\":21}}}]}"
     },
     {

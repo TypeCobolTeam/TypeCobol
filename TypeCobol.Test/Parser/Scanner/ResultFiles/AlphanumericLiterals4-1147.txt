@@ -1,0 +1,3 @@
+-- Line 1 --
+[1,9+:X'C085D0']<HexadecimalAlphanumericLiteral>(',Y,Y){éeè}
+

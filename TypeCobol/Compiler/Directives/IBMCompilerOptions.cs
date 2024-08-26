@@ -1,6 +1,8 @@
 #nullable enable
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using TypeCobol.Compiler.File;
 
 namespace TypeCobol.Compiler.Directives
 {
@@ -137,7 +139,14 @@ namespace TypeCobol.Compiler.Directives
                 case IBMCompilerOptionName.BLOCK0: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.BUFSIZE: IsActivated = true; Value = "4096"; break;
                 case IBMCompilerOptionName.CICS: IsActivated = false; Value = null; break;
-                case IBMCompilerOptionName.CODEPAGE: IsActivated = true; Value = "1140"; break;
+                case IBMCompilerOptionName.CODEPAGE:
+                    IsActivated = true;
+#if EUROINFO_RULES
+                    Value = "1147"; //IBM EBCDIC (France-Euro)
+#else
+                    Value = "1140"; //IBM EBCDIC (EU-Canada-Euro)
+#endif
+                    break;
                 case IBMCompilerOptionName.COMPILE: IsActivated = false; Value = "S"; break;
                 case IBMCompilerOptionName.COPYLOC: IsActivated = false; Value = null; break;
                 case IBMCompilerOptionName.CURRENCY: IsActivated = false; Value = null; break;
@@ -1014,5 +1023,30 @@ namespace TypeCobol.Compiler.Directives
         ZONEDATA,
         /* If you compile using ZWB, the compiler removes the sign from a signed zoned decimal (DISPLAY) field before comparing this field to an alphanumeric elementary field during execution. */
         ZWB
+    }
+
+    public static class IBMCompilerOptionsExtensions
+    {
+        /// <summary>
+        /// Get from the CODEPAGE compiler option:
+        /// • The encoding of literals in the source program
+        /// • The encoding for data items described with USAGE DISPLAY or DISPLAY-1
+        /// • The encoding for XML parsing and XML generation
+        ///
+        /// The encoding of national and UTF-8 data is not affected by the CODEPAGE compiler option. The encoding
+        /// for national literals and data items described with usage NATIONAL is UTF-16BE (big endian), CCSID
+        /// 1200. A reference to UTF-16 in this document is a reference to UTF-16BE. The encoding for UTF-8 literals
+        /// and data items described with usage UTF-8 is UTF-8, CCSID 1208.
+        /// </summary>
+        public static Encoding GetEncodingForAlphanumericLiterals(this IBMCompilerOptions ibmCompilerOptions)
+        {
+            string? codePageOption = ibmCompilerOptions.CODEPAGE.Value;
+            if (int.TryParse(codePageOption, out int codePage))
+            {
+                return IBMCodePages.GetDotNetEncodingFromIBMCCSID(codePage);
+            }
+
+            throw new ArgumentException($"Invalid CODEPAGE compiler option: '{codePageOption}'.");
+        }
     }
 }

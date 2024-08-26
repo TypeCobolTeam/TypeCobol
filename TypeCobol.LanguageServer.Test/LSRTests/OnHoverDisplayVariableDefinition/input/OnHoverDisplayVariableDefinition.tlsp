@@ -22,7 +22,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\",\"position\":{\"line\":13,\"character\":18}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 var1 pic 9(10).\\r\\n\"}],\"range\":{\"start\":{\"line\":14,\"character\":11},\"end\":{\"line\":14,\"character\":28}}}}"
     },
     {
@@ -30,7 +30,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\",\"position\":{\"line\":13,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 var2.\\r\\n   05 var3 pic X(10).\\r\\n\"}],\"range\":{\"start\":{\"line\":14,\"character\":11},\"end\":{\"line\":14,\"character\":28}}}}"
     },
     {
@@ -38,7 +38,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\",\"position\":{\"line\":14,\"character\":20}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"05 var3 pic X(10).\\r\\n\"}],\"range\":{\"start\":{\"line\":15,\"character\":11},\"end\":{\"line\":15,\"character\":23}}}}"
     },
     {
@@ -46,7 +46,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/3/tcbl/DVZZMFT081153230217563314.cee\",\"position\":{\"line\":15,\"character\":20}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 var4 type MyType.\\r\\n\"}],\"range\":{\"start\":{\"line\":16,\"character\":11},\"end\":{\"line\":16,\"character\":23}}}}"
     }
   ],

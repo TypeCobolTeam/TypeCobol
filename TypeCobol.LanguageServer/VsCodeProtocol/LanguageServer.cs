@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.Logging;
 
@@ -31,6 +32,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             rpcServer.RegisterRequestMethod(ShutdownRequest.Type, CallShutdown);
             rpcServer.RegisterRequestMethod(SignatureHelpRequest.Type, CallSignatureHelp);
             rpcServer.RegisterRequestMethod(WorkspaceSymbolRequest.Type, CallWorkspaceSymbol);
+            rpcServer.RegisterRequestMethod(WorkspaceExecuteCommandRequest.Type, CallExecuteCommand);
             rpcServer.RegisterNotificationMethod(DidChangeConfigurationNotification.Type, CallDidChangeConfiguration);
             rpcServer.RegisterNotificationMethod(ExitNotification.Type, CallExit);
             rpcServer.RegisterNotificationMethod(DidChangeWatchedFilesNotification.Type, CallDidChangeWatchedFiles);
@@ -61,7 +63,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         // RPC server used to send Remote Procedure Calls to the client
-        protected IRPCServer RpcServer { get; }
+        protected internal IRPCServer RpcServer { get; }
 
         /// <summary>
         /// Unhandled Exception Event Handler
@@ -377,6 +379,21 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
+        private ResponseResultOrError CallExecuteCommand(RequestType requestType, object parameters, LSPProfiling lspProfiling)
+        {
+            ResponseResultOrError resultOrError;
+            try
+            {
+                object result = OnExecuteCommand((ExecuteCommandParams)parameters);
+                resultOrError = new ResponseResultOrError() { result = result };
+            }
+            catch (Exception e)
+            {
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
+            }
+            return resultOrError;
+        }
+
         private void CallDidChangeConfiguration(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
             try
@@ -518,6 +535,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             capabilities.documentRangeFormattingProvider = false;
             capabilities.documentOnTypeFormattingProvider = null;
             capabilities.renameProvider = false;
+            capabilities.executeCommandProvider = new ExecuteCommandOptions() { commands = ICommand.SupportedCommands };
 
             var result = new InitializeResult();
             result.capabilities = capabilities;
@@ -696,6 +714,20 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// resolves to such.
         /// </summary>
         protected virtual List<SymbolInformation> OnWorkspaceSymbol(WorkspaceSymbolParams parameters)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// The workspace/executeCommand request is sent from the client to the server to trigger
+        /// command execution on the server. In most cases the server creates a WorkspaceEdit
+        /// structure and applies the changes to the workspace using the request workspace/applyEdit
+        /// which is sent from the server to the client.
+        /// </summary>
+        /// <param name="parameters">ExecuteCommandParams instance containing the name of the command
+        /// to execute and its arguments.</param>
+        /// <returns>Generic result object (maybe null) depending on the command being actually executed.</returns>
+        protected virtual object OnExecuteCommand(ExecuteCommandParams parameters)
         {
             return null;
         }

@@ -22,7 +22,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"position\":{\"line\":14,\"character\":45}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 StringBuilder typedef strict public PIC X(5).\\r\\n\\r\\na description \\r\\n\\r\\nSee: issue #123 \\r\\n\\r\\nTo do:\\r\\n\\t-\\tTo complete\\r\\n\"}],\"range\":{\"start\":{\"line\":15,\"character\":11},\"end\":{\"line\":15,\"character\":49}}}}"
     },
     {
@@ -30,7 +30,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"position\":{\"line\":22,\"character\":30}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.\\r\\n    05 sBuilder        type StringBuilder.\\r\\n\"}],\"range\":{\"start\":{\"line\":23,\"character\":7},\"end\":{\"line\":23,\"character\":46}}}}"
     },
     {
@@ -38,7 +38,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"position\":{\"line\":35,\"character\":26}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description \\r\\nthis is a extent to the description and \\r\\nyet I need a description that is a bit longer \\r\\n\\r\\nParameters:\\r\\n\\t-\\tbuffer: a buffer\\r\\n\\t-\\tblen: length\\r\\n\\t-\\ttw: a TextWriter\\r\\n\"}],\"range\":{\"start\":{\"line\":36,\"character\":11},\"end\":{\"line\":38,\"character\":50}}}}"
     },
     {
@@ -46,7 +46,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"position\":{\"line\":35,\"character\":34}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description \\r\\nthis is a extent to the description and \\r\\nyet I need a description that is a bit longer \\r\\n\\r\\nParameters:\\r\\n\\t-\\tbuffer: a buffer\\r\\n\\t-\\tblen: length\\r\\n\\t-\\ttw: a TextWriter\\r\\n\"}],\"range\":{\"start\":{\"line\":36,\"character\":11},\"end\":{\"line\":38,\"character\":50}}}}"
     },
     {
@@ -54,7 +54,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"position\":{\"line\":30,\"character\":20}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description \\r\\nthis is a extent to the description and \\r\\nyet I need a description that is a bit longer \\r\\nRestriction: a restriction \\r\\n\\r\\nDeprecated\\r\\nReplaced By: nothing \\r\\n\\r\\nSee: issue 35 \\r\\n\\r\\nParameters:\\r\\n\\t-\\tsrc: boolean\\r\\n\\t-\\tsrc2: boolean\\r\\n\\t-\\tsb: a comment\\r\\n\\r\\nNeeds:\\r\\n\\t-\\tneed 1\\r\\n\\t-\\tneed 2\\r\\n\\t-\\tneed 3\\r\\n\\t-\\tneed 4\\r\\n\\r\\nTo do:\\r\\n\\t-\\tfix that comment thing\\r\\n\"}],\"range\":{\"start\":{\"line\":31,\"character\":11},\"end\":{\"line\":33,\"character\":34}}}}"
     },
     {
@@ -62,7 +62,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"position\":{\"line\":95,\"character\":47}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.\\r\\n    05 sBuilder        type StringBuilder.\\r\\n\"}],\"range\":{\"start\":{\"line\":85,\"character\":6},\"end\":{\"line\":98,\"character\":12}}}}"
     },
     {
@@ -70,7 +70,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\",\"position\":{\"line\":95,\"character\":38}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.\\r\\n    05 sBuilder        type StringBuilder.\\r\\n\"}],\"range\":{\"start\":{\"line\":85,\"character\":6},\"end\":{\"line\":98,\"character\":12}}}}"
     }
   ],

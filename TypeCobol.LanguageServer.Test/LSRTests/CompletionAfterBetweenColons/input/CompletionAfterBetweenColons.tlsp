@@ -34,7 +34,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":17,\"character\":21},\"end\":{\"line\":17,\"character\":21}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input ':' expecting TO\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
     },
     {
@@ -42,7 +42,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"position\":{\"line\":16,\"character\":21}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[]}"
     },
     {
@@ -70,7 +70,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
     },
     {
@@ -78,7 +78,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"position\":{\"line\":17,\"character\":31}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[]}"
     },
     {
@@ -106,7 +106,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":20,\"character\":12},\"end\":{\"line\":20,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting TO\"},{\"range\":{\"start\":{\"line\":19,\"character\":25},\"end\":{\"line\":19,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '::' expecting user defined word\"}]}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
@@ -114,7 +114,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"position\":{\"line\":18,\"character\":24}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[]}"
     },
     {

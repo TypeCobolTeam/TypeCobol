@@ -26,7 +26,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"position\":{\"line\":4,\"character\":42}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":[]}"
     },
     {
@@ -38,7 +38,7 @@
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY13205826092725044692.cee\",\"position\":{\"line\":16,\"character\":49}}}"
     },
     {
-      "category": 2,
+      "category": 1,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"Data1 (Alphanumeric) (Data1)\",\"kind\":6,\"insertText\":\"Data1\"},{\"label\":\"ListIdx (Numeric) (ListIdx)\",\"kind\":6,\"insertText\":\"ListIdx\"}]}"
     },
     {
