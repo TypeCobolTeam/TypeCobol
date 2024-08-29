@@ -18,7 +18,7 @@ namespace TypeCobol.LanguageServer.Commands
                     return true;
                 }
 
-                if (dataRedefines.ChildrenCount == 0)
+                if (HasNoChildrenExcludingIndex(dataRedefines))
                 {
                     // Inline REDEFINES, nothing to do
                     return true;
@@ -92,10 +92,14 @@ namespace TypeCobol.LanguageServer.Commands
                         int indent = levelNumber.Token.StartIndex;
                         string newText = $"{Environment.NewLine}{new string(' ', indent)}{level} FILLER PIC X({adjustedFillerSize}).";
 
-                        // Insert at the end of last child line
-                        var lastChildLastToken = lastChild.CodeElement.ConsumedTokens.Last();
-                        int line = lastChildLastToken.Line;
-                        int column = lastChildLastToken.TokensLine.Length;
+                        // Look for the last node (last child itself or the last node of its descendants for a group)
+                        var lastNode = GetLastDescendant(lastChild);
+
+                        // Insert at the end of last node line
+                        Debug.Assert(lastNode.CodeElement != null);
+                        var lastNodeLastToken = lastNode.CodeElement.ConsumedTokens.Last();
+                        int line = lastNodeLastToken.Line;
+                        int column = lastNodeLastToken.TokensLine.Length;
                         var start = new Position(line, column);
                         var end = new Position(line, column);
                         textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
@@ -104,6 +108,17 @@ namespace TypeCobol.LanguageServer.Commands
                     if (textEdit != null)
                     {
                         textEdits.Add(textEdit);
+                    }
+
+                    DataDefinition GetLastDescendant(DataDefinition dataDefinition)
+                    {
+                        if (HasNoChildrenExcludingIndex(dataDefinition))
+                        {
+                            return dataDefinition;
+                        }
+
+                        Debug.Assert(dataDefinition.Children[^1] is DataDefinition);
+                        return GetLastDescendant((DataDefinition)dataDefinition.Children[^1]);
                     }
                 }
 
@@ -114,6 +129,11 @@ namespace TypeCobol.LanguageServer.Commands
                     var end = new Position(lastChild.CodeElement.LineEnd, lastChild.CodeElement.StopIndex + 1);
                     var textEdit = new TextEdit(new VsCodeProtocol.Range() { start = start, end = end }, string.Empty);
                     textEdits.Add(textEdit);
+                }
+
+                bool HasNoChildrenExcludingIndex(Node node)
+                {
+                    return node.ChildrenCount == node.Children.OfType<IndexDefinition>().Count();
                 }
             }
         }
