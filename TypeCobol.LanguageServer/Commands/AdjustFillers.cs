@@ -92,9 +92,10 @@ namespace TypeCobol.LanguageServer.Commands
                         int indent = levelNumber.Token.StartIndex;
                         string newText = $"{Environment.NewLine}{new string(' ', indent)}{level} FILLER PIC X({adjustedFillerSize}).";
 
-                        // Insert right after last child
-                        int line = lastChild.CodeElement.LineEnd;
-                        int column = lastChild.CodeElement.StopIndex + 1;
+                        // Insert at the end of last child line
+                        var lastChildLastToken = lastChild.CodeElement.ConsumedTokens.Last();
+                        int line = lastChildLastToken.Line;
+                        int column = lastChildLastToken.TokensLine.Length;
                         var start = new Position(line, column);
                         var end = new Position(line, column);
                         textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);

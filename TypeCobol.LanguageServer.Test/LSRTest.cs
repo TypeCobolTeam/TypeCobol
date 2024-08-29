@@ -564,6 +564,7 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers", LsrTestingOptions.NoLsrTesting);
             LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithCopy", LsrTestingOptions.NoLsrTesting, copyFolder: "CopyFolder");
+            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_BadEdits_1", LsrTestingOptions.NoLsrTesting);
         }
     }
 }
