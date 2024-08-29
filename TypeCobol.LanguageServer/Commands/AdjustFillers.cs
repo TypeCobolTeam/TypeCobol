@@ -12,6 +12,12 @@ namespace TypeCobol.LanguageServer.Commands
         {
             public override bool Visit(DataRedefines dataRedefines)
             {
+                if (dataRedefines.IsInsideCopy())
+                {
+                    // REDEFINES comes from an included COPY, do not alter !
+                    return true;
+                }
+
                 if (dataRedefines.ChildrenCount == 0)
                 {
                     // Inline REDEFINES, nothing to do
