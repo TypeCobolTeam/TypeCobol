@@ -18,7 +18,7 @@ namespace TypeCobol.LanguageServer.Commands
                     return true;
                 }
 
-                if (dataRedefines.ChildrenCount == 0)
+                if (!dataRedefines.HasChildrenExcludingIndex())
                 {
                     // Inline REDEFINES, nothing to do
                     return true;
@@ -92,10 +92,14 @@ namespace TypeCobol.LanguageServer.Commands
                         int indent = levelNumber.Token.StartIndex;
                         string newText = $"{Environment.NewLine}{new string(' ', indent)}{level} FILLER PIC X({adjustedFillerSize}).";
 
-                        // Insert at the end of last child line
-                        var lastChildLastToken = lastChild.CodeElement.ConsumedTokens.Last();
-                        int line = lastChildLastToken.Line;
-                        int column = lastChildLastToken.TokensLine.Length;
+                        // Look for the last node (last child itself or the last node of its descendants for a group)
+                        var lastNode = lastChild.GetLastNode();
+
+                        // Insert at the end of last node line
+                        Debug.Assert(lastNode.CodeElement != null);
+                        var lastNodeLastToken = lastNode.CodeElement.ConsumedTokens.Last();
+                        int line = lastNodeLastToken.Line;
+                        int column = lastNodeLastToken.TokensLine.Length;
                         var start = new Position(line, column);
                         var end = new Position(line, column);
                         textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
