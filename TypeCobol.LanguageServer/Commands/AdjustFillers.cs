@@ -18,7 +18,7 @@ namespace TypeCobol.LanguageServer.Commands
                     return true;
                 }
 
-                if (HasNoChildrenExcludingIndex(dataRedefines))
+                if (!dataRedefines.HasChildrenExcludingIndex())
                 {
                     // Inline REDEFINES, nothing to do
                     return true;
@@ -93,7 +93,7 @@ namespace TypeCobol.LanguageServer.Commands
                         string newText = $"{Environment.NewLine}{new string(' ', indent)}{level} FILLER PIC X({adjustedFillerSize}).";
 
                         // Look for the last node (last child itself or the last node of its descendants for a group)
-                        var lastNode = GetLastDescendant(lastChild);
+                        var lastNode = lastChild.GetLastNode();
 
                         // Insert at the end of last node line
                         Debug.Assert(lastNode.CodeElement != null);
@@ -109,17 +109,6 @@ namespace TypeCobol.LanguageServer.Commands
                     {
                         textEdits.Add(textEdit);
                     }
-
-                    DataDefinition GetLastDescendant(DataDefinition dataDefinition)
-                    {
-                        if (HasNoChildrenExcludingIndex(dataDefinition))
-                        {
-                            return dataDefinition;
-                        }
-
-                        Debug.Assert(dataDefinition.Children[^1] is DataDefinition);
-                        return GetLastDescendant((DataDefinition)dataDefinition.Children[^1]);
-                    }
                 }
 
                 void Remove()
@@ -129,11 +118,6 @@ namespace TypeCobol.LanguageServer.Commands
                     var end = new Position(lastChild.CodeElement.LineEnd, lastChild.CodeElement.StopIndex + 1);
                     var textEdit = new TextEdit(new VsCodeProtocol.Range() { start = start, end = end }, string.Empty);
                     textEdits.Add(textEdit);
-                }
-
-                bool HasNoChildrenExcludingIndex(Node node)
-                {
-                    return node.ChildrenCount == node.Children.OfType<IndexDefinition>().Count();
                 }
             }
         }

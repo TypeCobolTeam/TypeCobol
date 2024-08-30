@@ -941,6 +941,26 @@ namespace TypeCobol.Compiler.Nodes {
 
             return Parent.GetNextNode();
         }
+
+        /// <summary>
+        /// Return the last node (by ignoring indexes) under the current node in document order.
+        /// The result is the current node itself if it has no children.
+        /// </summary>
+        /// <returns>Non-null instance of Node.</returns>
+        public Node GetLastNode()
+        {
+            return HasChildrenExcludingIndex() ? Children[^1].GetLastNode() : this;
+        }
+
+        /// <summary>
+        /// Indicate whether this node has 'real' children (from a semantic point of view) by excluding indexes.
+        /// Note: indexes are created as children nodes for technical reasons (especially Symbol Table management).
+        /// </summary>
+        /// <returns></returns>
+        public bool HasChildrenExcludingIndex()
+        {
+            return Children.Any(child => child is not IndexDefinition);
+        }
     }
 
     /// <summary>
