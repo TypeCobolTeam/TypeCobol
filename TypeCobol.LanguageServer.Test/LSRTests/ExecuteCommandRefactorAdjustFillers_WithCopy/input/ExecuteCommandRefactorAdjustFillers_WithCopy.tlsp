@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"workspace/applyEdit\",\"params\":{\"label\":\"Adjust FILLERs: 1 FILLER(s) modified\",\"edit\":{\"changes\":{\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\":[{\"range\":{\"start\":{\"line\":10,\"character\":24},\"end\":{\"line\":10,\"character\":29}},\"newText\":\"X(100)\"}]}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"workspace/applyEdit\",\"params\":{\"label\":\"Adjust FILLERs: 1 FILLER(s) modified\",\"edit\":{\"changes\":{\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\":[{\"range\":{\"start\":{\"line\":10,\"character\":24},\"end\":{\"line\":10,\"character\":30}},\"newText\":\"X(100).\"}]}}}}"
     },
     {
       "category": 0,

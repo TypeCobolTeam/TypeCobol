@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"workspace/applyEdit\",\"params\":{\"label\":\"Adjust FILLERs: 3 FILLER(s) modified\",\"edit\":{\"changes\":{\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\":[{\"range\":{\"start\":{\"line\":9,\"character\":24},\"end\":{\"line\":9,\"character\":29}},\"newText\":\"X(100)\"},{\"range\":{\"start\":{\"line\":11,\"character\":29},\"end\":{\"line\":11,\"character\":29}},\"newText\":\"\\r\\n          05 FILLER PIC X(75).\"},{\"range\":{\"start\":{\"line\":16,\"character\":0},\"end\":{\"line\":16,\"character\":30}},\"newText\":\"\"}]}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"workspace/applyEdit\",\"params\":{\"label\":\"Adjust FILLERs: 3 FILLER(s) modified\",\"edit\":{\"changes\":{\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\":[{\"range\":{\"start\":{\"line\":9,\"character\":24},\"end\":{\"line\":9,\"character\":30}},\"newText\":\"X(100).\"},{\"range\":{\"start\":{\"line\":11,\"character\":29},\"end\":{\"line\":11,\"character\":29}},\"newText\":\"\\r\\n          05 FILLER PIC X(75).\"},{\"range\":{\"start\":{\"line\":16,\"character\":0},\"end\":{\"line\":16,\"character\":30}},\"newText\":\"\"}]}}}}"
     },
     {
       "category": 0,
