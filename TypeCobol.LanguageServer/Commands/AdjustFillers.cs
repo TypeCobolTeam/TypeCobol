@@ -31,13 +31,15 @@ namespace TypeCobol.LanguageServer.Commands
                     return true;
                 }
 
-                long redefinesSize = dataRedefines.PhysicalLength;
-                long delta = targetSize.Value - redefinesSize;
+                long delta = targetSize.Value - dataRedefines.PhysicalLength;
                 if (delta == 0)
                 {
                     // The REDEFINES size already matches the target size, no need to change anything
                     return true;
                 }
+
+                // delta must be considered for a single occurence
+                delta /= dataRedefines.MaxOccurencesCount;
 
                 // Examine REDEFINES last child
                 Debug.Assert(dataRedefines.Children[^1] is DataDefinition);
