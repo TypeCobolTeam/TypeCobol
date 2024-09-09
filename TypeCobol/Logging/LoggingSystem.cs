@@ -17,6 +17,18 @@ namespace TypeCobol.Logging
             //time to flush remaining logging actions before ending the process.
             private static readonly TimeSpan _Period = TimeSpan.FromMilliseconds(1500);
 
+            private static void SafeCallLogger(ILogger logger, Action<ILogger> action)
+            {
+                try
+                {
+                    action(logger);
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.WriteLine(exception.ToText(false)); //Complete exception chain but no StackTrace.
+                }
+            }
+
             private readonly ConcurrentQueue<Action<ILogger>> _work;
             private readonly Thread _thread;
             private readonly object _waitLock;
@@ -43,14 +55,7 @@ namespace TypeCobol.Logging
                             //Dispatch to loggers
                             foreach (var logger in _Loggers)
                             {
-                                try
-                                {
-                                    action(logger);
-                                }
-                                catch (Exception exception)
-                                {
-                                    Console.Error.WriteLine(exception.ToText(false)); //Complete exception chain but no StackTrace.
-                                }
+                                SafeCallLogger(logger, action);
                             }
                         }
                     }
@@ -79,7 +84,7 @@ namespace TypeCobol.Logging
                     var consoleLogger = new ConsoleLogger(LogLevel.Error); // Drop infos and warnings, keep errors and exceptions
                     foreach (var action in remainingWork)
                     {
-                        action(consoleLogger);
+                        SafeCallLogger(consoleLogger, action);
                     }
                 }
             }
