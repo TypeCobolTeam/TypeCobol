@@ -12,27 +12,45 @@ namespace TypeCobol.LanguageServer.Commands
     {
         private class AdjustFillerVisitor(List<TextEdit> textEdits) : AbstractAstVisitor
         {
+            private readonly Stack<DataRedefines> _toProcess = new Stack<DataRedefines>();
             private readonly StringBuilder _newTextBuilder = new StringBuilder();
 
             public override bool Visit(DataRedefines dataRedefines)
             {
+                // Push REDEFINES on stack and continue visit.
+                // Each REDEFINES is processed when we end its visit, to ensure edits are created in document order.
+                _toProcess.Push(dataRedefines);
+                return true;
+            }
+
+            public override void EndNode(Node node)
+            {
+                if (_toProcess.Count > 0 && _toProcess.Peek() == node)
+                {
+                    // We are leaving the current REDEFINES, compute edits for it and remove it from stack.
+                    Process(_toProcess.Pop());
+                }
+            }
+
+            private void Process(DataRedefines dataRedefines)
+            {
                 if (dataRedefines.IsInsideCopy())
                 {
                     // REDEFINES comes from an included COPY, do not alter !
-                    return true;
+                    return;
                 }
 
                 if (!dataRedefines.HasChildrenExcludingIndex())
                 {
                     // Inline REDEFINES, nothing to do
-                    return true;
+                    return;
                 }
 
                 long? targetSize = dataRedefines.RedefinedVariable?.PhysicalLength;
                 if (!targetSize.HasValue)
                 {
                     // Unable to resolve target of the REDEFINES
-                    return true;
+                    return;
                 }
 
                 long redefinesSize = dataRedefines.PhysicalLength;
@@ -40,7 +58,7 @@ namespace TypeCobol.LanguageServer.Commands
                 if (delta == 0)
                 {
                     // The REDEFINES size already matches the target size, no need to change anything
-                    return true;
+                    return;
                 }
 
                 // Examine REDEFINES last child
@@ -53,7 +71,7 @@ namespace TypeCobol.LanguageServer.Commands
                 if (adjustedFillerSize < 0)
                 {
                     // The REDEFINES size exceeds its target size, unable to adjust
-                    return true;
+                    return;
                 }
 
                 if (adjustedFillerSize > 0)
@@ -66,8 +84,6 @@ namespace TypeCobol.LanguageServer.Commands
                     // adjustedFillerSize is 0, we need to remove the FILLER
                     Remove();
                 }
-
-                return true;
 
                 void AddOrAdjust()
                 {
