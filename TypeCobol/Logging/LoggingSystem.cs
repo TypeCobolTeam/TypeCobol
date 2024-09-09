@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Concurrent;
 
 namespace TypeCobol.Logging
 {
@@ -66,16 +63,25 @@ namespace TypeCobol.Logging
             {
                 _stop = true;
 
-                //Pulse the thread to end as soon as possible
+                // Pulse the thread to end as soon as possible
                 lock (_waitLock)
                 {
                     Monitor.Pulse(_waitLock);
                 }
 
-                //Wait for last actions to be processed
+                // Wait for last actions to be processed
                 _thread.Join(_Period);
 
-                System.Diagnostics.Debug.Assert(_work.Count == 0);
+                // Last chance ! Log errors into the console if we did not have enough time to use configured loggers
+                if (!_work.IsEmpty)
+                {
+                    var remainingWork = _work.ToArray();
+                    var consoleLogger = new ConsoleLogger(LogLevel.Error); // Drop infos and warnings, keep errors and exceptions
+                    foreach (var action in remainingWork)
+                    {
+                        action(consoleLogger);
+                    }
+                }
             }
         }
 
