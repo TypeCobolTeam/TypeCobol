@@ -568,6 +568,7 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_BadLocation", LsrTestingOptions.NoLsrTesting);
             LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithSequenceNumbers", LsrTestingOptions.NoLsrTesting);
             LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_NestedRedefines", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithOccurs", LsrTestingOptions.NoLsrTesting);
         }
     }
 }
