@@ -75,6 +75,13 @@ namespace TypeCobol.LanguageServer.Commands
                 bool lastChildIsFiller = lastChild.IsFiller();
                 long fillerSize = lastChildIsFiller ? lastChild.PhysicalLength : 0;
                 long adjustedFillerSize = fillerSize + delta;
+
+                if (lastChildIsFiller)
+                {
+                    // adjustedFillerSize must be considered for a single occurence
+                    adjustedFillerSize /= lastChild.MaxOccurencesCount;
+                }
+
                 if (adjustedFillerSize < 0)
                 {
                     // The REDEFINES size exceeds its target size, unable to adjust
