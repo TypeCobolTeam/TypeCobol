@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.Commands
@@ -10,6 +12,8 @@ namespace TypeCobol.LanguageServer.Commands
     {
         private class AdjustFillerVisitor(List<TextEdit> textEdits) : AbstractAstVisitor
         {
+            private readonly StringBuilder _newTextBuilder = new StringBuilder();
+
             public override bool Visit(DataRedefines dataRedefines)
             {
                 if (dataRedefines.IsInsideCopy())
@@ -18,7 +22,7 @@ namespace TypeCobol.LanguageServer.Commands
                     return true;
                 }
 
-                if (dataRedefines.ChildrenCount == 0)
+                if (!dataRedefines.HasChildrenExcludingIndex())
                 {
                     // Inline REDEFINES, nothing to do
                     return true;
@@ -74,10 +78,45 @@ namespace TypeCobol.LanguageServer.Commands
                         var pictureCharacterString = lastChild.Picture?.Token;
                         if (pictureCharacterString != null)
                         {
-                            // Replace the picture with an adjusted PIC X(size)
+                            string adjustedPictureCharacterString = $"X({adjustedFillerSize})";
+                            int deltaChar = adjustedPictureCharacterString.Length - pictureCharacterString.Length; // Number of chars needed to accomodate the new picture character string
+                            string sourceText = pictureCharacterString.TokensLine.SourceText;
+                            int index = pictureCharacterString.StopIndex - (int)CobolFormatAreas.EndNumber; // Index marking the end of the picture character string in SourceText
+                            const int maxSourceTextLength = (int)CobolFormatAreas.End_B - (int)CobolFormatAreas.Indicator; // 65 chars max
+
+                            // Build new text: this is made of adjusted picture followed by everything previously written on the same line after the original picture character string
+                            _newTextBuilder.Append(adjustedPictureCharacterString);
+                            if (sourceText.Length + deltaChar > maxSourceTextLength && sourceText[^deltaChar..].All(c => c == ' '))
+                            {
+                                // New source text would go beyond column 72, but we have enough spaces at the end, so consume them
+                                _newTextBuilder.Append(sourceText[index..^deltaChar]);
+                            }
+                            else
+                            {
+                                // Either new source text ends before column 72 -> ok
+                                // Or we don't have spaces to delete, in that case the TextEdit will produce invalid code, dev will have to fix the source manually !
+                                _newTextBuilder.Append(sourceText[index..]);
+                            }
+
+                            // Handle comment area
+                            if (pictureCharacterString.TokensLine.CommentText != null)
+                            {
+                                if (deltaChar < 0)
+                                {
+                                    // The adjusted picture character string is smaller, add spaces to compensate
+                                    _newTextBuilder.Append(' ', -deltaChar);
+                                }
+
+                                // Add comments
+                                _newTextBuilder.Append(pictureCharacterString.TokensLine.CommentText);
+                            }
+
+                            string newText = _newTextBuilder.ToString();
+                            _newTextBuilder.Clear();
+
                             var start = new Position(pictureCharacterString.Line, pictureCharacterString.StartIndex);
-                            var end = new Position(pictureCharacterString.Line, pictureCharacterString.StopIndex + 1);
-                            textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), $"X({adjustedFillerSize})");
+                            var end = new Position(pictureCharacterString.Line, pictureCharacterString.TokensLine.Length);
+                            textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
                         }
                         // else PICTURE could not be found, unable to modify the FILLER (for example 05 FILLER USAGE POINTER)
                     }
@@ -90,11 +129,23 @@ namespace TypeCobol.LanguageServer.Commands
                         // Detect level and indentation from last child
                         string level = levelNumber.Token.SourceText;
                         int indent = levelNumber.Token.StartIndex;
-                        string newText = $"{Environment.NewLine}{new string(' ', indent)}{level} FILLER PIC X({adjustedFillerSize}).";
+                        _newTextBuilder.AppendLine();
+                        _newTextBuilder.Append(' ', indent);
+                        _newTextBuilder.Append(level);
+                        _newTextBuilder.Append(" FILLER PIC X(");
+                        _newTextBuilder.Append(adjustedFillerSize);
+                        _newTextBuilder.Append(").");
+                        string newText = _newTextBuilder.ToString();
+                        _newTextBuilder.Clear();
 
-                        // Insert right after last child
-                        int line = lastChild.CodeElement.LineEnd;
-                        int column = lastChild.CodeElement.StopIndex + 1;
+                        // Look for the last node (last child itself or the last node of its descendants for a group)
+                        var lastNode = lastChild.GetLastNode();
+
+                        // Insert at the end of last node line
+                        Debug.Assert(lastNode.CodeElement != null);
+                        var lastNodeLastToken = lastNode.CodeElement.ConsumedTokens.Last();
+                        int line = lastNodeLastToken.Line;
+                        int column = lastNodeLastToken.TokensLine.Length;
                         var start = new Position(line, column);
                         var end = new Position(line, column);
                         textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
