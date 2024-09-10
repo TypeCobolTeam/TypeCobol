@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Concurrent;
 
 namespace TypeCobol.Logging
 {
@@ -19,6 +16,18 @@ namespace TypeCobol.Logging
             //Check action queue every 1.5s, this is also the maximum allotted
             //time to flush remaining logging actions before ending the process.
             private static readonly TimeSpan _Period = TimeSpan.FromMilliseconds(1500);
+
+            private static void SafeCallLogger(ILogger logger, Action<ILogger> action)
+            {
+                try
+                {
+                    action(logger);
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.WriteLine(exception.ToText(false)); //Complete exception chain but no StackTrace.
+                }
+            }
 
             private readonly ConcurrentQueue<Action<ILogger>> _work;
             private readonly Thread _thread;
@@ -46,14 +55,7 @@ namespace TypeCobol.Logging
                             //Dispatch to loggers
                             foreach (var logger in _Loggers)
                             {
-                                try
-                                {
-                                    action(logger);
-                                }
-                                catch (Exception exception)
-                                {
-                                    Console.Error.WriteLine(exception.ToText(false)); //Complete exception chain but no StackTrace.
-                                }
+                                SafeCallLogger(logger, action);
                             }
                         }
                     }
@@ -66,16 +68,25 @@ namespace TypeCobol.Logging
             {
                 _stop = true;
 
-                //Pulse the thread to end as soon as possible
+                // Pulse the thread to end as soon as possible
                 lock (_waitLock)
                 {
                     Monitor.Pulse(_waitLock);
                 }
 
-                //Wait for last actions to be processed
+                // Wait for last actions to be processed
                 _thread.Join(_Period);
 
-                System.Diagnostics.Debug.Assert(_work.Count == 0);
+                // Last chance ! Log errors into the console if we did not have enough time to use configured loggers
+                if (!_work.IsEmpty)
+                {
+                    var remainingWork = _work.ToArray();
+                    var consoleLogger = new ConsoleLogger(LogLevel.Error); // Drop infos and warnings, keep errors and exceptions
+                    foreach (var action in remainingWork)
+                    {
+                        SafeCallLogger(consoleLogger, action);
+                    }
+                }
             }
         }
 
