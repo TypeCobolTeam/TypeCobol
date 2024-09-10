@@ -1,37 +1,72 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.Commands
 {
     internal class AdjustFillers : AbstractCommand
     {
-        private class AdjustFillerVisitor(List<TextEdit> textEdits) : AbstractAstVisitor
+        private class AdjustFillerVisitor : AbstractAstVisitor
         {
+            private readonly Stack<DataRedefines> _toProcess = new();
+            private readonly StringBuilder _newTextBuilder = new();
+
+            public int ModifiedFillersCount { get; private set; }
+
+            public List<TextEdit> TextEdits { get; } = new();
+
             public override bool Visit(DataRedefines dataRedefines)
             {
-                if (dataRedefines.ChildrenCount == 0)
+                // Push REDEFINES on stack and continue visit.
+                // Each REDEFINES is processed when we end its visit, to ensure edits are created in document order.
+                _toProcess.Push(dataRedefines);
+                return true;
+            }
+
+            public override void EndNode(Node node)
+            {
+                if (_toProcess.Count > 0 && _toProcess.Peek() == node)
+                {
+                    // We are leaving the current REDEFINES, compute edits for it and remove it from stack.
+                    Process(_toProcess.Pop());
+                }
+            }
+
+            private void Process(DataRedefines dataRedefines)
+            {
+                if (dataRedefines.IsInsideCopy())
+                {
+                    // REDEFINES comes from an included COPY, do not alter !
+                    return;
+                }
+
+                if (!dataRedefines.HasChildrenExcludingIndex())
                 {
                     // Inline REDEFINES, nothing to do
-                    return true;
+                    return;
                 }
 
                 long? targetSize = dataRedefines.RedefinedVariable?.PhysicalLength;
                 if (!targetSize.HasValue)
                 {
                     // Unable to resolve target of the REDEFINES
-                    return true;
+                    return;
                 }
 
-                long redefinesSize = dataRedefines.PhysicalLength;
-                long delta = targetSize.Value - redefinesSize;
+                long delta = targetSize.Value - dataRedefines.PhysicalLength;
                 if (delta == 0)
                 {
                     // The REDEFINES size already matches the target size, no need to change anything
-                    return true;
+                    return;
                 }
+
+                // delta must be considered for a single occurence
+                delta /= dataRedefines.MaxOccurencesCount;
 
                 // Examine REDEFINES last child
                 Debug.Assert(dataRedefines.Children[^1] is DataDefinition);
@@ -40,12 +75,20 @@ namespace TypeCobol.LanguageServer.Commands
                 bool lastChildIsFiller = lastChild.IsFiller();
                 long fillerSize = lastChildIsFiller ? lastChild.PhysicalLength : 0;
                 long adjustedFillerSize = fillerSize + delta;
+
+                if (lastChildIsFiller)
+                {
+                    // adjustedFillerSize must be considered for a single occurence
+                    adjustedFillerSize /= lastChild.MaxOccurencesCount;
+                }
+
                 if (adjustedFillerSize < 0)
                 {
                     // The REDEFINES size exceeds its target size, unable to adjust
-                    return true;
+                    return;
                 }
 
+                ModifiedFillersCount++;
                 if (adjustedFillerSize > 0)
                 {
                     // Either increase the size of existing FILLER or create a new one
@@ -53,11 +96,9 @@ namespace TypeCobol.LanguageServer.Commands
                 }
                 else if (lastChildIsFiller)
                 {
-                    // adjustedFillerSize is 0, we need to remove the FILLER
+                    // adjustedFillerSize is 0, we have to remove the FILLER
                     Remove();
                 }
-
-                return true;
 
                 void AddOrAdjust()
                 {
@@ -68,10 +109,45 @@ namespace TypeCobol.LanguageServer.Commands
                         var pictureCharacterString = lastChild.Picture?.Token;
                         if (pictureCharacterString != null)
                         {
-                            // Replace the picture with an adjusted PIC X(size)
+                            string adjustedPictureCharacterString = $"X({adjustedFillerSize})";
+                            int deltaChar = adjustedPictureCharacterString.Length - pictureCharacterString.Length; // Number of chars needed to accomodate the new picture character string
+                            string sourceText = pictureCharacterString.TokensLine.SourceText;
+                            int index = pictureCharacterString.StopIndex - (int)CobolFormatAreas.EndNumber; // Index marking the end of the picture character string in SourceText
+                            const int maxSourceTextLength = (int)CobolFormatAreas.End_B - (int)CobolFormatAreas.Indicator; // 65 chars max
+
+                            // Build new text: this is made of adjusted picture followed by everything previously written on the same line after the original picture character string
+                            _newTextBuilder.Append(adjustedPictureCharacterString);
+                            if (sourceText.Length + deltaChar > maxSourceTextLength && sourceText[^deltaChar..].All(c => c == ' '))
+                            {
+                                // New source text would go beyond column 72, but we have enough spaces at the end, so consume them
+                                _newTextBuilder.Append(sourceText[index..^deltaChar]);
+                            }
+                            else
+                            {
+                                // Either new source text ends before column 72 -> ok
+                                // Or we don't have spaces to delete, in that case the TextEdit will produce invalid code, dev will have to fix the source manually !
+                                _newTextBuilder.Append(sourceText[index..]);
+                            }
+
+                            // Handle comment area
+                            if (pictureCharacterString.TokensLine.CommentText != null)
+                            {
+                                if (deltaChar < 0)
+                                {
+                                    // The adjusted picture character string is smaller, add spaces to compensate
+                                    _newTextBuilder.Append(' ', -deltaChar);
+                                }
+
+                                // Add comments
+                                _newTextBuilder.Append(pictureCharacterString.TokensLine.CommentText);
+                            }
+
+                            string newText = _newTextBuilder.ToString();
+                            _newTextBuilder.Clear();
+
                             var start = new Position(pictureCharacterString.Line, pictureCharacterString.StartIndex);
-                            var end = new Position(pictureCharacterString.Line, pictureCharacterString.StopIndex + 1);
-                            textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), $"X({adjustedFillerSize})");
+                            var end = new Position(pictureCharacterString.Line, pictureCharacterString.TokensLine.Length);
+                            textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
                         }
                         // else PICTURE could not be found, unable to modify the FILLER (for example 05 FILLER USAGE POINTER)
                     }
@@ -84,11 +160,23 @@ namespace TypeCobol.LanguageServer.Commands
                         // Detect level and indentation from last child
                         string level = levelNumber.Token.SourceText;
                         int indent = levelNumber.Token.StartIndex;
-                        string newText = $"{Environment.NewLine}{new string(' ', indent)}{level} FILLER PIC X({adjustedFillerSize}).";
+                        _newTextBuilder.AppendLine();
+                        _newTextBuilder.Append(' ', indent);
+                        _newTextBuilder.Append(level);
+                        _newTextBuilder.Append(" FILLER PIC X(");
+                        _newTextBuilder.Append(adjustedFillerSize);
+                        _newTextBuilder.Append(").");
+                        string newText = _newTextBuilder.ToString();
+                        _newTextBuilder.Clear();
 
-                        // Insert right after last child
-                        int line = lastChild.CodeElement.LineEnd;
-                        int column = lastChild.CodeElement.StopIndex + 1;
+                        // Look for the last node (last child itself or the last node of its descendants for a group)
+                        var lastNode = lastChild.GetLastNode();
+
+                        // Insert at the end of last node line
+                        Debug.Assert(lastNode.CodeElement != null);
+                        var lastNodeLastToken = lastNode.CodeElement.ConsumedTokens.Last();
+                        int line = lastNodeLastToken.Line;
+                        int column = lastNodeLastToken.TokensLine.Length;
                         var start = new Position(line, column);
                         var end = new Position(line, column);
                         textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
@@ -96,22 +184,34 @@ namespace TypeCobol.LanguageServer.Commands
 
                     if (textEdit != null)
                     {
-                        textEdits.Add(textEdit);
+                        TextEdits.Add(textEdit);
                     }
                 }
 
                 void Remove()
                 {
-                    // Remove the whole code element (including spaces at the beginning of the line)
-                    var start = new Position(lastChild.CodeElement.Line, 0);
-                    var end = new Position(lastChild.CodeElement.LineEnd, lastChild.CodeElement.StopIndex + 1);
-                    var textEdit = new TextEdit(new VsCodeProtocol.Range() { start = start, end = end }, string.Empty);
-                    textEdits.Add(textEdit);
+                    // To preserve format, the removal of a FILLER is implemented as erasing each of its token,
+                    // while keeping the comments that may have been consumed.
+                    var tokens = lastChild.CodeElement.ConsumedTokens;
+                    Debug.Assert(tokens != null);
+                    Debug.Assert(tokens.Count > 0);
+                    var eraseGroups = tokens
+                        .Where(t => t.TokenType != TokenType.CommentLine && t.TokenType != TokenType.FloatingComment)
+                        .GroupBy(t => t.Line);
+
+                    // Create one text edit per line
+                    foreach (var eraseGroup in eraseGroups)
+                    {
+                        var start = new Position(eraseGroup.Key, eraseGroup.First().StartIndex);
+                        var end = new Position(eraseGroup.Key, eraseGroup.Last().StopIndex + 1);
+                        string newText = new string(' ', end.character - start.character);
+                        TextEdits.Add(new TextEdit(new VsCodeProtocol.Range(start, end), newText));
+                    }
                 }
             }
         }
 
-        public static AdjustFillers Create(TypeCobolServer typeCobolServer) => new AdjustFillers(typeCobolServer);
+        public static AdjustFillers Create(TypeCobolServer typeCobolServer) => new(typeCobolServer);
 
         public AdjustFillers(TypeCobolServer typeCobolServer)
             : base(typeCobolServer)
@@ -141,13 +241,12 @@ namespace TypeCobol.LanguageServer.Commands
         private void ComputeTextEdits(Uri documentUri, ProgramClassDocument programClassDocument)
         {
             // Compute edits using a visitor
-            var textEdits = new List<TextEdit>();
-            var visitor = new AdjustFillerVisitor(textEdits);
+            var visitor = new AdjustFillerVisitor();
             programClassDocument.Root?.AcceptASTVisitor(visitor);
 
             // Create WorkspaceApplyEditRequest and send to client
-            string label = $"Adjust FILLERs: {textEdits.Count} FILLER(s) modified";
-            var workspaceEdit = new WorkspaceEdit() { changes = { { documentUri.OriginalString, textEdits } } };
+            string label = $"Adjust FILLERs: {visitor.ModifiedFillersCount} FILLER(s) modified";
+            var workspaceEdit = new WorkspaceEdit() { changes = { { documentUri.OriginalString, visitor.TextEdits } } };
             var applyWorkspaceEditParams = new ApplyWorkspaceEditParams() { label = label, edit = workspaceEdit };
             Server.RpcServer.SendRequest(WorkspaceApplyEditRequest.Type, applyWorkspaceEditParams)
                 .ConfigureAwait(false); // No need to wait for response and therefore no need to bounce back on original thread
