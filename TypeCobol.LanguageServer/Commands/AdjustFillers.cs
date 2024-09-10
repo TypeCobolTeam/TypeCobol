@@ -3,6 +3,7 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -10,10 +11,14 @@ namespace TypeCobol.LanguageServer.Commands
 {
     internal class AdjustFillers : AbstractCommand
     {
-        private class AdjustFillerVisitor(List<TextEdit> textEdits) : AbstractAstVisitor
+        private class AdjustFillerVisitor : AbstractAstVisitor
         {
-            private readonly Stack<DataRedefines> _toProcess = new Stack<DataRedefines>();
-            private readonly StringBuilder _newTextBuilder = new StringBuilder();
+            private readonly Stack<DataRedefines> _toProcess = new();
+            private readonly StringBuilder _newTextBuilder = new();
+
+            public int ModifiedFillersCount { get; private set; }
+
+            public List<TextEdit> TextEdits { get; } = new();
 
             public override bool Visit(DataRedefines dataRedefines)
             {
@@ -83,6 +88,7 @@ namespace TypeCobol.LanguageServer.Commands
                     return;
                 }
 
+                ModifiedFillersCount++;
                 if (adjustedFillerSize > 0)
                 {
                     // Either increase the size of existing FILLER or create a new one
@@ -90,7 +96,7 @@ namespace TypeCobol.LanguageServer.Commands
                 }
                 else if (lastChildIsFiller)
                 {
-                    // adjustedFillerSize is 0, we need to remove the FILLER
+                    // adjustedFillerSize is 0, we have to remove the FILLER
                     Remove();
                 }
 
@@ -178,22 +184,34 @@ namespace TypeCobol.LanguageServer.Commands
 
                     if (textEdit != null)
                     {
-                        textEdits.Add(textEdit);
+                        TextEdits.Add(textEdit);
                     }
                 }
 
                 void Remove()
                 {
-                    // Remove the whole code element (including spaces at the beginning of the line)
-                    var start = new Position(lastChild.CodeElement.Line, 0);
-                    var end = new Position(lastChild.CodeElement.LineEnd, lastChild.CodeElement.StopIndex + 1);
-                    var textEdit = new TextEdit(new VsCodeProtocol.Range() { start = start, end = end }, string.Empty);
-                    textEdits.Add(textEdit);
+                    // To preserve format, the removal of a FILLER is implemented as erasing each of its token,
+                    // while keeping the comments that may have been consumed.
+                    var tokens = lastChild.CodeElement.ConsumedTokens;
+                    Debug.Assert(tokens != null);
+                    Debug.Assert(tokens.Count > 0);
+                    var eraseGroups = tokens
+                        .Where(t => t.TokenType != TokenType.CommentLine && t.TokenType != TokenType.FloatingComment)
+                        .GroupBy(t => t.Line);
+
+                    // Create one text edit per line
+                    foreach (var eraseGroup in eraseGroups)
+                    {
+                        var start = new Position(eraseGroup.Key, eraseGroup.First().StartIndex);
+                        var end = new Position(eraseGroup.Key, eraseGroup.Last().StopIndex + 1);
+                        string newText = new string(' ', end.character - start.character);
+                        TextEdits.Add(new TextEdit(new VsCodeProtocol.Range(start, end), newText));
+                    }
                 }
             }
         }
 
-        public static AdjustFillers Create(TypeCobolServer typeCobolServer) => new AdjustFillers(typeCobolServer);
+        public static AdjustFillers Create(TypeCobolServer typeCobolServer) => new(typeCobolServer);
 
         public AdjustFillers(TypeCobolServer typeCobolServer)
             : base(typeCobolServer)
@@ -223,13 +241,12 @@ namespace TypeCobol.LanguageServer.Commands
         private void ComputeTextEdits(Uri documentUri, ProgramClassDocument programClassDocument)
         {
             // Compute edits using a visitor
-            var textEdits = new List<TextEdit>();
-            var visitor = new AdjustFillerVisitor(textEdits);
+            var visitor = new AdjustFillerVisitor();
             programClassDocument.Root?.AcceptASTVisitor(visitor);
 
             // Create WorkspaceApplyEditRequest and send to client
-            string label = $"Adjust FILLERs: {textEdits.Count} FILLER(s) modified";
-            var workspaceEdit = new WorkspaceEdit() { changes = { { documentUri.OriginalString, textEdits } } };
+            string label = $"Adjust FILLERs: {visitor.ModifiedFillersCount} FILLER(s) modified";
+            var workspaceEdit = new WorkspaceEdit() { changes = { { documentUri.OriginalString, visitor.TextEdits } } };
             var applyWorkspaceEditParams = new ApplyWorkspaceEditParams() { label = label, edit = workspaceEdit };
             Server.RpcServer.SendRequest(WorkspaceApplyEditRequest.Type, applyWorkspaceEditParams)
                 .ConfigureAwait(false); // No need to wait for response and therefore no need to bounce back on original thread
