@@ -78,25 +78,6 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool NoCopyDependencyWatchers { get; set; }
 
-        private bool Logger(string message, Uri uri)
-        {
-            if (uri == null)
-            {
-                RemoteConsole.Log(message);
-            }
-            else
-            {
-                var uriLogMessageParams = new UriLogMessageParams()
-                {
-                    type = MessageType.Log,
-                    message = message,
-                    textDocument = new TextDocumentIdentifier(uri)
-                };
-                this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
-            }
-            return true;
-        }
-
         private List<CodeElementWrapper> CodeElementFinder(FileCompiler fileCompiler, Position position)
         {
             List<CodeElement> codeElements = new List<CodeElement>();
@@ -255,7 +236,7 @@ namespace TypeCobol.LanguageServer
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
             // Initialize the workspace.
-            this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
+            this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, RemoteConsole.Log);
             if (!NoCopyDependencyWatchers)
                 this.Workspace.InitCopyDependencyWatchers();
 #if EUROINFO_RULES
