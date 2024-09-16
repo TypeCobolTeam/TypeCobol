@@ -26,6 +26,13 @@
     <None Update="LSRTests\**\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ProtocolTests\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ProtocolTests\Messages\" />
   </ItemGroup>
 
 </Project>
