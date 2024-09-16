@@ -248,7 +248,7 @@ namespace TypeCobol.LanguageServer.Commands
             string label = $"Adjust FILLERs: {visitor.ModifiedFillersCount} FILLER(s) modified";
             var workspaceEdit = new WorkspaceEdit() { changes = { { documentUri.OriginalString, visitor.TextEdits } } };
             var applyWorkspaceEditParams = new ApplyWorkspaceEditParams() { label = label, edit = workspaceEdit };
-            Server.RpcServer.SendRequest(WorkspaceApplyEditRequest.Type, applyWorkspaceEditParams)
+            Server.RpcServer.SendRequest(WorkspaceApplyEditRequest.Type, applyWorkspaceEditParams, out _)
                 .ConfigureAwait(false); // No need to wait for response and therefore no need to bounce back on original thread
         }
     }
