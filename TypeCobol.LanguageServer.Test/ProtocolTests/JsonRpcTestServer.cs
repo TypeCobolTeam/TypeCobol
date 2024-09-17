@@ -13,7 +13,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
         private readonly Dictionary<string, RequestType> _requestTypes;
         private object _expectedObject;
 
-        public JsonRpcTestServer(TestMessageServer testMessageServer, IEnumerable<LspMethod> supportedMethods)
+        public JsonRpcTestServer(TestMessageServer testMessageServer, IEnumerable<LspMethodDefinition> supportedMethods)
             : base(testMessageServer)
         {
             Handler = (_, args) => throw (Exception)args.ExceptionObject;
@@ -24,15 +24,15 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
             foreach (var supportedMethod in supportedMethods)
             {
-                if (supportedMethod.IsNotification)
+                if (supportedMethod.Kind == MethodKind.NotificationMethod)
                 {
-                    var notificationType = supportedMethod.NotificationType;
+                    var notificationType = (NotificationType)supportedMethod;
                     _notificationTypes.Add(notificationType.Method, notificationType);
                     RegisterNotificationMethod(notificationType, HandleNotification);
                 }
                 else
                 {
-                    var requestType = supportedMethod.RequestType;
+                    var requestType = (RequestType)supportedMethod;
                     _requestTypes.Add(requestType.Method, requestType);
                     RegisterRequestMethod(requestType, HandleRequest);
                 }

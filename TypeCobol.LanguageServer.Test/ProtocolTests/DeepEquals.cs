@@ -7,11 +7,25 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
     internal static class DeepEquals
     {
+        private class NotEqualException : Exception
+        {
+            public Stack<string> Path { get; }
+            public object ExpectedValue { get; }
+            public object ActualValue { get; }
+
+            public NotEqualException(Stack<string> path, object expectedValue, object actual)
+            {
+                Path = path;
+                ExpectedValue = expectedValue;
+                ActualValue = actual;
+            }
+        }
+
         public static void AssertAreEqual(object expected, object actual)
         {
             try
             {
-                Check(expected, actual);
+                CheckEquals(expected, actual);
             }
             catch (NotEqualException notEqualException)
             {
@@ -26,7 +40,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
             static string ToString(object obj) => obj == null ? "<NULL>" : obj.ToString();
         }
 
-        private static void Check(object expected, object actual)
+        private static void CheckEquals(object expected, object actual)
         {
             var stack = new Stack<string>();
             Compare(".", expected, actual);
@@ -87,20 +101,6 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
                 stack.Pop();
             }
-        }
-    }
-
-    internal class NotEqualException : Exception
-    {
-        public Stack<string> Path { get; }
-        public object ExpectedValue { get; }
-        public object ActualValue { get; }
-
-        public NotEqualException(Stack<string> path, object expectedValue, object actual)
-        {
-            Path = path;
-            ExpectedValue = expectedValue;
-            ActualValue = actual;
         }
     }
 }

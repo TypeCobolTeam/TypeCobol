@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
@@ -25,22 +26,22 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public void Validate(Dictionary<string, LspMethod> methods)
+        public void Validate(Dictionary<string, LspMethodDefinition> methods)
         {
-            var untestedMethods = new Dictionary<string, LspMethod>(methods);
-            var unknownMethods = new List<string>();
+            var untested = new Dictionary<string, LspMethodDefinition>(methods);
+            var unknown = new List<string>();
             var messagesByMethod = this.ToLookup(testMessage => testMessage.Method);
             foreach (var messageGroup in messagesByMethod)
             {
                 string method = messageGroup.Key;
-                if (!untestedMethods.Remove(method))
+                if (!untested.Remove(method))
                 {
-                    unknownMethods.Add(method);
+                    unknown.Add(method);
                 }
             }
 
-            AssertEmptyCollection("untested", untestedMethods.Keys.ToList());
-            AssertEmptyCollection("unknown", unknownMethods);
+            AssertEmptyCollection(nameof(untested), untested.Keys.ToList());
+            AssertEmptyCollection(nameof(unknown), unknown);
 
             static void AssertEmptyCollection(string category, List<string> collection)
             {
