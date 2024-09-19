@@ -13,7 +13,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         {
             this.RpcServer = rpcServer;
             rpcServer.RegisterRequestMethod(CompletionRequest.Type, CallCompletion);
-            rpcServer.RegisterRequestMethod(DocumentSymbolRequest.Type, CallDocumentSymbol);
             rpcServer.RegisterRequestMethod(DocumentFormattingRequest.Type, CallDocumentFormatting);
             rpcServer.RegisterRequestMethod(DocumentOnTypeFormattingRequest.Type, CallDocumentOnTypeFormatting);
             rpcServer.RegisterRequestMethod(DocumentRangeFormattingRequest.Type, CallDocumentRangeFormatting);
@@ -24,7 +23,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             rpcServer.RegisterRequestMethod(RenameRequest.Type, CallRename);
             rpcServer.RegisterRequestMethod(ShutdownRequest.Type, CallShutdown);
             rpcServer.RegisterRequestMethod(SignatureHelpRequest.Type, CallSignatureHelp);
-            rpcServer.RegisterRequestMethod(WorkspaceSymbolRequest.Type, CallWorkspaceSymbol);
             rpcServer.RegisterRequestMethod(WorkspaceExecuteCommandRequest.Type, CallExecuteCommand);
             rpcServer.RegisterNotificationMethod(DidChangeConfigurationNotification.Type, CallDidChangeConfiguration);
             rpcServer.RegisterNotificationMethod(ExitNotification.Type, CallExit);
@@ -87,22 +85,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             try
             {
                 IList<CompletionItem> result = OnCompletion((TextDocumentPosition)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentSymbol(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<SymbolInformation> result = OnDocumentSymbol((TextDocumentIdentifier)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -266,22 +248,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             try
             {
                 SignatureHelp result = OnSignatureHelp((TextDocumentPosition)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallWorkspaceSymbol(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<SymbolInformation> result = OnWorkspaceSymbol((WorkspaceSymbolParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -584,28 +550,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// [Location[]](#Location) or a Thenable that resolves to such.
         /// </summary>
         protected virtual List<Location> OnReferences(ReferenceParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to list all symbols found in a given text document. The request's
-        /// parameter is of type[TextDocumentIdentifier](#TextDocumentIdentifier) the
-        /// response is of type[SymbolInformation[]](#SymbolInformation) or a Thenable
-        /// that resolves to such.
-        /// </summary>
-        protected virtual List<SymbolInformation> OnDocumentSymbol(TextDocumentIdentifier parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to list project-wide symbols matching the query string given
-        /// by the[WorkspaceSymbolParams](#WorkspaceSymbolParams). The response is
-        /// of type[SymbolInformation[]](#SymbolInformation) or a Thenable that
-        /// resolves to such.
-        /// </summary>
-        protected virtual List<SymbolInformation> OnWorkspaceSymbol(WorkspaceSymbolParams parameters)
         {
             return null;
         }
