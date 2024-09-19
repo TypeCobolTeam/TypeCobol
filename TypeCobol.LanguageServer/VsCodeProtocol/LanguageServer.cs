@@ -13,7 +13,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         {
             this.RpcServer = rpcServer;
             rpcServer.RegisterRequestMethod(CompletionRequest.Type, CallCompletion);
-            rpcServer.RegisterRequestMethod(CompletionResolveRequest.Type, CallCompletionResolve);
             rpcServer.RegisterRequestMethod(DocumentHighlightRequest.Type, CallDocumentHighlight);
             rpcServer.RegisterRequestMethod(DocumentSymbolRequest.Type, CallDocumentSymbol);
             rpcServer.RegisterRequestMethod(DocumentFormattingRequest.Type, CallDocumentFormatting);
@@ -89,22 +88,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             try
             {
                 IList<CompletionItem> result = OnCompletion((TextDocumentPosition)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallCompletionResolve(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                CompletionItem result = OnCompletionResolve((CompletionItem)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -469,7 +452,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             var capabilities = new ServerCapabilities();
             capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
             capabilities.hoverProvider = false;
-            capabilities.completionProvider = new CompletionOptions() { resolveProvider = true};
+            capabilities.completionProvider = new CompletionOptions() { resolveProvider = false };
             capabilities.signatureHelpProvider = null;
             capabilities.definitionProvider = true;
             capabilities.referencesProvider = false;
@@ -586,16 +569,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
         /// </summary>
         protected virtual List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Request to resolve additional information for a given completion item.The request's
-        /// parameter is of type[CompletionItem](#CompletionItem) the response
-        /// is of type[CompletionItem](#CompletionItem) or a Thenable that resolves to such.
-        /// </summary>
-        protected virtual CompletionItem OnCompletionResolve(CompletionItem parameters)
         {
             return null;
         }
