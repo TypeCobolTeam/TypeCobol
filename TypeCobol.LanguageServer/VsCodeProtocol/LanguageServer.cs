@@ -13,9 +13,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         {
             this.RpcServer = rpcServer;
             rpcServer.RegisterRequestMethod(CompletionRequest.Type, CallCompletion);
-            rpcServer.RegisterRequestMethod(DocumentFormattingRequest.Type, CallDocumentFormatting);
-            rpcServer.RegisterRequestMethod(DocumentOnTypeFormattingRequest.Type, CallDocumentOnTypeFormatting);
-            rpcServer.RegisterRequestMethod(DocumentRangeFormattingRequest.Type, CallDocumentRangeFormatting);
             rpcServer.RegisterRequestMethod(DefinitionRequest.Type, CallDefinition);
             rpcServer.RegisterRequestMethod(HoverRequest.Type, CallHoverRequest);
             rpcServer.RegisterRequestMethod(InitializeRequest.Type, CallInitialize);
@@ -85,54 +82,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             try
             {
                 IList<CompletionItem> result = OnCompletion((TextDocumentPosition)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<TextEdit> result = OnDocumentFormatting((DocumentFormattingParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentOnTypeFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<TextEdit> result = OnDocumentOnTypeFormatting((DocumentOnTypeFormattingParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentRangeFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<TextEdit> result = OnDocumentRangeFormatting((DocumentRangeFormattingParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -564,30 +513,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// to execute and its arguments.</param>
         /// <returns>Generic result object (maybe null) depending on the command being actually executed.</returns>
         protected virtual object OnExecuteCommand(ExecuteCommandParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to format a whole document.
-        /// </summary>
-        protected virtual List<TextEdit> OnDocumentFormatting(DocumentFormattingParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to format a range in a document.
-        /// </summary>
-        protected virtual List<TextEdit> OnDocumentRangeFormatting(DocumentRangeFormattingParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to format a document on type.
-        /// </summary>
-        protected virtual List<TextEdit> OnDocumentOnTypeFormatting(DocumentOnTypeFormattingParams parameters)
         {
             return null;
         }
