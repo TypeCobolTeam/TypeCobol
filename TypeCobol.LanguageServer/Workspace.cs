@@ -13,6 +13,7 @@ using TypeCobol.Tools;
 using System.Collections.Concurrent;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Preprocessor;
@@ -973,21 +974,27 @@ namespace TypeCobol.LanguageServer
         /// Get the Data Layout rows for a Program or a Copy (output = CSV)
         /// </summary>
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
-        /// <param name="separator">Separator to be used in the rows</param>
         /// <returns></returns>
-        public string[] GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
+        public GetDataLayoutCSVResult GetDataLayoutAsCSV(CompilationUnit compilationUnit)
         {
+            const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
+            const string HEADER = $"LineNumber{SEPARATOR}NodeLevel{SEPARATOR}LevelNumber{SEPARATOR}VariableName{SEPARATOR}PictureTypeOrUsage{SEPARATOR}Start{SEPARATOR}End{SEPARATOR}Length";
             var rows = new List<string>();
             foreach (var dataLayoutNode in CollectDataLayoutNodes(compilationUnit))
             {
-                var row = CreateRow(dataLayoutNode, separator);
+                var row = CreateRow(dataLayoutNode, SEPARATOR);
                 if (row != null)
                 {
                     rows.Add(row);
                 }
             }
 
-            return rows.ToArray();
+            return new GetDataLayoutCSVResult()
+            {
+                header = HEADER,
+                rows = rows.ToArray(),
+                separator = GetDataLayoutCSVResult.SEPARATOR
+            };
 
             static string CreateRow(Tuple<int, DataDefinition, int> dataLayoutNode, string separator)
             {

@@ -219,9 +219,10 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             if (context != null && context.FileCompiler != null)
             {
                 // We only support CSV for now. In the future outputType should be checked here
-                string[] rows = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, GetDataLayoutCSVResult.SEPARATOR);
-
-                return new GetDataLayoutResult(rows);
+                return new GetDataLayoutResult()
+                {
+                    csvResult = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram)
+                };
             }
 
             throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");

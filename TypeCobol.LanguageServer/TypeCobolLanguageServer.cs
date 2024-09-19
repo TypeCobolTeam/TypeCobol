@@ -311,7 +311,7 @@ namespace TypeCobol.LanguageServer
             else
             {
                 //An Empty
-                result = new CfgDfaParams(new TextDocumentIdentifier(docContext.TextDocument.uri));
+                result = new CfgDfaParams() { textDocument = new TextDocumentIdentifier(docContext.TextDocument.uri) };
             }
             return result;
         }

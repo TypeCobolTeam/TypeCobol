@@ -23,7 +23,13 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// Resulting CfgDfaParams instance.
         /// </summary>
         public CfgDfaParams GetParams() {
-            return new CfgDfaParams(textDocumentId, dotFilePath, instructionPositions.ToArray(), basicBlockInfos.ToArray());
+            return new CfgDfaParams()
+            {
+                textDocument = textDocumentId,
+                dotFilePath = dotFilePath,
+                instructionPositions = instructionPositions.ToArray(),
+                basicBlockInfos = basicBlockInfos.ToArray()
+            };
         }
 
         public CfgDfaParamsBuilder(TextDocumentIdentifier textDocId, string dotFilePath) 
