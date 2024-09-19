@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TypeCobol.LanguageServer.Commands;
+﻿using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.Logging;
 
@@ -14,7 +12,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public LanguageServer(IRPCServer rpcServer)
         {
             this.RpcServer = rpcServer;
-            rpcServer.RegisterRequestMethod(CodeActionRequest.Type, CallCodeAction);
             rpcServer.RegisterRequestMethod(CodeLensRequest.Type, CallCodeLens);
             rpcServer.RegisterRequestMethod(CodeLensResolveRequest.Type, CallCodeLensResolve);
             rpcServer.RegisterRequestMethod(CompletionRequest.Type, CallCompletion);
@@ -87,22 +84,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         // --- Generic notification and request handlers ---
-
-        private ResponseResultOrError CallCodeAction(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<Command> result = OnCodeAction((CodeActionParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch(Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
 
         private ResponseResultOrError CallCodeLens(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
@@ -728,14 +709,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// to execute and its arguments.</param>
         /// <returns>Generic result object (maybe null) depending on the command being actually executed.</returns>
         protected virtual object OnExecuteCommand(ExecuteCommandParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to provide commands for the given text document and range.
-        /// </summary>
-        protected virtual List<Command> OnCodeAction(CodeActionParams parameters)
         {
             return null;
         }
