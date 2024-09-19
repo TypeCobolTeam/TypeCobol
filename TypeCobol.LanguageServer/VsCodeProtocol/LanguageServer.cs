@@ -16,7 +16,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             rpcServer.RegisterRequestMethod(DefinitionRequest.Type, CallDefinition);
             rpcServer.RegisterRequestMethod(HoverRequest.Type, CallHoverRequest);
             rpcServer.RegisterRequestMethod(InitializeRequest.Type, CallInitialize);
-            rpcServer.RegisterRequestMethod(RenameRequest.Type, CallRename);
             rpcServer.RegisterRequestMethod(ShutdownRequest.Type, CallShutdown);
             rpcServer.RegisterRequestMethod(SignatureHelpRequest.Type, CallSignatureHelp);
             rpcServer.RegisterRequestMethod(WorkspaceExecuteCommandRequest.Type, CallExecuteCommand);
@@ -135,22 +134,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             {
                 NotifyException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message, data = new InitializeError() { retry = false } };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallRename(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                WorkspaceEdit result = OnRename((RenameParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
         }
@@ -485,14 +468,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// to execute and its arguments.</param>
         /// <returns>Generic result object (maybe null) depending on the command being actually executed.</returns>
         protected virtual object OnExecuteCommand(ExecuteCommandParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to rename a symbol.
-        /// </summary>
-        protected virtual WorkspaceEdit OnRename(RenameParams parameters)
         {
             return null;
         }
