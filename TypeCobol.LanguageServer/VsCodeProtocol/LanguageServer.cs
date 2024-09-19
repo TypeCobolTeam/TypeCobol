@@ -12,8 +12,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public LanguageServer(IRPCServer rpcServer)
         {
             this.RpcServer = rpcServer;
-            rpcServer.RegisterRequestMethod(CodeLensRequest.Type, CallCodeLens);
-            rpcServer.RegisterRequestMethod(CodeLensResolveRequest.Type, CallCodeLensResolve);
             rpcServer.RegisterRequestMethod(CompletionRequest.Type, CallCompletion);
             rpcServer.RegisterRequestMethod(CompletionResolveRequest.Type, CallCompletionResolve);
             rpcServer.RegisterRequestMethod(DocumentHighlightRequest.Type, CallDocumentHighlight);
@@ -84,38 +82,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         // --- Generic notification and request handlers ---
-
-        private ResponseResultOrError CallCodeLens(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<CodeLens> result = OnCodeLens((TextDocumentIdentifier)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallCodeLensResolve(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                CodeLens result =  OnCodeLensResolve((CodeLens)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
 
         private ResponseResultOrError CallCompletion(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
@@ -714,23 +680,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         /// <summary>
-        /// A request to provide code lens for the given text document.
-        /// </summary>
-        protected virtual List<CodeLens> OnCodeLens(TextDocumentIdentifier parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to resolve a command for a given code lens.
-        /// </summary>
-        protected virtual CodeLens OnCodeLensResolve(CodeLens parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to to format a whole document.
+        /// A request to format a whole document.
         /// </summary>
         protected virtual List<TextEdit> OnDocumentFormatting(DocumentFormattingParams parameters)
         {
@@ -738,7 +688,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         /// <summary>
-        /// A request to to format a range in a document.
+        /// A request to format a range in a document.
         /// </summary>
         protected virtual List<TextEdit> OnDocumentRangeFormatting(DocumentRangeFormattingParams parameters)
         {
