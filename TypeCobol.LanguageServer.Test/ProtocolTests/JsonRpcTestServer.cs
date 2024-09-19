@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using TypeCobol.LanguageServer.JsonRPC;
+using TypeCobol.LanguageServer.StdioHttp;
 
 namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
@@ -8,19 +9,25 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
     {
         private static readonly LSPProfiling DefaultProfilingData = new LSPProfiling(TimeSpan.Zero, 0);
 
+        private static IMessageServer CreateMessageServer(out TestMessageServer testMessageServer)
+        {
+            testMessageServer = new TestMessageServer();
+            return testMessageServer;
+        }
+
         private readonly TestMessageServer _testMessageServer;
         private readonly Dictionary<string, NotificationType> _notificationTypes;
         private readonly Dictionary<string, RequestType> _requestTypes;
-        private object _expectedObject;
+        private object _expected;
 
-        public JsonRpcTestServer(TestMessageServer testMessageServer, IEnumerable<LspMethodDefinition> supportedMethods)
-            : base(testMessageServer)
+        public JsonRpcTestServer(IEnumerable<LspMethodDefinition> supportedMethods)
+            : base(CreateMessageServer(out var testMessageServer))
         {
             Handler = (_, args) => throw (Exception)args.ExceptionObject;
             _testMessageServer = testMessageServer;
             _notificationTypes = new Dictionary<string, NotificationType>();
             _requestTypes = new Dictionary<string, RequestType>();
-            _expectedObject = null;
+            _expected = null;
 
             foreach (var supportedMethod in supportedMethods)
             {
@@ -41,27 +48,28 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
         private void HandleNotification(NotificationType notificationType, object parameters, LSPProfiling lspProfiling)
         {
-            DeepEquals.AssertAreEqual(_expectedObject, parameters);
+            DeepEquals.AssertAreEqual(_expected, parameters);
         }
 
         private ResponseResultOrError HandleRequest(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
-            DeepEquals.AssertAreEqual(_expectedObject, parameters);
+            DeepEquals.AssertAreEqual(_expected, parameters);
             return new ResponseResultOrError() { result = new object() };
         }
 
         public void Test(TestMessage testMessage)
         {
+            ResetExpected();
             if (testMessage.Action == MessageAction.Send)
             {
                 var json = JToken.Parse(testMessage.Content);
-                _testMessageServer.Expect(json, testMessage.Type == MessageType.Response);
+                _testMessageServer.Expected = new Expected(json, testMessage.Type == MessageType.Response);
                 SendMessage(testMessage.Method, testMessage.Type, json);
             }
             else
             {
                 Debug.Assert(testMessage.Action == MessageAction.Receive);
-                _expectedObject = JToken.Parse(testMessage.Content).ToObject(GetTargetType(testMessage));
+                _expected = JToken.Parse(testMessage.Content).ToObject(GetTargetType(testMessage));
 
                 Task<ResponseResultOrError> task = null;
                 string requestId = "received-request-id";
@@ -76,11 +84,15 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
                 if (task != null)
                 {
-                    DeepEquals.AssertAreEqual(_expectedObject, task.Result.result);
+                    DeepEquals.AssertAreEqual(_expected, task.Result.result);
                 }
-
-                _expectedObject = null;
             }
+        }
+
+        private void ResetExpected()
+        {
+            _expected = null;
+            _testMessageServer.Expected = null;
         }
 
         private void SendMessage(string method, MessageType messageType, JToken json)

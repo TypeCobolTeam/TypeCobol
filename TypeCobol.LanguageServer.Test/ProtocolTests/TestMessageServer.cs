@@ -6,27 +6,27 @@ using TypeCobol.LanguageServer.StdioHttp;
 
 namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
+    internal record struct Expected(JToken Json, bool IsResponse);
+
     internal class TestMessageServer : IMessageServer
     {
-        private record struct Expected(JToken Json, bool IsResponse);
-
-        private Expected? _expected;
+        public Expected? Expected { get; set; }
 
         public TestMessageServer()
         {
-            _expected = null;
+            Expected = null;
         }
 
         public void SendMessage(string message)
         {
-            if (!_expected.HasValue)
+            if (!Expected.HasValue)
             {
                 return;
             }
 
-            var expectedJson = _expected.Value.Json;
+            var expectedJson = Expected.Value.Json;
             var actualJsonMessage = JToken.Parse(message);
-            var actualJson = _expected.Value.IsResponse ? actualJsonMessage["result"] : actualJsonMessage["params"];
+            var actualJson = Expected.Value.IsResponse ? actualJsonMessage["result"] : actualJsonMessage["params"];
             bool equals = JToken.DeepEquals(expectedJson, actualJson);
             if (!equals)
             {
@@ -44,18 +44,11 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 }
                 Assert.Fail(error.ToString());
             }
-
-            _expected = null;
         }
 
         public void WriteServerLog(string trace)
         {
-            // Do nothing, not part of this test
-        }
-
-        public void Expect(JToken json, bool isResponse)
-        {
-            _expected = new Expected(json, isResponse);
+            Console.WriteLine(trace);
         }
     }
 }
