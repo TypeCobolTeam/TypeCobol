@@ -16,7 +16,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             rpcServer.RegisterRequestMethod(DefinitionRequest.Type, CallDefinition);
             rpcServer.RegisterRequestMethod(HoverRequest.Type, CallHoverRequest);
             rpcServer.RegisterRequestMethod(InitializeRequest.Type, CallInitialize);
-            rpcServer.RegisterRequestMethod(ReferencesRequest.Type, CallReferences);
             rpcServer.RegisterRequestMethod(RenameRequest.Type, CallRename);
             rpcServer.RegisterRequestMethod(ShutdownRequest.Type, CallShutdown);
             rpcServer.RegisterRequestMethod(SignatureHelpRequest.Type, CallSignatureHelp);
@@ -136,22 +135,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             {
                 NotifyException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message, data = new InitializeError() { retry = false } };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallReferences(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<Location> result = OnReferences((ReferenceParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
         }
@@ -490,17 +473,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         protected virtual Definition OnDefinition(TextDocumentPosition parameters)
         {
             throw new ArgumentException("No definition");            
-        }
-
-        /// <summary>
-        /// A request to resolve project-wide references for the symbol denoted
-        /// by the given text document position.The request's parameter is of
-        /// type[ReferenceParams](#ReferenceParams) the response is of type
-        /// [Location[]](#Location) or a Thenable that resolves to such.
-        /// </summary>
-        protected virtual List<Location> OnReferences(ReferenceParams parameters)
-        {
-            return null;
         }
 
         /// <summary>
