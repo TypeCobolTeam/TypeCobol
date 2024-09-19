@@ -13,7 +13,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         {
             this.RpcServer = rpcServer;
             rpcServer.RegisterRequestMethod(CompletionRequest.Type, CallCompletion);
-            rpcServer.RegisterRequestMethod(DocumentHighlightRequest.Type, CallDocumentHighlight);
             rpcServer.RegisterRequestMethod(DocumentSymbolRequest.Type, CallDocumentSymbol);
             rpcServer.RegisterRequestMethod(DocumentFormattingRequest.Type, CallDocumentFormatting);
             rpcServer.RegisterRequestMethod(DocumentOnTypeFormattingRequest.Type, CallDocumentOnTypeFormatting);
@@ -88,22 +87,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             try
             {
                 IList<CompletionItem> result = OnCompletion((TextDocumentPosition)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentHighlight(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<DocumentHighlight> result = OnDocumentHighlight((TextDocumentPosition)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -601,17 +584,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// [Location[]](#Location) or a Thenable that resolves to such.
         /// </summary>
         protected virtual List<Location> OnReferences(ReferenceParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Request to resolve a [DocumentHighlight](#DocumentHighlight) for a given
-        /// text document position.The request's parameter is of type [TextDocumentPosition]
-        /// (#TextDocumentPosition) the request reponse is of type [DocumentHighlight[]]
-        /// (#DocumentHighlight) or a Thenable that resolves to such.
-        /// </summary>
-        protected virtual List<DocumentHighlight> OnDocumentHighlight(TextDocumentPosition parameters)
         {
             return null;
         }
