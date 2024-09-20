@@ -5,6 +5,9 @@ using System.Text;
 
 namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
+    /// <summary>
+    /// Utility class to compare two objects by their data.
+    /// </summary>
     internal static class DeepEquals
     {
         private class NullDataException : Exception
@@ -59,6 +62,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
         private static void CheckEquals(object expected, object actual)
         {
+            // Traversal of the objects, the stack tracks the current field being compared
             var stack = new Stack<string>();
             Compare(".", expected, actual);
 
@@ -68,22 +72,27 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
                 if (ReferenceEquals(expectedFieldValue, actualFieldValue))
                 {
+                    // Same instance or both null.
                     if (expectedFieldValue == null)
                     {
+                        // This could be a missing data from a serialization/deserialization mismatch
                         throw new NullDataException(stack);
                     }
 
+                    // Ok
                     stack.Pop();
                     return;
                 }
 
                 if (expectedFieldValue == null || actualFieldValue == null)
                 {
+                    // One null but not the other
                     throw new NotEqualException(stack, expectedFieldValue, actualFieldValue);
                 }
 
                 if (expectedFieldValue.GetType() != actualFieldValue.GetType())
                 {
+                    // Type mismatch
                     throw new NotEqualException(stack, expectedFieldValue, actualFieldValue);
                 }
 
@@ -92,18 +101,22 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 {
                     if (!expectedFieldValue.Equals(actualFieldValue))
                     {
+                        // Different values
                         throw new NotEqualException(stack, expectedFieldValue, actualFieldValue);
                     }
                 }
                 else if (typeof(IEnumerable).IsAssignableFrom(type))
                 {
+                    // Try comparing collection of values
                     var expectedFieldValues = ((IEnumerable)expectedFieldValue).Cast<object>().ToArray();
                     var actualFieldValues = ((IEnumerable)actualFieldValue).Cast<object>().ToArray();
                     if (expectedFieldValues.Length != actualFieldValues.Length)
                     {
+                        // Not the same number of elements
                         throw new NotEqualException(stack, expectedFieldValue, actualFieldValue);
                     }
 
+                    // Compare each element. Note that this assumes the elements are in same order which may not be a requirement.
                     int length = expectedFieldValues.Length;
                     for (int i = 0; i < length; i++)
                     {
@@ -114,6 +127,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 }
                 else if (type != typeof(object))
                 {
+                    // Compare each instance field of the objects
                     foreach (var childField in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                     {
                         var expectedChildFieldValue = childField.GetValue(expectedFieldValue);

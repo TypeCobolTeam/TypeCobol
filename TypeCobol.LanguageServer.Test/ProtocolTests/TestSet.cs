@@ -5,6 +5,9 @@ using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
+    /// <summary>
+    /// Wrap a list of TestMessage and provide minimal consistency check
+    /// </summary>
     internal class TestSet : IEnumerable<TestMessage>
     {
         public static TestSet Build(string messageFilesDirectory)
@@ -28,6 +31,8 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 
         public void Validate(Dictionary<string, LspMethodDefinition> methods)
         {
+            // Detect untested methods: methods that are known by this server but without any associated test file
+            // and unknown methods: methods having a test file but not known by this server
             var untested = new Dictionary<string, LspMethodDefinition>(methods);
             var unknown = new List<string>();
             var messagesByMethod = this.ToLookup(testMessage => testMessage.Method);
@@ -40,6 +45,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 }
             }
 
+            // Both should be empty
             AssertEmptyCollection(nameof(untested), untested.Keys.ToList());
             AssertEmptyCollection(nameof(unknown), unknown);
 

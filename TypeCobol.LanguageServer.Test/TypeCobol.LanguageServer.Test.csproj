@@ -31,8 +31,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ProtocolTests\Messages\" />
-  </ItemGroup>
-
 </Project>

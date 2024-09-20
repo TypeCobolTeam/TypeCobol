@@ -13,15 +13,17 @@ namespace TypeCobol.LanguageServer.Test
         {
             var result = new Dictionary<string, LspMethodDefinition>();
             var assembly = typeof(TypeCobolLanguageServer).Assembly;
-            foreach (var type in assembly.GetTypes())
+            foreach (var type in assembly.GetTypes()) // All types
             {
-                foreach (var field in type.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                foreach (var field in type.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) // Having static fields
                 {
-                    if (typeof(LspMethodDefinition).IsAssignableFrom(field.FieldType))
+                    if (typeof(LspMethodDefinition).IsAssignableFrom(field.FieldType)) // Whose type is an LSP method definition
                     {
+                        // Get method definition
                         var lspMethodDefinition = (LspMethodDefinition)field.GetValue(null);
                         Debug.Assert(lspMethodDefinition != null);
 
+                        // Discard empty messages
                         if (lspMethodDefinition.Types.All(t => t == null || t == typeof(object)))
                         {
                             Console.WriteLine($"No data to test in method '{lspMethodDefinition.Method}', skipping...");
@@ -38,9 +40,11 @@ namespace TypeCobol.LanguageServer.Test
 
         private static void TestMessageDirectory(string path, Dictionary<string, LspMethodDefinition> lspMethods)
         {
+            // Collect test files from dir and check consistency
             var testSet = TestSet.Build(path);
             testSet.Validate(lspMethods);
 
+            // Test each message using the test server
             var testServer = new JsonRpcTestServer(lspMethods.Values);
             foreach (var testMessage in testSet)
             {
@@ -48,6 +52,12 @@ namespace TypeCobol.LanguageServer.Test
             }
         }
 
+        /// <summary>
+        /// Basic test to validate the test framework itself. Each type of message is tested:
+        /// - notification, sent or received
+        /// - request, sent or received
+        /// - response, sent or received
+        /// </summary>
         [TestMethod]
         public void TestFakeMessages()
         {
@@ -61,6 +71,9 @@ namespace TypeCobol.LanguageServer.Test
             TestMessageDirectory(@"ProtocolTests\Fakes", lspMethods);
         }
 
+        /// <summary>
+        /// Actual test for LSP messages.
+        /// </summary>
         [TestMethod]
         public void TestAllMessages() => TestMessageDirectory(@"ProtocolTests\Messages", DiscoverLspMethods());
     }
