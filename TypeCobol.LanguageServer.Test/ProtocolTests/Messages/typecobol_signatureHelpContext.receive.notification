@@ -1,0 +1,16 @@
+{
+    "textDocument": {
+        "uri": "example/uri"
+    },
+    "signatureInformation": {
+        "label": "Label for signature",
+        "parameters": [
+            {
+                "label": "Label for first parameter"
+            },
+            {
+                "label": "Label for second parameter"
+            }
+        ]
+    }
+}

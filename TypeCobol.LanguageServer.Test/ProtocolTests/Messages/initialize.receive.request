@@ -1,0 +1,43 @@
+{
+    "processId": -1,
+    "rootPath": "C:\\path",
+    "rootUri": "example/uri",
+    "capabilities": {
+        "workspace": {
+            "applyEdit": true,
+            "didChangeConfiguration": {
+                "dynamicRegistration": true
+            },
+            "didChangeWatchedFiles": {
+                "dynamicRegistration": false
+            },
+            "symbol": {
+                "dynamicRegistration": true
+            },
+            "executeCommand": {
+                "dynamicRegistration": false
+            }
+        },
+        "textDocument": {
+            "synchronization": {
+                "willSave": true,
+                "willSaveWaitUntil": false,
+                "didSave": true,
+                "dynamicRegistration": true
+            },
+            "completion": {
+                "completionItem": {
+                    "snippetSupport": true
+                },
+                "dynamicRegistration": true
+            },
+            "hover": {
+                "dynamicRegistration": true
+            },
+            "definition": {
+                "dynamicRegistration": true
+            }
+        }
+    },
+    "trace": "verbose"
+}

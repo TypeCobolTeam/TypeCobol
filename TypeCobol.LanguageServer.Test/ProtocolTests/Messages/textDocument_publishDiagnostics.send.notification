@@ -1,0 +1,10 @@
+{
+	"uri": "example/uri",
+	"diagnostics": [
+		{
+			"range": { "start": { "line": 9, "character": 25 }, "end": { "line": 10, "character": 0 } },
+			"severity": 1,
+			"message": "Invalid syntax !"
+		}
+	]
+}

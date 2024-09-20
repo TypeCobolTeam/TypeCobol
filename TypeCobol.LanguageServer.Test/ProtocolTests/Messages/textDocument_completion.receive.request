@@ -1,0 +1,9 @@
+{
+    "textDocument": {
+        "uri": "example/uri"
+    },
+    "position": {
+        "line": 22,
+        "character": 23
+    }
+}
