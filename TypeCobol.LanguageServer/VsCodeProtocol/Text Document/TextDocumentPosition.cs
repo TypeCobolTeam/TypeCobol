@@ -16,11 +16,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public TextDocumentIdentifier textDocument { get; set; }
 
         /// <summary>
-        /// Legacy property to support protocol version 1.0 requests.
-        /// </summary>
-        public string uri {get; set;}
-
-        /// <summary>
         /// The position inside the text document.
         /// </summary>
         public Position position { get; set; }

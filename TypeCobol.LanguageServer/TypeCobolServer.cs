@@ -349,10 +349,7 @@ namespace TypeCobol.LanguageServer
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, docContext.TextDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
 
-                string text = parameters.text ?? parameters.textDocument.text;
-                //These are no longer needed.
-                parameters.text = null;
-                parameters.textDocument.text = null;
+                string text = parameters.textDocument.text;
                 this.Workspace.OpenTextDocument(docContext, text, projectKey, copyFolders);
 
                 // DEBUG information
@@ -440,7 +437,7 @@ namespace TypeCobol.LanguageServer
         {
             Hover resultHover = new Hover();
 
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return resultHover;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -546,7 +543,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         protected override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -729,7 +726,7 @@ namespace TypeCobol.LanguageServer
 
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -850,8 +847,8 @@ namespace TypeCobol.LanguageServer
 
         protected override Location OnDefinition(TextDocumentPosition parameters)
         {
-            var defaultDefinition = new Location() { uri = parameters.uri, range = new Range() };
-            Uri objUri = new Uri(parameters.uri);
+            var defaultDefinition = new Location() { uri = parameters.textDocument.uri, range = new Range() };
+            Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
                 var codeElementToNode = docContext.FileCompiler?.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
@@ -926,7 +923,7 @@ namespace TypeCobol.LanguageServer
                         if (nodeDefinition.CodeElement != null)
                             return new Location()
                             {
-                                uri = parameters.uri,
+                                uri = parameters.textDocument.uri,
                                 range = new Range()
                                 {
                                     start = new Position() { line = nodeDefinition.CodeElement.Line - 1, character = 0 }
