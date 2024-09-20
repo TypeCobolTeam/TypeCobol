@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
@@ -7,7 +8,9 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
     internal class JsonRpcTestServer : JsonRPCServer
     {
-        private static readonly LSPProfiling DefaultProfilingData = new LSPProfiling(TimeSpan.Zero, 0);
+        private static readonly LSPProfiling _DefaultProfilingData = new LSPProfiling(TimeSpan.Zero, 0);
+
+        private static readonly JsonSerializer _JsonSerializer = new JsonSerializer() { MissingMemberHandling = MissingMemberHandling.Error };
 
         private static IMessageServer CreateMessageServer(out TestMessageServer testMessageServer)
         {
@@ -69,7 +72,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
             else
             {
                 Debug.Assert(testMessage.Action == MessageAction.Receive);
-                _expected = JToken.Parse(testMessage.Content).ToObject(GetTargetType(testMessage));
+                _expected = JToken.Parse(testMessage.Content).ToObject(GetTargetType(testMessage), _JsonSerializer);
 
                 Task<ResponseResultOrError> task = null;
                 string requestId = "received-request-id";
@@ -80,7 +83,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 }
 
                 string message = testMessage.WrapContent(requestId);
-                HandleMessage(message, null, DefaultProfilingData);
+                HandleMessage(message, null, _DefaultProfilingData);
 
                 if (task != null)
                 {
@@ -100,7 +103,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
             if (messageType == MessageType.Notification)
             {
                 var notificationType = _notificationTypes[method];
-                object parameter = json.ToObject(notificationType.ParamsType);
+                object parameter = json.ToObject(notificationType.ParamsType, _JsonSerializer);
                 SendNotification(notificationType, parameter);
             }
             else
@@ -108,14 +111,14 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 var requestType = _requestTypes[method];
                 if (messageType == MessageType.Request)
                 {
-                    object parameter = json.ToObject(requestType.ParamsType);
+                    object parameter = json.ToObject(requestType.ParamsType, _JsonSerializer);
                     SendRequest(requestType, parameter, out _).ConfigureAwait(false);
                 }
                 else
                 {
                     Debug.Assert(messageType == MessageType.Response);
                     const string requestId = "sent-request-id";
-                    object result = json.ToObject(requestType.ResultType);
+                    object result = json.ToObject(requestType.ResultType, _JsonSerializer);
                     Reply(requestId, new ResponseResultOrError() { result = result });
                 }
             }
