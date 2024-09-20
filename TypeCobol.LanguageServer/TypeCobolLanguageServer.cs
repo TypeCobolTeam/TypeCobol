@@ -256,7 +256,7 @@ namespace TypeCobol.LanguageServer
             tokens = CollectNotificationTokens();
             SyntaxColoringParams scParams = new SyntaxColoringParams()
             {
-                textDocument = this.LspTextDocument,
+                textDocument = new TextDocumentIdentifier() { uri = this.LspTextDocument.uri },
                 DocumentRange = docRange,
                 Tokens = tokens
             };

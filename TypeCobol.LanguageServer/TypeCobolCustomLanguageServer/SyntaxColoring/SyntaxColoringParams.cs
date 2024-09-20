@@ -10,7 +10,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxC
         /// <summary>
         /// The Text Document Identifier
         /// </summary>
-        public TextDocumentItem textDocument;
+        public TextDocumentIdentifier textDocument;
 
         /// <summary>
         /// Range in the document concerned by this Syntax Coloring.
