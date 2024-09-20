@@ -6,6 +6,7 @@
 	"contentChanges": [
 		{
 			"range": { "start": { "line": 9, "character": 25 }, "end": { "line": 10, "character": 0 } },
+			"rangeLength": 0,
 			"text": "this is not valid code"
 		}
 	]

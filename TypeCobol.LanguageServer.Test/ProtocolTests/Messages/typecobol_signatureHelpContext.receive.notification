@@ -6,11 +6,14 @@
         "label": "Label for signature",
         "parameters": [
             {
-                "label": "Label for first parameter"
+                "label": "Label for first parameter",
+				"documentation": "Description for first parameter, our server does not send any documentation !"
             },
             {
-                "label": "Label for second parameter"
+                "label": "Label for second parameter",
+				"documentation": "Description for second parameter, our server does not send any documentation !"
             }
-        ]
+        ],
+		"documentation": "Description for signature, our server does not send any documentation !"
     }
 }
