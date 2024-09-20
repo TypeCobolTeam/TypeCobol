@@ -7,6 +7,16 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
 {
     internal static class DeepEquals
     {
+        private class NullDataException : Exception
+        {
+            public Stack<string> Path { get; }
+
+            public NullDataException(Stack<string> path)
+            {
+                Path = path;
+            }
+        }
+
         private class NotEqualException : Exception
         {
             public Stack<string> Path { get; }
@@ -26,6 +36,13 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
             try
             {
                 CheckEquals(expected, actual);
+            }
+            catch (NullDataException nullDataException)
+            {
+                var error = new StringBuilder();
+                error.AppendLine("Potential missing data found:");
+                error.AppendLine(string.Join(" -> ", nullDataException.Path.Reverse()));
+                Assert.Fail(error.ToString());
             }
             catch (NotEqualException notEqualException)
             {
@@ -48,8 +65,14 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
             void Compare(string name, object expectedFieldValue, object actualFieldValue)
             {
                 stack.Push(name);
+
                 if (ReferenceEquals(expectedFieldValue, actualFieldValue))
                 {
+                    if (expectedFieldValue == null)
+                    {
+                        throw new NullDataException(stack);
+                    }
+
                     stack.Pop();
                     return;
                 }

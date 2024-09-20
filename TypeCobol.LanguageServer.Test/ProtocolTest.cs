@@ -41,7 +41,7 @@ namespace TypeCobol.LanguageServer.Test
             var testSet = TestSet.Build(path);
             testSet.Validate(lspMethods);
 
-            var testServer = new JsonRpcTestServer(new TestMessageServer(), lspMethods.Values);
+            var testServer = new JsonRpcTestServer(lspMethods.Values);
             foreach (var testMessage in testSet)
             {
                 testServer.Test(testMessage);
