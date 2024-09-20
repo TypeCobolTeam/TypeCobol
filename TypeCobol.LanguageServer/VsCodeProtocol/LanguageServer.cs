@@ -95,7 +95,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                Definition result =  OnDefinition((TextDocumentPosition)parameters);
+                Location result =  OnDefinition((TextDocumentPosition)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -453,7 +453,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// (#TextDocumentPosition) the response is of type [Definition](#Definition) or a
         /// Thenable that resolves to such.
         /// </summary>
-        protected virtual Definition OnDefinition(TextDocumentPosition parameters)
+        protected virtual Location OnDefinition(TextDocumentPosition parameters)
         {
             throw new ArgumentException("No definition");            
         }

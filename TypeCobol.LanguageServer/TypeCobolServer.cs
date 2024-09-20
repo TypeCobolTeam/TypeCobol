@@ -848,9 +848,9 @@ namespace TypeCobol.LanguageServer
             return signatureHelp;
         }
 
-        protected override Definition OnDefinition(TextDocumentPosition parameters)
+        protected override Location OnDefinition(TextDocumentPosition parameters)
         {
-            var defaultDefinition = new Definition(parameters.uri, new Range());
+            var defaultDefinition = new Location() { uri = parameters.uri, range = new Range() };
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
@@ -924,8 +924,14 @@ namespace TypeCobol.LanguageServer
                     {
                         var nodeDefinition = potentialDefinitionNodes[0];
                         if (nodeDefinition.CodeElement != null)
-                            return new Definition(parameters.uri,
-                                new Range() { start = new Position() { line = nodeDefinition.CodeElement.Line - 1, character = 0 } });
+                            return new Location()
+                            {
+                                uri = parameters.uri,
+                                range = new Range()
+                                {
+                                    start = new Position() { line = nodeDefinition.CodeElement.Line - 1, character = 0 }
+                                }
+                            };
                     }
                 }
             }
