@@ -19,31 +19,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The range's end position
         /// </summary>
         public Position end { get; set; }
-
-        public Range() { }
-
-        /// <summary>
-        /// Create a new Range liternal.
-        /// @param start The range's start position.
-        /// @param end The range's end position.
-        /// </summary>
-        public Range(Position start, Position end)
-        {
-            this.start = start;
-            this.end = end;
-        }
-
-        /// <summary>
-        /// Create a new Range literal.
-        /// @param startLine The start line number.
-        /// @param startCharacter The start character.
-        /// @param endLine The end line number.
-        /// @param endCharacter The end character.
-        /// </summary>
-        public Range(int startLine, int startCharacter, int endLine, int endCharacter)
-        {
-            this.start = new Position(startLine, startCharacter);
-            this.end = new Position(endLine, endCharacter);
-        }
     }
 }

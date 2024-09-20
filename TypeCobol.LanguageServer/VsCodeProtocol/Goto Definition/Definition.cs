@@ -14,6 +14,10 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     {
         //export type Definition = Location | Location[];
 
-        public Definition(string uri, Range range) : base(uri, range) { }
+        public Definition(string uri, Range range)
+        {
+            this.uri = uri;
+            this.range = range;
+        }
     }
 }

@@ -22,20 +22,14 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// </summary>
         public string newText { get; set; }
 
-        public TextEdit(Range range, string newText)
-        {
-            this.range = range;
-            this.newText = newText;
-        }
-
         /// <summary>
         /// Creates a replace text edit.
         /// @param range The range of text to be replaced.
         /// @param newText The new text.
         /// </summary>
-        public static TextEdit replace(Range range, string newText)
+        public static TextEdit Replace(Range range, string newText)
         {
-            return new TextEdit(range, newText);
+            return new TextEdit() { range = range, newText = newText };
         }
 
         /// <summary>
@@ -43,19 +37,19 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// @param psotion The position to insert the text at.
         /// @param newText The text to be inserted.
         /// </summary>
-        public static TextEdit insert(Position position, string newText)
+        public static TextEdit Insert(Position position, string newText)
         {
-            Range range = new Range(position, position);
-            return new TextEdit(range, newText);
+            Range range = new Range() { start = position, end = position };
+            return new TextEdit() { range = range, newText = newText };
         }
 
         /// <summary>
         /// Creates a delete text edit.
         /// @param range The range of text to be deleted.
         /// </summary>
-        public static TextEdit del(Range range)
+        public static TextEdit Del(Range range)
         {
-            return new TextEdit(range, string.Empty);
+            return new TextEdit() { range = range, newText = string.Empty };
         }
     }
 }

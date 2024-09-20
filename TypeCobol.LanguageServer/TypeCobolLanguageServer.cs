@@ -137,11 +137,14 @@ namespace TypeCobol.LanguageServer
             int tcolumn = token.Column;
             int tcolumnEnd = token.EndColumn;
             Range currentFormaCommentTokenRange = new Range();
-            currentFormaCommentTokenRange.start = new Position(tline - 1, tcolumn - 1);
-            currentFormaCommentTokenRange.end = new Position(tline - 1, tcolumnEnd - 1);
-            AddToken(tline - 1, new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token(
-                TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
-                currentFormaCommentTokenRange));
+            currentFormaCommentTokenRange.start = new Position() { line = tline - 1, character = tcolumn - 1 };
+            currentFormaCommentTokenRange.end = new Position() { line = tline - 1, character = tcolumnEnd - 1 };
+            var syntaxColoringToken = new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token()
+            {
+                Type = TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
+                Range = currentFormaCommentTokenRange
+            };
+            AddToken(tline - 1, syntaxColoringToken);
         }
 
         /// <summary>
@@ -184,13 +187,19 @@ namespace TypeCobol.LanguageServer
             {
                 if (_rootOutlineNode == null)
                 {
-                    _rootOutlineNode = new OutlineNode(programClassDocument.Root);
+                    _rootOutlineNode = OutlineNode.BuildFrom(programClassDocument.Root);
                 }
 
                 if (bForced || _rootOutlineNode.Update(programClassDocument.Root))
-                    return new RefreshOutlineParams(new TextDocumentIdentifier(this.LspTextDocument.uri),
-                        _rootOutlineNode);
+                {
+                    return new RefreshOutlineParams()
+                    {
+                        textDocument = new TextDocumentIdentifier() { uri = this.LspTextDocument.uri },
+                        outlineNodes = _rootOutlineNode.childNodes
+                    };
+                }
             }
+
             return null;
         }
 
@@ -229,9 +238,9 @@ namespace TypeCobol.LanguageServer
                 {
                     var firstChange = minChange;
                     var lastChange = maxChange;
-                    Position firstPos = new Position(firstChange.LineIndex, 0);
-                    Position lastPos = new Position(lastChange.LineIndex, lastChange.NewLine.Length - 1);
-                    docRange = new Range(firstPos, lastPos);
+                    Position firstPos = new Position() { line = firstChange.LineIndex, character = 0 };
+                    Position lastPos = new Position() { line = lastChange.LineIndex, character = lastChange.NewLine.Length - 1 };
+                    docRange = new Range() { start = firstPos, end = lastPos };
                 }
             }
             //Compute all interesting tokens
@@ -245,7 +254,12 @@ namespace TypeCobol.LanguageServer
                 CollectTokens((ITokensLine)line);
             }
             tokens = CollectNotificationTokens();
-            SyntaxColoringParams scParams = new SyntaxColoringParams(this.LspTextDocument, docRange, tokens);
+            SyntaxColoringParams scParams = new SyntaxColoringParams()
+            {
+                textDocument = this.LspTextDocument,
+                DocumentRange = docRange,
+                Tokens = tokens
+            };
             //Now send the notification.
             this.RpcServer.SendNotification(SyntaxColoringNotification.Type, scParams);
         }
@@ -296,7 +310,7 @@ namespace TypeCobol.LanguageServer
                 string tempFile = Path.GetTempFileName();
                 using (TextWriter writer = writeToFile ? File.CreateText(tempFile)  : (TextWriter)new StringWriter())
                 {
-                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), writeToFile ? tempFile : null);
+                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier() { uri = docContext.TextDocument.uri }, writeToFile ? tempFile : null);
                     CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
                     gen.FullInstruction = true;
                     gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
@@ -311,7 +325,7 @@ namespace TypeCobol.LanguageServer
             else
             {
                 //An Empty
-                result = new CfgDfaParams() { textDocument = new TextDocumentIdentifier(docContext.TextDocument.uri) };
+                result = new CfgDfaParams() { textDocument = new TextDocumentIdentifier() { uri = docContext.TextDocument.uri } };
             }
             return result;
         }

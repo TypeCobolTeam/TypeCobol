@@ -168,8 +168,13 @@ namespace TypeCobol.LanguageServer
             //Warning the main file could not be opened
             //This event can be used when a dependency have not been loaded
 
+            // Get the original URI (which was set by the client)
+            // DON'T use ToString() as it returns the canonically unescaped form of the URI
+            // (it may cause issue if the path contains some blanks which need to be escaped)
+            string uri = ((Uri)fileUri).OriginalString;
+
             //Send missing copies to client
-            MissingCopiesDetected(new TextDocumentIdentifier((Uri)fileUri), missingCopiesEvent.Copies);
+            MissingCopiesDetected(new TextDocumentIdentifier() { uri = uri }, missingCopiesEvent.Copies);
         }
 
         /// <summary>
@@ -184,9 +189,20 @@ namespace TypeCobol.LanguageServer
 
             foreach (var diag in diagnosticEvent.Diagnostics)
             {
-                diagList.Add(new Diagnostic(new Range(diag.LineStart, diag.ColumnStart, diag.LineEnd, diag.ColumnEnd),
-                    diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(),
-                    diag.Info.ReferenceText));
+                var range = new Range()
+                {
+                    start = new Position() { line = diag.LineStart, character = diag.ColumnStart },
+                    end = new Position() { line = diag.LineEnd, character = diag.ColumnEnd }
+                };
+                var lspDiag = new Diagnostic()
+                {
+                    range = range,
+                    message = diag.Message,
+                    severity = (DiagnosticSeverity)diag.Info.Severity,
+                    code = diag.Info.Code.ToString(),
+                    source = diag.Info.ReferenceText
+                };
+                diagList.Add(lspDiag);
             }
 
             // Gets the original URI (which was set by the client)
@@ -412,7 +428,7 @@ namespace TypeCobol.LanguageServer
         {
             if (parameters.text != null)
             {
-                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams(parameters.textDocument.uri);
+                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams() { uri = parameters.textDocument.uri };
                 TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
                 tdcce.text = parameters.text;
                 dctdp.contentChanges = new TextDocumentContentChangeEvent[] { tdcce };
@@ -508,9 +524,11 @@ namespace TypeCobol.LanguageServer
 
             if (message != string.Empty)
             {
-                resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
-                    matchingCodeElement.LineEnd,
-                    matchingCodeElement.StopIndex + 1);
+                resultHover.range = new Range()
+                {
+                    start = new Position() { line = matchingCodeElement.Line, character = matchingCodeElement.StartIndex },
+                    end = new Position() { line = matchingCodeElement.LineEnd, character = matchingCodeElement.StopIndex + 1 }
+                };
                 resultHover.contents =
                     new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
                 return resultHover;
@@ -678,7 +696,7 @@ namespace TypeCobol.LanguageServer
                         //Return a default text to inform the user that completion is not available after the given token
                         items = new List<CompletionItem>(1)
                         {
-                            new CompletionItem("Completion is not available in this context") { insertText = string.Empty }
+                            new CompletionItem() { label = "Completion is not available in this context", insertText = string.Empty }
                         };
                     }
                 }
@@ -686,8 +704,11 @@ namespace TypeCobol.LanguageServer
                 if (userFilterToken != null)
                 {
                     //Add the range object to let the client know the position of the user filter token
-                    var range = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
-                        userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                    var range = new Range()
+                    {
+                        start = new Position() { line = userFilterToken.Line - 1, character = userFilterToken.StartIndex },
+                        end = new Position() { line = userFilterToken.Line - 1, character = userFilterToken.StopIndex + 1 }
+                    };
                     //-1 on lne to 0 based / +1 on stop index to include the last character
                     items.ForEach(c =>
                     {
@@ -904,7 +925,7 @@ namespace TypeCobol.LanguageServer
                         var nodeDefinition = potentialDefinitionNodes[0];
                         if (nodeDefinition.CodeElement != null)
                             return new Definition(parameters.uri,
-                                new Range() { start = new Position(nodeDefinition.CodeElement.Line - 1, 0) });
+                                new Range() { start = new Position() { line = nodeDefinition.CodeElement.Line - 1, character = 0 } });
                     }
                 }
             }

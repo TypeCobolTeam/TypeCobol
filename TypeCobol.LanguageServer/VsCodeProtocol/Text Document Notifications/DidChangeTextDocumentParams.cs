@@ -11,7 +11,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     public class DidChangeTextDocumentParams : TextDocumentIdentifier
     {
         public TextDocumentContentChangeEvent[] contentChanges { get; set; }
-
-        public DidChangeTextDocumentParams(string uri) : base(uri) { }
     }
 }

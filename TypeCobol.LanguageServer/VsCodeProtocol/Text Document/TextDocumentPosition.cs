@@ -24,17 +24,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The position inside the text document.
         /// </summary>
         public Position position { get; set; }
-
-        /// <summary>
-        /// Creates a new TextDocumentPosition
-        /// @param uri The document's uri.
-        /// @param position The position inside the document.
-        /// </summary>
-        public TextDocumentPosition(TextDocumentIdentifier textDocument, string uri, Position position)
-        {
-            this.textDocument = textDocument;
-            this.uri = uri;
-            this.position = position;
-        }
     }
 }
