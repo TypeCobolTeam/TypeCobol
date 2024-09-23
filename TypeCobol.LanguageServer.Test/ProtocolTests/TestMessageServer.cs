@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TypeCobol.LanguageServer.StdioHttp;
@@ -59,7 +58,8 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 {
                     error.AppendLine(actualJson.ToString(Formatting.Indented));
                 }
-                Assert.Fail(error.ToString());
+
+                throw new Exception(error.ToString());
             }
         }
 

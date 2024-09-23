@@ -44,11 +44,33 @@ namespace TypeCobol.LanguageServer.Test
             var testSet = TestSet.Build(path);
             testSet.Validate(lspMethods);
 
-            // Test each message using the test server
+            // Test each message using the test server and collect errors
+            var failedTests = new List<(string FileName, Exception Exception)>();
             var testServer = new JsonRpcTestServer(lspMethods.Values);
             foreach (var testMessage in testSet)
             {
-                testServer.Test(testMessage);
+                try
+                {
+                    testServer.Test(testMessage);
+                }
+                catch (Exception exception)
+                {
+                    failedTests.Add((testMessage.FileName, exception));
+                }
+            }
+
+            // Fail if errors encountered
+            if (failedTests.Count > 0)
+            {
+                Console.WriteLine();
+                foreach (var failedTest in failedTests)
+                {
+                    Console.WriteLine($"[{failedTest.FileName}] failed !");
+                    Console.WriteLine(failedTest.Exception.Message);
+                    Console.WriteLine();
+                }
+
+                Assert.Fail($"{failedTests.Count} test(s) failed !");
             }
         }
 

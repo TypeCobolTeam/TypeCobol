@@ -69,7 +69,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
              * The server received a notification, we must compare the received params with the ones we are
              * expecting from the test data.
              */
-            DeepEquals.AssertAreEqual(_expected, parameters);
+            DeepEquals.CheckAreEqual(_expected, parameters);
         }
 
         private ResponseResultOrError HandleRequest(RequestType requestType, object parameters, LSPProfiling lspProfiling)
@@ -78,7 +78,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
              * The server received a request, we must compare the received params of the request with the params
              * we are expecting from the test data.
              */
-            DeepEquals.AssertAreEqual(_expected, parameters);
+            DeepEquals.CheckAreEqual(_expected, parameters);
 
             // Replying a dummy response, this response will be ignored by the TestMessageServer
             return new ResponseResultOrError() { result = new object() };
@@ -134,7 +134,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 if (task != null)
                 {
                     // The message was a response, read the result from the task
-                    DeepEquals.AssertAreEqual(_expected, task.Result.result);
+                    DeepEquals.CheckAreEqual(_expected, task.Result.result);
                 }
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 using System.Text;
 
@@ -10,7 +9,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
     /// </summary>
     internal static class DeepEquals
     {
-        private class NullDataException : Exception
+        public class NullDataException : Exception
         {
             public Stack<string> Path { get; }
 
@@ -18,9 +17,20 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
             {
                 Path = path;
             }
+
+            public override string Message
+            {
+                get
+                {
+                    var error = new StringBuilder();
+                    error.AppendLine("Potential missing data found:");
+                    error.AppendLine(string.Join(" -> ", Path.Reverse()));
+                    return error.ToString();
+                }
+            }
         }
 
-        private class NotEqualException : Exception
+        public class NotEqualException : Exception
         {
             public Stack<string> Path { get; }
             public object ExpectedValue { get; }
@@ -32,35 +42,24 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                 ExpectedValue = expectedValue;
                 ActualValue = actual;
             }
+
+            public override string Message
+            {
+                get
+                {
+                    var error = new StringBuilder();
+                    error.AppendLine("Objects are not equal:");
+                    error.AppendLine(string.Join(" -> ", Path.Reverse()));
+                    error.AppendLine($"Expected: {ValueToString(ExpectedValue)}");
+                    error.AppendLine($"Actual: {ValueToString(ActualValue)}");
+                    return error.ToString();
+
+                    static string ValueToString(object obj) => obj == null ? "<NULL>" : obj.ToString();
+                }
+            }
         }
 
-        public static void AssertAreEqual(object expected, object actual)
-        {
-            try
-            {
-                CheckEquals(expected, actual);
-            }
-            catch (NullDataException nullDataException)
-            {
-                var error = new StringBuilder();
-                error.AppendLine("Potential missing data found:");
-                error.AppendLine(string.Join(" -> ", nullDataException.Path.Reverse()));
-                Assert.Fail(error.ToString());
-            }
-            catch (NotEqualException notEqualException)
-            {
-                var error = new StringBuilder();
-                error.AppendLine("Objects are not equal:");
-                error.AppendLine(string.Join(" -> ", notEqualException.Path.Reverse()));
-                error.AppendLine($"Expected: {ToString(notEqualException.ExpectedValue)}");
-                error.AppendLine($"Actual: {ToString(notEqualException.ActualValue)}");
-                Assert.Fail(error.ToString());
-            }
-
-            static string ToString(object obj) => obj == null ? "<NULL>" : obj.ToString();
-        }
-
-        private static void CheckEquals(object expected, object actual)
+        public static void CheckAreEqual(object expected, object actual)
         {
             // Traversal of the objects, the stack tracks the current field being compared
             var stack = new Stack<string>();

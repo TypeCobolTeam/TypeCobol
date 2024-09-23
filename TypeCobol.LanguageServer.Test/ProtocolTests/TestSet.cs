@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.Test.ProtocolTests
@@ -62,7 +61,7 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
                     error.AppendLine("'");
                 }
 
-                Assert.Fail(error.ToString());
+                throw new Exception(error.ToString());
             }
         }
     }
