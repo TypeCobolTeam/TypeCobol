@@ -435,7 +435,7 @@ namespace TypeCobol.LanguageServer
                 var vtdi = new VersionedTextDocumentIdentifier(parameters.textDocument.uri, 0);
                 TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
                 tdcce.text = parameters.text;
-                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams(vtdi, new[] { tdcce });
+                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams { textDocument = vtdi, contentChanges = new[] { tdcce } };
                 OnDidChangeTextDocument(dctdp);
             }
         }

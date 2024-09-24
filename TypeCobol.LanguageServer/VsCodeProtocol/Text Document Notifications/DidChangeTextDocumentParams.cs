@@ -13,16 +13,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public VersionedTextDocumentIdentifier textDocument { get; set; }
 
         public TextDocumentContentChangeEvent[] contentChanges { get; set; }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="textDocument">The document that did change.</param>
-        /// <param name="contentChanges">The actual content changes.</param>
-        public DidChangeTextDocumentParams(VersionedTextDocumentIdentifier textDocument, TextDocumentContentChangeEvent[] contentChanges)
-        {
-            this.textDocument = textDocument;
-            this.contentChanges = contentChanges;
-        }
     }
 }
