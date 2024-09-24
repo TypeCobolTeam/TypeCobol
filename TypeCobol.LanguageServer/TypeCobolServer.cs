@@ -364,11 +364,12 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only another event that will do it
+            var uri = parameters.textDocument.uri;
+            var docContext = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only another event that will do it
             if (docContext == null)
                 return;
 
-            Uri objUri = new Uri(parameters.uri);
+            Uri objUri = new Uri(uri);
             var updates = new RangeUpdate[parameters.contentChanges.Length];
             
             // Convert change events into updates
@@ -425,10 +426,9 @@ namespace TypeCobol.LanguageServer
         {
             if (parameters.text != null)
             {
-                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams() { uri = parameters.textDocument.uri };
-                TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
-                tdcce.text = parameters.text;
-                dctdp.contentChanges = new TextDocumentContentChangeEvent[] { tdcce };
+                var vtdi = new VersionedTextDocumentIdentifier() { uri = parameters.textDocument.uri, version = 0 };
+                var tdcce = new TextDocumentContentChangeEvent() { text = parameters.text };
+                var dctdp = new DidChangeTextDocumentParams() { textDocument = vtdi, contentChanges = new[] { tdcce } };
                 OnDidChangeTextDocument(dctdp);
             }
         }
@@ -847,8 +847,9 @@ namespace TypeCobol.LanguageServer
 
         protected override Location OnDefinition(TextDocumentPosition parameters)
         {
-            var defaultDefinition = new Location() { uri = parameters.textDocument.uri, range = new Range() };
-            Uri objUri = new Uri(parameters.textDocument.uri);
+            var uri = parameters.textDocument.uri;
+            var defaultDefinition = new Location() { uri = uri, range = new Range() };
+            Uri objUri = new Uri(uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
                 var codeElementToNode = docContext.FileCompiler?.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
@@ -923,7 +924,7 @@ namespace TypeCobol.LanguageServer
                         if (nodeDefinition.CodeElement != null)
                             return new Location()
                             {
-                                uri = parameters.textDocument.uri,
+                                uri = uri,
                                 range = new Range()
                                 {
                                     start = new Position() { line = nodeDefinition.CodeElement.Line - 1, character = 0 }

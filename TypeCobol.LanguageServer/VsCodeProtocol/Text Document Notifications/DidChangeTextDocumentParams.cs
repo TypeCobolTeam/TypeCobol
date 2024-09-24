@@ -8,8 +8,10 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// <summary>
     /// The change text document notification's parameters.
     /// </summary>
-    public class DidChangeTextDocumentParams : TextDocumentIdentifier
+    public class DidChangeTextDocumentParams
     {
+        public VersionedTextDocumentIdentifier textDocument { get; set; }
+
         public TextDocumentContentChangeEvent[] contentChanges { get; set; }
     }
 }
