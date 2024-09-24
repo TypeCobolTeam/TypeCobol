@@ -22,6 +22,11 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
         private TestSet(List<TestMessage> testMessages)
         {
             _testMessages = testMessages;
+
+#if !EUROINFO_RULES
+            // In non-EI code ExtractRemarksData is not defined but the test messages for this method are still there, so we have to remove them
+            _testMessages.RemoveAll(testMessage => testMessage.Method == "typecobol/euroinformation/ExtractRemarksData");
+#endif
         }
 
         public IEnumerator<TestMessage> GetEnumerator() => _testMessages.GetEnumerator();
