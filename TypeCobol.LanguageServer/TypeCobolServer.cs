@@ -539,9 +539,9 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Request to request completion at a given text document position. The request's
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
-        /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
+        /// is of type CompletionList or a Thenable that resolves to such.
         /// </summary>
-        protected override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        protected override CompletionList OnCompletion(TextDocumentPosition parameters)
         {
             var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
@@ -555,7 +555,7 @@ namespace TypeCobol.LanguageServer
             {
                 var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler, parameters.position);
                 if (wrappedCodeElements == null)
-                    return new List<CompletionItem>();
+                    return new CompletionList();
 
                 Token userFilterToken = null;
                 Token lastSignificantToken = null;
@@ -721,7 +721,7 @@ namespace TypeCobol.LanguageServer
                 items = null;
             }
 
-            return items;
+            return new CompletionList() { isIncomplete = false, items = items };
         }
 
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)

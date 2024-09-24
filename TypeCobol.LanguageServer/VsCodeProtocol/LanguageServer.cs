@@ -79,7 +79,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                IList<CompletionItem> result = OnCompletion((TextDocumentPosition)parameters);
+                CompletionList result = OnCompletion((TextDocumentPosition)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -430,9 +430,9 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// Request to request completion at a given text document position. The request's
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
-        /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
+        /// is of type CompletionList or a Thenable that resolves to such.
         /// </summary>
-        protected virtual List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        protected virtual CompletionList OnCompletion(TextDocumentPosition parameters)
         {
             return null;
         }

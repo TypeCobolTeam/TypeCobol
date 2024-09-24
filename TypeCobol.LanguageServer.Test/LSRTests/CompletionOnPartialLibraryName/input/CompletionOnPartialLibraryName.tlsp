@@ -35,7 +35,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":[{\"label\":\"MyPublicType\",\"kind\":7,\"insertText\":\"MyPublicType.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"MyPublicType\",\"kind\":7,\"insertText\":\"MyPublicType.\"}]}}"
     },
     {
       "category": 0,
@@ -51,7 +51,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[]}}"
     },
     {
       "category": 0,
@@ -67,7 +67,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":[{\"label\":\"MyPublicProcedure   \",\"kind\":3,\"insertText\":\"MyPublicProcedure\",\"data\":[null,{\"label\":\"StackedLibrary.MyPublicProcedure\",\"parameters\":[]},null]}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"MyPublicProcedure   \",\"kind\":3,\"insertText\":\"MyPublicProcedure\",\"data\":[null,{\"label\":\"StackedLibrary.MyPublicProcedure\",\"parameters\":[]},null]}]}}"
     },
     {
       "category": 0,
@@ -83,7 +83,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[]}}"
     },
     {
       "category": 0,

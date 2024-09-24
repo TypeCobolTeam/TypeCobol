@@ -95,7 +95,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"var1 (DATE) (var1)\",\"kind\":6,\"insertText\":\"var1\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"var1 (DATE) (var1)\",\"kind\":6,\"insertText\":\"var1\"}]}}"
     },
     {
       "category": 0,
@@ -135,7 +135,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"var2 (DATE) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"var2 (DATE) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"}]}}"
     },
     {
       "category": 0,
