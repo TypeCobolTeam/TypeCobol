@@ -39,13 +39,12 @@ namespace TypeCobol.LanguageServer.Test.ProtocolTests
             // and unknown methods: methods having a test file but not known by this server
             var untested = new Dictionary<string, LspMethodDefinition>(methods);
             var unknown = new List<string>();
-            var messagesByMethod = this.ToLookup(testMessage => testMessage.Method);
-            foreach (var messageGroup in messagesByMethod)
+            var testedMethods = this.Select(testMessage => testMessage.Method).ToHashSet();
+            foreach (var testedMethod in testedMethods)
             {
-                string method = messageGroup.Key;
-                if (!untested.Remove(method))
+                if (!untested.Remove(testedMethod))
                 {
-                    unknown.Add(method);
+                    unknown.Add(testedMethod);
                 }
             }
 

@@ -10,6 +10,13 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     public class Range
     {
+        public static Range FromPositions(int lineStart, int characterStart, int lineEnd, int characterEnd)
+        {
+            var start = new Position() { line = lineStart, character = characterStart };
+            var end = new Position() { line = lineEnd, character = characterEnd };
+            return new Range() { start = start, end = end };
+        }
+
         /// <summary>
         /// The range's start position
         /// </summary>

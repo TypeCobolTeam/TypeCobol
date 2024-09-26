@@ -168,13 +168,9 @@ namespace TypeCobol.LanguageServer
             //Warning the main file could not be opened
             //This event can be used when a dependency have not been loaded
 
-            // Get the original URI (which was set by the client)
-            // DON'T use ToString() as it returns the canonically unescaped form of the URI
-            // (it may cause issue if the path contains some blanks which need to be escaped)
-            string uri = ((Uri)fileUri).OriginalString;
-
             //Send missing copies to client
-            MissingCopiesDetected(new TextDocumentIdentifier() { uri = uri }, missingCopiesEvent.Copies);
+            var textDoc = TextDocumentIdentifier.BuildFrom((Uri)fileUri);
+            MissingCopiesDetected(textDoc, missingCopiesEvent.Copies);
         }
 
         /// <summary>
@@ -189,11 +185,7 @@ namespace TypeCobol.LanguageServer
 
             foreach (var diag in diagnosticEvent.Diagnostics)
             {
-                var range = new Range()
-                {
-                    start = new Position() { line = diag.LineStart, character = diag.ColumnStart },
-                    end = new Position() { line = diag.LineEnd, character = diag.ColumnEnd }
-                };
+                var range = Range.FromPositions(diag.LineStart, diag.ColumnStart, diag.LineEnd, diag.ColumnEnd);
                 var lspDiag = new Diagnostic()
                 {
                     range = range,
@@ -521,11 +513,7 @@ namespace TypeCobol.LanguageServer
 
             if (message != string.Empty)
             {
-                resultHover.range = new Range()
-                {
-                    start = new Position() { line = matchingCodeElement.Line, character = matchingCodeElement.StartIndex },
-                    end = new Position() { line = matchingCodeElement.LineEnd, character = matchingCodeElement.StopIndex + 1 }
-                };
+                resultHover.range = Range.FromPositions(matchingCodeElement.Line, matchingCodeElement.StartIndex, matchingCodeElement.LineEnd, matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
                     new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
                 return resultHover;
@@ -701,11 +689,7 @@ namespace TypeCobol.LanguageServer
                 if (userFilterToken != null)
                 {
                     //Add the range object to let the client know the position of the user filter token
-                    var range = new Range()
-                    {
-                        start = new Position() { line = userFilterToken.Line - 1, character = userFilterToken.StartIndex },
-                        end = new Position() { line = userFilterToken.Line - 1, character = userFilterToken.StopIndex + 1 }
-                    };
+                    var range = Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
                     //-1 on lne to 0 based / +1 on stop index to include the last character
                     items.ForEach(c =>
                     {

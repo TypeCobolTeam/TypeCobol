@@ -27,8 +27,9 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// @param range The range of text to be replaced.
         /// @param newText The new text.
         /// </summary>
-        public static TextEdit Replace(Range range, string newText)
+        public static TextEdit Replace(Position start, Position end, string newText)
         {
+            var range = new Range() { start = start, end = end };
             return new TextEdit() { range = range, newText = newText };
         }
 

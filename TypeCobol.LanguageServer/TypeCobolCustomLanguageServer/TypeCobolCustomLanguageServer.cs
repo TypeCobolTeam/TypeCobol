@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-#if EUROINFO_RULES
+﻿#if EUROINFO_RULES
 using TypeCobol.CustomExceptions;
 #endif
 using TypeCobol.LanguageServer.JsonRPC;
@@ -219,10 +216,15 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             if (context != null && context.FileCompiler != null)
             {
                 // We only support CSV for now. In the future outputType should be checked here
-                return new GetDataLayoutResult()
+                const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
+                var csv = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, SEPARATOR);
+                var csvResult = new GetDataLayoutCSVResult()
                 {
-                    csvResult = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram)
+                    header = csv.Header,
+                    rows = csv.Rows,
+                    separator = SEPARATOR
                 };
+                return new GetDataLayoutResult() { csvResult = csvResult };
             }
 
             throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");

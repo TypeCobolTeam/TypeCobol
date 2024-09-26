@@ -147,7 +147,7 @@ namespace TypeCobol.LanguageServer.Commands
 
                             var start = new Position() { line = pictureCharacterString.Line, character = pictureCharacterString.StartIndex };
                             var end = new Position() { line = pictureCharacterString.Line, character = pictureCharacterString.TokensLine.Length };
-                            textEdit = TextEdit.Replace(new VsCodeProtocol.Range() { start = start, end = end }, newText);
+                            textEdit = TextEdit.Replace(start, end, newText);
                         }
                         // else PICTURE could not be found, unable to modify the FILLER (for example 05 FILLER USAGE POINTER)
                     }
@@ -204,7 +204,7 @@ namespace TypeCobol.LanguageServer.Commands
                         var start = new Position() { line = eraseGroup.Key, character = eraseGroup.First().StartIndex };
                         var end = new Position() { line = eraseGroup.Key, character = eraseGroup.Last().StopIndex + 1 };
                         string newText = new string(' ', end.character - start.character);
-                        TextEdits.Add(TextEdit.Replace(new VsCodeProtocol.Range() { start = start, end = end }, newText));
+                        TextEdits.Add(TextEdit.Replace(start, end, newText));
                     }
                 }
             }

@@ -136,13 +136,11 @@ namespace TypeCobol.LanguageServer
             int tline = token.Line;
             int tcolumn = token.Column;
             int tcolumnEnd = token.EndColumn;
-            Range currentFormaCommentTokenRange = new Range();
-            currentFormaCommentTokenRange.start = new Position() { line = tline - 1, character = tcolumn - 1 };
-            currentFormaCommentTokenRange.end = new Position() { line = tline - 1, character = tcolumnEnd - 1 };
+            var currentFormatCommentTokenRange = Range.FromPositions(tline - 1, tcolumn - 1, tline - 1, tcolumnEnd - 1);
             var syntaxColoringToken = new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token()
             {
                 Type = TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
-                Range = currentFormaCommentTokenRange
+                Range = currentFormatCommentTokenRange
             };
             AddToken(tline - 1, syntaxColoringToken);
         }
@@ -238,9 +236,7 @@ namespace TypeCobol.LanguageServer
                 {
                     var firstChange = minChange;
                     var lastChange = maxChange;
-                    Position firstPos = new Position() { line = firstChange.LineIndex, character = 0 };
-                    Position lastPos = new Position() { line = lastChange.LineIndex, character = lastChange.NewLine.Length - 1 };
-                    docRange = new Range() { start = firstPos, end = lastPos };
+                    docRange = Range.FromPositions(firstChange.LineIndex, 0, lastChange.LineIndex, lastChange.NewLine.Length - 1);
                 }
             }
             //Compute all interesting tokens

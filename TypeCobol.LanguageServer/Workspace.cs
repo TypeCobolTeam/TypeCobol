@@ -13,7 +13,6 @@ using TypeCobol.Tools;
 using System.Collections.Concurrent;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Preprocessor;
@@ -974,27 +973,22 @@ namespace TypeCobol.LanguageServer
         /// Get the Data Layout rows for a Program or a Copy (output = CSV)
         /// </summary>
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
-        /// <returns></returns>
-        public GetDataLayoutCSVResult GetDataLayoutAsCSV(CompilationUnit compilationUnit)
+        /// <param name="separator">Separator for fields to use</param>
+        /// <returns>Tuple made of the CSV header and CSV rows</returns>
+        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
         {
-            const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
-            const string HEADER = $"LineNumber{SEPARATOR}NodeLevel{SEPARATOR}LevelNumber{SEPARATOR}VariableName{SEPARATOR}PictureTypeOrUsage{SEPARATOR}Start{SEPARATOR}End{SEPARATOR}Length";
+            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
             var rows = new List<string>();
             foreach (var dataLayoutNode in CollectDataLayoutNodes(compilationUnit))
             {
-                var row = CreateRow(dataLayoutNode, SEPARATOR);
+                var row = CreateRow(dataLayoutNode, separator);
                 if (row != null)
                 {
                     rows.Add(row);
                 }
             }
 
-            return new GetDataLayoutCSVResult()
-            {
-                header = HEADER,
-                rows = rows.ToArray(),
-                separator = GetDataLayoutCSVResult.SEPARATOR
-            };
+            return (header, rows.ToArray());
 
             static string CreateRow(Tuple<int, DataDefinition, int> dataLayoutNode, string separator)
             {
