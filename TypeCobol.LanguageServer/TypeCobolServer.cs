@@ -370,11 +370,12 @@ namespace TypeCobol.LanguageServer
 
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only another event that will do it
+            var uri = parameters.textDocument.uri;
+            var docContext = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only another event that will do it
             if (docContext == null)
                 return;
 
-            Uri objUri = new Uri(parameters.uri);
+            Uri objUri = new Uri(uri);
             var updates = new RangeUpdate[parameters.contentChanges.Length];
             
             // Convert change events into updates
@@ -431,10 +432,10 @@ namespace TypeCobol.LanguageServer
         {
             if (parameters.text != null)
             {
-                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams(parameters.textDocument.uri);
+                var vtdi = new VersionedTextDocumentIdentifier(parameters.textDocument.uri, 0);
                 TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
                 tdcce.text = parameters.text;
-                dctdp.contentChanges = new TextDocumentContentChangeEvent[] { tdcce };
+                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams { textDocument = vtdi, contentChanges = new[] { tdcce } };
                 OnDidChangeTextDocument(dctdp);
             }
         }
@@ -443,7 +444,7 @@ namespace TypeCobol.LanguageServer
         {
             Hover resultHover = new Hover();
 
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return resultHover;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -547,7 +548,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         protected override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -727,7 +728,7 @@ namespace TypeCobol.LanguageServer
 
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -848,8 +849,9 @@ namespace TypeCobol.LanguageServer
 
         protected override Definition OnDefinition(TextDocumentPosition parameters)
         {
-            var defaultDefinition = new Definition(parameters.uri, new Range());
-            Uri objUri = new Uri(parameters.uri);
+            var uri = parameters.textDocument.uri;
+            var defaultDefinition = new Definition(uri, new Range());
+            Uri objUri = new Uri(uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
                 var codeElementToNode = docContext.FileCompiler?.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
@@ -922,7 +924,7 @@ namespace TypeCobol.LanguageServer
                     {
                         var nodeDefinition = potentialDefinitionNodes[0];
                         if (nodeDefinition.CodeElement != null)
-                            return new Definition(parameters.uri,
+                            return new Definition(uri,
                                 new Range() { start = new Position(nodeDefinition.CodeElement.Line - 1, 0) });
                     }
                 }
