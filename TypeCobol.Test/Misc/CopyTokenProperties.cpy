@@ -1,0 +1,1 @@
+       01 var1-imported PIC X.
