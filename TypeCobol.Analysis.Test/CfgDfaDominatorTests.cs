@@ -26,7 +26,7 @@ namespace TypeCobol.Analysis.Test
             // compare with expected result
             string result = writer.ToString();
             string expected = File.ReadAllText(expectedDomsFile);
-            TestUtils.compareLines(path, result, expected, expectedDomsFile);
+            TestUtils.CompareLines(path, result, expected, expectedDomsFile);
         }
 
         private static void HanoiPrgCfgExtendedImmediateDominator(bool duplicate)
@@ -43,7 +43,7 @@ namespace TypeCobol.Analysis.Test
             // compare with expected result
             string result = writer.ToString();
             string expected = File.ReadAllText(expectedDomsFile);
-            TestUtils.compareLines(path, result, expected, expectedDomsFile);
+            TestUtils.CompareLines(path, result, expected, expectedDomsFile);
         }
 
         [TestMethod]
