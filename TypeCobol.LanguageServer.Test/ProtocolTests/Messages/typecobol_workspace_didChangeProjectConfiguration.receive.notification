@@ -1,0 +1,7 @@
+{
+    "ProjectKey": "5zk8MGcXEe2hQLJRJOvGYQ",
+    "CopyFolders": [
+        "path_to_copy_folder1",
+        "path_to_copy_folder2"
+    ]
+}

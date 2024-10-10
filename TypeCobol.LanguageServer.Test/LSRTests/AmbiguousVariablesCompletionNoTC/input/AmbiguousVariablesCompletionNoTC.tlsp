@@ -43,7 +43,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\"},{\"label\":\"non-ambiguous-1 (Alphanumeric) (non-ambiguous-1)\",\"kind\":6,\"insertText\":\"non-ambiguous-1\"},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\"},{\"label\":\"non-ambiguous-2 (Alphanumeric) (non-ambiguous-2)\",\"kind\":6,\"insertText\":\"non-ambiguous-2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\"},{\"label\":\"non-ambiguous-1 (Alphanumeric) (non-ambiguous-1)\",\"kind\":6,\"insertText\":\"non-ambiguous-1\"},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\"},{\"label\":\"non-ambiguous-2 (Alphanumeric) (non-ambiguous-2)\",\"kind\":6,\"insertText\":\"non-ambiguous-2\"}]}}"
     },
     {
       "category": 0,
@@ -75,7 +75,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}}"
     },
     {
       "category": 0,
@@ -119,7 +119,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/TCOMFL061931428110445951281.cee\"}}}",

@@ -26,5 +26,10 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The capabilities provided by the client (editor)
         /// </summary>
         public ClientCapabilities capabilities { get; set; }
+
+        /// <summary>
+        /// The initial trace setting. If omitted trace is disabled ('off').
+        /// </summary>
+        public string trace { get; set; }
     }
 }

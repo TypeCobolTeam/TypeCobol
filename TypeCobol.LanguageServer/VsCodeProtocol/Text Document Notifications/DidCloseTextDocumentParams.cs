@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TypeCobol.LanguageServer.VsCodeProtocol
+﻿namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
     /// <summary>
     ///  The document close notification is sent from the client to the server when the document got closed in the client.
@@ -17,13 +11,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The document that was closed.
         /// </summary>
         public TextDocumentIdentifier textDocument;
-        public DidCloseTextDocumentParams() {
-    
-        }
-  
-        public DidCloseTextDocumentParams(TextDocumentIdentifier textDocument) {
-            this.textDocument = textDocument;
-        }
-
     }
 }

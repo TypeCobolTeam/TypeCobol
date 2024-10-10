@@ -1,0 +1,7 @@
+{
+    "command": "commandName",
+    "arguments": [{
+            "uri": "example/uri"
+        }
+    ]
+}

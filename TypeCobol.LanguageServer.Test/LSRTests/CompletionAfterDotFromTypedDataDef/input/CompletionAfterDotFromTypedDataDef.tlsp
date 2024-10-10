@@ -27,7 +27,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":[]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"isIncomplete\":false,\"items\":[]}}"
     },
     {
       "category": 0,
@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"Data1 (Alphanumeric) (Data1)\",\"kind\":6,\"insertText\":\"Data1\"},{\"label\":\"ListIdx (Numeric) (ListIdx)\",\"kind\":6,\"insertText\":\"ListIdx\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Data1 (Alphanumeric) (Data1)\",\"kind\":6,\"insertText\":\"Data1\"},{\"label\":\"ListIdx (Numeric) (ListIdx)\",\"kind\":6,\"insertText\":\"ListIdx\"}]}}"
     },
     {
       "category": 0,

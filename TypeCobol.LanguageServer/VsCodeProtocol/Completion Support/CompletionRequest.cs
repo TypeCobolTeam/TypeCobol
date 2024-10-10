@@ -3,7 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-using System.Collections.Generic;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
@@ -15,6 +14,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class CompletionRequest
     {
-        public readonly static RequestType Type = new RequestType("textDocument/completion", typeof(TextDocumentPosition), typeof(List<CompletionItem>), null);
+        public static readonly RequestType Type = new RequestType("textDocument/completion", typeof(TextDocumentPosition), typeof(CompletionList), null);
     }
 }

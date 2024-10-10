@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0},\"Tokens\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\"},\"Tokens\":[]}}"
     },
     {
       "category": 1,
@@ -23,7 +23,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0},\"DocumentRange\":{\"start\":{\"line\":10,\"character\":0},\"end\":{\"line\":11,\"character\":36}},\"Tokens\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\"},\"DocumentRange\":{\"start\":{\"line\":10,\"character\":0},\"end\":{\"line\":11,\"character\":36}},\"Tokens\":[]}}"
     },
     {
       "category": 0,
@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0},\"DocumentRange\":{\"start\":{\"line\":11,\"character\":0},\"end\":{\"line\":12,\"character\":36}},\"Tokens\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\"},\"DocumentRange\":{\"start\":{\"line\":11,\"character\":0},\"end\":{\"line\":12,\"character\":36}},\"Tokens\":[]}}"
     },
     {
       "category": 0,
@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0},\"DocumentRange\":{\"start\":{\"line\":12,\"character\":0},\"end\":{\"line\":13,\"character\":36}},\"Tokens\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM54022999843151611639.cee\"},\"DocumentRange\":{\"start\":{\"line\":12,\"character\":0},\"end\":{\"line\":13,\"character\":36}},\"Tokens\":[]}}"
     },
     {
       "category": 1,

@@ -12,17 +12,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     public class Location
     {
         public string uri { get; set; }
-        public Range range { get; set; }
 
-        /// <summary>
-        /// Creates a Location literal.
-        /// @param uri The location's uri.
-        /// @param range The location's range.
-        /// </summary>
-        public Location(string uri, Range range)
-        {
-            this.uri = uri;
-            this.range = range;
-        }
+        public Range range { get; set; }
     }
 }

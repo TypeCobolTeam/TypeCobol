@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TypeCobol.LanguageServer.VsCodeProtocol;
+﻿using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -17,19 +16,5 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// List of copy folders, associated to the Project whose key is given by projectKey property.
         /// </summary>
         public List<string> CopyFolders;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="textDocument"></param>
-        /// <param name="text"></param>
-        /// <param name="ProjectKey"></param>
-        /// <param name="CopyFolders"></param>
-        public DidOpenProjectTextDocumentParams(VsCodeProtocol.TextDocumentItem textDocument, string text, string projectKey, List<string> copyFolders)
-            : base(textDocument, text)
-        {
-            this.ProjectKey = projectKey;
-            this.CopyFolders = copyFolders;
-        }
     }
 }
