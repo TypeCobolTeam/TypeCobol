@@ -785,11 +785,12 @@ namespace TypeCobol.LanguageServer
                     // Evict from target project cache only
                     evictions[workspaceProject.Project.CopyCache].Add(changedCopy.CopyName);
                 }
-                else
+                else if (!WorkspaceProjectStore.IsKnownProject(changedCopy.OwnerProject))
                 {
-                    // Inconsistent notification from client, the target project could not be found
-                    LoggingSystem.LogMessage(LogLevel.Warning, $"Copy to WorkspaceProject mismatch: could not find project '{changedCopy.OwnerProject}'.");
+                    // Inconsistent notification from client, the target project is unknown
+                    LoggingSystem.LogMessage(LogLevel.Error, $"Copy to WorkspaceProject mismatch: project '{changedCopy.OwnerProject}' is unknown.");
                 }
+                // else this is a known project but already closed: ignore
             }
 
             // Remove obsolete data from caches

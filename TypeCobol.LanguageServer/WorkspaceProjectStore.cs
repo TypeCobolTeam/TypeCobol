@@ -15,19 +15,15 @@ namespace TypeCobol.LanguageServer
     class WorkspaceProjectStore
     {
         /// <summary>
-        /// Exception thrown when project keys are duplicated.
-        /// </summary>
-        internal class DuplicatedProjectException : Exception
-        {
-            internal DuplicatedProjectException(string key) : base($"Duplicate Project: '{key}'")
-            {
-            }
-        }
-
-        /// <summary>
         /// The dictionary of WorkspaceProject Keys to WorkspaceProject instance.
         /// </summary>
         private readonly ConcurrentDictionary<string, WorkspaceProject> _namedProjects;
+
+        /// <summary>
+        /// The set of all known named projects that have been opened at some point in this WorkspaceProjectStore.
+        /// Does not include the DefaultWorkspaceProject.
+        /// </summary>
+        private readonly HashSet<string> _allKnownProjects;
 
         /// <summary>
         /// Underlying workspace project
@@ -62,6 +58,7 @@ namespace TypeCobol.LanguageServer
         {
             this._workspace = workspace;
             this._namedProjects = new ConcurrentDictionary<string, WorkspaceProject>(StringComparer.OrdinalIgnoreCase);
+            this._allKnownProjects = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             CreateDefaultWorkspaceProject();
         }
 
@@ -98,7 +95,6 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="projectKey">The Project's key</param>
         /// <returns>The WorkspaceProject instance created</returns>
-        /// <exception cref="DuplicatedProjectException">Sent if the given Project's key is already associated to a project.</exception>
         private WorkspaceProject CreateWorkspaceProject(string projectKey)
         {
             System.Diagnostics.Debug.Assert(projectKey != null);
@@ -110,10 +106,7 @@ namespace TypeCobol.LanguageServer
                 _workspace.Configuration.Format, this.DefaultWorkspaceProject.Project.CompilationOptions,
                 this.DefaultWorkspaceProject.Project.AnalyzerProvider);
             WorkspaceProject workspaceProject = new WorkspaceProject(projectKey, compilationProject, _workspace);
-            if (!_namedProjects.TryAdd(projectKey, workspaceProject))
-            {
-                throw new DuplicatedProjectException(projectKey);
-            }
+            _allKnownProjects.Add(projectKey);
 
             return workspaceProject;
         }
@@ -130,6 +123,14 @@ namespace TypeCobol.LanguageServer
 
             return _namedProjects.GetOrAdd(projectKey, CreateWorkspaceProject);
         }
+
+        /// <summary>
+        /// Indicates whether the given project key refers to a project that has been previously opened
+        /// on this server.
+        /// </summary>
+        /// <param name="projectKey">Name of WorkspaceProject to test, null is allowed.</param>
+        /// <returns>True when the project is known, False otherwise.</returns>
+        internal bool IsKnownProject(string projectKey) => projectKey == null || _allKnownProjects.Contains(projectKey);
 
         /// <summary>
         /// Find a WorkspaceProject by its project key.
