@@ -157,7 +157,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// <summary>
         /// Returns missing token InformationText
         /// </summary>
-        public override string Text
+        public override string SourceText
         {
             get
             {

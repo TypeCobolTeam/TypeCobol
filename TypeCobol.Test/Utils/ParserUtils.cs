@@ -348,7 +348,7 @@ namespace TypeCobol.Test.Utils
         {
             string expectedResult = reader.ReadToEnd();
             reader.Close();
-            TestUtils.compareLines(testName, result, expectedResult, expectedResultPath);
+            TestUtils.CompareLines(testName, result, expectedResult, expectedResultPath);
         }
 
 

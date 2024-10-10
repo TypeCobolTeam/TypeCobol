@@ -114,7 +114,7 @@ namespace TypeCobol.Test.Parser.Scanner
             {
                 expectedResult = reader.ReadToEnd();
             }
-            TestUtils.compareLines(testName, result, expectedResult, PlatformUtils.GetPathForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt"));
+            TestUtils.CompareLines(testName, result, expectedResult, PlatformUtils.GetPathForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt"));
         }
 
         public static string ScanSqlLines(string[] lines, bool decimalPointIsComma)

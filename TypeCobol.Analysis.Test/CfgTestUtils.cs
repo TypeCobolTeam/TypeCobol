@@ -80,7 +80,7 @@ namespace TypeCobol.Analysis.Test
 
                 string result = writer.ToString();
                 string expected = File.ReadAllText(expectedLivenessFilePath);
-                TestUtils.compareLines(sourceFilePath, result, expected, expectedLivenessFilePath);
+                TestUtils.CompareLines(sourceFilePath, result, expected, expectedLivenessFilePath);
             }
 
             return dfaResults;
@@ -141,7 +141,7 @@ namespace TypeCobol.Analysis.Test
                     if (File.Exists(expectedDiagnosticsFilePath))
                     {
                         string expectedResult = File.ReadAllText(expectedDiagnosticsFilePath);
-                        TestUtils.compareLines(sourceFilePath, diagnosticsText, expectedResult, expectedDiagnosticsFilePath);
+                        TestUtils.CompareLines(sourceFilePath, diagnosticsText, expectedResult, expectedDiagnosticsFilePath);
                     }
                     else
                     {
@@ -216,7 +216,7 @@ namespace TypeCobol.Analysis.Test
             // compare with expected result
             string result = writer.ToString();
             string expected = File.ReadAllText(expectedDotFile);
-            TestUtils.compareLines(testPath, result, expected, expectedDotFile);
+            TestUtils.CompareLines(testPath, result, expected, expectedDotFile);
         }
 
         /// <summary>
