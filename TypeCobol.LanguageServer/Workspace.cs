@@ -788,7 +788,8 @@ namespace TypeCobol.LanguageServer
                 else if (!WorkspaceProjectStore.IsKnownProject(changedCopy.OwnerProject))
                 {
                     // Inconsistent notification from client, the target project is unknown
-                    LoggingSystem.LogMessage(LogLevel.Error, $"Copy to WorkspaceProject mismatch: project '{changedCopy.OwnerProject}' is unknown.");
+                    var contextData = new Dictionary<string, object>() { { "WorkspaceProjectId", changedCopy.OwnerProject } };
+                    LoggingSystem.LogMessage(LogLevel.Error, "Copy to WorkspaceProject mismatch: unknown project.", contextData);
                 }
                 // else this is a known project but already closed: ignore
             }
