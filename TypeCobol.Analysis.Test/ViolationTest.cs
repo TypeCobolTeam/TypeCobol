@@ -1,10 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using TypeCobol.Test;
-using static TypeCobol.Analysis.Test.CfgTestUtils;
-using static TypeCobol.Compiler.Symbols.Symbol;
 
 namespace TypeCobol.Analysis.Test
 {
