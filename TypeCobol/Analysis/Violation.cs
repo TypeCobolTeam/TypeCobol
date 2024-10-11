@@ -1,4 +1,5 @@
 ﻿using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Analysis
 {
@@ -11,9 +12,12 @@ namespace TypeCobol.Analysis
 
         private static DiagnosticMessage ToDiagnosticMessage(Severity severity, string message, string ruleId)
         {
+            // We need to escape the braces in message (possibly present when it contains some user input for instance) to avoid a string.Format error later
+            var escapedMessage = message.EscapeStringFormatPlaceHolders();
+
             //RuleId is stored in ReferenceText, it will then be transferred through LSP as 'source'.
             //Diagnostic code is fixed, it means that all diagnostics with code '47' are in fact quality rule violations created by an analyzer.
-            return new DiagnosticMessage(Category.CodeAnalysis, DIAGNOSTIC_CODE, severity, message, null, 0, ruleId);
+            return new DiagnosticMessage(Category.CodeAnalysis, DIAGNOSTIC_CODE, severity, escapedMessage, null, 0, ruleId);
         }
 
         public string RuleId => Info.ReferenceText;

@@ -23,5 +23,15 @@ namespace TypeCobol.Tools
         {
             return new string(text.TakeWhile(char.IsWhiteSpace).ToArray());
         }
+
+        /// <summary>
+        /// Escape the string.Format placeholders (i.e. braces) in the given string.
+        /// </summary>
+        /// <param name="text">The string to be escaped</param>
+        /// <returns>The given string with escaped string.Format placeholders</returns>
+        public static string EscapeStringFormatPlaceHolders(this string text)
+        {
+            return text?.Replace("{", "{{").Replace("}", "}}");
+        }
     }
 }
