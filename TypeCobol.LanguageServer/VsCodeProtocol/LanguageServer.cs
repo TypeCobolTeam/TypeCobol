@@ -183,6 +183,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;

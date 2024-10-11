@@ -95,6 +95,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -263,6 +264,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -282,6 +284,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -300,6 +303,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
