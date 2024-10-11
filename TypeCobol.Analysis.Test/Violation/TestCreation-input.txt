@@ -1,0 +1,4 @@
+Invalid value: myValue
+Invalid value: myValueWithBraces{}
+{Invalid value: myValueWithBraces{}}
+Invalid value: myValueWithSpecialChars [(*+-?!|^$.,:;/\#&@)]
