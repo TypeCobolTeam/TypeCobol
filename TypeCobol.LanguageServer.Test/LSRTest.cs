@@ -531,7 +531,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestMethod]
         public void LSRAutoReplaceSecurityTest()
         {
-            if (global::CLI.Test.UnitTestHelper.CompareDirectory(null, null, "TypeCobol.LanguageServer.Test\\LSRTests"))
+            if (global::CLI.Test.UnitTestHelper.CompareDirectory(null, null, false))
             {
                 Assert.Fail("Set AutoReplace to false in UnitTestHelper.CompareDirectory()\n\n");
             }

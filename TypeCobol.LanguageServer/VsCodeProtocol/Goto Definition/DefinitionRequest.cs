@@ -15,6 +15,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class DefinitionRequest
     {
-        public static readonly RequestType Type = new RequestType("textDocument/definition", typeof(TextDocumentPosition), typeof(Definition), null);
+        public static readonly RequestType Type = new RequestType("textDocument/definition", typeof(TextDocumentPosition), typeof(Location), null);
     }
 }

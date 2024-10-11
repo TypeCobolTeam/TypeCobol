@@ -19,17 +19,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// Character offset on a line in a document (zero-based).
         /// </summary>
         public int character { get; set; }
-
-        /// <summary>
-        /// Creates a new Position literal from the given line and character.
-        /// @param line The position's line.
-        /// @param character The position's character.
-        /// </summary>
-        public Position(int line, int character)
-        {
-            this.line = line;
-            this.character = character;
-
-        }
     }
 }

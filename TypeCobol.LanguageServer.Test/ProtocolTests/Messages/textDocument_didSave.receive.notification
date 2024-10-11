@@ -1,0 +1,6 @@
+{
+    "textDocument": {
+        "uri": "example/uri"
+    },
+    "text": "The content to be saved"
+}

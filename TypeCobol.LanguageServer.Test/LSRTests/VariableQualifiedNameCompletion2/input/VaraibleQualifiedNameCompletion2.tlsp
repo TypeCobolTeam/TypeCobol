@@ -84,7 +84,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}}"
     },
     {
       "category": 0,
@@ -116,7 +116,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}}"
     },
     {
       "category": 0,
@@ -152,7 +152,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}}"
     },
     {
       "category": 0,
@@ -216,7 +216,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":[{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\"},{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"W-Bool (BOOL) (W-Bool)\",\"kind\":6,\"insertText\":\"W-Bool\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"},{\"label\":\"MyBoool (BOOL) (MyGroup::MyBoool)\",\"kind\":6,\"insertText\":\"MyGroup::MyBoool\"},{\"label\":\"MyDatePointer (Alphanumeric) (MyDatePointer)\",\"kind\":6,\"insertText\":\"MyDatePointer\"},{\"label\":\"TestType (MyType) (TestType)\",\"kind\":6,\"insertText\":\"TestType\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\"},{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"W-Bool (BOOL) (W-Bool)\",\"kind\":6,\"insertText\":\"W-Bool\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"},{\"label\":\"MyBoool (BOOL) (MyGroup::MyBoool)\",\"kind\":6,\"insertText\":\"MyGroup::MyBoool\"},{\"label\":\"MyDatePointer (Alphanumeric) (MyDatePointer)\",\"kind\":6,\"insertText\":\"MyDatePointer\"},{\"label\":\"TestType (MyType) (TestType)\",\"kind\":6,\"insertText\":\"TestType\"}]}}"
     },
     {
       "category": 0,
@@ -256,7 +256,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"Varia (DATE) (TestType::Varia)\",\"kind\":6,\"insertText\":\"TestType::Varia\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"},{\"label\":\"MyDatePointer (Alphanumeric) (MyDatePointer)\",\"kind\":6,\"insertText\":\"MyDatePointer\"},{\"label\":\"TestLevel (Alphanumeric) (TestType::TestLevel)\",\"kind\":6,\"insertText\":\"TestType::TestLevel\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"Varia (DATE) (TestType::Varia)\",\"kind\":6,\"insertText\":\"TestType::Varia\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"},{\"label\":\"MyDatePointer (Alphanumeric) (MyDatePointer)\",\"kind\":6,\"insertText\":\"MyDatePointer\"},{\"label\":\"TestLevel (Alphanumeric) (TestType::TestLevel)\",\"kind\":6,\"insertText\":\"TestType::TestLevel\"}]}}"
     },
     {
       "category": 0,
@@ -328,7 +328,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}}"
     },
     {
       "category": 0,
@@ -368,7 +368,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}}"
     },
     {
       "category": 0,
@@ -472,7 +472,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}}"
     },
     {
       "category": 0,
@@ -628,7 +628,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"MyTestLevel (Level88) (MyTestLevel)\",\"kind\":6,\"insertText\":\"MyTestLevel\"},{\"label\":\"MyBoool (BOOL) (MyBoool)\",\"kind\":6,\"insertText\":\"MyBoool\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"MyTestLevel (Level88) (MyTestLevel)\",\"kind\":6,\"insertText\":\"MyTestLevel\"},{\"label\":\"MyBoool (BOOL) (MyBoool)\",\"kind\":6,\"insertText\":\"MyBoool\"}]}}"
     },
     {
       "category": 0,
@@ -860,7 +860,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar (BOOL) (TestVar)\",\"kind\":6,\"insertText\":\"TestVar\"},{\"label\":\"TestLevel (Alphanumeric) (TestLevel)\",\"kind\":6,\"insertText\":\"TestLevel\"}]}}"
     },
     {
       "category": 0,
@@ -900,7 +900,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestLevel2 (Alphanumeric) (TestLevel2)\",\"kind\":6,\"insertText\":\"TestLevel2\"}]}}"
     },
     {
       "category": 0,
@@ -940,7 +940,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Varia (DATE) (Varia)\",\"kind\":6,\"insertText\":\"Varia\"}]}}"
     },
     {
       "category": 0,

@@ -1,0 +1,18 @@
+{
+    "range": {
+        "start": {
+            "line": 9,
+            "character": 34
+        },
+        "end": {
+            "line": 10,
+            "character": 60
+        }
+    },
+    "contents": [
+        {
+            "language": "Cobol",
+            "value": "Description for hovered element"
+        }
+    ]
+}

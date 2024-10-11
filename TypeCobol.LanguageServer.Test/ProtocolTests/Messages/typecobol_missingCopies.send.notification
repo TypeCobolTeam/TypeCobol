@@ -1,0 +1,11 @@
+{
+    "textDocument": {
+        "uri": "example/uri"
+    },
+    "Copies": [
+        "COPY1", "COPY2", "COPY3"
+    ],
+    "CpyCopies": [
+        "CPYCOPY1", "CPYCOPY2", "CPYCOPY3"
+    ]
+}

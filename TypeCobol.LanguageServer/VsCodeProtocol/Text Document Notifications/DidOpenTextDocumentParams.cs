@@ -14,21 +14,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The document that was opened.
         /// </summary>
         public TextDocumentItem textDocument;
-
-        /// <summary>
-        /// Legacy property to support protocol version 1.0 requests.
-        /// </summary>
-        public string text { get; set; }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="textDocument"></param>
-        /// <param name="text"></param>
-        public DidOpenTextDocumentParams(TextDocumentItem textDocument, string text)
-        {
-            this.textDocument = textDocument;
-            this.text = text;
-        }
     }
 }

@@ -46,20 +46,20 @@ namespace TypeCobol.LanguageServer
 
             if (paragraphs != null)
             {
-                completionItems.AddRange(paragraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference }));
+                completionItems.AddRange(paragraphs.Select(para => new CompletionItem() { label = para.Name, kind = CompletionItemKind.Reference }));
             }
 
             if (sections != null)
             {
-                completionItems.AddRange(sections.Select(s => new CompletionItem(s.Name) { kind = CompletionItemKind.Reference }));
+                completionItems.AddRange(sections.Select(s => new CompletionItem() { label = s.Name, kind = CompletionItemKind.Reference }));
             }
 
             if (variables != null)
             {
                 foreach (var variable in variables)
                 {
-                    var completionItem =
-                        new CompletionItem(string.Format("{0} PIC{1}", variable.Name, variable.Picture.NormalizedValue));
+                    var completionItem = new CompletionItem();
+                    completionItem.label = string.Format("{0} PIC{1}", variable.Name, variable.Picture.NormalizedValue);
                     completionItem.insertText = variable.Name;
                     completionItem.kind = CompletionItemKind.Variable;
                     completionItems.Add(completionItem);
@@ -103,7 +103,7 @@ namespace TypeCobol.LanguageServer
 
             foreach (var variable in variables)
             {
-                var completionItem = new CompletionItem(string.Format("{0}", variable.Name));
+                var completionItem = new CompletionItem() { label = string.Format("{0}", variable.Name) };
                 completionItem.insertText = variable.Name;
                 completionItem.kind = CompletionItemKind.Variable;
                 completionItems.Add(completionItem);
@@ -330,7 +330,7 @@ namespace TypeCobol.LanguageServer
             }
 
             IEnumerable<Program> programs = callNode.SymbolTable.GetPrograms(userFilterToken != null ? userFilterToken.Text : string.Empty);
-            return programs.Select(prog => new CompletionItem(prog.Name) { kind = CompletionItemKind.Module }).ToList();
+            return programs.Select(prog => new CompletionItem() { label = prog.Name, kind = CompletionItemKind.Module }).ToList();
         }
 
         #endregion

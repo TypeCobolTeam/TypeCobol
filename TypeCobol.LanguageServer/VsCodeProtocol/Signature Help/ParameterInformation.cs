@@ -22,17 +22,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// in the UI but can be omitted.
         /// </summary>
         public string documentation { get; set; }
-
-        /// <summary>
-        /// Creates a new parameter information literal.
-        ///
-        /// @param label A label string.
-        /// @param documentation A doc string.
-        /// </summary>
-        public ParameterInformation(string label, string documentation)
-        {
-            this.label = label;
-            this.documentation = documentation;
-        }
     }
 }

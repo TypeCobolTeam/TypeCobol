@@ -9,12 +9,5 @@
         /// The version number of this document.
         /// </summary>
         public int version { get; set; }
-
-        /// <summary>
-        /// Creates a new versioned TextDocumentIdentifier.
-        /// </summary>
-        /// <param name="uri">The document's uri.</param>
-        /// <param name="version">The version number of this document.</param>
-        public VersionedTextDocumentIdentifier(string uri, int version) : base(uri) { this.version = version; }
     }
 }
