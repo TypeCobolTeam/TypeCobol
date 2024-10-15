@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace TypeCobol.LanguageServer.Commands
+﻿namespace TypeCobol.LanguageServer.Commands
 {
     /// <summary>
     /// Describe any command implemented by this server.
@@ -13,7 +11,7 @@ namespace TypeCobol.LanguageServer.Commands
         {
             _Commands = new Dictionary<string, Func<TypeCobolServer, ICommand>>()
             {
-                { "refactor/adjustFillers", AdjustFillers.Create }
+                { "refactor/adjustFillers", Refactor.AdjustFillers.Create }
                 // Register all supported commands here
             };
         }
@@ -55,26 +53,6 @@ namespace TypeCobol.LanguageServer.Commands
     /// </summary>
     internal abstract class AbstractCommand : ICommand
     {
-        /// <summary>
-        /// Helper method for reading untyped args of the command.
-        /// Does not work for JSON primitive values
-        /// </summary>
-        /// <typeparam name="T">Target type for the argument.</typeparam>
-        /// <param name="argument">Argument value to convert.</param>
-        /// <param name="instance">[out] New instance of T converted from given argument value, default when given arg is not a JObject.</param>
-        /// <returns>True when conversion succeeded, False otherwise.</returns>
-        protected static bool TryReadArgumentAs<T>(object argument, out T instance)
-        {
-            if (argument is JObject jObject)
-            {
-                instance = jObject.ToObject<T>();
-                return true;
-            }
-
-            instance = default;
-            return false;
-        }
-
         protected TypeCobolServer Server { get; }
 
         protected AbstractCommand(TypeCobolServer typeCobolServer)
