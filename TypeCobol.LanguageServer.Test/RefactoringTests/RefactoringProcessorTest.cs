@@ -107,7 +107,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             return (originalSource, processorType, commandArguments, modifiedSource);
         }
 
-        private RefactoringProcessorTest(string testName, CompilationUnit target, IRefactoringProcessor refactoringProcessor, object[] arguments, string expectedResult)
+        internal RefactoringProcessorTest(string testName, CompilationUnit target, IRefactoringProcessor refactoringProcessor, object[] arguments, string expectedResult)
         {
             _testName = testName;
             _target = target;
@@ -147,76 +147,36 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             result.AppendLine($"refactoring.label={label}");
             result.AppendLine("refactoring.source=");
 
-            int lineIndex = 1;
+            // Apply text edits on original source code: we simulate here what happens client-side
             int changeIndex = 0;
-            var nextChange = (changeIndex < changes.Count) ? changes[changeIndex++] : null;
-
-            using (var lineEnumerator = _target.CobolTextLines.GetEnumerator())
+            var nextChange = NextChange();
+            for (int lineIndex = 0; lineIndex < _target.CobolTextLines.Count; lineIndex++)
             {
-                while (lineEnumerator.MoveNext())
+                string lineText = _target.CobolTextLines[lineIndex].Text;
+                if (nextChange != null && lineIndex + 1 == nextChange.range.start.line)
                 {
-                    Debug.Assert(lineEnumerator.Current != null);
-                    string line = lineEnumerator.Current.Text;
-                    if (nextChange != null && lineIndex == nextChange.range.start.line)
-                    {
-                        // Line is changed
-                        if (IsInsert(nextChange))
-                        {
-                            // Insert new text
-                            result.Append(line);
-                            result.AppendLine(nextChange.newText);
-                            lineIndex++;
-                        }
-                        else if (IsDelete(nextChange))
-                        {
-                            // Delete = ignore current line
-                            lineIndex += nextChange.range.end.line - nextChange.range.start.line + 1;
-                            for (int i = nextChange.range.start.line; i < nextChange.range.end.line; i++)
-                            {
-                                // And also ignore next lines (if needed)
-                                lineEnumerator.MoveNext();
-                            }
-                        }
-                        else
-                        {
-                            // Modified line = start of original line + new text + end of original line
-                            // (which may be different from the start one if the change spread on several lines)
-                            result.Append(line[..nextChange.range.start.character]);
-                            result.Append(nextChange.newText);
-                            for (int i = nextChange.range.start.line; i < nextChange.range.end.line; i++)
-                            {
-                                // Ignore replaced lines (if needed)
-                                lineEnumerator.MoveNext();
-                                line = lineEnumerator.Current.Text;
-                            }
-                            result.AppendLine(line[nextChange.range.end.character..]);
-                            lineIndex++;
-                        }
+                    // The line is the target of the change
+                    result.Append(lineText[..nextChange.range.start.character]); // Keep part of the first line before the change
+                    result.Append(nextChange.newText); // Insert new text (maybe empty when it is a deletion)
 
-                        nextChange = (changeIndex < changes.Count) ? changes[changeIndex++] : null;
-                    }
-                    else
-                    {
-                        // Unchanged line
-                        result.AppendLine(line);
-                        lineIndex++;
-                    }
+                    // Skip lines overlapping the change
+                    lineIndex += nextChange.range.end.line - nextChange.range.start.line;
+                    lineText = _target.CobolTextLines[lineIndex].Text;
+
+                    // Keep part of the last line after the change
+                    result.AppendLine(lineText[nextChange.range.end.character..]);
+                    nextChange = NextChange();
+                }
+                else
+                {
+                    // Line is unchanged
+                    result.AppendLine(lineText);
                 }
             }
 
             return result.ToString();
-        }
 
-        private static bool IsInsert(TextEdit change)
-        {
-            // start == end --> Insert
-            return change.range.start.line == change.range.end.line && change.range.start.character == change.range.end.character;
-        }
-
-        private static bool IsDelete(TextEdit change)
-        {
-            // newText empty --> Delete
-            return change.newText.Length == 0;
+            TextEdit NextChange() => changeIndex < changes.Count ? changes[changeIndex++] : null;
         }
     }
 }
