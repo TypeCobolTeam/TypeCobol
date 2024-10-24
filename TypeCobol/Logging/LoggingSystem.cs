@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace TypeCobol.Logging
 {
@@ -13,10 +14,6 @@ namespace TypeCobol.Logging
         /// </summary>
         private class LoggerThread
         {
-            //Check action queue every 1.5s, this is also the maximum allotted
-            //time to flush remaining logging actions before ending the process.
-            private static readonly TimeSpan _Period = TimeSpan.FromMilliseconds(1500);
-
             private static void SafeCallLogger(ILogger logger, Action<ILogger> action)
             {
                 try
@@ -31,14 +28,14 @@ namespace TypeCobol.Logging
 
             private readonly ConcurrentQueue<Action<ILogger>> _work;
             private readonly Thread _thread;
-            private readonly object _waitLock;
+            private readonly AutoResetEvent _signal;
             private bool _stop;
 
             public LoggerThread()
             {
                 _work = new ConcurrentQueue<Action<ILogger>>();
                 _thread = new Thread(Log) { IsBackground = true };
-                _waitLock = new object();
+                _signal = new AutoResetEvent(false);
                 _stop = false;
                 _thread.Start();
             }
@@ -47,46 +44,38 @@ namespace TypeCobol.Logging
             {
                 while (!_stop)
                 {
-                    lock (_waitLock)
+                    //Wait for signal
+                    _signal.WaitOne();
+
+                    //Process all pending logging actions
+                    while (_work.TryDequeue(out var action))
                     {
-                        Monitor.Wait(_waitLock, _Period); //Wait until pulsed or polling period expires
-                        while (_work.TryDequeue(out var action))
+                        //Dispatch to loggers
+                        foreach (var logger in _Loggers)
                         {
-                            //Dispatch to loggers
-                            foreach (var logger in _Loggers)
-                            {
-                                SafeCallLogger(logger, action);
-                            }
+                            SafeCallLogger(logger, action);
                         }
                     }
                 }
             }
 
-            public void AddWork(Action<ILogger> action) => _work.Enqueue(action);
+            public void AddWork(Action<ILogger> action)
+            {
+                _work.Enqueue(action);
+                _signal.Set();
+            }
 
             public void Stop()
             {
                 _stop = true;
 
                 // Pulse the thread to end as soon as possible
-                lock (_waitLock)
-                {
-                    Monitor.Pulse(_waitLock);
-                }
+                _signal.Set();
 
                 // Wait for last actions to be processed
-                _thread.Join(_Period);
+                _thread.Join();
 
-                // Last chance ! Log errors into the console if we did not have enough time to use configured loggers
-                if (!_work.IsEmpty)
-                {
-                    var remainingWork = _work.ToArray();
-                    var consoleLogger = new ConsoleLogger(LogLevel.Error); // Drop infos and warnings, keep errors and exceptions
-                    foreach (var action in remainingWork)
-                    {
-                        SafeCallLogger(consoleLogger, action);
-                    }
-                }
+                Debug.Assert(_work.IsEmpty);
             }
         }
 
@@ -114,7 +103,7 @@ namespace TypeCobol.Logging
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
-            LogException((Exception) args.ExceptionObject);
+            LogException((Exception)args.ExceptionObject);
         }
 
         private static void OnApplicationExit(object sender, EventArgs args)
