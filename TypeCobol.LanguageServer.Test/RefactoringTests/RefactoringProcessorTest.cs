@@ -148,6 +148,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             result.AppendLine("refactoring.source=");
 
             // Apply text edits on original source code: we simulate here what happens client-side
+            // Note that this algorithm expects at most one change per line
             int changeIndex = 0;
             var nextChange = NextChange();
             for (int lineIndex = 0; lineIndex < _target.CobolTextLines.Count; lineIndex++)

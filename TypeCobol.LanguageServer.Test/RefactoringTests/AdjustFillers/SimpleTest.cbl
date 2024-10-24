@@ -5,14 +5,14 @@
        01 target-zone PIC X(200).
        01 redef1 REDEFINES target-zone.
           05 var1 PIC X(100).
-      * Ajuster ici la taille (20 -> 100)
+      * Adjust FILLER size here (20 -> 100)
           05 FILLER PIC X(20).
        01 redef2 REDEFINES target-zone.
           05 var2 PIC X(125).
-      * Ajouter ici un FILLER de taille 75
+      * Add here new FILLER, length 75
        01 redef3 REDEFINES target-zone.
           05 var3 PIC X(200).
-      * Supprimer ce FILLER complètement
+      * Remove this FILLER entirely
           05 FILLER PIC X(25).
        PROCEDURE DIVISION.
            GOBACK
@@ -32,15 +32,15 @@ refactoring.source=
        01 target-zone PIC X(200).
        01 redef1 REDEFINES target-zone.
           05 var1 PIC X(100).
-      * Ajuster ici la taille (20 -> 100)
+      * Adjust FILLER size here (20 -> 100)
           05 FILLER PIC X(100).
        01 redef2 REDEFINES target-zone.
           05 var2 PIC X(125).
           05 FILLER PIC X(75).
-      * Ajouter ici un FILLER de taille 75
+      * Add here new FILLER, length 75
        01 redef3 REDEFINES target-zone.
           05 var3 PIC X(200).
-      * Supprimer ce FILLER complètement
+      * Remove this FILLER entirely
                               
        PROCEDURE DIVISION.
            GOBACK

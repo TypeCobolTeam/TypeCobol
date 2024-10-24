@@ -33,9 +33,9 @@ namespace TypeCobol.LanguageServer.Test
                 builder.AppendLine("      * 07: This line won't change");
                 builder.AppendLine("      * 08: This line will have some text inserted");
                 builder.AppendLine("      * 09: This line won't change");
-                builder.AppendLine("      * 10: This line will be partially deleted");
+                builder.AppendLine("      * 10: This line will be partially deleted at its end");
                 builder.AppendLine("      * 11: This line will be deleted");
-                builder.AppendLine("      * 12: This line will be partially deleted");
+                builder.AppendLine("      * 12: This line will be partially deleted at its beginning");
                 builder.AppendLine("      * 13: This line won't change");
                 builder.AppendLine("      * 14: This line will be partially modified");
                 builder.AppendLine("      * 15: This line will be entirely replaced");
@@ -57,7 +57,7 @@ namespace TypeCobol.LanguageServer.Test
                 builder.AppendLine("      * on multiple");
                 builder.AppendLine("      * lines] will have some text inserted");
                 builder.AppendLine("      * 09: This line won't change");
-                builder.AppendLine("      * 10: This line will be partially deleted");
+                builder.AppendLine("      * 10: This line will be partially deleted at its beginning");
                 builder.AppendLine("      * 13: This line won't change");
                 builder.AppendLine("      * 14: This line has been");
                 builder.AppendLine("      * modified and the modification spans");

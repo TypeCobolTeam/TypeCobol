@@ -8,6 +8,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     /// delegates its processing to a refactoring processor.
     /// </summary>
     /// <typeparam name="TProcessor">Refactoring processor type</typeparam>
+    /// <remarks>This class allows modifying only one document at a time. Multi-document refactorings are not supported.</remarks>
     internal class AbstractSingleDocumentRefactoring<TProcessor> : AbstractCommand
         where TProcessor : IRefactoringProcessor, new()
     {
