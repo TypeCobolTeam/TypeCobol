@@ -20,10 +20,17 @@
     <ProjectReference Include="..\CLI\src\CLI.csproj" />
     <ProjectReference Include="..\CLI\test\CLI.Test.csproj" />
     <ProjectReference Include="..\TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj" />
+    <ProjectReference Include="..\TypeCobol.Test\TypeCobol.Test.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="LSRTests\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="RefactoringTests\**\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
