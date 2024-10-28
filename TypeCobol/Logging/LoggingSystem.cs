@@ -61,6 +61,9 @@ namespace TypeCobol.Logging
 
             public void AddWork(Action<ILogger> action)
             {
+                // Assert that no attempt is made to log after the thread has been requested to stop
+                Debug.Assert(!_stop);
+
                 _work.Enqueue(action);
                 _signal.Set();
             }
@@ -75,6 +78,7 @@ namespace TypeCobol.Logging
                 // Wait for last actions to be processed
                 _thread.Join();
 
+                // Assert that no log were dropped
                 Debug.Assert(_work.IsEmpty);
             }
         }
