@@ -20,6 +20,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         {
             string exceptionType = exception.GetType().FullName;
             string exceptionMessage = exception.Message;
+            string exceptionSource = exception.Source;
             var exceptionTargetSite = new StringBuilder();
             if (exception.TargetSite != null)
             {
@@ -39,6 +40,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
                 {
                     { "Type", exceptionType },
                     { nameof(Exception.Message), exceptionMessage },
+                    { nameof(Exception.Source), exceptionSource },
                     { nameof(Exception.TargetSite), exceptionTargetSite.ToString() }
                 }
             };
