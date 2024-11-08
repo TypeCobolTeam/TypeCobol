@@ -23,7 +23,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             const string elevenSpaces = "           ";
             const string fourSpaces = "    ";
             const int maxStatementLength = CobolFormatAreas.End_B - CobolFormatAreas.Begin_B + 1; // Statements cannot exceed 61 characters
-            const char debugIndicator = 'D';
+            const char indicator = ' '; // TODO CobolTextLine.CreateCobolLines does not work with DEBUG mode and continuations cannot be used in DEBUG mode
 
             var builder = GetStringBuilder();
             int lineLength = builder.Length - _lastNewLineEndIndex - 1;
@@ -34,7 +34,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 builder.Remove(_lastNewLineEndIndex + 1, lineLength);
 
                 // Split statement line and append
-                var cobolLines = CobolTextLine.CreateCobolLines(ColumnsLayout.CobolReferenceFormat, new TypeCobolOptions(), 0, debugIndicator, string.Empty, lastLineText);
+                var cobolLines = CobolTextLine.CreateCobolLines(ColumnsLayout.CobolReferenceFormat, new TypeCobolOptions(), 0, indicator, string.Empty, lastLineText);
                 var lines = cobolLines.Select(l => l.Text.TrimEnd()).ToArray();
                 builder.AppendJoin(NewLine, lines);
             }

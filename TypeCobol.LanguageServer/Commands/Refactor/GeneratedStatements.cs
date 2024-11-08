@@ -147,13 +147,27 @@
             writer.Write("DISPLAY '");
             WriteIndent(LogicalLevel, writer);
             writer.Write(DisplayName);
-            WriteSubscripts();
+
+            if (Indices.Length > 0)
+            {
+                writer.Write(" (' ");
+                string subscripts = string.Join(" ' ' ", Indices);
+                writer.Write(subscripts);
+                writer.Write(" ')");
+            }
 
             if (WithValue)
             {
                 writer.Write(" <' ");
                 writer.Write(AccessName);
-                WriteSubscripts();
+
+                if (Indices.Length > 0)
+                {
+                    writer.Write(" (");
+                    string subscripts = string.Join(' ', Indices);
+                    writer.Write(subscripts);
+                    writer.Write(')');
+                }
 
                 if (ReferenceModifier != null)
                 {
@@ -169,17 +183,6 @@
             }
 
             writer.WriteLine();
-
-            void WriteSubscripts()
-            {
-                if (Indices.Length > 0)
-                {
-                    writer.Write(" (");
-                    string subscripts = string.Join(' ', Indices);
-                    writer.Write(subscripts);
-                    writer.Write(')');
-                }
-            }
         }
 
         protected override void WriteEndLine(int level, TextWriter writer)

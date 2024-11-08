@@ -11,14 +11,21 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
     internal abstract class Selection
     {
+        public static Selection Root(params Selection[] selections)
+        {
+            var rootSelection = new SelectionByIndex(0, NodeVisitMode.PassThrough);
+            rootSelection.SubSelections.AddRange(selections);
+            return rootSelection;
+        }
+
         public NodeVisitMode VisitMode { get; }
 
         public List<Selection> SubSelections { get; }
 
-        protected Selection(NodeVisitMode visitMode, List<Selection> subSelections)
+        protected Selection(NodeVisitMode visitMode)
         {
             VisitMode = visitMode;
-            SubSelections = subSelections;
+            SubSelections = new List<Selection>();
         }
 
         public abstract Node SelectChild(Node parent);
@@ -28,8 +35,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     {
         public string Name { get; }
 
-        public SelectionByName(string name, NodeVisitMode visitMode, List<Selection> subSelections)
-            : base(visitMode, subSelections)
+        public SelectionByName(string name, NodeVisitMode visitMode)
+            : base(visitMode)
         {
             Name = name;
         }
@@ -44,8 +51,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     {
         public int Index { get; }
 
-        public SelectionByIndex(int index, NodeVisitMode visitMode, List<Selection> subSelections)
-            : base(visitMode, subSelections)
+        public SelectionByIndex(int index, NodeVisitMode visitMode)
+            : base(visitMode)
         {
             Index = index;
         }
@@ -61,7 +68,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         public static AutoSelection Instance = new();
 
         private AutoSelection()
-            : base(NodeVisitMode.Automatic, null)
+            : base(NodeVisitMode.Automatic)
         {
 
         }
