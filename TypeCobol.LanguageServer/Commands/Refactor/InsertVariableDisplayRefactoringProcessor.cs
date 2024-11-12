@@ -36,11 +36,11 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 GeneratedRoot statementsForLinkageVariables = GenerateDisplayStatements(linkageSection, _linkageSectionSelection);
 
                 // TODO Gather generated indices
-                
-                var cobolStringWriter = new CobolStringWriter();
-                statementsForWorkingStorageVariables.Write(cobolStringWriter);
-                statementsForLinkageVariables.Write(cobolStringWriter);
-                string cobolString = cobolStringWriter.ToString();
+
+                var cobolStringBuilder = new CobolStringBuilder(true);
+                statementsForWorkingStorageVariables.WriteCobolCode(cobolStringBuilder);
+                statementsForLinkageVariables.WriteCobolCode(cobolStringBuilder);
+                string cobolString = cobolStringBuilder.ToString();
 
                 // TODO Convert to TextEdits, one for indices, one for generated statements
             }
