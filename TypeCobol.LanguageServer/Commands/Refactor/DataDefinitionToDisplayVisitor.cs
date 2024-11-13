@@ -65,24 +65,21 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 string index = $"Idx-{_hash}-{_indices.Count + 1}";
                 _indices.Push(index);
 
-                GeneratedPerform perform;
-
                 // Generate IF IS NUMERIC if need be
+                string max;
                 if (dataDefinition.OccursDependingOn != null)
                 {
-                    string max = dataDefinition.OccursDependingOn.MainSymbolReference.Name;
-                    var @if = new GeneratedIf($"{max} IS NUMERIC"); // TODO Else ?
+                    max = dataDefinition.OccursDependingOn.MainSymbolReference.Name;
+                    var @if = new GeneratedIfNumeric(max); // TODO Else ???
                     _currentStatement.AddChild(@if);
                     _currentStatement = @if;
-                    perform = new GeneratedPerform(index, max);
-
                 }
                 else
                 {
-                    string max = dataDefinition.MaxOccurencesCount.ToString();
-                    perform = new GeneratedPerform(index, max);
+                    max = dataDefinition.MaxOccurencesCount.ToString();
                 }
 
+                var perform = new GeneratedPerform(index, max);
                 _currentStatement.AddChild(perform);
                 _currentStatement = perform;
             }

@@ -1,4 +1,8 @@
-﻿namespace TypeCobol.LanguageServer.Commands.Refactor
+﻿using System.Diagnostics;
+using System.Text;
+using TypeCobol.Compiler.Text;
+
+namespace TypeCobol.LanguageServer.Commands.Refactor
 {
     internal abstract class GeneratedStatement
     {
@@ -31,30 +35,39 @@
             }
         }
 
-        protected void WriteIndent(int level, TextWriter writer)
+        protected internal void WriteCobolCode(int statementLevel, CobolStringBuilder builder)
         {
-            string indent = new string(' ', 2 * level);
-            writer.Write(indent);
-        }
+            if (!_active) return;
 
-        protected void Write(int level, TextWriter writer)
-        {
-            WriteStatementLine(level, writer);
+            WriteIndent();
+            WriteStatementOpening(builder);
+            builder.AppendLine();
 
             if (Children.Count > 0)
             {
                 foreach (var child in Children)
                 {
-                    child.Write(level + 1, writer);
+                    child.WriteCobolCode(statementLevel + 1, builder);
                 }
 
-                WriteEndLine(level, writer);
+                WriteIndent();
+                WriteStatementEnd(builder);
+                builder.AppendLine();
+            }
+
+            void WriteIndent()
+            {
+                Debug.Assert(statementLevel >= 0);
+
+                int length = CobolFormatAreas.End_A - CobolFormatAreas.Begin_A + 1; // 4 spaces to start in AreaB
+                length += 2 * statementLevel; // 2 additional spaces for each level of nested statements
+                builder.AppendIndent(length);
             }
         }
 
-        protected abstract void WriteStatementLine(int level, TextWriter writer);
+        protected abstract void WriteStatementOpening(CobolStringBuilder builder);
 
-        protected abstract void WriteEndLine(int level, TextWriter writer);
+        protected abstract void WriteStatementEnd(CobolStringBuilder builder);
     }
 
     internal class GeneratedRoot : GeneratedStatement
@@ -65,16 +78,22 @@
 
         }
 
-        public void Write(TextWriter writer) => Write(-1, writer);
-
-        protected override void WriteStatementLine(int level, TextWriter writer)
+        public void WriteCobolCode(CobolStringBuilder builder)
         {
-
+            foreach (var child in Children)
+            {
+                child.WriteCobolCode(0, builder);
+            }
         }
 
-        protected override void WriteEndLine(int level, TextWriter writer)
+        protected override void WriteStatementOpening(CobolStringBuilder builder)
         {
+            throw new InvalidOperationException("Root statement has no beginning code element.");
+        }
 
+        protected override void WriteStatementEnd(CobolStringBuilder builder)
+        {
+            throw new InvalidOperationException("Root statement has no ending code element.");
         }
     }
 
@@ -91,16 +110,25 @@
             Max = max;
         }
 
-        protected override void WriteStatementLine(int level, TextWriter writer)
+        protected override void WriteStatementOpening(CobolStringBuilder builder)
         {
-            WriteIndent(level, writer);
-            writer.WriteLine($"PERFORM VARYING {Index} FROM 1 BY 1 UNTIL {Index} > {Max}");
+            // PERFORM VARYING Idx-hash-n FROM 1 BY 1 UNTIL Idx-hash-n > Max
+            builder.AppendWord("PERFORM");
+            builder.AppendWord("VARYING");
+            builder.AppendWord(Index);
+            builder.AppendWord("FROM");
+            builder.AppendWord("1");
+            builder.AppendWord("BY");
+            builder.AppendWord("1");
+            builder.AppendWord("UNTIL");
+            builder.AppendWord(Index);
+            builder.AppendWord(">");
+            builder.AppendWord(Max);
         }
 
-        protected override void WriteEndLine(int level, TextWriter writer)
+        protected override void WriteStatementEnd(CobolStringBuilder builder)
         {
-            WriteIndent(level, writer);
-            writer.WriteLine("END-PERFORM");
+            builder.AppendWord("END-PERFORM");
         }
     }
 
@@ -141,76 +169,129 @@
             WithValue = withValue;
         }
 
-        protected override void WriteStatementLine(int level, TextWriter writer)
+        protected override void WriteStatementOpening(CobolStringBuilder builder)
         {
-            WriteIndent(level, writer);
-            writer.Write("DISPLAY '");
-            WriteIndent(LogicalLevel, writer);
-            writer.Write(DisplayName);
+            builder.AppendWord("DISPLAY");
 
-            if (Indices.Length > 0)
+            var wordBuilder = new StringBuilder();
+            bool withIndices = Indices.Length > 0;
+            switch (withIndices, WithValue)
             {
-                writer.Write(" (' ");
-                string subscripts = string.Join(" ' ' ", Indices);
-                writer.Write(subscripts);
-                writer.Write(" ')");
+                case (false, false):
+                    // No indices, no value: DISPLAY '    var1'
+                    AppendDisplayName(null);
+                    break;
+                case (false, true):
+                    // No indices but a value: DISPLAY '    var1 <' var1 '>'
+                    AppendDisplayName('<');
+                    builder.AppendWord(AccessName);
+                    if (ReferenceModifier != null)
+                    {
+                        builder.AppendWord(ReferenceModifier);
+                    }
+                    builder.AppendWord("'>'");
+                    break;
+                case (true, false):
+                    // Indices but no value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ')'
+                    AppendDisplayName('(');
+                    AppendIndicesForLabel();
+                    builder.AppendWord("')'");
+                    break;
+                case (true, true):
+                    // Indices and value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ') <' var1 (Idx-1 Idx-2) '>'
+                    AppendDisplayName('(');
+                    AppendIndicesForLabel();
+                    builder.AppendWord("') <'");
+                    builder.AppendWord(AccessName);
+                    AppendIndicesForCode();
+                    if (ReferenceModifier != null)
+                    {
+                        builder.AppendWord(ReferenceModifier);
+                    }
+                    builder.AppendWord("'>'");
+                    break;
             }
 
-            if (WithValue)
+            void AppendDisplayName(char? terminator)
             {
-                writer.Write(" <' ");
-                writer.Write(AccessName);
-
-                if (Indices.Length > 0)
+                wordBuilder.Append('\'');
+                wordBuilder.Append(' ', LogicalLevel);
+                wordBuilder.Append(DisplayName);
+                if (terminator.HasValue)
                 {
-                    writer.Write(" (");
-                    string subscripts = string.Join(' ', Indices);
-                    writer.Write(subscripts);
-                    writer.Write(')');
+                    wordBuilder.Append(' ');
+                    wordBuilder.Append(terminator.Value);
                 }
-
-                if (ReferenceModifier != null)
-                {
-                    writer.Write(' ');
-                    writer.Write(ReferenceModifier);
-                }
-
-                writer.Write(" '>'");
+                wordBuilder.Append('\'');
+                builder.AppendWord(wordBuilder.ToString());
+                wordBuilder.Clear();
             }
-            else
+
+            void AppendIndicesForLabel()
             {
-                writer.Write('\'');
+                for (int i = 0; i < Indices.Length; i++)
+                {
+                    builder.AppendWord(Indices[i]);
+                    bool isLast = i == Indices.Length - 1;
+                    if (!isLast)
+                    {
+                        builder.AppendWord("' '");
+                    }
+                }
             }
 
-            writer.WriteLine();
+            void AppendIndicesForCode()
+            {
+                for (int i = 0; i < Indices.Length; i++)
+                {
+                    bool isFirst = i == 0;
+                    bool isLast = i == Indices.Length - 1;
+
+                    if (isFirst)
+                    {
+                        wordBuilder.Append('(');
+                    }
+
+                    wordBuilder.Append(Indices[i]);
+
+                    if (isLast)
+                    {
+                        wordBuilder.Append(')');
+                    }
+
+                    builder.AppendWord(wordBuilder.ToString());
+                    wordBuilder.Clear();
+                }
+            }
         }
 
-        protected override void WriteEndLine(int level, TextWriter writer)
+        protected override void WriteStatementEnd(CobolStringBuilder builder)
         {
             throw new InvalidOperationException("DISPLAY statement is not composite.");
         }
     }
 
-    internal class GeneratedIf : GeneratedStatement
+    internal class GeneratedIfNumeric : GeneratedStatement
     {
-        public string Condition { get; }
+        public string Variable { get; }
 
-        public GeneratedIf(string condition)
+        public GeneratedIfNumeric(string variable)
             : base(false)
         {
-            Condition = condition;
+            Variable = variable;
         }
 
-        protected override void WriteStatementLine(int level, TextWriter writer)
+        protected override void WriteStatementOpening(CobolStringBuilder builder)
         {
-            WriteIndent(level, writer);
-            writer.WriteLine($"IF ({Condition})");
+            builder.AppendWord("IF");
+            builder.AppendWord(Variable);
+            builder.AppendWord("IS");
+            builder.AppendWord("NUMERIC");
         }
 
-        protected override void WriteEndLine(int level, TextWriter writer)
+        protected override void WriteStatementEnd(CobolStringBuilder builder)
         {
-            WriteIndent(level, writer);
-            writer.WriteLine("END-IF");
+            builder.AppendWord("END-IF");
         }
     }
 }

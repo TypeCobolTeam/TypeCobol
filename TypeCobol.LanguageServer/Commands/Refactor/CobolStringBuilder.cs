@@ -43,7 +43,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         private void FlushCurrentLine()
         {
             string currentLine = _currentLine.ToString();
-            _previousLineIndentLength = currentLine.Skip(_SequenceNumber.Length + 1).TakeWhile(c => c == ONE_SPACE).Count();
+            _previousLineIndentLength = currentLine.Skip(_SequenceNumber.Length + 1).TakeWhile(c => c == ONE_SPACE).Count(); // TODO Add a param to the GetIndent method ?
             _text.Append(currentLine);
             _currentLine.Clear();
         }

@@ -13,14 +13,15 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
-            // TODO Extract TextDocumentIdentifier and insert position and build Selection objects from arguments
-            // TODO Create hash from all args + current date ?
+            // TODO Extract TextDocumentIdentifier and insert position
+            // TODO Build Selection objects from arguments
+            // TODO Create hash from all args + current date
             return new TextDocumentIdentifier("example/uri");
         }
 
         public void CheckTarget(CompilationUnit compilationUnit)
         {
-            // TODO
+            // TODO Define requirements on CompilationUnit to perform refactoring
         }
 
         public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
@@ -35,16 +36,17 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 var linkageSection = dataDivision.Children.OfType<LinkageSection>().SingleOrDefault();
                 GeneratedRoot statementsForLinkageVariables = GenerateDisplayStatements(linkageSection, _linkageSectionSelection);
 
-                // TODO Gather generated indices
+                // TODO Gather required indices and generate
 
                 var cobolStringBuilder = new CobolStringBuilder(true);
                 statementsForWorkingStorageVariables.WriteCobolCode(cobolStringBuilder);
                 statementsForLinkageVariables.WriteCobolCode(cobolStringBuilder);
                 string cobolString = cobolStringBuilder.ToString();
 
-                // TODO Convert to TextEdits, one for indices, one for generated statements
+                // TODO Convert to TextEdits, one TextEdit for indices, one TextEdit for generated statements
             }
 
+            // TODO content of label ?
             return (null, null);
         }
 
