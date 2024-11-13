@@ -31,33 +31,38 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             var dataDivision = program.Children.OfType<DataDivision>().SingleOrDefault();
             if (dataDivision != null)
             {
-                var workingStorageSection = dataDivision.Children.OfType<WorkingStorageSection>().SingleOrDefault();
-                GeneratedRoot statementsForWorkingStorageVariables = GenerateDisplayStatements(workingStorageSection, _workingStorageSectionSelection);
-                var linkageSection = dataDivision.Children.OfType<LinkageSection>().SingleOrDefault();
-                GeneratedRoot statementsForLinkageVariables = GenerateDisplayStatements(linkageSection, _linkageSectionSelection);
+                var indexGenerator = new IndexGenerator(_hash);
 
-                // TODO Gather required indices and generate
+                var workingStorageSection = dataDivision.Children.OfType<WorkingStorageSection>().SingleOrDefault();
+                GeneratedRoot statementsForWorkingStorageVariables = GenerateDisplayStatements(workingStorageSection, _workingStorageSectionSelection, indexGenerator);
+                var linkageSection = dataDivision.Children.OfType<LinkageSection>().SingleOrDefault();
+                GeneratedRoot statementsForLinkageVariables = GenerateDisplayStatements(linkageSection, _linkageSectionSelection, indexGenerator);
 
                 var cobolStringBuilder = new CobolStringBuilder(true);
+                indexGenerator.WriteCobolCode(cobolStringBuilder);
+                string cobolStringForIndices = cobolStringBuilder.ToString();
+
+                cobolStringBuilder.Clear();
                 statementsForWorkingStorageVariables.WriteCobolCode(cobolStringBuilder);
                 statementsForLinkageVariables.WriteCobolCode(cobolStringBuilder);
-                string cobolString = cobolStringBuilder.ToString();
+                string cobolStringForStatements = cobolStringBuilder.ToString();
 
-                // TODO Convert to TextEdits, one TextEdit for indices, one TextEdit for generated statements
+                // TODO Convert generated indices to a TextEdit
+                // TODO Convert generated statements to a TextEdit
             }
 
-            // TODO content of label ?
+            // TODO content of the label ?
             return (null, null);
         }
 
-        private GeneratedRoot GenerateDisplayStatements(DataSection dataSection, Selection rootSelection)
+        private GeneratedRoot GenerateDisplayStatements(DataSection dataSection, Selection rootSelection, IndexGenerator indexGenerator)
         {
             if (dataSection == null || rootSelection == null)
             {
                 return new GeneratedRoot();
             }
 
-            var visitor = new DataDefinitionToDisplayVisitor(_hash, rootSelection);
+            var visitor = new DataDefinitionToDisplayVisitor(rootSelection, indexGenerator);
             visitor.Visit(dataSection);
             return visitor.GeneratedStatements;
         }

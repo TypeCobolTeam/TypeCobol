@@ -215,7 +215,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             void AppendDisplayName(char? terminator)
             {
                 wordBuilder.Append('\'');
-                wordBuilder.Append(' ', LogicalLevel);
+                wordBuilder.Append(' ', LogicalLevel * 2);
                 wordBuilder.Append(DisplayName);
                 if (terminator.HasValue)
                 {

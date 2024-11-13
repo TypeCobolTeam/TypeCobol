@@ -4,15 +4,15 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 {
     internal class DataDefinitionToDisplayVisitor : SelectedNodeVisitor
     {
-        private readonly string _hash;
+        private readonly IndexGenerator _indexGenerator;
         private int _dataLogicalLevel;
         private readonly Stack<string> _indices;
         private GeneratedStatement _currentStatement;
 
-        public DataDefinitionToDisplayVisitor(string hash, Selection rootSelection)
+        public DataDefinitionToDisplayVisitor(Selection rootSelection, IndexGenerator indexGenerator)
             : base(rootSelection)
         {
-            _hash = hash;
+            _indexGenerator = indexGenerator;
             _dataLogicalLevel = -1;
             _indices = new Stack<string>();
             GeneratedStatements = new GeneratedRoot();
@@ -62,11 +62,11 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             // Generate PERFORM if need be
             if (dataDefinition.IsTableOccurence)
             {
-                string index = $"Idx-{_hash}-{_indices.Count + 1}";
-                _indices.Push(index);
+                // Compute index size
+                string max = dataDefinition.MaxOccurencesCount.ToString();
+                int indexSize = max.Length;
 
                 // Generate IF IS NUMERIC if need be
-                string max;
                 if (dataDefinition.OccursDependingOn != null)
                 {
                     max = dataDefinition.OccursDependingOn.MainSymbolReference.Name;
@@ -74,11 +74,12 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     _currentStatement.AddChild(@if);
                     _currentStatement = @if;
                 }
-                else
-                {
-                    max = dataDefinition.MaxOccurencesCount.ToString();
-                }
 
+                // Generate index
+                string index = _indexGenerator.GenerateNextIndex(indexSize);
+                _indices.Push(index);
+
+                // Generate PERFORM
                 var perform = new GeneratedPerform(index, max);
                 _currentStatement.AddChild(perform);
                 _currentStatement = perform;

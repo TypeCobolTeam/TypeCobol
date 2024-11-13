@@ -23,8 +23,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             _indicator = debug ? DEBUG_INDICATOR : ONE_SPACE;
             _text = new StringBuilder();
             _currentLine = new StringBuilder();
-            _previousLineIndentLength = -1;
-            InitCurrentLine(false);
+            Clear();
         }
 
         private void InitCurrentLine(bool useIndentFromPreviousLine)
@@ -83,6 +82,14 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             FlushCurrentLine();
             _text.AppendLine();
             InitCurrentLine(useIndentFromPreviousLine);
+        }
+
+        public void Clear()
+        {
+            _text.Clear();
+            _currentLine.Clear();
+            _previousLineIndentLength = -1;
+            InitCurrentLine(false);
         }
 
         public override string ToString()
