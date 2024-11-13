@@ -14,8 +14,12 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
             // TODO Extract TextDocumentIdentifier and insert position
+
+            string allArgs = arguments.Select(argument => argument.ToString()).Aggregate(string.Empty, string.Concat);
+            _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + DateTime.Now);
+
             // TODO Build Selection objects from arguments
-            // TODO Create hash from all args + current date
+
             return new TextDocumentIdentifier("example/uri");
         }
 
