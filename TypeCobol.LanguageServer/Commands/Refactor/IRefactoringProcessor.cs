@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler;
+﻿using Newtonsoft.Json.Linq;
+using TypeCobol.Compiler;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.Commands.Refactor
@@ -10,6 +11,55 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     /// </summary>
     public interface IRefactoringProcessor
     {
+        /// <summary>
+        /// Arguments deserialization helper. Returns an object read or parsed from
+        /// given arguments array and index.
+        /// </summary>
+        /// <typeparam name="T">Expected type of the argument.</typeparam>
+        /// <param name="arguments">Arguments array.</param>
+        /// <param name="index">Argument index.</param>
+        /// <param name="required">True to consider the argument as required: when missing, an ArgumentException
+        /// will be thrown. False to consider the argument as optional: the default value for the argument type
+        /// will be returned.</param>
+        /// <returns>Instance of T, possibly null.</returns>
+        static T Expect<T>(object[] arguments, int index, bool required)
+        {
+            if (arguments == null || index > arguments.Length - 1)
+            {
+                return DefaultOrThrowWhenRequired();
+            }
+
+            object argument = arguments[index];
+            switch (argument)
+            {
+                case T result:
+                    return result;
+                case JToken jToken:
+                    if (jToken.Type == JTokenType.Null)
+                    {
+                        ThrowWhenRequired();
+                    }
+
+                    return jToken.ToObject<T>();
+            }
+
+            return DefaultOrThrowWhenRequired();
+
+            T DefaultOrThrowWhenRequired()
+            {
+                ThrowWhenRequired();
+                return default;
+            }
+
+            void ThrowWhenRequired()
+            {
+                if (required)
+                {
+                    throw new ArgumentException("Invalid arguments for command.", nameof(arguments));
+                }
+            }
+        }
+
         /// <summary>
         /// Collect and parse refactoring arguments.
         /// </summary>
