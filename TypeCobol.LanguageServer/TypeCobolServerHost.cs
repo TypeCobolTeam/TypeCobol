@@ -310,6 +310,10 @@ namespace TypeCobol.LanguageServer
                     httpServer.RedirectedOutpuStream = Process.StandardInput;
                 }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
+
+                // Add custom logger to track server exceptions
+                LoggingSystem.RegisterLogger(new TypeCobolServerLogger(jsonRPCServer));
+
                 var typeCobolServer = new TypeCobolCustomLanguageServer(jsonRPCServer, MessagesActionQueue);
 
                 typeCobolServer.NoLogsMessageNotification = NoLogsMessageNotification;
