@@ -13,14 +13,26 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
-            // TODO Extract TextDocumentIdentifier and insert position
+            // Get TextDocumentPosition (contains TextDocumentIdentifier and insertion position)
+            var textDocumentPosition = IRefactoringProcessor.Expect<TextDocumentPosition>(arguments, 0, true);
 
+            // Generate new hash for the ongoing refactoring
             string allArgs = arguments.Select(argument => argument.ToString()).Aggregate(string.Empty, string.Concat);
             _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + DateTime.Now);
 
-            // TODO Build Selection objects from arguments
+            _insertAt = textDocumentPosition.position;
 
-            return new TextDocumentIdentifier("example/uri");
+            // Get Selection objects
+            _workingStorageSectionSelection = GetSelection(1);
+            _linkageSectionSelection = GetSelection(2);
+
+            return textDocumentPosition.textDocument;
+
+            Selection GetSelection(int index)
+            {
+                var jsonSelection = IRefactoringProcessor.Expect<JsonSelection>(arguments, index, false);
+                return jsonSelection?.Convert();
+            }
         }
 
         public void CheckTarget(CompilationUnit compilationUnit)

@@ -2,7 +2,41 @@
 
 namespace TypeCobol.LanguageServer.Commands.Refactor
 {
-    internal enum NodeVisitMode
+    public class JsonSelection
+    {
+        public NodeVisitMode visitMode;
+        public JsonSelection[] subSelections;
+        public string name;
+        public int? index;
+
+        internal Selection Convert()
+        {
+            Selection instance = null;
+
+            if (name != null)
+            {
+                instance = new SelectionByName(name, visitMode);
+            }
+            else if (index.HasValue)
+            {
+                instance = new SelectionByIndex(index.Value, visitMode);
+            }
+            
+            if (instance == null)
+            {
+                throw new InvalidDataException();
+            }
+
+            if (subSelections != null)
+            {
+                instance.SubSelections.AddRange(subSelections.Select(subSelection => subSelection.Convert()));
+            }
+
+            return instance;
+        }
+    }
+
+    public enum NodeVisitMode
     {
         Default,
         PassThrough,
@@ -11,13 +45,6 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
     internal abstract class Selection
     {
-        public static Selection Root(params Selection[] selections)
-        {
-            var rootSelection = new SelectionByIndex(0, NodeVisitMode.PassThrough);
-            rootSelection.SubSelections.AddRange(selections);
-            return rootSelection;
-        }
-
         public NodeVisitMode VisitMode { get; }
 
         public List<Selection> SubSelections { get; }
