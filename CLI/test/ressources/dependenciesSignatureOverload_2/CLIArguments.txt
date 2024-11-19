@@ -1,1 +1,10 @@
-﻿-i input\Main.tcbl -o output\Main.cbl -d output\errors.txt -dp input\Dependency.tcbl -y input\Intrinsic.tcbl
+﻿-i
+input/Main.tcbl
+-o
+output/Main.cbl
+-d
+output/errors.txt
+-dp
+input/Dependency.tcbl
+-y
+input/Intrinsic.tcbl

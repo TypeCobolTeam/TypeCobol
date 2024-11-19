@@ -1,1 +1,12 @@
-﻿-i input\PGM3.rdz.tcbl -o output\PGM3.rdz.tcbl -d output\error.txt --dependencies input\DoesntExists.rdz.tcbl --dependencies input\Callee.rdz.tcbl -e rdz
+﻿-i
+input/PGM3.rdz.tcbl
+-o
+output/PGM3.rdz.tcbl
+-d
+output/error.txt
+--dependencies
+input/DoesntExists.rdz.tcbl
+--dependencies
+input/Callee.rdz.tcbl
+-e
+rdz

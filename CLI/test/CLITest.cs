@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
+﻿using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Tools.Options_Config;
 
@@ -409,7 +403,7 @@ namespace CLI.Test
         internal static void ReadConsole(string testFolderName, ReturnCode expectedReturnCode)
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
-            string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
+            string[] arguments = File.ReadAllLines(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
             string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim().Replace("\r", "");
             string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim().Replace("\r", "");
             if (!string.Equals(standardOutput, expectedoutput, StringComparison.CurrentCultureIgnoreCase))
@@ -423,7 +417,7 @@ namespace CLI.Test
         internal static void ReadConsoleWarnings(string testFolderName, ReturnCode expectedReturnCode)
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
-            string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
+            string[] arguments = File.ReadAllLines(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
             string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim();
             string warnings = string.Empty;
 
@@ -452,11 +446,11 @@ namespace CLI.Test
         internal static string Test(string testFolderName, ReturnCode expectedReturnCode)
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
-            string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
+            string[] arguments = File.ReadAllLines(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
             return Test(workingDirectory, arguments, expectedReturnCode);
         }
 
-        internal static string Test(string workingDirectory, string arguments, ReturnCode expectedReturnCode)
+        internal static string Test(string workingDirectory, IEnumerable<string> arguments, ReturnCode expectedReturnCode)
         {
             //
             //Create output folder because CLI will not create it
@@ -477,22 +471,25 @@ namespace CLI.Test
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
+            startInfo.FileName = "dotnet";
             startInfo.WorkingDirectory = workingDirectory;
-            // Find TypeCobol.CLI.exe location
+            // Find TypeCobol.CLI.dll location
             string currentDirectory = Environment.CurrentDirectory;
             string configuration = Path.GetFileName(currentDirectory);
             string pathToExe = Path.Combine(currentDirectory, "..", "..", "..", "..");
             pathToExe = Path.GetFullPath(pathToExe);
-            pathToExe = Path.Combine(pathToExe, "CLI", "src", "bin", configuration, "TypeCobol.CLI.exe");
-            startInfo.Arguments = @"/c " + pathToExe + " " + arguments;
+            pathToExe = Path.Combine(pathToExe, "CLI", "src", "bin", configuration, "TypeCobol.CLI.dll");
+            startInfo.ArgumentList.Add(pathToExe);
+            foreach (var argument in arguments)
+            {
+                startInfo.ArgumentList.Add(argument);
+            }
 
             process.StartInfo = startInfo;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.UseShellExecute = false;
             process.Start();
-            while (!process.HasExited)
-                continue;
+            process.WaitForExit();
 
             Console.WriteLine("workingDirectory="+ workingDirectory);
             Console.WriteLine("Return Code=" + process.ExitCode);

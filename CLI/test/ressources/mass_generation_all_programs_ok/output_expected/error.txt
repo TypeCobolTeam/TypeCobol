@@ -1,4 +1,4 @@
 ﻿ReturnCode=Success_
-No error in "input\DVZZPGM1.tcbl".
-No error in "input\DVZZPGM2.tcbl".
-No error in "input\DVZZPGM3.tcbl".
+No error in "input/DVZZPGM1.tcbl".
+No error in "input/DVZZPGM2.tcbl".
+No error in "input/DVZZPGM3.tcbl".

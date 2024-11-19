@@ -1,1 +1,13 @@
-﻿-i input\MainPgm.rdz.tcbl -o output\MainPgm.rdz.tcbl -d output\error.txt --exectostep=AST -e rdz --dependencies input\Dep.rdz.tcbl -c input\copy
+﻿-i
+input/MainPgm.rdz.tcbl
+-o
+output/MainPgm.rdz.tcbl
+-d
+output/error.txt
+--exectostep=AST
+-e
+rdz
+--dependencies
+input/Dep.rdz.tcbl
+-c
+input/copy

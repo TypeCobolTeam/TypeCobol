@@ -1,1 +1,4 @@
--i input\InBulkCallPgm.cbl -zcr=output\InBulkCallPgm.csv --exectostep=SemanticCrossCheck
+-i
+input/InBulkCallPgm.cbl
+-zcr=output/InBulkCallPgm.csv
+--exectostep=SemanticCrossCheck
