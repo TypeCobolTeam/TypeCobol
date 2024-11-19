@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TypeCobol.Transform.Test
 {
@@ -26,15 +21,35 @@ namespace TypeCobol.Transform.Test
 
     class TransformTestHelper
     {
-
         internal static void Test(string testFolderName)
         {
-            var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
-            string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "Arguments.txt");
+            var workingDirectory = Path.Combine("ressources", testFolderName);
+            var argumentsFilePath = Path.Combine(workingDirectory, "Arguments.txt");
+            var arguments = new List<List<string>>();
+            using (var reader = new StreamReader(File.OpenRead(argumentsFilePath)))
+            {
+                string line;
+                var argumentList = new List<string>();
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.Length == 0)
+                    {
+                        arguments.Add(argumentList.ToList());
+                        argumentList.Clear();
+                    }
+                    else
+                    {
+                        argumentList.Add(line);
+                    }
+                }
+
+                arguments.Add(argumentList);
+            }
+
             Test(workingDirectory, arguments);
         }
 
-        internal static void Test(string workingDirectory, string arguments)
+        internal static void Test(string workingDirectory, List<List<string>> arguments)
         {
             DirectoryInfo outputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output");
             if (outputDir.Exists)
@@ -49,33 +64,31 @@ namespace TypeCobol.Transform.Test
             while (!outputDir.Exists)
                 outputDir.Refresh();
 
-            StringReader sr = new StringReader(arguments);
-            string line_args = null;
             List<int> returnCodes = new List<int>();
-            while ((line_args = sr.ReadLine()) != null)
+            foreach (var argumentList in arguments)
             {
-                line_args = line_args.Trim();
-                if (line_args.Length > 0)
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                startInfo.FileName = "dotnet";
+                startInfo.WorkingDirectory = workingDirectory;
+                // Find TypeCobol.Transform.dll location
+                string currentDirectory = Environment.CurrentDirectory;
+                string configuration = Path.GetFileName(currentDirectory);
+                string pathToExe = Path.Combine(currentDirectory, "..", "..", "..");
+                pathToExe = Path.GetFullPath(pathToExe);
+                pathToExe = Path.Combine(pathToExe, "TypeCobol.Transform", "bin", configuration, "TypeCobol.Transform.dll");
+                startInfo.ArgumentList.Add(pathToExe);
+                foreach (var argument in argumentList)
                 {
-                    System.Diagnostics.Process process = new System.Diagnostics.Process();
-                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-                    startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfo.FileName = "cmd.exe";
-                    startInfo.WorkingDirectory = workingDirectory;
-                    // Find TypeCobol.Transform.exe location
-                    string currentDirectory = Environment.CurrentDirectory;
-                    string configuration = Path.GetFileName(currentDirectory);
-                    string pathToExe = Path.Combine(currentDirectory, "..", "..", "..");
-                    pathToExe = Path.GetFullPath(pathToExe);
-                    pathToExe = Path.Combine(pathToExe, "TypeCobol.Transform", "bin", configuration, "TypeCobol.Transform.exe");
-                    startInfo.Arguments = @"/c " + pathToExe + " " + line_args;
-
-                    process.StartInfo = startInfo;
-                    process.Start();
-                    while (!process.HasExited)
-                        continue;
-                    returnCodes.Add(process.ExitCode);
+                    startInfo.ArgumentList.Add(argument);
                 }
+
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
+
+                returnCodes.Add(process.ExitCode);
             }
 
             Console.WriteLine("workingDirectory=" + workingDirectory);
