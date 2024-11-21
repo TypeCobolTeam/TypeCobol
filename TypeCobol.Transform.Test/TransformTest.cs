@@ -5,7 +5,6 @@ namespace TypeCobol.Transform.Test
     [TestClass]
     public class TransformTest
     {
-
         [TestMethod]
         public void Transform_Encode()
         {
@@ -26,23 +25,28 @@ namespace TypeCobol.Transform.Test
             var workingDirectory = Path.Combine("ressources", testFolderName);
             var argumentsFilePath = Path.Combine(workingDirectory, "Arguments.txt");
             var arguments = new List<List<string>>();
+
+            // Parse arguments file
+            // Each arguments file contains several tests: format is one argument per line and one empty line to separate each test
             using (var reader = new StreamReader(File.OpenRead(argumentsFilePath)))
             {
-                string line;
                 var argumentList = new List<string>();
-                while ((line = reader.ReadLine()) != null)
+                while (reader.ReadLine() is { } line)
                 {
                     if (line.Length == 0)
                     {
+                        // Empty line: flush current set of args
                         arguments.Add(argumentList.ToList());
                         argumentList.Clear();
                     }
                     else
                     {
+                        // Add arg to current set
                         argumentList.Add(line);
                     }
                 }
 
+                // Flush last set of arguments
                 arguments.Add(argumentList);
             }
 

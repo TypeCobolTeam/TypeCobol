@@ -142,22 +142,24 @@ namespace TypeCobol.LanguageServer
         public static List<string> Extensions = new List<string>();
 
         /// <summary>
-        /// Run the Lsr Process
+        /// Try launch the Lsr Process
         /// </summary>
-        /// <param name="fullPath">full path of the process or its corresponding platform-independent library</param>
+        /// <param name="fullPath">full path of the process or its corresponding platform-independent .NET library</param>
         /// <param name="arguments">process arguments</param>
-        /// <param name="lsrProcess">Non-null Process instance shen the process has been successfully started, null otherwise.</param>
-        /// <returns>true if the process has been run, false otherwise.</returns>
+        /// <param name="lsrProcess">Non-null Process instance when the process has been successfully started, null otherwise.</param>
+        /// <returns>True if the process has been run, False otherwise.</returns>
         protected static bool TryStartLsr(string fullPath, List<string> arguments, out Process lsrProcess)
         {
             var process = new Process();
             if (Path.GetExtension(fullPath) == ".dll")
             {
+                // Wrap with dotnet.exe
                 process.StartInfo.FileName = "dotnet";
                 process.StartInfo.ArgumentList.Add(fullPath);
             }
             else
             {
+                // Run directly, the path is supposed to point to a native executable file
                 process.StartInfo.FileName = fullPath;
             }
 
@@ -169,6 +171,7 @@ namespace TypeCobol.LanguageServer
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardInput = true;
+
             //Start the process
             try
             {
@@ -205,7 +208,7 @@ namespace TypeCobol.LanguageServer
                 "",
                 "DESCRIPTION:",
                 "  Run the Language Server Robot.",
-                { "l|loglevel=",  "Logging level (1=Lifecycle, 2=Message, 3=Protocol).", (string v) =>
+                { "l|loglevel=",  "Logging level (0=Lifecycle, 1=Message, 2=Protocol).", (string v) =>
                     {
                         if (v != null)
                         {
@@ -233,7 +236,7 @@ namespace TypeCobol.LanguageServer
                 { "lsr=","{PATH} the lsr path", (string v) => LsrPath = v },
                 { "s|script=","{PATH} script path in lsr", (string v) => LsrScript = v },
                 { "td|timerdisabled","Disable the delay that handle the automatic launch of Node Phase analyze", _ => TimerDisabledOption = true },
-                { "ro|roptions=","LSR options", (string v) => LsrOptions = v + " " },
+                { "ro|roptions=","Path to LSR options file", (string v) => LsrOptions = v + " " },
                 { "tsource",  "Source document testing mode.", _ => LsrSourceTesting = true},
                 { "tscanner",  "Scanner testing mode.", _ => LsrScannerTesting = true},
                 { "tpreprocess",  "Preprocessing testing mode.", _ => LsrPreprocessTesting = true},
@@ -301,14 +304,17 @@ namespace TypeCobol.LanguageServer
                 logWriter = new DebugTextWriter();
             }
 
+            // Start Language Server Robot if requested
             Process lsrProcess = null;
             if (LsrMode && LsrPath != null && LsrScript != null)
             {
-                string fullPath = Path.GetFullPath(LsrPath);
+                // Read LSR options from file
                 var lsrOptions = LsrOptions != null ? File.ReadAllLines(LsrOptions).ToList() : new List<string>();
                 lsrOptions.Add("-ioc");
                 lsrOptions.Add("-c");
                 lsrOptions.Add("-script=" + LsrScript);
+
+                string fullPath = Path.GetFullPath(LsrPath);
                 if (!TryStartLsr(fullPath, lsrOptions, out lsrProcess))
                 {
                     System.Console.Error.WriteLine("Fail to run LSR process");

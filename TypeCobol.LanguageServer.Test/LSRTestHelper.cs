@@ -80,29 +80,29 @@ namespace TypeCobol.LanguageServer.Test
             // LSR arguments
             var lsrOptions = new List<string>()
             {
-                "-lf=" + logFile,
-                "-l=3",
-                "-init=" + initGeneratedFileInfo.FullName,
-                "-config=" + configGeneratedFileInfo.FullName
+                "-lf=" + logFile, // LSR log file path
+                "-l=2", // Robot logging level:use the Protocol level
+                "-init=" + initGeneratedFileInfo.FullName, // Path to the JSON initialize request
+                "-config=" + configGeneratedFileInfo.FullName // Path to the JSON didChangeConfiguration notification
             };
             var lsrOptionsGeneratedFileInfo = new FileInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "generatedLsrOptions.txt");
             File.WriteAllLines(lsrOptionsGeneratedFileInfo.FullName, lsrOptions);
 
             // LS arguments
-            var lsOptions = new List<string>() // LS options
+            var lsOptions = new List<string>()
             {
-                "-r",
-                "-lsr=" + lsrPath,
-                "-ro=" + lsrOptionsGeneratedFileInfo.FullName,
-                "-script=" + scriptFileInfo.FullName
+                "-r", // Use Robot
+                "-lsr=" + lsrPath, // Path to the robot executable file or library
+                "-ro=" + lsrOptionsGeneratedFileInfo.FullName, // Path to the robot options file
+                "-script=" + scriptFileInfo.FullName // Path to the input script
             };
-            if (activateTdOption) lsOptions.Add("-td");
-            lsOptions.Add(lsrTestingOption.ToLanguageServerOption());
-            lsOptions.Add("-lf=" + tcLogFile);
-            lsOptions.Add("-l=3");
-            if (useSyntaxColoring) lsOptions.Add("-sc");
-            if (useOutline) lsOptions.Add("-ol");
-            if (useCfg) lsOptions.Add("-cfg=AsContent");
+            if (activateTdOption) lsOptions.Add("-td"); // if true, disable auto rebuild of AST
+            lsOptions.Add(lsrTestingOption.ToLanguageServerOption()); // Testing mode for LSR
+            lsOptions.Add("-lf=" + tcLogFile); // LS log file path
+            lsOptions.Add("-l=2"); // Server logging level: use the Protocol level
+            if (useSyntaxColoring) lsOptions.Add("-sc"); // if true, activate syntax coloring
+            if (useOutline) lsOptions.Add("-ol"); // if true, activate outline
+            if (useCfg) lsOptions.Add("-cfg=AsContent"); // if true, activate cfg as content directly included in messages
 
             //Build full path to default Cpy Copy names file for LSR tests
             string cpyCopiesFile = Path.GetFullPath(Path.Combine(testWorkingDirectory, "input", "CpyCopies.lst"));
@@ -120,8 +120,6 @@ namespace TypeCobol.LanguageServer.Test
                 startInfo.ArgumentList.Add(lsOption);
             }
             process.StartInfo = startInfo;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.RedirectStandardOutput = true;
             process.Start();
             process.WaitForExit(LSR_TEST_TIMEOUT);
 
