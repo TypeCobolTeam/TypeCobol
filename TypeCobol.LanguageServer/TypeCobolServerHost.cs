@@ -136,8 +136,6 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static string UserAgent { get; set; }
 
-        public static System.Diagnostics.Process Process;
-
         /// <summary>
         /// Custom extensions Dll Paths
         /// </summary>
@@ -146,32 +144,48 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Run the Lsr Process
         /// </summary>
-        /// <param name="fullPath">full path of the process</param>
+        /// <param name="fullPath">full path of the process or its corresponding platform-independent library</param>
         /// <param name="arguments">process arguments</param>
+        /// <param name="lsrProcess">Non-null Process instance shen the process has been successfully started, null otherwise.</param>
         /// <returns>true if the process has been run, false otherwise.</returns>
-        protected static bool StartLsr(string fullPath, string arguments)
+        protected static bool TryStartLsr(string fullPath, List<string> arguments, out Process lsrProcess)
         {
-            Process = new System.Diagnostics.Process();
-            Process.StartInfo.FileName = fullPath;
-            if (arguments != null)
-                Process.StartInfo.Arguments = arguments;
-            Process.StartInfo.UseShellExecute = false;
-            Process.StartInfo.RedirectStandardOutput = true;
-            Process.StartInfo.RedirectStandardInput = true;
+            var process = new Process();
+            if (Path.GetExtension(fullPath) == ".dll")
+            {
+                process.StartInfo.FileName = "dotnet";
+                process.StartInfo.ArgumentList.Add(fullPath);
+            }
+            else
+            {
+                process.StartInfo.FileName = fullPath;
+            }
+
+            foreach (var argument in arguments)
+            {
+                process.StartInfo.ArgumentList.Add(argument);
+            }
+
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardInput = true;
             //Start the process
             try
             {
-                if (!Process.Start())
+                if (!process.Start())
                 {
+                    lsrProcess = null;
                     return false;
                 }
                 else
                 {
+                    lsrProcess = process;
                     return true;
                 }
             }
-            catch 
+            catch
             {
+                lsrProcess = null;
                 return false;
             }
         }
@@ -286,15 +300,22 @@ namespace TypeCobol.LanguageServer
             {
                 logWriter = new DebugTextWriter();
             }
+
+            Process lsrProcess = null;
             if (LsrMode && LsrPath != null && LsrScript != null)
             {
                 string fullPath = Path.GetFullPath(LsrPath);
-                if (!StartLsr(fullPath, (LsrOptions ?? "") + "-ioc -c -script=" + LsrScript))
+                var lsrOptions = LsrOptions != null ? File.ReadAllLines(LsrOptions).ToList() : new List<string>();
+                lsrOptions.Add("-ioc");
+                lsrOptions.Add("-c");
+                lsrOptions.Add("-script=" + LsrScript);
+                if (!TryStartLsr(fullPath, lsrOptions, out lsrProcess))
                 {
                     System.Console.Error.WriteLine("Fail to run LSR process");
                     return -1;
                 }
             }
+
             //Run this server
             try
             {
@@ -304,10 +325,10 @@ namespace TypeCobol.LanguageServer
                 // Configure the protocols stack
                 var httpServer = new StdioHttpServer(Encoding.UTF8, LogLevel, logWriter, MessagesActionQueue);
                 httpServer.IsLsrTdMode = TimerDisabledOption;
-                if (Process != null)
+                if (lsrProcess != null)
                 {
-                    httpServer.RedirectedInputStream = Process.StandardOutput.BaseStream;
-                    httpServer.RedirectedOutpuStream = Process.StandardInput;
+                    httpServer.RedirectedInputStream = lsrProcess.StandardOutput.BaseStream;
+                    httpServer.RedirectedOutpuStream = lsrProcess.StandardInput;
                 }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
 

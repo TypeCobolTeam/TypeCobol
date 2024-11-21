@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CLI.Test;
+﻿using CLI.Test;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.LanguageServer.Utilities;
 
@@ -13,21 +7,9 @@ namespace TypeCobol.LanguageServer.Test
     public class LSRTestHelper
     {
         /// <summary>
-        /// Contains the default argument to launch TypeCobol Language Server executable. 
-        /// -r activate the robot mode
-        /// -e make LSR stops at first error detected
-        /// -lsr contains the path to LanguageServerRobot executable
-        /// -script contains the path to the script to test
-        /// -config contains the path to the config file necessary for TypeCobolLSR initialization 
-        /// -init Give the initialize file path
-        /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
-        /// {8} is filled with -sc if useSyntaxColoring is set to true.
+        /// LSR Test Timeout in milliseconds.
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"-lf={6} -l=3 -init={1} -config={2}\" -script={3} {4} {5} -lf={7} -l=3 {8} {9} {10}";
-        /// <summary>
-        /// LSR Test Timeout in milli secondes.
-        /// </summary>
-        public const int LSR_TEST_TIMEOUT = 1000 * 30;
+        private const int LSR_TEST_TIMEOUT = 1000 * 30;
 
         public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, bool useSyntaxColoring = false, bool useOutline = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null, bool useCfg = false, bool pureCobol = false)
         {
@@ -54,7 +36,7 @@ namespace TypeCobol.LanguageServer.Test
             var configFileContent = File.ReadAllText(configFileInfo.FullName);
             configFileContent = configFileContent.Replace("{CopyFolder}",
                 new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" +
-                                  Path.DirectorySeparatorChar + copyFolder).FullName.Replace(@"\", @"\\"));
+                                  (copyFolder != null ? Path.DirectorySeparatorChar + copyFolder : "")).FullName.Replace(@"\", @"\\"));
             String testOptions = "";
             testOptions += useOutline ? "" : ",\"-dol\"";
             testOptions += pureCobol ? ",\"-cob\"" : "";
@@ -68,7 +50,7 @@ namespace TypeCobol.LanguageServer.Test
 
             configFileContent = configFileContent.Replace("{DependenciesFolder}",
                 new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" +
-                                  Path.DirectorySeparatorChar + customDependenciesFolder).FullName.Replace(@"\", @"\\"));
+                                  (customDependenciesFolder != null ? Path.DirectorySeparatorChar + customDependenciesFolder : "")).FullName.Replace(@"\", @"\\"));
 
             var configGeneratedFileInfo = new FileInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "generatedConfig.json");
 
@@ -93,35 +75,56 @@ namespace TypeCobol.LanguageServer.Test
             string configuration = Path.GetFileName(lsrPath);
             lsrPath = Path.Combine(lsrPath, "..", "..", "..");
             lsrPath = Path.GetFullPath(lsrPath);
-            lsrPath = Path.Combine(lsrPath, "TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer", "bin", configuration, "TypeCobol.LanguageServerRobot.exe");
+            lsrPath = Path.Combine(lsrPath, "TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer", "bin", configuration, "TypeCobol.LanguageServerRobot.dll");
 
-            //Setup the arguments
-            var arguments = string.Format(defaultTypeCobolLSArgs,
-                lsrPath,
-                initGeneratedFileInfo.FullName, 
-                configGeneratedFileInfo.FullName, 
-                scriptFileInfo.FullName, 
-                activateTdOption ? "-td" : "", 
-                lsrTestingOption.ToLanguageServerOption(),
-                logFile,
-                tcLogFile,
-                useSyntaxColoring ? "-sc" : "",
-                useOutline ? "-ol" : "",
-                useCfg ? "-cfg=AsContent" : "");
+            // LSR arguments
+            var lsrOptions = new List<string>()
+            {
+                "-lf=" + logFile,
+                "-l=3",
+                "-init=" + initGeneratedFileInfo.FullName,
+                "-config=" + configGeneratedFileInfo.FullName
+            };
+            var lsrOptionsGeneratedFileInfo = new FileInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "generatedLsrOptions.txt");
+            File.WriteAllLines(lsrOptionsGeneratedFileInfo.FullName, lsrOptions);
+
+            // LS arguments
+            var lsOptions = new List<string>() // LS options
+            {
+                "-r",
+                "-lsr=" + lsrPath,
+                "-ro=" + lsrOptionsGeneratedFileInfo.FullName,
+                "-script=" + scriptFileInfo.FullName
+            };
+            if (activateTdOption) lsOptions.Add("-td");
+            lsOptions.Add(lsrTestingOption.ToLanguageServerOption());
+            lsOptions.Add("-lf=" + tcLogFile);
+            lsOptions.Add("-l=3");
+            if (useSyntaxColoring) lsOptions.Add("-sc");
+            if (useOutline) lsOptions.Add("-ol");
+            if (useCfg) lsOptions.Add("-cfg=AsContent");
 
             //Build full path to default Cpy Copy names file for LSR tests
             string cpyCopiesFile = Path.GetFullPath(Path.Combine(testWorkingDirectory, "input", "CpyCopies.lst"));
-            arguments += " -ycpl=\"" + cpyCopiesFile + "\"";
+            lsOptions.Add("-ycpl=" + cpyCopiesFile);
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar +"TypeCobol.LanguageServer.exe";
+            startInfo.FileName = "dotnet";
             startInfo.WorkingDirectory = testWorkingDirectory;
-            startInfo.Arguments = arguments;
+            var lsPath = Path.Combine(Directory.GetCurrentDirectory(), "TypeCobol.LanguageServer.dll");
+            startInfo.ArgumentList.Add(lsPath);
+            foreach (var lsOption in lsOptions)
+            {
+                startInfo.ArgumentList.Add(lsOption);
+            }
             process.StartInfo = startInfo;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.RedirectStandardOutput = true;
             process.Start();
             process.WaitForExit(LSR_TEST_TIMEOUT);
+
             if (!process.HasExited)
             {
                 process.Kill(true); // Also kill associated LSR process
@@ -143,6 +146,5 @@ namespace TypeCobol.LanguageServer.Test
                 throw new Exception("directory not equals");
             }
         }
-
     }
 }
