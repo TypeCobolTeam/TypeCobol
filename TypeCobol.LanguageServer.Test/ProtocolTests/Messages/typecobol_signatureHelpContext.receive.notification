@@ -7,13 +7,13 @@
         "parameters": [
             {
                 "label": "Label for first parameter",
-				"documentation": "Description for first parameter, our server does not send any documentation !"
+                "documentation": "Description for first parameter, our server does not send any documentation !"
             },
             {
                 "label": "Label for second parameter",
-				"documentation": "Description for second parameter, our server does not send any documentation !"
+                "documentation": "Description for second parameter, our server does not send any documentation !"
             }
         ],
-		"documentation": "Description for signature, our server does not send any documentation !"
+        "documentation": "Description for signature, our server does not send any documentation !"
     }
 }
