@@ -90,13 +90,14 @@ namespace TypeCobol.LanguageServer.Test
                 { testNotification.Method, testNotification },
                 { testRequest.Method, testRequest }
             };
-            TestMessageDirectory(@"ProtocolTests\Fakes", lspMethods);
+
+            TestMessageDirectory(Path.Combine("ProtocolTests", "Fakes"), lspMethods);
         }
 
         /// <summary>
         /// Actual test for LSP messages.
         /// </summary>
         [TestMethod]
-        public void TestAllMessages() => TestMessageDirectory(@"ProtocolTests\Messages", DiscoverLspMethods());
+        public void TestAllMessages() => TestMessageDirectory(Path.Combine("ProtocolTests", "Messages"), DiscoverLspMethods());
     }
 }

@@ -1,0 +1,4 @@
+Line 0[0,0] <47, Error, CodeAnalysis> - Invalid value: myValue
+Line 0[0,0] <47, Error, CodeAnalysis> - Invalid value: myValueWithBraces{}
+Line 0[0,0] <47, Error, CodeAnalysis> - {Invalid value: myValueWithBraces{}}
+Line 0[0,0] <47, Error, CodeAnalysis> - Invalid value: myValueWithSpecialChars [(*+-?!|^$.,:;/\#&@)]

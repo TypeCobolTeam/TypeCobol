@@ -74,14 +74,14 @@ namespace TypeCobol.Codegen {
 
             // compare with expected result
             string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
-            TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path), "Codegen\\test"));
+            TypeCobol.Test.TestUtils.CompareLines(path, writer.ToString(), expected, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path), "Codegen\\test"));
 
             if (lmStream != null)
             {
                 //compare with expected line mapping
                 string lm = System.Text.ASCIIEncoding.Default.GetString(lmStream.ToArray());
                 string expectedLm = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), format.Encoding);
-                TypeCobol.Test.TestUtils.compareLines(path + ML_SUFFIX, lm, expectedLm, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), "Codegen\\test"));
+                TypeCobol.Test.TestUtils.CompareLines(path + ML_SUFFIX, lm, expectedLm, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), "Codegen\\test"));
             }
         }
 

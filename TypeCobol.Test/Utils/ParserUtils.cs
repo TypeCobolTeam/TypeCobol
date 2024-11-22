@@ -53,17 +53,15 @@ namespace TypeCobol.Test.Utils
             return compiler.CompilationResultsForProgram;
         }
 
-        public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy)
+        public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy, TypeCobolOptions options, DocumentFormat enclosingDocumentFormat)
         {
-            //Prepare
-            var typeCobolOptions = new TypeCobolOptions();
-            var textDocument = new ReadOnlyTextDocument("Empty doc", typeCobolOptions.GetEncodingForAlphanumericLiterals(), ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
+            // Load string into new document
+            var textDocument = new ReadOnlyTextDocument("In-memory document", options.GetEncodingForAlphanumericLiterals(), enclosingDocumentFormat.ColumnsLayout, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
-            var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" },
-                DocumentFormat.FreeTextFormat, typeCobolOptions, null);
+            var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" }, enclosingDocumentFormat, options, null);
 
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, project);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, options, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
@@ -348,7 +346,7 @@ namespace TypeCobol.Test.Utils
         {
             string expectedResult = reader.ReadToEnd();
             reader.Close();
-            TestUtils.compareLines(testName, result, expectedResult, expectedResultPath);
+            TestUtils.CompareLines(testName, result, expectedResult, expectedResultPath);
         }
 
 

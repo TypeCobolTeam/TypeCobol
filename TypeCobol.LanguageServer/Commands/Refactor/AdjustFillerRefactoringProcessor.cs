@@ -1,15 +1,19 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using Newtonsoft.Json.Linq;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
-namespace TypeCobol.LanguageServer.Commands
+namespace TypeCobol.LanguageServer.Commands.Refactor
 {
-    internal class AdjustFillers : AbstractCommand
+    /// <summary>
+    /// Refactoring processor for AdjustFillers command
+    /// </summary>
+    public class AdjustFillerRefactoringProcessor : IRefactoringProcessor
     {
         private class AdjustFillerVisitor : AbstractAstVisitor
         {
@@ -210,45 +214,34 @@ namespace TypeCobol.LanguageServer.Commands
             }
         }
 
-        public static AdjustFillers Create(TypeCobolServer typeCobolServer) => new(typeCobolServer);
-
-        public AdjustFillers(TypeCobolServer typeCobolServer)
-            : base(typeCobolServer)
+        public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
-
-        }
-
-        public override object Run(object[] arguments)
-        {
-            if (arguments == null || arguments.Length == 0 || !TryReadArgumentAs(arguments[0], out TextDocumentIdentifier textDocumentIdentifier))
+            // TODO How to factorize for all processors ?
+            if (arguments == null || arguments.Length == 0 || arguments[0] is not JObject jObject)
             {
                 throw new ArgumentException("Invalid arguments for command.", nameof(arguments));
             }
 
-            var target = Server.GetDocumentContextFromStringUri(textDocumentIdentifier.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
-            var programClassDocument = target.FileCompiler?.CompilationResultsForProgram?.ProgramClassDocumentSnapshot;
-            if (programClassDocument == null)
-            {
-                throw new InvalidOperationException($"Could not get AST for document '{target.Uri}'.");
-            }
-
-            // Compute edits asynchronously: create a message for ourselves
-            Server.Workspace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(() => ComputeTextEdits(target.Uri, programClassDocument)));
-            return new object(); // Non-null blank response
+            return jObject.ToObject<TextDocumentIdentifier>();
         }
 
-        private void ComputeTextEdits(Uri documentUri, ProgramClassDocument programClassDocument)
+        public void CheckTarget(CompilationUnit compilationUnit)
+        {
+            // Require full AST
+            if (compilationUnit.ProgramClassDocumentSnapshot == null)
+            {
+                throw new InvalidOperationException($"Could not get AST for program '{compilationUnit.TextSourceInfo.Name}'.");
+            }
+        }
+
+        public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
         {
             // Compute edits using a visitor
             var visitor = new AdjustFillerVisitor();
-            programClassDocument.Root?.AcceptASTVisitor(visitor);
+            compilationUnit.ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(visitor);
 
-            // Create WorkspaceApplyEditRequest and send to client
             string label = $"Adjust FILLERs: {visitor.ModifiedFillersCount} FILLER(s) modified";
-            var workspaceEdit = new WorkspaceEdit() { changes = new Dictionary<string, IList<TextEdit>>() { { documentUri.OriginalString, visitor.TextEdits } } };
-            var applyWorkspaceEditParams = new ApplyWorkspaceEditParams() { label = label, edit = workspaceEdit };
-            Server.RpcServer.SendRequest(WorkspaceApplyEditRequest.Type, applyWorkspaceEditParams, out _)
-                .ConfigureAwait(false); // No need to wait for response and therefore no need to bounce back on original thread
+            return (label, visitor.TextEdits);
         }
     }
 }

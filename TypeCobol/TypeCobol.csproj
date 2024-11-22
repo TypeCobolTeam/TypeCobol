@@ -54,13 +54,23 @@
     </Antlr4>
   </ItemGroup>
 
+  <PropertyGroup>
+    <CSCupGenerator>$(MSBuildProjectDirectory)\..\CSCup\bin\$(Configuration)\CSCup.dll</CSCupGenerator>
+    <CSCupGenerationFolder>.\obj\$(Configuration)\CSCupGenerated</CSCupGenerationFolder>
+    <CobolCompilerDirectivesGrammar>$(MSBuildProjectDirectory)\Compiler\CupPreprocessor\CobolCompilerDirectives.cup</CobolCompilerDirectivesGrammar>
+    <TypeCobolProgramGrammar>$(MSBuildProjectDirectory)\Compiler\CupParser\TypeCobolProgram.cup</TypeCobolProgramGrammar>
+  </PropertyGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="powershell .\PreBuildCSCup.ps1 $(Configuration) $(IntermediateOutputPath)CSCupGenerated" />
+    <RemoveDir Directories="$(CSCupGenerationFolder)" />
+    <MakeDir Directories="$(CSCupGenerationFolder)" />
+    <Exec Command="dotnet $(CSCupGenerator) -nodate -nopositions -expect 2000 -parser CobolCompilerDirectivesParser -symbols CobolCompilerDirectivesSymbols $(CobolCompilerDirectivesGrammar)" WorkingDirectory="$(CSCupGenerationFolder)" />
+    <Exec Command="dotnet $(CSCupGenerator) -nodate -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(TypeCobolProgramGrammar)" WorkingDirectory="$(CSCupGenerationFolder)" />
   </Target>
 
   <Target Name="IncludeCSCupGeneratedClassesForCompile" AfterTargets="PreBuildEvent" BeforeTargets="BeforeCompile;CoreCompile">
     <ItemGroup>
-      <Compile Include="$(IntermediateOutputPath)CSCupGenerated\*.cs" />
+      <Compile Include="$(CSCupGenerationFolder)\*.cs" />
     </ItemGroup>
   </Target>
 

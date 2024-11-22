@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Test.Utils;
 
@@ -145,7 +143,7 @@ namespace TypeCobol.Test.Parser
         /// <param name="asPartOfACopy"></param>
         public static Tuple<CodeElementsDocument, T> ParseOneCodeElement<T>(string textToParse, bool asPartOfACopy = false, bool correctSyntax = true) where T : CodeElement
         {
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolString(textToParse, asPartOfACopy);
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolString(textToParse, asPartOfACopy, new TypeCobolOptions(), DocumentFormat.FreeTextFormat); // Default options and FreeTextFormat for CodeElements tests
 
             CodeElementsDocument codeElementsDocument = compilationUnit.CodeElementsDocumentSnapshot;
             Assert.IsTrue(codeElementsDocument.CodeElements.Any());

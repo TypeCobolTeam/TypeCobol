@@ -58,12 +58,15 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <param name="e">Tne Exception event argument</param>
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
-            NotifyException(e.ExceptionObject as Exception);
+            var exception = (Exception)e.ExceptionObject;
+            NotifyException(exception);
+
+            // Display message on client interface to notify server crash !
+            this.RemoteWindow.ShowErrorMessage(exception.Message + "\n" + exception.StackTrace);
         }
 
         public virtual void NotifyException(Exception e)
         {
-            this.RemoteWindow.ShowErrorMessage(e.Message + "\n" + e.StackTrace);
             LoggingSystem.LogException(e);
         }
 
