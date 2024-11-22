@@ -79,10 +79,10 @@ namespace TypeCobol.Transform.Test
                 // Find TypeCobol.Transform.dll location
                 string currentDirectory = Environment.CurrentDirectory;
                 string configuration = Path.GetFileName(currentDirectory);
-                string pathToExe = Path.Combine(currentDirectory, "..", "..", "..");
-                pathToExe = Path.GetFullPath(pathToExe);
-                pathToExe = Path.Combine(pathToExe, "TypeCobol.Transform", "bin", configuration, "TypeCobol.Transform.dll");
-                startInfo.ArgumentList.Add(pathToExe);
+                string transformPath = Path.Combine(currentDirectory, "..", "..", "..");
+                transformPath = Path.GetFullPath(transformPath);
+                transformPath = Path.Combine(transformPath, "TypeCobol.Transform", "bin", configuration, "TypeCobol.Transform.dll");
+                startInfo.ArgumentList.Add(transformPath);
                 foreach (var argument in argumentList)
                 {
                     startInfo.ArgumentList.Add(argument);

@@ -476,10 +476,10 @@ namespace CLI.Test
             // Find TypeCobol.CLI.dll location
             string currentDirectory = Environment.CurrentDirectory;
             string configuration = Path.GetFileName(currentDirectory);
-            string pathToExe = Path.Combine(currentDirectory, "..", "..", "..", "..");
-            pathToExe = Path.GetFullPath(pathToExe);
-            pathToExe = Path.Combine(pathToExe, "CLI", "src", "bin", configuration, "TypeCobol.CLI.dll");
-            startInfo.ArgumentList.Add(pathToExe);
+            string cliPath = Path.Combine(currentDirectory, "..", "..", "..", "..");
+            cliPath = Path.GetFullPath(cliPath);
+            cliPath = Path.Combine(cliPath, "CLI", "src", "bin", configuration, "TypeCobol.CLI.dll");
+            startInfo.ArgumentList.Add(cliPath);
             foreach (var argument in arguments)
             {
                 startInfo.ArgumentList.Add(argument);
