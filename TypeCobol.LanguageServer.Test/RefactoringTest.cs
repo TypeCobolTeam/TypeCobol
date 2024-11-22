@@ -90,10 +90,10 @@ namespace TypeCobol.LanguageServer.Test
                 var insertSingleLine = TextEdit.Insert(new Position(){ line = 2, character = 22 }, "[inserted text on single line] ");
                 textEdits.Add(insertSingleLine);
 
-                var deleteSingleLine = TextEdit.Del(Range.FromPositions(4, 22, 4, 32));
+                var deleteSingleLine = TextEdit.Delete(Range.FromPositions(4, 22, 4, 32));
                 textEdits.Add(deleteSingleLine);
 
-                var modifySingleLine = TextEdit.Replace(new Position() { line = 6, character = 22 }, new Position() { line = 6, character = 29 }, "has been");
+                var modifySingleLine = TextEdit.Replace(Range.FromPositions(6, 22, 6, 29), "has been");
                 textEdits.Add(modifySingleLine);
 
                 var builder = new StringBuilder();
@@ -103,14 +103,14 @@ namespace TypeCobol.LanguageServer.Test
                 var insertMultiLines = TextEdit.Insert(new Position() { line = 8, character = 22 }, builder.ToString());
                 textEdits.Add(insertMultiLines);
 
-                var deleteMultiLines = TextEdit.Del(Range.FromPositions(10, 22, 12, 22));
+                var deleteMultiLines = TextEdit.Delete(Range.FromPositions(10, 22, 12, 22));
                 textEdits.Add(deleteMultiLines);
 
                 builder.Clear();
                 builder.AppendLine("has been");
                 builder.AppendLine("      * modified and the modification spans");
                 builder.Append("      * over multiple lines ");
-                var modifyMultiLines = TextEdit.Replace(new Position() { line = 14, character = 22 }, new Position() { line = 16, character = 22 }, builder.ToString());
+                var modifyMultiLines = TextEdit.Replace(Range.FromPositions(14, 22, 16, 22), builder.ToString());
                 textEdits.Add(modifyMultiLines);
 
                 return (label, textEdits);
