@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.LanguageServer.Commands.Refactor
 {
@@ -136,36 +138,21 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     {
         public int LogicalLevel { get; }
 
-        public string DisplayName { get; }
+        public DataDefinition Target { get; }
 
-        public string AccessName { get; }
+        public DataDefinitionHelper.DataAccessor Accessor { get; }
 
         public string[] Indices { get; }
 
-        public string ReferenceModifier { get; }
-
         public bool WithValue { get; }
 
-        public GeneratedDisplay(int logicalLevel, string name, string[] indices, bool withValue)
-            : this(logicalLevel, name, name, indices, null, withValue)
-        {
-
-        }
-
-        public GeneratedDisplay(int logicalLevel, string accessName, string[] indices, string referenceModifier)
-            : this(logicalLevel, "FILLER", accessName, indices, referenceModifier, true)
-        {
-
-        }
-
-        private GeneratedDisplay(int logicalLevel, string displayName, string accessName, string[] indices, string referenceModifier, bool withValue)
+        public GeneratedDisplay(int logicalLevel, DataDefinition target, DataDefinitionHelper.DataAccessor accessor, string[] indices, bool withValue)
             : base(true)
         {
             LogicalLevel = logicalLevel;
-            DisplayName = displayName;
-            AccessName = accessName;
+            Target = target;
+            Accessor = accessor;
             Indices = indices;
-            ReferenceModifier = referenceModifier;
             WithValue = withValue;
         }
 
@@ -184,54 +171,131 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 case (false, true):
                     // No indices but a value: DISPLAY '    var1 <' var1 '>'
                     AppendDisplayName('<');
-                    builder.AppendWord(AccessName);
-                    if (ReferenceModifier != null)
-                    {
-                        builder.AppendWord(ReferenceModifier);
-                    }
-                    builder.AppendWord("'>'");
+                    AppendValue();
+                    AppendClosingValueDelimiter();
                     break;
                 case (true, false):
                     // Indices but no value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ')'
                     AppendDisplayName('(');
-                    AppendIndicesForLabel();
-                    builder.AppendWord("')'");
+                    AppendIndicesForDisplay();
+                    AppendClosingIndicesDelimiter();
                     break;
                 case (true, true):
                     // Indices and value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ') <' var1 (Idx-1 Idx-2) '>'
                     AppendDisplayName('(');
-                    AppendIndicesForLabel();
-                    builder.AppendWord("') <'");
-                    builder.AppendWord(AccessName);
-                    AppendIndicesForCode();
-                    if (ReferenceModifier != null)
-                    {
-                        builder.AppendWord(ReferenceModifier);
-                    }
-                    builder.AppendWord("'>'");
+                    AppendIndicesForDisplay();
+                    AppendClosingIndicesDelimiter();
+                    AppendValue();
+                    AppendClosingValueDelimiter();
                     break;
             }
 
-            void AppendDisplayName(char? terminator)
+            void AppendDisplayName(char? openingChar)
             {
+                // DisplayName is a non-breakable literal: ' Indent Name (referenceModifierPrecededBySpace)? (openingCharPrecededBySpace)? '
                 wordBuilder.Append('\'');
-                wordBuilder.Append(' ', LogicalLevel * 2);
-                wordBuilder.Append(DisplayName);
-                if (terminator.HasValue)
+
+                string indent = new string(' ', 2 * LogicalLevel);
+                wordBuilder.Append(indent);
+
+                string name = string.IsNullOrEmpty(Target.Name) ? "FILLER" : Target.Name;
+                wordBuilder.Append(name);
+
+                if (Indices.Length == 0 && Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
                 {
                     wordBuilder.Append(' ');
-                    wordBuilder.Append(terminator.Value);
+                    wordBuilder.Append(Accessor.ReferenceModifier);
                 }
+
+                if (openingChar.HasValue)
+                {
+                    wordBuilder.Append(' ');
+                    wordBuilder.Append(openingChar.Value);
+                }
+
                 wordBuilder.Append('\'');
                 builder.AppendWord(wordBuilder.ToString());
                 wordBuilder.Clear();
             }
 
-            void AppendIndicesForLabel()
+            void AppendValue()
+            {
+                if (!string.IsNullOrEmpty(Target.Name) && IsNationalOrNationalEdited(Target))
+                {
+                    builder.AppendWord("FUNCTION");
+                    builder.AppendWord("DISPLAY-OF");
+                    wordBuilder.Append('(');
+                    wordBuilder.Append(Target.Name);
+                    if (Indices.Length == 0)
+                    {
+                        wordBuilder.Append(')');
+                    }
+                    builder.AppendWord(wordBuilder.ToString());
+                    wordBuilder.Clear();
+                    AppendIndicesForAccess(true);
+                }
+                else
+                {
+                    builder.AppendWord(Accessor.Data.Name);
+                    AppendIndicesForAccess(false);
+                    if (Accessor.ReferenceModifier != null)
+                    {
+                        builder.AppendWord(Accessor.ReferenceModifier);
+                    }
+                }
+
+                void AppendIndicesForAccess(bool addClosingParenthesis)
+                {
+                    for (int i = 0; i < Indices.Length; i++)
+                    {
+                        bool isFirst = i == 0;
+                        bool isLast = i == Indices.Length - 1;
+
+                        if (isFirst)
+                        {
+                            wordBuilder.Append('(');
+                        }
+
+                        wordBuilder.Append(Indices[i]);
+
+                        if (isLast)
+                        {
+                            wordBuilder.Append(')');
+                            if (addClosingParenthesis)
+                            {
+                                wordBuilder.Append(')');
+                            }
+                        }
+
+                        builder.AppendWord(wordBuilder.ToString());
+                        wordBuilder.Clear();
+                    }
+                }
+            }
+
+            static bool IsNationalOrNationalEdited(DataDefinition dataDefinition)
+            {
+                bool hasPicture = dataDefinition.SemanticData?.Type?.Tag == Compiler.Types.Type.Tags.Picture;
+                if (hasPicture)
+                {
+                    var picture = (PictureType)dataDefinition.SemanticData.Type;
+                    return picture.Category == PictureCategory.National || picture.Category == PictureCategory.NationalEdited;
+                }
+
+                return false;
+            }
+
+            void AppendClosingValueDelimiter()
+            {
+                builder.AppendWord("'>'");
+            }
+
+            void AppendIndicesForDisplay()
             {
                 for (int i = 0; i < Indices.Length; i++)
                 {
                     builder.AppendWord(Indices[i]);
+
                     bool isLast = i == Indices.Length - 1;
                     if (!isLast)
                     {
@@ -240,28 +304,24 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 }
             }
 
-            void AppendIndicesForCode()
+            void AppendClosingIndicesDelimiter()
             {
-                for (int i = 0; i < Indices.Length; i++)
+                wordBuilder.Append(')');
+                
+                Debug.Assert(Indices.Length > 0);
+                if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
                 {
-                    bool isFirst = i == 0;
-                    bool isLast = i == Indices.Length - 1;
-
-                    if (isFirst)
-                    {
-                        wordBuilder.Append('(');
-                    }
-
-                    wordBuilder.Append(Indices[i]);
-
-                    if (isLast)
-                    {
-                        wordBuilder.Append(')');
-                    }
-
-                    builder.AppendWord(wordBuilder.ToString());
-                    wordBuilder.Clear();
+                    wordBuilder.Append(' ');
+                    wordBuilder.Append(Accessor.ReferenceModifier);
                 }
+
+                if (WithValue)
+                {
+                    wordBuilder.Append(" <");
+                }
+
+                builder.AppendWord(wordBuilder.ToString());
+                wordBuilder.Clear();
             }
         }
 

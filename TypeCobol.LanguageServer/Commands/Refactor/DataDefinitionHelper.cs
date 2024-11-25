@@ -36,12 +36,15 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        public static (string Name, string ReferenceModifier) GetClosestAccessor(DataDefinition dataDefinition, string[] indices)
+        public record struct DataAccessor(DataDefinition Data, string ReferenceModifier);
+
+        public static DataAccessor GetClosestAccessor(DataDefinition dataDefinition, string[] indices)
         {
             var info = new LeftmostCharacterPositionInfo();
 
             var currentDefinition = dataDefinition;
-            var parentDefinition = currentDefinition.Parent as DataDefinition;
+            var directParent = currentDefinition.Parent as DataDefinition;
+            var parentDefinition = directParent;
             int index = indices.Length - 1;
             while (parentDefinition != null && string.IsNullOrEmpty(currentDefinition.Name))
             {
@@ -61,12 +64,12 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             if (string.IsNullOrEmpty(currentDefinition.Name))
             {
                 // Could not find any named data: no accessor is available for the given DataDefinition
-                return (null, null);
+                return new DataAccessor(null, null);
             }
 
             string leftMostCharacterPositionExpression = info.ToExpression();
             string referenceModifier = leftMostCharacterPositionExpression != null ? $"({leftMostCharacterPositionExpression}:{dataDefinition.PhysicalLength})" : null;
-            return (currentDefinition.Name, referenceModifier);
+            return new DataAccessor(currentDefinition, referenceModifier);
         }
 
         public static bool IsGroup(DataDefinition dataDefinition)

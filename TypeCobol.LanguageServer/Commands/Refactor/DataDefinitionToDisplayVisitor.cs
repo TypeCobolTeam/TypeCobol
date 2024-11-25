@@ -90,25 +90,15 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         {
             var indices = _indices.Reverse().ToArray();
             var accessor = DataDefinitionHelper.GetClosestAccessor(dataDefinition, indices);
-            if (accessor.Name == null)
+            if (accessor.Data == null)
             {
                 // Cannot generate DISPLAY statement
                 return;
             }
 
-            GeneratedDisplay display;
-            if (accessor.ReferenceModifier != null)
-            {
-                // FILLER / Anonymous data
-                display = new GeneratedDisplay(_dataLogicalLevel, accessor.Name, indices, accessor.ReferenceModifier);
-            }
-            else
-            {
-                // Named data
-                bool withValue = !DataDefinitionHelper.IsGroup(dataDefinition) || !dataDefinitionHasSelectedChildren;
-                display = new GeneratedDisplay(_dataLogicalLevel, dataDefinition.Name, indices, withValue);
-            }
-
+            // Generated DISPLAY
+            bool withValue = !DataDefinitionHelper.IsGroup(dataDefinition) || !dataDefinitionHasSelectedChildren;
+            var display = new GeneratedDisplay(_dataLogicalLevel, dataDefinition, accessor, indices, withValue);
             _currentStatement.AddChild(display);
         }
 

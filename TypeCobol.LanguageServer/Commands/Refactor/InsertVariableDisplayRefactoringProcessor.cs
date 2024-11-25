@@ -8,23 +8,26 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     {
         private string _hash;
         private Position _insertAt;
+        private bool _insertBeforeStatement;
         private Selection _workingStorageSectionSelection;
         private Selection _linkageSectionSelection;
 
         public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
-            // Get TextDocumentPosition (contains TextDocumentIdentifier and insertion position)
-            var textDocumentPosition = IRefactoringProcessor.Expect<TextDocumentPosition>(arguments, 0, true);
-
-            // Generate new hash for the ongoing refactoring
+            // Generate new hash for this refactoring
             string allArgs = arguments.Select(argument => argument.ToString()).Aggregate(string.Empty, string.Concat);
             _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + DateTime.Now);
 
+            // Get TextDocumentPosition (contains TextDocumentIdentifier and insertion position)
+            var textDocumentPosition = IRefactoringProcessor.Expect<TextDocumentPosition>(arguments, 0, true);
             _insertAt = textDocumentPosition.position;
 
+            // Get insert before/after flag
+            _insertBeforeStatement = IRefactoringProcessor.Expect<bool>(arguments, 1, true);
+
             // Get Selection objects
-            _workingStorageSectionSelection = GetSelection(1);
-            _linkageSectionSelection = GetSelection(2);
+            _workingStorageSectionSelection = GetSelection(2);
+            _linkageSectionSelection = GetSelection(3);
 
             return textDocumentPosition.textDocument;
 
@@ -37,7 +40,11 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         public void CheckTarget(CompilationUnit compilationUnit)
         {
-            // TODO Define requirements on CompilationUnit to perform refactoring
+            // Require full AST
+            if (compilationUnit.ProgramClassDocumentSnapshot == null)
+            {
+                throw new InvalidOperationException($"Could not get AST for program '{compilationUnit.TextSourceInfo.Name}'.");
+            }
         }
 
         public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
