@@ -3,10 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
     /// <summary>
@@ -20,25 +16,18 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The label of this signature. Will be shown in
         /// the UI.
         /// </summary>
-        public string label { get; }
+        public string label { get; set; }
 
         /// <summary>
         /// The human-readable doc-comment of this signature. Will be shown
         /// in the UI but can be omitted.
         /// </summary>
-        public string documentation { get; }
+        public string documentation { get; set; }
 
         /// <summary>
         /// The parameters of this signature.
         /// </summary>
-        public ParameterInformation[] parameters { get; }
-
-        public SignatureInformation(string label, string documentation, params ParameterInformation[] parameters)
-        {
-            this.label = label;
-            this.documentation = documentation;
-            this.parameters = parameters;
-        }
+        public ParameterInformation[] parameters { get; set; }
 
         public override bool Equals(object obj)
         {

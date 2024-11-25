@@ -137,7 +137,7 @@ namespace TypeCobol.LanguageServer.Test
 
             DirectoryInfo expectedOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "output_expected");
             DirectoryInfo resultOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" + Path.DirectorySeparatorChar + "Results");
-            bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, resultOutputDir, "TypeCobol.LanguageServer.Test");
+            bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, resultOutputDir, false);
             if (!dirIdentical)
             {
                 throw new Exception("directory not equals");

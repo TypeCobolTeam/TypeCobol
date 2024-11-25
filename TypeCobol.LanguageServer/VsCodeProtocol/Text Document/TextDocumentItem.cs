@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TypeCobol.LanguageServer.VsCodeProtocol
+﻿namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
     /// <summary>
     /// An item to transfer a text document from the client to the server.
@@ -27,10 +21,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The content of the opened  text document.
         /// </summary>
         public String text;
-
-        public TextDocumentItem()
-        {
-
-        }
     }
 }

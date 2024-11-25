@@ -1,0 +1,13 @@
+{
+    "textDocument": {
+        "uri": "example/uri",
+        "languageId": "__lsp4j_Cobol",
+        "version": 0,
+        "text": "The content of the opened text document"
+    },
+    "ProjectKey": "5zk8MGcXEe2hQLJRJOvGYQ",
+    "CopyFolders": [
+        "path_to_copy_folder1",
+        "path_to_copy_folder2"
+    ]
+}

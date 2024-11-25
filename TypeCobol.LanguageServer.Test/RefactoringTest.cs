@@ -73,7 +73,7 @@ namespace TypeCobol.LanguageServer.Test
 
             public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
             {
-                return new TextDocumentIdentifier(nameof(FixedTextEditGenerator));
+                return new TextDocumentIdentifier(){ uri = nameof(FixedTextEditGenerator) };
             }
 
             public void CheckTarget(CompilationUnit compilationUnit)
@@ -87,30 +87,30 @@ namespace TypeCobol.LanguageServer.Test
                 string label = $"Generated some text edits on {Target.TextSourceInfo.Name}";
                 var textEdits = new List<TextEdit>();
 
-                var insertSingleLine = TextEdit.insert(new Position(2, 22), "[inserted text on single line] ");
+                var insertSingleLine = TextEdit.Insert(new Position(){ line = 2, character = 22 }, "[inserted text on single line] ");
                 textEdits.Add(insertSingleLine);
 
-                var deleteSingleLine = TextEdit.del(new Range(4, 22, 4, 32));
+                var deleteSingleLine = TextEdit.Delete(Range.FromPositions(4, 22, 4, 32));
                 textEdits.Add(deleteSingleLine);
 
-                var modifySingleLine = TextEdit.replace(new Range(6, 22, 6, 29), "has been");
+                var modifySingleLine = TextEdit.Replace(Range.FromPositions(6, 22, 6, 29), "has been");
                 textEdits.Add(modifySingleLine);
 
                 var builder = new StringBuilder();
                 builder.AppendLine("[inserted text");
                 builder.AppendLine("      * on multiple");
                 builder.Append("      * lines] ");
-                var insertMultiLines = TextEdit.insert(new Position(8, 22), builder.ToString());
+                var insertMultiLines = TextEdit.Insert(new Position() { line = 8, character = 22 }, builder.ToString());
                 textEdits.Add(insertMultiLines);
 
-                var deleteMultiLines = TextEdit.del(new Range(10, 22, 12, 22));
+                var deleteMultiLines = TextEdit.Delete(Range.FromPositions(10, 22, 12, 22));
                 textEdits.Add(deleteMultiLines);
 
                 builder.Clear();
                 builder.AppendLine("has been");
                 builder.AppendLine("      * modified and the modification spans");
                 builder.Append("      * over multiple lines ");
-                var modifyMultiLines = TextEdit.replace(new Range(14, 22, 16, 22), builder.ToString());
+                var modifyMultiLines = TextEdit.Replace(Range.FromPositions(14, 22, 16, 22), builder.ToString());
                 textEdits.Add(modifyMultiLines);
 
                 return (label, textEdits);

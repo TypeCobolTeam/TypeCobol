@@ -48,7 +48,7 @@ namespace TypeCobol.LanguageServer
         public event EventHandler<ThreadExceptionEventArgs> ExceptionTriggered;
         public event EventHandler<string> WarningTrigger;
         public System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
-        private Func<string, Uri, bool> _Logger;       
+        private Action<string> _logger;
         /// <summary>
         /// Custom Analyzer Providers Loaded
         /// </summary>
@@ -159,12 +159,12 @@ namespace TypeCobol.LanguageServer
             DefaultCopyFolder = folder + @"\DefaultCopies\";
         }
 
-        public Workspace(string rootDirectoryFullName, string workspaceName, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
+        public Workspace(string rootDirectoryFullName, string workspaceName, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue, Action<string> logger)
         {
             this._allOpenedDocuments = new ConcurrentDictionary<Uri, DocumentContext>();
             MessagesActionsQueue = messagesActionsQueue;
             _fileCompilerWaitingForNodePhase = new List<FileCompiler>();
-            _Logger = logger;
+            _logger = logger;
             RootDirectory = rootDirectoryFullName;
             Name = workspaceName;
 
@@ -339,9 +339,10 @@ namespace TypeCobol.LanguageServer
                 {
                     //Log text lines string 
                     var sb = new StringBuilder();
+                    sb.AppendLine(fileUri.OriginalString);
                     foreach (var cobolTextLine in fileCompilerToUpdate.CompilationResultsForProgram.CobolTextLines)
                         sb.AppendLine(cobolTextLine.SourceText);
-                    _Logger(sb.ToString(), fileUri);
+                    _logger(sb.ToString());
                 }
                 
                 var handler = new Action<object, ExecutionStepEventArgs>((sender, args) => { ExecutionStepEventHandler(sender, args, fileUri); });
@@ -388,9 +389,10 @@ namespace TypeCobol.LanguageServer
                     {
                         //Return log information about updated tokens
                         var sb = new StringBuilder();
+                        sb.AppendLine(fileUri.OriginalString);
                         foreach (var token in fileCompiler.CompilationResultsForProgram.TokensDocumentSnapshot.SourceTokens)
                             sb.AppendLine(token.ToString());
-                        _Logger(sb.ToString(), fileUri);
+                        _logger(sb.ToString());
                     }
                     break;
                 case ExecutionStep.Preprocessor:
@@ -398,9 +400,10 @@ namespace TypeCobol.LanguageServer
                     {
                         //Return log information about updated processed tokens
                         var sb = new StringBuilder();
+                        sb.AppendLine(fileUri.OriginalString);
                         foreach (var token in fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
                             sb.AppendLine(token.ToString());
-                        _Logger(sb.ToString(), fileUri);
+                        _logger(sb.ToString());
                     }
                     break;
                 case ExecutionStep.CodeElement:
@@ -408,9 +411,10 @@ namespace TypeCobol.LanguageServer
                     {
                         //Return log information about code elements
                         var sb = new StringBuilder();
+                        sb.AppendLine(fileUri.OriginalString);
                         foreach (var codeElement in fileCompiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements)
                             sb.AppendLine(codeElement.ToString());
-                        _Logger(sb.ToString(), fileUri);
+                        _logger(sb.ToString());
                     }
                     break;
                 case ExecutionStep.AST:
@@ -673,7 +677,7 @@ namespace TypeCobol.LanguageServer
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
             //Configure CFG/DFA analyzer(s) + external analyzers if any
-            var analyzerProviderWrapper = new AnalyzerProviderWrapper(str => _Logger(str, null));
+            var analyzerProviderWrapper = new AnalyzerProviderWrapper(_logger);
             analyzerProviderWrapper.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode, o));
             if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
             {
@@ -971,10 +975,11 @@ namespace TypeCobol.LanguageServer
         /// Get the Data Layout rows for a Program or a Copy (output = CSV)
         /// </summary>
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
-        /// <param name="separator">Separator to be used in the rows</param>
-        /// <returns></returns>
-        public string[] GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
+        /// <param name="separator">Separator for fields to use</param>
+        /// <returns>Tuple made of the CSV header and CSV rows</returns>
+        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
         {
+            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
             var rows = new List<string>();
             foreach (var dataLayoutNode in CollectDataLayoutNodes(compilationUnit))
             {
@@ -985,7 +990,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            return rows.ToArray();
+            return (header, rows.ToArray());
 
             static string CreateRow(Tuple<int, DataDefinition, int> dataLayoutNode, string separator)
             {

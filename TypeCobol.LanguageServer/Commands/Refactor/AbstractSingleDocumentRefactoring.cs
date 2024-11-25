@@ -45,9 +45,9 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             var refactoring = Processor.PerformRefactoring(compilationUnit);
 
             // Create WorkspaceApplyEditRequest and send to client
-            var workspaceEdit = new WorkspaceEdit() { changes = { { documentUri.OriginalString, refactoring.TextEdits } } };
+            var workspaceEdit = new WorkspaceEdit() { changes = new Dictionary<string, IList<TextEdit>>() { { documentUri.OriginalString, refactoring.TextEdits } } };
             var applyWorkspaceEditParams = new ApplyWorkspaceEditParams() { label = refactoring.Label, edit = workspaceEdit };
-            Server.RpcServer.SendRequest(WorkspaceApplyEditRequest.Type, applyWorkspaceEditParams)
+            Server.RpcServer.SendRequest(WorkspaceApplyEditRequest.Type, applyWorkspaceEditParams, out _)
                 .ConfigureAwait(false); // No need to wait for response and therefore no need to bounce back on original thread
         }
     }

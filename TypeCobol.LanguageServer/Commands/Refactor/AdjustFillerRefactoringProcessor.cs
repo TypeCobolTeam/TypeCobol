@@ -149,9 +149,9 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                             string newText = _newTextBuilder.ToString();
                             _newTextBuilder.Clear();
 
-                            var start = new Position(pictureCharacterString.Line, pictureCharacterString.StartIndex);
-                            var end = new Position(pictureCharacterString.Line, pictureCharacterString.TokensLine.Length);
-                            textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
+                            var start = new Position() { line = pictureCharacterString.Line, character = pictureCharacterString.StartIndex };
+                            var end = new Position() { line = pictureCharacterString.Line, character = pictureCharacterString.TokensLine.Length };
+                            textEdit = TextEdit.Replace(start, end, newText);
                         }
                         // else PICTURE could not be found, unable to modify the FILLER (for example 05 FILLER USAGE POINTER)
                     }
@@ -181,9 +181,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                         var lastNodeLastToken = lastNode.CodeElement.ConsumedTokens.Last();
                         int line = lastNodeLastToken.Line;
                         int column = lastNodeLastToken.TokensLine.Length;
-                        var start = new Position(line, column);
-                        var end = new Position(line, column);
-                        textEdit = new TextEdit(new VsCodeProtocol.Range(start, end), newText);
+                        var position = new Position() { line = line, character = column };
+                        textEdit = TextEdit.Insert(position, newText);
                     }
 
                     if (textEdit != null)
@@ -206,10 +205,10 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     // Create one text edit per line
                     foreach (var eraseGroup in eraseGroups)
                     {
-                        var start = new Position(eraseGroup.Key, eraseGroup.First().StartIndex);
-                        var end = new Position(eraseGroup.Key, eraseGroup.Last().StopIndex + 1);
+                        var start = new Position() { line = eraseGroup.Key, character = eraseGroup.First().StartIndex };
+                        var end = new Position() { line = eraseGroup.Key, character = eraseGroup.Last().StopIndex + 1 };
                         string newText = new string(' ', end.character - start.character);
-                        TextEdits.Add(new TextEdit(new VsCodeProtocol.Range(start, end), newText));
+                        TextEdits.Add(TextEdit.Replace(start, end, newText));
                     }
                 }
             }

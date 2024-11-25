@@ -22,40 +22,43 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// </summary>
         public string newText { get; set; }
 
-        public TextEdit(Range range, string newText)
-        {
-            this.range = range;
-            this.newText = newText;
-        }
+        /// <summary>
+        /// Creates a replace text edit.
+        /// </summary>
+        /// <param name="start">The start position of text to be replaced.</param>
+        /// <param name="end">The end position of text to be replaced.</param>
+        /// <param name="newText">The replacement text.</param>
+        /// <returns>Non-null instance of TextEdit.</returns>
+        public static TextEdit Replace(Position start, Position end, string newText) => Replace(new Range() { start = start, end = end }, newText);
 
         /// <summary>
         /// Creates a replace text edit.
-        /// @param range The range of text to be replaced.
-        /// @param newText The new text.
         /// </summary>
-        public static TextEdit replace(Range range, string newText)
-        {
-            return new TextEdit(range, newText);
-        }
+        /// <param name="range">The range of text to be replaced.</param>
+        /// <param name="newText">The replacement text.</param>
+        /// <returns>Non-null instance of TextEdit.</returns>
+        public static TextEdit Replace(Range range, string newText) => new TextEdit() { range = range, newText = newText };
 
         /// <summary>
-        /// Creates a insert text edit.
-        /// @param psotion The position to insert the text at.
-        /// @param newText The text to be inserted.
+        /// Creates an insert text edit.
         /// </summary>
-        public static TextEdit insert(Position position, string newText)
+        /// <param name="position">The position to insert the text at.</param>
+        /// <param name="newText">The text to be inserted.</param>
+        /// <returns>Non-null instance of TextEdit.</returns>
+        public static TextEdit Insert(Position position, string newText)
         {
-            Range range = new Range(position, position);
-            return new TextEdit(range, newText);
+            Range range = new Range() { start = position, end = position };
+            return new TextEdit() { range = range, newText = newText };
         }
 
         /// <summary>
         /// Creates a delete text edit.
-        /// @param range The range of text to be deleted.
         /// </summary>
-        public static TextEdit del(Range range)
+        /// <param name="range">The range of text to be deleted.</param>
+        /// <returns>Non-null instance of TextEdit.</returns>
+        public static TextEdit Delete(Range range)
         {
-            return new TextEdit(range, string.Empty);
+            return new TextEdit() { range = range, newText = string.Empty };
         }
     }
 }

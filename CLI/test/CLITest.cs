@@ -498,7 +498,7 @@ namespace CLI.Test
             Console.WriteLine("Return Code=" + process.ExitCode);
             //Compare outputDir with expectedOutputDir
             DirectoryInfo expectedOutputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output_expected");
-            bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, outputDir, "CLI\\test");
+            bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, outputDir, true);
 
             string consoleOutput = (process.StandardOutput.ReadToEnd());
 
@@ -560,11 +560,11 @@ namespace CLI.Test
         /// <param name="actualDir"></param>
         /// <param name="testPlaylistDirectory"></param>
         /// <returns></returns>
-        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir, string testPlaylistDirectory = null)
+        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir, bool fromCLI)
         {
             bool autoReplace = false;
 
-            if (targetDir == null && actualDir == null && testPlaylistDirectory.Contains("LSRTests"))
+            if (targetDir == null && actualDir == null && !fromCLI)
                 return autoReplace;
 
             if (!targetDir.Exists)
@@ -613,7 +613,7 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!HaveSameContent(targetFileContent, actualFileContent))
                 {
-                    if (autoReplace && testPlaylistDirectory != null)
+                    if (autoReplace)
                     {
                         string path = string.Empty;
 
@@ -621,13 +621,19 @@ namespace CLI.Test
                         string projectPath = commonTargetFiles[i].FullName.Split(new[] {"bin"}, StringSplitOptions.None)[0];
                         string testRelativePath = commonTargetFiles[i].FullName.Split(new[] { "Debug" }, StringSplitOptions.None)[1];
 
-                        path = projectPath + testPlaylistDirectory + testRelativePath;
+                        path = projectPath + testRelativePath;
 
-                        if (testPlaylistDirectory.Contains("LanguageServer") && path != String.Empty)
-                            ReplaceLSRTestFile(path, actualFileContent);
-
-                        else if (testPlaylistDirectory.Contains("CLI") && path != String.Empty)
-                            ReplaceCliTestFile(path, actualFileContent);
+                        if (path != string.Empty)
+                        {
+                            if (fromCLI)
+                            {
+                                ReplaceCliTestFile(path, actualFileContent);
+                            }
+                            else
+                            {
+                                ReplaceLSRTestFile(path, actualFileContent);
+                            }
+                        }
 
                         Console.WriteLine("File not equals: " + commonTargetFiles[i]);
                         Console.WriteLine("Input file has been modified\n");

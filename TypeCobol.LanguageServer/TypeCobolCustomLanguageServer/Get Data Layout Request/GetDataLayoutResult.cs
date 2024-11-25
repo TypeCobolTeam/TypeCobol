@@ -8,9 +8,7 @@
         /// <summary>
         /// The result dedicated to CSV outputType
         /// </summary>
-        public GetDataLayoutCSVResult csvResult { get; internal set; }
-
-        public GetDataLayoutResult(string[] rows) => csvResult = new GetDataLayoutCSVResult(rows);
+        public GetDataLayoutCSVResult csvResult { get; set; }
     }
 
     /// <summary>
@@ -18,25 +16,21 @@
     /// </summary>
     public class GetDataLayoutCSVResult
     {
-        // For outputType = CSV
         internal const string SEPARATOR = ";";
-        private const string HEADER = "LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length";
 
         /// <summary>
         /// The table header
         /// </summary>
-        public string header { get; internal set; }
+        public string header { get; set; }
 
         /// <summary>
         /// The table rows
         /// </summary>
-        public string[] rows { get; internal set; }
+        public string[] rows { get; set; }
 
         /// <summary>
         /// The separator
         /// </summary>
-        public string separator { get; internal set; }
-
-        public GetDataLayoutCSVResult(string[] rows) => (header, this.rows, separator) = (HEADER, rows, SEPARATOR);
+        public string separator { get; set; }
     }
 }

@@ -69,14 +69,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// (#CompletionResolveRequest)
         /// </summary>
         public object data { get; set; }
-
-        /// <summary>
-        /// Create a completion item and seed it with a label.
-        /// @param label The completion item's label
-        /// </summary>
-        public CompletionItem(string label)
-        {
-            this.label = label;
-        }
     }
 }

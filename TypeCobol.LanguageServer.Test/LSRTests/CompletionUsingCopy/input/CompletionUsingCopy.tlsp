@@ -55,7 +55,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"YISCTST (Alphanumeric) (YISCTST)\",\"kind\":6,\"insertText\":\"YISCTST\"},{\"label\":\"TST-ISC-LL (Numeric) (TST-ISC-LL)\",\"kind\":6,\"insertText\":\"TST-ISC-LL\"},{\"label\":\"TST-ISC-CODE-MVS (Alphanumeric) (TST-ISC-CODE-MVS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-MVS\"},{\"label\":\"TST-ISC-CODE-IMS (Alphanumeric) (TST-ISC-CODE-IMS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-IMS\"},{\"label\":\"TST-ISC-CODE-CENTRE (Alphanumeric) (TST-ISC-CODE-CENTRE)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-CENTRE\"},{\"label\":\"TST-ISC-NOM (Alphanumeric) (TST-ISC-NOM)\",\"kind\":6,\"insertText\":\"TST-ISC-NOM\"},{\"label\":\"TST-ISC-NOM-FULL (Alphanumeric) (TST-ISC-NOM-FULL)\",\"kind\":6,\"insertText\":\"TST-ISC-NOM-FULL\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"YISCTST (Alphanumeric) (YISCTST)\",\"kind\":6,\"insertText\":\"YISCTST\"},{\"label\":\"TST-ISC-LL (Numeric) (TST-ISC-LL)\",\"kind\":6,\"insertText\":\"TST-ISC-LL\"},{\"label\":\"TST-ISC-CODE-MVS (Alphanumeric) (TST-ISC-CODE-MVS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-MVS\"},{\"label\":\"TST-ISC-CODE-IMS (Alphanumeric) (TST-ISC-CODE-IMS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-IMS\"},{\"label\":\"TST-ISC-CODE-CENTRE (Alphanumeric) (TST-ISC-CODE-CENTRE)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-CENTRE\"},{\"label\":\"TST-ISC-NOM (Alphanumeric) (TST-ISC-NOM)\",\"kind\":6,\"insertText\":\"TST-ISC-NOM\"},{\"label\":\"TST-ISC-NOM-FULL (Alphanumeric) (TST-ISC-NOM-FULL)\",\"kind\":6,\"insertText\":\"TST-ISC-NOM-FULL\"}]}}"
     },
     {
       "category": 0,
@@ -87,7 +87,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"TST-ISC-LL (Numeric) (TST-ISC-LL)\",\"kind\":6,\"insertText\":\"TST-ISC-LL\"},{\"label\":\"TST-ISC-CODE-MVS (Alphanumeric) (TST-ISC-CODE-MVS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-MVS\"},{\"label\":\"TST-ISC-CODE-IMS (Alphanumeric) (TST-ISC-CODE-IMS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-IMS\"},{\"label\":\"TST-ISC-CODE-CENTRE (Alphanumeric) (TST-ISC-CODE-CENTRE)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-CENTRE\"},{\"label\":\"TST-ISC-NOM (Alphanumeric) (TST-ISC-NOM)\",\"kind\":6,\"insertText\":\"TST-ISC-NOM\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TST-ISC-LL (Numeric) (TST-ISC-LL)\",\"kind\":6,\"insertText\":\"TST-ISC-LL\"},{\"label\":\"TST-ISC-CODE-MVS (Alphanumeric) (TST-ISC-CODE-MVS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-MVS\"},{\"label\":\"TST-ISC-CODE-IMS (Alphanumeric) (TST-ISC-CODE-IMS)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-IMS\"},{\"label\":\"TST-ISC-CODE-CENTRE (Alphanumeric) (TST-ISC-CODE-CENTRE)\",\"kind\":6,\"insertText\":\"TST-ISC-CODE-CENTRE\"},{\"label\":\"TST-ISC-NOM (Alphanumeric) (TST-ISC-NOM)\",\"kind\":6,\"insertText\":\"TST-ISC-NOM\"}]}}"
     },
     {
       "category": 0,
