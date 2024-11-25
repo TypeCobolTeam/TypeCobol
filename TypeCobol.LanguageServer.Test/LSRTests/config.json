@@ -10,7 +10,7 @@
       "-y",
       "{IntrinsicFile}",
       "--dependencies",
-      "{DependenciesFolder}\\*.tcbl",
+      "{DependenciesFolder}/*.tcbl",
       "--autoremarks",
       "-md",
       "30"{TestOptions}

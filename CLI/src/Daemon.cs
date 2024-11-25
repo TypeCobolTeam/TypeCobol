@@ -1,9 +1,6 @@
-﻿using System;
-using Mono.Options;
-using System.Collections.Generic;
+﻿using Mono.Options;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using System.Reflection;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
@@ -36,8 +33,10 @@ namespace TypeCobol.Server {
             p.AddRange(TypeCobolOptionSet.GetCommonTypeCobolOptions(config));
 
             //Add DefaultCopies to running session
-            var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            config.CopyFolders.Add(folder + @"\DefaultCopies\");
+            var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Debug.Assert(folder != null);
+            folder = Path.Combine(folder, "DefaultCopies");
+            config.CopyFolders.Add(folder);
 
             try
             {

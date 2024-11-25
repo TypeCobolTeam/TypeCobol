@@ -155,7 +155,7 @@ namespace TypeCobol.LanguageServer
 
         static Workspace()
         {
-            var folder = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+            var folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             DefaultCopyFolder = folder + @"\DefaultCopies\";
         }
 
