@@ -75,7 +75,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\"},{\"label\":\"Level2-2 (Alphanumeric) (Level2-2)\",\"kind\":6,\"insertText\":\"Level2-2\"},{\"label\":\"MyBool (BOOL) (MyBool)\",\"kind\":6,\"insertText\":\"MyBool\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\"},{\"label\":\"Level2-2 (Alphanumeric) (Level2-2)\",\"kind\":6,\"insertText\":\"Level2-2\"},{\"label\":\"MyBool (BOOL) (MyBool)\",\"kind\":6,\"insertText\":\"MyBool\"}]}}"
     },
     {
       "category": 0,
@@ -107,7 +107,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":[{\"label\":\"VarLevel2-2 (Alphanumeric) (VarLevel2-2)\",\"kind\":6,\"insertText\":\"VarLevel2-2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"VarLevel2-2 (Alphanumeric) (VarLevel2-2)\",\"kind\":6,\"insertText\":\"VarLevel2-2\"}]}}"
     },
     {
       "category": 0,

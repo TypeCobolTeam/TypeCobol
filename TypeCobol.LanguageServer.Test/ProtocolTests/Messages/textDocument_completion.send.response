@@ -1,0 +1,13 @@
+{
+    "isIncomplete": false,
+    "items": [{
+            "label": "group1 (Alphanumeric) (group1)",
+            "kind": 6,
+            "insertText": "group1"
+        }, {
+            "label": "var1 (Alphanumeric) (var1)",
+            "kind": 6,
+            "insertText": "var1"
+        }
+    ]
+}

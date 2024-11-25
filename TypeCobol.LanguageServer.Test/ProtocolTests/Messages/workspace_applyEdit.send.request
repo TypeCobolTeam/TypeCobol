@@ -1,0 +1,45 @@
+{
+    "label": "Adjust FILLERs: 3 FILLER(s) modified",
+    "edit": {
+        "changes": {
+            "example/uri": [{
+                    "range": {
+                        "start": {
+                            "line": 9,
+                            "character": 24
+                        },
+                        "end": {
+                            "line": 9,
+                            "character": 29
+                        }
+                    },
+                    "newText": "X(100)"
+                }, {
+                    "range": {
+                        "start": {
+                            "line": 11,
+                            "character": 29
+                        },
+                        "end": {
+                            "line": 11,
+                            "character": 29
+                        }
+                    },
+                    "newText": "\r\n          05 FILLER PIC X(75)."
+                }, {
+                    "range": {
+                        "start": {
+                            "line": 16,
+                            "character": 0
+                        },
+                        "end": {
+                            "line": 16,
+                            "character": 30
+                        }
+                    },
+                    "newText": ""
+                }
+            ]
+        }
+    }
+}

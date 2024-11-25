@@ -23,7 +23,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// <summary>
         /// Send an async request to the client and await for the response or error
         /// </summary>
-        Task<ResponseResultOrError> SendRequest(RequestType requestType, object parameters);
+        Task<ResponseResultOrError> SendRequest(RequestType requestType, object parameters, out string requestId);
 
         /// <summary>
         /// Write a trace in the server log file

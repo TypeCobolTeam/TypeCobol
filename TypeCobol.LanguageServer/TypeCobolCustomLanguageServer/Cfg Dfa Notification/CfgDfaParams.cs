@@ -51,29 +51,5 @@
         /// An array of BasicBlock information.
         /// </summary>
         public BasicBlockInfo[] basicBlockInfos { get; set; }
-
-        /// <summary>
-        /// Full constructor
-        /// </summary>
-        /// <param name="textDocument">The Target document identifier</param>
-        /// <param name="dotFilePath">The path of the dot file</param>
-        /// <param name="instructionPositions">The array of instruction positions</param>
-        /// <param name="basicBlockInfos">The Basic Block Information array</param>
-        public CfgDfaParams(VsCodeProtocol.TextDocumentIdentifier textDocument, string dotFilePath, VsCodeProtocol.Position[] instructionPositions, BasicBlockInfo[] basicBlockInfos)
-        {
-            this.textDocument = textDocument;
-            this.dotFilePath = dotFilePath;
-            this.instructionPositions = instructionPositions;
-            this.basicBlockInfos = basicBlockInfos;
-        }
-
-        /// <summary>
-        /// Empty Constructor
-        /// </summary>
-        /// <param name="textDocument">The Target document identifier</param>
-        public CfgDfaParams(VsCodeProtocol.TextDocumentIdentifier textDocument)
-            : this(textDocument, null, null, null)
-        {            
-        }
     }
 }

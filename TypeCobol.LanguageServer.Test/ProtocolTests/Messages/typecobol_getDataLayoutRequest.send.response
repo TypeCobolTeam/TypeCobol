@@ -1,0 +1,11 @@
+{
+    "csvResult": {
+        "header": "col1;col2;col3",
+        "rows": [
+            "name1;9;data1",
+            "name2;456;data2",
+            "name2;-8;data3"
+        ],
+        "separator": ";"
+    }
+}
