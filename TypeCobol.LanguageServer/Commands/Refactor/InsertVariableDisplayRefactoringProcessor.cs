@@ -74,8 +74,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 // TODO Convert generated statements to a TextEdit
             }
 
-            // TODO content of the label ?
-            return (null, null);
+            // TODO Set TextEdits
+            return ("Debug instructions successfully generated.", null);
         }
 
         private GeneratedRoot GenerateDisplayStatements(DataSection dataSection, Selection rootSelection, IndexGenerator indexGenerator)

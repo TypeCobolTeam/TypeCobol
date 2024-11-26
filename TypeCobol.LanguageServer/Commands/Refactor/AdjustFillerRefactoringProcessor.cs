@@ -217,13 +217,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
-            // TODO How to factorize for all processors ?
-            if (arguments == null || arguments.Length == 0 || arguments[0] is not JObject jObject)
-            {
-                throw new ArgumentException("Invalid arguments for command.", nameof(arguments));
-            }
-
-            return jObject.ToObject<TextDocumentIdentifier>();
+            // Single argument is the text document identifier
+            return IRefactoringProcessor.Expect<TextDocumentIdentifier>(arguments, 0, true);
         }
 
         public void CheckTarget(CompilationUnit compilationUnit)
