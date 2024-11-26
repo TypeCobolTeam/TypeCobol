@@ -4,6 +4,7 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.LanguageServer.Commands.Refactor
 {
+    [DebuggerDisplay("Text = {_text}, CurrentLine = {_currentLine}")]
     internal class CobolStringBuilder
     {
         private const int MAX_LENGTH = (int)CobolFormatAreas.End_B; // 72
@@ -73,6 +74,40 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
 
             _currentLine.Append(text);
+        }
+
+        public void AppendLiteralForDisplay(string literalValue, char delimiter = '\'')
+        {
+            Debug.Assert(!_currentLineIsEmpty);
+
+            bool addSeparator = true;
+            int indent = _currentLine.Length - _SequenceNumber.Length;
+
+            string text = literalValue;
+            int remaining;
+            int addedCharsCount;
+            while (text.Length + (addedCharsCount = (addSeparator ? 3 : 2)) > (remaining = MAX_LENGTH - _currentLine.Length))
+            {
+                string part = text.Substring(0, remaining - addedCharsCount);
+                if (addSeparator)
+                {
+                    _currentLine.Append(ONE_SPACE);
+                }
+
+                _currentLine.Append(delimiter + part + delimiter);
+
+                AppendLine(false);
+                AppendIndent(indent);
+
+                text = text.Substring(part.Length);
+                addSeparator = false;
+            }
+
+            if (text.Length > 0)
+            {
+                _currentLine.Append(delimiter + text + delimiter);
+                _currentLineIsEmpty = false;
+            }
         }
 
         public void AppendLine() => AppendLine(false);

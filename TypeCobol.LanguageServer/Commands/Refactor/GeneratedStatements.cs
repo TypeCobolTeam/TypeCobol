@@ -376,17 +376,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         protected override void WriteStatementOpening(CobolStringBuilder builder)
         {
             Debug.Assert(!Message.Contains('\''));
-            Debug.Assert(Message.Split(' ').All(ContainsNoQuotesOrTwoQuotes));
-
             builder.AppendWord("DISPLAY");
-            string displayArg = '\'' + Message + '\'';
-            builder.AppendWord(displayArg);
-
-            static bool ContainsNoQuotesOrTwoQuotes(string word)
-            {
-                int quoteCount = word.Count(c => c == '"');
-                return quoteCount == 0 || quoteCount == 2;
-            }
+            builder.AppendLiteralForDisplay(Message);
         }
 
         protected override void WriteStatementEnd(CobolStringBuilder builder)
