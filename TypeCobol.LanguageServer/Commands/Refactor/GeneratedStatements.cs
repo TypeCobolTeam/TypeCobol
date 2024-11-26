@@ -134,7 +134,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         }
     }
 
-    internal class GeneratedDisplay : GeneratedStatement
+    internal class GeneratedDisplayVariable : GeneratedStatement
     {
         public int LogicalLevel { get; }
 
@@ -146,7 +146,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         public bool WithValue { get; }
 
-        public GeneratedDisplay(int logicalLevel, DataDefinition target, DataDefinitionHelper.DataAccessor accessor, string[] indices, bool withValue)
+        public GeneratedDisplayVariable(int logicalLevel, DataDefinition target, DataDefinitionHelper.DataAccessor accessor, string[] indices, bool withValue)
             : base(true)
         {
             LogicalLevel = logicalLevel;
@@ -336,10 +336,13 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     {
         public string Variable { get; }
 
-        public GeneratedIfNumeric(string variable)
+        public bool Negate { get; }
+
+        public GeneratedIfNumeric(string variable, bool negate)
             : base(false)
         {
             Variable = variable;
+            Negate = negate;
         }
 
         protected override void WriteStatementOpening(CobolStringBuilder builder)
@@ -347,12 +350,48 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             builder.AppendWord("IF");
             builder.AppendWord(Variable);
             builder.AppendWord("IS");
+            if (Negate)
+            {
+                builder.AppendWord("NOT");
+            }
             builder.AppendWord("NUMERIC");
         }
 
         protected override void WriteStatementEnd(CobolStringBuilder builder)
         {
             builder.AppendWord("END-IF");
+        }
+    }
+
+    internal class GeneratedDisplayMessage : GeneratedStatement
+    {
+        public string Message { get; }
+
+        public GeneratedDisplayMessage(string message)
+            : base(true)
+        {
+            Message = message;
+        }
+
+        protected override void WriteStatementOpening(CobolStringBuilder builder)
+        {
+            Debug.Assert(!Message.Contains('\''));
+            Debug.Assert(Message.Split(' ').All(ContainsNoQuotesOrTwoQuotes));
+
+            builder.AppendWord("DISPLAY");
+            string displayArg = '\'' + Message + '\'';
+            builder.AppendWord(displayArg);
+
+            static bool ContainsNoQuotesOrTwoQuotes(string word)
+            {
+                int quoteCount = word.Count(c => c == '"');
+                return quoteCount == 0 || quoteCount == 2;
+            }
+        }
+
+        protected override void WriteStatementEnd(CobolStringBuilder builder)
+        {
+            throw new InvalidOperationException("DISPLAY statement is not composite.");
         }
     }
 }

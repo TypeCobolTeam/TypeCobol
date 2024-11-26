@@ -66,13 +66,22 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 string max = dataDefinition.MaxOccurencesCount.ToString();
                 int indexSize = max.Length;
 
-                // Generate IF IS NUMERIC if need be
+                // Generate IF IS NUMERIC / NOT NUMERIC if need be
                 if (dataDefinition.OccursDependingOn != null)
                 {
+                    // IF IS NUMERIC
                     max = dataDefinition.OccursDependingOn.MainSymbolReference.Name;
-                    var @if = new GeneratedIfNumeric(max); // TODO Else ???
-                    _currentStatement.AddChild(@if);
-                    _currentStatement = @if;
+                    var ifNumeric = new GeneratedIfNumeric(max, false); 
+                    _currentStatement.AddChild(ifNumeric);
+
+                    // IF IS NOT NUMERIC + error message
+                    var ifNotNumeric = new GeneratedIfNumeric(max, true);
+                    string message = $"Cannot DISPLAY \"{dataDefinition.Name}\" because its DEPENDING ON \"{max}\" is not numeric.";
+                    ifNotNumeric.AddChild(new GeneratedDisplayMessage(message));
+                    _currentStatement.AddChild(ifNotNumeric);
+
+                    // Keep generating inside IF IS NUMERIC
+                    _currentStatement = ifNumeric;
                 }
 
                 // Generate index
@@ -98,7 +107,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
             // Generated DISPLAY
             bool withValue = !DataDefinitionHelper.IsGroup(dataDefinition) || !dataDefinitionHasSelectedChildren;
-            var display = new GeneratedDisplay(_dataLogicalLevel, dataDefinition, accessor, indices, withValue);
+            var display = new GeneratedDisplayVariable(_dataLogicalLevel, dataDefinition, accessor, indices, withValue);
             _currentStatement.AddChild(display);
         }
 
