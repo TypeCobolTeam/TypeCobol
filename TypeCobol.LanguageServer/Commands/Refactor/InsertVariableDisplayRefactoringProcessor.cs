@@ -1,5 +1,6 @@
 ﻿using TypeCobol.Compiler;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.Commands.Refactor
@@ -49,8 +50,14 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
         {
-            // TODO GetProgram from insert position (it may not be MainProgram if we have stacked programs)
-            var program = compilationUnit.ProgramClassDocumentSnapshot.Root.MainProgram;
+            var location = CodeElementLocator.FindCodeElementAt(compilationUnit, _insertAt);
+            if (location.CodeElement == null)
+            {
+                // TODO Improve this ?
+                return ("Unable to locate program", new List<TextEdit>());
+            }
+
+            var program = location.Node.GetProgramNode();
             var dataDivision = program.Children.OfType<DataDivision>().SingleOrDefault();
             if (dataDivision != null)
             {
