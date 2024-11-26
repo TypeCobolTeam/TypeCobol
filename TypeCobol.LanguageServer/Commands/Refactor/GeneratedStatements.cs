@@ -306,7 +306,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
             void AppendClosingIndicesDelimiter()
             {
-                wordBuilder.Append(')');
+                wordBuilder.Append("')");
                 
                 Debug.Assert(Indices.Length > 0);
                 if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
@@ -320,6 +320,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     wordBuilder.Append(" <");
                 }
 
+                wordBuilder.Append('\'');
                 builder.AppendWord(wordBuilder.ToString());
                 wordBuilder.Clear();
             }
