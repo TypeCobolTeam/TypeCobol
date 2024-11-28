@@ -141,15 +141,17 @@ namespace TypeCobol.Tools.Options_Config
     }
 
     /// <summary>
-    /// Categories of ReturnCode:
-    /// * 0000 : Everything is ok
+    /// Categories of ReturnCode.
+    /// ReturnCode ranges from 0 to 255 as follows:
+    /// * 000 : Everything is ok
     ///         Output files are generated
-    /// * 0001 to 0999 : Ok but there are warnings.
+    /// * 001 to 099 : Ok but there are warnings.
     ///         Output files are generated
-    ///         Diagnostic file should contains warnings
-    /// * >= 1000 : Errors
+    ///         Diagnostic file should contain warnings
+    /// * >= 100 : Errors
     ///         Output files are NOT generated
-    ///         Diagnostic file should contains errors and warnings
+    ///         Diagnostic file should contain errors and warnings
+    /// * 255 : Multiple errors, check logs and/or console messages
     /// </summary>
     public enum ReturnCode
     {
@@ -159,36 +161,36 @@ namespace TypeCobol.Tools.Options_Config
         Warning = 1,                    // Warning(s) issued during parsing of input file
 
         //Errors
-        ParsingDiagnostics = 1000,      // Syntax or semantic error in one or more input file
-        OutputFileError = 1001,         // CLI parameters error
-        MissingCopy = 1002,             // Use of option --haltonmissingcopy and at least one COPY is missing
-        GenerationError = 1003,         // Error during Code generation
-        FatalError = 1004,              // Not managed exception
-        UnexpectedParamError = 1005,     // Unexpected token given
+        ParsingDiagnostics = 100,      // Syntax or semantic error in one or more input file
+        OutputFileError = 101,         // CLI parameters error
+        MissingCopy = 102,             // Use of option --haltonmissingcopy and at least one COPY is missing
+        GenerationError = 103,         // Error during Code generation
+        FatalError = 104,              // Not managed exception
+        UnexpectedParamError = 105,     // Unexpected token given
 
         // Missing parameter           
-        InputFileMissing = 1010,        // Missing input file parameter
-        OutputFileMissing = 1011,       // Missing output files and ExecToStep set to "Generate"
+        InputFileMissing = 110,        // Missing input file parameter
+        OutputFileMissing = 111,       // Missing output files and ExecToStep set to "Generate"
 
         // Wrong parameter
-        InputFileError = 1020,           // Wrong input file(s) given
-        OutputPathError = 1021,          // Output paths given are unreachable.
-        ErrorFileError = 1022,           // Wrong error path given
-        HaltOnMissingCopyError = 1024,   // Missing copy path given is unreachable.
-        ExecToStepError = 1025,          // Unexpected user input for exectostep option
-        EncodingError = 1026,            // Unexpected user input for encoding option
-        IntrinsicError = 1027,           // Wrong intrinsic file(s) given
-        CopiesError = 1028,              // Wrong copies folder(s) given
-        DependenciesError = 1029,        // Wrong dependencies folder given
-        MaxDiagnosticsError = 1030,      // Unexpected user input for maximundiagnostics option (not an int)
-        OutputFormatError = 1031,        // Unexpected user input for outputFormat option
-        ExpandingCopyError = 1032,       // Expanding copy path given is unreachable.
-        ExtractUsedCopyError = 1033,     // Extract used copy path given is unreachable.
-        LogFileError = 1034,             // Wrong log path given
-        ParserExtensionFileError = 1035, // Invalid path to a custom extension DLL file
-        CfgOptionError = 1036,           // Invalid CFG building mode
+        InputFileError = 120,           // Wrong input file(s) given
+        OutputPathError = 121,          // Output paths given are unreachable.
+        ErrorFileError = 122,           // Wrong error path given
+        HaltOnMissingCopyError = 124,   // Missing copy path given is unreachable.
+        ExecToStepError = 125,          // Unexpected user input for exectostep option
+        EncodingError = 126,            // Unexpected user input for encoding option
+        IntrinsicError = 127,           // Wrong intrinsic file(s) given
+        CopiesError = 128,              // Wrong copies folder(s) given
+        DependenciesError = 129,        // Wrong dependencies folder given
+        MaxDiagnosticsError = 130,      // Unexpected user input for maximumdiagnostics option (not an int)
+        OutputFormatError = 131,        // Unexpected user input for outputFormat option
+        ExpandingCopyError = 132,       // Expanding copy path given is unreachable.
+        ExtractUsedCopyError = 133,     // Extract used copy path given is unreachable.
+        LogFileError = 134,             // Wrong log path given
+        ParserExtensionFileError = 135, // Invalid path to a custom extension DLL file
+        CfgOptionError = 136,           // Invalid CFG building mode
 
-        MultipleErrors = 9999
+        MultipleErrors = 255
     }
 
     public enum OutputFormat {
