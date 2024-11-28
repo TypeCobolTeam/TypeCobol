@@ -420,13 +420,17 @@ namespace TypeCobol.Transform
                 }
 
                 bOverwrite = part3Length == 0;
-                return !bOverwrite ? Math.Abs(realPart3LineNumber - part3StartFromLine1) : -1;
+                if (!bOverwrite)
+                {
+                    Console.WriteLine("DeltaPart3 = " + Math.Abs(realPart3LineNumber - part3StartFromLine1));
+                }
+                return !bOverwrite ? 0 : 1;
             }
             catch (Exception e)
             {//Any exception lead to an error --> This may not be a Generated Cobol file from a TypeCobol File.                
                 Console.WriteLine(String.Format("{0} : {1}", PROGNAME, string.Format(Resource.Exception_error, e.Message)));
                 bOverwrite = true;
-                return -1; //In case of error
+                return 1; //In case of error
             }
             finally
             {
