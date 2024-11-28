@@ -318,7 +318,7 @@ namespace TypeCobol.LanguageServer
                 if (!TryStartLsr(fullPath, lsrOptions, out lsrProcess))
                 {
                     System.Console.Error.WriteLine("Fail to run LSR process");
-                    return -1;
+                    return 1;
                 }
             }
 
