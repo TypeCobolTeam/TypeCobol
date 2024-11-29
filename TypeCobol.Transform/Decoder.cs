@@ -324,9 +324,10 @@ namespace TypeCobol.Transform
         /// <summary>
         /// The decoder method which extract the original TypeCobol source code from a mixed source code.
         /// </summary>
-        /// <param name="concatenatedFilePath">The path to the concatened source file</param>
-        /// <param name="typeCobolOutputFilePath">The output file which will contains the original TypeCobol source codde</param>
-        /// <returns>The Delta of the beginning of PART3 line and the expected PART3 beginning line if ok -1 otherwise</returns>
+        /// <param name="concatenatedFilePath">The path to the concatenated source file</param>
+        /// <param name="typeCobolOutputFilePath">The output file which will contains the original TypeCobol source code</param>
+        /// <returns>0 when decoding operation succeeded, 1 otherwise</returns>
+        /// <remarks>The Delta of the beginning of PART3 line and the expected PART3 beginning line is written to the Console</remarks>
         public static int decode(string concatenatedFilePath, string typeCobolOutputFilePath)
         {
             Stream outputStream = File.OpenWrite(typeCobolOutputFilePath);
