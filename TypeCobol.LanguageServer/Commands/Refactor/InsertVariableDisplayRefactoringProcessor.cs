@@ -11,6 +11,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         private Position _insertAt;
         private bool _insertBeforeStatement;
         private Selection _workingStorageSectionSelection;
+        private Selection _localStorageSectionSelection;
         private Selection _linkageSectionSelection;
 
         public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
@@ -28,7 +29,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
             // Get Selection objects
             _workingStorageSectionSelection = GetSelection(2);
-            _linkageSectionSelection = GetSelection(3);
+            _localStorageSectionSelection = GetSelection(3);
+            _linkageSectionSelection = GetSelection(4);
 
             return textDocumentPosition.textDocument;
 
@@ -63,10 +65,10 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             {
                 var indexGenerator = new IndexGenerator(_hash);
 
-                var workingStorageSection = dataDivision.Children.OfType<WorkingStorageSection>().SingleOrDefault();
-                GeneratedRoot statementsForWorkingStorageVariables = GenerateDisplayStatements(workingStorageSection, _workingStorageSectionSelection, indexGenerator);
-                var linkageSection = dataDivision.Children.OfType<LinkageSection>().SingleOrDefault();
-                GeneratedRoot statementsForLinkageVariables = GenerateDisplayStatements(linkageSection, _linkageSectionSelection, indexGenerator);
+                var dataSections = ExtractDataSections(dataDivision);
+                var statementsForWorkingStorageVariables = GenerateDisplayStatements(dataSections.WorkingStorageSection, _workingStorageSectionSelection, indexGenerator);
+                var statementsForLocalStorageVariables = GenerateDisplayStatements(dataSections.LocalStorageSection, _localStorageSectionSelection, indexGenerator);
+                var statementsForLinkageVariables = GenerateDisplayStatements(dataSections.LinkageSection, _linkageSectionSelection, indexGenerator);
 
                 var cobolStringBuilder = new CobolStringBuilder(true);
                 indexGenerator.WriteCobolCode(cobolStringBuilder);
@@ -74,6 +76,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
                 cobolStringBuilder.Clear();
                 statementsForWorkingStorageVariables.WriteCobolCode(cobolStringBuilder);
+                statementsForLocalStorageVariables.WriteCobolCode(cobolStringBuilder);
                 statementsForLinkageVariables.WriteCobolCode(cobolStringBuilder);
                 string cobolStringForStatements = cobolStringBuilder.ToString();
 
@@ -85,7 +88,31 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             return ("Debug instructions successfully generated.", null);
         }
 
-        private GeneratedRoot GenerateDisplayStatements(DataSection dataSection, Selection rootSelection, IndexGenerator indexGenerator)
+        private static (WorkingStorageSection WorkingStorageSection, LocalStorageSection LocalStorageSection, LinkageSection LinkageSection) ExtractDataSections(DataDivision dataDivision)
+        {
+            WorkingStorageSection workingStorageSection = null;
+            LocalStorageSection localStorageSection = null;
+            LinkageSection linkageSection = null;
+            foreach (var dataSection in dataDivision.Children)
+            {
+                switch (dataSection)
+                {
+                    case WorkingStorageSection workingStorage:
+                        workingStorageSection = workingStorage;
+                        break;
+                    case LocalStorageSection localStorage:
+                        localStorageSection = localStorage;
+                        break;
+                    case LinkageSection linkage:
+                        linkageSection = linkage;
+                        break;
+                }
+            }
+
+            return (workingStorageSection, localStorageSection, linkageSection);
+        }
+
+        private static GeneratedRoot GenerateDisplayStatements(DataSection dataSection, Selection rootSelection, IndexGenerator indexGenerator)
         {
             if (dataSection == null || rootSelection == null)
             {
