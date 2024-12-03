@@ -1,1 +1,12 @@
-﻿-i input\PGM3.rdz.tcbl -o output\PGM3.rdz.tcbl -d output\error.txt --dependencies input\dependencies\*.rdz.tcbl -e rdz -y input\MyIntrinsicFunctions.rdz.tcbl
+﻿-i
+input/PGM3.rdz.tcbl
+-o
+output/PGM3.rdz.tcbl
+-d
+output/error.txt
+--dependencies
+input/dependencies/*.rdz.tcbl
+-e
+rdz
+-y
+input/MyIntrinsicFunctions.rdz.tcbl

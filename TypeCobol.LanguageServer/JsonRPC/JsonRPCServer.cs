@@ -89,14 +89,14 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// <summary>
         /// Send an async request to the client and await later for the response or error
         /// </summary>
-        public Task<ResponseResultOrError> SendRequest(RequestType requestType, object parameters)
+        public Task<ResponseResultOrError> SendRequest(RequestType requestType, object parameters, out string requestId)
         {
             JObject jsonMessage = new JObject();
             PrepareJsonPRCMessage(jsonMessage);
 
             // Generate a unique id for the request
             int id = Interlocked.Increment(ref sequenceNumber);
-            string requestId = id.ToString();
+            requestId = id.ToString();
             jsonMessage["id"] = requestId;
 
             jsonMessage["method"] = requestType.Method;
@@ -211,7 +211,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
             }
         }
 
-        private void Reply(string requestId, ResponseResultOrError resultOrError)
+        protected void Reply(string requestId, ResponseResultOrError resultOrError)
         {
             JObject jsonMessage = new JObject();
             PrepareJsonPRCMessage(jsonMessage);

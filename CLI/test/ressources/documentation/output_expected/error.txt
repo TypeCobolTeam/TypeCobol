@@ -1,5 +1,5 @@
 ﻿ReturnCode=Warning_
-6 errors in "input\DocGen.tcbl":
+6 errors in "input/DocGen.tcbl":
 Line 9[13,18] <37, Warning, General> - Warning: Formalized comment field is declared more than once : params
 Line 13[12,17] <37, Warning, General> - Warning: Formalized comment field is declared more than once : Params
 Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field

@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":[{\"label\":\"var1 (Alphanumeric) (var1)\",\"kind\":6,\"insertText\":\"var1\"},{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"var1 (Alphanumeric) (var1)\",\"kind\":6,\"insertText\":\"var1\"},{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"}]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/TCOMFL062610805482392753007.cee\"}}}",

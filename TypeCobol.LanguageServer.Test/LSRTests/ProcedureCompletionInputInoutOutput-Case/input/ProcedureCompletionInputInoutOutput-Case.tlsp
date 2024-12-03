@@ -65,7 +65,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"myProc INPUT pname(Alphanumeric) IN-OUT pnbr(Numeric) OUTPUT IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc INPUT\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myProc INPUT pname(Alphanumeric) IN-OUT pnbr(Numeric) OUTPUT IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc INPUT\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}}"
     },
     {
       "category": 0,
@@ -93,7 +93,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       IN-OUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       IN-OUT \"}]}}"
     },
     {
       "category": 0,
@@ -117,7 +117,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       OUTPUT \"}]}}"
     },
     {
       "category": 0,
@@ -141,7 +141,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}}"
     },
     {
       "category": 0,
@@ -269,7 +269,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"myProc Input pname(Alphanumeric) In-Out pnbr(Numeric) Output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc Input\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myProc Input pname(Alphanumeric) In-Out pnbr(Numeric) Output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc Input\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}}"
     },
     {
       "category": 0,
@@ -297,7 +297,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                        In-Out \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                        In-Out \"}]}}"
     },
     {
       "category": 0,
@@ -321,7 +321,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                        Output \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                        Output \"}]}}"
     },
     {
       "category": 0,
@@ -345,7 +345,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}}"
     },
     {
       "category": 0,
@@ -565,7 +565,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":[{\"label\":\"myProc input pname(Alphanumeric) in-out pnbr(Numeric) output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc input\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myProc input pname(Alphanumeric) in-out pnbr(Numeric) output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc input\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}}"
     },
     {
       "category": 0,
@@ -593,7 +593,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       in-out \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       in-out \"}]}}"
     },
     {
       "category": 0,
@@ -617,7 +617,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       output \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       output \"}]}}"
     },
     {
       "category": 0,
@@ -641,7 +641,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}}"
     },
     {
       "category": 0,

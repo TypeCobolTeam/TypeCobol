@@ -96,7 +96,7 @@ namespace TypeCobol.LanguageServer
                     
 
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
-                var completionItem = new CompletionItem(typeDisplayName);
+                var completionItem = new CompletionItem() { label = typeDisplayName };
 
                 if (!(node is FunctionDeclaration))
                     if (typeIsPublic)
@@ -164,8 +164,8 @@ namespace TypeCobol.LanguageServer
                                      //Ignore public if proc is in the current program
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.VisualQualifiedName.ToString() : proc.Name;
-                var completionItem =
-                    new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
+                var completionItem = new CompletionItem();
+                completionItem.label = string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams);
                 completionItem.insertText = procIsPublic
                     ? inputParams != null
                             ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Input])
@@ -282,7 +282,7 @@ namespace TypeCobol.LanguageServer
             }
 
             string label = $"{name} ({type}) ({insertText})";
-            return new CompletionItem(label) { insertText = insertText, kind = CompletionItemKind.Variable };
+            return new CompletionItem() { label = label, insertText = insertText, kind = CompletionItemKind.Variable };
         }
 
         public static Case GetTextCase(string tokenText)

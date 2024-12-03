@@ -1,17 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeModel;
+﻿using System.Text;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     public class OutlineNode
     {
+        public static OutlineNode BuildFrom(Node node)
+        {
+            var instance = new OutlineNode();
+            instance.name = node.Name;
+            instance.type = node.GetType().Name;
+            instance.parentName = node.Parent?.Name;
+            instance.childIndex = 0;
+
+            if (node is FunctionDeclaration fun)
+            {
+                StringBuilder args = new StringBuilder();
+
+                //Format the arguments in one line
+                if (fun.Profile.InputParameters.Count > 0)
+                    args.Append("in| " + string.Join(", ", fun.Profile.InputParameters.Select(p => p.Name + ":" + p.DataType.Name)) + ";");
+
+                if (fun.Profile.InoutParameters.Count > 0)
+                    args.Append("inout| " + string.Join(", ", fun.Profile.InoutParameters.Select(p => p.Name + ":" + p.DataType.Name)) + ";");
+
+                if (fun.Profile.OutputParameters.Count > 0)
+                    args.Append("out| " + string.Join(", ", fun.Profile.OutputParameters.Select(p => p.Name + ":" + p.DataType.Name)) + ";");
+
+                if (args.Length > 0)
+                    args.Remove(args.Length - 1, 1);
+
+                instance.arguments = args.ToString();
+            }
+
+            return instance;
+        }
+
         /// <summary>
         /// The node's name
         /// </summary>
@@ -49,34 +74,6 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         private int childIndex;
 
-        public OutlineNode(Node node, OutlineNode parent = null)
-        {
-            this.name = node.Name;
-            this.type = node.GetType().Name;
-            this.parentName = node.Parent?.Name;
-            this.childIndex = 0;
-
-            if (node is FunctionDeclaration fun)
-            {
-                StringBuilder args = new StringBuilder();
-
-                //Format the arguments in one line
-                if (fun.Profile.InputParameters.Count > 0)
-                    args.Append("in| " + string.Join(", ", fun.Profile.InputParameters.Select(p => p.Name + ":" + p.DataType.Name))+ ";");
-
-                if (fun.Profile.InoutParameters.Count > 0)
-                    args.Append("inout| " + string.Join(", ", fun.Profile.InoutParameters.Select(p => p.Name + ":" + p.DataType.Name)) + ";");
-
-                if (fun.Profile.OutputParameters.Count > 0)
-                    args.Append("out| " + string.Join(", ", fun.Profile.OutputParameters.Select(p => p.Name + ":" + p.DataType.Name)) + ";");
-
-                if (args.Length > 0)
-                    args.Remove(args.Length - 1, 1);
-
-                this.arguments = args.ToString();
-            }
-        }
-
         /// <summary>
         /// Update recursively all the OutlineNodes with the source file content
         /// </summary>
@@ -86,9 +83,11 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             int i = 0;
             //Gets the nodes that we will evaluate and transform into OutlineNodes
-            var interestingNodes = node.Children.Where(c => c is Sentence == false && c is FunctionEnd == false && c is End == false && c is DataDescription == false && c is DataRedefines == false);
+            var interestingNodes = node.Children
+                .Where(c => c is Sentence == false && c is FunctionEnd == false && c is End == false && c is DataDescription == false && c is DataRedefines == false)
+                .ToArray();
 
-            if (interestingNodes.Any())
+            if (interestingNodes.Length > 0)
             {
                 if (childNodes == null)
                 {
@@ -106,14 +105,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 return false;
             }
 
-            int childrenCount = Math.Max(this.childNodes.Count, interestingNodes.Count());
+            int childrenCount = Math.Max(this.childNodes.Count, interestingNodes.Length);
 
             //Reset the updated status
             this.isUpdated = false;
             while (i < childrenCount)
             {
                 // Remove the OutlineNode if if there is more OutlineNode than Nodes
-                if (i >= interestingNodes.Count())
+                if (i >= interestingNodes.Length)
                 {
                     if (i >= this.childNodes.Count)
                         break;
@@ -127,12 +126,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 if (i >= this.childNodes.Count)
                 {
                     this.childIndex = i;
-                    this.childNodes.Insert(i, new OutlineNode(interestingNodes.ElementAt(i), this));
+                    this.childNodes.Insert(i, BuildFrom(interestingNodes[i]));
                     this.childNodes[i].isUpdated = true;
                     continue;
                 }
 
-                var derivationNode = this.childNodes[i].IsDerivationNode(interestingNodes.ElementAt(i)) ? interestingNodes.ElementAt(i) : null;
+                var derivationNode = this.childNodes[i].IsDerivationNode(interestingNodes[i]) ? interestingNodes[i] : null;
 
                 //If the current OutlineNode is the equivalent of the current Node
                 if (derivationNode != null)
@@ -169,7 +168,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 else
                 {
                     //Create and insert new OutlineNodes with no Node equivalent
-                    this.childNodes.Insert(i, new OutlineNode(interestingNodes.ElementAt(i), this));
+                    this.childNodes.Insert(i, BuildFrom(interestingNodes[i]));
                     this.childNodes[i].isUpdated = true;
                     this.childNodes[i].childIndex = i;
                     childrenCount++;

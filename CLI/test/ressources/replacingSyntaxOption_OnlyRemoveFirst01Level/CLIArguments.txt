@@ -1,1 +1,11 @@
-﻿-i input\replacingSyntaxPartial.rdz.tcbl -o output\replacingSyntaxPartial.rdz.tcbl -d output\error.txt -e rdz -dcsm -ycpl input\CPY.list
+﻿-i
+input/replacingSyntaxPartial.rdz.tcbl
+-o
+output/replacingSyntaxPartial.rdz.tcbl
+-d
+output/error.txt
+-e
+rdz
+-dcsm
+-ycpl
+input/CPY.list

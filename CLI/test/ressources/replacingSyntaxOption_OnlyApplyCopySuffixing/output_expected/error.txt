@@ -1,5 +1,5 @@
 ReturnCode=ParsingDiagnostics_
-6 errors in "input\replacingSyntaxPartial.rdz.tcbl":
+6 errors in "input/replacingSyntaxPartial.rdz.tcbl":
 Line 13[20,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CONVEA 
 Symbols found: DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA | DVZS0OSM::CONVEA | DVZS0OSM::CONVEA::CONVEA
 Line 17[20,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol CONVEA 

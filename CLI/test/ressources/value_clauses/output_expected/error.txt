@@ -1,2 +1,2 @@
 ReturnCode=Success_
-No error in "input\ValueClauses.rdz.tcbl".
+No error in "input/ValueClauses.rdz.tcbl".

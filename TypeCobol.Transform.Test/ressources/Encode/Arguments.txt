@@ -1,4 +1,18 @@
-﻿-tcmc input\TypeCobolFile.tcbl input\GeneratedCobolFile.cbl output\EncodedTypeCobol.tcmc
--tcmc input\TypeCobolFileLine6.tcbl input\TypeCobolFileLine6.cbl output\TypeCobolFileLine6.tcmc
--tcmc input\DVZZJCM5971568404687801514.tcbl input\DVZZJCM55499349689522088865.cbl output\DVZZJCM5275173981815586154.tcmc
--tcmc input\Empty.cbl output\Empty.tcmc
+﻿-tcmc
+input/TypeCobolFile.tcbl
+input/GeneratedCobolFile.cbl
+output/EncodedTypeCobol.tcmc
+
+-tcmc
+input/TypeCobolFileLine6.tcbl
+input/TypeCobolFileLine6.cbl
+output/TypeCobolFileLine6.tcmc
+
+-tcmc
+input/DVZZJCM5971568404687801514.tcbl
+input/DVZZJCM55499349689522088865.cbl
+output/DVZZJCM5275173981815586154.tcmc
+
+-tcmc
+input/Empty.cbl
+output/Empty.tcmc

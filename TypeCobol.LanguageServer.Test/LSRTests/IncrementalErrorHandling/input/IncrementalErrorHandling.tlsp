@@ -11,7 +11,7 @@
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX07851183288335278339.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0},\"Tokens\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX07851183288335278339.cee\"},\"Tokens\":[]}}"
     },
     {
       "category": 1,
@@ -23,7 +23,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX07851183288335278339.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0},\"DocumentRange\":{\"start\":{\"line\":16,\"character\":0},\"end\":{\"line\":20,\"character\":-1}},\"Tokens\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/syntaxColoring\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX07851183288335278339.cee\"},\"DocumentRange\":{\"start\":{\"line\":16,\"character\":0},\"end\":{\"line\":20,\"character\":-1}},\"Tokens\":[]}}"
     },
     {
       "category": 1,

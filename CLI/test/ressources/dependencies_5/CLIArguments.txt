@@ -1,1 +1,12 @@
-﻿-i input\PGM.rdz.tcbl -o output\PGM.rdz.tcbl -d output\error.txt --dependencies input\IRLLBIRL.tcbl --dependencies input\TTTLBDEC.tcbl -e rdz
+﻿-i
+input/PGM.rdz.tcbl
+-o
+output/PGM.rdz.tcbl
+-d
+output/error.txt
+--dependencies
+input/IRLLBIRL.tcbl
+--dependencies
+input/TTTLBDEC.tcbl
+-e
+rdz

@@ -23,7 +23,13 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// Resulting CfgDfaParams instance.
         /// </summary>
         public CfgDfaParams GetParams() {
-            return new CfgDfaParams(textDocumentId, dotFilePath, instructionPositions.ToArray(), basicBlockInfos.ToArray());
+            return new CfgDfaParams()
+            {
+                textDocument = textDocumentId,
+                dotFilePath = dotFilePath,
+                instructionPositions = instructionPositions.ToArray(),
+                basicBlockInfos = basicBlockInfos.ToArray()
+            };
         }
 
         public CfgDfaParamsBuilder(TextDocumentIdentifier textDocId, string dotFilePath) 
@@ -45,7 +51,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             int firstInstrIndex = block.Instructions.Count > 0 ? instructionPositions.Count : -1;
             foreach (var i in block.Instructions)
             {
-                instructionPositions.Add(new Position(i.CodeElement.Line - 1, i.CodeElement.Column - 1));
+                instructionPositions.Add(new Position() { line = i.CodeElement.Line - 1, character = i.CodeElement.Column - 1 });
             }
             int lastInstrIndex = block.Instructions.Count > 0 ? instructionPositions.Count : -1;
             BasicBlockInfo blockInfo = new BasicBlockInfo()

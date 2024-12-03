@@ -1,0 +1,6 @@
+{
+    "textDocument": {
+        "uri": "example/uri"
+    },
+    "outputType": "CSV"
+}

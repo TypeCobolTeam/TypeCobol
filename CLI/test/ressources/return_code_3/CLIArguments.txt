@@ -1,1 +1,8 @@
-﻿-i input\FunDeclare.rdz.tcbl -o output\FunDeclare.rdz.tcbl -d output\error.txt -e rdz
+﻿-i
+input/FunDeclare.rdz.tcbl
+-o
+output/FunDeclare.rdz.tcbl
+-d
+output/error.txt
+-e
+rdz

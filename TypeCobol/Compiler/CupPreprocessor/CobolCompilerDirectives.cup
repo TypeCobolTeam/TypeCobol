@@ -177,7 +177,7 @@ parser code {:
 :};
 
 // Include Cobol Words Symbols
-#use ..\CupCommon\CobolWordsSymbols.cup
+#use ../CupCommon/CobolWordsSymbols.cup
 non terminal starts;
 non terminal compilerDirectingStatement;
 non terminal basisCompilerStatement;
@@ -245,8 +245,8 @@ non terminal replacing_by;
 
 start with starts;
 
-#use ..\CupCommon\CobolWordsDirectiveRules.cup
-#use ..\CupCommon\CodeElementStartingKeyword.cup
+#use ../CupCommon/CobolWordsDirectiveRules.cup
+#use ../CupCommon/CodeElementStartingKeyword.cup
 
 
 starts ::= compilerDirectingStatement

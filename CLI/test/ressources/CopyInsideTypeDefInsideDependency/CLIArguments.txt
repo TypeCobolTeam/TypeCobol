@@ -1,1 +1,12 @@
-﻿-i input\CopyInsideTypeDefInsideDependency.rdz.tcbl -o output\CopyInsideTypeDefInsideDependency.rdz.tcbl -d output\error.txt --dependencies input\Dependencies\*.tcbl -e rdz -c input\Copies
+﻿-i
+input/CopyInsideTypeDefInsideDependency.rdz.tcbl
+-o
+output/CopyInsideTypeDefInsideDependency.rdz.tcbl
+-d
+output/error.txt
+--dependencies
+input/Dependencies/*.tcbl
+-e
+rdz
+-c
+input/Copies

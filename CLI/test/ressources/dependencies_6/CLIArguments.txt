@@ -1,1 +1,10 @@
-﻿-i input\MyProgram6685642317.tcbl -o output\MyProgram6685642317.tcbl -d output\error.txt --dependencies input\Duplicat.tcbl -e rdz
+﻿-i
+input/MyProgram6685642317.tcbl
+-o
+output/MyProgram6685642317.tcbl
+-d
+output/error.txt
+--dependencies
+input/Duplicat.tcbl
+-e
+rdz

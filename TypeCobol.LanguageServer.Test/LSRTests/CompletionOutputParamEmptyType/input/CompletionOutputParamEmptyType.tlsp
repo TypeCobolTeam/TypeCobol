@@ -23,7 +23,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":[{\"label\":\"chaine (Alphanumeric) (chaine)\",\"kind\":6,\"insertText\":\"chaine\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"chaine (Alphanumeric) (chaine)\",\"kind\":6,\"insertText\":\"chaine\"}]}}"
     },
     {
       "category": 0,

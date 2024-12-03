@@ -1,2 +1,2 @@
 ReturnCode=Success_
-No error in "input\test.tcbl".
+No error in "input/test.tcbl".

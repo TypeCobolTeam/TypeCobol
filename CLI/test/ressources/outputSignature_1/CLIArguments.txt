@@ -1,1 +1,10 @@
-﻿-i input\Callee.rdz.tcbl -o output\ProcedureCall-Public-Signatures.rdz.tcbl -d output\error.txt -e rdz -f PublicSignatures
+﻿-i
+input/Callee.rdz.tcbl
+-o
+output/ProcedureCall-Public-Signatures.rdz.tcbl
+-d
+output/error.txt
+-e
+rdz
+-f
+PublicSignatures

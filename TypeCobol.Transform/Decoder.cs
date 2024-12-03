@@ -324,9 +324,10 @@ namespace TypeCobol.Transform
         /// <summary>
         /// The decoder method which extract the original TypeCobol source code from a mixed source code.
         /// </summary>
-        /// <param name="concatenatedFilePath">The path to the concatened source file</param>
-        /// <param name="typeCobolOutputFilePath">The output file which will contains the original TypeCobol source codde</param>
-        /// <returns>The Delta of the beginning of PART3 line and the expected PART3 beginning line if ok -1 otherwise</returns>
+        /// <param name="concatenatedFilePath">The path to the concatenated source file</param>
+        /// <param name="typeCobolOutputFilePath">The output file which will contains the original TypeCobol source code</param>
+        /// <returns>0 when decoding operation succeeded, 1 otherwise</returns>
+        /// <remarks>The Delta of the beginning of PART3 line and the expected PART3 beginning line is written to the Console</remarks>
         public static int decode(string concatenatedFilePath, string typeCobolOutputFilePath)
         {
             Stream outputStream = File.OpenWrite(typeCobolOutputFilePath);
@@ -420,13 +421,17 @@ namespace TypeCobol.Transform
                 }
 
                 bOverwrite = part3Length == 0;
-                return !bOverwrite ? Math.Abs(realPart3LineNumber - part3StartFromLine1) : -1;
+                if (!bOverwrite)
+                {
+                    Console.WriteLine("DeltaPart3 = " + Math.Abs(realPart3LineNumber - part3StartFromLine1));
+                }
+                return !bOverwrite ? 0 : 1;
             }
             catch (Exception e)
             {//Any exception lead to an error --> This may not be a Generated Cobol file from a TypeCobol File.                
                 Console.WriteLine(String.Format("{0} : {1}", PROGNAME, string.Format(Resource.Exception_error, e.Message)));
                 bOverwrite = true;
-                return -1; //In case of error
+                return 1; //In case of error
             }
             finally
             {

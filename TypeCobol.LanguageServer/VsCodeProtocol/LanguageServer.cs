@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TypeCobol.LanguageServer.Commands;
+﻿using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.Logging;
 
@@ -14,24 +12,12 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public LanguageServer(IRPCServer rpcServer)
         {
             this.RpcServer = rpcServer;
-            rpcServer.RegisterRequestMethod(CodeActionRequest.Type, CallCodeAction);
-            rpcServer.RegisterRequestMethod(CodeLensRequest.Type, CallCodeLens);
-            rpcServer.RegisterRequestMethod(CodeLensResolveRequest.Type, CallCodeLensResolve);
             rpcServer.RegisterRequestMethod(CompletionRequest.Type, CallCompletion);
-            rpcServer.RegisterRequestMethod(CompletionResolveRequest.Type, CallCompletionResolve);
-            rpcServer.RegisterRequestMethod(DocumentHighlightRequest.Type, CallDocumentHighlight);
-            rpcServer.RegisterRequestMethod(DocumentSymbolRequest.Type, CallDocumentSymbol);
-            rpcServer.RegisterRequestMethod(DocumentFormattingRequest.Type, CallDocumentFormatting);
-            rpcServer.RegisterRequestMethod(DocumentOnTypeFormattingRequest.Type, CallDocumentOnTypeFormatting);
-            rpcServer.RegisterRequestMethod(DocumentRangeFormattingRequest.Type, CallDocumentRangeFormatting);
             rpcServer.RegisterRequestMethod(DefinitionRequest.Type, CallDefinition);
             rpcServer.RegisterRequestMethod(HoverRequest.Type, CallHoverRequest);
             rpcServer.RegisterRequestMethod(InitializeRequest.Type, CallInitialize);
-            rpcServer.RegisterRequestMethod(ReferencesRequest.Type, CallReferences);
-            rpcServer.RegisterRequestMethod(RenameRequest.Type, CallRename);
             rpcServer.RegisterRequestMethod(ShutdownRequest.Type, CallShutdown);
             rpcServer.RegisterRequestMethod(SignatureHelpRequest.Type, CallSignatureHelp);
-            rpcServer.RegisterRequestMethod(WorkspaceSymbolRequest.Type, CallWorkspaceSymbol);
             rpcServer.RegisterRequestMethod(WorkspaceExecuteCommandRequest.Type, CallExecuteCommand);
             rpcServer.RegisterNotificationMethod(DidChangeConfigurationNotification.Type, CallDidChangeConfiguration);
             rpcServer.RegisterNotificationMethod(ExitNotification.Type, CallExit);
@@ -91,156 +77,12 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         // --- Generic notification and request handlers ---
 
-        private ResponseResultOrError CallCodeAction(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<Command> result = OnCodeAction((CodeActionParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch(Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallCodeLens(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<CodeLens> result = OnCodeLens((TextDocumentIdentifier)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallCodeLensResolve(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                CodeLens result =  OnCodeLensResolve((CodeLens)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
         private ResponseResultOrError CallCompletion(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError = null;
             try
             {
-                IList<CompletionItem> result = OnCompletion((TextDocumentPosition)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallCompletionResolve(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                CompletionItem result = OnCompletionResolve((CompletionItem)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentHighlight(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<DocumentHighlight> result = OnDocumentHighlight((TextDocumentPosition)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentSymbol(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<SymbolInformation> result = OnDocumentSymbol((TextDocumentIdentifier)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<TextEdit> result = OnDocumentFormatting((DocumentFormattingParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentOnTypeFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<TextEdit> result = OnDocumentOnTypeFormatting((DocumentOnTypeFormattingParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallDocumentRangeFormatting(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<TextEdit> result = OnDocumentRangeFormatting((DocumentRangeFormattingParams)parameters);
+                CompletionList result = OnCompletion((TextDocumentPosition)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -256,7 +98,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                Definition result =  OnDefinition((TextDocumentPosition)parameters);
+                Location result =  OnDefinition((TextDocumentPosition)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -299,38 +141,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallReferences(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<Location> result = OnReferences((ReferenceParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
-        private ResponseResultOrError CallRename(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                WorkspaceEdit result = OnRename((RenameParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
         private bool shutdownReceived = false;
 
         private ResponseResultOrError CallShutdown(RequestType requestType, object parameters, LSPProfiling lspProfiling)
@@ -366,22 +176,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             return resultOrError;
         }
 
-        private ResponseResultOrError CallWorkspaceSymbol(RequestType requestType, object parameters, LSPProfiling lspProfiling)
-        {
-            ResponseResultOrError resultOrError = null;
-            try
-            {
-                List<SymbolInformation> result = OnWorkspaceSymbol((WorkspaceSymbolParams)parameters);
-                resultOrError = new ResponseResultOrError() { result = result };
-            }
-            catch (Exception e)
-            {
-                NotifyException(e);
-                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
-            }
-            return resultOrError;
-        }
-
         private ResponseResultOrError CallExecuteCommand(RequestType requestType, object parameters, LSPProfiling lspProfiling)
         {
             ResponseResultOrError resultOrError;
@@ -392,6 +186,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -525,7 +320,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             var capabilities = new ServerCapabilities();
             capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
             capabilities.hoverProvider = false;
-            capabilities.completionProvider = new CompletionOptions() { resolveProvider = true};
+            capabilities.completionProvider = new CompletionOptions() { resolveProvider = false };
             capabilities.signatureHelpProvider = null;
             capabilities.definitionProvider = true;
             capabilities.referencesProvider = false;
@@ -639,19 +434,9 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// Request to request completion at a given text document position. The request's
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
-        /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
+        /// is of type CompletionList or a Thenable that resolves to such.
         /// </summary>
-        protected virtual List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Request to resolve additional information for a given completion item.The request's
-        /// parameter is of type[CompletionItem](#CompletionItem) the response
-        /// is of type[CompletionItem](#CompletionItem) or a Thenable that resolves to such.
-        /// </summary>
-        protected virtual CompletionItem OnCompletionResolve(CompletionItem parameters)
+        protected virtual CompletionList OnCompletion(TextDocumentPosition parameters)
         {
             return null;
         }
@@ -672,53 +457,9 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// (#TextDocumentPosition) the response is of type [Definition](#Definition) or a
         /// Thenable that resolves to such.
         /// </summary>
-        protected virtual Definition OnDefinition(TextDocumentPosition parameters)
+        protected virtual Location OnDefinition(TextDocumentPosition parameters)
         {
             throw new ArgumentException("No definition");            
-        }
-
-        /// <summary>
-        /// A request to resolve project-wide references for the symbol denoted
-        /// by the given text document position.The request's parameter is of
-        /// type[ReferenceParams](#ReferenceParams) the response is of type
-        /// [Location[]](#Location) or a Thenable that resolves to such.
-        /// </summary>
-        protected virtual List<Location> OnReferences(ReferenceParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Request to resolve a [DocumentHighlight](#DocumentHighlight) for a given
-        /// text document position.The request's parameter is of type [TextDocumentPosition]
-        /// (#TextDocumentPosition) the request reponse is of type [DocumentHighlight[]]
-        /// (#DocumentHighlight) or a Thenable that resolves to such.
-        /// </summary>
-        protected virtual List<DocumentHighlight> OnDocumentHighlight(TextDocumentPosition parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to list all symbols found in a given text document. The request's
-        /// parameter is of type[TextDocumentIdentifier](#TextDocumentIdentifier) the
-        /// response is of type[SymbolInformation[]](#SymbolInformation) or a Thenable
-        /// that resolves to such.
-        /// </summary>
-        protected virtual List<SymbolInformation> OnDocumentSymbol(TextDocumentIdentifier parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to list project-wide symbols matching the query string given
-        /// by the[WorkspaceSymbolParams](#WorkspaceSymbolParams). The response is
-        /// of type[SymbolInformation[]](#SymbolInformation) or a Thenable that
-        /// resolves to such.
-        /// </summary>
-        protected virtual List<SymbolInformation> OnWorkspaceSymbol(WorkspaceSymbolParams parameters)
-        {
-            return null;
         }
 
         /// <summary>
@@ -731,62 +472,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// to execute and its arguments.</param>
         /// <returns>Generic result object (maybe null) depending on the command being actually executed.</returns>
         protected virtual object OnExecuteCommand(ExecuteCommandParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to provide commands for the given text document and range.
-        /// </summary>
-        protected virtual List<Command> OnCodeAction(CodeActionParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to provide code lens for the given text document.
-        /// </summary>
-        protected virtual List<CodeLens> OnCodeLens(TextDocumentIdentifier parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to resolve a command for a given code lens.
-        /// </summary>
-        protected virtual CodeLens OnCodeLensResolve(CodeLens parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to to format a whole document.
-        /// </summary>
-        protected virtual List<TextEdit> OnDocumentFormatting(DocumentFormattingParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to to format a range in a document.
-        /// </summary>
-        protected virtual List<TextEdit> OnDocumentRangeFormatting(DocumentRangeFormattingParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to format a document on type.
-        /// </summary>
-        protected virtual List<TextEdit> OnDocumentOnTypeFormatting(DocumentOnTypeFormattingParams parameters)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// A request to rename a symbol.
-        /// </summary>
-        protected virtual WorkspaceEdit OnRename(RenameParams parameters)
         {
             return null;
         }

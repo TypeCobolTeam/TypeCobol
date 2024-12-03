@@ -1,2 +1,2 @@
 ReturnCode=Success_
-No error in "input\CopyTestwithOrWithoutReplace.rdz.cbl".
+No error in "input/CopyTestwithOrWithoutReplace.rdz.cbl".

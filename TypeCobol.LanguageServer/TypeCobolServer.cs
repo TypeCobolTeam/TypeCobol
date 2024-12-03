@@ -78,25 +78,6 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool NoCopyDependencyWatchers { get; set; }
 
-        private bool Logger(string message, Uri uri)
-        {
-            if (uri == null)
-            {
-                RemoteConsole.Log(message);
-            }
-            else
-            {
-                var uriLogMessageParams = new UriLogMessageParams()
-                {
-                    type = MessageType.Log,
-                    message = message,
-                    textDocument = new TextDocumentIdentifier(uri)
-                };
-                this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
-            }
-            return true;
-        }
-
         private List<CodeElementWrapper> CodeElementFinder(FileCompiler fileCompiler, Position position)
         {
             List<CodeElement> codeElements = new List<CodeElement>();
@@ -188,7 +169,8 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            MissingCopiesDetected(new TextDocumentIdentifier((Uri)fileUri), missingCopiesEvent.Copies);
+            var textDoc = TextDocumentIdentifier.BuildFrom((Uri)fileUri);
+            MissingCopiesDetected(textDoc, missingCopiesEvent.Copies);
         }
 
         /// <summary>
@@ -203,9 +185,16 @@ namespace TypeCobol.LanguageServer
 
             foreach (var diag in diagnosticEvent.Diagnostics)
             {
-                diagList.Add(new Diagnostic(new Range(diag.LineStart, diag.ColumnStart, diag.LineEnd, diag.ColumnEnd),
-                    diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(),
-                    diag.Info.ReferenceText));
+                var range = Range.FromPositions(diag.LineStart, diag.ColumnStart, diag.LineEnd, diag.ColumnEnd);
+                var lspDiag = new Diagnostic()
+                {
+                    range = range,
+                    message = diag.Message,
+                    severity = (DiagnosticSeverity)diag.Info.Severity,
+                    code = diag.Info.Code.ToString(),
+                    source = diag.Info.ReferenceText
+                };
+                diagList.Add(lspDiag);
             }
 
             // Gets the original URI (which was set by the client)
@@ -255,7 +244,7 @@ namespace TypeCobol.LanguageServer
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
             // Initialize the workspace.
-            this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
+            this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, RemoteConsole.Log);
             if (!NoCopyDependencyWatchers)
                 this.Workspace.InitCopyDependencyWatchers();
 #if EUROINFO_RULES
@@ -352,10 +341,7 @@ namespace TypeCobol.LanguageServer
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, docContext.TextDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
 
-                string text = parameters.text ?? parameters.textDocument.text;
-                //These are no longer needed.
-                parameters.text = null;
-                parameters.textDocument.text = null;
+                string text = parameters.textDocument.text;
                 this.Workspace.OpenTextDocument(docContext, text, projectKey, copyFolders);
 
                 // DEBUG information
@@ -432,10 +418,9 @@ namespace TypeCobol.LanguageServer
         {
             if (parameters.text != null)
             {
-                var vtdi = new VersionedTextDocumentIdentifier(parameters.textDocument.uri, 0);
-                TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
-                tdcce.text = parameters.text;
-                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams { textDocument = vtdi, contentChanges = new[] { tdcce } };
+                var vtdi = new VersionedTextDocumentIdentifier() { uri = parameters.textDocument.uri, version = 0 };
+                var tdcce = new TextDocumentContentChangeEvent() { text = parameters.text };
+                var dctdp = new DidChangeTextDocumentParams() { textDocument = vtdi, contentChanges = new[] { tdcce } };
                 OnDidChangeTextDocument(dctdp);
             }
         }
@@ -528,9 +513,7 @@ namespace TypeCobol.LanguageServer
 
             if (message != string.Empty)
             {
-                resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
-                    matchingCodeElement.LineEnd,
-                    matchingCodeElement.StopIndex + 1);
+                resultHover.range = Range.FromPositions(matchingCodeElement.Line, matchingCodeElement.StartIndex, matchingCodeElement.LineEnd, matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
                     new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
                 return resultHover;
@@ -544,9 +527,9 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Request to request completion at a given text document position. The request's
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
-        /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
+        /// is of type CompletionList or a Thenable that resolves to such.
         /// </summary>
-        protected override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        protected override CompletionList OnCompletion(TextDocumentPosition parameters)
         {
             var docContext = GetDocumentContextFromStringUri(parameters.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
@@ -560,7 +543,7 @@ namespace TypeCobol.LanguageServer
             {
                 var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler, parameters.position);
                 if (wrappedCodeElements == null)
-                    return new List<CompletionItem>();
+                    return new CompletionList();
 
                 Token userFilterToken = null;
                 Token lastSignificantToken = null;
@@ -698,7 +681,7 @@ namespace TypeCobol.LanguageServer
                         //Return a default text to inform the user that completion is not available after the given token
                         items = new List<CompletionItem>(1)
                         {
-                            new CompletionItem("Completion is not available in this context") { insertText = string.Empty }
+                            new CompletionItem() { label = "Completion is not available in this context", insertText = string.Empty }
                         };
                     }
                 }
@@ -706,8 +689,7 @@ namespace TypeCobol.LanguageServer
                 if (userFilterToken != null)
                 {
                     //Add the range object to let the client know the position of the user filter token
-                    var range = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
-                        userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                    var range = Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
                     //-1 on lne to 0 based / +1 on stop index to include the last character
                     items.ForEach(c =>
                     {
@@ -723,7 +705,7 @@ namespace TypeCobol.LanguageServer
                 items = null;
             }
 
-            return items;
+            return new CompletionList() { isIncomplete = false, items = items };
         }
 
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
@@ -847,10 +829,10 @@ namespace TypeCobol.LanguageServer
             return signatureHelp;
         }
 
-        protected override Definition OnDefinition(TextDocumentPosition parameters)
+        protected override Location OnDefinition(TextDocumentPosition parameters)
         {
             var uri = parameters.textDocument.uri;
-            var defaultDefinition = new Definition(uri, new Range());
+            var defaultDefinition = new Location() { uri = uri, range = new Range() };
             Uri objUri = new Uri(uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocument(objUri, out var docContext))
             {
@@ -924,8 +906,14 @@ namespace TypeCobol.LanguageServer
                     {
                         var nodeDefinition = potentialDefinitionNodes[0];
                         if (nodeDefinition.CodeElement != null)
-                            return new Definition(uri,
-                                new Range() { start = new Position(nodeDefinition.CodeElement.Line - 1, 0) });
+                            return new Location()
+                            {
+                                uri = uri,
+                                range = new Range()
+                                {
+                                    start = new Position() { line = nodeDefinition.CodeElement.Line - 1, character = 0 }
+                                }
+                            };
                     }
                 }
             }

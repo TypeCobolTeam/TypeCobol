@@ -1,2 +1,2 @@
-﻿Code: 1021 TypeCobol.CLI: Output paths given are unreachable.
+﻿Code: 121 TypeCobol.CLI: Output paths given are unreachable.
 Try TypeCobol.CLI --help for usage information.

@@ -1,1 +1,10 @@
-﻿-i input\FunDeclare.rdz.tcbl -o output\FunDeclareMixed.cbl -d output\error.txt -e rdz -f Cobol85Mixed
+﻿-i
+input/FunDeclare.rdz.tcbl
+-o
+output/FunDeclareMixed.cbl
+-d
+output/error.txt
+-e
+rdz
+-f
+Cobol85Mixed

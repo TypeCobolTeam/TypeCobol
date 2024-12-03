@@ -58,7 +58,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\\n            IN-OUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\\n            IN-OUT \"}]}}"
     },
     {
       "category": 0,
@@ -91,7 +91,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\\n            OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date\\n            OUTPUT \"}]}}"
     },
     {
       "category": 0,
@@ -125,7 +125,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"W-DateDb2 (DateDB2) (W-DateDb2)\",\"kind\":6,\"insertText\":\"W-DateDb2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"W-DateDb2 (DateDB2) (W-DateDb2)\",\"kind\":6,\"insertText\":\"W-DateDb2\"}]}}"
     },
     {
       "category": 0,

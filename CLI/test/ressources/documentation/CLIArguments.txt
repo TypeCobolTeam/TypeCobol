@@ -1,1 +1,10 @@
-﻿-i input\DocGen.tcbl -o output\DocGen.json -d output\error.txt -e rdz -f Documentation
+﻿-i
+input/DocGen.tcbl
+-o
+output/DocGen.json
+-d
+output/error.txt
+-e
+rdz
+-f
+Documentation

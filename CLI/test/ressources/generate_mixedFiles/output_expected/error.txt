@@ -1,2 +1,2 @@
 ﻿ReturnCode=Success_
-No error in "input\FunDeclare.rdz.tcbl".
+No error in "input/FunDeclare.rdz.tcbl".

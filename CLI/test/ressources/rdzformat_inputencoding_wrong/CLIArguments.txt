@@ -1,1 +1,6 @@
--i input\test.tcbl -o output\result.cbl -d output\errors.txt
+-i
+input/test.tcbl
+-o
+output/result.cbl
+-d
+output/errors.txt

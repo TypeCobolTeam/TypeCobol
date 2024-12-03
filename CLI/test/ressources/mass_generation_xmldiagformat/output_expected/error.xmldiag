@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <build return-code="ParsingDiagnostics">
   <filetable>
-    <file index="1" path="input\DVZZPGM1.tcbl" />
-    <file index="2" path="input\DVZZPGM2.tcbl" />
-    <file index="3" path="input\DVZZPGM3.tcbl" />
+    <file index="1" path="input/DVZZPGM1.tcbl" />
+    <file index="2" path="input/DVZZPGM2.tcbl" />
+    <file index="3" path="input/DVZZPGM3.tcbl" />
   </filetable>
   <diagnostics>
     <diagnostic file-index="1">

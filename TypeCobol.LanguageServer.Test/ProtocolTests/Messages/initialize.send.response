@@ -1,0 +1,30 @@
+{
+    "capabilities": {
+        "experimental": [{
+                "Item1": "version",
+                "Item2": "0.0.0-local+cdc04259ef353c11c4fd3b95351aca7fea9c271c"
+            }
+        ],
+        "textDocumentSync": 2,
+        "hoverProvider": true,
+        "completionProvider": {
+            "resolveProvider": false,
+            "triggerCharacters": ["::"]
+        },
+        "signatureHelpProvider": {
+            "triggerCharacters": []
+        },
+        "definitionProvider": true,
+        "referencesProvider": false,
+        "documentHighlightProvider": false,
+        "documentSymbolProvider": false,
+        "workspaceSymbolProvider": false,
+        "codeActionProvider": false,
+        "documentFormattingProvider": false,
+        "documentRangeFormattingProvider": false,
+        "renameProvider": false,
+        "executeCommandProvider": {
+            "commands": ["command1"]
+        }
+    }
+}

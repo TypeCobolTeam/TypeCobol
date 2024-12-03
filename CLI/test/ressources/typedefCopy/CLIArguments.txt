@@ -1,1 +1,10 @@
-﻿-i input\Client.rdz.tcbl -o output\Client.rdz.tcbl -d output\error.txt -e rdz -c input
+﻿-i
+input/Client.rdz.tcbl
+-o
+output/Client.rdz.tcbl
+-d
+output/error.txt
+-e
+rdz
+-c
+input

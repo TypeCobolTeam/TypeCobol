@@ -24,7 +24,7 @@ namespace TypeCobol.Transform
         /// Main
         /// </summary>
         /// <param name="args">Command line arguments</param>
-        /// <returns>0, if ok, != 0 otherwise</returns>
+        /// <returns>0, if ok, 1 otherwise</returns>
         static int Main(string[] args)
         {
             if (args.Length == 1 && args[0].Equals(HELP_OPTION))
@@ -60,7 +60,7 @@ namespace TypeCobol.Transform
                     System.Console.WriteLine(String.Format("{0} : {1}", PROGNAME, Resource.Invalid_count_args));
                     return 1;
                 }
-                return Decoder.decode(args[1], args[2]); //Returns 0 if no lines difference. If > 0 correponds to number of line changes. If == -1 exception occured.
+                return Decoder.decode(args[1], args[2]); // 0 for success, 1 for error
             }
             else
             {

@@ -1,4 +1,4 @@
-﻿Code: 1025 TypeCobol.CLI: Unexpected parameter given for ExecToStep. Accepted parameters are "Scanner"/0, "Preprocessor"/1, "CodeElement"/2, "AST"/3, "SemanticCrossCheck"/4, "Generate"/5(default).
-Code: 1010 TypeCobol.CLI: Input file(s) are required.
-Code: 1026 TypeCobol.CLI: The format 'BadEncoding2' is not supported.
+﻿Code: 125 TypeCobol.CLI: Unexpected parameter given for ExecToStep. Accepted parameters are "Scanner"/0, "Preprocessor"/1, "CodeElement"/2, "AST"/3, "SemanticCrossCheck"/4, "Generate"/5(default).
+Code: 110 TypeCobol.CLI: Input file(s) are required.
+Code: 126 TypeCobol.CLI: The format 'BadEncoding2' is not supported.
 Try TypeCobol.CLI --help for usage information.

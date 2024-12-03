@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":[{\"label\":\"Var1 (Alphanumeric) (Var1)\",\"kind\":6,\"insertText\":\"Var1\"},{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Group1-Var1 (Alphanumeric) (Group1::Group1-Var1)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var1\"},{\"label\":\"Group1-Var2 (Alphanumeric) (Group1::Group1-Var2)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Var1 (Alphanumeric) (Var1)\",\"kind\":6,\"insertText\":\"Var1\"},{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Group1-Var1 (Alphanumeric) (Group1::Group1-Var1)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var1\"},{\"label\":\"Group1-Var2 (Alphanumeric) (Group1::Group1-Var2)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var2\"}]}}"
     },
     {
       "category": 0,
@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\",\"data\":{\"start\":{\"line\":15,\"character\":19},\"end\":{\"line\":15,\"character\":21}}},{\"label\":\"Group1-Var1 (Alphanumeric) (Group1::Group1-Var1)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var1\",\"data\":{\"start\":{\"line\":15,\"character\":19},\"end\":{\"line\":15,\"character\":21}}},{\"label\":\"Group1-Var2 (Alphanumeric) (Group1::Group1-Var2)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var2\",\"data\":{\"start\":{\"line\":15,\"character\":19},\"end\":{\"line\":15,\"character\":21}}}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\",\"data\":{\"start\":{\"line\":15,\"character\":19},\"end\":{\"line\":15,\"character\":21}}},{\"label\":\"Group1-Var1 (Alphanumeric) (Group1::Group1-Var1)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var1\",\"data\":{\"start\":{\"line\":15,\"character\":19},\"end\":{\"line\":15,\"character\":21}}},{\"label\":\"Group1-Var2 (Alphanumeric) (Group1::Group1-Var2)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var2\",\"data\":{\"start\":{\"line\":15,\"character\":19},\"end\":{\"line\":15,\"character\":21}}}]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/workspaces/rdz_workspace/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ED/ED.ADYTCOB.SOURCE/TCOMFL06.cbl\"}}}",

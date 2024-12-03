@@ -1,0 +1,3 @@
+{
+    "settings": ["C:\\folder\\TypeCobol.CLI.exe", "-e", "rdz", "{-c}", "--autoremarks", "-cob", "-dol", "-c", "C:\\Users\\USER\\AppData\\Local\\Euro-Information\\TCOB\\CobolEditorEI\\Copys\\Production", "-c", "C:\\Users\\USER\\AppData\\Local\\Euro-Information\\TCOB\\CobolEditorEI\\Copys\\Production_suffixedCPY", "-dcsm"]
+}

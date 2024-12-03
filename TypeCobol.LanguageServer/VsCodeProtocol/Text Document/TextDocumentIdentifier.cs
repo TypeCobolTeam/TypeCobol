@@ -10,30 +10,17 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     public class TextDocumentIdentifier
     {
+        public static TextDocumentIdentifier BuildFrom(Uri uri)
+        {
+            // Get the original URI (which was set by the client)
+            // DON'T use ToString() as it returns the canonically unescaped form of the URI
+            // (it may cause issue if the path contains some blanks which need to be escaped)
+            return new TextDocumentIdentifier() { uri = uri.OriginalString };
+        }
+
         /// <summary>
         /// The text document's uri.
         /// </summary>
         public string uri { get; set; }
-
-        /// <summary>
-        /// Creates a new TextDocumentIdentifier literal.
-        /// </summary>
-        /// <param name="uri">The document's uri.</param>
-        public TextDocumentIdentifier(string uri)
-        {
-            this.uri = uri;
-        }
-
-        /// <summary>
-        /// Creates a new TextDocumentIdentifier literal.
-        /// </summary>
-        /// <param name="uri">The document's uri.</param>
-        internal TextDocumentIdentifier(Uri uri)
-        {
-            // Gets the original URI (which was set by the client)
-            // DON'T use ToString() as it returns the canonically unescaped form of the URI
-            // (it may cause issue if the path contains some blanks which need to be escaped)
-            this.uri = uri.OriginalString;
-        }
     }
 }
