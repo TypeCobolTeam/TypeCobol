@@ -16,7 +16,6 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         private readonly char _indicator;
         private readonly StringBuilder _text;
         private readonly StringBuilder _currentLine;
-        private int _previousLineIndentLength;
         private bool _currentLineIsEmpty;
 
         public CobolStringBuilder(bool debug = false)
@@ -27,31 +26,28 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             Clear();
         }
 
-        private void InitCurrentLine(bool useIndentFromPreviousLine)
+        private void InitCurrentLine()
         {
             _currentLine.Append(_SequenceNumber);
             _currentLine.Append(_indicator);
-            if (useIndentFromPreviousLine)
-            {
-                Debug.Assert(_previousLineIndentLength >= 0);
-                _currentLine.Append(new string(ONE_SPACE, _previousLineIndentLength));
-            }
-            
             _currentLineIsEmpty = true;
         }
 
-        private void FlushCurrentLine()
+        private int FlushCurrentLine()
         {
             string currentLine = _currentLine.ToString();
-            _previousLineIndentLength = currentLine.Skip(_SequenceNumber.Length + 1).TakeWhile(c => c == ONE_SPACE).Count(); // TODO Add a param to the GetIndent method ?
+            int previousLineIndentLength = currentLine.Skip(_SequenceNumber.Length + 1).TakeWhile(c => c == ONE_SPACE).Count(); // TODO Add a param to the GetIndent method ?
             _text.Append(currentLine);
             _currentLine.Clear();
+            return previousLineIndentLength;
         }
 
         public void AppendIndent(int length)
         {
+            Debug.Assert(_currentLineIsEmpty);
+            Debug.Assert(_currentLine.Length + length <= MAX_LENGTH);
             string indent = new string(ONE_SPACE, length);
-            AppendText(indent);
+            _currentLine.Append(indent);
         }
 
         public void AppendWord(string word)
@@ -66,7 +62,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             int separatorLength = addSeparator ? 1 : 0;
             if (_currentLine.Length + separatorLength + text.Length > MAX_LENGTH)
             {
-                AppendLine(true);
+                int indent = AppendLine();
+                AppendIndent(indent);
             }
             else if (addSeparator)
             {
@@ -96,7 +93,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
                 _currentLine.Append(delimiter + part + delimiter);
 
-                AppendLine(false);
+                AppendLine();
                 AppendIndent(indent);
 
                 text = text.Substring(part.Length);
@@ -105,26 +102,29 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
             if (text.Length > 0)
             {
+                if (addSeparator)
+                {
+                    _currentLine.Append(ONE_SPACE);
+                }
+
                 _currentLine.Append(delimiter + text + delimiter);
                 _currentLineIsEmpty = false;
             }
         }
 
-        public void AppendLine() => AppendLine(false);
-
-        private void AppendLine(bool useIndentFromPreviousLine)
+        public int AppendLine()
         {
-            FlushCurrentLine();
+            int previousLineIndentLength = FlushCurrentLine();
             _text.AppendLine();
-            InitCurrentLine(useIndentFromPreviousLine);
+            InitCurrentLine();
+            return previousLineIndentLength;
         }
 
         public void Clear()
         {
             _text.Clear();
             _currentLine.Clear();
-            _previousLineIndentLength = -1;
-            InitCurrentLine(false);
+            InitCurrentLine();
         }
 
         public override string ToString()

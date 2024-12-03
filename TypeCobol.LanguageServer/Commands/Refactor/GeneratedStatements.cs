@@ -332,17 +332,17 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         }
     }
 
-    internal class GeneratedIfNumeric : GeneratedStatement
+    internal class GeneratedIfNumericElseDisplayMessage : GeneratedStatement
     {
         public string Variable { get; }
 
-        public bool Negate { get; }
+        public string ErrorMessage { get; }
 
-        public GeneratedIfNumeric(string variable, bool negate)
+        public GeneratedIfNumericElseDisplayMessage(string variable, string errorMessage)
             : base(false)
         {
             Variable = variable;
-            Negate = negate;
+            ErrorMessage = errorMessage;
         }
 
         protected override void WriteStatementOpening(CobolStringBuilder builder)
@@ -350,39 +350,19 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             builder.AppendWord("IF");
             builder.AppendWord(Variable);
             builder.AppendWord("IS");
-            if (Negate)
-            {
-                builder.AppendWord("NOT");
-            }
             builder.AppendWord("NUMERIC");
         }
 
         protected override void WriteStatementEnd(CobolStringBuilder builder)
         {
-            builder.AppendWord("END-IF");
-        }
-    }
-
-    internal class GeneratedDisplayMessage : GeneratedStatement
-    {
-        public string Message { get; }
-
-        public GeneratedDisplayMessage(string message)
-            : base(true)
-        {
-            Message = message;
-        }
-
-        protected override void WriteStatementOpening(CobolStringBuilder builder)
-        {
-            Debug.Assert(!Message.Contains('\''));
+            builder.AppendWord("ELSE");
+            int indent = builder.AppendLine();
+            builder.AppendIndent(indent + 2);
             builder.AppendWord("DISPLAY");
-            builder.AppendLiteralForDisplay(Message);
-        }
-
-        protected override void WriteStatementEnd(CobolStringBuilder builder)
-        {
-            throw new InvalidOperationException("DISPLAY statement is not composite.");
+            builder.AppendLiteralForDisplay(ErrorMessage);
+            builder.AppendLine();
+            builder.AppendIndent(indent);
+            builder.AppendWord("END-IF");
         }
     }
 }

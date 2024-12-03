@@ -69,18 +69,11 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 // Generate IF IS NUMERIC / NOT NUMERIC if need be
                 if (dataDefinition.OccursDependingOn != null)
                 {
-                    // IF IS NUMERIC
+                    // IF IS NUMERIC ELSE DISPLAY error message
                     max = dataDefinition.OccursDependingOn.MainSymbolReference.Name;
-                    var ifNumeric = new GeneratedIfNumeric(max, false); 
-                    _currentStatement.AddChild(ifNumeric);
-
-                    // IF IS NOT NUMERIC + error message
-                    var ifNotNumeric = new GeneratedIfNumeric(max, true);
                     string message = $"Cannot DISPLAY \"{dataDefinition.Name}\" because its DEPENDING ON \"{max}\" is not numeric.";
-                    ifNotNumeric.AddChild(new GeneratedDisplayMessage(message));
-                    _currentStatement.AddChild(ifNotNumeric);
-
-                    // Keep generating inside IF IS NUMERIC
+                    var ifNumeric = new GeneratedIfNumericElseDisplayMessage(max, message);
+                    _currentStatement.AddChild(ifNumeric);
                     _currentStatement = ifNumeric;
                 }
 
