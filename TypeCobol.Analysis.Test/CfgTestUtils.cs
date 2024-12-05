@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Analysis.Util;
@@ -79,8 +74,7 @@ namespace TypeCobol.Analysis.Test
                 GenVariableLivenessResults(dfaResults, writer);
 
                 string result = writer.ToString();
-                string expected = File.ReadAllText(expectedLivenessFilePath);
-                TestUtils.CompareLines(sourceFilePath, result, expected, expectedLivenessFilePath);
+                TestUtils.CompareContent(sourceFilePath, result, new TestUtils.FileInfo(expectedLivenessFilePath));
             }
 
             return dfaResults;
@@ -140,8 +134,7 @@ namespace TypeCobol.Analysis.Test
                     string diagnosticsText = ParserUtils.DiagnosticsToString(diagnostics);
                     if (File.Exists(expectedDiagnosticsFilePath))
                     {
-                        string expectedResult = File.ReadAllText(expectedDiagnosticsFilePath);
-                        TestUtils.CompareLines(sourceFilePath, diagnosticsText, expectedResult, expectedDiagnosticsFilePath);
+                        TestUtils.CompareContent(sourceFilePath, diagnosticsText, new TestUtils.FileInfo(expectedDiagnosticsFilePath));
                     }
                     else
                     {
@@ -215,8 +208,7 @@ namespace TypeCobol.Analysis.Test
 
             // compare with expected result
             string result = writer.ToString();
-            string expected = File.ReadAllText(expectedDotFile);
-            TestUtils.CompareLines(testPath, result, expected, expectedDotFile);
+            TestUtils.CompareContent(testPath, result, new TestUtils.FileInfo(expectedDotFile));
         }
 
         /// <summary>

@@ -30,8 +30,8 @@ namespace TypeCobol.Test.Misc
 
             // Compare to expected
             var expectedPath = Path.Combine(folder, fileName) + $"-{propertyName}.txt";
-            var expected = File.ReadAllText(expectedPath);
-            TestUtils.CompareLines(testName, result.ToString(), expected, expectedPath);
+            var expected = new TestUtils.FileInfo(expectedPath);
+            TestUtils.CompareContent(testName, result.ToString(), expected);
         }
 
         /// <summary>

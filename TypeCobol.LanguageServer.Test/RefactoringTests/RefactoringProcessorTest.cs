@@ -138,7 +138,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             string actualResult = ApplyTextEdits(refactoring.Label, refactoring.TextEdits);
 
             // Compare actual modified code with expected modified code
-            TestUtils.CompareLines(_testName, actualResult, _expectedResult, null);
+            TestUtils.CompareContent(_testName, actualResult, _expectedResult);
         }
 
         private string ApplyTextEdits(string label, List<TextEdit> changes)
