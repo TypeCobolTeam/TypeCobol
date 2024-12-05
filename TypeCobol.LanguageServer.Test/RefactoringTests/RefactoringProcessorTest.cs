@@ -69,7 +69,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             {
                 while (reader.ReadLine() is { } line) // Non-null pattern + variable definition
                 {
-                    if (line.All(c => c == '-'))
+                    if (line.Length > 0 && line.All(c => c == '-'))
                     {
                         // The line is a separator, flush content read so far into correct variable
                         string currentPart = builder.ToString()[..^2]; // Remove trailing line break

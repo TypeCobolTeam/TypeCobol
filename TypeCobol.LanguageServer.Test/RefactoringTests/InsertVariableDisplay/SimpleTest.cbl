@@ -1,0 +1,40 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X(200).
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.
+------------------------------------------------------------------------------------
+TypeCobol.LanguageServer.Commands.Refactor.InsertVariableDisplayRefactoringProcessor
+------------------------------------------------------------------------------------
+[
+    {
+        "textDocument": { "uri": "file:/test.expected.cbl" },
+        "position": { "line": 5, "character": 26 }
+    },
+    false,
+    {
+        "visitMode": 1, "index": 0, "subSelections": [
+            {
+                "visitMode": 0, "name": "var1"
+            }
+        ]
+    }
+]
+------------------------------------------------------------------------------------
+refactoring.label=Debug instructions successfully generated.
+refactoring.source=
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X(200).
+       PROCEDURE DIVISION.
+      D    DISPLAY 'var1 <' var1 '>'
+
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.

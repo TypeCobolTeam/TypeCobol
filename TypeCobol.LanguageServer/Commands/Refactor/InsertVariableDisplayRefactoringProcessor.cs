@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler;
+﻿using System.Diagnostics;
+using TypeCobol.Compiler;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -13,6 +15,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         private Selection _workingStorageSectionSelection;
         private Selection _localStorageSectionSelection;
         private Selection _linkageSectionSelection;
+
+        private (CodeElement CodeElement, Node Node) _location;
 
         public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
@@ -48,19 +52,20 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             {
                 throw new InvalidOperationException($"Could not get AST for program '{compilationUnit.TextSourceInfo.Name}'.");
             }
+
+            // Check valid insertion location
+            _location = CodeElementLocator.FindCodeElementAt(compilationUnit, _insertAt);
+            if (_location.CodeElement == null)
+            {
+                throw new InvalidOperationException("Unable to locate program to modify.");
+            }
         }
 
         public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
         {
-            var location = CodeElementLocator.FindCodeElementAt(compilationUnit, _insertAt);
-            if (location.CodeElement == null)
-            {
-                // TODO Improve this ?
-                return ("Unable to locate program", new List<TextEdit>());
-            }
-
-            var program = location.Node.GetProgramNode();
+            var program = _location.Node.GetProgramNode();
             var dataDivision = program.Children.OfType<DataDivision>().SingleOrDefault();
+            var textEdits = new List<TextEdit>();
             if (dataDivision != null)
             {
                 var indexGenerator = new IndexGenerator(_hash);
@@ -80,12 +85,32 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 statementsForLinkageVariables.WriteCobolCode(cobolStringBuilder);
                 string cobolStringForStatements = cobolStringBuilder.ToString();
 
-                // TODO Convert generated indices to a TextEdit
-                // TODO Convert generated statements to a TextEdit
+                if (cobolStringForIndices.Length > 0)
+                {
+                    var targetSection = (DataSection)dataSections.WorkingStorageSection ?? dataSections.LocalStorageSection;
+                    if (targetSection == null)
+                    {
+                        // TODO Either move this into CheckTarget and turn it into a refactoring requirement or generate a WORKING STORAGE ourselves ?
+                        return ("Unable to generate indices", new List<TextEdit>());
+                    }
+
+                    textEdits.Add(InsertAtEnd(targetSection, cobolStringForIndices));
+                }
+
+                if (cobolStringForStatements.Length > 0)
+                {
+                    if (_insertBeforeStatement)
+                    {
+                        textEdits.Add(InsertBefore(_location.Node, cobolStringForStatements));
+                    }
+                    else
+                    {
+                        textEdits.Add(InsertAfter(_location.Node, cobolStringForStatements));
+                    }
+                }
             }
 
-            // TODO Set TextEdits
-            return ("Debug instructions successfully generated.", null);
+            return (textEdits.Count > 0 ? "Debug instructions successfully generated." : "No modification", textEdits);
         }
 
         private static (WorkingStorageSection WorkingStorageSection, LocalStorageSection LocalStorageSection, LinkageSection LinkageSection) ExtractDataSections(DataDivision dataDivision)
@@ -123,5 +148,23 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             visitor.Visit(dataSection);
             return visitor.GeneratedStatements;
         }
+
+        private static TextEdit InsertBefore(Node node, string code)
+        {
+            Debug.Assert(node.CodeElement != null);
+            int line = node.CodeElement.Line;
+            int character = 0;
+            return TextEdit.Insert(new Position() { line = line, character = character }, code + Environment.NewLine);
+        }
+
+        private static TextEdit InsertAfter(Node node, string code)
+        {
+            Debug.Assert(node.CodeElement != null);
+            int line = node.CodeElement.LineEnd;
+            int character = node.CodeElement.StopIndex + 1;
+            return TextEdit.Insert(new Position() { line = line, character = character }, Environment.NewLine + code);
+        }
+
+        private static TextEdit InsertAtEnd(Node node, string code) => InsertAfter(node.GetLastNode(), code);
     }
 }
