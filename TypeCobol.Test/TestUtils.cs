@@ -84,8 +84,8 @@ namespace TypeCobol.Test
             var lineFaults = new List<int>();
             for (int c = 0; c < actualLines.Length && c < expectedLines.Length; c++)
             {
-                var actualLine = RemoveCrLiterals(actualLines[c]);
-                var expectedLine = RemoveCrLiterals(expectedLines[c]);
+                var actualLine = actualLines[c];
+                var expectedLine = expectedLines[c];
                 if (actualLine != expectedLine)
                 {
                     lineFaults.Add(c);
@@ -124,8 +124,6 @@ namespace TypeCobol.Test
 
                 throw new Exception(errors.ToString());
             }
-
-            static string RemoveCrLiterals(string text) => Regex.Replace(text, @"\\\\r|\\r", string.Empty);
         }
 
         public static string GetReportDirectoryPath()

@@ -171,28 +171,28 @@ namespace TypeCobol.Compiler.CodeElements
                     break;
                 case Fields.Description:
                     if (!string.IsNullOrEmpty(Description))
-                        Description += Environment.NewLine;
-                    Description += value + " ";
+                        Description += " ";
+                    Description += value;
                     break;
                 case Fields.Deprecated:
                     if (!string.IsNullOrEmpty(Deprecated))
-                        Description += Environment.NewLine;
-                    Deprecated += value + " ";
+                        Deprecated += " ";
+                    Deprecated += value;
                     break;
                 case Fields.ReplacedBy:
                     if (!string.IsNullOrEmpty(ReplacedBy))
-                        ReplacedBy += Environment.NewLine;
-                    ReplacedBy += value + " ";
+                        ReplacedBy += " ";
+                    ReplacedBy += value;
                     break;
                 case Fields.Restriction:
                     if (!string.IsNullOrEmpty(Restriction))
-                        Restriction += Environment.NewLine;
-                    Restriction += value + " ";
+                        Restriction += " ";
+                    Restriction += value;
                     break;
                 case Fields.See:
                     if (!string.IsNullOrEmpty(See))
-                        See += Environment.NewLine;
-                    See += value + " ";
+                        See += " ";
+                    See += value;
                     break;
                 case Fields.Parameters:
                     if (isContinuation)
