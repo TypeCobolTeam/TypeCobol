@@ -60,18 +60,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The diagnostic's message.
         /// </summary>
         public string message { get; set; }
-
-        /// <summary>
-        /// Creates a new Diagnostic literal.
-        /// </summary>
-        public Diagnostic(Range range, string message, DiagnosticSeverity severity, string code, string source)
-        {
-            this.range = range;
-            this.message = message;
-
-            this.severity = severity;
-            this.code = code;
-            this.source = source;
-        }
     }
 }

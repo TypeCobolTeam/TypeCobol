@@ -1,0 +1,134 @@
+Class=Token, TokenType=IDENTIFICATION
+-SourceText=IDENTIFICATION
+Class=Token, TokenType=DIVISION
+-SourceText=DIVISION
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=PROGRAM_ID
+-SourceText=PROGRAM-ID
+Class=Token, TokenType=PeriodSeparator
+-SourceText=. 
+Class=Token, TokenType=UserDefinedWord
+-SourceText=TokenProperties
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=DATA
+-SourceText=DATA
+Class=Token, TokenType=DIVISION
+-SourceText=DIVISION
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=WORKING_STORAGE
+-SourceText=WORKING-STORAGE
+Class=Token, TokenType=SECTION
+-SourceText=SECTION
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=ImportedToken, TokenType=LevelNumber
+-SourceText=01
+Class=ImportedToken, TokenType=UserDefinedWord
+-SourceText=var1-imported
+Class=ImportedToken, TokenType=PIC
+-SourceText=PIC
+Class=ImportedToken, TokenType=PictureCharacterString
+-SourceText=X
+Class=ImportedToken, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=LevelNumber
+-SourceText=01
+Class=Token, TokenType=UserDefinedWord
+-SourceText=var1
+Class=Token, TokenType=PIC
+-SourceText=PIC
+Class=Token, TokenType=PictureCharacterString
+-SourceText=X
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=LevelNumber
+-SourceText=01
+Class=ReplacedPartialCobolWord, TokenType=UserDefinedWord
+-SourceText=var1-:SUFFIX:
+Class=Token, TokenType=PIC
+-SourceText=PIC
+Class=Token, TokenType=PictureCharacterString
+-SourceText=X
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=LevelNumber
+-SourceText=01
+Class=Token, TokenType=UserDefinedWord
+-SourceText=exempleTab
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=LevelNumber
+-SourceText=05
+Class=Token, TokenType=UserDefinedWord
+-SourceText=item
+Class=Token, TokenType=PIC
+-SourceText=PIC
+Class=Token, TokenType=PictureCharacterString
+-SourceText=X
+Class=Token, TokenType=OCCURS
+-SourceText=OCCURS
+Class=ReplacedToken, TokenType=IntegerLiteral
+-SourceText=TabSize
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=LevelNumber
+-SourceText=01
+Class=ReplacedTokenGroup, TokenType=UserDefinedWord
+-SourceText=to create a ReplacedTokenGroup
+Class=Token, TokenType=PIC
+-SourceText=PIC
+Class=Token, TokenType=PictureCharacterString
+-SourceText=X
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=LevelNumber
+-SourceText=01
+Class=Token, TokenType=UserDefinedWord
+-SourceText=var1-continued
+Class=Token, TokenType=PIC
+-SourceText=PIC
+Class=Token, TokenType=PictureCharacterString
+-SourceText=X(1000)
+Class=Token, TokenType=VALUE
+-SourceText=VALUE
+Class=ContinuationToken, TokenType=AlphanumericLiteral
+-SourceText='This value is continued on t
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=PROCEDURE
+-SourceText=PROCEDURE
+Class=Token, TokenType=DIVISION
+-SourceText=DIVISION
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=GOBACK
+-SourceText=GOBACK
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=SectionParagraphName
+-SourceText=missingToken
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=INITIALIZE
+-SourceText=INITIALIZE
+Class=Token, TokenType=UserDefinedWord
+-SourceText=var1
+Class=Token, TokenType=WITH
+-SourceText=WITH
+Class=MissingToken, TokenType=FILLER
+-SourceText=<missing FILLER>
+Class=Token, TokenType=DEFAULT
+-SourceText=DEFAULT
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.
+Class=Token, TokenType=END
+-SourceText=END
+Class=Token, TokenType=PROGRAM
+-SourceText=PROGRAM
+Class=Token, TokenType=UserDefinedWord
+-SourceText=TokenProperties
+Class=Token, TokenType=PeriodSeparator
+-SourceText=.

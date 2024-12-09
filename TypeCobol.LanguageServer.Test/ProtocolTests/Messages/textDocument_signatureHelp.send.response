@@ -1,0 +1,20 @@
+{
+    "signatures": [
+        {
+            "label": "method",
+            "documentation": "The method about to be called",
+            "parameters": [
+                {
+                    "label": "firstParam",
+                    "documentation": "The first parameter of the method"
+                },
+                {
+                    "label": "secondParam",
+                    "documentation": "The second parameter of the method"
+                }
+            ]
+        }
+    ],
+    "activeSignature": 0,
+    "activeParameter": 1
+}

@@ -26,15 +26,5 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// invoked with.
         /// </summary>
         public object[] arguments { get; set; }
-
-        /// <summary>
-        /// Creates a new Command literal.
-        /// </summary>
-        public Command(string title, string command, params object[] args)
-        {
-            this.title = title;
-            this.command = command;
-            this.arguments = args;
-        }
     }
 }

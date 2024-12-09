@@ -1,4 +1,4 @@
 ﻿ReturnCode=MissingCopy_
-2 errors in "input\Copies.rdz.tcbl":
+2 errors in "input/Copies.rdz.tcbl":
 Line 10[24,38] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YCONVEAR
 Line 13[8,42] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTTMCOIS

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,7 +22,7 @@ namespace TypeCobol.Test
         /// <param name="expectedResult"></param>
         /// <param name="expectedResultPath"></param>
         /// <returns></returns>
-        public static void compareLines(string testName, string result, string expectedResult, string expectedResultPath)
+        public static void CompareLines(string testName, string result, string expectedResult, string expectedResultPath)
         {
             StringBuilder errors = new StringBuilder();
 
@@ -37,7 +33,7 @@ namespace TypeCobol.Test
                 expectedResultPath == string.Empty)
             {
                 if (autoReplace)
-                    Assert.Fail("Set AutoReplace to false in TestUtils.compareLines()\n\n");
+                    Assert.Fail("Set AutoReplace to false in TestUtils.CompareLines()\n\n");
             }
 
             result = Regex.Replace(result, "(?<!\r)\n", "\r\n");
@@ -66,7 +62,7 @@ namespace TypeCobol.Test
                 {
                     errors.Append("result != expectedResult  In test:" + testName)
                         .AppendLine(" at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
-                    errors.AppendLine("See TestUtils.cs compareLines method to autoreplace ExpectedResult");
+                    errors.AppendLine("See TestUtils.cs CompareLines method to autoreplace ExpectedResult");
                     errors.Append("=== RESULT ==========\n" + result + "====================");
                     throw new Exception(errors.ToString());
                 }

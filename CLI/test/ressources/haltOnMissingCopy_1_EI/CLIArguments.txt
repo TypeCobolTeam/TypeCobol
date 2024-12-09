@@ -1,1 +1,11 @@
-﻿-i input\MissingCopy.rdz.tcbl -o output\MissingCopy.rdz.tcbl -d output\error.txt --exectostep=AST --haltonmissingcopy="output\MissingCopy.txt" -e rdz -ycpl="input\CpyCopies.lst"
+﻿-i
+input/MissingCopy.rdz.tcbl
+-o
+output/MissingCopy.rdz.tcbl
+-d
+output/error.txt
+--exectostep=AST
+--haltonmissingcopy=output/MissingCopy.txt
+-e
+rdz
+-ycpl=input/CpyCopies.lst

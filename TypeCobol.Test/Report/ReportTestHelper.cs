@@ -65,7 +65,7 @@ namespace TypeCobol.Test.Report
                         // compare with expected result
                         string result = sw.ToString();
                         string expected = File.ReadAllText(output, format.Encoding);
-                        TestUtils.compareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
+                        TestUtils.CompareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
                         return ReturnCode.Success;
                     }
                 }

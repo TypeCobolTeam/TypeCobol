@@ -31,7 +31,7 @@ namespace TypeCobol.Analysis.Test
                 string result = sw.ToString();
                 string output = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm.csv");
                 string expected = File.ReadAllText(output, DocumentFormat.RDZReferenceFormat.Encoding);
-                TypeCobol.Test.TestUtils.compareLines(path, result, expected, output);
+                TypeCobol.Test.TestUtils.CompareLines(path, result, expected, output);
             }
         }
 
@@ -51,7 +51,7 @@ namespace TypeCobol.Analysis.Test
                 string result = sw.ToString();
                 string output = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm88Set.csv");
                 string expected = File.ReadAllText(output, DocumentFormat.RDZReferenceFormat.Encoding);
-                TypeCobol.Test.TestUtils.compareLines(path, result, expected, output);
+                TypeCobol.Test.TestUtils.CompareLines(path, result, expected, output);
             }
         }
 
@@ -71,7 +71,7 @@ namespace TypeCobol.Analysis.Test
                 string result = sw.ToString();
                 string output = Path.Combine(CfgTestUtils.Report, "ProcCallPgm.csv");
                 string expected = File.ReadAllText(output, DocumentFormat.RDZReferenceFormat.Encoding);
-                TypeCobol.Test.TestUtils.compareLines(path, result, expected, output);
+                TypeCobol.Test.TestUtils.CompareLines(path, result, expected, output);
             }
         }
 

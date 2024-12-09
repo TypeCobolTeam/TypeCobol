@@ -1,1 +1,14 @@
-﻿-i input\MissingCopy.rdz.tcbl -o output\MissingCopy.rdz.tcbl -d output\error.txt --dependencies input\Callee.rdz.tcbl -y input\MyIntrinsicFunctions.rdz.tcbl --exectostep=Preprocessor  --haltonmissingcopy="output\MissingCopy.txt" -e rdz
+﻿-i
+input/MissingCopy.rdz.tcbl
+-o
+output/MissingCopy.rdz.tcbl
+-d
+output/error.txt
+--dependencies
+input/Callee.rdz.tcbl
+-y
+input/MyIntrinsicFunctions.rdz.tcbl
+--exectostep=Preprocessor
+--haltonmissingcopy=output/MissingCopy.txt
+-e
+rdz

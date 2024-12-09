@@ -35,7 +35,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"G-StorVar (BOOL) (G-StorVar)\",\"kind\":6,\"insertText\":\"G-StorVar\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"G-StorVar (BOOL) (G-StorVar)\",\"kind\":6,\"insertText\":\"G-StorVar\"}]}}"
     },
     {
       "category": 0,
@@ -103,7 +103,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"Param1 (BOOL) (Param1)\",\"kind\":6,\"insertText\":\"Param1\"},{\"label\":\"PW-TestVar (DATE) (PW-TestVar)\",\"kind\":6,\"insertText\":\"PW-TestVar\"},{\"label\":\"G-StorVar (BOOL) (G-StorVar)\",\"kind\":6,\"insertText\":\"G-StorVar\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Param1 (BOOL) (Param1)\",\"kind\":6,\"insertText\":\"Param1\"},{\"label\":\"PW-TestVar (DATE) (PW-TestVar)\",\"kind\":6,\"insertText\":\"PW-TestVar\"},{\"label\":\"G-StorVar (BOOL) (G-StorVar)\",\"kind\":6,\"insertText\":\"G-StorVar\"}]}}"
     },
     {
       "category": 0,
@@ -143,7 +143,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":[{\"label\":\"G-StorVar (BOOL) (G-StorVar)\",\"kind\":6,\"insertText\":\"G-StorVar\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"G-StorVar (BOOL) (G-StorVar)\",\"kind\":6,\"insertText\":\"G-StorVar\"}]}}"
     },
     {
       "category": 0,

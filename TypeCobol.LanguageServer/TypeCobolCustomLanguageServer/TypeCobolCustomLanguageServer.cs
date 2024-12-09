@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-#if EUROINFO_RULES
+﻿#if EUROINFO_RULES
 using TypeCobol.CustomExceptions;
 #endif
 using TypeCobol.LanguageServer.JsonRPC;
@@ -98,6 +95,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -219,9 +217,15 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             if (context != null && context.FileCompiler != null)
             {
                 // We only support CSV for now. In the future outputType should be checked here
-                string[] rows = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, GetDataLayoutCSVResult.SEPARATOR);
-
-                return new GetDataLayoutResult(rows);
+                const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
+                var csv = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, SEPARATOR);
+                var csvResult = new GetDataLayoutCSVResult()
+                {
+                    header = csv.Header,
+                    rows = csv.Rows,
+                    separator = SEPARATOR
+                };
+                return new GetDataLayoutResult() { csvResult = csvResult };
             }
 
             throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");
@@ -260,6 +264,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -279,6 +284,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -297,6 +303,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             catch (Exception e)
             {
+                NotifyException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }

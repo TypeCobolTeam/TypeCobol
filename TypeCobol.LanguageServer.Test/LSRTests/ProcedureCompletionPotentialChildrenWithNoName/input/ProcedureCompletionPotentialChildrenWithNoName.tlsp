@@ -35,7 +35,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}}"
     },
     {
       "category": 0,
@@ -63,7 +63,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"}]}}"
     },
     {
       "category": 0,
@@ -92,7 +92,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"TestVar3 (Level88) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar3 (Level88) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}}"
     },
     {
       "category": 0,
@@ -152,7 +152,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}}"
     },
     {
       "category": 0,
@@ -180,7 +180,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}}"
     },
     {
       "category": 0,
@@ -208,7 +208,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}}"
     },
     {
       "category": 0,
@@ -236,7 +236,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}}"
     },
     {
       "category": 0,
@@ -264,7 +264,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}}"
     },
     {
       "category": 0,

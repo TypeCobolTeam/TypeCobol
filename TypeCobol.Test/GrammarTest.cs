@@ -240,7 +240,7 @@ namespace TypeCobol.Test {
             {
                 StreamReader expectedResultReader = new StreamReader(new FileStream(expectedResultFile, FileMode.Open));
                 StreamReader actualResultReader = new StreamReader(new FileStream(resultFile, FileMode.Open));
-                TestUtils.compareLines("GrammarTestCompareFiles", expectedResultReader.ReadToEnd(), actualResultReader.ReadToEnd(), expectedResultFile); //The test will fail if result files are different
+                TestUtils.CompareLines("GrammarTestCompareFiles", expectedResultReader.ReadToEnd(), actualResultReader.ReadToEnd(), expectedResultFile); //The test will fail if result files are different
 
                 expectedResultReader.Close();
                 actualResultReader.Close();
