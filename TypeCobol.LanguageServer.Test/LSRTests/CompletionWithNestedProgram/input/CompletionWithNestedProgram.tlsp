@@ -111,7 +111,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"DateOrdinal\",\"kind\":19,\"insertText\":\"DateOrdinal.\"},{\"label\":\"DateDB2\",\"kind\":19,\"insertText\":\"DateDB2.\"},{\"label\":\"Time6\",\"kind\":19,\"insertText\":\"Time6.\"},{\"label\":\"Time8\",\"kind\":19,\"insertText\":\"Time8.\"},{\"label\":\"TimeDB2\",\"kind\":19,\"insertText\":\"TimeDB2.\"},{\"label\":\"TimeStampDB2\",\"kind\":19,\"insertText\":\"TimeStampDB2.\"},{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2.\"},{\"label\":\"SmallInt\",\"kind\":19,\"insertText\":\"SmallInt.\"},{\"label\":\"Integer\",\"kind\":19,\"insertText\":\"Integer.\"},{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt.\"},{\"label\":\"Real\",\"kind\":19,\"insertText\":\"Real.\"},{\"label\":\"Float\",\"kind\":19,\"insertText\":\"Float.\"},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL.\"},{\"label\":\"DATE\",\"kind\":19,\"insertText\":\"DATE.\"},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY.\"},{\"label\":\"STRING\",\"kind\":19,\"insertText\":\"STRING.\"},{\"label\":\"ProcCall\",\"kind\":9},{\"label\":\"NestedProg\",\"kind\":9}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"DateOrdinal\",\"kind\":19,\"insertText\":\"DateOrdinal.\"},{\"label\":\"DateDB2\",\"kind\":19,\"insertText\":\"DateDB2.\"},{\"label\":\"Time6\",\"kind\":19,\"insertText\":\"Time6.\"},{\"label\":\"Time8\",\"kind\":19,\"insertText\":\"Time8.\"},{\"label\":\"TimeDB2\",\"kind\":19,\"insertText\":\"TimeDB2.\"},{\"label\":\"TimeStampDB2\",\"kind\":19,\"insertText\":\"TimeStampDB2.\"},{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2.\"},{\"label\":\"SmallInt\",\"kind\":19,\"insertText\":\"SmallInt.\"},{\"label\":\"Integer\",\"kind\":19,\"insertText\":\"Integer.\"},{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt.\"},{\"label\":\"Real\",\"kind\":19,\"insertText\":\"Real.\"},{\"label\":\"Float\",\"kind\":19,\"insertText\":\"Float.\"},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL.\"},{\"label\":\"DATE\",\"kind\":19,\"insertText\":\"DATE.\"},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY.\"},{\"label\":\"STRING\",\"kind\":19,\"insertText\":\"STRING.\"},{\"label\":\"ProcCall\",\"kind\":9},{\"label\":\"NestedProg\",\"kind\":9}]}}"
     },
     {
       "category": 0,
@@ -155,7 +155,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\"},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\"},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\"},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\"},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\"},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\"},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\"},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\"},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\"},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\"},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\"}]}}"
     },
     {
       "category": 0,
@@ -179,7 +179,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}}]}}"
     },
     {
       "category": 0,
@@ -227,7 +227,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"groupA-2 (Alphanumeric) (groupA-2)\",\"kind\":6,\"insertText\":\"groupA-2\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"groupA-2 (Alphanumeric) (groupA-2)\",\"kind\":6,\"insertText\":\"groupA-2\"}]}}"
     },
     {
       "category": 0,
@@ -259,7 +259,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"varA (DATE) (varA)\",\"kind\":6,\"insertText\":\"varA\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"varA (DATE) (varA)\",\"kind\":6,\"insertText\":\"varA\"}]}}"
     },
     {
       "category": 0,

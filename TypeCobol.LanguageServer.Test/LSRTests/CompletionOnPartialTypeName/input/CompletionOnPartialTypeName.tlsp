@@ -35,7 +35,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}}]}}"
     },
     {
       "category": 0,
@@ -59,7 +59,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}}]}}"
     },
     {
       "category": 0,

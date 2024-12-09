@@ -24,7 +24,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             foreach (var parameter in procedure.Profile.InputParameters)
             {
                 var label = string.Format("{0}{1}({2})", firstPass ? "INPUT " : null, parameter.DataName, parameter.DataType.Name);
-                parametersInfo[i] = new ParameterInformation(label, null); //Replace null with commented documentation linked to parameter
+                parametersInfo[i] = new ParameterInformation() { label = label }; //Add commented documentation linked to parameter
 
                 i++; firstPass = false;
             }
@@ -32,7 +32,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             foreach (var parameter in procedure.Profile.InoutParameters)
             {
                 var label = string.Format("{0}{1}({2})", firstPass ? "IN-OUT " : null, parameter.DataName, parameter.DataType.Name);
-                parametersInfo[i] = new ParameterInformation(label, null);
+                parametersInfo[i] = new ParameterInformation() { label = label };
 
                 i++; firstPass = false;
             }
@@ -40,12 +40,17 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             foreach (var parameter in procedure.Profile.OutputParameters)
             {
                 var label = string.Format("{0}{1}({2})", firstPass ? "OUTPUT " : null, parameter.DataName, parameter.DataType.Name);
-                parametersInfo[i] = new ParameterInformation(label, null);
+                parametersInfo[i] = new ParameterInformation() { label = label };
 
                 i++; firstPass = false;
             }
 
-            return new SignatureInformation(procedure.QualifiedName.ToString(), null, parametersInfo); //Replace null with commented documentation linked to procedure declaration
+            return new SignatureInformation()
+            {
+                label = procedure.QualifiedName.ToString(),
+                documentation = null, //Replace null with commented documentation linked to procedure declaration
+                parameters = parametersInfo
+            };
         }
 
         /// <summary>

@@ -202,7 +202,7 @@ namespace TypeCobol.Test {
         [TestProperty("Time", "fast")]
         public void TCBLAutoReplaceSecurityTest()
         {
-            TestUtils.compareLines(string.Empty, string.Empty, string.Empty, string.Empty);
+            TestUtils.CompareLines(string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
 

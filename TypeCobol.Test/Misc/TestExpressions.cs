@@ -195,7 +195,7 @@ namespace TypeCobol.Test.Misc
             var expectedPath = Path.ChangeExtension(Path.Combine("Misc", "Expressions-expected"), "txt");
             var expected = File.ReadAllText(expectedPath);
             // ensure the string and the file are the same 
-            TestUtils.compareLines("CheckExpressions", strToString.ToString(), expected, PlatformUtils.GetPathForProjectFile(expectedPath));
+            TestUtils.CompareLines("CheckExpressions", strToString.ToString(), expected, PlatformUtils.GetPathForProjectFile(expectedPath));
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace TypeCobol.Test.Misc
             var expectedPath = Path.ChangeExtension(Path.Combine("Misc", "ExpressionsTokens-expected"), "txt");
             var expected = File.ReadAllText(expectedPath);
             // ensure the string and the file are the same 
-            TestUtils.compareLines("CheckExpressionTokens", strToString.ToString(), expected, PlatformUtils.GetPathForProjectFile(expectedPath));
+            TestUtils.CompareLines("CheckExpressionTokens", strToString.ToString(), expected, PlatformUtils.GetPathForProjectFile(expectedPath));
         }
 
         private class TokenCollector : AbstractAstVisitor

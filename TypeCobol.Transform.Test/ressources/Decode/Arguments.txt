@@ -1,15 +1,47 @@
-﻿-c2tc input\EncodedTypeCobol.tcmc output\Result.tcbl
--c2tc input\DVZZJCM06091671950858863561.tcmc output\DVZZJCM07743263199481788228.c2tc
--c2tc input\DVZZJCM5275173981815586154.tcmc output\DVZZJCM5275173981815586154.c2tc
--c2tc input\NoSequenceNumber.tcmc output\NoSequenceNumber.c2tc
--c2tc input\WithLeftAndRightColumns.tcmc output\WithLeftAndRightColumns.c2tc
--c2tc input\Part1Invalid.tcmc output\Part1Invalid.c2tc
--c2tc input\Part1Invalid2.tcmc output\Part1Invalid2.c2tc
--c2tc input\Part1Invalid-NoPart2.tcmc output\Part1Invalid-NoPart2.c2tc
--c2tc input\Empty.tcmc output\Empty.c2tc
--c2tc input\EncodedTypeCobol2.tcmc output\Result2.tcbl
--c2tc input\NoDecodableWithCblOps.cbl output\NoDecodableWithCblOps.cbl
--c2tc input\NoDecodableFile.cbl output\NoDecodableFile.cbl
+﻿-c2tc
+input/EncodedTypeCobol.tcmc
+output/Result.tcbl
 
+-c2tc
+input/DVZZJCM06091671950858863561.tcmc
+output/DVZZJCM07743263199481788228.c2tc
 
+-c2tc
+input/DVZZJCM5275173981815586154.tcmc
+output/DVZZJCM5275173981815586154.c2tc
 
+-c2tc
+input/NoSequenceNumber.tcmc
+output/NoSequenceNumber.c2tc
+
+-c2tc
+input/WithLeftAndRightColumns.tcmc
+output/WithLeftAndRightColumns.c2tc
+
+-c2tc
+input/Part1Invalid.tcmc
+output/Part1Invalid.c2tc
+
+-c2tc
+input/Part1Invalid2.tcmc
+output/Part1Invalid2.c2tc
+
+-c2tc
+input/Part1Invalid-NoPart2.tcmc
+output/Part1Invalid-NoPart2.c2tc
+
+-c2tc
+input/Empty.tcmc
+output/Empty.c2tc
+
+-c2tc
+input/EncodedTypeCobol2.tcmc
+output/Result2.tcbl
+
+-c2tc
+input/NoDecodableWithCblOps.cbl
+output/NoDecodableWithCblOps.cbl
+
+-c2tc
+input/NoDecodableFile.cbl
+output/NoDecodableFile.cbl

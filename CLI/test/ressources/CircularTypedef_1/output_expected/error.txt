@@ -1,5 +1,5 @@
 ReturnCode=ParsingDiagnostics_
-8 errors in "input\MainPgm.tcbl":
+8 errors in "input/MainPgm.tcbl":
 Line 12[13,39] <30, Error, Semantics> - Semantic error: Type circular reference detected : MainType1 -> Type1 -> Type1
 Line 19[13,39] <30, Error, Semantics> - Semantic error: Type circular reference detected : MainType2 -> Type2 -> Type2
 Line 36[13,41] <30, Error, Semantics> - Semantic error: Type circular reference detected : MainType11 -> Type11 -> Type11

@@ -1,4 +1,4 @@
 ﻿ReturnCode=Warning_
-No error in "input\PGM3.rdz.tcbl".
-1 error in "emptyFolder\":
-Line 0[0,0] <35, Warning, Semantics> - Error while parsing dependency file: emptyFolder\, no dependencies found
+No error in "input/PGM3.rdz.tcbl".
+1 error in "emptyFolder/":
+Line 0[0,0] <35, Warning, Semantics> - Error while parsing dependency file: emptyFolder/, no dependencies found
