@@ -13,6 +13,8 @@
             _indices = new List<Index>();
         }
 
+        public bool IsEmpty => _indices.Count == 0;
+
         public string GenerateNextIndex(int size)
         {
             var newIndex = new Index($"Idx-{_hash}-{_indices.Count + 1}", size);

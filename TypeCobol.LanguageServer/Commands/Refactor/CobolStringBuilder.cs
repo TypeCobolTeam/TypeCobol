@@ -10,6 +10,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         private const int MAX_LENGTH = (int)CobolFormatAreas.End_B; // 72
         private const char ONE_SPACE = ' ';
         private const char DEBUG_INDICATOR = 'D';
+        private const char COMMENT_INDICATOR = '*';
 
         private static readonly string _SequenceNumber = new string(ONE_SPACE, CobolFormatAreas.EndNumber - CobolFormatAreas.BeginNumber + 1); // 6 spaces
 
@@ -118,6 +119,31 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             _text.AppendLine();
             InitCurrentLine();
             return previousLineIndentLength;
+        }
+
+        public void AppendCommentSingleLine(string comment)
+        {
+            comment ??= string.Empty;
+
+            if (comment.Length > CobolFormatAreas.End_B - CobolFormatAreas.Begin_A + 1) // 65 chars is the maximum single line comment length
+            {
+                throw new NotSupportedException("This method does not support comment splitting !");
+            }
+
+            if (_currentLineIsEmpty)
+            {
+                _currentLine.Clear();
+                _currentLine.Append(_SequenceNumber);
+                _currentLine.Append(COMMENT_INDICATOR);
+                _currentLine.Append(comment);
+                AppendLine();
+            }
+            else
+            {
+                AppendLine();
+                Debug.Assert(_currentLineIsEmpty);
+                AppendCommentSingleLine(comment);
+            }
         }
 
         public void Clear()

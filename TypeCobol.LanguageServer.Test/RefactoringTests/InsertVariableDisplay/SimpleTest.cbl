@@ -33,7 +33,9 @@ refactoring.source=
        WORKING-STORAGE SECTION.
        01 var1 PIC X(200).
        PROCEDURE DIVISION.
+      *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
       D    DISPLAY 'var1 <' var1 '>'
+      *</DBG>
 
            GOBACK
            .

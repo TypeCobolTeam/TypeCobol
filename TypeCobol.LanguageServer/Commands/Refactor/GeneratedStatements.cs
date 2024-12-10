@@ -8,14 +8,14 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 {
     internal abstract class GeneratedStatement
     {
-        private bool _active;
-
-        protected GeneratedStatement(bool active)
+        protected GeneratedStatement(bool isActive)
         {
-            _active = active;
+            IsActive = isActive;
             Parent = null;
             Children = new List<GeneratedStatement>();
         }
+
+        protected bool IsActive { get; private set; }
 
         public GeneratedStatement Parent { get; private set; }
 
@@ -23,7 +23,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         private void Activate()
         {
-            _active = true;
+            IsActive = true;
             Parent?.Activate();
         }
 
@@ -31,7 +31,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         {
             childStatement.Parent = this;
             Children.Add(childStatement);
-            if (childStatement._active)
+            if (childStatement.IsActive)
             {
                 Activate();
             }
@@ -39,7 +39,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         protected internal void WriteCobolCode(int statementLevel, CobolStringBuilder builder)
         {
-            if (!_active) return;
+            if (!IsActive) return;
 
             WriteIndent();
             WriteStatementOpening(builder);
@@ -79,6 +79,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         {
 
         }
+
+        public bool IsEmpty => !IsActive || Children.Count == 0;
 
         public void WriteCobolCode(CobolStringBuilder builder)
         {

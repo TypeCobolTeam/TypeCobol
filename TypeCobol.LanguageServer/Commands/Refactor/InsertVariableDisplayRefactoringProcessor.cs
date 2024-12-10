@@ -22,7 +22,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         {
             // Generate new hash for this refactoring
             string allArgs = arguments.Select(argument => argument.ToString()).Aggregate(string.Empty, string.Concat);
-            _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + DateTime.Now);
+            _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + EnvironmentVariableProvider.Now);
 
             // Get TextDocumentPosition (contains TextDocumentIdentifier and insertion position)
             var textDocumentPosition = Expect<TextDocumentPosition>(arguments, 0, true);
@@ -75,17 +75,26 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 var statementsForLocalStorageVariables = GenerateDisplayStatements(dataSections.LocalStorageSection, _localStorageSectionSelection, indexGenerator);
                 var statementsForLinkageVariables = GenerateDisplayStatements(dataSections.LinkageSection, _linkageSectionSelection, indexGenerator);
 
+                string openingComment = $"<DBG>{nameof(InsertVariableDisplay)} {EnvironmentVariableProvider.Now:yyyy/MM/dd HH:mm} {EnvironmentVariableProvider.UserName}";
+                const string closingComment = "</DBG>";
+
                 var cobolStringBuilder = new CobolStringBuilder(true);
+                cobolStringBuilder.AppendCommentSingleLine(openingComment);
                 indexGenerator.WriteCobolCode(cobolStringBuilder);
+                cobolStringBuilder.AppendCommentSingleLine(closingComment);
+                bool hasCodeForIndices = !indexGenerator.IsEmpty;
                 string cobolStringForIndices = cobolStringBuilder.ToString();
 
                 cobolStringBuilder.Clear();
+                cobolStringBuilder.AppendCommentSingleLine(openingComment);
                 statementsForWorkingStorageVariables.WriteCobolCode(cobolStringBuilder);
                 statementsForLocalStorageVariables.WriteCobolCode(cobolStringBuilder);
                 statementsForLinkageVariables.WriteCobolCode(cobolStringBuilder);
+                cobolStringBuilder.AppendCommentSingleLine(closingComment);
+                bool hasCodeForStatements = !statementsForWorkingStorageVariables.IsEmpty || !statementsForLocalStorageVariables.IsEmpty || !statementsForLinkageVariables.IsEmpty;
                 string cobolStringForStatements = cobolStringBuilder.ToString();
 
-                if (cobolStringForIndices.Length > 0)
+                if (hasCodeForIndices)
                 {
                     var targetSection = (DataSection)dataSections.WorkingStorageSection ?? dataSections.LocalStorageSection;
                     if (targetSection == null)
@@ -97,7 +106,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     textEdits.Add(InsertAtEnd(targetSection, cobolStringForIndices));
                 }
 
-                if (cobolStringForStatements.Length > 0)
+                if (hasCodeForStatements)
                 {
                     if (_insertBeforeStatement)
                     {
