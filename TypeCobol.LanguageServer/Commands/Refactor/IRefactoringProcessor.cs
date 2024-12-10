@@ -12,6 +12,37 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     public interface IRefactoringProcessor
     {
         /// <summary>
+        /// Sets the environment variable provider for this instance.
+        /// </summary>
+        IEnvironmentVariableProvider EnvironmentVariableProvider { set; }
+
+        /// <summary>
+        /// Collect and parse refactoring arguments.
+        /// </summary>
+        /// <param name="arguments">Untyped argument array, possibly null.</param>
+        /// <returns>Non-null TextDocumentIdentifier found in args, an exception should be thrown if no identifier could be found.</returns>
+        TextDocumentIdentifier PrepareRefactoring(object[] arguments);
+
+        /// <summary>
+        /// Perform validation of the refactoring target.
+        /// </summary>
+        /// <param name="compilationUnit">The program that should be modified by this refactoring.</param>
+        void CheckTarget(CompilationUnit compilationUnit);
+
+        /// <summary>
+        /// Compute text edits corresponding to this refactoring.
+        /// </summary>
+        /// <param name="compilationUnit">Target of the refactoring.</param>
+        /// <returns>A tuple made of a label describing the modification that has been performed and a list of TextEdits.</returns>
+        (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit);
+    }
+
+    /// <summary>
+    /// Base class for refactoring processors.
+    /// </summary>
+    public abstract class AbstractRefactoringProcessor : IRefactoringProcessor
+    {
+        /// <summary>
         /// Arguments deserialization helper. Returns an object read or parsed from
         /// given arguments array and index.
         /// </summary>
@@ -22,7 +53,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         /// will be thrown. False to consider the argument as optional: the default value for the argument type
         /// will be returned.</param>
         /// <returns>Instance of T, possibly null.</returns>
-        static T Expect<T>(object[] arguments, int index, bool required)
+        protected static T Expect<T>(object[] arguments, int index, bool required)
         {
             if (arguments == null || index > arguments.Length - 1)
             {
@@ -60,24 +91,12 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        /// <summary>
-        /// Collect and parse refactoring arguments.
-        /// </summary>
-        /// <param name="arguments">Untyped argument array, possibly null.</param>
-        /// <returns>Non-null TextDocumentIdentifier found in args, an exception should be thrown if no identifier could be found.</returns>
-        TextDocumentIdentifier PrepareRefactoring(object[] arguments);
+        public IEnvironmentVariableProvider EnvironmentVariableProvider { get; set; } = RealEnvironment.Instance; // Initialize with real environment
 
-        /// <summary>
-        /// Perform validation of the refactoring target.
-        /// </summary>
-        /// <param name="compilationUnit">The program that should be modified by this refactoring.</param>
-        void CheckTarget(CompilationUnit compilationUnit);
+        public abstract TextDocumentIdentifier PrepareRefactoring(object[] arguments);
 
-        /// <summary>
-        /// Compute text edits corresponding to this refactoring.
-        /// </summary>
-        /// <param name="compilationUnit">Target of the refactoring.</param>
-        /// <returns>A tuple made of a label describing the modification that has been performed and a list of TextEdits.</returns>
-        (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit);
+        public abstract void CheckTarget(CompilationUnit compilationUnit);
+
+        public abstract (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit);
     }
 }

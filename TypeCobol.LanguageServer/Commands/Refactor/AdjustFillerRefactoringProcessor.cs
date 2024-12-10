@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
@@ -13,7 +12,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     /// <summary>
     /// Refactoring processor for AdjustFillers command
     /// </summary>
-    public class AdjustFillerRefactoringProcessor : IRefactoringProcessor
+    public class AdjustFillerRefactoringProcessor : AbstractRefactoringProcessor
     {
         private class AdjustFillerVisitor : AbstractAstVisitor
         {
@@ -214,13 +213,13 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
+        public override TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
             // Single argument is the text document identifier
-            return IRefactoringProcessor.Expect<TextDocumentIdentifier>(arguments, 0, true);
+            return Expect<TextDocumentIdentifier>(arguments, 0, true);
         }
 
-        public void CheckTarget(CompilationUnit compilationUnit)
+        public override void CheckTarget(CompilationUnit compilationUnit)
         {
             // Require full AST
             if (compilationUnit.ProgramClassDocumentSnapshot == null)
@@ -229,7 +228,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
+        public override (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
         {
             // Compute edits using a visitor
             var visitor = new AdjustFillerVisitor();

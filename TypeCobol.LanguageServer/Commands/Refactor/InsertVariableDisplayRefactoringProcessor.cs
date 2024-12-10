@@ -7,7 +7,7 @@ using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.Commands.Refactor
 {
-    internal class InsertVariableDisplayRefactoringProcessor : IRefactoringProcessor
+    internal class InsertVariableDisplayRefactoringProcessor : AbstractRefactoringProcessor
     {
         private string _hash;
         private Position _insertAt;
@@ -18,18 +18,18 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         private (CodeElement CodeElement, Node Node) _location;
 
-        public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
+        public override TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
             // Generate new hash for this refactoring
             string allArgs = arguments.Select(argument => argument.ToString()).Aggregate(string.Empty, string.Concat);
             _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + DateTime.Now);
 
             // Get TextDocumentPosition (contains TextDocumentIdentifier and insertion position)
-            var textDocumentPosition = IRefactoringProcessor.Expect<TextDocumentPosition>(arguments, 0, true);
+            var textDocumentPosition = Expect<TextDocumentPosition>(arguments, 0, true);
             _insertAt = textDocumentPosition.position;
 
             // Get insert before/after flag
-            _insertBeforeStatement = IRefactoringProcessor.Expect<bool>(arguments, 1, true);
+            _insertBeforeStatement = Expect<bool>(arguments, 1, true);
 
             // Get Selection objects
             _workingStorageSectionSelection = GetSelection(2);
@@ -40,12 +40,12 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
             Selection GetSelection(int index)
             {
-                var jsonSelection = IRefactoringProcessor.Expect<JsonSelection>(arguments, index, false);
+                var jsonSelection = Expect<JsonSelection>(arguments, index, false);
                 return jsonSelection?.Convert();
             }
         }
 
-        public void CheckTarget(CompilationUnit compilationUnit)
+        public override void CheckTarget(CompilationUnit compilationUnit)
         {
             // Require full AST
             if (compilationUnit.ProgramClassDocumentSnapshot == null)
@@ -61,7 +61,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
+        public override (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
         {
             var program = _location.Node.GetProgramNode();
             var dataDivision = program.Children.OfType<DataDivision>().SingleOrDefault();

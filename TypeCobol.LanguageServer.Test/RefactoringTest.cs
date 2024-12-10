@@ -71,6 +71,8 @@ namespace TypeCobol.LanguageServer.Test
 
             public string ExpectedResult { get; }
 
+            public IEnvironmentVariableProvider EnvironmentVariableProvider { get; set; }
+
             public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
             {
                 return new TextDocumentIdentifier(){ uri = nameof(FixedTextEditGenerator) };
