@@ -21,7 +21,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         public override TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
             // Generate new hash for this refactoring
-            string allArgs = arguments.Select(argument => argument.ToString()).Aggregate(string.Empty, string.Concat);
+            string allArgs = arguments.Select(argument => argument?.ToString()).Aggregate(string.Empty, string.Concat);
             _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + EnvironmentVariableProvider.Now);
 
             // Get TextDocumentPosition (contains TextDocumentIdentifier and insertion position)
