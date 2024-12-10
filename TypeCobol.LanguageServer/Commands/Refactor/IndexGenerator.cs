@@ -13,7 +13,7 @@
             _indices = new List<Index>();
         }
 
-        public bool IsEmpty => _indices.Count == 0;
+        public bool HasContent => _indices.Count > 0;
 
         public string GenerateNextIndex(int size)
         {

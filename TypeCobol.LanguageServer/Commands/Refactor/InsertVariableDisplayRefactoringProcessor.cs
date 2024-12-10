@@ -82,7 +82,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 cobolStringBuilder.AppendCommentSingleLine(openingComment);
                 indexGenerator.WriteCobolCode(cobolStringBuilder);
                 cobolStringBuilder.AppendCommentSingleLine(closingComment);
-                bool hasCodeForIndices = !indexGenerator.IsEmpty;
+                bool hasCodeForIndices = indexGenerator.HasContent;
                 string cobolStringForIndices = cobolStringBuilder.ToString();
 
                 cobolStringBuilder.Clear();
@@ -91,7 +91,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 statementsForLocalStorageVariables.WriteCobolCode(cobolStringBuilder);
                 statementsForLinkageVariables.WriteCobolCode(cobolStringBuilder);
                 cobolStringBuilder.AppendCommentSingleLine(closingComment);
-                bool hasCodeForStatements = !statementsForWorkingStorageVariables.IsEmpty || !statementsForLocalStorageVariables.IsEmpty || !statementsForLinkageVariables.IsEmpty;
+                bool hasCodeForStatements = statementsForWorkingStorageVariables.HasContent || statementsForLocalStorageVariables.HasContent || statementsForLinkageVariables.HasContent;
                 string cobolStringForStatements = cobolStringBuilder.ToString();
 
                 if (hasCodeForIndices)

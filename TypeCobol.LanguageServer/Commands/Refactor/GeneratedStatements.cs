@@ -80,7 +80,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
         }
 
-        public bool IsEmpty => !IsActive || Children.Count == 0;
+        public bool HasContent => IsActive && Children.Count > 0;
 
         public void WriteCobolCode(CobolStringBuilder builder)
         {
