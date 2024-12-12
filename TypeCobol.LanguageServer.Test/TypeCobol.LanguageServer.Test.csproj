@@ -33,9 +33,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="RefactoringTests\**\*">
+    <None Update="ProcessorTests\**\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+	
+  <ItemGroup>
+    <None Update="RefactoringTests\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>	
 
 </Project>
