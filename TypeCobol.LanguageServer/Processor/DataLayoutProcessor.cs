@@ -2,6 +2,8 @@
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer
 {
@@ -27,10 +29,11 @@ namespace TypeCobol.LanguageServer
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
         /// <param name="separator">Separator for fields to use</param>
         /// <returns>Tuple made of the CSV header and CSV rows</returns>
-        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
+        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
         {
             var rows = new List<string>();
-            foreach (var dataLayoutNode in CollectDataLayoutNodes(compilationUnit))
+            var dataLayoutNodes = CollectDataLayoutNodesAtPosition(compilationUnit, position);
+            foreach (var dataLayoutNode in dataLayoutNodes)
             {
                 var row = CreateRow(dataLayoutNode, separator);
                 if (row != null)
@@ -155,28 +158,36 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodes(CompilationUnit compilationUnit)
+        private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position)
         {
+            var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
+            if (location.CodeElement == null)
+            {
+                throw new Exception($"No program found in: '{compilationUnit.TextSourceInfo.Name}'"); ;
+            }
+
             var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
-            Node dataDivision = compilationUnit?.TemporaryProgramClassDocumentSnapshot?.Root?.MainProgram?.GetChildren<DataDivision>()?.FirstOrDefault();
+            var program = location.Node.GetProgramNode();
+            Node dataDivision = program?.GetChildren<DataDivision>()?.FirstOrDefault();
             if (dataDivision != null)
             {
-                // Consider data declared in the Working storage
-                var workingStorage = dataDivision.GetChildren<WorkingStorageSection>().FirstOrDefault();
-                if (workingStorage != null)
-                {
-                    CollectDataLayoutNodes(0, workingStorage, 0);
-                }
-
-                // Consider also data declared in the Local storage
-                var localStorage = dataDivision.GetChildren<LocalStorageSection>().FirstOrDefault();
-                if (localStorage != null)
-                {
-                    CollectDataLayoutNodes(0, localStorage, 0);
-                }
+                // Consider data declared in the Working and Local storage
+                CollectDataLayoutNodesInSection<WorkingStorageSection>();
+                CollectDataLayoutNodesInSection<LocalStorageSection>();
+                // Consider also data declared in the Linkage
+                CollectDataLayoutNodesInSection<LinkageSection>();
             }
 
             return dataLayoutNodes;
+
+            void CollectDataLayoutNodesInSection<N>() where N : Node
+            {
+                var section = dataDivision.GetChildren<N>().FirstOrDefault();
+                if (section != null)
+                {
+                    CollectDataLayoutNodes(0, section, 0);
+                }
+            }
 
             void CollectDataLayoutNodes(int nodeLevel, Node node, int occursDimension)
             {

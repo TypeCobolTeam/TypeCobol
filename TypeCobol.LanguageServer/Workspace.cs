@@ -12,7 +12,6 @@ using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Nodes;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Preprocessor;
@@ -970,9 +969,9 @@ namespace TypeCobol.LanguageServer
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
         /// <param name="separator">Separator for fields to use</param>
         /// <returns>Tuple made of the CSV header and CSV rows</returns>
-        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
+        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, VsCodeProtocol.Position position, string separator)
         {
-            return _dataLayoutProcessor.GetDataLayoutAsCSV(compilationUnit, separator);
+            return _dataLayoutProcessor.GetDataLayoutAsCSV(compilationUnit, position, separator);
         }
         #endregion
 

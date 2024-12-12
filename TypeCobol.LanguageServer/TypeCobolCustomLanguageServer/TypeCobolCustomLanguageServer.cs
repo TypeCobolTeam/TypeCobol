@@ -211,14 +211,15 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="parameter"></param>
         protected virtual GetDataLayoutResult OnDidReceiveGetDataLayout(GetDataLayoutParams parameter)
         {
-            string uri = parameter.textDocument.uri;
+            string uri = parameter.textDocumentPosition.textDocument.uri;
 
             var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (context != null && context.FileCompiler != null)
             {
                 // We only support CSV for now. In the future outputType should be checked here
+                var position = parameter.textDocumentPosition.position;
                 const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
-                var csv = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, SEPARATOR);
+                var csv = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
                 var csvResult = new GetDataLayoutCSVResult()
                 {
                     header = csv.Header,
@@ -228,7 +229,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 return new GetDataLayoutResult() { csvResult = csvResult };
             }
 
-            throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");
+            throw new Exception($"Unknown document: '{uri}'");
         }
 
 #if EUROINFO_RULES

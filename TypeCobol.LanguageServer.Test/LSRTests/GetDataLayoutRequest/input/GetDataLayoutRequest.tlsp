@@ -23,7 +23,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/getDataLayoutRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\"},\"outputType\":\"CSV\"}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/getDataLayoutRequest\",\"params\":{\"textDocumentPosition\":{\"textDocument\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\"},\"position\":{\"line\":10,\"character\":10}},\"outputType\":\"CSV\"}}"
     },
     {
       "category": 1,
@@ -47,7 +47,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"typecobol/getDataLayoutRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\"},\"outputType\":\"CSV\"}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"typecobol/getDataLayoutRequest\",\"params\":{\"textDocumentPosition\":{\"textDocument\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\"},\"position\":{\"line\":10,\"character\":10}},\"outputType\":\"CSV\"}}"
     },
     {
       "category": 1,
