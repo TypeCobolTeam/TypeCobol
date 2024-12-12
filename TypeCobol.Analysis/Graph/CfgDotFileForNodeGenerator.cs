@@ -37,8 +37,10 @@ namespace TypeCobol.Analysis.Graph
                         sb.Append('\\');
                         break;
                     case '\n':
+                        sb.Append("  "); // Lines breaks translate to two spaces regardless of the platform
+                        continue;
                     case '\r':
-                        sb.Append(' ');
+                        // Ignore CR
                         continue;
                 }
                 sb.Append(c);
