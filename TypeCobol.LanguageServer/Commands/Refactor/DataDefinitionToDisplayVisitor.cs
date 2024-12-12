@@ -6,6 +6,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
     {
         private readonly IndexGenerator _indexGenerator;
         private int _dataLogicalLevel;
+        private int _occursDimension;
         private readonly Stack<string> _indices;
         private GeneratedStatement _currentStatement;
 
@@ -14,6 +15,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         {
             _indexGenerator = indexGenerator;
             _dataLogicalLevel = -1;
+            _occursDimension = 0;
             _indices = new Stack<string>();
             GeneratedStatements = new GeneratedRoot();
             _currentStatement = GeneratedStatements;
@@ -62,6 +64,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             // Generate PERFORM if need be
             if (dataDefinition.IsTableOccurence)
             {
+                _occursDimension++;
+
                 // Compute index size
                 string max = dataDefinition.MaxOccurencesCount.ToString();
                 int indexSize = max.Length;
@@ -77,8 +81,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     _currentStatement = ifNumeric;
                 }
 
-                // Generate index
-                string index = _indexGenerator.GenerateNextIndex(indexSize);
+                // Reuse or generate new index
+                string index = _indexGenerator.GetOrCreateIndex(_occursDimension, indexSize);
                 _indices.Push(index);
 
                 // Generate PERFORM
@@ -118,6 +122,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 }
 
                 _indices.Pop();
+
+                _occursDimension--;
             }
 
             _dataLogicalLevel--;

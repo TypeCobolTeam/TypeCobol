@@ -1,8 +1,13 @@
-﻿namespace TypeCobol.LanguageServer.Commands.Refactor
+﻿using System.Diagnostics;
+
+namespace TypeCobol.LanguageServer.Commands.Refactor
 {
     internal class IndexGenerator
     {
-        private record struct Index(string Name, int Size);
+        private record Index(string Name)
+        {
+            public int Size { get; set; }
+        }
 
         private readonly string _hash;
         private readonly List<Index> _indices;
@@ -15,11 +20,25 @@
 
         public bool HasContent => _indices.Count > 0;
 
-        public string GenerateNextIndex(int size)
+        public string GetOrCreateIndex(int occursDimension, int size)
         {
-            var newIndex = new Index($"Idx-{_hash}-{_indices.Count + 1}", size);
-            _indices.Add(newIndex);
-            return newIndex.Name;
+            Debug.Assert(occursDimension >= 1);
+            Debug.Assert(size >= 1);
+
+            Index index;
+            if (occursDimension > _indices.Count)
+            {
+                Debug.Assert(occursDimension == _indices.Count + 1);
+                index = new Index($"Idx-{_hash}-{occursDimension}") { Size = size };
+                _indices.Add(index);
+            }
+            else
+            {
+                index = _indices[occursDimension - 1];
+                index.Size = Math.Max(index.Size, size);
+            }
+
+            return index.Name;
         }
 
         public void WriteCobolCode(CobolStringBuilder builder)
