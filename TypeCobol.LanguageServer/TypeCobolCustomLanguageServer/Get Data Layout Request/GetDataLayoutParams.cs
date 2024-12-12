@@ -9,7 +9,7 @@
         internal const string OUTPUT_TYPE_CSV = "CSV";
 
         /// <summary>
-        /// The document and position that requests the Data Layout
+        /// The document and the position that request the Data Layout
         /// </summary>
         public VsCodeProtocol.TextDocumentPosition textDocumentPosition { get; set; }
 

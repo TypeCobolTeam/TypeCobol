@@ -27,6 +27,7 @@ namespace TypeCobol.LanguageServer
         /// Get the Data Layout rows for a Program or a Copy (output = CSV)
         /// </summary>
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
+        /// <param name="position">Position determining the variables to be considered (i.e. from the main, stacked or nested program)</param>
         /// <param name="separator">Separator for fields to use</param>
         /// <returns>Tuple made of the CSV header and CSV rows</returns>
         public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
