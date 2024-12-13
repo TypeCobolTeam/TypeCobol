@@ -72,7 +72,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
                     if (line.All(c => c == '-'))
                     {
                         // The line is a separator, flush content read so far into correct variable
-                        string currentPart = builder.ToString()[..^2]; // Remove trailing line break
+                        string currentPart = builder.ToString()[..^Environment.NewLine.Length]; // Remove trailing line break
                         builder.Clear();
 
                         switch (state)
