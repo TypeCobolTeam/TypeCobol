@@ -304,7 +304,7 @@ namespace TypeCobol.LanguageServer
             {                
                 //Create a temporary dot file.
                 string tempFile = Path.GetTempFileName();
-                using (TextWriter writer = writeToFile ? File.CreateText(tempFile)  : (TextWriter)new StringWriter())
+                using (TextWriter writer = writeToFile ? File.CreateText(tempFile) : new StringWriter() { NewLine = " " }) // Do not output newlines when writing to notification param object
                 {
                     CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier() { uri = docContext.TextDocument.uri }, writeToFile ? tempFile : null);
                     CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Text;
 using TypeCobol.Analysis.Cfg;
 using TypeCobol.Compiler;
@@ -49,8 +48,8 @@ namespace TypeCobol.Analysis.Graph
         }
 
         private readonly HashSet<int> _encounteredBlocks;
-        private readonly StringBuilder _blocksBuffer;
-        private readonly StringBuilder _edgesBuffer;
+        private StringWriter _blocksBuffer;
+        private StringWriter _edgesBuffer;
         private ControlFlowGraph<Node, D> _cfg;
         private readonly int _clusterIndex;
 
@@ -69,26 +68,28 @@ namespace TypeCobol.Analysis.Graph
 
         private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, CfgDotFileForNodeGenerator<D> parentGenerator, int clusterIndex)
         {
-            this._clusterIndex = clusterIndex;
             if (parentGenerator != null)
             {
                 //List of encountered blocks is inherited from parent
                 _encounteredBlocks = parentGenerator._encounteredBlocks;
+                //Separate block writer but keep params from parent
+                _blocksBuffer = new StringWriter(parentGenerator._blocksBuffer.FormatProvider) { NewLine = parentGenerator._blocksBuffer.NewLine };
                 //In DOT, if an edge belongs to a subgraph, then its target block must be included into that subgraph
                 //To avoid unwanted block inclusions, we write all edges at the root level (main digraph)
                 _edgesBuffer = parentGenerator._edgesBuffer;
+
                 this.BlockEmittedEvent = parentGenerator.BlockEmittedEvent;
             }
             else
             {
                 _encounteredBlocks = new HashSet<int>();
-                _edgesBuffer = new StringBuilder();
+                //Instance are created when generation is requested
+                _blocksBuffer = null;
+                _edgesBuffer = null;
             }
 
-            //The blocks buffer is per instance
-            _blocksBuffer = new StringBuilder();
-
             _cfg = cfg;
+            _clusterIndex = clusterIndex;
         }
 
         /// <summary>
@@ -115,11 +116,18 @@ namespace TypeCobol.Analysis.Graph
         {
             //Reset state
             _encounteredBlocks.Clear();
-            _blocksBuffer.Clear();
-            _edgesBuffer.Clear();
+            Debug.Assert(_blocksBuffer == null);
+            _blocksBuffer = new StringWriter(writer.FormatProvider) { NewLine = writer.NewLine };
+            _edgesBuffer ??= new StringWriter(writer.FormatProvider) { NewLine = writer.NewLine };
 
             //Nothing to generate
-            if (_cfg == null) return;
+            if (_cfg == null)
+            {
+                //Reset writers and return
+                _blocksBuffer = null;
+                _edgesBuffer = null;
+                return;
+            }
 
             //Write header
             writer.WriteLine("digraph Cfg {");
@@ -147,12 +155,15 @@ namespace TypeCobol.Analysis.Graph
             //Close graph
             writer.WriteLine("}");
             writer.Flush();
+
+            //Reset writers
+            _blocksBuffer = null;
+            _edgesBuffer = null;
         }
 
         private bool EmitBlock(BasicBlock<Node, D> block, int incomingEdge, BasicBlock<Node, D> predecessorBlock, ControlFlowGraph<Node, D> cfg)
         {
-            if (_encounteredBlocks.Contains(block.Index)) return false;
-            _encounteredBlocks.Add(block.Index);
+            if (!_encounteredBlocks.Add(block.Index)) return false;
 
             //Write block to blocks buffer
             WriteBlock(block);
@@ -160,7 +171,6 @@ namespace TypeCobol.Analysis.Graph
             //Special treatment for group blocks
             if (block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group && !group.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
-                StringWriter writer = new StringWriter();
                 if (group.Group.Count > 0)
                 {
                     //Generate blocks for subgraph using a nested generator
@@ -170,36 +180,34 @@ namespace TypeCobol.Analysis.Graph
                     _cfg.DFS(first, subgraphGenerator.EmitBlock);
                     string blocks = subgraphGenerator._blocksBuffer.ToString();
 
-                    System.Diagnostics.Debug.Assert(blocks != null);
+                    Debug.Assert(blocks != null);
                     if (blocks != string.Empty)
                     {
-                        //Write subgraph
-                        writer.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
-                        writer.WriteLine("color = blue;");
-                        writer.WriteLine($"label = \"{((ControlFlowGraphBuilder<D>.BasicBlockForNode) first).Tag}\";");
-                        writer.WriteLine(blocks);
-                        writer.WriteLine('}');
+                        //Include subgraph into parent graph
+                        _blocksBuffer.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
+                        _blocksBuffer.WriteLine("color = blue;");
+                        _blocksBuffer.WriteLine($"label = \"{((ControlFlowGraphBuilder<D>.BasicBlockForNode) first).Tag}\";");
+                        _blocksBuffer.WriteLine(blocks);
+                        _blocksBuffer.WriteLine('}');
                     }
 
                     //Create dashed link to the group
-                    writer.WriteLine("Block{0} -> Block{1} [style=dashed]", block.Index, first.Index);
+                    _blocksBuffer.WriteLine("Block{0} -> Block{1} [style=dashed]", block.Index, first.Index);
                 }
                 else
                 {
                     //Group is empty, create link to an empty block
-                    writer.WriteLine("Block{0} -> \"\" [style=dashed]", block.Index);
+                    _blocksBuffer.WriteLine("Block{0} -> \"\" [style=dashed]", block.Index);
                 }
-                writer.Flush();
 
-                //Include subgraph into parent graph
-                _blocksBuffer.AppendLine(writer.ToString());
+                _blocksBuffer.WriteLine();
             }
 
             //Write edges to edges buffer
             foreach (var edge in block.SuccessorEdges)
             {
-                System.Diagnostics.Debug.Assert(edge >= 0 && edge < _cfg.SuccessorEdges.Count);
-                _edgesBuffer.AppendLine($"Block{block.Index} -> Block{_cfg.SuccessorEdges[edge].Index}");
+                Debug.Assert(edge >= 0 && edge < _cfg.SuccessorEdges.Count);
+                _edgesBuffer.WriteLine($"Block{block.Index} -> Block{_cfg.SuccessorEdges[edge].Index}");
             }
             if (BlockEmittedEvent != null)
                 BlockEmittedEvent(block, _clusterIndex);
@@ -209,21 +217,21 @@ namespace TypeCobol.Analysis.Graph
         private void WriteBlock(BasicBlock<Node, D> block)
         {
             //Block title
-            _blocksBuffer.AppendLine($"Block{block.Index} [");
-            _blocksBuffer.Append("label = \"{");
-            _blocksBuffer.Append(BlockName(block));
-            _blocksBuffer.Append("|");
+            _blocksBuffer.WriteLine($"Block{block.Index} [");
+            _blocksBuffer.Write("label = \"{");
+            _blocksBuffer.Write(BlockName(block));
+            _blocksBuffer.Write("|");
 
             //Print all instructions inside the block.
             foreach (var i in block.Instructions)
             {
-                _blocksBuffer.Append(InstructionToString(i));
-                _blocksBuffer.Append("\\l");
+                _blocksBuffer.Write(InstructionToString(i));
+                _blocksBuffer.Write("\\l");
             }
 
             //Close block
-            _blocksBuffer.AppendLine("}\"");
-            _blocksBuffer.AppendLine("]");
+            _blocksBuffer.WriteLine("}\"");
+            _blocksBuffer.WriteLine("]");
         }
 
         /// <summary>
@@ -260,7 +268,7 @@ namespace TypeCobol.Analysis.Graph
                 ? "<null>"
                 : FullInstruction
                     ? Escape(instruction.CodeElement.SourceText)
-                    : System.Enum.GetName(typeof(CodeElementType), instruction.CodeElement.Type);
+                    : Enum.GetName(typeof(CodeElementType), instruction.CodeElement.Type);
         }
     }
 }
