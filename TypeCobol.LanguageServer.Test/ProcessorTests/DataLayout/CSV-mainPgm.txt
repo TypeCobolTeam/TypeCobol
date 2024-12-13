@@ -1,5 +1,5 @@
-[{"line":10,"character":12}]
----------------------------------------------------------------------------
+{"line":10,"character":12}
+---------------------------------------------------------------------------------
 LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length
 6;0;1;main-group;GROUP;1;1;1
 7;1;5;main-var;PIC X;1;1;1
