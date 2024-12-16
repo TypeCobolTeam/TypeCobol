@@ -169,21 +169,20 @@ namespace TypeCobol.LanguageServer
 
             var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
             var program = location.Node.GetProgramNode();
-            Node dataDivision = program?.GetChildren<DataDivision>()?.FirstOrDefault();
+            DataDivision dataDivision = program?.GetChildren<DataDivision>()?.FirstOrDefault();
             if (dataDivision != null)
             {
-                // Consider data declared in the Working and Local storage
-                CollectDataLayoutNodesInSection<WorkingStorageSection>();
-                CollectDataLayoutNodesInSection<LocalStorageSection>();
-                // Consider also data declared in the Linkage
-                CollectDataLayoutNodesInSection<LinkageSection>();
+                // Consider data declared in the Working and Local storage sections
+                CollectDataLayoutNodesInSection(dataDivision.WorkingStorageSection);
+                CollectDataLayoutNodesInSection(dataDivision.LocalStorageSection);
+                // Consider also data declared in the Linkage section
+                CollectDataLayoutNodesInSection(dataDivision.LinkageSection);
             }
 
             return dataLayoutNodes;
 
-            void CollectDataLayoutNodesInSection<N>() where N : Node
+            void CollectDataLayoutNodesInSection(DataSection section)
             {
-                var section = dataDivision.GetChildren<N>().FirstOrDefault();
                 if (section != null)
                 {
                     CollectDataLayoutNodes(0, section, 0);

@@ -16,38 +16,79 @@ namespace TypeCobol.Compiler.Nodes {
     public class DataDivision: GenericNode<DataDivisionHeader>, Parent<DataSection> {
 
         public const string NODE_ID = "data-division";
+
+        // The 5 (optional) data sections
+        private FileSection _fileSection;
+        private GlobalStorageSection _globalStorageSection;
+        private WorkingStorageSection _workingStorageSection;
+        private LocalStorageSection _localStorageSection;
+        private LinkageSection _linkageSection;
+
+        public FileSection FileSection => _fileSection;
+        public GlobalStorageSection GlobalStorageSection => _globalStorageSection;
+        public WorkingStorageSection WorkingStorageSection => _workingStorageSection;
+        public LocalStorageSection LocalStorageSection => _localStorageSection;
+        public LinkageSection LinkageSection => _linkageSection;
+
         public DataDivision(DataDivisionHeader header): base(header) { }
         public override string ID { get { return NODE_ID; } }
 
         public override void Add(Node child, int index = -1) {
-            if (index <= 0) index = WhereShouldIAdd(child.GetType());
+            if (child is DataSection section) UpdateSection(section);
+            if (index <= 0) index = WhereShouldIAdd(child);
+
             base.Add(child,index);
         }
-        private int WhereShouldIAdd(System.Type section) {
-            if (Tools.Reflection.IsTypeOf(section, typeof(FileSection))) return 0;
-            int ifile = -2;
-            int iglobal = -2;
-            int iworking = -2;
-            int ilocal = -2;
-            int ilinkage = -2;
-            int c = 0;
-            foreach(var child in this.Children()) {
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(FileSection))) ifile = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(GlobalStorageSection))) iglobal = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(WorkingStorageSection))) iworking = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LocalStorageSection))) ilocal = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LinkageSection))) ilinkage = c;
-                c++;
+
+        private void UpdateSection(DataSection section)
+        {
+            if (section is FileSection fileSection)
+            {
+                _fileSection = fileSection;
+            } else if (section is GlobalStorageSection globalStorageSection)
+            {
+                _globalStorageSection = globalStorageSection;
             }
-            if (Tools.Reflection.IsTypeOf(section, typeof(GlobalStorageSection))) return Math.Max(0,ifile+1);
-            if (Tools.Reflection.IsTypeOf(section, typeof(WorkingStorageSection))) return Math.Max(0, Math.Max(ifile + 1, iglobal + 1));
-            if (Tools.Reflection.IsTypeOf(section, typeof(LocalStorageSection))) return Math.Max(0,Math.Max(Math.Max(ifile+1, iglobal+1), iworking + 1));
-            if (Tools.Reflection.IsTypeOf(section, typeof(LinkageSection))) return Math.Max(0, Math.Max(Math.Max(Math.Max(ifile + 1, iglobal + 1), iworking + 1), ilocal + 1));
-            return 0;
+            else if (section is WorkingStorageSection workingStorageSection)
+            {
+                _workingStorageSection = workingStorageSection;
+            }
+            else if (section is LocalStorageSection localStorageSection)
+            {
+                _localStorageSection = localStorageSection;
+            }
+            else if (section is LinkageSection linkageSection)
+            {
+                _linkageSection = linkageSection;
+            }
+        }
+
+        private int WhereShouldIAdd(Node node) {
+            int result = 0;
+            if (node is GlobalStorageSection)
+            {
+                if (_fileSection != null) result++;
+            }
+            else if (node is WorkingStorageSection)
+            {
+                if (_fileSection != null) result++;
+                if (_globalStorageSection != null) result++;
+            }
+            else if (node is LocalStorageSection)
+            {
+                if (_fileSection != null) result++;
+                if (_globalStorageSection != null) result++;
+                if (_workingStorageSection != null) result++;
+            }
+            else if (node is LinkageSection)
+            {
+                if (_fileSection != null) result++;
+                if (_globalStorageSection != null) result++;
+                if (_workingStorageSection != null) result++;
+                if (_localStorageSection != null) result++;
+            }
+
+            return result;
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
