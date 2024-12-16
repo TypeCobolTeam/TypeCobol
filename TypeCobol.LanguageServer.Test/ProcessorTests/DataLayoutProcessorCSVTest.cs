@@ -16,18 +16,19 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
     [TestClass]
     public class DataLayoutProcessorCSVTest
     {
+        private const string TEST_DATA_PREFIX = "CSV-";
         private const string RELATIVE_PATH = "DataLayout";
         private const string ROOT_PATH = "ProcessorTests";
         private readonly DataLayoutProcessor _processor = new();
 
-        private void DoTestProcessor(string sourceFileName, string testDataFileName, bool isCopy = false, [CallerMemberName] string testName = null)
+        private void DoTestProcessor(string sourceFileName, bool isCopy = false, [CallerMemberName] string testName = null)
         {
             // Parse source file
             var folder = PlatformUtils.GetPathForProjectFile(RELATIVE_PATH, Path.GetFullPath(ROOT_PATH));
             var compilationUnit = ParserUtils.ParseCobolFile(sourceFileName, folder, isCopy, execToStep: ExecutionStep.SemanticCrossCheck);
 
             // Parse data file
-            var testDataFilePath = $"{Path.Combine(folder, testDataFileName)}.txt";
+            var testDataFilePath = $"{Path.Combine(folder, TEST_DATA_PREFIX + testName)}.txt";
             var testData = ParseContent(testDataFilePath);
 
             // Retrieve unique argument = position
@@ -62,18 +63,18 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         }
 
         [TestMethod]
-        public void TestCopy() => DoTestProcessor("copy", "CSV-copy", true);
+        public void Copy() => DoTestProcessor("copy", true);
 
         [TestMethod]
-        public void TestSimplePgm() => DoTestProcessor("simplePgm", "CSV-simplePgm");
+        public void SimplePgm() => DoTestProcessor("simplePgm");
 
         [TestMethod]
-        public void TestMainPgm() => DoTestProcessor("stackedAndNestedPgm", "CSV-mainPgm");
+        public void MainPgm() => DoTestProcessor("stackedAndNestedPgm");
 
         [TestMethod]
-        public void TestStackedPgm() => DoTestProcessor("stackedAndNestedPgm", "CSV-stackedPgm");
+        public void StackedPgm() => DoTestProcessor("stackedAndNestedPgm");
 
         [TestMethod]
-        public void TestNestedPgm() => DoTestProcessor("stackedAndNestedPgm", "CSV-nestedPgm");
+        public void NestedPgm() => DoTestProcessor("stackedAndNestedPgm");
     }
 }
