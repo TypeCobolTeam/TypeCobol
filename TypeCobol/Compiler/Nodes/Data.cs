@@ -17,78 +17,71 @@ namespace TypeCobol.Compiler.Nodes {
 
         public const string NODE_ID = "data-division";
 
+        /// <summary>
+        /// Lists indices for data sections
+        /// </summary>
+        private enum SectionIndex
+        {
+            FileSection,
+            GlobalStorageSection,
+            WorkingStorageSection,
+            LocalStorageSection,
+            LinkageSection
+        }
         // The 5 (optional) data sections
-        private FileSection _fileSection;
-        private GlobalStorageSection _globalStorageSection;
-        private WorkingStorageSection _workingStorageSection;
-        private LocalStorageSection _localStorageSection;
-        private LinkageSection _linkageSection;
-
-        public FileSection FileSection => _fileSection;
-        public GlobalStorageSection GlobalStorageSection => _globalStorageSection;
-        public WorkingStorageSection WorkingStorageSection => _workingStorageSection;
-        public LocalStorageSection LocalStorageSection => _localStorageSection;
-        public LinkageSection LinkageSection => _linkageSection;
+        private DataSection[] _sections = new DataSection[5];
+        public FileSection FileSection => (FileSection) _sections[(int)SectionIndex.FileSection];
+        public GlobalStorageSection GlobalStorageSection => (GlobalStorageSection)_sections[(int)SectionIndex.GlobalStorageSection];
+        public WorkingStorageSection WorkingStorageSection => (WorkingStorageSection)_sections[(int)SectionIndex.WorkingStorageSection];
+        public LocalStorageSection LocalStorageSection => (LocalStorageSection)_sections[(int)SectionIndex.LocalStorageSection];
+        public LinkageSection LinkageSection => (LinkageSection)_sections[(int)SectionIndex.LinkageSection];
 
         public DataDivision(DataDivisionHeader header): base(header) { }
         public override string ID { get { return NODE_ID; } }
 
-        public override void Add(Node child, int index = -1) {
-            if (child is DataSection section) UpdateSection(section);
-            if (index <= 0) index = WhereShouldIAdd(child);
+        public override void Add(Node child, int index = -1)
+        {
+            var maxSectionIndex = UpdateSection(child);
+            if (index <= 0) index = WhereShouldIAdd(maxSectionIndex);
 
             base.Add(child,index);
         }
 
-        private void UpdateSection(DataSection section)
+        private int UpdateSection(Node node)
         {
-            if (section is FileSection fileSection)
+            int result = -1;
+            if (node is FileSection fileSection)
             {
-                _fileSection = fileSection;
-            } else if (section is GlobalStorageSection globalStorageSection)
-            {
-                _globalStorageSection = globalStorageSection;
+                result = (int)SectionIndex.FileSection;
+                _sections[result] = fileSection;
             }
-            else if (section is WorkingStorageSection workingStorageSection)
+            else if (node is GlobalStorageSection globalStorageSection)
             {
-                _workingStorageSection = workingStorageSection;
+                result = (int)SectionIndex.GlobalStorageSection;
+                _sections[result] = globalStorageSection;
             }
-            else if (section is LocalStorageSection localStorageSection)
+            else if (node is WorkingStorageSection workingStorageSection)
             {
-                _localStorageSection = localStorageSection;
+                result = (int)SectionIndex.WorkingStorageSection;
+                _sections[result] = workingStorageSection;
             }
-            else if (section is LinkageSection linkageSection)
+            else if (node is LocalStorageSection localStorageSection)
             {
-                _linkageSection = linkageSection;
+                result = (int)SectionIndex.LocalStorageSection;
+                _sections[result] = localStorageSection;
             }
-        }
-
-        private int WhereShouldIAdd(Node node) {
-            int result = 0;
-            if (node is GlobalStorageSection)
+            else if (node is LinkageSection linkageSection)
             {
-                if (_fileSection != null) result++;
-            }
-            else if (node is WorkingStorageSection)
-            {
-                if (_fileSection != null) result++;
-                if (_globalStorageSection != null) result++;
-            }
-            else if (node is LocalStorageSection)
-            {
-                if (_fileSection != null) result++;
-                if (_globalStorageSection != null) result++;
-                if (_workingStorageSection != null) result++;
-            }
-            else if (node is LinkageSection)
-            {
-                if (_fileSection != null) result++;
-                if (_globalStorageSection != null) result++;
-                if (_workingStorageSection != null) result++;
-                if (_localStorageSection != null) result++;
+                result = (int)SectionIndex.LinkageSection;
+                _sections[result] = linkageSection;
             }
 
             return result;
+        }
+
+        private int WhereShouldIAdd(int maxSectionIndex)
+        {
+            return _sections.Take(maxSectionIndex).Count(s => s != null);
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
