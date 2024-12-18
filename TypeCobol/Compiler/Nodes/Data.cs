@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         private enum SectionIndex
         {
-            FileSection,
+            FileSection = 0,
             GlobalStorageSection,
             WorkingStorageSection,
             LocalStorageSection,
@@ -49,31 +49,19 @@ namespace TypeCobol.Compiler.Nodes {
 
         private int UpdateSection(Node node)
         {
-            int result = -1;
-            if (node is FileSection fileSection)
+            int result = node switch
             {
-                result = (int)SectionIndex.FileSection;
-                _sections[result] = fileSection;
-            }
-            else if (node is GlobalStorageSection globalStorageSection)
+                Nodes.FileSection => (int)SectionIndex.FileSection,
+                Nodes.GlobalStorageSection => (int)SectionIndex.GlobalStorageSection,
+                Nodes.WorkingStorageSection => (int)SectionIndex.WorkingStorageSection,
+                Nodes.LocalStorageSection => (int)SectionIndex.LocalStorageSection,
+                Nodes.LinkageSection => (int)SectionIndex.LinkageSection,
+                _ => -1
+            };
+
+            if (result != -1)
             {
-                result = (int)SectionIndex.GlobalStorageSection;
-                _sections[result] = globalStorageSection;
-            }
-            else if (node is WorkingStorageSection workingStorageSection)
-            {
-                result = (int)SectionIndex.WorkingStorageSection;
-                _sections[result] = workingStorageSection;
-            }
-            else if (node is LocalStorageSection localStorageSection)
-            {
-                result = (int)SectionIndex.LocalStorageSection;
-                _sections[result] = localStorageSection;
-            }
-            else if (node is LinkageSection linkageSection)
-            {
-                result = (int)SectionIndex.LinkageSection;
-                _sections[result] = linkageSection;
+                _sections[result] = (DataSection)node;
             }
 
             return result;
@@ -81,6 +69,7 @@ namespace TypeCobol.Compiler.Nodes {
 
         private int WhereShouldIAdd(int maxSectionIndex)
         {
+            // If maxSectionIndex = -1, _sections is not enumerated and Takes returns an empty IEnumerable so Count is 0
             return _sections.Take(maxSectionIndex).Count(s => s != null);
         }
 
