@@ -433,7 +433,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void ReplacingSyntaxOff()
         {
-            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
+            LSRTestHelper.Test("ReplacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
         }
 
         [TestMethod]
