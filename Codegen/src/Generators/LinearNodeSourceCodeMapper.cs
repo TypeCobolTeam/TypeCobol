@@ -684,11 +684,11 @@ namespace TypeCobol.Codegen.Generators
             Nodes[theNode.NodeIndex].To = Nodes[afterNode.NodeIndex].To;
             //Give to the Node its new span
             Nodes[theNode.NodeIndex].Positions = new Tuple<int, int, int, List<int>, List<int>>(
-                Nodes[afterNode.NodeIndex].Positions.Item1,
-                Nodes[afterNode.NodeIndex].Positions.Item1,
                 Nodes[afterNode.NodeIndex].Positions.Item2,
-                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item4[0] },
-                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item5[0] }
+                Nodes[afterNode.NodeIndex].Positions.Item2,
+                Nodes[afterNode.NodeIndex].Positions.Item3,
+                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item4[^1] },
+                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item5[^1] }
                 );
             //First generate a new line befor this node
             theNode.SetFlag(Node.Flag.FactoryGeneratedNodeWithFirstNewLine, true);

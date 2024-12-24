@@ -5,7 +5,7 @@
       *        YPRTD20
       *        YCONVEA
       *        ).
-                                                         
+                        
       
        DATA DIVISION.
        Working-STORAGE SECTION.
