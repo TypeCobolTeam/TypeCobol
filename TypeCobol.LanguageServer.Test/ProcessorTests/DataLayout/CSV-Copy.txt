@@ -1,5 +1,6 @@
 {"line":1,"character":12}
 ---------------------------------------------------------------------------------
+copy
 LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length
 1;0;1;TCOQLF;GROUP;1;6;6
 2;1;5;TCOQLF-Var1;PIC X;1;1;1

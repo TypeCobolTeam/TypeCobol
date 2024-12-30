@@ -39,6 +39,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
             // Build actual result
             var result = new StringBuilder();
+            result.AppendLine(processorResult.Root);
             result.AppendLine(processorResult.Header);
             foreach (var row in processorResult.Rows)
             {
@@ -50,7 +51,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             TestUtils.CompareLines(testName, result.ToString(), expected, null);
         }
 
-        private (string Header, string[] Rows) ExecuteProcessor(CompilationUnit compilationUnit, Position position)
+        private (string Root, string Header, string[] Rows) ExecuteProcessor(CompilationUnit compilationUnit, Position position)
         {
             return _processor.GetDataLayoutAsCSV(compilationUnit, position, ";");
         }

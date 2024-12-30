@@ -29,11 +29,11 @@ namespace TypeCobol.LanguageServer
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
         /// <param name="position">Position determining the variables to be considered (i.e. from the main, stacked or nested program)</param>
         /// <param name="separator">Separator for fields to use</param>
-        /// <returns>Tuple made of the CSV header and CSV rows</returns>
-        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
+        /// <returns>Tuple made of the root (the Copy or the Program containing the data), CSV header and CSV rows</returns>
+        public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
         {
             var rows = new List<string>();
-            var dataLayoutNodes = CollectDataLayoutNodesAtPosition(compilationUnit, position);
+            var dataLayoutNodes = CollectDataLayoutNodesAtPosition(compilationUnit, position, out var root);
             foreach (var dataLayoutNode in dataLayoutNodes)
             {
                 var row = CreateRow(dataLayoutNode, separator);
@@ -44,7 +44,7 @@ namespace TypeCobol.LanguageServer
             }
 
             string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
-            return (header, rows.ToArray());
+            return (root, header, rows.ToArray());
 
             static string CreateRow(Tuple<int, DataDefinition, int> dataLayoutNode, string separator)
             {
@@ -159,7 +159,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position)
+        private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, out string root)
         {
             var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
             if (location.CodeElement == null)
@@ -169,6 +169,7 @@ namespace TypeCobol.LanguageServer
 
             var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
             var program = location.Node.GetProgramNode();
+            root = program?.Name;
             DataDivision dataDivision = program?.GetChildren<DataDivision>()?.FirstOrDefault();
             if (dataDivision != null)
             {

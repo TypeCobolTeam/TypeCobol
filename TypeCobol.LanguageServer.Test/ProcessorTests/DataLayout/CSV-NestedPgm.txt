@@ -1,5 +1,6 @@
 {"line":20,"character":12}
 ---------------------------------------------------------------------------------
+Nested0
 LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length
 20;0;1;Nested0-group;GROUP;1;1;1
 21;1;5;Nested0-var;PIC X;1;1;1

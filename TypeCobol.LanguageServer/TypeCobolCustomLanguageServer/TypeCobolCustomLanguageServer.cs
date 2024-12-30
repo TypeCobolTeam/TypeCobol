@@ -219,11 +219,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 // We only support CSV for now. In the future outputType should be checked here
                 var position = parameter.textDocumentPosition.position;
                 const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
-                var csv = this.Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
+                var result = Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
                 var csvResult = new GetDataLayoutCSVResult()
                 {
-                    header = csv.Header,
-                    rows = csv.Rows,
+                    root = result.Root,
+                    header = result.Header,
+                    rows = result.Rows,
                     separator = SEPARATOR
                 };
                 return new GetDataLayoutResult() { csvResult = csvResult };

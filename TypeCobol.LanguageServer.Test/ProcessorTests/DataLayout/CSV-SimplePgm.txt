@@ -1,5 +1,6 @@
 {"line":10,"character":12}
 ---------------------------------------------------------------------------------
+TCOZEFR0
 LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length
 12;0;1;FILLER (1);GROUP OCCURS 1;1;81;81
 13;1;5;Array1 (1 1);GROUP OCCURS 9;1;81;81
