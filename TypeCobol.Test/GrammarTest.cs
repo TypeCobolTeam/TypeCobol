@@ -50,7 +50,7 @@ namespace TypeCobol.Test {
             options.ExecToStep = ExecutionStep.SemanticCrossCheck;
             options.IsCobolLanguage = true; //Designed for Cobol85 only because we expect generated code to be identical to input code
 
-            string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
+            string[] files = Directory.EnumerateFiles(rootFolder, regex, SearchOption.AllDirectories).OrderBy(p => p).ToArray();
             var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
             string resultFile = "GeneratedResultFile.txt";
 
