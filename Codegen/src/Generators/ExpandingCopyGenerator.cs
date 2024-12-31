@@ -189,7 +189,6 @@ namespace TypeCobol.Codegen.Generators
                 int i = 0;
                 int span = 0;
                 List<int> lineNumbers = new List<int>();
-                List<int> lineOffsets = new List<int>();
                 SourceDocument.SourceLine srcFirstLine = null;
                 do
                 {
@@ -207,15 +206,12 @@ namespace TypeCobol.Codegen.Generators
                             while (++lastLine < curLineIndex)
                             {
                                 lineNumbers.Add(lastLine);
-                                SourceDocument.SourceLine srcLine = TargetDocument[lastLine - 1];
-                                if (srcFirstLine != null) lineOffsets.Add(srcLine.From - srcFirstLine.From);
                             }
                         }
                         SourceDocument.SourceLine curLine = TargetDocument[curLineIndex - 1];
                         if (srcFirstLine == null)
                             srcFirstLine = curLine;
                         lineNumbers.Add(curLineIndex);
-                        lineOffsets.Add(curLine.From - srcFirstLine.From);
                         span = 0;
                         while ((i < ConsumedTokens.Count) && ((curLineIndex == ConsumedTokens[i].Line)
                             || (ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
@@ -236,8 +232,7 @@ namespace TypeCobol.Codegen.Generators
                     }
                 } while (i < ConsumedTokens.Count);
                 lineNumbers.TrimExcess();
-                lineOffsets.TrimExcess();
-                return new NodePositions(from, to, span, lineNumbers, lineOffsets);
+                return new NodePositions(from, to, span, lineNumbers);
             }
             return null;
         }

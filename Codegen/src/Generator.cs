@@ -20,8 +20,7 @@ namespace TypeCobol.Codegen
     /// <param name="To">End position of the node.</param>
     /// <param name="Span">End offset of the node, this is the end column of the node on its last line.</param>
     /// <param name="LineNumbers">List of line numbers the node spans across.</param>
-    /// <param name="LineOffsets">List of offsets for each line of the node.</param>
-    public record NodePositions(int From, int To, int Span, List<int> LineNumbers, List<int> LineOffsets);
+    public record NodePositions(int From, int To, int Span, List<int> LineNumbers);
 
     /// <summary>
     /// The Second Code Generator which can Handle correctly all preprocessor directives
@@ -167,7 +166,6 @@ namespace TypeCobol.Codegen
                 int i = 0;
                 int span = 0;
                 List<int> lineNumbers = new List<int>();
-                List<int> lineOffsets = new List<int>();
                 SourceDocument.SourceLine srcFirstLine = null;
                 do
                 {
@@ -186,15 +184,12 @@ namespace TypeCobol.Codegen
                             while (++lastLine < curLineIndex)
                             {
                                 lineNumbers.Add(lastLine);
-                                SourceDocument.SourceLine srcLine = TargetDocument[lastLine - 1];
-                                if (srcFirstLine != null) lineOffsets.Add(srcLine.From - srcFirstLine.From);
                             }
                         }
                         SourceDocument.SourceLine curLine = TargetDocument[curLineIndex - 1];
                         if (srcFirstLine == null)
                             srcFirstLine = curLine;
                         lineNumbers.Add(curLineIndex);
-                        lineOffsets.Add(curLine.From - srcFirstLine.From);
                         span = 0;
                         while ((i < node.CodeElement.ConsumedTokens.Count) && ((curLineIndex == node.CodeElement.ConsumedTokens[i].Line)
                             || (node.CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
@@ -215,8 +210,7 @@ namespace TypeCobol.Codegen
                     }
                 } while (i < node.CodeElement.ConsumedTokens.Count);
                 lineNumbers.TrimExcess();
-                lineOffsets.TrimExcess();
-                return new NodePositions(from, to, span, lineNumbers, lineOffsets);
+                return new NodePositions(from, to, span, lineNumbers);
             }
             return null;
         }

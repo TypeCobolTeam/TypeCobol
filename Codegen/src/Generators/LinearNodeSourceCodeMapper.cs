@@ -563,9 +563,6 @@ namespace TypeCobol.Codegen.Generators
             //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0);
             if (!(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0))
                 return false;
-            //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.LineOffsets.Count > 0);
-            if (!(Nodes[beforeNode.NodeIndex].Positions.LineOffsets.Count > 0))
-                return false;
             //Debug.Assert(Nodes[beforeNode.NodeIndex].From != null);
             if (!(Nodes[beforeNode.NodeIndex].From != null))
                 return false;
@@ -603,9 +600,6 @@ namespace TypeCobol.Codegen.Generators
             Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0);
             if (!(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0))
                 return false;
-            Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.LineOffsets.Count > 0);
-            if (!(Nodes[beforeNode.NodeIndex].Positions.LineOffsets.Count > 0))
-                return false;
             Debug.Assert(Nodes[beforeNode.NodeIndex].From != null);
             if (!(Nodes[beforeNode.NodeIndex].From != null))
                 return false;
@@ -627,8 +621,7 @@ namespace TypeCobol.Codegen.Generators
                 Nodes[beforeNode.NodeIndex].Positions.From,
                 Nodes[beforeNode.NodeIndex].Positions.From,
                 Nodes[beforeNode.NodeIndex].Positions.From,
-                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.LineNumbers[0] },
-                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.LineOffsets[0] }
+                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.LineNumbers[0] }
                 );
             //We must insert a NewLine
 
@@ -664,9 +657,6 @@ namespace TypeCobol.Codegen.Generators
             Debug.Assert(Nodes[afterNode.NodeIndex].Positions.LineNumbers.Count > 0);
             if (!(Nodes[afterNode.NodeIndex].Positions.LineNumbers.Count > 0))
                 return false;
-            Debug.Assert(Nodes[afterNode.NodeIndex].Positions.LineOffsets.Count > 0);
-            if (!(Nodes[afterNode.NodeIndex].Positions.LineOffsets.Count > 0))
-                return false;
             Debug.Assert(Nodes[afterNode.NodeIndex].From != null);
             if (!(Nodes[afterNode.NodeIndex].From != null))
                 return false;
@@ -687,8 +677,7 @@ namespace TypeCobol.Codegen.Generators
                 Nodes[afterNode.NodeIndex].Positions.To,
                 Nodes[afterNode.NodeIndex].Positions.To,
                 Nodes[afterNode.NodeIndex].Positions.Span,
-                new List<int>() { Nodes[afterNode.NodeIndex].Positions.LineNumbers[^1] },
-                new List<int>() { Nodes[afterNode.NodeIndex].Positions.LineOffsets[^1] }
+                new List<int>() { Nodes[afterNode.NodeIndex].Positions.LineNumbers[^1] }
                 );
             //First generate a new line befor this node
             theNode.SetFlag(Node.Flag.FactoryGeneratedNodeWithFirstNewLine, true);
@@ -935,11 +924,10 @@ namespace TypeCobol.Codegen.Generators
             int line_to = data.Positions.To;
             int span = data.Positions.Span;
             List<int> lines = data.Positions.LineNumbers;
-            List<int> line_offsets = data.Positions.LineOffsets;
             SourceDocument.SourceLine lineindex_srcline = Generator.TargetDocument[lineindex_buffer];
             SourceDocument.SourceLine line = Generator.TargetDocument[lines[0] - 1];
             int delta = line.From - lineindex_srcline.From;
-            data.Positions = new NodePositions(delta + line_from, delta + line_to, span, lines, line_offsets);
+            data.Positions = new NodePositions(delta + line_from, delta + line_to, span, lines);
             //Add Node's data to the list of all Node Data
             Nodes.Add(data);
             //------------------------------------------------------------------------------
@@ -1140,8 +1128,7 @@ namespace TypeCobol.Codegen.Generators
                     int to = data.Buffer.Size;//To the end of the buffer
                     int span = 0;
                     List<int> lines = new List<int>(){ lineGot };//Line number
-                    List<int> offsets = new List<int>(){0};//Line number start at offse 0
-                    NodePositions pos = new NodePositions(from, to, span, lines, offsets);
+                    NodePositions pos = new NodePositions(from, to, span, lines);
                     dummy_node.Positions = pos; 
                 }
             }
