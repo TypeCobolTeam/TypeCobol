@@ -176,15 +176,10 @@ namespace TypeCobol.Codegen.Generators
         /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value is NULL.
         /// In the consumed tokens span over several lines then the size of the newline sequence is included for each line.
         /// The method also calculate the ending span offset from the beginning of the last line.
-        /// It also get the list of Line numbers occupated by this node, and the offset of each line.
-        /// Item1 is the start column
-        /// Item2 is the en column
-        /// Item3 is the span
-        /// Item4 is the list of line numbers
-        /// Item5 is the list of offset inside the line numbers.
+        /// It also gets the list of Line numbers occupated by this node, and the offset of each line.
         /// 
         /// </summary>
-        public Tuple<int, int, int, List<int>, List<int>> FromToPositions(IList<Token> ConsumedTokens)
+        public NodePositions FromToPositions(IList<Token> ConsumedTokens)
         {
             if (ConsumedTokens.Count > 0)
             {
@@ -242,7 +237,7 @@ namespace TypeCobol.Codegen.Generators
                 } while (i < ConsumedTokens.Count);
                 lineNumbers.TrimExcess();
                 lineOffsets.TrimExcess();
-                return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lineNumbers, lineOffsets);
+                return new NodePositions(from, to, span, lineNumbers, lineOffsets);
             }
             return null;
         }
@@ -253,13 +248,13 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="tokens">The list of token to compute positions</param>
         /// <param name="from">Output of the from position</param>
         /// <param name="to">Output of the to position</param>
-        public Tuple<int, int, int, List<int>, List<int>> ComputePositions(IList<Token> tokens, out Position from, out Position to)
+        public NodePositions ComputePositions(IList<Token> tokens, out Position from, out Position to)
         {
-            Tuple<int, int, int, List<int>, List<int>> positions = FromToPositions(tokens);
-            SourceDocument.SourceLine firstLine = TargetDocument[positions.Item4[0] - 1];
-            SourceDocument.SourceLine lastLine = TargetDocument[positions.Item4[positions.Item4.Count - 1] - 1];
-            from = new Position(firstLine.From + positions.Item1 - 1);
-            to = new Position(lastLine.From + positions.Item2);
+            NodePositions positions = FromToPositions(tokens);
+            SourceDocument.SourceLine firstLine = TargetDocument[positions.LineNumbers[0] - 1];
+            SourceDocument.SourceLine lastLine = TargetDocument[positions.LineNumbers[^1] - 1];
+            from = new Position(firstLine.From + positions.From - 1);
+            to = new Position(lastLine.From + positions.To);
             return positions;
         }
 
@@ -271,7 +266,7 @@ namespace TypeCobol.Codegen.Generators
         {
             Position from = null;
             Position to = null;
-            Tuple<int, int, int, List<int>, List<int>> positions = ComputePositions(tokens, out from, out to);
+            NodePositions positions = ComputePositions(tokens, out from, out to);
             TargetDocument.Source.AddPosition(from);//from position
             TargetDocument.Source.AddPosition(to);//To Pos
             Compiler.Source.StringSourceText del_buffer = new Compiler.Source.StringSourceText(new string(' ', to.Pos - from.Pos));
@@ -288,12 +283,12 @@ namespace TypeCobol.Codegen.Generators
             bAddNewLine = false;
             Position cfrom = null;
             Position cto = null;
-            Tuple<int, int, int, List<int>, List<int>> positions = ComputePositions(new List<TypeCobol.Compiler.Scanner.Token>() { copyToken, lastToken }, out cfrom, out cto);
+            NodePositions positions = ComputePositions(new List<TypeCobol.Compiler.Scanner.Token>() { copyToken, lastToken }, out cfrom, out cto);
             TargetDocument.Source.AddPosition(cfrom);//from position
             if (this.Layout == ColumnsLayout.FreeTextFormat)
                 return cfrom;
 
-            SourceDocument.SourceLine sourceLine = TargetDocument[positions.Item4[positions.Item4.Count - 1] - 1];
+            SourceDocument.SourceLine sourceLine = TargetDocument[positions.LineNumbers[^1] - 1];
             int lineLen = -1;
             int lineStartOffset = -1;
             int lineEndOffset = -1;
