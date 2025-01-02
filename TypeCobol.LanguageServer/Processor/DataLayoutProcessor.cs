@@ -162,13 +162,15 @@ namespace TypeCobol.LanguageServer
         private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, out string root)
         {
             var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
-            if (location.CodeElement == null)
+            // Get the node corresponding to the position (if null use the main program)
+            var locationNode = location.Node ?? (compilationUnit.ProgramClassDocumentSnapshot.Root?.MainProgram);
+            if (locationNode == null)
             {
                 throw new Exception($"No program found in: '{compilationUnit.TextSourceInfo.Name}'"); ;
             }
 
             var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
-            var program = location.Node.GetProgramNode();
+            var program = locationNode.GetProgramNode();
             root = program?.Name;
             DataDivision dataDivision = program?.GetChildren<DataDivision>()?.FirstOrDefault();
             if (dataDivision != null)
