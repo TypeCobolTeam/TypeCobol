@@ -1,19 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\Common.props" />
+	<Import Project="..\Common.props" />
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<Description>
+			This command-line utility is the implementation of a Language Server for TypeCobol and Cobol languages.
+			The Language Server conforms to Microsoft LSP (Language Server Protocol) and supports incremental parsing.
+		</Description>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TypeCobol.Analysis\TypeCobol.Analysis.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TypeCobol.Analysis\TypeCobol.Analysis.csproj" />
+	</ItemGroup>
 
 </Project>
