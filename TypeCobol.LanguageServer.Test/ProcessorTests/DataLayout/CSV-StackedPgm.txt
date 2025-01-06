@@ -1,0 +1,6 @@
+{"line":33,"character":12}
+---------------------------------------------------------------------------------
+Stacked1
+LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length
+34;0;1;Stacked1-group;GROUP;1;1;1
+35;1;5;Stacked1-var;PIC X;1;1;1

@@ -13,7 +13,6 @@ using TypeCobol.Tools;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Nodes;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Preprocessor;
@@ -971,10 +970,10 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
         /// <param name="separator">Separator for fields to use</param>
-        /// <returns>Tuple made of the CSV header and CSV rows</returns>
-        public (string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, string separator)
+        /// <returns>Tuple made of the root (the Copy or the Program containing the data), CSV header and CSV rows</returns>
+        public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, VsCodeProtocol.Position position, string separator)
         {
-            return _dataLayoutProcessor.GetDataLayoutAsCSV(compilationUnit, separator);
+            return _dataLayoutProcessor.GetDataLayoutAsCSV(compilationUnit, position, separator);
         }
         #endregion
 

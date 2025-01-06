@@ -19,6 +19,11 @@
         internal const string SEPARATOR = ";";
 
         /// <summary>
+        /// The root element (Program main/nested/stacked or Copy) containing the data
+        /// </summary>
+        public string root { get; set; }
+
+        /// <summary>
         /// The table header
         /// </summary>
         public string header { get; set; }
