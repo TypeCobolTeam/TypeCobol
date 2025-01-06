@@ -67,6 +67,7 @@ namespace TypeCobol.Test
 
         public static void CompareLines(string testName, string[] actualLines, string[] expectedLines, FileInfo expected)
         {
+            // Set to true to automatically replace content in expected file.
             bool autoReplace = false;
 
             if (testName == null && actualLines == null && expectedLines == null && expected == null)
