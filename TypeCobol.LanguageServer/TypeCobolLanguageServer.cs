@@ -307,8 +307,7 @@ namespace TypeCobol.LanguageServer
                 using (TextWriter writer = writeToFile ? File.CreateText(tempFile) : new StringWriter() { NewLine = " " }) // Do not output newlines when writing to notification param object
                 {
                     CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier() { uri = docContext.TextDocument.uri }, writeToFile ? tempFile : null);
-                    CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
-                    gen.FullInstruction = true;
+                    CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]) { FullInstruction = true };
                     gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
                     gen.Report(writer);
                     result = builder.GetParams();
