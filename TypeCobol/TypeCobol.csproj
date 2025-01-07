@@ -1,74 +1,80 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\Common.props" />
+	<Import Project="..\Common.props" />
 
-  <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
-  </PropertyGroup>
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+		<PackageId>TypeCobol.Parser</PackageId>
+		<Description>
+			This class library contains the Typecobol parser. It allows parsing of TypeCobol or standard Cobol programmatically.
+			TypeCobol parser builds rich object model describing (Type)Cobol code and performs syntax and semantic checks.
+			It is an incremental parser that can be used to integrate with an IDE to perform real-time Cobol parsing and analysis.
+		</Description>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />
-    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
-    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="all" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />
+		<PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+		<PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="all" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <Antlr4UseCSharpGenerator>true</Antlr4UseCSharpGenerator>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Antlr4UseCSharpGenerator>true</Antlr4UseCSharpGenerator>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Antlr4 Update="AntlrGrammar\Cobol2002CodeElements.g4">
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Update="AntlrGrammar\CobolCodeElements.g4">
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Update="AntlrGrammar\CobolExpressions.g4">
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Update="AntlrGrammar\CobolWords.g4">
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Update="AntlrGrammar\CodeElements.g4">
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Update="AntlrGrammar\TypeCobolCodeElements.g4">
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-  </ItemGroup>
+	<ItemGroup>
+		<Antlr4 Update="AntlrGrammar\Cobol2002CodeElements.g4">
+			<CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+		</Antlr4>
+		<Antlr4 Update="AntlrGrammar\CobolCodeElements.g4">
+			<CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+		</Antlr4>
+		<Antlr4 Update="AntlrGrammar\CobolExpressions.g4">
+			<CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+		</Antlr4>
+		<Antlr4 Update="AntlrGrammar\CobolWords.g4">
+			<CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+		</Antlr4>
+		<Antlr4 Update="AntlrGrammar\CodeElements.g4">
+			<CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+		</Antlr4>
+		<Antlr4 Update="AntlrGrammar\TypeCobolCodeElements.g4">
+			<CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+		</Antlr4>
+	</ItemGroup>
 
-  <PropertyGroup>
-    <CSCupGenerator>$(MSBuildProjectDirectory)\..\CSCup\bin\$(Configuration)\CSCup.dll</CSCupGenerator>
-    <CSCupGenerationFolder>.\obj\$(Configuration)\CSCupGenerated</CSCupGenerationFolder>
-    <CobolCompilerDirectivesGrammar>$(MSBuildProjectDirectory)\Compiler\CupPreprocessor\CobolCompilerDirectives.cup</CobolCompilerDirectivesGrammar>
-    <TypeCobolProgramGrammar>$(MSBuildProjectDirectory)\Compiler\CupParser\TypeCobolProgram.cup</TypeCobolProgramGrammar>
-  </PropertyGroup>
+	<PropertyGroup>
+		<CSCupGenerator>$(MSBuildProjectDirectory)\..\CSCup\bin\$(Configuration)\CSCup.dll</CSCupGenerator>
+		<CSCupGenerationFolder>.\obj\$(Configuration)\CSCupGenerated</CSCupGenerationFolder>
+		<CobolCompilerDirectivesGrammar>$(MSBuildProjectDirectory)\Compiler\CupPreprocessor\CobolCompilerDirectives.cup</CobolCompilerDirectivesGrammar>
+		<TypeCobolProgramGrammar>$(MSBuildProjectDirectory)\Compiler\CupParser\TypeCobolProgram.cup</TypeCobolProgramGrammar>
+	</PropertyGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <RemoveDir Directories="$(CSCupGenerationFolder)" />
-    <MakeDir Directories="$(CSCupGenerationFolder)" />
-    <Exec Command="dotnet $(CSCupGenerator) -nodate -nopositions -expect 2000 -parser CobolCompilerDirectivesParser -symbols CobolCompilerDirectivesSymbols $(CobolCompilerDirectivesGrammar)" WorkingDirectory="$(CSCupGenerationFolder)" />
-    <Exec Command="dotnet $(CSCupGenerator) -nodate -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(TypeCobolProgramGrammar)" WorkingDirectory="$(CSCupGenerationFolder)" />
-  </Target>
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<RemoveDir Directories="$(CSCupGenerationFolder)" />
+		<MakeDir Directories="$(CSCupGenerationFolder)" />
+		<Exec Command="dotnet $(CSCupGenerator) -nodate -nopositions -expect 2000 -parser CobolCompilerDirectivesParser -symbols CobolCompilerDirectivesSymbols $(CobolCompilerDirectivesGrammar)" WorkingDirectory="$(CSCupGenerationFolder)" />
+		<Exec Command="dotnet $(CSCupGenerator) -nodate -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(TypeCobolProgramGrammar)" WorkingDirectory="$(CSCupGenerationFolder)" />
+	</Target>
 
-  <Target Name="IncludeCSCupGeneratedClassesForCompile" AfterTargets="PreBuildEvent" BeforeTargets="BeforeCompile;CoreCompile">
-    <ItemGroup>
-      <Compile Include="$(CSCupGenerationFolder)\*.cs" />
-    </ItemGroup>
-  </Target>
+	<Target Name="IncludeCSCupGeneratedClassesForCompile" AfterTargets="PreBuildEvent" BeforeTargets="BeforeCompile;CoreCompile">
+		<ItemGroup>
+			<Compile Include="$(CSCupGenerationFolder)\*.cs" />
+		</ItemGroup>
+	</Target>
 
 </Project>
