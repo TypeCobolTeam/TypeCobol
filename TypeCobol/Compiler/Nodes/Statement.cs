@@ -78,11 +78,16 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ToString()
         {
+            var writer = new StringWriter();
+            Write(writer);
+            return writer.ToString();
+        }
+
+        public void Write(TextWriter writer)
+        {
             var doc = FunctionDeclaration.CodeElement.FormalizedCommentDocumentation;
             if (doc != null)
-                return doc.ToString();
-
-            return string.Empty;
+                doc.Write(writer);
         }
 
         public CodeElementType EndType => CodeElementType.CallStatementEnd;

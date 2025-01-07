@@ -63,7 +63,6 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             var parts = LanguageServerTestUtils.ParseMultiplePartsContent(testDataFilePath);
 
             return (parts[0], parts[1], parts[2], parts[3]);
-
         }
 
         internal RefactoringProcessorTest(string testName, CompilationUnit target, IRefactoringProcessor refactoringProcessor, object[] arguments, string expectedResult)
@@ -97,7 +96,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             string actualResult = ApplyTextEdits(refactoring.Label, refactoring.TextEdits);
 
             // Compare actual modified code with expected modified code
-            TestUtils.CompareLines(_testName, actualResult, _expectedResult, null);
+            TestUtils.CompareContent(_testName, actualResult, _expectedResult);
         }
 
         private string ApplyTextEdits(string label, List<TextEdit> changes)

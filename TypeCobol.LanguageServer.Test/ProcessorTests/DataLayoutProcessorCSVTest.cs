@@ -47,8 +47,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             }
 
             // Compare to expected
-            var expected = testData.Expected;
-            TestUtils.CompareLines(testName, result.ToString(), expected, null);
+            TestUtils.CompareContent(testName, result.ToString(), testData.Expected);
         }
 
         private (string Root, string Header, string[] Rows) ExecuteProcessor(CompilationUnit compilationUnit, Position position)

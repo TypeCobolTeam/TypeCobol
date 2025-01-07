@@ -1,0 +1,43 @@
+{
+  "name": "ExecuteCommandRefactorAdjustFillers_BadEdits_1.tlsp",
+  "session": "C:\\Users\\GDLRUSER\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2023_09_07_10_40_16_316\\TestSuite_2023_09_07_10_40_16_316.slsp",
+  "user": "GDLRUSER",
+  "date": "2023/09/07 10:40:16 340",
+  "uri": "file:///C:/Users/GDLRUSER/Documents/TCOB/ExecuteCommandRefactorAdjustFillers_BadEdits_1.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\GDLRUSER\\\\Documents\\\\RepoGit\\\\TCOB\\\\Parser\\\\bin\\\\LS\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/GDLRUSER/Documents/RepoGit/TCOB/Parser/bin/LS/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"didSave\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.0.0-local\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\GDLRUSER\\\\Documents\\\\RepoGit\\\\TCOB\\\\Parser\\\\bin\\\\LS\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-e\",\"rdz\",\"{-c}\",\"--autoremarks\",\"-cob\",\"-dol\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Test\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Test_suffixedCPY\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UATL\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UATL_suffixedCPY\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UAT\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\UAT_suffixedCPY\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Production\",\"-c\",\"C:\\\\Users\\\\GDLRUSER\\\\AppData\\\\Local\\\\Euro-Information\\\\TCOB\\\\CobolEditorEI\\\\Copys\\\\Production_suffixedCPY\",\"-dcsm\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"languageId\":\"__lsp4j_Cobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\n       PROGRAM-ID. TCOMFL06.\\n       DATA DIVISION.\\n       WORKING-STORAGE SECTION.\\n       01 target-zone PIC X(200).\\n      * Adding a FILLER should not break the format !\\n       01 redef1 REDEFINES target-zone.\\n          05 var1 PIC X(100).                                           01234567\\n       PROCEDURE DIVISION.\\n           GOBACK\\n           .\\n       END PROGRAM TCOMFL06.\"}}}",
+  "messages": [
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\"},\"text\":\"       IDENTIFICATION DIVISION.\\n       PROGRAM-ID. TCOMFL06.\\n       DATA DIVISION.\\n       WORKING-STORAGE SECTION.\\n       01 target-zone PIC X(200).\\n      * Adding a FILLER should not break the format !\\n       01 redef1 REDEFINES target-zone.\\n          05 var1 PIC X(100).                                           01234567\\n       PROCEDURE DIVISION.\\n           GOBACK\\n           .\\n       END PROGRAM TCOMFL06.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"workspace/executeCommand\",\"params\":{\"command\":\"refactor/adjustFillers\",\"arguments\":[{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"workspace/applyEdit\",\"params\":{\"label\":\"Adjust FILLERs: 1 FILLER(s) modified\",\"edit\":{\"changes\":{\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\":[{\"range\":{\"start\":{\"line\":8,\"character\":80},\"end\":{\"line\":8,\"character\":80}},\"newText\":\"\\n          05 FILLER PIC X(100).\"}]}}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"applied\":true}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/GDLRUSER/workspaces/runtime-CobolEditorEI/RemoteSystemsTempFiles/FttRemoteTempFiles/nitcpip.e-i.net/ZZ/ZZ.DY530.ZGEN.SOURCE.TST2.PERM/TCOZEFR0.cbl\"}}}",
+  "IsValid": true
+}

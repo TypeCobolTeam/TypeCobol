@@ -433,7 +433,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void ReplacingSyntaxOff()
         {
-            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
+            LSRTestHelper.Test("ReplacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
         }
 
         [TestMethod]
@@ -558,18 +558,32 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("CopyEditAddDataItem", LsrTestingOptions.NoLsrTesting, true);
         }
 
+        #region Refactoring tests
+
+        /*
+         * These tests are platform-dependent as the server will generate source code using the NewLine of current OS.
+         * It is assumed that client and server both use the same line break sequence !
+         *
+         * When creating a new LSR refactoring test, start with Windows and then duplicate the file for its "NoWindows_"
+         * counterpart and replace the line breaks.
+         */
+
+        private static readonly string _OSPrefix = OperatingSystem.IsWindows() ? string.Empty : "NoWindows_";
+
         [TestMethod]
         [TestCategory("Refactorings")]
         public void ExecuteCommandRefactorAdjustFillers()
         {
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers", LsrTestingOptions.NoLsrTesting);
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithCopy", LsrTestingOptions.NoLsrTesting, copyFolder: "CopyFolder");
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_BadEdits_1", LsrTestingOptions.NoLsrTesting);
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_BadEdits_2", LsrTestingOptions.NoLsrTesting);
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_BadLocation", LsrTestingOptions.NoLsrTesting);
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithSequenceNumbers", LsrTestingOptions.NoLsrTesting);
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_NestedRedefines", LsrTestingOptions.NoLsrTesting);
-            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithOccurs", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test($"{_OSPrefix}ExecuteCommandRefactorAdjustFillers", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithCopy", LsrTestingOptions.NoLsrTesting, copyFolder: "CopyFolder"); // No newlines involved
+            LSRTestHelper.Test($"{_OSPrefix}ExecuteCommandRefactorAdjustFillers_BadEdits_1", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_BadEdits_2", LsrTestingOptions.NoLsrTesting); // No newlines involved
+            LSRTestHelper.Test($"{_OSPrefix}ExecuteCommandRefactorAdjustFillers_BadLocation", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test("ExecuteCommandRefactorAdjustFillers_WithSequenceNumbers", LsrTestingOptions.NoLsrTesting); // No newlines involved
+            LSRTestHelper.Test($"{_OSPrefix}ExecuteCommandRefactorAdjustFillers_NestedRedefines", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test($"{_OSPrefix}ExecuteCommandRefactorAdjustFillers_WithOccurs", LsrTestingOptions.NoLsrTesting);
         }
+
+        #endregion
     }
 }

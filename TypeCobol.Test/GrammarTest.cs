@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.IO;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
@@ -54,7 +50,7 @@ namespace TypeCobol.Test {
             options.ExecToStep = ExecutionStep.SemanticCrossCheck;
             options.IsCobolLanguage = true; //Designed for Cobol85 only because we expect generated code to be identical to input code
 
-            string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
+            string[] files = Directory.EnumerateFiles(rootFolder, regex, SearchOption.AllDirectories).OrderBy(p => p).ToArray();
             var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
             string resultFile = "GeneratedResultFile.txt";
 
@@ -238,12 +234,9 @@ namespace TypeCobol.Test {
             if (nbFilesInError > 0 && expectedResultFile == null) Assert.Fail('\n'+message); //If no expectedFile to compare throw assert if error
             else if (expectedResultFile != null) //If expectedFileResult exists compare the DefaultGeneratedFile with expectedFile
             {
-                StreamReader expectedResultReader = new StreamReader(new FileStream(expectedResultFile, FileMode.Open));
-                StreamReader actualResultReader = new StreamReader(new FileStream(resultFile, FileMode.Open));
-                TestUtils.CompareLines("GrammarTestCompareFiles", expectedResultReader.ReadToEnd(), actualResultReader.ReadToEnd(), expectedResultFile); //The test will fail if result files are different
-
-                expectedResultReader.Close();
-                actualResultReader.Close();
+                var actual = new TestUtils.FileInfo(resultFile);
+                var expected = new TestUtils.FileInfo(expectedResultFile);
+                TestUtils.CompareFiles("GrammarTestCompareFiles", actual, expected); //The test will fail if result files are different
             }
 
         }

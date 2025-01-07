@@ -23,7 +23,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 StringBuilder typedef strict public PIC X(5).\\r\\n\\r\\na description \\r\\n\\r\\nSee: issue #123 \\r\\n\\r\\nTo do:\\r\\n\\t-\\tTo complete\\r\\n\"}],\"range\":{\"start\":{\"line\":15,\"character\":11},\"end\":{\"line\":15,\"character\":49}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 StringBuilder typedef strict public PIC X(5).  a description  See: issue #123  To do: \\t-\\tTo complete \"}],\"range\":{\"start\":{\"line\":15,\"character\":11},\"end\":{\"line\":15,\"character\":49}}}}"
     },
     {
       "category": 0,
@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.\\r\\n    05 sBuilder        type StringBuilder.\\r\\n\"}],\"range\":{\"start\":{\"line\":23,\"character\":7},\"end\":{\"line\":23,\"character\":46}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.     05 sBuilder        type StringBuilder. \"}],\"range\":{\"start\":{\"line\":23,\"character\":7},\"end\":{\"line\":23,\"character\":46}}}}"
     },
     {
       "category": 0,
@@ -39,7 +39,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description \\r\\nthis is a extent to the description and \\r\\nyet I need a description that is a bit longer \\r\\n\\r\\nParameters:\\r\\n\\t-\\tbuffer: a buffer\\r\\n\\t-\\tblen: length\\r\\n\\t-\\ttw: a TextWriter\\r\\n\"}],\"range\":{\"start\":{\"line\":36,\"character\":11},\"end\":{\"line\":38,\"character\":50}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description this is a extent to the description and yet I need a description that is a bit longer  Parameters: \\t-\\tbuffer: a buffer \\t-\\tblen: length \\t-\\ttw: a TextWriter \"}],\"range\":{\"start\":{\"line\":36,\"character\":11},\"end\":{\"line\":38,\"character\":50}}}}"
     },
     {
       "category": 0,
@@ -47,7 +47,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description \\r\\nthis is a extent to the description and \\r\\nyet I need a description that is a bit longer \\r\\n\\r\\nParameters:\\r\\n\\t-\\tbuffer: a buffer\\r\\n\\t-\\tblen: length\\r\\n\\t-\\ttw: a TextWriter\\r\\n\"}],\"range\":{\"start\":{\"line\":36,\"character\":11},\"end\":{\"line\":38,\"character\":50}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description this is a extent to the description and yet I need a description that is a bit longer  Parameters: \\t-\\tbuffer: a buffer \\t-\\tblen: length \\t-\\ttw: a TextWriter \"}],\"range\":{\"start\":{\"line\":36,\"character\":11},\"end\":{\"line\":38,\"character\":50}}}}"
     },
     {
       "category": 0,
@@ -55,7 +55,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description \\r\\nthis is a extent to the description and \\r\\nyet I need a description that is a bit longer \\r\\nRestriction: a restriction \\r\\n\\r\\nDeprecated\\r\\nReplaced By: nothing \\r\\n\\r\\nSee: issue 35 \\r\\n\\r\\nParameters:\\r\\n\\t-\\tsrc: boolean\\r\\n\\t-\\tsrc2: boolean\\r\\n\\t-\\tsb: a comment\\r\\n\\r\\nNeeds:\\r\\n\\t-\\tneed 1\\r\\n\\t-\\tneed 2\\r\\n\\t-\\tneed 3\\r\\n\\t-\\tneed 4\\r\\n\\r\\nTo do:\\r\\n\\t-\\tfix that comment thing\\r\\n\"}],\"range\":{\"start\":{\"line\":31,\"character\":11},\"end\":{\"line\":33,\"character\":34}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"This is a description this is a extent to the description and yet I need a description that is a bit longer Restriction: a restriction  Deprecated Replaced By: nothing  See: issue 35  Parameters: \\t-\\tsrc: boolean \\t-\\tsrc2: boolean \\t-\\tsb: a comment  Needs: \\t-\\tneed 1 \\t-\\tneed 2 \\t-\\tneed 3 \\t-\\tneed 4  To do: \\t-\\tfix that comment thing \"}],\"range\":{\"start\":{\"line\":31,\"character\":11},\"end\":{\"line\":33,\"character\":34}}}}"
     },
     {
       "category": 0,
@@ -63,7 +63,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.\\r\\n    05 sBuilder        type StringBuilder.\\r\\n\"}],\"range\":{\"start\":{\"line\":85,\"character\":6},\"end\":{\"line\":98,\"character\":12}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.     05 sBuilder        type StringBuilder. \"}],\"range\":{\"start\":{\"line\":85,\"character\":6},\"end\":{\"line\":98,\"character\":12}}}}"
     },
     {
       "category": 0,
@@ -71,7 +71,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.\\r\\n    05 sBuilder        type StringBuilder.\\r\\n\"}],\"range\":{\"start\":{\"line\":85,\"character\":6},\"end\":{\"line\":98,\"character\":12}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":{\"contents\":[{\"language\":\"Cobol\",\"value\":\"01 TextWriter  typedef strict public.     05 sBuilder        type StringBuilder. \"}],\"range\":{\"start\":{\"line\":85,\"character\":6},\"end\":{\"line\":98,\"character\":12}}}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX16595831499420203922.cee\"}}}",

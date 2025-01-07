@@ -4,21 +4,21 @@ Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any des
 ======================== Documentation ========================
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
-  "Description": "Main Program ",
+  "Description": "Main Program",
   "Name": "DocForPrograms",
   "Namespace": "DocForPrograms",
   "Needs": [
     "This is my first need This is also my first need",
     "This is my second need"
   ],
-  "Restriction": "restriction value ",
-  "See": "Thank you for your attention "
+  "Restriction": "restriction value",
+  "See": "Thank you for your attention"
 }
 ---------------------
 
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
-  "Description": "Nested Program ",
+  "Description": "Nested Program",
   "Name": "NestedPgm",
   "Namespace": "DocForPrograms",
   "Needs": [
@@ -70,7 +70,7 @@ Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any des
 
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
-  "Description": "Stacked Program ",
+  "Description": "Stacked Program",
   "Name": "StackedPgm",
   "Namespace": "DocForPrograms",
   "Parameters": [

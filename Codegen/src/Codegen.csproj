@@ -8,13 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
-    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="TypeCobol.TemplateTask" Version="1.3.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="all" />
+    <PackageReference Include="TypeCobol.TemplateTask" Version="1.3.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

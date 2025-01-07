@@ -11,6 +11,7 @@ using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Logging;
 using TypeCobol.Tools;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using TypeCobol.Compiler.CodeElements;
 #if EUROINFO_RULES
 using System.Text.RegularExpressions;
@@ -157,7 +158,8 @@ namespace TypeCobol.LanguageServer
         static Workspace()
         {
             var folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            DefaultCopyFolder = folder + @"\DefaultCopies\";
+            Debug.Assert(folder != null);
+            DefaultCopyFolder = Path.Combine(folder, "DefaultCopies");
         }
 
         public Workspace(string rootDirectoryFullName, string workspaceName, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue, Action<string> logger)

@@ -1,7 +1,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
        DATA DIVISION.
-                                                         
+                        
        WORKING-STORAGE SECTION.
        01  TC-PGM1-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
@@ -13,7 +13,7 @@
            05 TC-PGM1-f1c0385c-Idt   PIC X(08) VALUE 'f1c0385c'.
            05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
-       
+                        
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 
@@ -49,7 +49,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
        DATA DIVISION.
-                                                         
+                        
        WORKING-STORAGE SECTION.
        01  TC-PGM2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
@@ -61,7 +61,7 @@
            05 TC-PGM2-f73481e6-Idt   PIC X(08) VALUE 'f73481e6'.
            05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
 
-       
+                        
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 

@@ -223,7 +223,7 @@ namespace TypeCobol.Codegen.Generators
             /// <summary>
             /// Precalculated positions
             /// </summary>
-            public Tuple<int, int, int, List<int>, List<int>> Positions
+            public NodePositions Positions
             {
                 get;
                 set;
@@ -315,14 +315,13 @@ namespace TypeCobol.Codegen.Generators
             /// </summary>
             public Node LastNode;
             /// <summary>
-            /// Node's Position
-            /// Item1 = From
-            /// Item2 = to
-            /// Item3 = span on the last line
-            /// Item4 = Node's Target Line Numbers.
-            /// Item5 = Node's Target Line offsets.
+            /// Node's Positions:
+            /// - From
+            /// - To
+            /// - Span on the last line
+            /// - Node's Target Line Numbers.
             /// </summary>
-            public Tuple<int, int, int, List<int>, List<int>> Positions;
+            public NodePositions Positions;
             /// <summary>
             /// The Buffer where this Node is Generated.
             /// </summary>
@@ -525,10 +524,10 @@ namespace TypeCobol.Codegen.Generators
                     data = Nodes[node.NodeIndex];
                     if (funData.BodyFistLineIndex == 0)
                     {//Remember the first the first line of the function body
-                        funData.BodyFistLineIndex = data.Positions.Item4[0];
+                        funData.BodyFistLineIndex = data.Positions.LineNumbers[0];
                     }
                     //Track the last line of the function body.
-                    funData.BodyLastLineIndex = data.Positions.Item4[0];
+                    funData.BodyLastLineIndex = data.Positions.LineNumbers[0];
                 }
             }
             if (node.NodeIndex > 0)
@@ -560,11 +559,8 @@ namespace TypeCobol.Codegen.Generators
             //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions != null);
             if (!(Nodes[beforeNode.NodeIndex].Positions != null))
                 return false;
-            //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0);
-            if (!(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0))
-                return false;
-            //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0);
-            if (!(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0))
+            //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0);
+            if (!(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0))
                 return false;
             //Debug.Assert(Nodes[beforeNode.NodeIndex].From != null);
             if (!(Nodes[beforeNode.NodeIndex].From != null))
@@ -600,11 +596,8 @@ namespace TypeCobol.Codegen.Generators
             Debug.Assert(Nodes[beforeNode.NodeIndex].Positions != null);
             if (!(Nodes[beforeNode.NodeIndex].Positions != null))
                 return false;
-            Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0);
-            if (!(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0))
-                return false;
-            Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0);
-            if (!(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0))
+            Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0);
+            if (!(Nodes[beforeNode.NodeIndex].Positions.LineNumbers.Count > 0))
                 return false;
             Debug.Assert(Nodes[beforeNode.NodeIndex].From != null);
             if (!(Nodes[beforeNode.NodeIndex].From != null))
@@ -614,7 +607,7 @@ namespace TypeCobol.Codegen.Generators
                 return false;
 
             //Determine the Line number of the before line.
-            int before_line = Nodes[beforeNode.NodeIndex].Positions.Item4[0] - 1;
+            int before_line = Nodes[beforeNode.NodeIndex].Positions.LineNumbers[0] - 1;
             //Add the node to the same line
             int insertIndex = LineData[before_line].LineNodes.IndexOf(beforeNode.NodeIndex);
             LineData[before_line].LineNodes.Insert(insertIndex, theNode.NodeIndex);
@@ -623,12 +616,11 @@ namespace TypeCobol.Codegen.Generators
             Nodes[theNode.NodeIndex].From = Nodes[beforeNode.NodeIndex].From;
             Nodes[theNode.NodeIndex].To = Nodes[beforeNode.NodeIndex].From;
             //Give to the Node its new span
-            Nodes[theNode.NodeIndex].Positions = new Tuple<int, int, int, List<int>, List<int>>(
-                Nodes[beforeNode.NodeIndex].Positions.Item1,
-                Nodes[beforeNode.NodeIndex].Positions.Item1,
-                Nodes[beforeNode.NodeIndex].Positions.Item1,
-                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.Item4[0] },
-                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.Item5[0] }
+            Nodes[theNode.NodeIndex].Positions = new NodePositions(
+                Nodes[beforeNode.NodeIndex].Positions.From,
+                Nodes[beforeNode.NodeIndex].Positions.From,
+                Nodes[beforeNode.NodeIndex].Positions.From,
+                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.LineNumbers[0] }
                 );
             //We must insert a NewLine
 
@@ -661,11 +653,8 @@ namespace TypeCobol.Codegen.Generators
             Debug.Assert(Nodes[afterNode.NodeIndex].Positions != null);
             if (!(Nodes[afterNode.NodeIndex].Positions != null))
                 return false;
-            Debug.Assert(Nodes[afterNode.NodeIndex].Positions.Item4.Count > 0);
-            if (!(Nodes[afterNode.NodeIndex].Positions.Item4.Count > 0))
-                return false;
-            Debug.Assert(Nodes[afterNode.NodeIndex].Positions.Item5.Count > 0);
-            if (!(Nodes[afterNode.NodeIndex].Positions.Item5.Count > 0))
+            Debug.Assert(Nodes[afterNode.NodeIndex].Positions.LineNumbers.Count > 0);
+            if (!(Nodes[afterNode.NodeIndex].Positions.LineNumbers.Count > 0))
                 return false;
             Debug.Assert(Nodes[afterNode.NodeIndex].From != null);
             if (!(Nodes[afterNode.NodeIndex].From != null))
@@ -675,7 +664,7 @@ namespace TypeCobol.Codegen.Generators
                 return false;
 
             //Determine the Line number of the before line.
-            int before_line = Nodes[afterNode.NodeIndex].Positions.Item4[0] - 1;
+            int before_line = Nodes[afterNode.NodeIndex].Positions.LineNumbers[0] - 1;
             //Add the node to the same line
             LineData[before_line].LineNodes.Add(theNode.NodeIndex);
             //The Node is Inserted at the beginning of the before node
@@ -683,12 +672,11 @@ namespace TypeCobol.Codegen.Generators
             Nodes[theNode.NodeIndex].From = Nodes[afterNode.NodeIndex].To;
             Nodes[theNode.NodeIndex].To = Nodes[afterNode.NodeIndex].To;
             //Give to the Node its new span
-            Nodes[theNode.NodeIndex].Positions = new Tuple<int, int, int, List<int>, List<int>>(
-                Nodes[afterNode.NodeIndex].Positions.Item1,
-                Nodes[afterNode.NodeIndex].Positions.Item1,
-                Nodes[afterNode.NodeIndex].Positions.Item2,
-                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item4[0] },
-                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item5[0] }
+            Nodes[theNode.NodeIndex].Positions = new NodePositions(
+                Nodes[afterNode.NodeIndex].Positions.To,
+                Nodes[afterNode.NodeIndex].Positions.To,
+                Nodes[afterNode.NodeIndex].Positions.Span,
+                new List<int>() { Nodes[afterNode.NodeIndex].Positions.LineNumbers[^1] }
                 );
             //First generate a new line befor this node
             theNode.SetFlag(Node.Flag.FactoryGeneratedNodeWithFirstNewLine, true);
@@ -795,7 +783,7 @@ namespace TypeCobol.Codegen.Generators
                 //Remember the Global Storage Section node.
                 this.ClonedGlobalStorageSection = (GlobalStorageSection)node;
             }
-            Tuple<int, int, int, List<int>, List<int>> positions = this.Generator.FromToPositions(node);
+            NodePositions positions = this.Generator.FromToPositions(node);
             if (positions == null)
             { //Node without positions probably a generated node.
                 node.NodeIndex = -1;
@@ -806,7 +794,7 @@ namespace TypeCobol.Codegen.Generators
                 }
                 return true;
             }
-            if (positions.Item4.Count == 0)
+            if (positions.LineNumbers.Count == 0)
             {   //This must be a Node in an imported COPY it has no lines associated to it
                 //So We must First try to create a COPY Node so that we can capture the COPY Line.
                 if (node.IsInsideCopy())
@@ -859,7 +847,7 @@ namespace TypeCobol.Codegen.Generators
                 node.NodeIndex = -1;
                 return true;
             }
-            if (positions.Item1 > positions.Item2)
+            if (positions.From > positions.To)
             {   //This is a very strange node that I encountered with position (from > to)
                 //I encountered this situation with tests files like:
                 //CCC1B045.PGM, CCTF0011.PGM, CCTZ015B, CCTZ0300B, etc..
@@ -881,7 +869,7 @@ namespace TypeCobol.Codegen.Generators
             LineStringSourceText buffer = null;
             //The first line number of the target buffer
             int lineindex_buffer = -1;
-            foreach (int i in data.Positions.Item4)
+            foreach (int i in data.Positions.LineNumbers)
             {//For each line concerned by the Node
                 int lineIndex = i - 1;//Zero based Index Line Number
                 NodedLines[lineIndex] = true;//Now this line is associated to at leat one node.
@@ -920,7 +908,7 @@ namespace TypeCobol.Codegen.Generators
                 //Add the participating line buffer
                 buffer.AddLine(lineIndex);
                 //Propagate Comment from buffer line index to current line.
-                //That is to say mark all line concerned by a Commnented Node as commented.
+                //That is to say mark all line concerned by a Commented Node as commented.
                 if (bCommented)
                 {
                     for (int k = lineindex_buffer; k < lineIndex; k++)
@@ -930,16 +918,15 @@ namespace TypeCobol.Codegen.Generators
             //Associate this node to its buffer
             data.Buffer = buffer;
             //Update the positions by translating the position to the real position in the source document.
-            //The source document is the document which contais the Full original source code
-            int line_from = data.Positions.Item1 - 1;
-            int line_to = data.Positions.Item2;
-            int span = data.Positions.Item3;
-            List<int> lines = data.Positions.Item4;
-            List<int> line_offsets = data.Positions.Item5;
-            SourceDocument.SourceLine lineindex_srcline = Generator.TargetDocument[lineindex_buffer];            
+            //The source document is the document which contains the Full original source code
+            int line_from = data.Positions.From - 1;
+            int line_to = data.Positions.To;
+            int span = data.Positions.Span;
+            List<int> lines = data.Positions.LineNumbers;
+            SourceDocument.SourceLine lineindex_srcline = Generator.TargetDocument[lineindex_buffer];
             SourceDocument.SourceLine line = Generator.TargetDocument[lines[0] - 1];
             int delta = line.From - lineindex_srcline.From;
-            data.Positions = new Tuple<int, int, int, List<int>, List<int>>(delta + line_from, delta + line_to, span, lines, line_offsets);
+            data.Positions = new NodePositions(delta + line_from, delta + line_to, span, lines);
             //Add Node's data to the list of all Node Data
             Nodes.Add(data);
             //------------------------------------------------------------------------------
@@ -1140,8 +1127,7 @@ namespace TypeCobol.Codegen.Generators
                     int to = data.Buffer.Size;//To the end of the buffer
                     int span = 0;
                     List<int> lines = new List<int>(){ lineGot };//Line number
-                    List<int> offsets = new List<int>(){0};//Line number start at offse 0
-                    Tuple<int, int, int, List<int>, List<int>> pos = new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lines, offsets);
+                    NodePositions pos = new NodePositions(from, to, span, lines);
                     dummy_node.Positions = pos; 
                 }
             }
@@ -1155,18 +1141,18 @@ namespace TypeCobol.Codegen.Generators
         private void RelocateFunctionBodyNoPositionNodes(NodeFunctionData funData)
         {
             //The last line of the function declaration
-            int lastBufferLineNumber = funData.Positions.Item4.Count > 0 ? funData.Positions.Item4[funData.Positions.Item4.Count - 1] :-1;
+            int lastBufferLineNumber = funData.Positions.LineNumbers.Count > 0 ? funData.Positions.LineNumbers[^1] :-1;
             for (int j = 0; j < funData.FunctionDeclNodes.Count; j++)
             {//For each Node in the function declaration body
                 NodeData node_data = Nodes[funData.FunctionDeclNodes[j]];
                 //Get its positions
-                Tuple<int, int, int, List<int>, List<int>> positions = 
+                NodePositions positions = 
                     node_data.node.IsFlagSet(Node.Flag.ExtraGeneratedLinearNode) ?
                     ((LinearGeneratedNode)node_data.node).Positions : this.Generator.FromToPositions(node_data.node);
                 if (positions != null && node_data.Buffer != null)
                 {//If the Node has positions and it is associated to a buffer
                     //The keep the the first line number having a valid buffer
-                    lastBufferLineNumber = positions.Item4[0];
+                    lastBufferLineNumber = positions.LineNumbers[0];
                 }
                 else if (positions == null && lastBufferLineNumber > 0)
                 {   //The node has no positions but we know a valid last line number having a valid buffer
@@ -1202,16 +1188,16 @@ namespace TypeCobol.Codegen.Generators
             for (int j = 0; j < funData.FunctionDeclNodes.Count; j++)
             {//For each node in the function declaration body.
                 NodeData node_data = Nodes[funData.FunctionDeclNodes[j]];
-                Tuple<int, int, int, List<int>, List<int>> positions = this.Generator.FromToPositions(node_data.node);
+                NodePositions positions = this.Generator.FromToPositions(node_data.node);
                 if (positions != null)
                 {//A Node with positions
-                    if (!lineNumbers.Contains(positions.Item4[0]))
+                    if (!lineNumbers.Contains(positions.LineNumbers[0]))
                     {
                         //Insert interval to the previous insertion point.
                         if (lineNumbers.Count > 0)
                         {
                             int prevPoint = insertPoints[insertPoints.Count - 1];
-                            for (int i = lineNumbers[lineNumbers.Count - 1] + 1; i < positions.Item4[0]; i++)
+                            for (int i = lineNumbers[lineNumbers.Count - 1] + 1; i < positions.LineNumbers[0]; i++)
                             {   //Each line numbers not associated to a node must be associated to the last valid  insertion point.
                                 //Such insertion point is added with negative value to distinguish it from a valid insertion point.
                                 lineNumbers.Add(i);
@@ -1219,8 +1205,8 @@ namespace TypeCobol.Codegen.Generators
                             }
                         }
                         //Add the line number and its position to valid number and insertion point lists.
-                        lineNumbers.Add(positions.Item4[0]);
-                        insertPoints.Add(j);                        
+                        lineNumbers.Add(positions.LineNumbers[0]);
+                        insertPoints.Add(j);
                     }
                 }
             }
@@ -1260,8 +1246,8 @@ namespace TypeCobol.Codegen.Generators
             {
                 if (Nodes[i].Positions != null)
                 {//Only for Nodes with positions
-                    Position from = new Position(Nodes[i].Positions.Item1);
-                    Position to = new Position(Nodes[i].Positions.Item2);
+                    Position from = new Position(Nodes[i].Positions.From);
+                    Position to = new Position(Nodes[i].Positions.To);
                     Nodes[i].Buffer.AddPosition(from);//from position
                     Nodes[i].Buffer.AddPosition(to);//To Pos
                     Nodes[i].From = from;
@@ -1424,7 +1410,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 if (Nodes[node.NodeIndex].Positions != null)
                 {
-                    lastLine = Nodes[node.NodeIndex].Positions.Item4[Nodes[node.NodeIndex].Positions.Item4.Count - 1];
+                    lastLine = Nodes[node.NodeIndex].Positions.LineNumbers[^1];
                     lastNode = node;
                 }
             }
@@ -1519,8 +1505,8 @@ namespace TypeCobol.Codegen.Generators
                         // for each lines, if it is inside the formalized comment then comment them (replace the 7th character by a '*') 
                         for (int i = 0; i < bufferLines.GetLength(0) - 1; i++)
                         {
-                            if (nodeData.Positions.Item4[i] >= delimiterToken.Item1.Line &&
-                                nodeData.Positions.Item4[i] <= delimiterToken.Item2.Line &&
+                            if (nodeData.Positions.LineNumbers[i] >= delimiterToken.Item1.Line &&
+                                nodeData.Positions.LineNumbers[i] <= delimiterToken.Item2.Line &&
                                 bufferLines[i, 1] >= 7) // Avoid comment blank lines
                             {
                                 if (positionList.Any() && positionList[0].Pos == bufferLines[i, 0] + 6)
@@ -1598,15 +1584,15 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder lines = new StringBuilder();
                 if (data.Positions != null)
                 {
-                    foreach (int n in data.Positions.Item4)
+                    foreach (int n in data.Positions.LineNumbers)
                     {
                         lines.Append(n);
                         lines.Append(",");
                     }
                 }
-                int from = data.Positions != null ? data.Positions.Item1 : -1;
-                int to = data.Positions != null ? data.Positions.Item2 : -1;
-                int span = data.Positions != null ? data.Positions.Item3 : -1;
+                int from = data.Positions != null ? data.Positions.From : -1;
+                int to = data.Positions != null ? data.Positions.To : -1;
+                int span = data.Positions != null ? data.Positions.Span : -1;
                 System.Console.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5} {8}]", i,
                     i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "",
                     data.node.Comment != null ? (data.node.Comment.Value ? "COMMENTED" : "") : "");
@@ -1658,15 +1644,15 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder lines = new StringBuilder();
                 if (data.Positions != null)
                 {
-                    foreach (int n in data.Positions.Item4)
+                    foreach (int n in data.Positions.LineNumbers)
                     {
                         lines.Append(n);
                         lines.Append(",");
                     }
                 }
-                int from = data.Positions != null ? data.Positions.Item1 : -1;
-                int to = data.Positions != null ? data.Positions.Item2 : -1;
-                int span = data.Positions != null ? data.Positions.Item3 : -1;
+                int from = data.Positions != null ? data.Positions.From : -1;
+                int to = data.Positions != null ? data.Positions.To : -1;
+                int span = data.Positions != null ? data.Positions.Span : -1;
                 Debug.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5} {8}]", i,
                     i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "",
                     data.node.Comment != null ? (data.node.Comment.Value ? "COMMENTED" : "") : "");

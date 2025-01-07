@@ -1,7 +1,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOZCHKP.
        DATA DIVISION.
-                                                             
+                            
        WORKING-STORAGE SECTION.
        01  TC-TCOZCHKP-FctList-Loaded PIC X(02) VALUE space.
            88 TC-TCOZCHKP-FctList-IsLoaded      VALUE 'OK'.
@@ -13,7 +13,7 @@
            05 TC-TCOZCHKP-b179d81b-Idt   PIC X(08) VALUE 'b179d81b'.
            05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
 
-       
+                            
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 

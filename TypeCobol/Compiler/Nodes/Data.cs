@@ -887,35 +887,38 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            FormalizedCommentDocumentation doc = this.CodeElement.FormalizedCommentDocumentation;
+            var writer = new StringWriter();
+            Write(writer);
+            return writer.ToString();
+        }
 
+        public void Write(TextWriter writer)
+        {
+            var lines = SelfAndChildrenLines.ToArray();
             int i = 0;
-
-            while (i < SelfAndChildrenLines.Count())
+            while (i < lines.Length)
             {
-                if (SelfAndChildrenLines.ElementAt(i) is CodeElementsLine line)
+                if (lines[i] is CodeElementsLine line)
                 {
                     if (line.ScanState.InsideFormalizedComment)
                     {
-                        while ((SelfAndChildrenLines.ElementAt(i) as CodeElementsLine)?.ScanState.InsideFormalizedComment == true)
+                        while ((lines[i] as CodeElementsLine)?.ScanState.InsideFormalizedComment == true)
                             i++;
                     }
                     else if (line.IndicatorChar != '*')
                     {
-                        sb.AppendLine(line.Text.Remove(0, 7));
+                        writer.WriteLine(line.Text.Remove(0, 7));
                     }
                 }
                 i++;
             }
 
+            var doc = CodeElement.FormalizedCommentDocumentation;
             if (doc != null)
             {
-                sb.AppendLine();
-                sb.Append(doc);
+                writer.WriteLine();
+                doc.Write(writer);
             }
-
-            return sb.ToString();
         }
     }
     // [/COBOL 2002]

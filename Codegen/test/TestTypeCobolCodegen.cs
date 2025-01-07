@@ -103,7 +103,7 @@ namespace TypeCobol.Codegen {
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseFunctions() {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Function")+".rdz.cbl");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","FUNCTION")+".rdz.cbl");
 		}
 
 		[TestMethod]
