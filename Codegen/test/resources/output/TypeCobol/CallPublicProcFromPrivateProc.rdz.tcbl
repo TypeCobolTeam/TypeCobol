@@ -31,7 +31,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PersonService.
        DATA DIVISION.
-                                                                  
+                                 
        WORKING-STORAGE SECTION.
        01  TC-PersonSe-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
@@ -43,7 +43,7 @@
            05 TC-PersonSe-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
            05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
 
-       
+                                 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 

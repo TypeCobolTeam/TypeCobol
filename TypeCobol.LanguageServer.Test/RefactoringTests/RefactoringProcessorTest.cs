@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.LanguageServer.Commands.Refactor;
+using TypeCobol.LanguageServer.Test.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.Test;
 using TypeCobol.Test.Utils;
@@ -59,52 +60,9 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
 
         private static (string OriginalSource, string ProcessorType, string CommandArguments, string ModifiedSource) ParseContent(string testDataFilePath)
         {
-            string originalSource = null;
-            string processorType = null;
-            string commandArguments = null;
+            var parts = LanguageServerTestUtils.ParseMultiplePartsContent(testDataFilePath);
 
-            int state = 0; // Track current part of the document
-            var builder = new StringBuilder();
-            using (var reader = File.OpenText(testDataFilePath))
-            {
-                while (reader.ReadLine() is { } line) // Non-null pattern + variable definition
-                {
-                    if (line.All(c => c == '-'))
-                    {
-                        // The line is a separator, flush content read so far into correct variable
-                        string currentPart = builder.ToString()[..^2]; // Remove trailing line break
-                        builder.Clear();
-
-                        switch (state)
-                        {
-                            case 0:
-                                // First part is the original source code
-                                originalSource = currentPart;
-                                break;
-                            case 1:
-                                // Second part is the processor .NET type name
-                                processorType = currentPart;
-                                break;
-                            case 2:
-                                // Third part is the array of arguments for the command/processor
-                                commandArguments = currentPart;
-                                break;
-                        }
-
-                        // Discard separator line but move on to next state
-                        state++;
-                        continue;
-                    }
-
-                    // Accumulate line
-                    builder.AppendLine(line);
-                }
-            }
-
-            // Fourth and expectedly last part is the modified source code
-            string modifiedSource = builder.ToString(); // Keep trailing line break as we'll end up with one added in the actual result too
-
-            return (originalSource, processorType, commandArguments, modifiedSource);
+            return (parts[0], parts[1], parts[2], parts[3]);
         }
 
         internal RefactoringProcessorTest(string testName, CompilationUnit target, IRefactoringProcessor refactoringProcessor, object[] arguments, string expectedResult)
@@ -138,7 +96,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             string actualResult = ApplyTextEdits(refactoring.Label, refactoring.TextEdits);
 
             // Compare actual modified code with expected modified code
-            TestUtils.CompareLines(_testName, actualResult, _expectedResult, null);
+            TestUtils.CompareContent(_testName, actualResult, _expectedResult);
         }
 
         private string ApplyTextEdits(string label, List<TextEdit> changes)

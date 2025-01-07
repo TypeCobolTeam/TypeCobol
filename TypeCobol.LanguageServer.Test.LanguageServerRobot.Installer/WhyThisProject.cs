@@ -1,6 +1,6 @@
 ﻿namespace TypeCobol.LanguageServer.Test.LanguageServerRobot.Installer
 {
-    internal class WhyThisProject
+    internal static class WhyThisProject
     {
         /*
          * This project allows to download the TypeCobol.LanguageServerRobot executable
@@ -8,7 +8,7 @@
          * in an isolated directory, which is the output directory of this project.
          * 
          * While LSR is used by LanguageServer unit tests project, it cannot reside
-         * in the ouptut directory of the test project itself because it interferes with
+         * in the output directory of the test project itself because it interferes with
          * the test discovery process. MSTest framework seems unable to deal with both
          * .exe file and .dll file having the same name... Having both TypeCobol.LanguageServerRobot.exe
          * and TypeCobol.LanguageServerRobot.dll in the output dir of TypeCobol.LanguageServer.Test

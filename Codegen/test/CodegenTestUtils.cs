@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -73,15 +71,15 @@ namespace TypeCobol.Codegen {
             }
 
             // compare with expected result
-            string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
-            TypeCobol.Test.TestUtils.CompareLines(path, writer.ToString(), expected, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path), "Codegen\\test"));
+            var expected = new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path), "Codegen/test"), format.Encoding);
+            TestUtils.CompareContent(path, writer.ToString(), expected);
 
             if (lmStream != null)
             {
                 //compare with expected line mapping
-                string lm = System.Text.ASCIIEncoding.Default.GetString(lmStream.ToArray());
-                string expectedLm = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), format.Encoding);
-                TypeCobol.Test.TestUtils.CompareLines(path + ML_SUFFIX, lm, expectedLm, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), "Codegen\\test"));
+                string lm = Encoding.Default.GetString(lmStream.ToArray());
+                var expectedLm = new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), "Codegen/test"), format.Encoding);
+                TestUtils.CompareContent(path + ML_SUFFIX, lm, expectedLm);
             }
         }
 

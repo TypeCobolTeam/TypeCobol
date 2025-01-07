@@ -32,8 +32,7 @@ namespace TypeCobol.Analysis.Test
 
             // Compare to expected
             var expectedPath = Path.Combine(folder, $"{fileName}-expected.txt");
-            var expected = File.ReadAllText(expectedPath);
-            TestUtils.CompareLines(testName, result.ToString(), expected, expectedPath);
+            TestUtils.CompareContent(testName, result.ToString(), new TestUtils.FileInfo(expectedPath));
         }
 
         [TestMethod]

@@ -80,7 +80,7 @@
             set PntTab-Pnt TO ADDRESS OF TC-DocCodeG-PntTab
 
            .
-                                                                                                                                                                                                                                                                                                                                                                                                                                  
+                          
 
       *<<< MyProc info
       *   @ deprec : It is

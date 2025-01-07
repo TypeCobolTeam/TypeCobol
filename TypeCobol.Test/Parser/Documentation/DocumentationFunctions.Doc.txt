@@ -24,15 +24,15 @@ Parameters :
 ---------------------
 
 Name : MyProc1
-Description : MyProc1 description 
+Description : MyProc1 description
 Visibility : Private
 Namespace : DocForFunctions
 NodeType : Function
 IsDeprecated : True
 Deprecated : 
-ReplacedBy : ReplacedBy MyProc8 
-Restriction : Do not support discount code 
-See : you later 
+ReplacedBy : ReplacedBy MyProc8
+Restriction : Do not support discount code
+See : you later
 Needs : 
     first need
     second need
@@ -92,7 +92,7 @@ Parameters :
 ---------------------
 
 Name : MyProc2
-Description : MyProc2 description 
+Description : MyProc2 description
 Visibility : Local
 Namespace : DocForFunctions
 NodeType : Function
@@ -127,7 +127,7 @@ Parameters :
 ---------------------
 
 Name : MyProc3
-Description : MyProc3 description 
+Description : MyProc3 description
 Visibility : Public
 Namespace : DocForFunctions
 NodeType : Function
@@ -168,11 +168,11 @@ No formalized comment found
 ---------------------
 
 == MyProc1 ==
-Description : MyProc1 description 
+Description : MyProc1 description
 Deprecated : *is present*
-ReplacedBy : ReplacedBy MyProc8 
-Restriction : Do not support discount code 
-See : you later 
+ReplacedBy : ReplacedBy MyProc8
+Restriction : Do not support discount code
+See : you later
 Needs : 
     first need
     second need
@@ -188,7 +188,7 @@ Parameters :
 ---------------------
 
 == MyProc2 ==
-Description : MyProc2 description 
+Description : MyProc2 description
 Deprecated : 
 ReplacedBy : 
 Restriction : 
@@ -200,7 +200,7 @@ Parameters :
 ---------------------
 
 == MyProc3 ==
-Description : MyProc3 description 
+Description : MyProc3 description
 Deprecated : 
 ReplacedBy : 
 Restriction : 

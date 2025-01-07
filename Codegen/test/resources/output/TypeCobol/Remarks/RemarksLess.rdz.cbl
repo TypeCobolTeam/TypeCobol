@@ -4,7 +4,7 @@
       *        YPRTD20L
       *        YCONVEAL
       *        ).
-                                                                                                                
+                                                                               
 000000 ENVIRONMENT DIVISION.
 000000 DATA DIVISION.
 000000 WORKING-STORAGE section.

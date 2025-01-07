@@ -2,7 +2,6 @@
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Sql.Scanner;
 using TypeCobol.Compiler.Text;
@@ -109,12 +108,9 @@ namespace TypeCobol.Test.Parser.Scanner
 
         public static void CheckWithResultFile(string result, string testName)
         {
-            string expectedResult;
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt")))
-            {
-                expectedResult = reader.ReadToEnd();
-            }
-            TestUtils.CompareLines(testName, result, expectedResult, PlatformUtils.GetPathForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt"));
+            string resultFilePath = PlatformUtils.GetPathForProjectFile(@"Parser/Scanner/ResultFiles/" + testName + ".txt");
+            var expected = new TestUtils.FileInfo(resultFilePath);
+            TestUtils.CompareContent(testName, result, expected);
         }
 
         public static string ScanSqlLines(string[] lines, bool decimalPointIsComma)

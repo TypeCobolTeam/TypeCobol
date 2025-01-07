@@ -1,11 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Test.Utils;
 
@@ -193,9 +188,8 @@ namespace TypeCobol.Test.Misc
             }
 
             var expectedPath = Path.ChangeExtension(Path.Combine("Misc", "Expressions-expected"), "txt");
-            var expected = File.ReadAllText(expectedPath);
             // ensure the string and the file are the same 
-            TestUtils.CompareLines("CheckExpressions", strToString.ToString(), expected, PlatformUtils.GetPathForProjectFile(expectedPath));
+            TestUtils.CompareContent("CheckExpressions", strToString.ToString(), new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(expectedPath)));
         }
 
         /// <summary>
@@ -262,9 +256,8 @@ namespace TypeCobol.Test.Misc
             }
 
             var expectedPath = Path.ChangeExtension(Path.Combine("Misc", "ExpressionsTokens-expected"), "txt");
-            var expected = File.ReadAllText(expectedPath);
             // ensure the string and the file are the same 
-            TestUtils.CompareLines("CheckExpressionTokens", strToString.ToString(), expected, PlatformUtils.GetPathForProjectFile(expectedPath));
+            TestUtils.CompareContent("CheckExpressionTokens", strToString.ToString(), new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(expectedPath)));
         }
 
         private class TokenCollector : AbstractAstVisitor
