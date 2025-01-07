@@ -9,9 +9,9 @@
         internal const string OUTPUT_TYPE_CSV = "CSV";
 
         /// <summary>
-        /// The current document in edition
+        /// The document and the position that request the Data Layout
         /// </summary>
-        public VsCodeProtocol.TextDocumentIdentifier textDocument { get; set; }
+        public VsCodeProtocol.TextDocumentPosition textDocumentPosition { get; set; }
 
         /// <summary>
         /// The output type expected by the client (only CSV is currently supported)

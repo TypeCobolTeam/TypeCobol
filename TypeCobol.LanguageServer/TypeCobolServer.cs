@@ -453,20 +453,20 @@ namespace TypeCobol.LanguageServer
             if (matchingNode == null)
                 return resultHover;
 
-            string message = string.Empty;
+            var tooltipWriter = new StringWriter() { NewLine = " " }; // Tooltip text on a single line: platform-independent but the client has to do its own formatting
 
             //Switch between all nodes that can return information
             switch (matchingNode)
             {
                 case DataDefinition data:
                     if (data.TypeDefinition != null)
-                        message = data.TypeDefinition.ToString();
+                        data.TypeDefinition.Write(tooltipWriter);
                     break;
                 case ProcedureStyleCall call:
                     //don't show hover on params
                     if (call.FunctionDeclaration != null && lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
                     {
-                        message = call.ToString();
+                        call.Write(tooltipWriter);
                     }
                     break;
                 case FunctionDeclaration fun:
@@ -482,7 +482,10 @@ namespace TypeCobol.LanguageServer
                                 param.CodeElement.StopIndex > parameters.position.character)
                             {
                                 if (param.TypeDefinition != null)
-                                    message = param.TypeDefinition.ToString();
+                                {
+                                    param.TypeDefinition.Write(tooltipWriter);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -505,17 +508,18 @@ namespace TypeCobol.LanguageServer
 
                             // Trace back to the DataDefinition corresponding to the storage area.
                             var targetDataDefinition = matchingNode.GetDataDefinitionFromStorageAreaDictionary(targetStorageArea);
-                            message = ToolTipHelper.GetToolTipText(targetDataDefinition);
+                            ToolTipHelper.WriteToolTipText(tooltipWriter, targetDataDefinition);
                         }
                     }
                     break;
             }
 
-            if (message != string.Empty)
+            string tooltip = tooltipWriter.ToString();
+            if (tooltip != string.Empty)
             {
                 resultHover.range = Range.FromPositions(matchingCodeElement.Line, matchingCodeElement.StartIndex, matchingCodeElement.LineEnd, matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
-                    new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
+                    new MarkedString[] { new MarkedString() { language = "Cobol", value = tooltip } };
                 return resultHover;
             }
 
@@ -994,21 +998,21 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Builds tooltip text for a Node.
+        /// Writes tooltip text for a Node to a text writer.
         /// </summary>
+        /// <param name="writer">Target TextWriter</param>
         /// <param name="node">Node to render as text.</param>
         /// <returns>A textual representation of the given node.</returns>
-        public static string GetToolTipText(Node node)
+        public static void WriteToolTipText(TextWriter writer, Node node)
         {
-            if (node == null) return string.Empty;
-            StringBuilder sb = new StringBuilder();
+            if (node == null) return;
+
             foreach (var tuple in GetLinesWithLevel(node))
             {
                 // Replace original indent with custom indent (3 spaces per level).
-                sb.Append(' ', 3 * tuple.Item1);
-                sb.AppendLine(tuple.Item2.Text.TrimStart());
+                writer.Write(new string(' ', 3 * tuple.Item1));
+                writer.WriteLine(tuple.Item2.Text.TrimStart());
             }
-            return sb.ToString();
         }
     }
 }

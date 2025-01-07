@@ -1,10 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using TypeCobol.Analysis.Graph;
 using TypeCobol.Test;
+
+using CFG = TypeCobol.Analysis.Graph.ControlFlowGraph<TypeCobol.Compiler.Nodes.Node, TypeCobol.Analysis.Dfa.DfaBasicBlockInfo<TypeCobol.Compiler.Symbols.VariableSymbol>>;
+
 using static TypeCobol.Analysis.Test.CfgTestUtils;
-using CFG = TypeCobol.Analysis.Graph.ControlFlowGraph<TypeCobol.Compiler.Nodes.Node,
-    TypeCobol.Analysis.Dfa.DfaBasicBlockInfo<TypeCobol.Compiler.Symbols.VariableSymbol>>;
 
 namespace TypeCobol.Analysis.Test
 {
@@ -25,8 +24,7 @@ namespace TypeCobol.Analysis.Test
             CFG.DumpDominators(blocks_dominators.Item2, writer);
             // compare with expected result
             string result = writer.ToString();
-            string expected = File.ReadAllText(expectedDomsFile);
-            TestUtils.CompareLines(path, result, expected, expectedDomsFile);
+            TestUtils.CompareContent(path, result, new TestUtils.FileInfo(expectedDomsFile));
         }
 
         private static void HanoiPrgCfgExtendedImmediateDominator(bool duplicate)
@@ -42,8 +40,7 @@ namespace TypeCobol.Analysis.Test
             CFG.DumpDominators(idoms, writer);
             // compare with expected result
             string result = writer.ToString();
-            string expected = File.ReadAllText(expectedDomsFile);
-            TestUtils.CompareLines(path, result, expected, expectedDomsFile);
+            TestUtils.CompareContent(path, result, new TestUtils.FileInfo(expectedDomsFile));
         }
 
         [TestMethod]

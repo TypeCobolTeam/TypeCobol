@@ -12,8 +12,11 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3
@@ -22,10 +25,10 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore .\TypeCobol.sln
+      run: dotnet restore ./TypeCobol.sln
     - name: Build CSCup
-      run: dotnet build .\CSCup\CSCup.csproj --no-restore --configuration ${{ inputs.build-configuration }}
+      run: dotnet build ./CSCup/CSCup.csproj --no-restore --configuration ${{ inputs.build-configuration }}
     - name: Build solution
-      run: dotnet build .\TypeCobol.sln --no-restore --configuration ${{ inputs.build-configuration }}
+      run: dotnet build ./TypeCobol.sln --no-restore --configuration ${{ inputs.build-configuration }}
     - name: Test
-      run: dotnet test .\TypeCobol.sln --no-build --verbosity normal --configuration ${{ inputs.build-configuration }}
+      run: dotnet test ./TypeCobol.sln --no-build --verbosity normal --configuration ${{ inputs.build-configuration }}

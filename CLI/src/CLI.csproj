@@ -1,23 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\Common.props" />
+	<Import Project="..\..\Common.props" />
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <AssemblyName>TypeCobol.CLI</AssemblyName>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<AssemblyName>TypeCobol.CLI</AssemblyName>
+		<!-- PackageId uses AssemblyName by default so no need to redefine here, PackageId is "TypeCobol.CLI" -->
+		<Description>
+			Command Line Interface for TypeCobol parser allowing to parse and analyze TypeCobol (or Cobol) code
+			from the command line. It is also able to generate Cobol from TypeCobol source code.
+		</Description>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Codegen\src\Codegen.csproj" />
-    <ProjectReference Include="..\..\TypeCobol.Analysis\TypeCobol.Analysis.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Codegen\src\Codegen.csproj" />
+		<ProjectReference Include="..\..\TypeCobol.Analysis\TypeCobol.Analysis.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="DefaultCopies\**\*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="DefaultCopies\**\*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

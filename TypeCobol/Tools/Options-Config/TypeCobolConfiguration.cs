@@ -397,7 +397,7 @@ namespace TypeCobol.Tools.Options_Config
                         file = string.Empty;
 
                     if ((!Directory.Exists(directory) || !string.IsNullOrEmpty(file) && !File.Exists(dependency)) && !errorStack.ContainsKey(ReturnCode.DependenciesError))
-                        errorStack.Add(ReturnCode.DependenciesError, TypeCobolConfiguration.ErrorMessages[ReturnCode.DependenciesError] + directory + Path.DirectorySeparatorChar + file);
+                        errorStack.Add(ReturnCode.DependenciesError, TypeCobolConfiguration.ErrorMessages[ReturnCode.DependenciesError] + dependency);
 
                 }
             }

@@ -236,7 +236,7 @@ namespace TypeCobol.LanguageServer
                 { "lsr=","{PATH} the lsr path", (string v) => LsrPath = v },
                 { "s|script=","{PATH} script path in lsr", (string v) => LsrScript = v },
                 { "td|timerdisabled","Disable the delay that handle the automatic launch of Node Phase analyze", _ => TimerDisabledOption = true },
-                { "ro|roptions=","Path to LSR options file", (string v) => LsrOptions = v + " " },
+                { "ro|roptions=","Path to LSR options file", (string v) => LsrOptions = v },
                 { "tsource",  "Source document testing mode.", _ => LsrSourceTesting = true},
                 { "tscanner",  "Scanner testing mode.", _ => LsrScannerTesting = true},
                 { "tpreprocess",  "Preprocessing testing mode.", _ => LsrPreprocessTesting = true},

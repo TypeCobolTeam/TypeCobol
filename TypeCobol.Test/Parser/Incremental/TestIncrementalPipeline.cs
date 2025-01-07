@@ -13,8 +13,8 @@ namespace TypeCobol.Test.Parser.Incremental
     [TestClass]
     public class IncrementalTextLineChanges
     {
-        private static readonly string _Root = PlatformUtils.GetPathForProjectFile(@"Parser\Incremental");
-        private static readonly string _RootPrograms = PlatformUtils.GetPathForProjectFile(@"Parser\Programs");
+        private static readonly string _Root = PlatformUtils.GetPathForProjectFile(@"Parser/Incremental");
+        private static readonly string _RootPrograms = PlatformUtils.GetPathForProjectFile(@"Parser/Programs");
 
         private static void TestFolder([CallerMemberName] string folder = null)
         {
