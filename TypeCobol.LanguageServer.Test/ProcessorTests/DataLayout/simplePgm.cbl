@@ -36,4 +36,7 @@
        01 num8         pic 9(03) binary.
        01 num9         pic 9(03) comp.
 
+       LINKAGE SECTION.
+       01 Var2-in-lk pic X(2).
+
        END PROGRAM TCOZEFR0.

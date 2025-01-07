@@ -320,7 +320,6 @@ namespace TypeCobol.Codegen.Generators
             /// - To
             /// - Span on the last line
             /// - Node's Target Line Numbers.
-            /// - Node's Target Line Offsets.
             /// </summary>
             public NodePositions Positions;
             /// <summary>

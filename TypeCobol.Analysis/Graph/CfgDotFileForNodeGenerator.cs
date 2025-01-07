@@ -47,10 +47,35 @@ namespace TypeCobol.Analysis.Graph
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Set of encountered blocks during one generation, each block is identified by its index.
+        /// Instantiated once in the constructor of root generator, then shared with all of its children.
+        /// Cleared each time a new generation is requested.
+        /// </summary>
         private readonly HashSet<int> _encounteredBlocks;
+
+        /// <summary>
+        /// Buffer for blocks. Each generator has its own instance. This buffer is created as soon as
+        /// we have the format parameters (FormatProvider and NewLine):
+        /// - for root generator that is when the generation is requested, using the supplied TextWriter
+        /// - for children generators, this is in the constructor having the parent generator as argument
+        /// </summary>
         private StringWriter _blocksBuffer;
+
+        /// <summary>
+        /// Buffer for edges. This buffer is shared across root generator and its children.
+        /// Like block generator, it is parameterized using the target writer properties.
+        /// </summary>
         private StringWriter _edgesBuffer;
+
+        /// <summary>
+        /// The current CFG to generate in DOT language.
+        /// </summary>
         private ControlFlowGraph<Node, D> _cfg;
+
+        /// <summary>
+        /// The identifier of current graph or subgraph being generated, a new identifier is generated for each block group coming from the CFG.
+        /// </summary>
         private readonly int _clusterIndex;
 
         public delegate void BlockEmitted(BasicBlock<Node, D> block, int clusterIndex);
@@ -83,7 +108,7 @@ namespace TypeCobol.Analysis.Graph
             else
             {
                 _encounteredBlocks = new HashSet<int>();
-                //Instance are created when generation is requested
+                // Instances are created when generation is requested, using the parameters from target writer
                 _blocksBuffer = null;
                 _edgesBuffer = null;
             }
@@ -95,7 +120,7 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// Controls the instruction format in generated dot file.
         /// </summary>
-        public bool FullInstruction { get; set; }
+        public bool FullInstruction { get; init; }
 
         /// <summary>
         /// Generate the Control Flow Graph in the given TextWriter
@@ -114,20 +139,21 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="writer">Output TextWriter</param>
         public void Report(TextWriter writer, CompilationUnit unit = null)
         {
-            //Reset state
-            _encounteredBlocks.Clear();
-            Debug.Assert(_blocksBuffer == null);
-            _blocksBuffer = new StringWriter(writer.FormatProvider) { NewLine = writer.NewLine };
-            _edgesBuffer ??= new StringWriter(writer.FormatProvider) { NewLine = writer.NewLine };
+            if (_blocksBuffer != null || _edgesBuffer != null)
+            {
+                throw new InvalidOperationException("Cannot generate subgraph using arbitrary parent graph generator ! Generate using root graph only !");
+            }
 
-            //Nothing to generate
             if (_cfg == null)
             {
-                //Reset writers and return
-                _blocksBuffer = null;
-                _edgesBuffer = null;
+                //Nothing to generate
                 return;
             }
+
+            //Initialize buffers with target writer parameters and reset encountered blocks
+            _encounteredBlocks.Clear();
+            _blocksBuffer = new StringWriter(writer.FormatProvider) { NewLine = writer.NewLine };
+            _edgesBuffer = new StringWriter(writer.FormatProvider) { NewLine = writer.NewLine }; 
 
             //Write header
             writer.WriteLine("digraph Cfg {");
@@ -174,8 +200,7 @@ namespace TypeCobol.Analysis.Graph
                 if (group.Group.Count > 0)
                 {
                     //Generate blocks for subgraph using a nested generator
-                    var subgraphGenerator = new CfgDotFileForNodeGenerator<D>(_cfg, this, group.GroupIndex);
-                    subgraphGenerator.FullInstruction = this.FullInstruction;
+                    var subgraphGenerator = new CfgDotFileForNodeGenerator<D>(_cfg, this, group.GroupIndex) { FullInstruction = this.FullInstruction };
                     BasicBlock<Node, D> first = group.Group.First.Value;
                     _cfg.DFS(first, subgraphGenerator.EmitBlock);
                     string blocks = subgraphGenerator._blocksBuffer.ToString();
