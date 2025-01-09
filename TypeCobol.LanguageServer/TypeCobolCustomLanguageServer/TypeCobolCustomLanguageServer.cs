@@ -216,18 +216,31 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (context != null && context.FileCompiler != null)
             {
-                // We only support CSV for now. In the future outputType should be checked here
                 var position = parameter.textDocumentPosition.position;
-                const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
-                var result = Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
-                var csvResult = new GetDataLayoutCSVResult()
+
+                if (GetDataLayoutParams.OUTPUT_TYPE_CSV.Equals(parameter.outputType))
                 {
-                    root = result.Root,
-                    header = result.Header,
-                    rows = result.Rows,
-                    separator = SEPARATOR
-                };
-                return new GetDataLayoutResult() { csvResult = csvResult };
+                    const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
+                    var result = Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
+                    var csvResult = new GetDataLayoutCSVResult()
+                    {
+                        root = result.Root,
+                        header = result.Header,
+                        rows = result.Rows,
+                        separator = SEPARATOR
+                    };
+                    return new GetDataLayoutResult() { csvResult = csvResult };
+                }
+                else
+                {
+                    var root = Workspace.GetDataLayoutAsTree(context.FileCompiler.CompilationResultsForProgram, position);
+                    var treeResult = new GetDataLayoutTreeResult()
+                    {
+                        root = root
+                    };
+                    return new GetDataLayoutResult() { treeResult = treeResult };
+                }
+
             }
 
             throw new Exception($"Unknown document: '{uri}'");

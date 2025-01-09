@@ -1,0 +1,120 @@
+{"line":1,"character":12}
+---------------------------------------------------------------------------------
+{
+  "logicalLevel": 0,
+  "line": 0,
+  "physicalLevel": 0,
+  "name": "copy",
+  "occursDimension": 0,
+  "start": 0,
+  "length": 0,
+  "index": 0,
+  "flags": 0,
+  "children": [
+    {
+      "logicalLevel": 1,
+      "line": 0,
+      "physicalLevel": 0,
+      "name": "working-storage",
+      "occursDimension": 0,
+      "start": 0,
+      "length": 0,
+      "index": 0,
+      "flags": 0,
+      "children": [
+        {
+          "logicalLevel": 2,
+          "line": 1,
+          "physicalLevel": 1,
+          "name": "TCOQLF",
+          "declaration": "GROUP",
+          "occursDimension": 0,
+          "start": 1,
+          "length": 6,
+          "index": 0,
+          "flags": 2,
+          "children": [
+            {
+              "logicalLevel": 3,
+              "line": 2,
+              "physicalLevel": 5,
+              "name": "TCOQLF-Var1",
+              "declaration": "PIC X",
+              "occursDimension": 0,
+              "start": 1,
+              "length": 1,
+              "index": 0,
+              "flags": 2,
+              "children": []
+            },
+            {
+              "logicalLevel": 3,
+              "line": 3,
+              "physicalLevel": 5,
+              "name": "TCOQLF-Var2",
+              "declaration": "PIC X",
+              "occursDimension": 0,
+              "start": 2,
+              "length": 1,
+              "index": 1,
+              "flags": 2,
+              "children": []
+            },
+            {
+              "logicalLevel": 3,
+              "line": 4,
+              "physicalLevel": 5,
+              "name": "TCOQLF-Var3",
+              "declaration": "PIC X",
+              "occursDimension": 0,
+              "start": 3,
+              "length": 1,
+              "index": 2,
+              "flags": 2,
+              "children": []
+            },
+            {
+              "logicalLevel": 3,
+              "line": 5,
+              "physicalLevel": 5,
+              "name": "TCOQLF-Var4",
+              "declaration": "PIC X",
+              "occursDimension": 0,
+              "start": 4,
+              "length": 1,
+              "index": 3,
+              "flags": 2,
+              "children": []
+            },
+            {
+              "logicalLevel": 3,
+              "line": 6,
+              "physicalLevel": 5,
+              "name": "TCOQLF-Var5",
+              "declaration": "PIC X",
+              "occursDimension": 0,
+              "start": 5,
+              "length": 1,
+              "index": 4,
+              "flags": 2,
+              "children": []
+            },
+            {
+              "logicalLevel": 3,
+              "line": 7,
+              "physicalLevel": 5,
+              "name": "TCOQLF-Var6",
+              "declaration": "PIC X",
+              "occursDimension": 0,
+              "start": 6,
+              "length": 1,
+              "index": 5,
+              "flags": 2,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

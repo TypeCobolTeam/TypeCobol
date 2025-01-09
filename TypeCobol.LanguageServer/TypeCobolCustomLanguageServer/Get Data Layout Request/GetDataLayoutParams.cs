@@ -5,8 +5,9 @@
     /// </summary>
     class GetDataLayoutParams
     {
-        // Output types (add TREE in the future?)
+        // Output types
         internal const string OUTPUT_TYPE_CSV = "CSV";
+        internal const string OUTPUT_TYPE_TREE = "TREE";
 
         /// <summary>
         /// The document and the position that request the Data Layout
@@ -14,7 +15,7 @@
         public VsCodeProtocol.TextDocumentPosition textDocumentPosition { get; set; }
 
         /// <summary>
-        /// The output type expected by the client (only CSV is currently supported)
+        /// The output type expected by the client (CSV or TREE)
         /// </summary>
         public string outputType { get; set; }
     }

@@ -1,11 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Report;
 using TypeCobol.LanguageServer.Test.Utilities;
-using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.Test;
 using TypeCobol.Test.Utils;
@@ -13,18 +12,25 @@ using TypeCobol.Test.Utils;
 namespace TypeCobol.LanguageServer.Test.ProcessorTests
 {
     /// <summary>
-    /// Tests for DataLayout processor with CSV
+    /// Tests for DataLayout processor with Tree
     /// </summary>
     [TestClass]
-    public class DataLayoutProcessorCSVTest
+    public class DataLayoutProcessorTreeTest
     {
-        private const string TEST_DATA_PREFIX = "CSV-";
+        private const string TEST_DATA_PREFIX = "Tree-";
         private const string RELATIVE_PATH = "DataLayout";
         private const string ROOT_PATH = "ProcessorTests";
         private readonly DataLayoutProcessor _processor = new();
 
         private void DoTestProcessor(string sourceFileName, bool isCopy = false, [CallerMemberName] string testName = null)
         {
+            // Force ignoring null value in JSON
+            var backupJsonSettings = JsonConvert.DefaultSettings;
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
             // Parse source file
             var folder = PlatformUtils.GetPathForProjectFile(RELATIVE_PATH, Path.GetFullPath(ROOT_PATH));
             var compilationUnit = ParserUtils.ParseCobolFile(sourceFileName, folder, isCopy, execToStep: ExecutionStep.SemanticCrossCheck);
@@ -39,22 +45,20 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             // Execute processor
             var processorResult = ExecuteProcessor(compilationUnit, position);
 
-            // Build actual result
-            var result = new StringBuilder();
-            result.AppendLine(processorResult.Root);
-            result.AppendLine(processorResult.Header);
-            foreach (var row in processorResult.Rows)
-            {
-                result.AppendLine(row);
-            }
+            // Build actual result (JSON)
+            var result = JToken.FromObject(processorResult).ToString(Formatting.Indented);
+            File.WriteAllText($"{Path.Combine(folder, TEST_DATA_PREFIX + testName)}_actual.txt", result);
 
-            // Compare to expected
-            TestUtils.CompareContent(testName, result.ToString(), testData.Expected);
+            // Compare to expected (JSON) but before restore JSON settings
+            var expectedJson = JToken.Parse(testData.Expected);
+            var expected = JToken.FromObject(expectedJson).ToString(Formatting.Indented);
+            JsonConvert.DefaultSettings = backupJsonSettings;
+            TestUtils.CompareContent(testName, result, expected);
         }
 
-        private (string Root, string Header, string[] Rows) ExecuteProcessor(CompilationUnit compilationUnit, Position position)
+        private DataLayoutNode ExecuteProcessor(CompilationUnit compilationUnit, Position position)
         {
-            return _processor.GetDataLayoutAsCSV(compilationUnit, position, ";");
+            return _processor.GetDataLayoutAsTree(compilationUnit, position);
         }
 
         private static (string Argument, string Expected) ParseContent(string testDataFilePath)
@@ -65,7 +69,11 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         }
 
         [TestMethod]
+     
         public void Copy() => DoTestProcessor("copy", true);
+
+        [TestMethod]
+        public void MiscPgm() => DoTestProcessor("miscPgm");
 
         [TestMethod]
         public void SimplePgm() => DoTestProcessor("simplePgm");

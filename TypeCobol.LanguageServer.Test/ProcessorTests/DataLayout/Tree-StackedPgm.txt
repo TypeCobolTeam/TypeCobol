@@ -1,0 +1,55 @@
+{"line":33,"character":12}
+---------------------------------------------------------------------------------
+{
+  "logicalLevel": 0,
+  "line": 0,
+  "physicalLevel": 0,
+  "name": "Stacked1",
+  "occursDimension": 0,
+  "start": 0,
+  "length": 0,
+  "index": 0,
+  "flags": 0,
+  "children": [
+    {
+      "logicalLevel": 1,
+      "line": 0,
+      "physicalLevel": 0,
+      "name": "working-storage",
+      "occursDimension": 0,
+      "start": 0,
+      "length": 0,
+      "index": 0,
+      "flags": 0,
+      "children": [
+        {
+          "logicalLevel": 2,
+          "line": 34,
+          "physicalLevel": 1,
+          "name": "Stacked1-group",
+          "declaration": "GROUP",
+          "occursDimension": 0,
+          "start": 1,
+          "length": 1,
+          "index": 0,
+          "flags": 2,
+          "children": [
+            {
+              "logicalLevel": 3,
+              "line": 35,
+              "physicalLevel": 5,
+              "name": "Stacked1-var",
+              "declaration": "PIC X",
+              "occursDimension": 0,
+              "start": 1,
+              "length": 1,
+              "index": 0,
+              "flags": 2,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

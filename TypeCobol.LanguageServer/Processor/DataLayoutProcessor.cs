@@ -1,7 +1,10 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Types;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -14,14 +17,187 @@ namespace TypeCobol.LanguageServer
     {
         private const char SPACE = ' ';
         private const string UNDEFINED = "***";
-        private const string FILLER = "FILLER";
+        private const string DIMENSION_ITEM = "1";
         private const string GROUP = "GROUP";
-        private const string OCCURS = "OCCURS {0}";
-        private const string OCCURS_SUFFIX_START = " (";
-        private const string OCCURS_SUFFIX = "1";
-        private const string OCCURS_SUFFIX_END = ")";
-        private const string PIC = "PIC {0}";
-        private const string REDEFINES = "REDEFINES {0}";
+        private const string FILLER = "FILLER";
+
+        private readonly struct DataLayoutItem
+        {
+            // Logical level: +1 on parent one
+            public int LogicalLevel { get; }
+
+            // Line number (starting at 1)
+            public int Line { get; }
+
+            // Level number
+            public long PhysicalLevel { get; }
+
+            // Name
+            public string Name { get; }
+
+            // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
+            public string Declaration { get; }
+
+            // +1 on parent one if OCCURS
+            public int OccursDimension { get; }
+
+            // Start position
+            public long Start { get; }
+
+            // Physical length
+            public long Length { get; }
+
+            // Copy directive (possibly null)
+            public string Copy { get; }
+
+            // Position in parent node's chidren
+            public int Index { get; }
+
+            // Flags IsRedefines, Displayable, ...
+            public DataLayoutNodeFlags Flags { get; }
+
+            private readonly DataDefinition _dataDefinition;
+
+            public DataLayoutItem(DataDefinition dataDefinition, int parentLogicalLevel, int parentOccursDimension, int index = -1)
+            {
+                _dataDefinition = dataDefinition;
+
+                bool incrementDimension = dataDefinition.IsTableOccurence;
+
+                //TODO manage slack bytes (property is dataDefinition.SlackBytes)
+
+                LogicalLevel = parentLogicalLevel + 1;
+                Line = dataDefinition.CodeElement.GetLineInMainSource() + 1;
+                PhysicalLevel = dataDefinition.CodeElement.LevelNumber.Value;
+                Name = dataDefinition.Name ?? FILLER;
+                OccursDimension = parentOccursDimension + (incrementDimension ? 1 : 0);
+                Start = dataDefinition.StartPosition;
+                Length = dataDefinition.PhysicalLength;
+                Copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
+                Index = index;
+
+                Flags = DataLayoutNodeFlags.None;
+                var declarationItems = new List<string>();
+                if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines codeElement)
+                {
+                    if (dataDefinition.Picture != null)
+                    {
+                        declarationItems.Add($"PIC {dataDefinition.Picture.Value}");
+                    }
+                    var usage = codeElement.Usage;
+                    if (usage != null)
+                    {
+                        declarationItems.Add(usage.Token.Text);
+                    }
+
+                    if (IsDisplayable(this))
+                    {
+                        Flags |= DataLayoutNodeFlags.Displayable;
+                    }
+
+                    bool IsDisplayable(DataLayoutItem current)
+                    {
+                        // FILLER with a National or NationalEdited picture are not displayable
+                        if (current.Name.Equals(FILLER) && IsNationalOrNationalEdited(current))
+                        {
+                            return false;
+                        }
+
+                        // Usage Index, FunctionPointer and ProcedurePointer are not displayable
+                        return usage?.Value != DataUsage.Index && usage?.Value != DataUsage.FunctionPointer && usage?.Value != DataUsage.ProcedurePointer;
+                    }
+
+                    bool IsNationalOrNationalEdited(DataLayoutItem current)
+                    {
+                        var type = current._dataDefinition.SemanticData?.Type;
+                        bool hasPicture = type?.Tag == Compiler.Types.Type.Tags.Picture;
+                        if (hasPicture)
+                        {
+                            var picture = (PictureType)type;
+                            return picture.Category == PictureCategory.National || picture.Category == PictureCategory.NationalEdited;
+                        }
+
+                        return false;
+                    }
+                }
+
+                if (declarationItems.Count == 0 && dataDefinition.IsGroup)
+                {
+                    declarationItems.Add(GROUP);
+                }
+
+                if (dataDefinition.CodeElement.Type == CodeElementType.DataRedefinesEntry)
+                {
+                    Flags |= DataLayoutNodeFlags.IsRedefines;
+                    declarationItems.Add($"REDEFINES {((DataRedefines)dataDefinition).CodeElement.RedefinesDataName.Name}");
+                }
+
+                if (incrementDimension)
+                {
+                    declarationItems.Add($"OCCURS {dataDefinition.MaxOccurencesCount}");
+                }
+
+                Declaration = string.Join(SPACE, declarationItems);
+            }
+
+            public string ToRow(string separator)
+            {
+                var row = new StringBuilder();
+
+                AppendWithSeparator(Line);
+                AppendWithSeparator(LogicalLevel);
+                AppendWithSeparator(PhysicalLevel);
+                AppendWithSeparator(GetNameWithDimensions()); // Ex.: Data-Name (1, 1) for 2 nested OCCURS
+                AppendWithSeparator(Declaration);
+
+                // Start/End/Length
+                AppendWithSeparator(Start);
+                AppendWithSeparator(GetEnd());
+                row.Append(Length);
+
+                return row.ToString();
+
+                void AppendWithSeparator(object value)
+                {
+                    row.Append(value).Append(separator);
+                }
+            }
+
+            public DataLayoutNode ToDataLayoutNode()
+            {
+                return new()
+                {
+                    logicalLevel = LogicalLevel,
+                    line = Line,
+                    physicalLevel = PhysicalLevel,
+                    name = Name,
+                    declaration = Declaration,
+                    occursDimension = OccursDimension,
+                    start = Start,
+                    length = Length,
+                    copy = Copy,
+                    index = Index,
+                    flags = Flags,
+                    children = []
+                };
+            }
+
+            private string GetNameWithDimensions()
+            {
+                if (OccursDimension == 0)
+                {
+                    return Name;
+                }
+                string dimensions = string.Join(SPACE, Enumerable.Repeat(DIMENSION_ITEM, OccursDimension));
+                return $"{Name} ({dimensions})";
+            }
+
+            private string GetEnd()
+            {
+                var end = Start + Length - 1;
+                return (end > 0) ? end.ToString() : UNDEFINED;
+            }
+        }
 
         /// <summary>
         /// Get the Data Layout rows for a Program or a Copy (output = CSV)
@@ -32,197 +208,159 @@ namespace TypeCobol.LanguageServer
         /// <returns>Tuple made of the root (the Copy or the Program containing the data), CSV header and CSV rows</returns>
         public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
         {
+            Program program = GetProgram(compilationUnit, position);
+
             var rows = new List<string>();
-            var dataLayoutNodes = CollectDataLayoutNodesAtPosition(compilationUnit, position, out var root);
-            foreach (var dataLayoutNode in dataLayoutNodes)
+            CollectInProgram(program, CollectInSection);
+
+            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
+            return (program?.Name, header, rows.ToArray());
+
+            void CollectInSection(DataSection section)
             {
-                var row = CreateRow(dataLayoutNode, separator);
-                if (row != null)
+                if (section != null)
                 {
-                    rows.Add(row);
+                    // Set level to -1 so that it will start at 0 for the rows
+                    CollectRows(section, -1, 0);
                 }
             }
 
-            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
-            return (root, header, rows.ToArray());
-
-            static string CreateRow(Tuple<int, DataDefinition, int> dataLayoutNode, string separator)
+            void CollectRows(Node node, int nodeLevel, int occursDimension)
             {
-                var nodeLevel = dataLayoutNode.Item1;
-                var dataDefinition = dataLayoutNode.Item2;
-                var occursDimension = dataLayoutNode.Item3;
-
-                var row = new StringBuilder();
-
-                //TODO manage slack bytes (property is dataDefinition.SlackBytes)
-
-                // Line number (starting at 1)
-                AppendToRow(dataDefinition.CodeElement.GetLineInMainSource() + 1);
-
-                // Node level
-                AppendToRow(nodeLevel);
-
-                // Level number
-                AppendToRow(dataDefinition.CodeElement.LevelNumber);
-
-                // Name
-                AppendNameToRow(dataDefinition, occursDimension);
-
-                // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
-                AppendDeclarationToRow(dataDefinition);
-
-                // Start/End/Length
-                var start = dataDefinition.StartPosition;
-                var length = dataDefinition.PhysicalLength;
-                AppendToRow(start);
-                AppendToRow(GetEnd(start, length));
-                row.Append(length);
-
-                return row.ToString();
-
-                void AppendToRow(object value)
+                foreach (var child in node.Children)
                 {
-                    row.Append(value).Append(separator);
-                }
-
-                void AppendNameToRow(DataDefinition dataDefinition, int occursDimension)
-                {
-                    row.Append(dataDefinition.Name ?? FILLER);
-                    if (occursDimension > 0)
+                    if (child is DataDefinition childDefinition && IsInScope(childDefinition))
                     {
-                        AppendOccursSuffixToRow(occursDimension);
-                    }
-                    row.Append(separator);
-                }
+                        var dataLayoutItem = new DataLayoutItem(childDefinition, nodeLevel, occursDimension);
+                        rows.Add(dataLayoutItem.ToRow(separator));
 
-                void AppendOccursSuffixToRow(int occursDimension)
-                {
-                    row.Append(OCCURS_SUFFIX_START);
-                    row.Append(OCCURS_SUFFIX);
-                    for (int i = 1; i < occursDimension; i++)
-                    {
-                        row.Append(SPACE).Append(OCCURS_SUFFIX);
-                    }
-                    row.Append(OCCURS_SUFFIX_END);
-                }
-
-                void AppendDeclarationToRow(DataDefinition dataDefinition)
-                {
-                    var initialRowLength = row.Length;
-
-                    CodeElementType type = dataDefinition.CodeElement.Type;
-                    if (type == CodeElementType.DataRedefinesEntry)
-                    {
-                        row.Append(string.Format(REDEFINES, ((DataRedefines)dataDefinition).CodeElement.RedefinesDataName.Name));
-                    }
-                    else if (type == CodeElementType.DataDescriptionEntry)
-                    {
-                        if (dataDefinition.Picture != null)
+                        if (childDefinition.Children.Count > 0)
                         {
-                            row.Append(string.Format(PIC, dataDefinition.Picture.Value));
-                        }
-                        string usage = ((DataDescriptionEntry)dataDefinition.CodeElement).Usage?.Token.Text;
-                        if (!string.IsNullOrWhiteSpace(usage))
-                        {
-                            AppendSpaceIfNeeded();
-                            row.Append(usage);
-                        }
-
-                        if (row.Length == initialRowLength && dataDefinition.ChildrenCount > 0)
-                        {
-                            row.Append(GROUP);
+                            CollectRows(childDefinition, dataLayoutItem.LogicalLevel, dataLayoutItem.OccursDimension);
                         }
                     }
-
-                    if (dataDefinition.IsTableOccurence)
-                    {
-                        AppendSpaceIfNeeded();
-                        row.Append(string.Format(OCCURS, dataDefinition.MaxOccurencesCount));
-                    }
-
-                    row.Append(separator);
-
-                    void AppendSpaceIfNeeded()
-                    {
-                        if (row.Length != initialRowLength)
-                        {
-                            row.Append(SPACE);
-                        }
-                    }
-                }
-
-                static object GetEnd(long start, long length)
-                {
-                    var end = start + length - 1;
-                    return (end > 0) ? end : UNDEFINED;
                 }
             }
         }
 
-        private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, out string root)
+        private static Program GetProgram(CompilationUnit compilationUnit, Position position)
         {
+            Debug.Assert(compilationUnit != null);
+            Debug.Assert(position != null);
             var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
             // Get the node corresponding to the position (if null use the main program)
             var locationNode = location.Node ?? (compilationUnit.ProgramClassDocumentSnapshot.Root?.MainProgram);
-            if (locationNode == null)
+            if (locationNode == null || locationNode.GetProgramNode() == null)
             {
                 throw new Exception($"No program found in: '{compilationUnit.TextSourceInfo.Name}'"); ;
             }
 
-            var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
-            var program = locationNode.GetProgramNode();
-            root = program?.Name;
-            DataDivision dataDivision = program?.GetChildren<DataDivision>()?.FirstOrDefault();
+            return locationNode.GetProgramNode();
+        }
+        private void CollectInProgram(Program program, Action<DataSection> collectInSection)
+        {
+            DataDivision dataDivision = program.GetChildren<DataDivision>()?.FirstOrDefault();
             if (dataDivision != null)
             {
                 // Consider data declared in the Working and Local storage sections
-                CollectDataLayoutNodesInSection(dataDivision.WorkingStorageSection);
-                CollectDataLayoutNodesInSection(dataDivision.LocalStorageSection);
+                collectInSection(dataDivision.WorkingStorageSection);
+                collectInSection(dataDivision.LocalStorageSection);
                 // Consider also data declared in the Linkage section
-                CollectDataLayoutNodesInSection(dataDivision.LinkageSection);
+                collectInSection(dataDivision.LinkageSection);
+            }
+        }
+
+        private static bool IsInScope(DataDefinition dataDefinition)
+        {
+            DataDefinitionEntry codeElement = dataDefinition.CodeElement;
+            if (codeElement == null || codeElement.Line < 0)
+            {
+                // Ignore node without CodeElement or with negative line number
+                return false;
             }
 
-            return dataLayoutNodes;
+            // Ignore level 88 and 66
+            CodeElementType type = codeElement.Type;
+            return type != CodeElementType.DataConditionEntry && type != CodeElementType.DataRenamesEntry;
+        }
 
-            void CollectDataLayoutNodesInSection(DataSection section)
+        /// <summary>
+        /// Get the Data Layout nodes for a Copy or a Program (output = TREE)
+        /// </summary>
+        /// <param name="compilationUnit">Compilation unit resulting from parsing the Copy or Program</param>
+        /// <param name="position">Position determining the data to be considered (useful in case of the stacked/nested Programs)</param>
+        /// <returns>Root data layout node</returns>
+        public DataLayoutNode GetDataLayoutAsTree(CompilationUnit compilationUnit, Position position)
+        {
+            Program program = GetProgram(compilationUnit, position);
+
+            var rootDLN = DataLayoutNodeBuilder.From(program);
+            var sectionDLNs = new List<DataLayoutNode>();
+
+            CollectInProgram(program, CollectInSection);
+
+            rootDLN.children = sectionDLNs.ToArray();
+
+            return rootDLN;
+
+            void CollectInSection(DataSection dataSection)
             {
-                if (section != null)
+                if (dataSection != null)
                 {
-                    CollectDataLayoutNodes(0, section, 0);
+                    var sectionDLN = DataLayoutNodeBuilder.From(dataSection);
+                    sectionDLNs.Add(sectionDLN);
+                    sectionDLN.children = CollectDataLayoutNodes(dataSection, sectionDLN).ToArray();
                 }
             }
 
-            void CollectDataLayoutNodes(int nodeLevel, Node node, int occursDimension)
+            List<DataLayoutNode> CollectDataLayoutNodes(Node parentNode, DataLayoutNode parentDLN)
             {
-                foreach (var child in node.Children)
+                var result = new List<DataLayoutNode>();
+
+                for (int i = 0; i < parentNode.ChildrenCount; i++)
                 {
-                    if (child is DataDefinition childDefinition)
+                    var child = parentNode.Children[i];
+                    if (child is DataDefinition childDefinition && IsInScope(childDefinition))
                     {
-                        var childOccursDimension = childDefinition.IsTableOccurence ? occursDimension + 1 : occursDimension;
-                        if (IsInScope(childDefinition))
-                        {
-                            dataLayoutNodes.Add(new Tuple<int, DataDefinition, int>(nodeLevel, childDefinition, childOccursDimension));
-                        }
+                        var childDLN = DataLayoutNodeBuilder.From(childDefinition, parentDLN, i);
+                        result.Add(childDLN);
                         if (childDefinition.Children.Count > 0)
                         {
-                            CollectDataLayoutNodes(nodeLevel + 1, childDefinition, childOccursDimension);
+                            childDLN.children = CollectDataLayoutNodes(child, childDLN).ToArray();
                         }
                     }
                 }
 
-                static bool IsInScope(DataDefinition dataDefinition)
-                {
-                    DataDefinitionEntry codeElement = dataDefinition.CodeElement;
-                    if (codeElement == null || codeElement.Line < 0)
-                    {
-                        // Ignore node without CodeElement or with negative line number
-                        return false;
-                    }
+                return result;
+            }
+        }
 
-                    // Ignore level 88 and 66
-                    CodeElementType type = codeElement.Type;
-                    return type != CodeElementType.DataConditionEntry && type != CodeElementType.DataRenamesEntry;
-                }
+        private class DataLayoutNodeBuilder
+        {
+            internal static DataLayoutNode From(Program program)
+            {
+                return new()
+                {
+                    name = program.Name,
+                    //index = program.Parent.ChildIndex(program), //TODO not good. Is this index useful? set it to -1?
+                    flags = DataLayoutNodeFlags.None
+                };
+            }
+
+            internal static DataLayoutNode From(DataSection dataSection)
+            {
+                return new()
+                {
+                    logicalLevel = 1,
+                    name = dataSection.ID,
+                    //index = dataSection.Parent.ChildIndex(dataSection), //TODO not good. Is this index useful? if yes change code to loop on DataDivision else set it to -1?
+                    flags = DataLayoutNodeFlags.None
+                };
+            }
+
+            internal static DataLayoutNode From(DataDefinition dataDefinition, DataLayoutNode parent, int index)
+            {
+                return new DataLayoutItem(dataDefinition, parent.logicalLevel, parent.occursDimension, index).ToDataLayoutNode();
             }
         }
     }
