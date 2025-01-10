@@ -102,7 +102,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
        DATA DIVISION.
-                                                           
+                          
        WORKING-STORAGE SECTION.
        01  TC-Callee-FctList-Loaded PIC X(02) VALUE space.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
@@ -115,7 +115,7 @@
            05 TC-Callee-ca0ab46c-Idt   PIC X(08) VALUE 'ca0ab46c'.
            05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
 
-       
+                          
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 

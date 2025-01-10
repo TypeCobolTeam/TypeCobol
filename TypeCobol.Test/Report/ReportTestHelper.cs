@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
@@ -64,8 +60,7 @@ namespace TypeCobol.Test.Report
                         report.Report(sw);
                         // compare with expected result
                         string result = sw.ToString();
-                        string expected = File.ReadAllText(output, format.Encoding);
-                        TestUtils.CompareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
+                        TestUtils.CompareContent(input, result, new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(output), format.Encoding));
                         return ReturnCode.Success;
                     }
                 }

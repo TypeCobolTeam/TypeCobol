@@ -1,33 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\Common.props" />
+	<Import Project="..\..\Common.props" />
 
-  <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<PackageId>TypeCobol.Codegen</PackageId>
+		<Description>
+			This class library contains Cobol code generator able to translate TypeCobol code to standard Cobol.
+			Additional generators are provided for specific purposes, like expanding included copybooks.
+		</Description>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
-    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="TypeCobol.TemplateTask" Version="1.3.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="all" />
+		<PackageReference Include="TypeCobol.TemplateTask" Version="1.3.0" PrivateAssets="all" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\TypeCobol.Transform\TypeCobol.Transform.csproj" />
-    <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\TypeCobol.Transform\TypeCobol.Transform.csproj" />
+		<ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj" />
+	</ItemGroup>
 
-  <!-- TODO: fix TCTemplate task !
-  <ItemGroup>
-    <TCTemplate Update="Skeletons\skeletons.xml">
-      <CustomToolNamespace>$(MSBuildThisFileDirectory)\Actions\Skeletons.cs</CustomToolNamespace>
-    </TCTemplate>
-  </ItemGroup>
-  -->
+	<!-- TODO: fix TCTemplate task !
+	<ItemGroup>
+		<TCTemplate Update="Skeletons\skeletons.xml">
+			<CustomToolNamespace>$(MSBuildThisFileDirectory)\Actions\Skeletons.cs</CustomToolNamespace>
+		</TCTemplate>
+	</ItemGroup>
+	-->
 
 </Project>

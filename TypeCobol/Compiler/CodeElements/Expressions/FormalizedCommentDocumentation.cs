@@ -171,28 +171,28 @@ namespace TypeCobol.Compiler.CodeElements
                     break;
                 case Fields.Description:
                     if (!string.IsNullOrEmpty(Description))
-                        Description += Environment.NewLine;
-                    Description += value + " ";
+                        Description += " ";
+                    Description += value;
                     break;
                 case Fields.Deprecated:
                     if (!string.IsNullOrEmpty(Deprecated))
-                        Description += Environment.NewLine;
-                    Deprecated += value + " ";
+                        Deprecated += " ";
+                    Deprecated += value;
                     break;
                 case Fields.ReplacedBy:
                     if (!string.IsNullOrEmpty(ReplacedBy))
-                        ReplacedBy += Environment.NewLine;
-                    ReplacedBy += value + " ";
+                        ReplacedBy += " ";
+                    ReplacedBy += value;
                     break;
                 case Fields.Restriction:
                     if (!string.IsNullOrEmpty(Restriction))
-                        Restriction += Environment.NewLine;
-                    Restriction += value + " ";
+                        Restriction += " ";
+                    Restriction += value;
                     break;
                 case Fields.See:
                     if (!string.IsNullOrEmpty(See))
-                        See += Environment.NewLine;
-                    See += value + " ";
+                        See += " ";
+                    See += value;
                     break;
                 case Fields.Parameters:
                     if (isContinuation)
@@ -233,66 +233,85 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var writer = new StringWriter();
+            Write(writer);
+            return writer.ToString();
+        }
+
+        public void Write(TextWriter writer)
+        {
+            bool empty = true;
 
             if (Description != null)
-                sb.AppendLine(Description);
+            {
+                writer.WriteLine(Description);
+                empty = Description.Length == 0;
+            }
 
             if (Restriction != null)
-                sb.AppendLine("Restriction: " + Restriction);
+            {
+                writer.WriteLine("Restriction: " + Restriction);
+                empty = false;
+            }
 
             if (Deprecated != null)
             {
-                if (sb.Length != 0)
-                    sb.AppendLine();
-                sb.AppendLine(Deprecated != string.Empty ? "Deprecated: " + Deprecated : "Deprecated");
+                if (!empty)
+                    writer.WriteLine();
+                writer.WriteLine(Deprecated != string.Empty ? "Deprecated: " + Deprecated : "Deprecated");
+                empty = false;
             }
 
             if (ReplacedBy != null)
-                sb.AppendLine("Replaced By: " + ReplacedBy);
+            {
+                writer.WriteLine("Replaced By: " + ReplacedBy);
+                empty = false;
+            }
 
             if (See != null)
             {
-                if (sb.Length != 0)
-                    sb.AppendLine();
-                sb.AppendLine("See: " + See);
+                if (!empty)
+                    writer.WriteLine();
+                writer.WriteLine("See: " + See);
+                empty = false;
             }
-            
 
             if (Parameters.Count > 0)
             {
-                if (sb.Length != 0)
-                    sb.AppendLine();
-                sb.AppendLine("Parameters:");
+                if (!empty)
+                    writer.WriteLine();
+                writer.WriteLine("Parameters:");
                 foreach (var parameter in Parameters)
                 {
-                    sb.AppendLine("\t-\t" + parameter.Key + ": " + parameter.Value);
+                    writer.WriteLine("\t-\t" + parameter.Key + ": " + parameter.Value);
                 }
+
+                empty = false;
             }
 
             if (Needs.Count > 0)
             {
-                if (sb.Length != 0)
-                    sb.AppendLine();
-                sb.AppendLine("Needs:");
+                if (!empty)
+                    writer.WriteLine();
+                writer.WriteLine("Needs:");
                 foreach (var need in Needs)
                 {
-                    sb.AppendLine("\t-\t" + need);
+                    writer.WriteLine("\t-\t" + need);
                 }
+
+                empty = false;
             }
 
             if (ToDo.Count > 0)
             {
-                if (sb.Length != 0)
-                    sb.AppendLine();
-                sb.AppendLine("To do:");
+                if (!empty)
+                    writer.WriteLine();
+                writer.WriteLine("To do:");
                 foreach (var todo in ToDo)
                 {
-                    sb.AppendLine("\t-\t" + todo);
+                    writer.WriteLine("\t-\t" + todo);
                 }
             }
-
-            return sb.ToString();
         }
     }
 }

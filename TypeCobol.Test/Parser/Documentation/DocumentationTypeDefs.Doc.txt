@@ -42,7 +42,7 @@ DataType :
 ---------------------
 
 Name : Type11
-Description : Description for Type11 
+Description : Description for Type11
 Visibility : Public
 Namespace : DocForTypeDefs
 NodeType : TypeDef
@@ -66,13 +66,13 @@ DataType :
 ---------------------
 
 Name : Type12
-Description : Description for Type12 
+Description : Description for Type12
 Visibility : Private
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : True
 Deprecated : 
-ReplacedBy : Type42 
+ReplacedBy : Type42
 Restriction : 
 See : 
 Needs : 
@@ -241,7 +241,7 @@ TypeDefChild :
 ---------------------
 
 Name : Type21
-Description : Description for Type21 
+Description : Description for Type21
 Visibility : Public
 Namespace : DocForTypeDefs
 NodeType : TypeDef
@@ -392,7 +392,7 @@ TypeDefChild :
 ---------------------
 
 Name : Type22
-Description : Description for Type22 
+Description : Description for Type22
 Visibility : Private
 Namespace : DocForTypeDefs
 NodeType : TypeDef
@@ -555,7 +555,7 @@ No formalized comment found
 ---------------------
 
 == Type11 ==
-Description : Description for Type11 
+Description : Description for Type11
 Deprecated : 
 ReplacedBy : 
 Restriction : 
@@ -567,9 +567,9 @@ Parameters :
 ---------------------
 
 == Type12 ==
-Description : Description for Type12 
+Description : Description for Type12
 Deprecated : *is present*
-ReplacedBy : Type42 
+ReplacedBy : Type42
 Restriction : 
 See : 
 Needs : 
@@ -586,7 +586,7 @@ No formalized comment found
 ---------------------
 
 == Type21 ==
-Description : Description for Type21 
+Description : Description for Type21
 Deprecated : 
 ReplacedBy : 
 Restriction : 
@@ -598,7 +598,7 @@ Parameters :
 ---------------------
 
 == Type22 ==
-Description : Description for Type22 
+Description : Description for Type22
 Deprecated : *is present*
 ReplacedBy : 
 Restriction : 

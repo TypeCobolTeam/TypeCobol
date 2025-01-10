@@ -17,16 +17,16 @@ Line 52[21,25] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "MyProc1 description ",
+  "Description": "MyProc1 description",
   "Name": "MyProc1",
   "Namespace": "DocForFunctions",
   "Needs": [
     "first need",
     "second need"
   ],
-  "ReplacedBy": "ReplacedBy MyProc8 ",
-  "Restriction": "Do not support discount code ",
-  "See": "you later ",
+  "ReplacedBy": "ReplacedBy MyProc8",
+  "Restriction": "Do not support discount code",
+  "See": "you later",
   "ToDos": [
     "implement a call to MyProc8 in case of discount code"
   ],
@@ -81,7 +81,7 @@ Line 52[21,25] <37, Warning, General> - Warning: Parameter does not have any des
 
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
-  "Description": "MyProc2 description ",
+  "Description": "MyProc2 description",
   "Name": "MyProc2",
   "Namespace": "DocForFunctions",
   "Parameters": [
@@ -107,7 +107,7 @@ Line 52[21,25] <37, Warning, General> - Warning: Parameter does not have any des
 
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
-  "Description": "MyProc3 description ",
+  "Description": "MyProc3 description",
   "Name": "MyProc3",
   "Namespace": "DocForFunctions",
   "Visibility": 1,

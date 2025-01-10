@@ -103,6 +103,7 @@ namespace TypeCobol.LanguageServer.Test
             if (useSyntaxColoring) lsOptions.Add("-sc"); // if true, activate syntax coloring
             if (useOutline) lsOptions.Add("-ol"); // if true, activate outline
             if (useCfg) lsOptions.Add("-cfg=AsContent"); // if true, activate cfg as content directly included in messages
+            lsOptions.Add("-now"); // Disable copy and dependencies watchers
 
             //Build full path to default Cpy Copy names file for LSR tests
             string cpyCopiesFile = Path.GetFullPath(Path.Combine(testWorkingDirectory, "input", "CpyCopies.lst"));

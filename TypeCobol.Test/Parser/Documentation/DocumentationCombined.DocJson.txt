@@ -10,16 +10,16 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "My program \r\ndescription ",
+  "Description": "My program description",
   "Name": "DocCombined",
   "Namespace": "DocCombined",
   "Needs": [
     "some needs",
     "description"
   ],
-  "ReplacedBy": "MyFonction2 ",
-  "Restriction": "Do not Use BOOL var ",
-  "See": "Thank you for your attention ",
+  "ReplacedBy": "MyFonction2",
+  "Restriction": "Do not Use BOOL var",
+  "See": "Thank you for your attention",
   "ToDos": [
     "Add BOOL support",
     "implement a call counter"
@@ -30,10 +30,10 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "inline typedef ",
+  "Description": "inline typedef",
   "Name": "myType",
   "Namespace": "DocCombined",
-  "Restriction": "Do not Use BOOL var ",
+  "Restriction": "Do not Use BOOL var",
   "Visibility": 1,
   "DocDataType": {
     "MaxOccurence": 1,
@@ -44,7 +44,7 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 
 {
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
-  "Description": "Vect2D ",
+  "Description": "Vect2D",
   "Name": "Vect2D",
   "Namespace": "DocCombined",
   "Childrens": [
@@ -79,8 +79,8 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
-  "Deprecated": "It is deprecated ",
-  "Description": "MyProc info \r\n",
+  "Deprecated": "It is deprecated",
+  "Description": "MyProc info",
   "Name": "MyProc",
   "Namespace": "DocCombined",
   "Needs": [
@@ -142,7 +142,7 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "MyPrivateProc is a Proc but Private ",
+  "Description": "MyPrivateProc is a Proc but Private",
   "Name": "MyPrivateProc",
   "Namespace": "DocCombined",
   "ToDos": [
@@ -173,7 +173,7 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "MyLocalProc is a Proc but Local (no access modifier) ",
+  "Description": "MyLocalProc is a Proc but Local (no access modifier)",
   "Name": "MyLocalProc",
   "Namespace": "DocCombined",
   "ToDos": [

@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
-using System.IO;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Report;
 using TypeCobol.Compiler.Symbols;
@@ -30,8 +29,7 @@ namespace TypeCobol.Analysis.Test
                 // compare with expected result
                 string result = sw.ToString();
                 string output = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm.csv");
-                string expected = File.ReadAllText(output, DocumentFormat.RDZReferenceFormat.Encoding);
-                TypeCobol.Test.TestUtils.CompareLines(path, result, expected, output);
+                TypeCobol.Test.TestUtils.CompareContent(path, result, new TypeCobol.Test.TestUtils.FileInfo(output, DocumentFormat.RDZReferenceFormat.Encoding));
             }
         }
 
@@ -50,8 +48,7 @@ namespace TypeCobol.Analysis.Test
                 // compare with expected result
                 string result = sw.ToString();
                 string output = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm88Set.csv");
-                string expected = File.ReadAllText(output, DocumentFormat.RDZReferenceFormat.Encoding);
-                TypeCobol.Test.TestUtils.CompareLines(path, result, expected, output);
+                TypeCobol.Test.TestUtils.CompareContent(path, result, new TypeCobol.Test.TestUtils.FileInfo(output, DocumentFormat.RDZReferenceFormat.Encoding));
             }
         }
 
@@ -70,8 +67,7 @@ namespace TypeCobol.Analysis.Test
                 // compare with expected result
                 string result = sw.ToString();
                 string output = Path.Combine(CfgTestUtils.Report, "ProcCallPgm.csv");
-                string expected = File.ReadAllText(output, DocumentFormat.RDZReferenceFormat.Encoding);
-                TypeCobol.Test.TestUtils.CompareLines(path, result, expected, output);
+                TypeCobol.Test.TestUtils.CompareContent(path, result, new TypeCobol.Test.TestUtils.FileInfo(output, DocumentFormat.RDZReferenceFormat.Encoding));
             }
         }
 

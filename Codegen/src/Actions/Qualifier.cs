@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using TypeCobol.Codegen.Nodes;
+﻿using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
@@ -112,7 +109,7 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsIndex) || this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsBoolean))
                 {
-                    Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(this.CurrentNode);
+                    NodePositions sourcePositions = this.Generator.FromToPositions(this.CurrentNode);
                     foreach (TypeCobol.Compiler.CodeElements.StorageArea storage_area in this.CurrentNode.QualifiedStorageAreas.Keys)
                     {
                         if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsIndex))
@@ -130,7 +127,7 @@ namespace TypeCobol.Codegen.Actions
                 return true;
             }
 
-            private void QualifiedStorageAreaSelecterForBoolean(StorageArea storage_area, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
+            private void QualifiedStorageAreaSelecterForBoolean(StorageArea storage_area, NodePositions sourcePositions)
             {
                 if (UsedStorageArea != null && UsedStorageArea.Contains(storage_area))
                     return;
@@ -147,7 +144,7 @@ namespace TypeCobol.Codegen.Actions
                 UsedStorageArea.Add(storage_area);
             }
 
-            private void QualifiedStorageAreaSelecterForIndexes(StorageArea storageArea, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
+            private void QualifiedStorageAreaSelecterForIndexes(StorageArea storageArea, NodePositions sourcePositions)
             {
                 if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsQualifiedReference)
                 {
@@ -257,7 +254,7 @@ namespace TypeCobol.Codegen.Actions
                                 {
                                     if (index.Name.Equals(indexDefinition.Name))
                                     {
-                                        Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(indexDefinition.Parent);
+                                        NodePositions sourcePositions = this.Generator.FromToPositions(indexDefinition.Parent);
                                         string qualified_name = indexDefinition.QualifiedName.ToString();
                                         GenerateToken item = null;
                                         string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, indexDefinition.Parent);
@@ -558,7 +555,7 @@ namespace TypeCobol.Codegen.Actions
 
                 //Now this Node Is Visited
                 sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(sourceNode);
+                NodePositions sourcePositions = this.Generator.FromToPositions(sourceNode);
                 IList<TypeCobol.Compiler.Scanner.Token> nodeTokens = sourceNode.CodeElement.ConsumedTokens;
                 List<Tuple<int, int>> boundaries = ItemsListIndexBoundary(nodeTokens);
                 int b = 0;
@@ -724,7 +721,7 @@ namespace TypeCobol.Codegen.Actions
             /// <param name="codelement">The Code element of this Node</param>
             /// <param name="code">The replace code</param>
             /// <param name="sourcePositions">The Positions of the Source Node</param>
-            public GenerateToken(CodeElement codelement, string code, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
+            public GenerateToken(CodeElement codelement, string code, NodePositions sourcePositions)
                 : base(codelement)
             {
                 ReplaceCode = code;
@@ -734,7 +731,7 @@ namespace TypeCobol.Codegen.Actions
             /// <summary>
             /// Source Node Positions
             /// </summary>
-            public Tuple<int, int, int, List<int>, List<int>> SourceNodePositions
+            public NodePositions SourceNodePositions
             {
                 get;
                 private set;

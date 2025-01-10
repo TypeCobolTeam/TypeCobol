@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace TypeCobol.Compiler.File
 {
@@ -16,8 +11,7 @@ namespace TypeCobol.Compiler.File
         // Local directory properties
 
         public DirectoryInfo RootDirectory { get; }
-        private string _rootPath;
-        private bool includeSubdirectories;
+        private readonly EnumerationOptions enumerationOptions;
         private string[] fileExtensions;
 
         // Library file format properties
@@ -41,13 +35,19 @@ namespace TypeCobol.Compiler.File
         {
             Name = libraryName;
 
-            this._rootPath = rootPath;
             RootDirectory = new DirectoryInfo(rootPath);
             if (!RootDirectory.Exists)
             {
                 throw new ArgumentException($"Local copy library {rootPath} does not exist on disk.");
             }
-            this.includeSubdirectories = includeSubdirectories;
+
+            this.enumerationOptions = new EnumerationOptions()
+            {
+                MatchCasing =
+                    MatchCasing.CaseInsensitive, // Looking up textnames from Cobol source which is case-insensitive
+                RecurseSubdirectories = includeSubdirectories
+            };
+
             if (fileExtensions != null)
             {
                 foreach (var fileExtension in fileExtensions)
@@ -169,9 +169,7 @@ namespace TypeCobol.Compiler.File
         /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
         public FileInfo SearchForFileWithoutExtensions(string textName)
         {
-            return RootDirectory.EnumerateFiles(textName,
-                    includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-                .FirstOrDefault();
+            return RootDirectory.EnumerateFiles(textName, enumerationOptions).FirstOrDefault();
         }
 
         /// <summary>
@@ -180,7 +178,7 @@ namespace TypeCobol.Compiler.File
         /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
         public FileInfo SearchForFileWithExtensions(string textName)
         {
-            return RootDirectory.EnumerateFiles($"{textName}.*", includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+            return RootDirectory.EnumerateFiles($"{textName}.*", enumerationOptions)
                 .FirstOrDefault(f =>
                     fileExtensions.Any(suffix =>
                         f.Extension.Equals(suffix, StringComparison.OrdinalIgnoreCase)));
@@ -237,7 +235,7 @@ namespace TypeCobol.Compiler.File
             if (fileSystemWatcher == null)
             {
                 fileSystemWatcher = new FileSystemWatcher(RootDirectory.FullName);
-                fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+                fileSystemWatcher.IncludeSubdirectories = enumerationOptions.RecurseSubdirectories;
                 fileSystemWatcher.Changed += fileSystemWatcher_Changed;
                 fileSystemWatcher.Renamed += fileSystemWatcher_Renamed;
                 fileSystemWatcher.Deleted += fileSystemWatcher_Deleted;

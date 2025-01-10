@@ -421,10 +421,10 @@ namespace CLI.Test
             string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim();
             string warnings = string.Empty;
 
-            foreach (string line in standardOutput.Split(new string[] { "\r\n" }, StringSplitOptions.None))
+            foreach (string line in standardOutput.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
             {
                 if (line.StartsWith("Line"))
-                    warnings += line + "\r\n";
+                    warnings += line + Environment.NewLine;
             }
 
             warnings = warnings.Trim();

@@ -21,7 +21,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
 
 {
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
-  "Description": "Description for Type11 ",
+  "Description": "Description for Type11",
   "Name": "Type11",
   "Namespace": "DocForTypeDefs",
   "Visibility": 1,
@@ -35,10 +35,10 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
 {
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "Description for Type12 ",
+  "Description": "Description for Type12",
   "Name": "Type12",
   "Namespace": "DocForTypeDefs",
-  "ReplacedBy": "Type42 ",
+  "ReplacedBy": "Type42",
   "Visibility": 2,
   "DocDataType": {
     "MaxOccurence": 1,
@@ -137,7 +137,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
 
 {
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
-  "Description": "Description for Type21 ",
+  "Description": "Description for Type21",
   "Name": "Type21",
   "Namespace": "DocForTypeDefs",
   "Visibility": 1,
@@ -228,7 +228,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
 {
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "Description for Type22 ",
+  "Description": "Description for Type22",
   "Name": "Type22",
   "Namespace": "DocForTypeDefs",
   "Needs": [

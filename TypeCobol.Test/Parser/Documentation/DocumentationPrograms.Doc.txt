@@ -3,15 +3,15 @@ Line 63[34,39] <37, Warning, General> - Warning: Parameter does not have any des
 Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param3
 ======================== Nodes properties ========================
 Name : DocForPrograms
-Description : Main Program 
+Description : Main Program
 Visibility : Local
 Namespace : DocForPrograms
 NodeType : Program
 IsDeprecated : False
 Deprecated : 
 ReplacedBy : 
-Restriction : restriction value 
-See : Thank you for your attention 
+Restriction : restriction value
+See : Thank you for your attention
 Needs : 
     This is my first need This is also my first need
     This is my second need
@@ -21,7 +21,7 @@ Parameters :
 ---------------------
 
 Name : NestedPgm
-Description : Nested Program 
+Description : Nested Program
 Visibility : Local
 Namespace : DocForPrograms
 NodeType : Program
@@ -78,7 +78,7 @@ Parameters :
 ---------------------
 
 Name : StackedPgm
-Description : Stacked Program 
+Description : Stacked Program
 Visibility : Local
 Namespace : DocForPrograms
 NodeType : Program
@@ -114,11 +114,11 @@ Parameters :
 
 ======================== Code Element properties ========================
 == DocForPrograms ==
-Description : Main Program 
+Description : Main Program
 Deprecated : 
 ReplacedBy : 
-Restriction : restriction value 
-See : Thank you for your attention 
+Restriction : restriction value
+See : Thank you for your attention
 Needs : 
     This is my first need This is also my first need
     This is my second need
@@ -128,7 +128,7 @@ Parameters :
 ---------------------
 
 == NestedPgm ==
-Description : Nested Program 
+Description : Nested Program
 Deprecated : 
 ReplacedBy : 
 Restriction : 
@@ -145,7 +145,7 @@ Parameters :
 ---------------------
 
 == StackedPgm ==
-Description : Stacked Program 
+Description : Stacked Program
 Deprecated : 
 ReplacedBy : 
 Restriction : 

@@ -1,22 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\Common.props" />
+	<Import Project="..\Common.props" />
 
-  <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-  </PropertyGroup>
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<!-- Dummy project to install LanguageServerRobot used during unit testing -->
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="TypeCobol.LanguageServer.Robot.Monitor" Version="1.5.1" />
-    <PackageReference Include="TypeCobol.LanguageServerRobot" Version="1.8.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="TypeCobol.LanguageServer.Robot.Monitor" Version="1.5.1" />
+		<PackageReference Include="TypeCobol.LanguageServerRobot" Version="1.8.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="$(LanguageServerRobotExecutableConfigFile)">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="$(LanguageServerRobotExecutableConfigFile)">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

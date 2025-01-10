@@ -16,38 +16,61 @@ namespace TypeCobol.Compiler.Nodes {
     public class DataDivision: GenericNode<DataDivisionHeader>, Parent<DataSection> {
 
         public const string NODE_ID = "data-division";
+
+        /// <summary>
+        /// Lists indices for data sections
+        /// </summary>
+        private enum SectionIndex
+        {
+            FileSection = 0,
+            GlobalStorageSection,
+            WorkingStorageSection,
+            LocalStorageSection,
+            LinkageSection
+        }
+        // The 5 (optional) data sections
+        private DataSection[] _sections = new DataSection[5];
+        public FileSection FileSection => (FileSection) _sections[(int)SectionIndex.FileSection];
+        public GlobalStorageSection GlobalStorageSection => (GlobalStorageSection)_sections[(int)SectionIndex.GlobalStorageSection];
+        public WorkingStorageSection WorkingStorageSection => (WorkingStorageSection)_sections[(int)SectionIndex.WorkingStorageSection];
+        public LocalStorageSection LocalStorageSection => (LocalStorageSection)_sections[(int)SectionIndex.LocalStorageSection];
+        public LinkageSection LinkageSection => (LinkageSection)_sections[(int)SectionIndex.LinkageSection];
+
         public DataDivision(DataDivisionHeader header): base(header) { }
         public override string ID { get { return NODE_ID; } }
 
-        public override void Add(Node child, int index = -1) {
-            if (index <= 0) index = WhereShouldIAdd(child.GetType());
+        public override void Add(Node child, int index = -1)
+        {
+            var maxSectionIndex = UpdateSection(child);
+            if (index <= 0) index = WhereShouldIAdd(maxSectionIndex);
+
             base.Add(child,index);
         }
-        private int WhereShouldIAdd(System.Type section) {
-            if (Tools.Reflection.IsTypeOf(section, typeof(FileSection))) return 0;
-            int ifile = -2;
-            int iglobal = -2;
-            int iworking = -2;
-            int ilocal = -2;
-            int ilinkage = -2;
-            int c = 0;
-            foreach(var child in this.Children()) {
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(FileSection))) ifile = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(GlobalStorageSection))) iglobal = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(WorkingStorageSection))) iworking = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LocalStorageSection))) ilocal = c;
-                else
-                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LinkageSection))) ilinkage = c;
-                c++;
+
+        private int UpdateSection(Node node)
+        {
+            int result = node switch
+            {
+                Nodes.FileSection => (int)SectionIndex.FileSection,
+                Nodes.GlobalStorageSection => (int)SectionIndex.GlobalStorageSection,
+                Nodes.WorkingStorageSection => (int)SectionIndex.WorkingStorageSection,
+                Nodes.LocalStorageSection => (int)SectionIndex.LocalStorageSection,
+                Nodes.LinkageSection => (int)SectionIndex.LinkageSection,
+                _ => -1
+            };
+
+            if (result != -1)
+            {
+                _sections[result] = (DataSection)node;
             }
-            if (Tools.Reflection.IsTypeOf(section, typeof(GlobalStorageSection))) return Math.Max(0,ifile+1);
-            if (Tools.Reflection.IsTypeOf(section, typeof(WorkingStorageSection))) return Math.Max(0, Math.Max(ifile + 1, iglobal + 1));
-            if (Tools.Reflection.IsTypeOf(section, typeof(LocalStorageSection))) return Math.Max(0,Math.Max(Math.Max(ifile+1, iglobal+1), iworking + 1));
-            if (Tools.Reflection.IsTypeOf(section, typeof(LinkageSection))) return Math.Max(0, Math.Max(Math.Max(Math.Max(ifile + 1, iglobal + 1), iworking + 1), ilocal + 1));
-            return 0;
+
+            return result;
+        }
+
+        private int WhereShouldIAdd(int maxSectionIndex)
+        {
+            // If maxSectionIndex = -1, _sections is not enumerated and Takes returns an empty IEnumerable so Count is 0
+            return _sections.Take(maxSectionIndex).Count(s => s != null);
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -864,35 +887,38 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            FormalizedCommentDocumentation doc = this.CodeElement.FormalizedCommentDocumentation;
+            var writer = new StringWriter();
+            Write(writer);
+            return writer.ToString();
+        }
 
+        public void Write(TextWriter writer)
+        {
+            var lines = SelfAndChildrenLines.ToArray();
             int i = 0;
-
-            while (i < SelfAndChildrenLines.Count())
+            while (i < lines.Length)
             {
-                if (SelfAndChildrenLines.ElementAt(i) is CodeElementsLine line)
+                if (lines[i] is CodeElementsLine line)
                 {
                     if (line.ScanState.InsideFormalizedComment)
                     {
-                        while ((SelfAndChildrenLines.ElementAt(i) as CodeElementsLine)?.ScanState.InsideFormalizedComment == true)
+                        while ((lines[i] as CodeElementsLine)?.ScanState.InsideFormalizedComment == true)
                             i++;
                     }
                     else if (line.IndicatorChar != '*')
                     {
-                        sb.AppendLine(line.Text.Remove(0, 7));
+                        writer.WriteLine(line.Text.Remove(0, 7));
                     }
                 }
                 i++;
             }
 
+            var doc = CodeElement.FormalizedCommentDocumentation;
             if (doc != null)
             {
-                sb.AppendLine();
-                sb.Append(doc);
+                writer.WriteLine();
+                doc.Write(writer);
             }
-
-            return sb.ToString();
         }
     }
     // [/COBOL 2002]

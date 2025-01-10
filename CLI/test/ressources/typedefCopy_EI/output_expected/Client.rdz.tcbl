@@ -4,7 +4,7 @@
       *REMARKS. COPY=(
       *        TESTCPY
       *        ).
-                                                           
+                          
        data division.
        working-storage section.
       *01 MyType typedef strict public.

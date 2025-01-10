@@ -10,7 +10,7 @@ namespace TypeCobol.Test.Parser.Scanner
 {
     static class TestRealPrograms
     {
-        private static readonly string ParserScannerSamples = @"Parser\Scanner\Samples";
+        private static readonly string ParserScannerSamples = @"Parser/Scanner/Samples";
 
 
         public static void CheckAllFilesForExceptions()

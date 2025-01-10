@@ -587,7 +587,7 @@ namespace TypeCobol.Codegen.Generators
                             //Pad a splitted segment
                             if (mapper.Nodes[node_index].Positions != null)
                             {
-                                int span = mapper.Nodes[node_index].Positions.Item3;
+                                int span = mapper.Nodes[node_index].Positions.Span;
                                 string pad = new string(' ', span);
                                 curSourceText.Insert(pad, to.Pos, to.Pos);
                             }

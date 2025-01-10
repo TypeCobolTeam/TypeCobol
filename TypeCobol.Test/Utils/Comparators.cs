@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Antlr4.Runtime;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
@@ -41,10 +37,7 @@ namespace TypeCobol.Test.Utils
             string stepDescription = ChangeId != null ? $"after incremental change: {ChangeId}" : "after initial parsing";
             string comparisonName = $"{compilationResult.TextSourceInfo.Name} vs {_formatter.GetType().Name} ({stepDescription})";
             string actual = _formatter.Format(compilationResult, history);
-            using (var expected = new StreamReader(new FileStream(_expectedResultPath, FileMode.Open)))
-            {
-                ParserUtils.CheckWithResultReader(comparisonName, actual, expected, _expectedResultPath);
-            }
+            TestUtils.CompareContent(comparisonName, actual, new TestUtils.FileInfo(_expectedResultPath));
         }
     }
 

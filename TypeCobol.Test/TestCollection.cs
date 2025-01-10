@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Parser;
 using TypeCobol.Test.Parser.FileFormat;
@@ -202,7 +199,7 @@ namespace TypeCobol.Test {
         [TestProperty("Time", "fast")]
         public void TCBLAutoReplaceSecurityTest()
         {
-            TestUtils.CompareLines(string.Empty, string.Empty, string.Empty, string.Empty);
+            TestUtils.CompareLines(null, null, null, null);
         }
 
 

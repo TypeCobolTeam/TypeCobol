@@ -8,79 +8,128 @@ namespace TypeCobol.Test
 {
     public class TestUtils
     {
-
-        //folder name for test results
-        private static string _report = "PerformanceReports";
-
-        /// <summary>
-        /// Compare result and expectedResult line by line.
-        /// If there is at least one difference, throw an exception for the test named by the parameter testName or 
-        /// Replace ExpectedResult content if content is different and boolean "autoReplace" is true
-        /// </summary>
-        /// <param name="testName">Name of the test</param>
-        /// <param name="result"></param>
-        /// <param name="expectedResult"></param>
-        /// <param name="expectedResultPath"></param>
-        /// <returns></returns>
-        public static void CompareLines(string testName, string result, string expectedResult, string expectedResultPath)
+        public class FileInfo
         {
-            StringBuilder errors = new StringBuilder();
+            public string Path { get; }
 
-            //Set to true to automatically replace content in ExpectedResult File
+            public Encoding Encoding { get; }
+
+            public FileInfo(string path, Encoding encoding = null)
+            {
+                Path = path;
+                Encoding = encoding ?? Encoding.UTF8;
+            }
+
+            public string ReadAllText() => File.ReadAllText(Path, Encoding);
+
+            public string[] ReadAllLines() => SplitLines(ReadAllText());
+
+            public void WriteAllLines(string[] contents)
+            {
+                using (var writer = new StreamWriter(new FileStream(Path, FileMode.Truncate), Encoding))
+                {
+                    for (int i = 0; i < contents.Length; i++)
+                    {
+                        string line = contents[i];
+                        if (i == contents.Length - 1)
+                        {
+                            writer.Write(line);
+                        }
+                        else
+                        {
+                            writer.WriteLine(line);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static string[] SplitLines(string content) => content.ReplaceLineEndings().Split(Environment.NewLine);
+
+        public static void CompareFiles(string testName, FileInfo actual, FileInfo expected)
+        {
+            CompareContent(testName, actual?.ReadAllText(), expected);
+        }
+
+        public static void CompareContent(string testName, string actualResult, FileInfo expected)
+        {
+            var actualLines = SplitLines(actualResult);
+            var expectedLines = expected?.ReadAllLines();
+            CompareLines(testName, actualLines, expectedLines, expected);
+        }
+
+        public static void CompareContent(string testName, string actualResult, string expectedResult)
+        {
+            var actualLines = SplitLines(actualResult);
+            var expectedLines = SplitLines(expectedResult);
+            CompareLines(testName, actualLines, expectedLines, null);
+        }
+
+        public static void CompareLines(string testName, string[] actualLines, string[] expectedLines, FileInfo expected)
+        {
+            // Set to true to automatically replace content in expected file.
             bool autoReplace = false;
 
-            if (testName == string.Empty && result == string.Empty && expectedResult == string.Empty &&
-                expectedResultPath == string.Empty)
+            if (testName == null && actualLines == null && expectedLines == null && expected == null)
             {
                 if (autoReplace)
                     Assert.Fail("Set AutoReplace to false in TestUtils.CompareLines()\n\n");
+                else
+                    return;
             }
 
-            result = Regex.Replace(result, "(?<!\r)\n", "\r\n");
-            expectedResult = Regex.Replace(expectedResult, "(?<!\r)\n", "\r\n");
+            Assert.IsNotNull(testName);
+            Assert.IsNotNull(actualLines);
+            Assert.IsNotNull(expectedLines);
 
-            String[] expectedResultLines = expectedResult.Split('\r', '\n');
-            String[] resultLines = result.Split('\r', '\n');
-
-            var linefaults = new List<int>();
-            for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
+            var lineFaults = new List<int>();
+            for (int c = 0; c < actualLines.Length && c < expectedLines.Length; c++)
             {
-                if (expectedResultLines[c] != resultLines[c]) linefaults.Add(c / 2 + 1);
-            }
-
-            if (result != expectedResult)
-            {
-                if (autoReplace && expectedResultPath != null)
+                var actualLine = actualLines[c];
+                var expectedLine = expectedLines[c];
+                if (actualLine != expectedLine)
                 {
-                    replaceLines(result, expectedResultPath);
-                    errors.AppendLine("result != expectedResult  In test:" + testName);
-                    errors.AppendLine("at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
-                    errors.AppendLine("Output file has been modified\n");
+                    lineFaults.Add(c);
+                }
+            }
+
+            if (lineFaults.Count > 0 || actualLines.Length != expectedLines.Length)
+            {
+                var errors = new StringBuilder();
+                errors.AppendLine("result != expectedResult  In test:" + testName);
+                if (lineFaults.Count > 0)
+                {
+                    errors.AppendLine("at line" + (lineFaults.Count > 1 ? "s" : "") + ": " + string.Join(",", lineFaults));
+                }
+                else
+                {
+                    errors.AppendLine($"line count differs: expecting {expectedLines.Length} lines but found {actualLines.Length} lines instead.");
+                }
+
+                if (autoReplace && expected != null)
+                {
+                    expected.WriteAllLines(actualLines);
+                    errors.AppendLine("autoReplace is active ! Output file has been rewritten\n");
                     errors.AppendLine("Please rerun unit test\n");
                 }
                 else
                 {
-                    errors.Append("result != expectedResult  In test:" + testName)
-                        .AppendLine(" at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
-                    errors.AppendLine("See TestUtils.cs CompareLines method to autoreplace ExpectedResult");
-                    errors.Append("=== RESULT ==========\n" + result + "====================");
-                    throw new Exception(errors.ToString());
+                    errors.AppendLine("See TestUtils.cs CompareLines method to auto-replace ExpectedResult");
+                    errors.AppendLine("======= RESULT =======");
+                    foreach (var actualLine in actualLines)
+                    {
+                        errors.AppendLine(actualLine);
+                    }
+                    errors.AppendLine("======================");
                 }
-            }
-        }
 
-        private static void replaceLines(string result, string expectedResultPath)
-        {
-            using (StreamWriter writer = new StreamWriter(expectedResultPath))
-            {
-                writer.Write(result);
+                throw new Exception(errors.ToString());
             }
-
         }
 
         public static string GetReportDirectoryPath()
         {
-            return Path.Combine(Directory.GetCurrentDirectory(), _report);
+            return Path.Combine(Directory.GetCurrentDirectory(), "PerformanceReports");
         }
 
         public static void CreateRunReport(string reportName, string localDirectoryFullName, string cobolFileName,

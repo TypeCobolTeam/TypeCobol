@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler;
@@ -17,6 +13,15 @@ using System.Text;
 
 namespace TypeCobol.Codegen
 {
+    /// <summary>
+    /// Capture positions for actual or generated nodes.
+    /// </summary>
+    /// <param name="From">Start position of the node.</param>
+    /// <param name="To">End position of the node.</param>
+    /// <param name="Span">End offset of the node, this is the end column of the node on its last line.</param>
+    /// <param name="LineNumbers">List of line numbers the node spans across.</param>
+    public record NodePositions(int From, int To, int Span, List<int> LineNumbers);
+
     /// <summary>
     /// The Second Code Generator which can Handle correctly all preprocessor directives
     /// during the Code Generation Phase.
@@ -149,7 +154,7 @@ namespace TypeCobol.Codegen
         /// The method also calculate the ending span offset from the beginning of the last line.
         /// It also get the list of Line numbers occupated by this node, and the offset of each line.
         /// </summary>
-        public Tuple<int, int, int, List<int>, List<int>> FromToPositions(Node node)
+        public NodePositions FromToPositions(Node node)
         {
             if (node.CodeElement == null || node.CodeElement.ConsumedTokens == null || node is ParameterEntry)
                 return null;
@@ -161,7 +166,6 @@ namespace TypeCobol.Codegen
                 int i = 0;
                 int span = 0;
                 List<int> lineNumbers = new List<int>();
-                List<int> lineOffsets = new List<int>();
                 SourceDocument.SourceLine srcFirstLine = null;
                 do
                 {
@@ -180,15 +184,12 @@ namespace TypeCobol.Codegen
                             while (++lastLine < curLineIndex)
                             {
                                 lineNumbers.Add(lastLine);
-                                SourceDocument.SourceLine srcLine = TargetDocument[lastLine - 1];
-                                if (srcFirstLine != null) lineOffsets.Add(srcLine.From - srcFirstLine.From);
                             }
                         }
                         SourceDocument.SourceLine curLine = TargetDocument[curLineIndex - 1];
                         if (srcFirstLine == null)
                             srcFirstLine = curLine;
                         lineNumbers.Add(curLineIndex);
-                        lineOffsets.Add(curLine.From - srcFirstLine.From);
                         span = 0;
                         while ((i < node.CodeElement.ConsumedTokens.Count) && ((curLineIndex == node.CodeElement.ConsumedTokens[i].Line)
                             || (node.CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
@@ -209,8 +210,7 @@ namespace TypeCobol.Codegen
                     }
                 } while (i < node.CodeElement.ConsumedTokens.Count);
                 lineNumbers.TrimExcess();
-                lineOffsets.TrimExcess();
-                return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lineNumbers, lineOffsets);
+                return new NodePositions(from, to, span, lineNumbers);
             }
             return null;
         }

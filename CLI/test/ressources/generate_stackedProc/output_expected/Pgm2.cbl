@@ -95,7 +95,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. STACKED.
        DATA DIVISION.
-                                                            
+                           
        WORKING-STORAGE SECTION.
        01  TC-STACKED-FctList-Loaded PIC X(02) VALUE space.
            88 TC-STACKED-FctList-IsLoaded      VALUE 'OK'.
@@ -113,7 +113,7 @@
            05 TC-STACKED-b4a83777-Idt   PIC X(08) VALUE 'b4a83777'.
            05 TC-STACKED-b4a83777 PROCEDURE-POINTER.
 
-       
+                           
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
        01 TC-A1 PIC X.
@@ -161,7 +161,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. STACKED2.
        DATA DIVISION.
-                                                             
+                            
        WORKING-STORAGE SECTION.
        01  TC-STACKED2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-STACKED2-FctList-IsLoaded      VALUE 'OK'.
@@ -174,7 +174,7 @@
            05 TC-STACKED2-f22bfcb0-Idt   PIC X(08) VALUE 'f22bfcb0'.
            05 TC-STACKED2-f22bfcb0 PROCEDURE-POINTER.
 
-       
+                            
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
        01 TC-A1 PIC X.

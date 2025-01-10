@@ -1,6 +1,12 @@
 {
+  "textDocumentPosition": {
     "textDocument": {
-        "uri": "example/uri"
+      "uri": "example/uri"
     },
-    "outputType": "CSV"
+    "position": {
+      "line": 22,
+      "character": 23
+    }
+  },
+  "outputType": "CSV"
 }

@@ -1,7 +1,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        DATA DIVISION.
-                                                             
+                            
        WORKING-STORAGE SECTION.
        01  TC-DVZZDATE-FctList-Loaded PIC X(02) VALUE space.
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
@@ -13,7 +13,7 @@
            05 TC-DVZZDATE-b173dd7b-Idt   PIC X(08) VALUE 'b173dd7b'.
            05 TC-DVZZDATE-b173dd7b PROCEDURE-POINTER.
 
-       
+                            
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 

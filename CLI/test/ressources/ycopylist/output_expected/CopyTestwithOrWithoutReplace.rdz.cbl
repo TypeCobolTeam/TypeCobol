@@ -5,7 +5,7 @@
       *        XMYCOPY
       *        YMYCOPY1
       *        ).
-                                                               
+                              
 
        ENVIRONMENT DIVISION.
        DATA DIVISION.

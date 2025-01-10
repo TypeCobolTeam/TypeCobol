@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Text;
+﻿using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
@@ -63,8 +62,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         public static void CheckWithDirectiveResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "DirectiveResultFiles", testName + ".txt");
-            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TestUtils.CompareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.CompareContent(path, result, new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(path)));
         }
 
         private static string ProcessTokensDocument(ProcessedTokensDocument processedDoc)
@@ -125,8 +123,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         public static void CheckWithCopyResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "CopyResultFiles", testName + ".txt");
-            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TestUtils.CompareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.CompareContent(path, result, new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(path)));
         }
 
         public static string ProcessReplaceDirectives(CompilationProject project, string name)
@@ -137,8 +134,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         public static void CheckWithReplaceResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "ReplaceResultFiles", testName + ".txt");
-            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TestUtils.CompareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.CompareContent(path, result, new TestUtils.FileInfo(PlatformUtils.GetPathForProjectFile(path)));
         }
     }
 }

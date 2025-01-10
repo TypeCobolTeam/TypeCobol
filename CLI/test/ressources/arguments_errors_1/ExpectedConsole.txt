@@ -5,7 +5,7 @@ Code: 124 TypeCobol.CLI: Missing copy path given is unreachable.
 Code: 126 TypeCobol.CLI: The format 'BadFormat' is not supported. The input encoding 'BadInputEncoding' could not be found.
 Code: 127 TypeCobol.CLI: Intrinsic files given are unreachable.
 Code: 128 TypeCobol.CLI: Copies files given are unreachable.
-Code: 129 TypeCobol.CLI: Dependencies files given are unreachable: input\MissingDependencies1
+Code: 129 TypeCobol.CLI: Dependencies files given are unreachable: input/MissingDependencies1
 Code: 130 TypeCobol.CLI: Maximum diagnostics have to be an integer.
 Code: 131 TypeCobol.CLI: Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1.
 Code: 132 TypeCobol.CLI: Expanding copy path given is unreachable.

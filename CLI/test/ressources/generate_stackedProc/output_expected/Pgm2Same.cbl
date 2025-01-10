@@ -2,7 +2,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
        DATA DIVISION.
-                                                         
+                        
        WORKING-STORAGE SECTION.
        01  TC-PGM2-FctList-Loaded PIC X(02) VALUE space.
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
@@ -15,7 +15,7 @@
            05 TC-PGM2-a4ee502d-Idt   PIC X(08) VALUE 'a4ee502d'.
            05 TC-PGM2-a4ee502d PROCEDURE-POINTER.
 
-       
+                        
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
        01 TC-A1 PIC X.
