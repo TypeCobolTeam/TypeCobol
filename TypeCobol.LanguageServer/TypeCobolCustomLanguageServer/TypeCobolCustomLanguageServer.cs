@@ -218,29 +218,30 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             {
                 var position = parameter.textDocumentPosition.position;
 
-                if (GetDataLayoutParams.OUTPUT_TYPE_CSV.Equals(parameter.outputType))
+                if (GetDataLayoutParams.OUTPUT_TYPE_TREE.Equals(parameter.outputType))
                 {
-                    const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
-                    var result = Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
-                    var csvResult = new GetDataLayoutCSVResult()
-                    {
-                        root = result.Root,
-                        header = result.Header,
-                        rows = result.Rows,
-                        separator = SEPARATOR
-                    };
-                    return new GetDataLayoutResult() { csvResult = csvResult };
-                }
-                else
-                {
+                    // Tree output
                     var root = Workspace.GetDataLayoutAsTree(context.FileCompiler.CompilationResultsForProgram, position);
                     var treeResult = new GetDataLayoutTreeResult()
                     {
                         root = root
                     };
+
                     return new GetDataLayoutResult() { treeResult = treeResult };
                 }
 
+                // CSV output by default
+                const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
+                var result = Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
+                var csvResult = new GetDataLayoutCSVResult()
+                {
+                    root = result.Root,
+                    header = result.Header,
+                    rows = result.Rows,
+                    separator = SEPARATOR
+                };
+
+                return new GetDataLayoutResult() { csvResult = csvResult };
             }
 
             throw new Exception($"Unknown document: '{uri}'");

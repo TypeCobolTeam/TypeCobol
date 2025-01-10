@@ -15,7 +15,7 @@
         public VsCodeProtocol.TextDocumentPosition textDocumentPosition { get; set; }
 
         /// <summary>
-        /// The output type expected by the client (CSV or TREE)
+        /// The output type expected by the client (CSV or TREE). If none is specified the default is CSV.
         /// </summary>
         public string outputType { get; set; }
     }
