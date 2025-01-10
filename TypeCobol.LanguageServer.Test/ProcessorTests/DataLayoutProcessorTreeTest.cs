@@ -47,7 +47,6 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
             // Build actual result (JSON)
             var result = JToken.FromObject(processorResult).ToString(Formatting.Indented);
-            File.WriteAllText($"{Path.Combine(folder, TEST_DATA_PREFIX + testName)}_actual.txt", result);
 
             // Compare to expected (JSON) but before restore JSON settings
             var expectedJson = JToken.Parse(testData.Expected);
