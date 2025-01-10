@@ -1,11 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.LanguageServer.Test.Utilities;
-using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.Test;
 using TypeCobol.Test.Utils;
