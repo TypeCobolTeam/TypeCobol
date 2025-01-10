@@ -24,13 +24,6 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         private void DoTestProcessor(string sourceFileName, bool isCopy = false, [CallerMemberName] string testName = null)
         {
-            // Force ignoring null value in JSON
-            var backupJsonSettings = JsonConvert.DefaultSettings;
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            };
-
             // Parse source file
             var folder = PlatformUtils.GetPathForProjectFile(RELATIVE_PATH, Path.GetFullPath(ROOT_PATH));
             var compilationUnit = ParserUtils.ParseCobolFile(sourceFileName, folder, isCopy, execToStep: ExecutionStep.SemanticCrossCheck);
@@ -44,6 +37,13 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
             // Execute processor
             var processorResult = ExecuteProcessor(compilationUnit, position);
+
+            // Force ignoring null value in JSON
+            var backupJsonSettings = JsonConvert.DefaultSettings;
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
             // Build actual result (JSON)
             var result = JToken.FromObject(processorResult).ToString(Formatting.Indented);
