@@ -218,7 +218,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             {
                 var position = parameter.textDocumentPosition.position;
 
-                if (GetDataLayoutParams.OUTPUT_TYPE_TREE.Equals(parameter.outputType))
+                if (parameter.outputType == GetDataLayoutParams.OUTPUT_TYPE_TREE)
                 {
                     // Tree output
                     var root = Workspace.GetDataLayoutAsTree(context.FileCompiler.CompilationResultsForProgram, position);

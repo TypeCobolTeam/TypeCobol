@@ -40,7 +40,7 @@
         // Copy directive (possibly null)
         public string copy { get; set; }
 
-        // Position in parent node's chidren
+        // Position in parent node's children
         public int index { get; set; }
 
         // Flags IsRedefines, Displayable, ...

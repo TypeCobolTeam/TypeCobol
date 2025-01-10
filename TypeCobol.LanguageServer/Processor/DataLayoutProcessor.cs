@@ -50,7 +50,7 @@ namespace TypeCobol.LanguageServer
             // Copy directive (possibly null)
             public string Copy { get; }
 
-            // Position in parent node's chidren
+            // Position in parent node's children
             public int Index { get; }
 
             // Flags IsRedefines, Displayable, ...
@@ -98,7 +98,7 @@ namespace TypeCobol.LanguageServer
                     bool IsDisplayable(DataLayoutItem current)
                     {
                         // FILLER with a National or NationalEdited picture are not displayable
-                        if (current.Name.Equals(FILLER) && IsNationalOrNationalEdited(current))
+                        if ((current.Name == FILLER) && IsNationalOrNationalEdited(current))
                         {
                             return false;
                         }
