@@ -119,7 +119,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 }
             }
 
-            return (textEdits.Count > 0 ? "Debug instructions successfully generated." : "No modification", textEdits);
+            return (textEdits.Count > 0 ? "Debug instructions successfully generated." : "No modification.", textEdits);
         }
 
         private static (WorkingStorageSection WorkingStorageSection, LocalStorageSection LocalStorageSection, LinkageSection LinkageSection) ExtractDataSections(DataDivision dataDivision)
