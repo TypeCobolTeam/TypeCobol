@@ -195,7 +195,6 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             void AppendDisplayName(char? openingChar)
             {
                 // DisplayName is a non-breakable literal: ' Indent Name (referenceModifierPrecededBySpace)? (openingCharPrecededBySpace)? '
-                wordBuilder.Append('\'');
 
                 string indent = new string(' ', 2 * LogicalLevel);
                 wordBuilder.Append(indent);
@@ -214,8 +213,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     wordBuilder.Append(openingChar.Value);
                 }
 
-                wordBuilder.Append('\'');
-                builder.AppendWord(wordBuilder.ToString());
+                builder.AppendLiteralForDisplay(wordBuilder.ToString());
                 wordBuilder.Clear();
             }
 
@@ -329,11 +327,9 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             {
                 if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
                 {
-                    foreach (var referenceModifierWord in Accessor.ReferenceModifier)
-                    {
-                        wordBuilder.Append(' ');
-                        wordBuilder.Append(referenceModifierWord);
-                    }
+                    Debug.Assert(Accessor.ReferenceModifier.Length == 1);
+                    wordBuilder.Append(' ');
+                    wordBuilder.Append(Accessor.ReferenceModifier[0]);
                 }
             }
         }
