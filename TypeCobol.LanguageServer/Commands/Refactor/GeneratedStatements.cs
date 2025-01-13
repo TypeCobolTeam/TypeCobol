@@ -203,10 +203,9 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 string name = string.IsNullOrEmpty(Target.Name) ? "FILLER" : Target.Name;
                 wordBuilder.Append(name);
 
-                if (Indices.Length == 0 && Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
+                if (Indices.Length == 0)
                 {
-                    wordBuilder.Append(' ');
-                    wordBuilder.Append(Accessor.ReferenceModifier);
+                    AppendReferenceModifierForDisplay();
                 }
 
                 if (openingChar.HasValue)
@@ -242,7 +241,10 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     AppendIndicesForAccess(false);
                     if (Accessor.ReferenceModifier != null)
                     {
-                        builder.AppendWord(Accessor.ReferenceModifier);
+                        foreach (var referenceModifierWord in Accessor.ReferenceModifier)
+                        {
+                            builder.AppendWord(referenceModifierWord);
+                        }
                     }
                 }
 
@@ -311,11 +313,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 wordBuilder.Append("')");
                 
                 Debug.Assert(Indices.Length > 0);
-                if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
-                {
-                    wordBuilder.Append(' ');
-                    wordBuilder.Append(Accessor.ReferenceModifier);
-                }
+                AppendReferenceModifierForDisplay();
 
                 if (WithValue)
                 {
@@ -325,6 +323,18 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 wordBuilder.Append('\'');
                 builder.AppendWord(wordBuilder.ToString());
                 wordBuilder.Clear();
+            }
+
+            void AppendReferenceModifierForDisplay()
+            {
+                if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
+                {
+                    foreach (var referenceModifierWord in Accessor.ReferenceModifier)
+                    {
+                        wordBuilder.Append(' ');
+                        wordBuilder.Append(referenceModifierWord);
+                    }
+                }
             }
         }
 

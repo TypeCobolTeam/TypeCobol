@@ -1,5 +1,4 @@
-﻿using System.Text;
-using TypeCobol.Compiler.Nodes;
+﻿using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.LanguageServer.Commands.Refactor
 {
@@ -14,29 +13,30 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
             }
 
-            public string ToExpression()
+            public List<string> ToExpression()
             {
                 if (DeltaParent == 1 && EnclosingOccurs.Count == 0)
                     return null;
 
-                var builder = new StringBuilder();
-                builder.Append(DeltaParent);
+                List<string> words = [ DeltaParent.ToString() ];
                 if (EnclosingOccurs.Count > 0)
                 {
                     foreach (var enclosingOccurs in EnclosingOccurs)
                     {
-                        builder.Append(" + (");
-                        builder.Append(enclosingOccurs.Index);
-                        builder.Append(" - 1) * ");
-                        builder.Append(enclosingOccurs.OccurenceSize);
+                        words.Add("+");
+                        words.Add('(' + enclosingOccurs.Index);
+                        words.Add("-");
+                        words.Add("1)");
+                        words.Add("*");
+                        words.Add(enclosingOccurs.OccurenceSize.ToString());
                     }
                 }
 
-                return builder.ToString();
+                return words;
             }
         }
 
-        public record struct DataAccessor(DataDefinition Data, string ReferenceModifier);
+        public record struct DataAccessor(DataDefinition Data, string[] ReferenceModifier);
 
         public static DataAccessor GetClosestAccessor(DataDefinition dataDefinition, string[] indices)
         {
@@ -67,8 +67,22 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 return new DataAccessor(null, null);
             }
 
-            string leftMostCharacterPositionExpression = info.ToExpression();
-            string referenceModifier = leftMostCharacterPositionExpression != null ? $"({leftMostCharacterPositionExpression}:{dataDefinition.PhysicalLength})" : null;
+            var leftMostCharacterPositionExpression = info.ToExpression();
+            string[] referenceModifier = null;
+            if (leftMostCharacterPositionExpression != null)
+            {
+                referenceModifier = new string[leftMostCharacterPositionExpression.Count];
+                for (int i = 0; i < leftMostCharacterPositionExpression.Count; i++)
+                {
+                    string part = leftMostCharacterPositionExpression[i];
+                    bool isFirst = i == 0;
+                    bool isLast = i == leftMostCharacterPositionExpression.Count - 1;
+                    if (isFirst) part = '(' + part;
+                    if (isLast) part = part + ':' + dataDefinition.PhysicalLength + ')';
+                    referenceModifier[i] = part;
+                }
+            }
+            
             return new DataAccessor(currentDefinition, referenceModifier);
         }
 
