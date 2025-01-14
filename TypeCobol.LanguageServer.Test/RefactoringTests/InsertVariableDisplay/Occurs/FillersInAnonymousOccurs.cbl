@@ -75,10 +75,9 @@ refactoring.source=
       D        PERFORM VARYING Idx-ff6a0562-3 FROM 1 BY 1 UNTIL
       D        Idx-ff6a0562-3 > 30
       D          DISPLAY '        FILLER (' Idx-ff6a0562-1 ' '
-      D          Idx-ff6a0562-2 ' ' Idx-ff6a0562-3 ') <' three-levels
-      D          (Idx-ff6a0562-1 Idx-ff6a0562-2 Idx-ff6a0562-3) (2 +
-      D          (Idx-ff6a0562-3 - 1) * 22 + (Idx-ff6a0562-2 - 1) * 660
-      D          + (Idx-ff6a0562-1 - 1) * 132000:20) '>'
+      D          Idx-ff6a0562-2 ' ' Idx-ff6a0562-3 ') <' three-levels (2
+      D          + (Idx-ff6a0562-3 - 1) * 22 + (Idx-ff6a0562-2 - 1) *
+      D          660 + (Idx-ff6a0562-1 - 1) * 132000:20) '>'
       D        END-PERFORM
       D      END-PERFORM
       D    END-PERFORM

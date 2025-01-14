@@ -36,7 +36,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        public record struct DataAccessor(DataDefinition Data, string[] ReferenceModifier);
+        public record struct DataAccessor(DataDefinition Data, string[] ReferenceModifier, HashSet<int> OmittedIndices);
 
         public static DataAccessor GetClosestAccessor(DataDefinition dataDefinition, string[] indices)
         {
@@ -46,6 +46,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             var directParent = currentDefinition.Parent as DataDefinition;
             var parentDefinition = directParent;
             int index = indices.Length - 1;
+            var omittedIndices = new HashSet<int>();
             while (parentDefinition != null && string.IsNullOrEmpty(currentDefinition.Name))
             {
                 info.DeltaParent += currentDefinition.StartPosition - parentDefinition.StartPosition;
@@ -54,6 +55,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                     long occurenceSize = currentDefinition.PhysicalLength / currentDefinition.MaxOccurencesCount;
                     string indexName = indices[index];
                     info.EnclosingOccurs.Add((indexName, occurenceSize));
+                    omittedIndices.Add(index);
                     index--;
                 }
 
@@ -64,7 +66,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             if (string.IsNullOrEmpty(currentDefinition.Name))
             {
                 // Could not find any named data: no accessor is available for the given DataDefinition
-                return new DataAccessor(null, null);
+                return new DataAccessor(null, null, null);
             }
 
             var leftMostCharacterPositionExpression = info.ToExpression();
@@ -83,7 +85,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 }
             }
             
-            return new DataAccessor(currentDefinition, referenceModifier);
+            return new DataAccessor(currentDefinition, referenceModifier, omittedIndices);
         }
 
         public static bool IsGroup(DataDefinition dataDefinition)

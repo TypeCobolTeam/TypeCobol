@@ -248,11 +248,14 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
                 void AppendIndicesForAccess(bool addClosingParenthesis)
                 {
+                    int writtenIndicesCount = 0;
+                    int indicesToWriteCount = Indices.Length - Accessor.OmittedIndices.Count;
                     for (int i = 0; i < Indices.Length; i++)
                     {
-                        bool isFirst = i == 0;
-                        bool isLast = i == Indices.Length - 1;
+                        bool isOmitted = Accessor.OmittedIndices.Contains(i);
+                        if (isOmitted) continue;
 
+                        bool isFirst = writtenIndicesCount == 0;
                         if (isFirst)
                         {
                             wordBuilder.Append('(');
@@ -260,6 +263,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
                         wordBuilder.Append(Indices[i]);
 
+                        bool isLast = writtenIndicesCount == indicesToWriteCount - 1;
                         if (isLast)
                         {
                             wordBuilder.Append(')');
@@ -271,6 +275,8 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
 
                         builder.AppendWord(wordBuilder.ToString());
                         wordBuilder.Clear();
+
+                        writtenIndicesCount++;
                     }
                 }
             }
