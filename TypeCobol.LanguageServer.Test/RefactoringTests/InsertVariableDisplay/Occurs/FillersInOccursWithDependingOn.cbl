@@ -80,13 +80,13 @@ refactoring.source=
 
        PROCEDURE DIVISION.
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
-      D    IF root-table-3-count IS NUMERIC
+      D    IF root-table-3-count >= 1 AND <= 1000
       D      PERFORM VARYING Idx-f21f0ca2-1 FROM 1 BY 1 UNTIL
       D      Idx-f21f0ca2-1 > root-table-3-count
-      D        IF table-level1-2-count IS NUMERIC
+      D        IF table-level1-2-count >= 1 AND <= 200
       D          PERFORM VARYING Idx-f21f0ca2-2 FROM 1 BY 1 UNTIL
       D          Idx-f21f0ca2-2 > table-level1-2-count
-      D            IF table-level2-1-count IS NUMERIC
+      D            IF table-level2-1-count >= 1 AND <= 30
       D              PERFORM VARYING Idx-f21f0ca2-3 FROM 1 BY 1 UNTIL
       D              Idx-f21f0ca2-3 > table-level2-1-count
       D                DISPLAY '        FILLER (' Idx-f21f0ca2-1 ' '
@@ -97,18 +97,18 @@ refactoring.source=
       D            ELSE
       D              DISPLAY 'Cannot DISPLAY "table-level2-1" because i'
       D                      'ts DEPENDING ON "table-level2-1-count" is'
-      D                      ' not numeric.'
+      D                      ' out of range.'
       D            END-IF
       D          END-PERFORM
       D        ELSE
       D          DISPLAY 'Cannot DISPLAY "table-level1-2" because its D'
-      D                  'EPENDING ON "table-level1-2-count" is not num'
-      D                  'eric.'
+      D                  'EPENDING ON "table-level1-2-count" is out of '
+      D                  'range.'
       D        END-IF
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-3" because its DEPENDI'
-      D              'NG ON "root-table-3-count" is not numeric.'
+      D              'NG ON "root-table-3-count" is out of range.'
       D    END-IF
       *</DBG>
 

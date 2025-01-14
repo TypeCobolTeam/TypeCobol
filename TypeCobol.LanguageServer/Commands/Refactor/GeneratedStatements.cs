@@ -346,25 +346,43 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
         }
     }
 
-    internal class GeneratedIfNumericElseDisplayMessage : GeneratedStatement
+    internal class GeneratedIfIsNumericAndInRangeElseDisplayMessage : GeneratedStatement
     {
         public string Variable { get; }
 
+        public bool CheckNumeric { get; }
+
+        public string MaxOccurs { get; }
+
         public string ErrorMessage { get; }
 
-        public GeneratedIfNumericElseDisplayMessage(string variable, string errorMessage)
+        public GeneratedIfIsNumericAndInRangeElseDisplayMessage(string variable, bool checkNumeric, string maxOccurs, string errorMessage)
             : base(false)
         {
             Variable = variable;
+            CheckNumeric = checkNumeric;
+            MaxOccurs = maxOccurs;
             ErrorMessage = errorMessage;
         }
 
         protected override void WriteStatementOpening(CobolStringBuilder builder)
         {
             builder.AppendWord("IF");
+
+            if (CheckNumeric)
+            {
+                builder.AppendWord(Variable);
+                builder.AppendWord("IS");
+                builder.AppendWord("NUMERIC");
+                builder.AppendWord("AND");
+            }
+
             builder.AppendWord(Variable);
-            builder.AppendWord("IS");
-            builder.AppendWord("NUMERIC");
+            builder.AppendWord(">=");
+            builder.AppendWord("1");
+            builder.AppendWord("AND");
+            builder.AppendWord("<=");
+            builder.AppendWord(MaxOccurs);
         }
 
         protected override void WriteStatementEnd(CobolStringBuilder builder)

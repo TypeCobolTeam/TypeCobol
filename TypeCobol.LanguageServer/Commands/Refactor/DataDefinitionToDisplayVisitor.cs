@@ -73,12 +73,18 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
                 // Generate IF IS NUMERIC / NOT NUMERIC if need be
                 if (dataDefinition.OccursDependingOn != null)
                 {
-                    // IF IS NUMERIC ELSE DISPLAY error message
+                    // IF IS NUMERIC AND IN RANGE ELSE DISPLAY error message
+                    string maxOccurs = max;
                     max = dataDefinition.OccursDependingOn.MainSymbolReference.Name;
-                    string message = $"Cannot DISPLAY \"{dataDefinition.Name}\" because its DEPENDING ON \"{max}\" is not numeric.";
-                    var ifNumeric = new GeneratedIfNumericElseDisplayMessage(max, message);
-                    _currentStatement.AddChild(ifNumeric);
-                    _currentStatement = ifNumeric;
+                    var dependingOn = dataDefinition.GetDataDefinitionFromStorageAreaDictionary(dataDefinition.OccursDependingOn.StorageArea, true);
+                    var dependingOnUsage = dependingOn?.SemanticData?.Type?.Usage;
+                    bool checkNumeric = dependingOnUsage != Compiler.Types.Type.UsageFormat.Comp && dependingOnUsage != Compiler.Types.Type.UsageFormat.Comp5;
+                    string errorMessage = checkNumeric
+                        ? $"Cannot DISPLAY \"{dataDefinition.Name}\" because its DEPENDING ON \"{max}\" is either not numeric or out of range."
+                        : $"Cannot DISPLAY \"{dataDefinition.Name}\" because its DEPENDING ON \"{max}\" is out of range.";
+                    var ifNumericAndInRange = new GeneratedIfIsNumericAndInRangeElseDisplayMessage(max, checkNumeric, maxOccurs, errorMessage);
+                    _currentStatement.AddChild(ifNumericAndInRange);
+                    _currentStatement = ifNumericAndInRange;
                 }
 
                 // Reuse or generate new index

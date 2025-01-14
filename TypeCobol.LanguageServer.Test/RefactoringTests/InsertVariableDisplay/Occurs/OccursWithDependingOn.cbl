@@ -100,7 +100,7 @@ refactoring.source=
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
       D    DISPLAY 'one-level'
       D    DISPLAY '  root-table-1-count <' root-table-1-count '>'
-      D    IF root-table-1-count IS NUMERIC
+      D    IF root-table-1-count >= 1 AND <= 10
       D      PERFORM VARYING Idx-a82e6694-1 FROM 1 BY 1 UNTIL
       D      Idx-a82e6694-1 > root-table-1-count
       D        DISPLAY '  root-table-1 (' Idx-a82e6694-1 ')'
@@ -111,16 +111,16 @@ refactoring.source=
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-1" because its DEPENDI'
-      D              'NG ON "root-table-1-count" is not numeric.'
+      D              'NG ON "root-table-1-count" is out of range.'
       D    END-IF
       D    DISPLAY 'two-levels'
       D    DISPLAY '  root-table-2-count <' root-table-2-count '>'
       D    DISPLAY '  table-level1-1-count <' table-level1-1-count '>'
-      D    IF root-table-2-count IS NUMERIC
+      D    IF root-table-2-count >= 1 AND <= 100
       D      PERFORM VARYING Idx-a82e6694-1 FROM 1 BY 1 UNTIL
       D      Idx-a82e6694-1 > root-table-2-count
       D        DISPLAY '  root-table-2 (' Idx-a82e6694-1 ')'
-      D        IF table-level1-1-count IS NUMERIC
+      D        IF table-level1-1-count >= 1 AND <= 20
       D          PERFORM VARYING Idx-a82e6694-2 FROM 1 BY 1 UNTIL
       D          Idx-a82e6694-2 > table-level1-1-count
       D            DISPLAY '    table-level1-1 (' Idx-a82e6694-1 ' '
@@ -134,28 +134,28 @@ refactoring.source=
       D          END-PERFORM
       D        ELSE
       D          DISPLAY 'Cannot DISPLAY "table-level1-1" because its D'
-      D                  'EPENDING ON "table-level1-1-count" is not num'
-      D                  'eric.'
+      D                  'EPENDING ON "table-level1-1-count" is out of '
+      D                  'range.'
       D        END-IF
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-2" because its DEPENDI'
-      D              'NG ON "root-table-2-count" is not numeric.'
+      D              'NG ON "root-table-2-count" is out of range.'
       D    END-IF
       D    DISPLAY 'three-levels'
       D    DISPLAY '  root-table-3-count <' root-table-3-count '>'
       D    DISPLAY '  table-level1-2-count <' table-level1-2-count '>'
       D    DISPLAY '  table-level2-1-count <' table-level2-1-count '>'
-      D    IF root-table-3-count IS NUMERIC
+      D    IF root-table-3-count >= 1 AND <= 1000
       D      PERFORM VARYING Idx-a82e6694-1 FROM 1 BY 1 UNTIL
       D      Idx-a82e6694-1 > root-table-3-count
       D        DISPLAY '  root-table-3 (' Idx-a82e6694-1 ')'
-      D        IF table-level1-2-count IS NUMERIC
+      D        IF table-level1-2-count >= 1 AND <= 200
       D          PERFORM VARYING Idx-a82e6694-2 FROM 1 BY 1 UNTIL
       D          Idx-a82e6694-2 > table-level1-2-count
       D            DISPLAY '    table-level1-2 (' Idx-a82e6694-1 ' '
       D            Idx-a82e6694-2 ')'
-      D            IF table-level2-1-count IS NUMERIC
+      D            IF table-level2-1-count >= 1 AND <= 30
       D              PERFORM VARYING Idx-a82e6694-3 FROM 1 BY 1 UNTIL
       D              Idx-a82e6694-3 > table-level2-1-count
       D                DISPLAY '      table-level2-1 (' Idx-a82e6694-1
@@ -172,18 +172,18 @@ refactoring.source=
       D            ELSE
       D              DISPLAY 'Cannot DISPLAY "table-level2-1" because i'
       D                      'ts DEPENDING ON "table-level2-1-count" is'
-      D                      ' not numeric.'
+      D                      ' out of range.'
       D            END-IF
       D          END-PERFORM
       D        ELSE
       D          DISPLAY 'Cannot DISPLAY "table-level1-2" because its D'
-      D                  'EPENDING ON "table-level1-2-count" is not num'
-      D                  'eric.'
+      D                  'EPENDING ON "table-level1-2-count" is out of '
+      D                  'range.'
       D        END-IF
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-3" because its DEPENDI'
-      D              'NG ON "root-table-3-count" is not numeric.'
+      D              'NG ON "root-table-3-count" is out of range.'
       D    END-IF
       *</DBG>
 
