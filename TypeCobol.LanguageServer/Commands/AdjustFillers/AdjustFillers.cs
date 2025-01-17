@@ -1,4 +1,4 @@
-﻿namespace TypeCobol.LanguageServer.Commands.Refactor
+﻿namespace TypeCobol.LanguageServer.Commands.AdjustFillers
 {
     internal class AdjustFillers : AbstractSingleDocumentRefactoring<AdjustFillerRefactoringProcessor>
     {

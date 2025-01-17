@@ -1,7 +1,7 @@
 ﻿using TypeCobol.Compiler;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
-namespace TypeCobol.LanguageServer.Commands.Refactor
+namespace TypeCobol.LanguageServer.Commands
 {
     /// <summary>
     /// A refactoring processor is responsible for implementing the refactoring logic

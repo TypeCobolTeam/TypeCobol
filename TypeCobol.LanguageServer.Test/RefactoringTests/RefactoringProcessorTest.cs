@@ -3,7 +3,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.LanguageServer.Commands.Refactor;
+using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.Test.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.Test;

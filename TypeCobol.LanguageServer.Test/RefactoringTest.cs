@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.LanguageServer.Commands.Refactor;
+using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.Test.RefactoringTests;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.Test.Utils;

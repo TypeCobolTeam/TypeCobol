@@ -8,7 +8,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
-namespace TypeCobol.LanguageServer.Commands.Refactor
+namespace TypeCobol.LanguageServer.Commands.AdjustFillers
 {
     /// <summary>
     /// Refactoring processor for AdjustFillers command
