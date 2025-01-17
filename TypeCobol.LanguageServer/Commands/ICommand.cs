@@ -11,7 +11,8 @@
         {
             _Commands = new Dictionary<string, Func<TypeCobolServer, ICommand>>()
             {
-                { "refactor/adjustFillers", AdjustFillers.AdjustFillers.Create }
+                { "refactor/adjustFillers", AdjustFillers.AdjustFillers.Create },
+                { "source/insertVariableDisplay", InsertVariableDisplay.InsertVariableDisplay.Create }
                 // Register all supported commands here
             };
         }
