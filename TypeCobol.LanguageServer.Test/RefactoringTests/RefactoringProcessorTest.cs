@@ -24,9 +24,9 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             var assembly = refactoringProcessorType.Assembly; // Consider types in TypeCobol.LanguageServer assembly
             foreach (var type in assembly.GetTypes())
             {
-                if (type.GetInterfaces().Contains(refactoringProcessorType))
+                if (!type.IsAbstract && type.GetInterfaces().Contains(refactoringProcessorType))
                 {
-                    // Found a type implementing directly IRefactoringProcessor
+                    // Found a concrete type implementing IRefactoringProcessor
                     var instance = (IRefactoringProcessor)Activator.CreateInstance(type); // Expecting a parameterless constructor
                     Debug.Assert(type.FullName != null);
                     _RefactoringProcessors.Add(type.FullName, instance);
