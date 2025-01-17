@@ -13,6 +13,24 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
 {
     internal class RefactoringProcessorTest
     {
+        /// <summary>
+        /// Mocks environment variables to get consistent results during unit tests.
+        /// </summary>
+        private class TestEnvironment : IEnvironmentVariableProvider
+
+        {
+            public static readonly TestEnvironment Instance = new TestEnvironment();
+
+            private TestEnvironment()
+            {
+
+            }
+
+            public DateTime Now => new DateTime(new DateOnly(1959, 9, 18), new TimeOnly(11, 9)); // It's always time to reinvent COBOL when doing unit tests !
+
+            public string UserName => "TESTUSER";
+        }
+
         private static readonly Dictionary<string, IRefactoringProcessor> _RefactoringProcessors;
 
         static RefactoringProcessorTest()
@@ -28,6 +46,8 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
                 {
                     // Found a concrete type implementing IRefactoringProcessor
                     var instance = (IRefactoringProcessor)Activator.CreateInstance(type); // Expecting a parameterless constructor
+                    Debug.Assert(instance != null);
+                    instance.EnvironmentVariableProvider = TestEnvironment.Instance; // Use controlled environment variables for testing
                     Debug.Assert(type.FullName != null);
                     _RefactoringProcessors.Add(type.FullName, instance);
                 }

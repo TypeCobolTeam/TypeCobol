@@ -12,6 +12,11 @@ namespace TypeCobol.LanguageServer.Commands
     public interface IRefactoringProcessor
     {
         /// <summary>
+        /// Sets the environment variable provider for this instance.
+        /// </summary>
+        IEnvironmentVariableProvider EnvironmentVariableProvider { set; }
+
+        /// <summary>
         /// Collect and parse refactoring arguments.
         /// </summary>
         /// <param name="arguments">Untyped argument array, possibly null.</param>
@@ -85,6 +90,8 @@ namespace TypeCobol.LanguageServer.Commands
                 }
             }
         }
+
+        public IEnvironmentVariableProvider EnvironmentVariableProvider { get; set; } = RealEnvironment.Instance; // Initialize with real environment
 
         public abstract TextDocumentIdentifier PrepareRefactoring(object[] arguments);
 
