@@ -18,11 +18,11 @@
            GOBACK
            .
        END PROGRAM TCOMFL06.
---------------------------------------------------------------------------------
-TypeCobol.LanguageServer.Commands.AdjustFillers.AdjustFillerRefactoringProcessor
---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+TypeCobol.LanguageServer.Commands.AdjustFillers.AdjustFillersRefactoringProcessor
+---------------------------------------------------------------------------------
 [{"uri":"file:/test.expected.cbl"}]
---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 refactoring.label=Adjust FILLERs: 3 FILLER(s) modified
 refactoring.source=
        IDENTIFICATION DIVISION.

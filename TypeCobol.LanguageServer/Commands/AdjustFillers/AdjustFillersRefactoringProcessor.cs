@@ -12,7 +12,7 @@ namespace TypeCobol.LanguageServer.Commands.AdjustFillers
     /// <summary>
     /// Refactoring processor for AdjustFillers command
     /// </summary>
-    public class AdjustFillerRefactoringProcessor : AbstractRefactoringProcessor
+    public class AdjustFillersRefactoringProcessor : AbstractRefactoringProcessor
     {
         private class AdjustFillerVisitor : AbstractAstVisitor
         {
