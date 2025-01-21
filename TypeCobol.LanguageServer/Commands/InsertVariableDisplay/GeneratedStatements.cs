@@ -336,14 +336,9 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 {
                     // Append (Idx1 Idx2 [...] Idxn) and an additional closing parenthesis when requested
 
-                    int writtenIndicesCount = 0;
-                    int indicesToWriteCount = Indices.Length - Accessor.OmittedIndices.Count;
-                    for (int i = 0; i < Indices.Length; i++)
+                    for (int i = 0; i < Accessor.IndicesCount; i++)
                     {
-                        bool isOmitted = Accessor.OmittedIndices.Contains(i);
-                        if (isOmitted) continue;
-
-                        bool isFirst = writtenIndicesCount == 0;
+                        bool isFirst = i == 0;
                         if (isFirst)
                         {
                             wordBuilder.Append('(');
@@ -351,7 +346,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
                         wordBuilder.Append(Indices[i]);
 
-                        bool isLast = writtenIndicesCount == indicesToWriteCount - 1;
+                        bool isLast = i == Accessor.IndicesCount - 1;
                         if (isLast)
                         {
                             wordBuilder.Append(')');
@@ -363,8 +358,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
                         builder.AppendWord(wordBuilder.ToString());
                         wordBuilder.Clear();
-
-                        writtenIndicesCount++;
                     }
                 }
             }

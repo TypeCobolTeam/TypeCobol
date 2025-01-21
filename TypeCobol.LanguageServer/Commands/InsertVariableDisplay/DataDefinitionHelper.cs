@@ -61,9 +61,11 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         /// Accessor for a DataDefinition.
         /// </summary>
         /// <param name="Data">DataDefinition to use to access originally targeted DataDefinition.</param>
+        /// <param name="IndicesCount">Number of indices to use on the accessor data. When the target data is nested under
+        /// anonymous arrays, the data used to access the target is on a different OCCURS dimension. Only some of the first
+        /// indices are used and this number indicates the count of them.</param>
         /// <param name="ReferenceModifier">Reference modifier to apply on Data, when null it means no reference modifier is required.</param>
-        /// <param name="OmittedIndices">Set of indices to omit when using the Data. The set contains the indices of the indices themselves.</param>
-        public record struct DataAccessor(DataDefinition Data, string[] ReferenceModifier, HashSet<int> OmittedIndices);
+        public record struct DataAccessor(DataDefinition Data, int IndicesCount, string[] ReferenceModifier);
 
         /// <summary>
         /// Compute accessor for given DataDefinition and indices.
@@ -80,7 +82,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             var currentDefinition = dataDefinition;
             var parentDefinition = currentDefinition.Parent as DataDefinition;
             int index = indices.Length - 1; // Current index used, starting from innermost as we are walking up the chain of parents
-            var omittedIndices = new HashSet<int>();
             while (parentDefinition != null && string.IsNullOrEmpty(currentDefinition.Name))
             {
                 info.DeltaParent += currentDefinition.StartPosition - parentDefinition.StartPosition; // Update delta
@@ -90,7 +91,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     long occurenceSize = currentDefinition.PhysicalLength / currentDefinition.MaxOccurencesCount;
                     string indexName = indices[index];
                     info.EnclosingOccurs.Add((indexName, occurenceSize));
-                    omittedIndices.Add(index);
                     index--;
                 }
 
@@ -101,7 +101,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             if (string.IsNullOrEmpty(currentDefinition.Name))
             {
                 // Could not find any named data: no accessor is available for the given DataDefinition
-                return new DataAccessor(null, null, null);
+                return new DataAccessor(null, 0, null);
             }
 
             // Compute reference modifier
@@ -122,8 +122,9 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     referenceModifier[i] = part;
                 }
             }
-            
-            return new DataAccessor(currentDefinition, referenceModifier, omittedIndices);
+
+            int indicesCount = index + 1; // Number of indices used to access the data
+            return new DataAccessor(currentDefinition, indicesCount, referenceModifier);
         }
     }
 }
