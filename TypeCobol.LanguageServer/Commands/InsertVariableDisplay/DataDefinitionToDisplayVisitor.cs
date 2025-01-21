@@ -10,7 +10,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
     {
         private readonly IndexGenerator _indexGenerator;
         private int _dataLogicalLevel;
-        private int _occursDimension;
         private readonly Stack<string> _indices;
         private GeneratedStatement _currentStatement;
 
@@ -19,7 +18,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         {
             _indexGenerator = indexGenerator;
             _dataLogicalLevel = -1; // Starts at -1 so the 01 levels have a logical level of 0 after being entered
-            _occursDimension = 0;
             _indices = new Stack<string>();
             GeneratedStatements = new GeneratedRoot();
             _currentStatement = GeneratedStatements;
@@ -68,8 +66,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             // Generate PERFORM if need be
             if (dataDefinition.IsTableOccurence)
             {
-                _occursDimension++;
-
                 // Compute index size
                 string max = dataDefinition.MaxOccurencesCount.ToString();
                 int indexSize = max.Length;
@@ -94,7 +90,8 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 }
 
                 // Reuse or generate new index
-                string index = _indexGenerator.GetOrCreateIndex(_occursDimension, indexSize);
+                int occursDimension = _indices.Count + 1;
+                string index = _indexGenerator.GetOrCreateIndex(occursDimension, indexSize);
                 _indices.Push(index);
 
                 // Generate PERFORM and continue generation inside it
@@ -139,8 +136,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
                 // Pop innermost index as we have exited the PERFORM
                 _indices.Pop();
-
-                _occursDimension--;
             }
 
             _dataLogicalLevel--;
