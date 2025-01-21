@@ -85,7 +85,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     var dependingOn = dataDefinition.GetDataDefinitionFromStorageAreaDictionary(dataDefinition.OccursDependingOn.StorageArea, true);
                     var dependingOnUsage = dependingOn?.SemanticData?.Type?.Usage;
                     bool checkNumeric = dependingOnUsage != Compiler.Types.Type.UsageFormat.Comp && dependingOnUsage != Compiler.Types.Type.UsageFormat.Comp5;
-                    string errorMessage = $"Cannot DISPLAY \"{dataDefinition.Name}\" because its DEPENDING ON \"{max}\" is {(checkNumeric ? "either not numeric or" : "")} out of range.";
+                    string errorMessage = $"Cannot DISPLAY \"{dataDefinition.Name}\" because its DEPENDING ON \"{max}\" is{(checkNumeric ? " either not numeric or " : " ")}out of range.";
 
                     // Create IF statement and continue generation inside it
                     var ifNumericAndInRange = new GeneratedIfIsNumericAndInRangeElseDisplayMessage(max, checkNumeric, maxOccurs, errorMessage);
