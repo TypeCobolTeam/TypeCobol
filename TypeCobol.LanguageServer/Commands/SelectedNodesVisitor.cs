@@ -129,8 +129,13 @@ namespace TypeCobol.LanguageServer.Commands
 
         public override Node SelectChild(Node parent)
         {
-            // TODO Selecting few nodes by name among a large collection of children will be inefficient !
-            return parent.Children.FirstOrDefault(child => child.Name == Name);
+            // Optimization: use SymbolTable and filter on parent instead of iterating Children and filter by name
+            if (parent.SymbolTable.DataEntries.TryGetValue(Name, out var candidates))
+            {
+                return candidates.FirstOrDefault(candidate => candidate.Parent == parent);
+            }
+
+            return null;
         }
     }
 
