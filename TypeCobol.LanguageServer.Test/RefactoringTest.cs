@@ -165,5 +165,8 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         public void AdjustFillers() => TestDirectory();
+
+        [TestMethod]
+        public void InsertVariableDisplay() => TestDirectory();
     }
 }
