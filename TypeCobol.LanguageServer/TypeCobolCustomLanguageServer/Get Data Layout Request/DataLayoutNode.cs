@@ -13,6 +13,8 @@
     /// </summary>
     public class DataLayoutNode
     {
+        public const int UNDEFINED = -1;
+
         // Logical level: +1 on parent one
         public int logicalLevel { get; set; }
 

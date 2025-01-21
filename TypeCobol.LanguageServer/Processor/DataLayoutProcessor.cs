@@ -186,6 +186,7 @@ namespace TypeCobol.LanguageServer
                 return new()
                 {
                     name = program.Name,
+                    index = DataLayoutNode.UNDEFINED,
                     flags = DataLayoutNodeFlags.None
                 };
             }
@@ -196,6 +197,7 @@ namespace TypeCobol.LanguageServer
                 {
                     logicalLevel = 1,
                     name = dataSection.ID,
+                    index = DataLayoutNode.UNDEFINED,
                     flags = DataLayoutNodeFlags.None
                 };
             }
