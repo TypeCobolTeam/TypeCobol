@@ -262,7 +262,7 @@ namespace TypeCobol.LanguageServer
 
                 }
 
-                if (declarationItems.Count == 0 && dataDefinition.IsGroup)
+                if (declarationItems.Count == 0 && dataDefinition.ChildrenCount > 0)
                 {
                     declarationItems.Add(GROUP);
                 }

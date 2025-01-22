@@ -724,31 +724,6 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public bool IsGroup
-        {
-            get
-            {
-                var type = SemanticData?.Type;
-
-                while (true)
-                {
-                    switch (type?.Tag)
-                    {
-                        case Types.Type.Tags.Array:
-                            type = ((ArrayType)type).ElementType;
-                            continue;
-                        case Types.Type.Tags.Picture:
-                        case Types.Type.Tags.Usage:
-                            return false;
-                        case Types.Type.Tags.Group:
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-            }
-        }
-
         public long MinOccurencesCount { get { if (_CommonDataDesc != null && _CommonDataDesc.MinOccurencesCount != null) return _CommonDataDesc.MinOccurencesCount.Value; else return 1; } }
         public long MaxOccurencesCount { get { return _CommonDataDesc != null && _CommonDataDesc.MaxOccurencesCount != null ? _CommonDataDesc.MaxOccurencesCount.Value : 1; } }
 
