@@ -13,41 +13,69 @@
     /// </summary>
     public class DataLayoutNode
     {
+        /// <summary>
+        /// UNDEFINED value possibly set for <c>index</c> field
+        /// </summary>
         public const int UNDEFINED = -1;
 
-        // Logical level: +1 on parent one
+        /// <summary>
+        /// Logical level: +1 on parent one
+        /// </summary>
         public int logicalLevel { get; set; }
 
-        // Line number (starting at 1)
+        /// <summary>
+        /// Line number (starting at 1)
+        /// </summary>        
         public int line { get; set; }
 
-        // Level number
+        /// <summary>
+        /// Level number
+        /// </summary>        
         public long physicalLevel { get; set; }
 
-        // Name
+        /// <summary>
+        /// Name
+        /// </summary>
         public string name { get; set; }
 
-        // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
+        /// <summary>
+        /// Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
+        /// </summary>
         public string declaration { get; set; }
 
-        // +1 on parent one if OCCURS
+        /// <summary>
+        /// +1 on parent one if OCCURS
+        /// </summary>
         public int occursDimension { get; set; }
 
-        // Start position
+        /// <summary>
+        /// Start position
+        /// </summary>
         public long start { get; set; }
 
-        // Physical length
+        /// <summary>
+        /// Physical length
+        /// </summary>
         public long length { get; set; }
 
-        // Copy directive (possibly null)
+        /// <summary>
+        /// Copy directive (possibly null)
+        /// </summary>
         public string copy { get; set; }
 
-        // Position in parent node's children
+        /// <summary>
+        /// Position in parent node's children (possibly set to UNDEFINED if not relevant)
+        /// </summary>
         public int index { get; set; }
 
-        // Flags IsRedefines, Displayable, ...
+        /// <summary>
+        /// Flags IsRedefines, Displayable, ...
+        /// </summary>
         public DataLayoutNodeFlags flags { get; set; }
 
+        /// <summary>
+        /// Children nodes
+        /// </summary>
         public DataLayoutNode[] children { get; set; }
     }
 }
