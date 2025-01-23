@@ -9,21 +9,21 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 {
     public class InsertVariableDisplayRefactoringProcessor : AbstractRefactoringProcessor
     {
-        private string _hash;
+        // From refactoring args
         private Position _insertAt;
         private bool _insertBeforeStatement;
         private Selection _workingStorageSectionSelection;
         private Selection _localStorageSectionSelection;
         private Selection _linkageSectionSelection;
 
+        // Generated using user and timestamp
+        private string _hash;
+
+        // Computed when checking target program
         private (CodeElement CodeElement, Node Node) _location;
 
         public override TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
-            // Generate new hash for this refactoring
-            string allArgs = arguments.Select(argument => argument?.ToString()).Aggregate(string.Empty, string.Concat);
-            _hash = Tools.Hash.CreateCOBOLNameHash(allArgs + EnvironmentVariableProvider.Now);
-
             // Get TextDocumentPosition (contains TextDocumentIdentifier and insertion position)
             var textDocumentPosition = Expect<TextDocumentPosition>(arguments, 0, true);
             _insertAt = textDocumentPosition.position;
@@ -35,6 +35,9 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             _workingStorageSectionSelection = GetSelection(2);
             _localStorageSectionSelection = GetSelection(3);
             _linkageSectionSelection = GetSelection(4);
+
+            // Generate new hash for this refactoring
+            _hash = Tools.Hash.CreateCOBOLNameHash($"{EnvironmentVariableProvider.UserName}@{EnvironmentVariableProvider.Now:yyyy/MM/dd HH:mm:ss.fff}");
 
             return textDocumentPosition.textDocument;
 

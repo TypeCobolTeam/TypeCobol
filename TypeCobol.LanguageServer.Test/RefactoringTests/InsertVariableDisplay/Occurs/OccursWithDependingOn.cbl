@@ -91,9 +91,9 @@ refactoring.source=
                    20 var5 PIC X.
                    20 var6 PIC X.
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
-      D77 Idx-de76b058-1 PIC 9(4) COMP.
-      D77 Idx-de76b058-2 PIC 9(3) COMP.
-      D77 Idx-de76b058-3 PIC 9(2) COMP.
+      D77 Idx-d4df4249-1 PIC 9(4) COMP.
+      D77 Idx-d4df4249-2 PIC 9(3) COMP.
+      D77 Idx-d4df4249-3 PIC 9(2) COMP.
       *</DBG>
 
        PROCEDURE DIVISION.
@@ -101,13 +101,13 @@ refactoring.source=
       D    DISPLAY 'one-level'
       D    DISPLAY '  root-table-1-count <' root-table-1-count '>'
       D    IF root-table-1-count >= 1 AND <= 10
-      D      PERFORM VARYING Idx-de76b058-1 FROM 1 BY 1 UNTIL
-      D      Idx-de76b058-1 > root-table-1-count
-      D        DISPLAY '  root-table-1 (' Idx-de76b058-1 ')'
-      D        DISPLAY '    var1 (' Idx-de76b058-1 ') <' var1
-      D        (Idx-de76b058-1) '>'
-      D        DISPLAY '    var2 (' Idx-de76b058-1 ') <' var2
-      D        (Idx-de76b058-1) '>'
+      D      PERFORM VARYING Idx-d4df4249-1 FROM 1 BY 1 UNTIL
+      D      Idx-d4df4249-1 > root-table-1-count
+      D        DISPLAY '  root-table-1 (' Idx-d4df4249-1 ')'
+      D        DISPLAY '    var1 (' Idx-d4df4249-1 ') <' var1
+      D        (Idx-d4df4249-1) '>'
+      D        DISPLAY '    var2 (' Idx-d4df4249-1 ') <' var2
+      D        (Idx-d4df4249-1) '>'
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-1" because its DEPENDI'
@@ -117,20 +117,20 @@ refactoring.source=
       D    DISPLAY '  root-table-2-count <' root-table-2-count '>'
       D    DISPLAY '  table-level1-1-count <' table-level1-1-count '>'
       D    IF root-table-2-count >= 1 AND <= 100
-      D      PERFORM VARYING Idx-de76b058-1 FROM 1 BY 1 UNTIL
-      D      Idx-de76b058-1 > root-table-2-count
-      D        DISPLAY '  root-table-2 (' Idx-de76b058-1 ')'
+      D      PERFORM VARYING Idx-d4df4249-1 FROM 1 BY 1 UNTIL
+      D      Idx-d4df4249-1 > root-table-2-count
+      D        DISPLAY '  root-table-2 (' Idx-d4df4249-1 ')'
       D        IF table-level1-1-count >= 1 AND <= 20
-      D          PERFORM VARYING Idx-de76b058-2 FROM 1 BY 1 UNTIL
-      D          Idx-de76b058-2 > table-level1-1-count
-      D            DISPLAY '    table-level1-1 (' Idx-de76b058-1 ' '
-      D            Idx-de76b058-2 ')'
-      D            DISPLAY '      var3 (' Idx-de76b058-1 ' '
-      D            Idx-de76b058-2 ') <' var3 (Idx-de76b058-1
-      D            Idx-de76b058-2) '>'
-      D            DISPLAY '      var4 (' Idx-de76b058-1 ' '
-      D            Idx-de76b058-2 ') <' var4 (Idx-de76b058-1
-      D            Idx-de76b058-2) '>'
+      D          PERFORM VARYING Idx-d4df4249-2 FROM 1 BY 1 UNTIL
+      D          Idx-d4df4249-2 > table-level1-1-count
+      D            DISPLAY '    table-level1-1 (' Idx-d4df4249-1 ' '
+      D            Idx-d4df4249-2 ')'
+      D            DISPLAY '      var3 (' Idx-d4df4249-1 ' '
+      D            Idx-d4df4249-2 ') <' var3 (Idx-d4df4249-1
+      D            Idx-d4df4249-2) '>'
+      D            DISPLAY '      var4 (' Idx-d4df4249-1 ' '
+      D            Idx-d4df4249-2 ') <' var4 (Idx-d4df4249-1
+      D            Idx-d4df4249-2) '>'
       D          END-PERFORM
       D        ELSE
       D          DISPLAY 'Cannot DISPLAY "table-level1-1" because its D'
@@ -147,26 +147,26 @@ refactoring.source=
       D    DISPLAY '  table-level1-2-count <' table-level1-2-count '>'
       D    DISPLAY '  table-level2-1-count <' table-level2-1-count '>'
       D    IF root-table-3-count >= 1 AND <= 1000
-      D      PERFORM VARYING Idx-de76b058-1 FROM 1 BY 1 UNTIL
-      D      Idx-de76b058-1 > root-table-3-count
-      D        DISPLAY '  root-table-3 (' Idx-de76b058-1 ')'
+      D      PERFORM VARYING Idx-d4df4249-1 FROM 1 BY 1 UNTIL
+      D      Idx-d4df4249-1 > root-table-3-count
+      D        DISPLAY '  root-table-3 (' Idx-d4df4249-1 ')'
       D        IF table-level1-2-count >= 1 AND <= 200
-      D          PERFORM VARYING Idx-de76b058-2 FROM 1 BY 1 UNTIL
-      D          Idx-de76b058-2 > table-level1-2-count
-      D            DISPLAY '    table-level1-2 (' Idx-de76b058-1 ' '
-      D            Idx-de76b058-2 ')'
+      D          PERFORM VARYING Idx-d4df4249-2 FROM 1 BY 1 UNTIL
+      D          Idx-d4df4249-2 > table-level1-2-count
+      D            DISPLAY '    table-level1-2 (' Idx-d4df4249-1 ' '
+      D            Idx-d4df4249-2 ')'
       D            IF table-level2-1-count >= 1 AND <= 30
-      D              PERFORM VARYING Idx-de76b058-3 FROM 1 BY 1 UNTIL
-      D              Idx-de76b058-3 > table-level2-1-count
-      D                DISPLAY '      table-level2-1 (' Idx-de76b058-1
-      D                ' ' Idx-de76b058-2 ' ' Idx-de76b058-3 ')'
-      D                DISPLAY '        var5 (' Idx-de76b058-1 ' '
-      D                Idx-de76b058-2 ' ' Idx-de76b058-3 ') <' var5
-      D                (Idx-de76b058-1 Idx-de76b058-2 Idx-de76b058-3)
+      D              PERFORM VARYING Idx-d4df4249-3 FROM 1 BY 1 UNTIL
+      D              Idx-d4df4249-3 > table-level2-1-count
+      D                DISPLAY '      table-level2-1 (' Idx-d4df4249-1
+      D                ' ' Idx-d4df4249-2 ' ' Idx-d4df4249-3 ')'
+      D                DISPLAY '        var5 (' Idx-d4df4249-1 ' '
+      D                Idx-d4df4249-2 ' ' Idx-d4df4249-3 ') <' var5
+      D                (Idx-d4df4249-1 Idx-d4df4249-2 Idx-d4df4249-3)
       D                '>'
-      D                DISPLAY '        var6 (' Idx-de76b058-1 ' '
-      D                Idx-de76b058-2 ' ' Idx-de76b058-3 ') <' var6
-      D                (Idx-de76b058-1 Idx-de76b058-2 Idx-de76b058-3)
+      D                DISPLAY '        var6 (' Idx-d4df4249-1 ' '
+      D                Idx-d4df4249-2 ' ' Idx-d4df4249-3 ') <' var6
+      D                (Idx-d4df4249-1 Idx-d4df4249-2 Idx-d4df4249-3)
       D                '>'
       D              END-PERFORM
       D            ELSE

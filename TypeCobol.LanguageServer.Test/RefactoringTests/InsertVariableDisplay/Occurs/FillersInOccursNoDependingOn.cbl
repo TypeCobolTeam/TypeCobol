@@ -61,23 +61,23 @@ refactoring.source=
                    20 FILLER PIC X(20).
                    20 var2 PIC X.
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
-      D77 Idx-ff1563da-1 PIC 9(4) COMP.
-      D77 Idx-ff1563da-2 PIC 9(3) COMP.
-      D77 Idx-ff1563da-3 PIC 9(2) COMP.
+      D77 Idx-d4df4249-1 PIC 9(4) COMP.
+      D77 Idx-d4df4249-2 PIC 9(3) COMP.
+      D77 Idx-d4df4249-3 PIC 9(2) COMP.
       *</DBG>
 
        PROCEDURE DIVISION.
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
-      D    PERFORM VARYING Idx-ff1563da-1 FROM 1 BY 1 UNTIL
-      D    Idx-ff1563da-1 > 1000
-      D      PERFORM VARYING Idx-ff1563da-2 FROM 1 BY 1 UNTIL
-      D      Idx-ff1563da-2 > 200
-      D        PERFORM VARYING Idx-ff1563da-3 FROM 1 BY 1 UNTIL
-      D        Idx-ff1563da-3 > 30
-      D          DISPLAY '        FILLER (' Idx-ff1563da-1 ' '
-      D          Idx-ff1563da-2 ' ' Idx-ff1563da-3 ') (2:20) <'
-      D          table-level2-1 (Idx-ff1563da-1 Idx-ff1563da-2
-      D          Idx-ff1563da-3) (2:20) '>'
+      D    PERFORM VARYING Idx-d4df4249-1 FROM 1 BY 1 UNTIL
+      D    Idx-d4df4249-1 > 1000
+      D      PERFORM VARYING Idx-d4df4249-2 FROM 1 BY 1 UNTIL
+      D      Idx-d4df4249-2 > 200
+      D        PERFORM VARYING Idx-d4df4249-3 FROM 1 BY 1 UNTIL
+      D        Idx-d4df4249-3 > 30
+      D          DISPLAY '        FILLER (' Idx-d4df4249-1 ' '
+      D          Idx-d4df4249-2 ' ' Idx-d4df4249-3 ') (2:20) <'
+      D          table-level2-1 (Idx-d4df4249-1 Idx-d4df4249-2
+      D          Idx-d4df4249-3) (2:20) '>'
       D        END-PERFORM
       D      END-PERFORM
       D    END-PERFORM

@@ -73,26 +73,26 @@ refactoring.source=
                    20 FILLER PIC X(20).
                    20 var2 PIC X.
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
-      D77 Idx-f0da61ff-1 PIC 9(4) COMP.
-      D77 Idx-f0da61ff-2 PIC 9(3) COMP.
-      D77 Idx-f0da61ff-3 PIC 9(2) COMP.
+      D77 Idx-d4df4249-1 PIC 9(4) COMP.
+      D77 Idx-d4df4249-2 PIC 9(3) COMP.
+      D77 Idx-d4df4249-3 PIC 9(2) COMP.
       *</DBG>
 
        PROCEDURE DIVISION.
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
       D    IF root-table-3-count >= 1 AND <= 1000
-      D      PERFORM VARYING Idx-f0da61ff-1 FROM 1 BY 1 UNTIL
-      D      Idx-f0da61ff-1 > root-table-3-count
+      D      PERFORM VARYING Idx-d4df4249-1 FROM 1 BY 1 UNTIL
+      D      Idx-d4df4249-1 > root-table-3-count
       D        IF table-level1-2-count >= 1 AND <= 200
-      D          PERFORM VARYING Idx-f0da61ff-2 FROM 1 BY 1 UNTIL
-      D          Idx-f0da61ff-2 > table-level1-2-count
+      D          PERFORM VARYING Idx-d4df4249-2 FROM 1 BY 1 UNTIL
+      D          Idx-d4df4249-2 > table-level1-2-count
       D            IF table-level2-1-count >= 1 AND <= 30
-      D              PERFORM VARYING Idx-f0da61ff-3 FROM 1 BY 1 UNTIL
-      D              Idx-f0da61ff-3 > table-level2-1-count
-      D                DISPLAY '        FILLER (' Idx-f0da61ff-1 ' '
-      D                Idx-f0da61ff-2 ' ' Idx-f0da61ff-3 ') (2:20) <'
-      D                table-level2-1 (Idx-f0da61ff-1 Idx-f0da61ff-2
-      D                Idx-f0da61ff-3) (2:20) '>'
+      D              PERFORM VARYING Idx-d4df4249-3 FROM 1 BY 1 UNTIL
+      D              Idx-d4df4249-3 > table-level2-1-count
+      D                DISPLAY '        FILLER (' Idx-d4df4249-1 ' '
+      D                Idx-d4df4249-2 ' ' Idx-d4df4249-3 ') (2:20) <'
+      D                table-level2-1 (Idx-d4df4249-1 Idx-d4df4249-2
+      D                Idx-d4df4249-3) (2:20) '>'
       D              END-PERFORM
       D            ELSE
       D              DISPLAY 'Cannot DISPLAY "table-level2-1" because i'
