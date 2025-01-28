@@ -295,7 +295,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
             void AppendValue()
             {
-                if (!string.IsNullOrEmpty(Target.Name) && IsNationalOrNationalEdited(Target))
+                if (!string.IsNullOrEmpty(Target.Name) && (Target.SemanticData?.Type).IsNationalOrNationalEdited())
                 {
                     Debug.Assert(Target == Accessor.Data); // Target is named
 
@@ -360,19 +360,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                         wordBuilder.Clear();
                     }
                 }
-            }
-
-            // TODO factorize with #2697
-            static bool IsNationalOrNationalEdited(DataDefinition dataDefinition)
-            {
-                bool hasPicture = dataDefinition.SemanticData?.Type?.Tag == Compiler.Types.Type.Tags.Picture;
-                if (hasPicture)
-                {
-                    var picture = (PictureType)dataDefinition.SemanticData.Type;
-                    return picture.Category == PictureCategory.National || picture.Category == PictureCategory.NationalEdited;
-                }
-
-                return false;
             }
 
             void AppendClosingValueDelimiter() => builder.AppendWord("'>'");

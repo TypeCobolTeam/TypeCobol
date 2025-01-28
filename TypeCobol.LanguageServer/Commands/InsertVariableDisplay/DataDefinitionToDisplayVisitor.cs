@@ -112,33 +112,9 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             }
 
             // Generate DISPLAY
-            bool withValue = !IsGroup(dataDefinition) || !dataDefinitionHasSelectedChildren;
+            bool withValue = !(dataDefinition.HasChildrenThatDeclareData() && dataDefinitionHasSelectedChildren);
             var display = new GeneratedDisplayVariable(_dataLogicalLevel, dataDefinition, accessor, indices, withValue);
             _currentStatement.AddChild(display);
-        }
-
-        private static bool IsGroup(DataDefinition dataDefinition)
-        {
-            var type = dataDefinition.SemanticData?.Type;
-            if (type == null)
-            {
-                // This is an anomaly as we should have the type info, default to children count.
-                return dataDefinition.ChildrenCount > 0;
-            }
-
-            // Extract relevant type
-            type = Innermost(type);
-            if (type.Tag == Compiler.Types.Type.Tags.Group)
-            {
-                var groupType = (Compiler.Types.GroupType)type;
-                return !groupType.IsElementary; // Exclude groups made of 88-levels only
-            }
-
-            // Not a group
-            return false;
-
-            // Goes through arrays and typedefs to get to the actual type
-            static Compiler.Types.Type Innermost(Compiler.Types.Type t) => t.TypeComponent != null ? Innermost(t.TypeComponent) : t;
         }
 
         private void ExitDataDefinition(DataDefinition dataDefinition)
