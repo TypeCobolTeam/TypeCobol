@@ -1,3 +1,3 @@
 ﻿--- Diagnostics ---
+Line 9[12,17] <37, Warning, General> - Warning: Unreachable code detected
 Line 28[15,29] <37, Warning, General> - Warning: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.
-Line 29[15,57] <37, Warning, General> - Warning: Unreachable code detected
