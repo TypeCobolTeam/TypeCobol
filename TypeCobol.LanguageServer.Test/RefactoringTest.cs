@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.LanguageServer.Commands.Refactor;
+using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.Test.RefactoringTests;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.Test.Utils;
@@ -71,6 +71,8 @@ namespace TypeCobol.LanguageServer.Test
 
             public string ExpectedResult { get; }
 
+            public IEnvironmentVariableProvider EnvironmentVariableProvider { get; set; }
+
             public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
             {
                 return new TextDocumentIdentifier(){ uri = nameof(FixedTextEditGenerator) };
@@ -123,8 +125,8 @@ namespace TypeCobol.LanguageServer.Test
             string path = Path.GetFullPath("RefactoringTests");
             path = Path.Combine(path, directoryName);
 
-            var failedTests = new List<(string TestName, Exception Exception)>();
-            foreach (var testFile in Directory.GetFiles(path))
+            var failedTests = new List<(string TestFile, Exception Exception)>();
+            foreach (var testFile in Directory.GetFiles(path, "*.*", SearchOption.AllDirectories))
             {
                 try
                 {
@@ -133,8 +135,7 @@ namespace TypeCobol.LanguageServer.Test
                 }
                 catch (Exception exception)
                 {
-                    string testName = Path.GetFileNameWithoutExtension(testFile);
-                    failedTests.Add((testName, exception));
+                    failedTests.Add((testFile, exception));
                 }
             }
 
@@ -144,7 +145,7 @@ namespace TypeCobol.LanguageServer.Test
                 Console.WriteLine();
                 foreach (var failedTest in failedTests)
                 {
-                    Console.WriteLine($"[{failedTest.TestName}] failed !");
+                    Console.WriteLine($"[{failedTest.TestFile}] failed !");
                     Console.WriteLine(failedTest.Exception.Message);
                     Console.WriteLine();
                 }
@@ -164,5 +165,8 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         public void AdjustFillers() => TestDirectory();
+
+        [TestMethod]
+        public void InsertVariableDisplay() => TestDirectory();
     }
 }
