@@ -23,7 +23,7 @@ namespace TypeCobol.LanguageServer.Test.Utilities
             {
                 while (reader.ReadLine() is { } line) // Non-null pattern + variable definition
                 {
-                    if (line.All(c => c == '-'))
+                    if (line.Length > 0 && line.All(c => c == '-'))
                     {
                         // The line is a separator, flush content read so far into a part
                         parts.Add(builder.ToString()[..^Environment.NewLine.Length]); // Remove trailing line break

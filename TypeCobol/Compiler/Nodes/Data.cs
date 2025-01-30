@@ -1,17 +1,13 @@
+using System.Diagnostics;
 using System.Text;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Nodes {
-
-    using System;
-    using System.Collections.Generic;
-    using Scanner;
-    using TypeCobol.Compiler.CodeElements;
-
-
 
     public class DataDivision: GenericNode<DataDivisionHeader>, Parent<DataSection> {
 
@@ -29,7 +25,7 @@ namespace TypeCobol.Compiler.Nodes {
             LinkageSection
         }
         // The 5 (optional) data sections
-        private DataSection[] _sections = new DataSection[5];
+        private readonly DataSection[] _sections = new DataSection[5];
         public FileSection FileSection => (FileSection) _sections[(int)SectionIndex.FileSection];
         public GlobalStorageSection GlobalStorageSection => (GlobalStorageSection)_sections[(int)SectionIndex.GlobalStorageSection];
         public WorkingStorageSection WorkingStorageSection => (WorkingStorageSection)_sections[(int)SectionIndex.WorkingStorageSection];
@@ -1126,6 +1122,42 @@ namespace TypeCobol.Compiler.Nodes {
             return dataDefinition != null
                    && dataDefinition.ChildrenCount == 0 // No children
                    && dataDefinition.CodeElement.IsFiller(); // Anonymous or FILLER (by using keyword or FILLER-like name)
+        }
+
+        /// <summary>
+        /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
+        /// </summary>
+        /// <param name="dataDefinition">Non-null item to check</param>
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry children</returns>
+        public static bool HasChildrenThatDeclareData([NotNull] this DataDefinition dataDefinition)
+        {
+            //We only need to check the last children:
+            //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
+            //DataDescription and DataRedefines are level between 1 and 49 inclusive.
+            //As the level number drives the positioning of Node inside the Children:
+            //- DataConditionEntry will always be positioned before other dataDescription
+            //- DataRenamesEntry will always be positioned after other dataDescription
+            if (dataDefinition.ChildrenCount > 0)
+            {
+                var lastChild = dataDefinition.Children[dataDefinition.ChildrenCount - 1];
+
+                if (lastChild.CodeElement == null)
+                {
+                    Debug.Assert(lastChild is IndexDefinition);
+                    //Last child is an Index in an OCCURS: it is not a declaration
+                    return false;
+                }
+
+                if (lastChild.CodeElement.Type == CodeElementType.DataRenamesEntry)
+                {
+                    //Last child is a DataRenamesEntry: we need to loop on the other children to find a possible DataDescription before
+                    return dataDefinition.Children.Any(c => c is DataDescription);
+                }
+
+                return lastChild.CodeElement.Type != CodeElementType.DataConditionEntry;
+            }
+
+            return false;
         }
     }
 

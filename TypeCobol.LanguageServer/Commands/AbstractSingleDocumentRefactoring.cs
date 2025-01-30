@@ -1,7 +1,7 @@
 ﻿using TypeCobol.Compiler;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
-namespace TypeCobol.LanguageServer.Commands.Refactor
+namespace TypeCobol.LanguageServer.Commands
 {
     /// <summary>
     /// Base class for Cobol document refactorings. This specialization of AbstractCommand

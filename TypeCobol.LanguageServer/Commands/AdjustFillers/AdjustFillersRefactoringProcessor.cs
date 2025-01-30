@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
@@ -8,12 +7,12 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
-namespace TypeCobol.LanguageServer.Commands.Refactor
+namespace TypeCobol.LanguageServer.Commands.AdjustFillers
 {
     /// <summary>
     /// Refactoring processor for AdjustFillers command
     /// </summary>
-    public class AdjustFillerRefactoringProcessor : IRefactoringProcessor
+    public class AdjustFillersRefactoringProcessor : AbstractRefactoringProcessor
     {
         private class AdjustFillerVisitor : AbstractAstVisitor
         {
@@ -214,18 +213,13 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        public TextDocumentIdentifier PrepareRefactoring(object[] arguments)
+        public override TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
-            // TODO How to factorize for all processors ?
-            if (arguments == null || arguments.Length == 0 || arguments[0] is not JObject jObject)
-            {
-                throw new ArgumentException("Invalid arguments for command.", nameof(arguments));
-            }
-
-            return jObject.ToObject<TextDocumentIdentifier>();
+            // Single argument is the text document identifier and it is required
+            return Expect<TextDocumentIdentifier>(arguments, 0, true);
         }
 
-        public void CheckTarget(CompilationUnit compilationUnit)
+        public override void CheckTarget(CompilationUnit compilationUnit)
         {
             // Require full AST
             if (compilationUnit.ProgramClassDocumentSnapshot == null)
@@ -234,7 +228,7 @@ namespace TypeCobol.LanguageServer.Commands.Refactor
             }
         }
 
-        public (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
+        public override (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
         {
             // Compute edits using a visitor
             var visitor = new AdjustFillerVisitor();
