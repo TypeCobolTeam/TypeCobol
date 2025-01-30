@@ -12,9 +12,9 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
     [TestClass]
     public class DataLayoutProcessorTreeTest : DataLayoutProcessorTest
     {
-        private Func<JsonSerializerSettings> backupJsonSettings;
+        private Func<JsonSerializerSettings> _backupJsonSettings;
 
-        protected override string GetTestPrefix() => "Tree-";
+        protected override string TestPrefix => "Tree-";
 
         protected override string GetActualResult(CompilationUnit compilationUnit, Position position)
         {
@@ -25,7 +25,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             return JToken.FromObject(processorResult).ToString(Formatting.Indented);
         }
 
-        protected override string GetExpectedResult(string expected)
+        protected override string FormatExpectedResult(string expected)
         {
             // Build expected result (JSON)
             var expectedJson = JToken.Parse(expected);
@@ -36,7 +36,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void Initialize()
         {
             // Back-up JSON default settings
-            backupJsonSettings = JsonConvert.DefaultSettings;
+            _backupJsonSettings = JsonConvert.DefaultSettings;
 
             // Force ignoring null value in JSON
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void Cleanup()
         {
             // Restore JSON default settings
-            JsonConvert.DefaultSettings = backupJsonSettings;
+            JsonConvert.DefaultSettings = _backupJsonSettings;
         }
 
         [TestMethod]

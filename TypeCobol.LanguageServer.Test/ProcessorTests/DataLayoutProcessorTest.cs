@@ -24,31 +24,24 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             var compilationUnit = ParserUtils.ParseCobolFile(sourceFileName, folder, isCopy, execToStep: ExecutionStep.SemanticCrossCheck);
 
             // Parse data file
-            var testDataFilePath = $"{Path.Combine(folder, GetTestPrefix() + testName)}.txt";
-            var testData = ParseContent(testDataFilePath);
+            var testDataFilePath = $"{Path.Combine(folder, TestPrefix + testName)}.txt";
+            var testData = LanguageServerTestUtils.ParseMultiplePartsContent(testDataFilePath);
 
             // Retrieve unique argument = position
-            var position = JToken.Parse(testData.Argument).ToObject<Position>();
+            var position = JToken.Parse(testData[0]).ToObject<Position>();
 
             // Execute processor and build actual result
             var actual = GetActualResult(compilationUnit, position);
 
             // Compare to expected
-            var expected = GetExpectedResult(testData.Expected);
+            var expected = FormatExpectedResult(testData[1]);
             TestUtils.CompareContent(testName, actual, expected);
         }
 
-        protected abstract string GetTestPrefix();
+        protected abstract string TestPrefix { get; }
 
         protected abstract string GetActualResult(CompilationUnit compilationUnit, Position position);
 
-        protected abstract string GetExpectedResult(string expected);
-
-        private static (string Argument, string Expected) ParseContent(string testDataFilePath)
-        {
-            var parts = LanguageServerTestUtils.ParseMultiplePartsContent(testDataFilePath);
-
-            return (parts[0], parts[1]);
-        }
+        protected abstract string FormatExpectedResult(string expected);
     }
 }

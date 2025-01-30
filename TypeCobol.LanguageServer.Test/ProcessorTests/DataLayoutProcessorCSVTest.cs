@@ -11,7 +11,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
     [TestClass]
     public class DataLayoutProcessorCSVTest : DataLayoutProcessorTest
     {
-        protected override string GetTestPrefix() => "CSV-";
+        protected override string TestPrefix => "CSV-";
 
         protected override string GetActualResult(CompilationUnit compilationUnit, Position position)
         {
@@ -30,7 +30,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             return actual.ToString();
         }
 
-        protected override string GetExpectedResult(string expected) => expected;
+        protected override string FormatExpectedResult(string expected) => expected;
 
         [TestMethod]
         public void Copy() => ExecuteTest("copy", true);

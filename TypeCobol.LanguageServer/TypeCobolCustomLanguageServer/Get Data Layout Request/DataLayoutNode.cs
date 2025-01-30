@@ -76,6 +76,6 @@
         /// <summary>
         /// Children nodes
         /// </summary>
-        public DataLayoutNode[] children { get; set; }
+        public List<DataLayoutNode> children { get; set; }
     }
 }

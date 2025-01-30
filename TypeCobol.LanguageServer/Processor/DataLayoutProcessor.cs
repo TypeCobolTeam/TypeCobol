@@ -31,6 +31,7 @@ namespace TypeCobol.LanguageServer
         public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
         {
             var rows = new List<string>();
+            var row = new StringBuilder();
             var rootDLN = CollectDataLayoutNodesAtPosition(compilationUnit, position, ConvertToRow);
             var root = rootDLN.name;
 
@@ -39,27 +40,27 @@ namespace TypeCobol.LanguageServer
 
             void ConvertToRow(DataLayoutNode dataLayoutNode)
             {
-                var row = new StringBuilder();
+                row.Clear();
 
                 //TODO manage slack bytes (property is dataDefinition.SlackBytes)
                 AppendToRow(dataLayoutNode.line);
                 AppendToRow(dataLayoutNode.logicalLevel - 2); // To compensate Program and Section levels
                 AppendToRow(dataLayoutNode.physicalLevel);
-                AppendToRow(GetNameWithDimensions(dataLayoutNode)); // Ex.: Data-Name (1, 1) for 2 nested OCCURS
+                AppendToRow(GetNameWithDimensions()); // Ex.: Data-Name (1, 1) for 2 nested OCCURS
                 AppendToRow(dataLayoutNode.declaration);
 
                 // Start/End/Length
                 var start = dataLayoutNode.start;
                 var length = dataLayoutNode.length;
                 AppendToRow(start);
-                AppendToRow(GetEnd(start, length));
+                AppendToRow(GetEnd());
                 row.Append(length);
 
                 rows.Add(row.ToString());
 
                 void AppendToRow(object value) => row.Append(value).Append(separator);
 
-                string GetNameWithDimensions(DataLayoutNode dataLayoutNode)
+                string GetNameWithDimensions()
                 {
                     if (dataLayoutNode.occursDimension == 0)
                     {
@@ -69,7 +70,7 @@ namespace TypeCobol.LanguageServer
                     return $"{dataLayoutNode.name} ({dimensions})";
                 }
 
-                static object GetEnd(long start, long length)
+                object GetEnd()
                 {
                     var end = start + length - 1;
                     return (end > 0) ? end : UNDEFINED;
@@ -114,33 +115,29 @@ namespace TypeCobol.LanguageServer
         {
             var rootDLN = DataLayoutNodeBuilder.From(program);
 
-            DataDivision dataDivision = program.GetChildren<DataDivision>()?.FirstOrDefault();
+            DataDivision dataDivision = program.Children.OfType<DataDivision>().FirstOrDefault();
             if (dataDivision != null)
             {
-                var sectionsDLN = new List<DataLayoutNode>();
-
                 // Consider data declared in the Working and Local storage sections
                 CollectInSection(dataDivision.WorkingStorageSection);
                 CollectInSection(dataDivision.LocalStorageSection);
                 // Consider also data declared in the Linkage section
                 CollectInSection(dataDivision.LinkageSection);
 
-                rootDLN.children = sectionsDLN.ToArray();
-
                 void CollectInSection(DataSection dataSection)
                 {
                     if (dataSection != null)
                     {
                         var sectionDLN = DataLayoutNodeBuilder.From(dataSection);
-                        sectionsDLN.Add(sectionDLN);
-                        sectionDLN.children = CollectDataLayoutNodes(dataSection, sectionDLN).ToArray();
+                        rootDLN.children.Add(sectionDLN);
+                        CollectDataLayoutNodes(dataSection, sectionDLN);
                     }
                 }
             }
 
             return rootDLN;
 
-            List<DataLayoutNode> CollectDataLayoutNodes(Node parentNode, DataLayoutNode parentDLN)
+            void CollectDataLayoutNodes(Node parentNode, DataLayoutNode parentDLN)
             {
                 var result = new List<DataLayoutNode>();
 
@@ -150,18 +147,16 @@ namespace TypeCobol.LanguageServer
                     if (child is DataDefinition childDefinition && IsInScope(childDefinition))
                     {
                         var childDLN = DataLayoutNodeBuilder.From(childDefinition, parentDLN, i);
-                        result.Add(childDLN);
+                        parentDLN.children.Add(childDLN);
 
                         convert?.Invoke(childDLN);
 
                         if (childDefinition.Children.Count > 0)
                         {
-                            childDLN.children = CollectDataLayoutNodes(child, childDLN).ToArray();
+                            CollectDataLayoutNodes(child, childDLN);
                         }
                     }
                 }
-
-                return result;
 
                 static bool IsInScope(DataDefinition dataDefinition)
                 {
@@ -187,7 +182,8 @@ namespace TypeCobol.LanguageServer
                 {
                     name = program.Name,
                     index = DataLayoutNode.UNDEFINED,
-                    flags = DataLayoutNodeFlags.None
+                    flags = DataLayoutNodeFlags.None,
+                    children = []
                 };
             }
 
@@ -198,7 +194,8 @@ namespace TypeCobol.LanguageServer
                     logicalLevel = 1,
                     name = dataSection.ID,
                     index = DataLayoutNode.UNDEFINED,
-                    flags = DataLayoutNodeFlags.None
+                    flags = DataLayoutNodeFlags.None,
+                    children = []
                 };
             }
 
@@ -239,7 +236,7 @@ namespace TypeCobol.LanguageServer
                     bool IsDisplayable()
                     {
                         // FILLER with a National or NationalEdited picture are not displayable
-                        if (name.Equals(FILLER) && IsNationalOrNationalEdited(dataDefinition))
+                        if (name == FILLER && IsNationalOrNationalEdited(dataDefinition))
                         {
                             return false;
                         }
@@ -259,7 +256,6 @@ namespace TypeCobol.LanguageServer
                             return false;
                         }
                     }
-
                 }
 
                 if (declarationItems.Count == 0 && dataDefinition.ChildrenCount > 0)
