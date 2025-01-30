@@ -236,25 +236,13 @@ namespace TypeCobol.LanguageServer
                     bool IsDisplayable()
                     {
                         // FILLER with a National or NationalEdited picture are not displayable
-                        if (name == FILLER && IsNationalOrNationalEdited(dataDefinition))
+                        if (name == FILLER && (dataDefinition.SemanticData?.Type).IsNationalOrNationalEdited())
                         {
                             return false;
                         }
 
                         // Usage Index, FunctionPointer and ProcedurePointer are not displayable
                         return usage?.Value != DataUsage.Index && usage?.Value != DataUsage.FunctionPointer && usage?.Value != DataUsage.ProcedurePointer;
-
-                        static bool IsNationalOrNationalEdited(DataDefinition dataDefinition)
-                        {
-                            bool hasPicture = dataDefinition.SemanticData?.Type?.Tag == Compiler.Types.Type.Tags.Picture;
-                            if (hasPicture)
-                            {
-                                var picture = (PictureType)dataDefinition.SemanticData.Type;
-                                return picture.Category == PictureCategory.National || picture.Category == PictureCategory.NationalEdited;
-                            }
-
-                            return false;
-                        }
                     }
                 }
 
