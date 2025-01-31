@@ -118,20 +118,23 @@ namespace TypeCobol.LanguageServer
             DataDivision dataDivision = program.Children.OfType<DataDivision>().FirstOrDefault();
             if (dataDivision != null)
             {
-                // Consider data declared in the Working and Local storage sections
-                CollectInSection(dataDivision.WorkingStorageSection);
-                CollectInSection(dataDivision.LocalStorageSection);
-                // Consider also data declared in the Linkage section
-                CollectInSection(dataDivision.LinkageSection);
-
-                void CollectInSection(DataSection dataSection)
+                for (int i = 0; i < dataDivision.ChildrenCount; i++)
                 {
-                    if (dataSection != null)
+                    var child = dataDivision.Children[i];
+                    if (child is DataSection dataSection && IsInScope())
                     {
-                        var sectionDLN = DataLayoutNodeBuilder.From(dataSection);
-                        rootDLN.children.Add(sectionDLN);
-                        CollectDataLayoutNodes(dataSection, sectionDLN);
+                        CollectInSection(dataSection, i);
                     }
+
+                    // Consider sections: Working and Local storage + Linkage
+                    bool IsInScope() => dataSection is WorkingStorageSection or LocalStorageSection or LinkageSection;
+                }
+
+                void CollectInSection(DataSection dataSection, int index)
+                {
+                    var sectionDLN = DataLayoutNodeBuilder.From(dataSection, index);
+                    rootDLN.children.Add(sectionDLN);
+                    CollectDataLayoutNodes(dataSection, sectionDLN);
                 }
             }
 
@@ -187,13 +190,13 @@ namespace TypeCobol.LanguageServer
                 };
             }
 
-            internal static DataLayoutNode From(DataSection dataSection)
+            internal static DataLayoutNode From(DataSection dataSection, int index)
             {
                 return new()
                 {
                     logicalLevel = 1,
                     name = dataSection.ID,
-                    index = DataLayoutNode.UNDEFINED,
+                    index = index,
                     flags = DataLayoutNodeFlags.None,
                     children = []
                 };

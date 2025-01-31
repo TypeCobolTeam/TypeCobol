@@ -19,7 +19,7 @@
       "occursDimension": 0,
       "start": 0,
       "length": 0,
-      "index": -1,
+      "index": 0,
       "flags": 0,
       "children": [
         {
