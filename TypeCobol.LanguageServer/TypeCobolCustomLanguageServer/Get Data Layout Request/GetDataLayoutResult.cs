@@ -9,6 +9,11 @@
         /// The result dedicated to CSV outputType
         /// </summary>
         public GetDataLayoutCSVResult csvResult { get; set; }
+
+        /// <summary>
+        /// The result dedicated to TREE outputType
+        /// </summary>
+        public GetDataLayoutTreeResult treeResult { get; set; }
     }
 
     /// <summary>
@@ -37,5 +42,16 @@
         /// The separator
         /// </summary>
         public string separator { get; set; }
+    }
+
+    /// <summary>
+    /// The result for a TREE output
+    /// </summary>
+    public class GetDataLayoutTreeResult
+    {
+        /// <summary>
+        /// The root node
+        /// </summary>
+        public DataLayoutNode root { get; set; }
     }
 }

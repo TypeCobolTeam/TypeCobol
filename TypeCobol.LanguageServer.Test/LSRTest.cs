@@ -450,7 +450,8 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("GetDataLayout")]
         public void GetDataLayoutRequest()
         {
-            LSRTestHelper.Test("GetDataLayoutRequest", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test("GetDataLayoutRequestCSV", LsrTestingOptions.NoLsrTesting);
+            LSRTestHelper.Test("GetDataLayoutRequestTREE", LsrTestingOptions.NoLsrTesting);
         }
 
         [TestMethod]

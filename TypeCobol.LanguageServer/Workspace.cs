@@ -966,14 +966,26 @@ namespace TypeCobol.LanguageServer
 
         #region Data Layout
         /// <summary>
-        /// Get the Data Layout rows for a Program or a Copy (output = CSV)
+        /// Get the Data Layout rows for a Copy or a Program (output = CSV)
         /// </summary>
-        /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
+        /// <param name="compilationUnit">Compilation unit resulting from parsing the Copy or Program</param>
+        /// <param name="position">Position determining the data to be considered (useful in case of the stacked/nested Programs)</param>
         /// <param name="separator">Separator for fields to use</param>
         /// <returns>Tuple made of the root (the Copy or the Program containing the data), CSV header and CSV rows</returns>
         public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, VsCodeProtocol.Position position, string separator)
         {
             return _dataLayoutProcessor.GetDataLayoutAsCSV(compilationUnit, position, separator);
+        }
+
+        /// <summary>
+        /// Get the Data Layout nodes for a Copy or a Program (output = TREE)
+        /// </summary>
+        /// <param name="compilationUnit">Compilation unit resulting from parsing the Copy or Program</param>
+        /// <param name="position">Position determining the data to be considered (useful in case of the stacked/nested Programs)</param>
+        /// <returns>Root data layout node</returns>
+        public DataLayoutNode GetDataLayoutAsTree(CompilationUnit compilationUnit, VsCodeProtocol.Position position)
+        {
+            return _dataLayoutProcessor.GetDataLayoutAsTree(compilationUnit, position);
         }
         #endregion
 
