@@ -48,5 +48,11 @@
              10 var-index-redef REDEFINES var-index USAGE INDEX.
              10 var-function-pointer USAGE FUNCTION-POINTER.
              10 var-procedure-pointer USAGE PROCEDURE-POINTER.
-      
+          05 var-occurs OCCURS 65535.
+          05 var-occurs-not-displayable OCCURS 65536.
+          05 grp-occurs-not-displayable OCCURS 65536.
+             10 var1-not-displayable PIC X.
+             10 grp1-not-displayable.
+                15 var2-not-displayable PIC X.
+       
        END PROGRAM TCOZEFR3.

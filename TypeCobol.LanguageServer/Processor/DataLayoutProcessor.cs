@@ -20,6 +20,7 @@ namespace TypeCobol.LanguageServer
         private const string DIMENSION_ITEM = "1";
         private const string GROUP = "GROUP";
         private const string FILLER = "FILLER";
+        private const int MAX_INDEX_CAPACITY = 65535; // Max capacity of an index declared as PIC 9(4) COMP-5
 
         /// <summary>
         /// Get the Data Layout rows for a Copy or a Program (output = CSV)
@@ -216,6 +217,7 @@ namespace TypeCobol.LanguageServer
                 long start = dataDefinition.StartPosition;
                 long length = dataDefinition.PhysicalLength;
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
+                bool exceedsMaxIndexCapacity = parent.ExceedsMaxIndexCapacity || (incrementDimension && dataDefinition.MaxOccurencesCount > MAX_INDEX_CAPACITY);
 
                 DataLayoutNodeFlags flags = DataLayoutNodeFlags.None;
                 var declarationItems = new List<string>();
@@ -238,6 +240,12 @@ namespace TypeCobol.LanguageServer
 
                     bool IsDisplayable()
                     {
+                        // OCCURS that can not be looped by an index defined as PIC 9(4) COMP-5 (see InsertVariableDisplay command) are not displayable
+                        if (exceedsMaxIndexCapacity)
+                        {
+                            return false;
+                        }
+
                         // FILLER with a National or NationalEdited picture are not displayable
                         if (name == FILLER && (dataDefinition.SemanticData?.Type).IsNationalOrNationalEdited())
                         {
@@ -278,7 +286,8 @@ namespace TypeCobol.LanguageServer
                     copy = copy,
                     index = index,
                     flags = flags,
-                    children = []
+                    children = [],
+                    ExceedsMaxIndexCapacity = exceedsMaxIndexCapacity
                 };
             }
         }

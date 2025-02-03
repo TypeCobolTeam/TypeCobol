@@ -145,7 +145,7 @@
           "declaration": "GROUP",
           "occursDimension": 0,
           "start": 1,
-          "length": 1360,
+          "length": 132432,
           "index": 1,
           "flags": 2,
           "children": [
@@ -638,6 +638,86 @@
                   "index": 3,
                   "flags": 0,
                   "children": []
+                }
+              ]
+            },
+            {
+              "logicalLevel": 3,
+              "line": 51,
+              "physicalLevel": 5,
+              "name": "var-occurs",
+              "declaration": "OCCURS 65535",
+              "occursDimension": 1,
+              "start": 1361,
+              "length": 0,
+              "index": 6,
+              "flags": 2,
+              "children": []
+            },
+            {
+              "logicalLevel": 3,
+              "line": 52,
+              "physicalLevel": 5,
+              "name": "var-occurs-not-displayable",
+              "declaration": "OCCURS 65536",
+              "occursDimension": 1,
+              "start": 1361,
+              "length": 0,
+              "index": 7,
+              "flags": 0,
+              "children": []
+            },
+            {
+              "logicalLevel": 3,
+              "line": 53,
+              "physicalLevel": 5,
+              "name": "grp-occurs-not-displayable",
+              "declaration": "GROUP OCCURS 65536",
+              "occursDimension": 1,
+              "start": 1361,
+              "length": 131072,
+              "index": 8,
+              "flags": 0,
+              "children": [
+                {
+                  "logicalLevel": 4,
+                  "line": 54,
+                  "physicalLevel": 10,
+                  "name": "var1-not-displayable",
+                  "declaration": "PIC X",
+                  "occursDimension": 1,
+                  "start": 1361,
+                  "length": 1,
+                  "index": 0,
+                  "flags": 0,
+                  "children": []
+                },
+                {
+                  "logicalLevel": 4,
+                  "line": 55,
+                  "physicalLevel": 10,
+                  "name": "grp1-not-displayable",
+                  "declaration": "GROUP",
+                  "occursDimension": 1,
+                  "start": 1362,
+                  "length": 1,
+                  "index": 1,
+                  "flags": 0,
+                  "children": [
+                    {
+                      "logicalLevel": 5,
+                      "line": 56,
+                      "physicalLevel": 15,
+                      "name": "var2-not-displayable",
+                      "declaration": "PIC X",
+                      "occursDimension": 1,
+                      "start": 1362,
+                      "length": 1,
+                      "index": 0,
+                      "flags": 0,
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

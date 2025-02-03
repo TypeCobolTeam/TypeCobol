@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.LanguageServer
+﻿using Newtonsoft.Json;
+
+namespace TypeCobol.LanguageServer
 {
     [Flags]
     public enum DataLayoutNodeFlags
@@ -77,5 +79,11 @@
         /// Children nodes
         /// </summary>
         public List<DataLayoutNode> children { get; set; }
+
+        /// <summary>
+        /// Flag indicating whether the max OCCURS exceeds the max capacity of an index declared as PIC 9(4) COMP-5
+        /// </summary>
+        [JsonIgnore]
+        public bool ExceedsMaxIndexCapacity { get; set; }
     }
 }
