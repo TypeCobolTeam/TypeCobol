@@ -2,7 +2,6 @@
 using System.Text;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 {
@@ -295,7 +294,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
             void AppendValue()
             {
-                if (!string.IsNullOrEmpty(Target.Name) && (Target.SemanticData?.Type).IsNationalOrNationalEdited())
+                if (!string.IsNullOrEmpty(Target.Name) && Target.IsNationalOrNationalEdited())
                 {
                     Debug.Assert(Target == Accessor.Data); // Target is named
 
