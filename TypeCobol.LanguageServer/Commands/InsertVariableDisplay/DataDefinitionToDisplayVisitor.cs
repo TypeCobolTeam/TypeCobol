@@ -66,18 +66,15 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             // Generate PERFORM if need be
             if (dataDefinition.IsTableOccurence)
             {
-                // Compute index size
+                // Start with MaxOccurs as max and check whether a DEPENDING ON is declared or not
                 string max = dataDefinition.MaxOccurencesCount.ToString();
-                int indexSize = max.Length;
-
-                // Generate IF IS NUMERIC AND IN RANGE if need be
                 if (dataDefinition.OccursDependingOn != null)
                 {
-                    // Depending on has to be checked, and it becomes the max for the PERFORM
+                    // Generate IF IS NUMERIC AND IN RANGE. The DEPENDING ON variable becomes the max for the PERFORM
                     string maxOccurs = max;
                     max = dataDefinition.OccursDependingOn.MainSymbolReference.Name;
 
-                    // Check depending on type: we should not check class when the depending on is binary
+                    // Check DEPENDING ON type: we should not check class when the DEPENDING ON is binary
                     var dependingOn = dataDefinition.GetDataDefinitionFromStorageAreaDictionary(dataDefinition.OccursDependingOn.StorageArea, true);
                     var dependingOnUsage = dependingOn?.SemanticData?.Type?.Usage;
                     bool checkNumeric = dependingOnUsage != Compiler.Types.Type.UsageFormat.Comp && dependingOnUsage != Compiler.Types.Type.UsageFormat.Comp5;
@@ -89,9 +86,8 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     _currentStatement = ifNumericAndInRange;
                 }
 
-                // Reuse or generate new index
-                int occursDimension = _indices.Count + 1;
-                string index = _indexGenerator.GetOrCreateIndex(occursDimension, indexSize);
+                // Reuse or generate new index for the current OCCURS dimension
+                string index = _indexGenerator.GetOrCreateIndex(_indices.Count + 1);
                 _indices.Push(index);
 
                 // Generate PERFORM and continue generation inside it

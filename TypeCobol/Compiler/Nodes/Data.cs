@@ -1159,6 +1159,33 @@ namespace TypeCobol.Compiler.Nodes {
 
             return false;
         }
+
+        /// <summary>
+        /// Test the given data to check whether its PICTURE is among the given Picture categories.
+        /// </summary>
+        /// <param name="dataDefinition">Non-null data to test.</param>
+        /// <param name="pictureCategories">Enumeration of Picture Categories to test, passing no categories will simply test whether
+        /// the data has a PICTURE type or not.</param>
+        /// <returns>True when the actual picture category of the data is among the given categories.</returns>
+        public static bool HasPictureCategory([NotNull] this DataDefinition dataDefinition, params PictureCategory[] pictureCategories)
+        {
+            var type = dataDefinition.SemanticData?.Type;
+            bool hasPicture = type?.Tag == Types.Type.Tags.Picture;
+            if (hasPicture)
+            {
+                if (pictureCategories.Length == 0)
+                    return true; // No categories to test, the method will just indicate that the data has a PICTURE
+
+                var pictureType = (PictureType)type;
+                return pictureCategories.Contains(pictureType.Category); // We could use HashSet, but we're assuming a small array of PictureCategory without duplicates
+            }
+
+            // No PICTURE
+            return false;
+        }
+
+        public static bool IsNationalOrNationalEdited([NotNull] this DataDefinition dataDefinition)
+            => dataDefinition.HasPictureCategory(PictureCategory.National, PictureCategory.NationalEdited);
     }
 
 } // end of namespace TypeCobol.Compiler.Nodes
