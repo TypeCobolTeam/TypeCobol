@@ -246,14 +246,36 @@ namespace TypeCobol.LanguageServer
                             return false;
                         }
 
-                        // FILLER with a National or NationalEdited picture are not displayable
-                        if (name == FILLER && (dataDefinition.SemanticData?.Type).IsNationalOrNationalEdited())
+                        // Usage Index, FunctionPointer and ProcedurePointer are not displayable
+                        var dataUsage = usage?.Value;
+                        if (dataUsage == DataUsage.Index || dataUsage == DataUsage.FunctionPointer || dataUsage == DataUsage.ProcedurePointer)
                         {
                             return false;
                         }
 
-                        // Usage Index, FunctionPointer and ProcedurePointer are not displayable
-                        return usage?.Value != DataUsage.Index && usage?.Value != DataUsage.FunctionPointer && usage?.Value != DataUsage.ProcedurePointer;
+                        if (!dataDefinition.IsFiller())
+                        {
+                            return true;
+                        }
+                            
+                        // FILLER with a National or NationalEdited picture are not displayable
+                        if ((dataDefinition.SemanticData?.Type).IsNationalOrNationalEdited())
+                        {
+                            return false;
+                        }
+
+                        // FILLER with no named ascendant are not displayable
+                        var ascendantNode = dataDefinition.Parent;
+                        while (ascendantNode is DataDefinition ascendantDataDefinition)
+                        {
+                            if (!ascendantDataDefinition.CodeElement.IsFiller())
+                            {
+                                return true; 
+                            }
+                            ascendantNode = ascendantNode.Parent;
+                        }
+
+                        return false;
                     }
                 }
 

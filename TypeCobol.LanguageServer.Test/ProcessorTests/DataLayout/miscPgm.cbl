@@ -54,5 +54,14 @@
              10 var1-not-displayable PIC X.
              10 grp1-not-displayable.
                 15 var2-not-displayable PIC X.
+      * FILLER not displayable (no named ascendant)
+       01 FILLER PIC X.
+       01 .
+          05 FILLER PIC X.
+          05 .
+             10 FILLER PIC X.
+             10 FILLER.
+                15 PIC X.
+                15 var-displayable PIC X.
 
        END PROGRAM TCOZEFR3.
