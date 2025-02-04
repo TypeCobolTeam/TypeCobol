@@ -259,7 +259,7 @@ namespace TypeCobol.LanguageServer
                         }
                             
                         // FILLER with a National or NationalEdited picture are not displayable
-                        if ((dataDefinition.SemanticData?.Type).IsNationalOrNationalEdited())
+                        if (dataDefinition.IsNationalOrNationalEdited())
                         {
                             return false;
                         }
