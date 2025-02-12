@@ -85,5 +85,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         [JsonIgnore]
         public bool ExceedsMaxIndexCapacity { get; set; }
+
+        /// <summary>
+        /// Flag indicating whether the data is addressable in a DISPLAY statement (i.e is named or having at least one named parent)
+        /// </summary>
+        [JsonIgnore]
+        public bool IsAdressable { get; set; }
     }
 }

@@ -746,7 +746,7 @@
           "start": 1,
           "length": 4,
           "index": 3,
-          "flags": 2,
+          "flags": 0,
           "children": [
             {
               "logicalLevel": 3,
@@ -771,7 +771,7 @@
               "start": 2,
               "length": 3,
               "index": 1,
-              "flags": 2,
+              "flags": 0,
               "children": [
                 {
                   "logicalLevel": 4,
@@ -796,7 +796,7 @@
                   "start": 3,
                   "length": 2,
                   "index": 1,
-                  "flags": 2,
+                  "flags": 0,
                   "children": [
                     {
                       "logicalLevel": 5,

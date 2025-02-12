@@ -4,6 +4,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.LanguageServer.Commands.InsertVariableDisplay;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -19,7 +20,6 @@ namespace TypeCobol.LanguageServer
         private const string DIMENSION_ITEM = "1";
         private const string GROUP = "GROUP";
         private const string FILLER = "FILLER";
-        private const int MAX_INDEX_CAPACITY = 65535; // Max capacity of an index declared as PIC 9(4) COMP-5
 
         /// <summary>
         /// Get the Data Layout rows for a Copy or a Program (output = CSV)
@@ -211,12 +211,13 @@ namespace TypeCobol.LanguageServer
                 int logicalLevel = parent.logicalLevel + 1;
                 int line = dataDefinition.CodeElement.GetLineInMainSource() + 1;
                 long physicalLevel = dataDefinition.CodeElement.LevelNumber.Value;
-                var name = dataDefinition.Name ?? FILLER;
+                bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
+                var name = isNamed ? dataDefinition.Name : FILLER;
                 int occursDimension = parent.occursDimension + (incrementDimension ? 1 : 0);
                 long start = dataDefinition.StartPosition;
                 long length = dataDefinition.PhysicalLength;
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
-                bool exceedsMaxIndexCapacity = parent.ExceedsMaxIndexCapacity || (incrementDimension && dataDefinition.MaxOccurencesCount > MAX_INDEX_CAPACITY);
+                bool exceedsMaxIndexCapacity = parent.ExceedsMaxIndexCapacity || (incrementDimension && dataDefinition.MaxOccurencesCount > IndexGenerator.MAX_INDEX_CAPACITY);
 
                 DataLayoutNodeFlags flags = DataLayoutNodeFlags.None;
                 var declarationItems = new List<string>();
@@ -239,7 +240,7 @@ namespace TypeCobol.LanguageServer
 
                     bool IsDisplayable()
                     {
-                        // OCCURS that can not be looped by an index defined as PIC 9(4) COMP-5 (see InsertVariableDisplay command) are not displayable
+                        // OCCURS that can not be looped by an index defined as PIC 9(4) COMP-5 (see IndexGenerator) are not displayable
                         if (exceedsMaxIndexCapacity)
                         {
                             return false;
@@ -252,29 +253,14 @@ namespace TypeCobol.LanguageServer
                             return false;
                         }
 
-                        if (!dataDefinition.IsFiller())
+                        // Named data are displayable
+                        if (isNamed)
                         {
                             return true;
                         }
-                            
-                        // FILLER with a National or NationalEdited picture are not displayable
-                        if (dataDefinition.IsNationalOrNationalEdited())
-                        {
-                            return false;
-                        }
 
-                        // FILLER with no named ascendant are not displayable
-                        var ascendantNode = dataDefinition.Parent;
-                        while (ascendantNode is DataDefinition ascendantDataDefinition)
-                        {
-                            if (!ascendantDataDefinition.CodeElement.IsFiller())
-                            {
-                                return true; 
-                            }
-                            ascendantNode = ascendantNode.Parent;
-                        }
-
-                        return false;
+                        // FILLER are displayable when having at least one named parent and not a National/NationalEdited picture 
+                        return parent.IsAdressable && !dataDefinition.IsNationalOrNationalEdited();
                     }
                 }
 
@@ -308,7 +294,8 @@ namespace TypeCobol.LanguageServer
                     index = index,
                     flags = flags,
                     children = [],
-                    ExceedsMaxIndexCapacity = exceedsMaxIndexCapacity
+                    ExceedsMaxIndexCapacity = exceedsMaxIndexCapacity,
+                    IsAdressable = parent.IsAdressable || isNamed
                 };
             }
         }

@@ -32,7 +32,7 @@
           "start": 1,
           "length": 81,
           "index": 0,
-          "flags": 2,
+          "flags": 0,
           "children": [
             {
               "logicalLevel": 3,
@@ -100,7 +100,7 @@
           "start": 1,
           "length": 4,
           "index": 1,
-          "flags": 2,
+          "flags": 0,
           "children": [
             {
               "logicalLevel": 3,
@@ -139,7 +139,7 @@
               "start": 1,
               "length": 3,
               "index": 1,
-              "flags": 3,
+              "flags": 1,
               "children": [
                 {
                   "logicalLevel": 4,
