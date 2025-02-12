@@ -260,7 +260,7 @@ namespace TypeCobol.LanguageServer
                         }
 
                         // FILLER are displayable when having at least one named parent and not a National/NationalEdited picture 
-                        return parent.IsAdressable && !dataDefinition.IsNationalOrNationalEdited();
+                        return parent.IsAddressable && !dataDefinition.IsNationalOrNationalEdited();
                     }
                 }
 
@@ -295,7 +295,7 @@ namespace TypeCobol.LanguageServer
                     flags = flags,
                     children = [],
                     ExceedsMaxIndexCapacity = exceedsMaxIndexCapacity,
-                    IsAdressable = parent.IsAdressable || isNamed
+                    IsAddressable = parent.IsAddressable || isNamed
                 };
             }
         }

@@ -90,6 +90,6 @@ namespace TypeCobol.LanguageServer
         /// Flag indicating whether the data is addressable in a DISPLAY statement (i.e is named or having at least one named parent)
         /// </summary>
         [JsonIgnore]
-        public bool IsAdressable { get; set; }
+        public bool IsAddressable { get; set; }
     }
 }
