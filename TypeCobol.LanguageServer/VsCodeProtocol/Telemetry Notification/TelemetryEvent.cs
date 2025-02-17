@@ -35,8 +35,8 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
             return new TelemetryEvent()
             {
-                Type = "exception",
-                Data = new Dictionary<string, string>()
+                type = "exception",
+                data = new Dictionary<string, string>()
                 {
                     { "Type", exceptionType },
                     { nameof(Exception.Message), exceptionMessage },
@@ -49,11 +49,11 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// String identifier for the type of the event.
         /// </summary>
-        public string Type { get; set; }
+        public string type { get; set; }
 
         /// <summary>
         /// Name-value collection to hold descriptive data of the event.
         /// </summary>
-        public Dictionary<string, string> Data { get; set; }
+        public Dictionary<string, string> data { get; set; }
     }
 }

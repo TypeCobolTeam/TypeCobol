@@ -1132,14 +1132,14 @@ namespace TypeCobol.Compiler.Nodes {
         public static bool HasChildrenThatDeclareData([NotNull] this DataDefinition dataDefinition)
         {
             //We only need to check the last children:
-            //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
+            //DataConditionEntry is a level 88, DataRenamesEntry is level 66, both cannot have children
             //DataDescription and DataRedefines are level between 1 and 49 inclusive.
             //As the level number drives the positioning of Node inside the Children:
-            //- DataConditionEntry will always be positioned before other dataDescription
-            //- DataRenamesEntry will always be positioned after other dataDescription
+            //- if last child is a DataConditionEntry, it means all children are DataConditionEntry and no new data is declared
+            //- if last child is a DataRenamesEntry, some data may be declared before the RENAMES
             if (dataDefinition.ChildrenCount > 0)
             {
-                var lastChild = dataDefinition.Children[dataDefinition.ChildrenCount - 1];
+                var lastChild = dataDefinition.Children[^1];
 
                 if (lastChild.CodeElement == null)
                 {
