@@ -123,8 +123,16 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             int addedCharsCount; // Number of extra chars required, 2 for the two delimiters or 3 when we also have to add the separator after DISPLAY keyword
             while (text.Length + (addedCharsCount = (addSeparator ? 3 : 2)) > (remaining = MAX_LINE_LENGTH - _currentLine.Length))
             {
+                int partLength = remaining - addedCharsCount;
+                if (partLength < 1)
+                {
+                    // Not enough remaining space on current line to add anything -> start a newline and continue
+                    AppendLineAndIndent();
+                    continue;
+                }
+
                 // Split literal
-                string part = text.Substring(0, remaining - addedCharsCount);
+                string part = text.Substring(0, partLength);
                 if (addSeparator)
                 {
                     _currentLine.Append(ONE_SPACE);
@@ -136,12 +144,10 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 _currentLine.Append(delimiter);
 
                 // Create new line and align
-                AppendLine();
-                AppendIndent(indent);
+                AppendLineAndIndent();
 
                 // Compute remaining text to append and continue
                 text = text.Substring(part.Length);
-                addSeparator = false;
             }
 
             // Append last part(this may be the full literal itself if it did not need to be split)
@@ -152,8 +158,17 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     _currentLine.Append(ONE_SPACE);
                 }
 
-                _currentLine.Append(delimiter + text + delimiter);
+                _currentLine.Append(delimiter);
+                _currentLine.Append(text);
+                _currentLine.Append(delimiter);
                 _currentLineIsEmpty = false;
+            }
+
+            void AppendLineAndIndent()
+            {
+                AppendLine();
+                AppendIndent(indent);
+                addSeparator = false;
             }
         }
 
