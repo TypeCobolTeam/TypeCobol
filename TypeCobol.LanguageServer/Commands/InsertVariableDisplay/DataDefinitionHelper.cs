@@ -28,14 +28,14 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
             }
 
-            public List<string> ToExpression()
+            public List<string> BuildReferenceModifier(long physicalLength)
             {
                 // Default position: no need to create an expression. The whole data is used directly.
                 if (DeltaParent == 1 && EnclosingOccurs.Count == 0)
                     return null;
 
-                // Start with delta parent
-                List<string> words = [ DeltaParent.ToString() ];
+                // Start with delta parent preceded by an opening parenthesis
+                List<string> words = ['(' + DeltaParent.ToString() ];
 
                 if (EnclosingOccurs.Count > 0)
                 {
@@ -53,6 +53,10 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     }
                 }
 
+                // Add length and closing parenthesis on last word
+                string lastWord = words[^1] + ':' + physicalLength + ')';
+                words[^1] = lastWord;
+
                 return words;
             }
         }
@@ -64,8 +68,8 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         /// <param name="IndicesCount">Number of indices to use on the accessor data. When the target data is nested under
         /// anonymous arrays, the data used to access the target is on a different OCCURS dimension. Only some of the first
         /// indices are used and this number indicates the count of them.</param>
-        /// <param name="ReferenceModifier">Reference modifier to apply on Data, when null it means no reference modifier is required.</param>
-        public record struct DataAccessor(DataDefinition Data, int IndicesCount, string[] ReferenceModifier);
+        /// <param name="ReferenceModifier">Reference modifier to apply on Data as a list of words. When null it means no reference modifier is required.</param>
+        public record struct DataAccessor(DataDefinition Data, int IndicesCount, List<string> ReferenceModifier);
 
         /// <summary>
         /// Compute accessor for given DataDefinition and indices.
@@ -105,24 +109,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             }
 
             // Compute reference modifier
-            var leftMostCharacterPositionExpression = info.ToExpression();
-            string[] referenceModifier = null;
-            if (leftMostCharacterPositionExpression != null)
-            {
-                referenceModifier = new string[leftMostCharacterPositionExpression.Count];
-                for (int i = 0; i < leftMostCharacterPositionExpression.Count; i++)
-                {
-                    string part = leftMostCharacterPositionExpression[i];
-                    // Add opening parenthesis on first part
-                    bool isFirst = i == 0;
-                    if (isFirst) part = '(' + part;
-                    // Add length and closing parenthesis on last part
-                    bool isLast = i == leftMostCharacterPositionExpression.Count - 1;
-                    if (isLast) part = part + ':' + dataDefinition.PhysicalLength + ')';
-                    referenceModifier[i] = part;
-                }
-            }
-
+            var referenceModifier = info.BuildReferenceModifier(dataDefinition.PhysicalLength);
             int indicesCount = index + 1; // Number of indices used to access the data
             return new DataAccessor(currentDefinition, indicesCount, referenceModifier);
         }

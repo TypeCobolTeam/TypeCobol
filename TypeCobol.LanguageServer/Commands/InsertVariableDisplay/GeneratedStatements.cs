@@ -401,7 +401,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 // Do not attempt to represent reference modifier when it is not a direct access (access using the direct parent)
                 if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
                 {
-                    Debug.Assert(Accessor.ReferenceModifier.Length == 1);
+                    Debug.Assert(Accessor.ReferenceModifier.Count == 1);
                     wordBuilder.Append(' ');
                     wordBuilder.Append(Accessor.ReferenceModifier[0]);
                 }
@@ -485,7 +485,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
              * With THEN a pseudo statement as it should not produce any code and not increase statement level
              *
              * Instead we hack the WriteStatementEnd to write directly the ELSE and DISPLAY [ErrorMessage] part
-             * directly without using the real GeneratedDisplay class !!!
+             * without using the real GeneratedDisplay class !!!
              */
             builder.AppendWord("ELSE");
             int indent = builder.AppendLine();

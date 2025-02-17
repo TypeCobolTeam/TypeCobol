@@ -65,7 +65,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         /// - the current line is empty
         /// - the number of spaces does not exceed the maximum line length
         /// </summary>
-        /// <param name="length">Number os leading spaces to add to current line.</param>
+        /// <param name="length">Number of leading spaces to add to current line.</param>
         public void AppendIndent(int length)
         {
             Debug.Assert(_currentLineIsEmpty);
@@ -131,7 +131,9 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 }
 
                 // Append beginning
-                _currentLine.Append(delimiter + part + delimiter);
+                _currentLine.Append(delimiter);
+                _currentLine.Append(part);
+                _currentLine.Append(delimiter);
 
                 // Create new line and align
                 AppendLine();
