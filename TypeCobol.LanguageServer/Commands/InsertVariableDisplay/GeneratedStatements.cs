@@ -225,70 +225,99 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
             var wordBuilder = new StringBuilder();
             bool withIndices = Indices.Length > 0;
-            switch (withIndices, WithValue)
+
+            /*
+             * There are four main forms for the DISPLAY statement:
+             * - No indices, no value: DISPLAY '    var1'
+             * - No indices but a value: DISPLAY '    var1 <' var1 '>'
+             * - Indices but no value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ')'
+             * - Indices and value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ') <' var1 (Idx-1 Idx-2) '>'
+             *
+             * Those four forms are altered when a reference modifier is needed.
+             *
+             * The AppendDisplayName method is responsible for creating the part describing the data
+             * including the opening value delimiter (char <) when required.
+             * The AppendValue method is responsible for creating the value part including the closing
+             * value delimiter (char >)
+             */
+
+            AppendDisplayName();
+            if (WithValue)
             {
-                case (false, false):
-                    // No indices, no value: DISPLAY '    var1'
-                    AppendDisplayName(null);
-                    break;
-                case (false, true):
-                    // No indices but a value: DISPLAY '    var1 <' var1 '>'
-                    AppendDisplayName('<');
-                    AppendValue();
-                    AppendClosingValueDelimiter();
-                    break;
-                case (true, false):
-                    // Indices but no value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ')'
-                    AppendDisplayName('(');
-                    AppendIndicesForDisplay();
-                    AppendClosingIndicesDelimiterAndReferenceModifierForDisplay();
-                    break;
-                case (true, true):
-                    // Indices and value: DISPLAY '    var1 (' Idx-1 ' ' Idx-2 ') <' var1 (Idx-1 Idx-2) '>'
-                    AppendDisplayName('(');
-                    AppendIndicesForDisplay();
-                    AppendClosingIndicesDelimiterAndReferenceModifierForDisplay();
-                    AppendValue();
-                    AppendClosingValueDelimiter();
-                    break;
+                AppendValue();
             }
 
-            void AppendDisplayName(char? openingChar)
+            void AppendDisplayName()
             {
                 /*
-                 * DisplayName is a literal describing what is displayed in the output:
+                 * The whole display name is made of several literals (and references) when it includes indices.
+                 * The first literal may be long, for example when the variable is deeply nested and
+                 * has a long name. To avoid generating invalid cobol lines, we use the AppendLiteralForDisplay
+                 * method for the first literal, as it is able to split it on several lines. The other literals
+                 * are short and won't need splitting, so we add them as regular words.
                  *
-                 * Form is:
-                 * openingDelimiter Indent Name referenceModifierPrecededBySpace? openingCharPrecededBySpace? closingDelimiter
-                 * - openingDelimiter and closingDelimiter are the ' (single quote) character
-                 * - Indent is a string made of spaces: 2 spaces for each level of nesting of the targeted data (01 levels start at 0)
-                 * - Name is the name of the targeted data or 'FILLER' for anonymous or FILLERs
-                 * - referenceModifierPrecededBySpace is an optional reference modifier (for anonymous and FILLERs)
-                 * - openingCharPrecededBySpace is depending on what is expected after:
-                 *   - null when no indices nor value come after
-                 *   - ( when indices come after
-                 *   - < when no indices come after and a value is expected
+                 * This boolean manages this distinction.
                  */
+                bool isFirstLiteral = true;
 
+                // Indentation of the name
                 string indent = new string(' ', 2 * LogicalLevel);
                 wordBuilder.Append(indent);
 
+                // Data name
                 string name = string.IsNullOrEmpty(Target.Name) ? "FILLER" : Target.Name;
                 wordBuilder.Append(name);
 
-                if (Indices.Length == 0)
+                if (withIndices)
                 {
-                    AppendReferenceModifierForDisplay();
-                }
-                // else: reference modifier will be added after indices in AppendClosingIndicesDelimiterAndReferenceModifierForDisplay
+                    // Add opening parenthesis and flush the first literal
+                    wordBuilder.Append(" (");
+                    builder.AppendLiteralForDisplay(wordBuilder.ToString());
+                    wordBuilder.Clear();
+                    isFirstLiteral = false;
 
-                if (openingChar.HasValue)
+                    // Indices for display are separated by a space literal
+                    for (int i = 0; i < Indices.Length; i++)
+                    {
+                        builder.AppendWord(Indices[i]);
+
+                        bool isLast = i == Indices.Length - 1;
+                        if (!isLast)
+                        {
+                            builder.AppendWord("' '");
+                        }
+                    }
+
+                    // Start a new literal, as it will ultimately be appended as word, we have to add the opening delimiter ourselves
+                    wordBuilder.Append("')");
+                }
+
+                // Do not attempt to represent reference modifier when it is not a direct access (access using the direct parent)
+                if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
                 {
+                    Debug.Assert(Accessor.ReferenceModifier.Count == 1);
                     wordBuilder.Append(' ');
-                    wordBuilder.Append(openingChar.Value);
+                    wordBuilder.Append(Accessor.ReferenceModifier[0]);
                 }
 
-                builder.AppendLiteralForDisplay(wordBuilder.ToString());
+                // Add opening value delimiter
+                if (WithValue)
+                {
+                    wordBuilder.Append(" <");
+                }
+
+                // Flush last literal
+                if (isFirstLiteral)
+                {
+                    builder.AppendLiteralForDisplay(wordBuilder.ToString());
+                }
+                else
+                {
+                    // We have to add closing delimiter ourselves
+                    wordBuilder.Append('\'');
+                    builder.AppendWord(wordBuilder.ToString());
+                }
+                
                 wordBuilder.Clear();
             }
 
@@ -331,6 +360,8 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     }
                 }
 
+                builder.AppendWord("'>'");
+
                 void AppendIndicesForAccess(bool addClosingParenthesis)
                 {
                     // Append (Idx1 Idx2 [...] Idxn) and an additional closing parenthesis when requested
@@ -358,52 +389,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                         builder.AppendWord(wordBuilder.ToString());
                         wordBuilder.Clear();
                     }
-                }
-            }
-
-            void AppendClosingValueDelimiter() => builder.AppendWord("'>'");
-
-            void AppendIndicesForDisplay()
-            {
-                // Indices for display are separated by a space literal
-                for (int i = 0; i < Indices.Length; i++)
-                {
-                    builder.AppendWord(Indices[i]);
-
-                    bool isLast = i == Indices.Length - 1;
-                    if (!isLast)
-                    {
-                        builder.AppendWord("' '");
-                    }
-                }
-            }
-
-            void AppendClosingIndicesDelimiterAndReferenceModifierForDisplay()
-            {
-                wordBuilder.Append("')");
-
-                Debug.Assert(Indices.Length > 0);
-                AppendReferenceModifierForDisplay();
-
-                if (WithValue)
-                {
-                    // For opening value
-                    wordBuilder.Append(" <");
-                }
-
-                wordBuilder.Append('\'');
-                builder.AppendWord(wordBuilder.ToString());
-                wordBuilder.Clear();
-            }
-
-            void AppendReferenceModifierForDisplay()
-            {
-                // Do not attempt to represent reference modifier when it is not a direct access (access using the direct parent)
-                if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
-                {
-                    Debug.Assert(Accessor.ReferenceModifier.Count == 1);
-                    wordBuilder.Append(' ');
-                    wordBuilder.Append(Accessor.ReferenceModifier[0]);
                 }
             }
         }
