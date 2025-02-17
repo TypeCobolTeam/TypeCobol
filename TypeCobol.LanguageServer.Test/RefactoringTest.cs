@@ -147,6 +147,7 @@ namespace TypeCobol.LanguageServer.Test
                 {
                     Console.WriteLine($"[{failedTest.TestFile}] failed !");
                     Console.WriteLine(failedTest.Exception.Message);
+                    Console.WriteLine(failedTest.Exception.StackTrace);
                     Console.WriteLine();
                 }
 
