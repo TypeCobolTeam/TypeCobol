@@ -1,17 +1,13 @@
+using System.Diagnostics;
 using System.Text;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Nodes {
-
-    using System;
-    using System.Collections.Generic;
-    using Scanner;
-    using TypeCobol.Compiler.CodeElements;
-
-
 
     public class DataDivision: GenericNode<DataDivisionHeader>, Parent<DataSection> {
 
@@ -29,7 +25,7 @@ namespace TypeCobol.Compiler.Nodes {
             LinkageSection
         }
         // The 5 (optional) data sections
-        private DataSection[] _sections = new DataSection[5];
+        private readonly DataSection[] _sections = new DataSection[5];
         public FileSection FileSection => (FileSection) _sections[(int)SectionIndex.FileSection];
         public GlobalStorageSection GlobalStorageSection => (GlobalStorageSection)_sections[(int)SectionIndex.GlobalStorageSection];
         public WorkingStorageSection WorkingStorageSection => (WorkingStorageSection)_sections[(int)SectionIndex.WorkingStorageSection];
@@ -1127,6 +1123,69 @@ namespace TypeCobol.Compiler.Nodes {
                    && dataDefinition.ChildrenCount == 0 // No children
                    && dataDefinition.CodeElement.IsFiller(); // Anonymous or FILLER (by using keyword or FILLER-like name)
         }
+
+        /// <summary>
+        /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
+        /// </summary>
+        /// <param name="dataDefinition">Non-null item to check</param>
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry children</returns>
+        public static bool HasChildrenThatDeclareData([NotNull] this DataDefinition dataDefinition)
+        {
+            //We only need to check the last children:
+            //DataConditionEntry is a level 88, DataRenamesEntry is level 66, both cannot have children
+            //DataDescription and DataRedefines are level between 1 and 49 inclusive.
+            //As the level number drives the positioning of Node inside the Children:
+            //- if last child is a DataConditionEntry, it means all children are DataConditionEntry and no new data is declared
+            //- if last child is a DataRenamesEntry, some data may be declared before the RENAMES
+            if (dataDefinition.ChildrenCount > 0)
+            {
+                var lastChild = dataDefinition.Children[^1];
+
+                if (lastChild.CodeElement == null)
+                {
+                    Debug.Assert(lastChild is IndexDefinition);
+                    //Last child is an Index in an OCCURS: it is not a declaration
+                    return false;
+                }
+
+                if (lastChild.CodeElement.Type == CodeElementType.DataRenamesEntry)
+                {
+                    //Last child is a DataRenamesEntry: we need to loop on the other children to find a possible DataDescription before
+                    return dataDefinition.Children.Any(c => c is DataDescription);
+                }
+
+                return lastChild.CodeElement.Type != CodeElementType.DataConditionEntry;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Test the given data to check whether its PICTURE is among the given Picture categories.
+        /// </summary>
+        /// <param name="dataDefinition">Non-null data to test.</param>
+        /// <param name="pictureCategories">Enumeration of Picture Categories to test, passing no categories will simply test whether
+        /// the data has a PICTURE type or not.</param>
+        /// <returns>True when the actual picture category of the data is among the given categories.</returns>
+        public static bool HasPictureCategory([NotNull] this DataDefinition dataDefinition, params PictureCategory[] pictureCategories)
+        {
+            var type = dataDefinition.SemanticData?.Type;
+            bool hasPicture = type?.Tag == Types.Type.Tags.Picture;
+            if (hasPicture)
+            {
+                if (pictureCategories.Length == 0)
+                    return true; // No categories to test, the method will just indicate that the data has a PICTURE
+
+                var pictureType = (PictureType)type;
+                return pictureCategories.Contains(pictureType.Category); // We could use HashSet, but we're assuming a small array of PictureCategory without duplicates
+            }
+
+            // No PICTURE
+            return false;
+        }
+
+        public static bool IsNationalOrNationalEdited([NotNull] this DataDefinition dataDefinition)
+            => dataDefinition.HasPictureCategory(PictureCategory.National, PictureCategory.NationalEdited);
     }
 
 } // end of namespace TypeCobol.Compiler.Nodes

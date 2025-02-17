@@ -1,6 +1,6 @@
-﻿namespace TypeCobol.LanguageServer.Commands.Refactor
+﻿namespace TypeCobol.LanguageServer.Commands.AdjustFillers
 {
-    internal class AdjustFillers : AbstractSingleDocumentRefactoring<AdjustFillerRefactoringProcessor>
+    internal class AdjustFillers : AbstractSingleDocumentRefactoring<AdjustFillersRefactoringProcessor>
     {
         public static AdjustFillers Create(TypeCobolServer typeCobolServer) => new(typeCobolServer);
 
