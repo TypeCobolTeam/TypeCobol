@@ -1,50 +1,64 @@
 {"line":10,"character":12}
 ---------------------------------------------------------------------------------
 {
-  "logicalLevel": 0,
-  "line": 0,
-  "physicalLevel": 0,
-  "name": "MAINPGM",
-  "occursDimension": 0,
-  "start": 0,
-  "length": 0,
-  "index": -1,
-  "flags": 0,
+  "dataValues": [
+    0,
+    0,
+    0,
+    "MAINPGM",
+    null,
+    0,
+    0,
+    0,
+    null,
+    -1,
+    0
+  ],
   "children": [
     {
-      "logicalLevel": 1,
-      "line": 0,
-      "physicalLevel": 0,
-      "name": "working-storage",
-      "occursDimension": 0,
-      "start": 0,
-      "length": 0,
-      "index": 0,
-      "flags": 0,
+      "dataValues": [
+        1,
+        0,
+        0,
+        "working-storage",
+        null,
+        0,
+        0,
+        0,
+        null,
+        0,
+        0
+      ],
       "children": [
         {
-          "logicalLevel": 2,
-          "line": 6,
-          "physicalLevel": 1,
-          "name": "main-group",
-          "declaration": "GROUP",
-          "occursDimension": 0,
-          "start": 1,
-          "length": 1,
-          "index": 0,
-          "flags": 2,
+          "dataValues": [
+            2,
+            6,
+            1,
+            "main-group",
+            "GROUP",
+            0,
+            1,
+            1,
+            null,
+            0,
+            2
+          ],
           "children": [
             {
-              "logicalLevel": 3,
-              "line": 7,
-              "physicalLevel": 5,
-              "name": "main-var",
-              "declaration": "PIC X",
-              "occursDimension": 0,
-              "start": 1,
-              "length": 1,
-              "index": 0,
-              "flags": 2,
+              "dataValues": [
+                3,
+                7,
+                5,
+                "main-var",
+                "PIC X",
+                0,
+                1,
+                1,
+                null,
+                0,
+                2
+              ],
               "children": []
             }
           ]
