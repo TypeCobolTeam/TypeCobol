@@ -33,7 +33,7 @@ namespace TypeCobol.LanguageServer
             var rows = new List<string>();
             var row = new StringBuilder();
             var rootDLN = CollectDataLayoutNodesAtPosition(compilationUnit, position, ConvertToRow);
-            var root = rootDLN.name;
+            var root = rootDLN.Name;
 
             string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
             return (root, header, rows.ToArray());
@@ -43,15 +43,15 @@ namespace TypeCobol.LanguageServer
                 row.Clear();
 
                 //TODO manage slack bytes (property is dataDefinition.SlackBytes)
-                AppendToRow(dataLayoutNode.line);
-                AppendToRow(dataLayoutNode.logicalLevel - 2); // To compensate Program and Section levels
-                AppendToRow(dataLayoutNode.physicalLevel);
+                AppendToRow(dataLayoutNode.Line);
+                AppendToRow(dataLayoutNode.LogicalLevel - 2); // To compensate Program and Section levels
+                AppendToRow(dataLayoutNode.PhysicalLevel);
                 AppendToRow(GetNameWithDimensions()); // Ex.: Data-Name (1, 1) for 2 nested OCCURS
-                AppendToRow(dataLayoutNode.declaration);
+                AppendToRow(dataLayoutNode.Declaration);
 
                 // Start/End/Length
-                var start = dataLayoutNode.start;
-                var length = dataLayoutNode.length;
+                var start = dataLayoutNode.Start;
+                var length = dataLayoutNode.Length;
                 AppendToRow(start);
                 AppendToRow(GetEnd());
                 row.Append(length);
@@ -62,12 +62,12 @@ namespace TypeCobol.LanguageServer
 
                 string GetNameWithDimensions()
                 {
-                    if (dataLayoutNode.occursDimension == 0)
+                    if (dataLayoutNode.OccursDimension == 0)
                     {
-                        return dataLayoutNode.name;
+                        return dataLayoutNode.Name;
                     }
-                    string dimensions = string.Join(SPACE, Enumerable.Repeat(DIMENSION_ITEM, dataLayoutNode.occursDimension));
-                    return $"{dataLayoutNode.name} ({dimensions})";
+                    string dimensions = string.Join(SPACE, Enumerable.Repeat(DIMENSION_ITEM, dataLayoutNode.OccursDimension));
+                    return $"{dataLayoutNode.Name} ({dimensions})";
                 }
 
                 object GetEnd()
@@ -183,9 +183,7 @@ namespace TypeCobol.LanguageServer
             {
                 return new()
                 {
-                    name = program.Name,
-                    index = DataLayoutNode.UNDEFINED,
-                    flags = DataLayoutNodeFlags.None,
+                    Name = program.Name,
                     children = []
                 };
             }
@@ -194,10 +192,9 @@ namespace TypeCobol.LanguageServer
             {
                 return new()
                 {
-                    logicalLevel = 1,
-                    name = dataSection.ID,
-                    index = index,
-                    flags = DataLayoutNodeFlags.None,
+                    LogicalLevel = 1,
+                    Name = dataSection.ID,
+                    Index = index,
                     children = []
                 };
             }
@@ -208,12 +205,12 @@ namespace TypeCobol.LanguageServer
 
                 bool incrementDimension = dataDefinition.IsTableOccurence;
 
-                int logicalLevel = parent.logicalLevel + 1;
+                int logicalLevel = parent.LogicalLevel + 1;
                 int line = dataDefinition.CodeElement.GetLineInMainSource() + 1;
                 long physicalLevel = dataDefinition.CodeElement.LevelNumber.Value;
                 bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
                 var name = isNamed ? dataDefinition.Name : FILLER;
-                int occursDimension = parent.occursDimension + (incrementDimension ? 1 : 0);
+                int occursDimension = parent.OccursDimension + (incrementDimension ? 1 : 0);
                 long start = dataDefinition.StartPosition;
                 long length = dataDefinition.PhysicalLength;
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
@@ -282,17 +279,17 @@ namespace TypeCobol.LanguageServer
 
                 return new()
                 {
-                    logicalLevel = logicalLevel,
-                    line = line,
-                    physicalLevel = physicalLevel,
-                    name = name,
-                    declaration = string.Join(SPACE, declarationItems),
-                    occursDimension = occursDimension,
-                    start = start,
-                    length = length,
-                    copy = copy,
-                    index = index,
-                    flags = flags,
+                    LogicalLevel = logicalLevel,
+                    Line = line,
+                    PhysicalLevel = physicalLevel,
+                    Name = name,
+                    Declaration = string.Join(SPACE, declarationItems),
+                    OccursDimension = occursDimension,
+                    Start = start,
+                    Length = length,
+                    Copy = copy,
+                    Index = index,
+                    Flags = flags,
                     children = [],
                     ExceedsMaxIndexCapacity = exceedsMaxIndexCapacity,
                     IsAddressable = parent.IsAddressable || isNamed
