@@ -40,9 +40,6 @@ label = "{Block13|       display 'after perform'\l}"
 Block15 [
 label = "{Block15|    display 'terminate'\l}"
 ]
-Block2 [
-label = "{Block2|    goback\l}"
-]
 Block14 [
 label = "{Block14|    else\l       display 'not done'\l}"
 ]
@@ -58,7 +55,7 @@ Block22 -> Block12
 Block24 -> Block25
 Block25 -> Block13
 Block13 -> Block15
-Block15 -> Block2
+Block15 -> Block13
 Block14 -> Block15
 
 }
