@@ -35,7 +35,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     return null;
 
                 // Start with delta parent preceded by an opening parenthesis
-                List<string> words = ['(' + DeltaParent.ToString() ];
+                List<string> words = [ '(' + DeltaParent.ToString() ];
 
                 if (EnclosingOccurs.Count > 0)
                 {
