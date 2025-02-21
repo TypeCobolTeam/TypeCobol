@@ -94,10 +94,15 @@ namespace TypeCobol.Compiler.Parser
             try
             {
                 TUVienna.CS_CUP.Runtime.Symbol symbol = parser.parse();
+
+                #region Temporary debug code for #2439
+
                 if (scanner.AnomalousLineIndexFound)
                 {
                     builder.LogAnomalousLineIndex();
                 }
+
+                #endregion
             }
             catch (Exception ex)
             {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
@@ -20,11 +17,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     {
         private static readonly HashSet<string> _SourceCodeDumpReasons = new HashSet<string>();
 
-        internal void LogAnomalousLineIndex() => LogErrorIncludingFullSourceCode(nameof(LogAnomalousLineIndex), "Anomalous line index found !");
+        internal void LogAnomalousLineIndex() => LogErrorWithOptionalFullSourceCode(nameof(LogAnomalousLineIndex), "Anomalous line index found !");
 
-        private void LogInvalidAst(string message) => LogErrorIncludingFullSourceCode(nameof(LogInvalidAst), message);
+        private void LogInvalidAst(string message) => LogErrorWithOptionalFullSourceCode(nameof(LogInvalidAst), message);
 
-        private void LogErrorIncludingFullSourceCode(string reason, string message)
+        private void LogErrorWithOptionalFullSourceCode(string reason, string message, bool fullDump = false)
         {
             // Fail immediately in debug. There is no point in dumping source code and this allows to see the error.
             System.Diagnostics.Debug.Fail(message);
@@ -33,62 +30,70 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             // Build a correlation id to group traces
             string correlationId = DateTime.Now.ToString("s") + "@" + Environment.MachineName;
-
-            const int MAX_LINES_PER_LOG = 5000;
-            int traceId = 0;
             var currentTrace = new StringBuilder();
 
-            // Dump file structure
-            IterateCodeElementsLines(DumpCodeElementTypes);
-
-            // Dump source code
-            IterateCodeElementsLines(codeElementsLine => currentTrace.AppendLine(codeElementsLine.Text));
-
-            // Dump last 5 incremental changes
-            int changeId = -4; //Number last 5 changes from -4 to 0
-            foreach (var textChangedEvent in _history.TextChangedEvents)
+            if (fullDump)
             {
-                currentTrace.AppendLine($"change {changeId}:");
-                foreach (var documentChange in textChangedEvent.DocumentChanges)
+                int traceId = 0;
+
+                // Dump file structure
+                IterateCodeElementsLines(DumpCodeElementTypes);
+
+                // Dump source code
+                IterateCodeElementsLines(codeElementsLine => currentTrace.AppendLine(codeElementsLine.Text));
+
+                // Dump last incremental changes
+                int changeId = -_history.Depth + 1; //Number last changes from -N+1 to 0
+                foreach (var textChangedEvent in _history.TextChangedEvents)
                 {
-                    string text = documentChange.NewLine == null
-                        ? string.Empty
-                        : '"' + documentChange.NewLine.Text + '"';
-                    currentTrace.AppendLine($"{documentChange.Type}@{documentChange.LineIndex} {text}");
+                    currentTrace.AppendLine($"change {changeId}:");
+                    foreach (var documentChange in textChangedEvent.DocumentChanges)
+                    {
+                        string text = documentChange.NewLine == null
+                            ? string.Empty
+                            : '"' + documentChange.NewLine.Text + '"';
+                        currentTrace.AppendLine($"{documentChange.Type}@{documentChange.LineIndex} {text}");
+                    }
+
+                    changeId++;
                 }
 
-                changeId++;
-            }
-            LoggingSystem.LogMessage(LogLevel.Error, message, new Dictionary<string, object>() { { $"{correlationId} - changes", currentTrace.ToString() } });
-
-            void IterateCodeElementsLines(Action<CodeElementsLine> appendLine)
-            {
-                for (int i = 0; i < _codeElementsLines.Count; i++)
+                void IterateCodeElementsLines(Action<CodeElementsLine> appendLine)
                 {
-                    appendLine(_codeElementsLines[i]);
-
-                    if ((i + 1) % MAX_LINES_PER_LOG == 0 || i == _codeElementsLines.Count - 1)
+                    const int MAX_LINES_PER_LOG = 1000;
+                    for (int i = 0; i < _codeElementsLines.Count; i++)
                     {
-                        var contextData = new Dictionary<string, object>()
-                                          {
-                                              { $"{correlationId} - part {traceId}", currentTrace.ToString() }
-                                          };
-                        LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
-                        currentTrace.Clear();
-                        traceId++;
+                        appendLine(_codeElementsLines[i]);
+
+                        if ((i + 1) % MAX_LINES_PER_LOG == 0 || i == _codeElementsLines.Count - 1)
+                        {
+                            var contextData = new Dictionary<string, object>()
+                            {
+                                { $"{correlationId} - part {traceId}", currentTrace.ToString() }
+                            };
+                            LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+                            currentTrace.Clear();
+                            traceId++;
+                        }
+                    }
+                }
+
+                void DumpCodeElementTypes(CodeElementsLine codeElementsLine)
+                {
+                    if (!codeElementsLine.HasCodeElements) return;
+
+                    foreach (var codeElement in codeElementsLine.CodeElements)
+                    {
+                        currentTrace.AppendLine($"{codeElement.Line}: {codeElement.Type}");
                     }
                 }
             }
-
-            void DumpCodeElementTypes(CodeElementsLine codeElementsLine)
+            else
             {
-                if (!codeElementsLine.HasCodeElements) return;
-
-                foreach (var codeElement in codeElementsLine.CodeElements)
-                {
-                    currentTrace.AppendLine($"{codeElement.Line}: {codeElement.Type}");
-                }
+                currentTrace.Append("No source code dump");
             }
+
+            LoggingSystem.LogMessage(LogLevel.Error, message, new Dictionary<string, object>() { { $"{correlationId} - changes", currentTrace.ToString() } });
         }
 
         public SyntaxTree SyntaxTree { get; set; }
