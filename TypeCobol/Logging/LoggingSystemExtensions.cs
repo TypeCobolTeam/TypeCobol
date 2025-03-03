@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Logging
 {
@@ -172,5 +171,95 @@ namespace TypeCobol.Logging
         }
 
         #endregion
+
+        private static readonly HashSet<string> _SourceCodeDumpReasons = new HashSet<string>();
+
+        /// <summary>
+        /// Debug helper creating a series of log traces containing full source code and last incremental changes.
+        /// </summary>
+        /// <param name="reasonId">Unique identifier for the dump, this id is used to avoid dumping multiple
+        /// times for the same reason.</param>
+        /// <param name="message">Error message.</param>
+        /// <param name="codeElementsLines">List of CodeElementsLines at time of log.</param>
+        /// <param name="history">History of last incremental changes.</param>
+        public static void LogErrorWithSourceCode(string reasonId, string message, IReadOnlyList<CodeElementsLine> codeElementsLines, IncrementalChangesHistory history)
+        {
+            // Fail immediately in debug. There is no point in dumping source code and this allows to see the error.
+            System.Diagnostics.Debug.Fail(message);
+
+            if (!_SourceCodeDumpReasons.Add(reasonId)) return; // Dump only once for this reason to avoid huge logs
+
+            // Build a correlation id to group traces
+            string correlationId = DateTime.Now.ToString("s") + "@" + Environment.MachineName;
+            var currentTrace = new StringBuilder();
+
+            if (codeElementsLines != null)
+            {
+                int traceId = 0;
+
+                // Dump file structure
+                IterateCodeElementsLines(DumpCodeElementTypes);
+
+                // Dump source code
+                IterateCodeElementsLines(codeElementsLine => currentTrace.AppendLine(codeElementsLine.Text));
+
+                void IterateCodeElementsLines(Action<CodeElementsLine> appendLine)
+                {
+                    const int MAX_LINES_PER_LOG = 1000;
+                    for (int i = 0; i < codeElementsLines.Count; i++)
+                    {
+                        appendLine(codeElementsLines[i]);
+
+                        if ((i + 1) % MAX_LINES_PER_LOG == 0 || i == codeElementsLines.Count - 1)
+                        {
+                            var contextData = new Dictionary<string, object>()
+                            {
+                                { $"{correlationId} - part {traceId}", currentTrace.ToString() }
+                            };
+                            LoggingSystem.LogMessage(LogLevel.Error, message, contextData);
+                            currentTrace.Clear();
+                            traceId++;
+                        }
+                    }
+                }
+
+                void DumpCodeElementTypes(CodeElementsLine codeElementsLine)
+                {
+                    if (!codeElementsLine.HasCodeElements) return;
+
+                    foreach (var codeElement in codeElementsLine.CodeElements)
+                    {
+                        currentTrace.AppendLine($"{codeElement.Line}: {codeElement.Type}");
+                    }
+                }
+            }
+            else
+            {
+                currentTrace.Append("No source code available");
+            }
+
+            if (history != null)
+            {
+                // Dump last incremental changes
+                int changeId = -history.Depth + 1; //Number last changes from -N+1 to 0
+                foreach (var textChangedEvent in history.TextChangedEvents)
+                {
+                    currentTrace.AppendLine($"change {changeId}:");
+                    foreach (var documentChange in textChangedEvent.DocumentChanges)
+                    {
+                        string text = documentChange.NewLine == null ? string.Empty : $"\"{documentChange.NewLine.Text}\"";
+                        currentTrace.AppendLine($"{documentChange.Type}@{documentChange.LineIndex} {text}");
+                    }
+
+                    changeId++;
+                }
+            }
+            else
+            {
+                currentTrace.Append(" - No incremental changes history available");
+            }
+
+            LoggingSystem.LogMessage(LogLevel.Error, message, new Dictionary<string, object>() { { $"{correlationId} - changes", currentTrace.ToString() } });
+        }
     }
 }

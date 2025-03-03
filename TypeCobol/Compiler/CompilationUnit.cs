@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
@@ -49,7 +47,7 @@ namespace TypeCobol.Compiler
                 _analyzerProvider = null;
             }
 
-            _history = this.TrackChanges(20);
+            _history = this.TrackChanges(15);
         }
 
         /// <summary>
