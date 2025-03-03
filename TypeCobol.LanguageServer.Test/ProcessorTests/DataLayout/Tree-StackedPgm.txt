@@ -1,0 +1,69 @@
+{"line":33,"character":12}
+---------------------------------------------------------------------------------
+{
+  "dataValues": [
+    0,
+    0,
+    0,
+    "Stacked1",
+    null,
+    0,
+    0,
+    0,
+    null,
+    -1,
+    0
+  ],
+  "children": [
+    {
+      "dataValues": [
+        1,
+        0,
+        0,
+        "working-storage",
+        null,
+        0,
+        0,
+        0,
+        null,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "dataValues": [
+            2,
+            34,
+            1,
+            "Stacked1-group",
+            "GROUP",
+            0,
+            1,
+            1,
+            null,
+            0,
+            2
+          ],
+          "children": [
+            {
+              "dataValues": [
+                3,
+                35,
+                5,
+                "Stacked1-var",
+                "PIC X",
+                0,
+                1,
+                1,
+                null,
+                0,
+                2
+              ],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

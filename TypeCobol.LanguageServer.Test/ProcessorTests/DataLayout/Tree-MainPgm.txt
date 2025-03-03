@@ -1,0 +1,69 @@
+{"line":10,"character":12}
+---------------------------------------------------------------------------------
+{
+  "dataValues": [
+    0,
+    0,
+    0,
+    "MAINPGM",
+    null,
+    0,
+    0,
+    0,
+    null,
+    -1,
+    0
+  ],
+  "children": [
+    {
+      "dataValues": [
+        1,
+        0,
+        0,
+        "working-storage",
+        null,
+        0,
+        0,
+        0,
+        null,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "dataValues": [
+            2,
+            6,
+            1,
+            "main-group",
+            "GROUP",
+            0,
+            1,
+            1,
+            null,
+            0,
+            2
+          ],
+          "children": [
+            {
+              "dataValues": [
+                3,
+                7,
+                5,
+                "main-var",
+                "PIC X",
+                0,
+                1,
+                1,
+                null,
+                0,
+                2
+              ],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

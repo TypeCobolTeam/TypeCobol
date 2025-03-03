@@ -216,8 +216,21 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (context != null && context.FileCompiler != null)
             {
-                // We only support CSV for now. In the future outputType should be checked here
                 var position = parameter.textDocumentPosition.position;
+
+                if (parameter.outputType == GetDataLayoutParams.OUTPUT_TYPE_TREE)
+                {
+                    // Tree output
+                    var root = Workspace.GetDataLayoutAsTree(context.FileCompiler.CompilationResultsForProgram, position);
+                    var treeResult = new GetDataLayoutTreeResult()
+                    {
+                        root = root
+                    };
+
+                    return new GetDataLayoutResult() { treeResult = treeResult };
+                }
+
+                // CSV output by default
                 const string SEPARATOR = GetDataLayoutCSVResult.SEPARATOR;
                 var result = Workspace.GetDataLayoutAsCSV(context.FileCompiler.CompilationResultsForProgram, position, SEPARATOR);
                 var csvResult = new GetDataLayoutCSVResult()
@@ -227,6 +240,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                     rows = result.Rows,
                     separator = SEPARATOR
                 };
+
                 return new GetDataLayoutResult() { csvResult = csvResult };
             }
 
