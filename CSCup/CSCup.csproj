@@ -8,6 +8,8 @@
 		<Nullable>disable</Nullable>
 		<!-- This project is used only at compile time, no need to redistribute -->
 		<IsPackable>false</IsPackable>
+		<!-- Disable .NET Analyzers on this project as it is a compile-time dependency only and not part of the packaged projects -->
+		<EnableNETAnalyzers>false</EnableNETAnalyzers>
 	</PropertyGroup>
 
 	<ItemGroup>

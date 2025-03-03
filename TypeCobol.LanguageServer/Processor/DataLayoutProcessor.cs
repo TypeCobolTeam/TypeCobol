@@ -1,7 +1,10 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.LanguageServer.Commands.InsertVariableDisplay;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -14,144 +17,60 @@ namespace TypeCobol.LanguageServer
     {
         private const char SPACE = ' ';
         private const string UNDEFINED = "***";
-        private const string FILLER = "FILLER";
+        private const string DIMENSION_ITEM = "1";
         private const string GROUP = "GROUP";
-        private const string OCCURS = "OCCURS {0}";
-        private const string OCCURS_SUFFIX_START = " (";
-        private const string OCCURS_SUFFIX = "1";
-        private const string OCCURS_SUFFIX_END = ")";
-        private const string PIC = "PIC {0}";
-        private const string REDEFINES = "REDEFINES {0}";
+        private const string FILLER = "FILLER";
 
         /// <summary>
-        /// Get the Data Layout rows for a Program or a Copy (output = CSV)
+        /// Get the Data Layout rows for a Copy or a Program (output = CSV)
         /// </summary>
-        /// <param name="compilationUnit">Compilation unit resulting from parsing the Program/Copy</param>
-        /// <param name="position">Position determining the variables to be considered (i.e. from the main, stacked or nested program)</param>
+        /// <param name="compilationUnit">Compilation unit resulting from parsing the Copy or Program</param>
+        /// <param name="position">Position determining the data to be considered (useful in case of the stacked/nested Programs)</param>
         /// <param name="separator">Separator for fields to use</param>
         /// <returns>Tuple made of the root (the Copy or the Program containing the data), CSV header and CSV rows</returns>
         public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
         {
             var rows = new List<string>();
-            var dataLayoutNodes = CollectDataLayoutNodesAtPosition(compilationUnit, position, out var root);
-            foreach (var dataLayoutNode in dataLayoutNodes)
-            {
-                var row = CreateRow(dataLayoutNode, separator);
-                if (row != null)
-                {
-                    rows.Add(row);
-                }
-            }
+            var row = new StringBuilder();
+            var rootDLN = CollectDataLayoutNodesAtPosition(compilationUnit, position, ConvertToRow);
+            var root = rootDLN.Name;
 
             string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
             return (root, header, rows.ToArray());
 
-            static string CreateRow(Tuple<int, DataDefinition, int> dataLayoutNode, string separator)
+            void ConvertToRow(DataLayoutNode dataLayoutNode)
             {
-                var nodeLevel = dataLayoutNode.Item1;
-                var dataDefinition = dataLayoutNode.Item2;
-                var occursDimension = dataLayoutNode.Item3;
-
-                var row = new StringBuilder();
+                row.Clear();
 
                 //TODO manage slack bytes (property is dataDefinition.SlackBytes)
-
-                // Line number (starting at 1)
-                AppendToRow(dataDefinition.CodeElement.GetLineInMainSource() + 1);
-
-                // Node level
-                AppendToRow(nodeLevel);
-
-                // Level number
-                AppendToRow(dataDefinition.CodeElement.LevelNumber);
-
-                // Name
-                AppendNameToRow(dataDefinition, occursDimension);
-
-                // Declaration (Picture, Usage, REDEFINES, OCCURS, ...)
-                AppendDeclarationToRow(dataDefinition);
+                AppendToRow(dataLayoutNode.Line);
+                AppendToRow(dataLayoutNode.LogicalLevel - 2); // To compensate Program and Section levels
+                AppendToRow(dataLayoutNode.PhysicalLevel);
+                AppendToRow(GetNameWithDimensions()); // Ex.: Data-Name (1, 1) for 2 nested OCCURS
+                AppendToRow(dataLayoutNode.Declaration);
 
                 // Start/End/Length
-                var start = dataDefinition.StartPosition;
-                var length = dataDefinition.PhysicalLength;
+                var start = dataLayoutNode.Start;
+                var length = dataLayoutNode.Length;
                 AppendToRow(start);
-                AppendToRow(GetEnd(start, length));
+                AppendToRow(GetEnd());
                 row.Append(length);
 
-                return row.ToString();
+                rows.Add(row.ToString());
 
-                void AppendToRow(object value)
+                void AppendToRow(object value) => row.Append(value).Append(separator);
+
+                string GetNameWithDimensions()
                 {
-                    row.Append(value).Append(separator);
+                    if (dataLayoutNode.OccursDimension == 0)
+                    {
+                        return dataLayoutNode.Name;
+                    }
+                    string dimensions = string.Join(SPACE, Enumerable.Repeat(DIMENSION_ITEM, dataLayoutNode.OccursDimension));
+                    return $"{dataLayoutNode.Name} ({dimensions})";
                 }
 
-                void AppendNameToRow(DataDefinition dataDefinition, int occursDimension)
-                {
-                    row.Append(dataDefinition.Name ?? FILLER);
-                    if (occursDimension > 0)
-                    {
-                        AppendOccursSuffixToRow(occursDimension);
-                    }
-                    row.Append(separator);
-                }
-
-                void AppendOccursSuffixToRow(int occursDimension)
-                {
-                    row.Append(OCCURS_SUFFIX_START);
-                    row.Append(OCCURS_SUFFIX);
-                    for (int i = 1; i < occursDimension; i++)
-                    {
-                        row.Append(SPACE).Append(OCCURS_SUFFIX);
-                    }
-                    row.Append(OCCURS_SUFFIX_END);
-                }
-
-                void AppendDeclarationToRow(DataDefinition dataDefinition)
-                {
-                    var initialRowLength = row.Length;
-
-                    CodeElementType type = dataDefinition.CodeElement.Type;
-                    if (type == CodeElementType.DataRedefinesEntry)
-                    {
-                        row.Append(string.Format(REDEFINES, ((DataRedefines)dataDefinition).CodeElement.RedefinesDataName.Name));
-                    }
-                    else if (type == CodeElementType.DataDescriptionEntry)
-                    {
-                        if (dataDefinition.Picture != null)
-                        {
-                            row.Append(string.Format(PIC, dataDefinition.Picture.Value));
-                        }
-                        string usage = ((DataDescriptionEntry)dataDefinition.CodeElement).Usage?.Token.Text;
-                        if (!string.IsNullOrWhiteSpace(usage))
-                        {
-                            AppendSpaceIfNeeded();
-                            row.Append(usage);
-                        }
-
-                        if (row.Length == initialRowLength && dataDefinition.ChildrenCount > 0)
-                        {
-                            row.Append(GROUP);
-                        }
-                    }
-
-                    if (dataDefinition.IsTableOccurence)
-                    {
-                        AppendSpaceIfNeeded();
-                        row.Append(string.Format(OCCURS, dataDefinition.MaxOccurencesCount));
-                    }
-
-                    row.Append(separator);
-
-                    void AppendSpaceIfNeeded()
-                    {
-                        if (row.Length != initialRowLength)
-                        {
-                            row.Append(SPACE);
-                        }
-                    }
-                }
-
-                static object GetEnd(long start, long length)
+                object GetEnd()
                 {
                     var end = start + length - 1;
                     return (end > 0) ? end : UNDEFINED;
@@ -159,53 +78,85 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        private List<Tuple<int, DataDefinition, int>> CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, out string root)
+        /// <summary>
+        /// Get the Data Layout nodes for a Copy or a Program (output = TREE)
+        /// </summary>
+        /// <param name="compilationUnit">Compilation unit resulting from parsing the Copy or Program</param>
+        /// <param name="position">Position determining the data to be considered (useful in case of the stacked/nested Programs)</param>
+        /// <returns>Root data layout node</returns>
+        public DataLayoutNode GetDataLayoutAsTree(CompilationUnit compilationUnit, Position position)
         {
+            return CollectDataLayoutNodesAtPosition(compilationUnit, position, null);
+        }
+
+        private DataLayoutNode CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, Action<DataLayoutNode> convert)
+        {
+            var program = GetProgram(compilationUnit, position);
+
+            return CollectInProgram(program, convert);
+        }
+
+        private static Program GetProgram(CompilationUnit compilationUnit, Position position)
+        {
+            Debug.Assert(compilationUnit != null);
+            Debug.Assert(position != null);
             var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
             // Get the node corresponding to the position (if null use the main program)
             var locationNode = location.Node ?? (compilationUnit.ProgramClassDocumentSnapshot.Root?.MainProgram);
-            if (locationNode == null)
+            if (locationNode == null || locationNode.GetProgramNode() == null)
             {
                 throw new Exception($"No program found in: '{compilationUnit.TextSourceInfo.Name}'"); ;
             }
 
-            var dataLayoutNodes = new List<Tuple<int, DataDefinition, int>>();
-            var program = locationNode.GetProgramNode();
-            root = program?.Name;
-            DataDivision dataDivision = program?.GetChildren<DataDivision>()?.FirstOrDefault();
+            return locationNode.GetProgramNode();
+        }
+
+        private DataLayoutNode CollectInProgram(Program program, Action<DataLayoutNode> convert)
+        {
+            var rootDLN = DataLayoutNodeBuilder.From(program);
+
+            DataDivision dataDivision = program.Children.OfType<DataDivision>().FirstOrDefault();
             if (dataDivision != null)
             {
-                // Consider data declared in the Working and Local storage sections
-                CollectDataLayoutNodesInSection(dataDivision.WorkingStorageSection);
-                CollectDataLayoutNodesInSection(dataDivision.LocalStorageSection);
-                // Consider also data declared in the Linkage section
-                CollectDataLayoutNodesInSection(dataDivision.LinkageSection);
-            }
-
-            return dataLayoutNodes;
-
-            void CollectDataLayoutNodesInSection(DataSection section)
-            {
-                if (section != null)
+                for (int i = 0; i < dataDivision.ChildrenCount; i++)
                 {
-                    CollectDataLayoutNodes(0, section, 0);
+                    var child = dataDivision.Children[i];
+                    if (child is DataSection dataSection && IsInScope())
+                    {
+                        CollectInSection(dataSection, i);
+                    }
+
+                    // Consider sections: Working and Local storage + Linkage
+                    bool IsInScope() => dataSection is WorkingStorageSection or LocalStorageSection or LinkageSection;
+                }
+
+                void CollectInSection(DataSection dataSection, int index)
+                {
+                    var sectionDLN = DataLayoutNodeBuilder.From(dataSection, index);
+                    rootDLN.children.Add(sectionDLN);
+                    CollectDataLayoutNodes(dataSection, sectionDLN);
                 }
             }
 
-            void CollectDataLayoutNodes(int nodeLevel, Node node, int occursDimension)
+            return rootDLN;
+
+            void CollectDataLayoutNodes(Node parentNode, DataLayoutNode parentDLN)
             {
-                foreach (var child in node.Children)
+                var result = new List<DataLayoutNode>();
+
+                for (int i = 0; i < parentNode.ChildrenCount; i++)
                 {
-                    if (child is DataDefinition childDefinition)
+                    var child = parentNode.Children[i];
+                    if (child is DataDefinition childDefinition && IsInScope(childDefinition))
                     {
-                        var childOccursDimension = childDefinition.IsTableOccurence ? occursDimension + 1 : occursDimension;
-                        if (IsInScope(childDefinition))
-                        {
-                            dataLayoutNodes.Add(new Tuple<int, DataDefinition, int>(nodeLevel, childDefinition, childOccursDimension));
-                        }
+                        var childDLN = DataLayoutNodeBuilder.From(childDefinition, parentDLN, i);
+                        parentDLN.children.Add(childDLN);
+
+                        convert?.Invoke(childDLN);
+
                         if (childDefinition.Children.Count > 0)
                         {
-                            CollectDataLayoutNodes(nodeLevel + 1, childDefinition, childOccursDimension);
+                            CollectDataLayoutNodes(child, childDLN);
                         }
                     }
                 }
@@ -223,6 +174,126 @@ namespace TypeCobol.LanguageServer
                     CodeElementType type = codeElement.Type;
                     return type != CodeElementType.DataConditionEntry && type != CodeElementType.DataRenamesEntry;
                 }
+            }
+        }
+
+        private class DataLayoutNodeBuilder
+        {
+            internal static DataLayoutNode From(Program program)
+            {
+                return new()
+                {
+                    Name = program.Name,
+                    children = []
+                };
+            }
+
+            internal static DataLayoutNode From(DataSection dataSection, int index)
+            {
+                return new()
+                {
+                    LogicalLevel = 1,
+                    Name = dataSection.ID,
+                    Index = index,
+                    children = []
+                };
+            }
+
+            internal static DataLayoutNode From(DataDefinition dataDefinition, DataLayoutNode parent, int index)
+            {
+                Debug.Assert(parent != null);
+
+                bool incrementDimension = dataDefinition.IsTableOccurence;
+
+                int logicalLevel = parent.LogicalLevel + 1;
+                int line = dataDefinition.CodeElement.GetLineInMainSource() + 1;
+                long physicalLevel = dataDefinition.CodeElement.LevelNumber.Value;
+                bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
+                var name = isNamed ? dataDefinition.Name : FILLER;
+                int occursDimension = parent.OccursDimension + (incrementDimension ? 1 : 0);
+                long start = dataDefinition.StartPosition;
+                long length = dataDefinition.PhysicalLength;
+                string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
+                bool exceedsMaxIndexCapacity = parent.ExceedsMaxIndexCapacity || (incrementDimension && dataDefinition.MaxOccurencesCount > IndexGenerator.MAX_INDEX_CAPACITY);
+
+                DataLayoutNodeFlags flags = DataLayoutNodeFlags.None;
+                var declarationItems = new List<string>();
+                if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines codeElement)
+                {
+                    if (dataDefinition.Picture != null)
+                    {
+                        declarationItems.Add($"PIC {dataDefinition.Picture.Value}");
+                    }
+                    var usage = codeElement.Usage;
+                    if (usage != null)
+                    {
+                        declarationItems.Add(usage.Token.Text);
+                    }
+
+                    if (IsDisplayable())
+                    {
+                        flags |= DataLayoutNodeFlags.Displayable;
+                    }
+
+                    bool IsDisplayable()
+                    {
+                        // OCCURS that can not be looped by an index defined as PIC 9(4) COMP-5 (see IndexGenerator) are not displayable
+                        if (exceedsMaxIndexCapacity)
+                        {
+                            return false;
+                        }
+
+                        // Usage Index, FunctionPointer and ProcedurePointer are not displayable
+                        var dataUsage = usage?.Value;
+                        if (dataUsage == DataUsage.Index || dataUsage == DataUsage.FunctionPointer || dataUsage == DataUsage.ProcedurePointer)
+                        {
+                            return false;
+                        }
+
+                        // Named data are displayable
+                        if (isNamed)
+                        {
+                            return true;
+                        }
+
+                        // FILLER are displayable when having at least one named parent and not a National/NationalEdited picture 
+                        return parent.IsAddressable && !dataDefinition.IsNationalOrNationalEdited();
+                    }
+                }
+
+                if (declarationItems.Count == 0 && dataDefinition.ChildrenCount > 0)
+                {
+                    declarationItems.Add(GROUP);
+                }
+
+                if (dataDefinition.CodeElement.Type == CodeElementType.DataRedefinesEntry)
+                {
+                    flags |= DataLayoutNodeFlags.IsRedefines;
+                    declarationItems.Add($"REDEFINES {((DataRedefines)dataDefinition).CodeElement.RedefinesDataName.Name}");
+                }
+
+                if (incrementDimension)
+                {
+                    declarationItems.Add($"OCCURS {dataDefinition.MaxOccurencesCount}");
+                }
+
+                return new()
+                {
+                    LogicalLevel = logicalLevel,
+                    Line = line,
+                    PhysicalLevel = physicalLevel,
+                    Name = name,
+                    Declaration = string.Join(SPACE, declarationItems),
+                    OccursDimension = occursDimension,
+                    Start = start,
+                    Length = length,
+                    Copy = copy,
+                    Index = index,
+                    Flags = flags,
+                    children = [],
+                    ExceedsMaxIndexCapacity = exceedsMaxIndexCapacity,
+                    IsAddressable = parent.IsAddressable || isNamed
+                };
             }
         }
     }

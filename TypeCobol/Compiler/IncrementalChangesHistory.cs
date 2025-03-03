@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Parser;
@@ -58,6 +56,7 @@ namespace TypeCobol.Compiler
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
+        public int Depth { get; }
         private readonly EventStore<ICobolTextLine> _textChangedEvents;
         private readonly EventStore<ITokensLine> _tokensChangedEvents;
         private readonly EventStore<IProcessedTokensLine> _processedTokensChangedEvents;
@@ -65,6 +64,7 @@ namespace TypeCobol.Compiler
 
         public IncrementalChangesHistory(int depth)
         {
+            Depth = depth;
             _textChangedEvents = new EventStore<ICobolTextLine>(depth);
             _tokensChangedEvents = new EventStore<ITokensLine>(depth);
             _processedTokensChangedEvents = new EventStore<IProcessedTokensLine>(depth);
