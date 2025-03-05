@@ -42,6 +42,12 @@ namespace TypeCobol.LanguageServer
             {
                 row.Clear();
 
+                if (dataLayoutNode.Flags.HasFlag(DataLayoutNodeFlags.Generated))
+                {
+                    // Ignore Generated 01
+                    return;
+                }
+
                 //TODO manage slack bytes (property is dataDefinition.SlackBytes)
                 AppendToRow(dataLayoutNode.Line);
                 AppendToRow(dataLayoutNode.LogicalLevel - 2); // To compensate Program and Section levels
@@ -105,7 +111,7 @@ namespace TypeCobol.LanguageServer
             var locationNode = location.Node ?? (compilationUnit.ProgramClassDocumentSnapshot.Root?.MainProgram);
             if (locationNode == null || locationNode.GetProgramNode() == null)
             {
-                throw new Exception($"No program found in: '{compilationUnit.TextSourceInfo.Name}'"); ;
+                throw new Exception($"No program found in: '{compilationUnit.TextSourceInfo.Name}'");
             }
 
             return locationNode.GetProgramNode();
@@ -142,8 +148,6 @@ namespace TypeCobol.LanguageServer
 
             void CollectDataLayoutNodes(Node parentNode, DataLayoutNode parentDLN)
             {
-                var result = new List<DataLayoutNode>();
-
                 for (int i = 0; i < parentNode.ChildrenCount; i++)
                 {
                     var child = parentNode.Children[i];
@@ -164,9 +168,9 @@ namespace TypeCobol.LanguageServer
                 static bool IsInScope(DataDefinition dataDefinition)
                 {
                     DataDefinitionEntry codeElement = dataDefinition.CodeElement;
-                    if (codeElement == null || codeElement.Line < 0)
+                    if (codeElement == null)
                     {
-                        // Ignore node without CodeElement or with negative line number
+                        // Ignore node without CodeElement
                         return false;
                     }
 
@@ -215,8 +219,9 @@ namespace TypeCobol.LanguageServer
                 long length = dataDefinition.PhysicalLength;
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
                 bool exceedsMaxIndexCapacity = parent.ExceedsMaxIndexCapacity || (incrementDimension && dataDefinition.MaxOccurencesCount > IndexGenerator.MAX_INDEX_CAPACITY);
+                bool generated = dataDefinition.CodeElement.LevelNumber is GeneratedIntegerValue; // Generated 01 = virtual node built by the parser
 
-                DataLayoutNodeFlags flags = DataLayoutNodeFlags.None;
+                DataLayoutNodeFlags flags = generated ? DataLayoutNodeFlags.Generated : DataLayoutNodeFlags.None;
                 var declarationItems = new List<string>();
                 if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines codeElement)
                 {
@@ -256,7 +261,7 @@ namespace TypeCobol.LanguageServer
                             return true;
                         }
 
-                        // FILLER are displayable when having at least one named parent and not a National/NationalEdited picture 
+                        // FILLER are displayable when having at least one named parent and not a National/NationalEdited picture
                         return parent.IsAddressable && !dataDefinition.IsNationalOrNationalEdited();
                     }
                 }
