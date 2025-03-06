@@ -7,7 +7,8 @@ namespace TypeCobol.LanguageServer
     {
         None = 0,
         IsRedefines = 1,
-        Displayable = 2 // Can be used in DISPLAY statement
+        Displayable = 2, // Can be used in DISPLAY statement
+        Generated = 4 // Generated 01 = virtual node built by the parser
     }
 
     /// <summary>
