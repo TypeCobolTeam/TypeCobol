@@ -36,6 +36,10 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void Copy() => ExecuteTest("copy", true);
 
         [TestMethod]
+        // To test Generated 01 (virtual node built by the parser) which is ignored in CSV output
+        public void CopyWithout01() => ExecuteTest("copyWithout01", true);
+
+        [TestMethod]
         public void SimplePgm() => ExecuteTest("simplePgm");
 
         [TestMethod]
