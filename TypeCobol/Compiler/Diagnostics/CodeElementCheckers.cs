@@ -415,7 +415,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (codeElement is INamedCodeElement namedCodeElement)
+            // Check name length, exclude typedefs as their names won't appear in generated Cobol.
+            if (codeElement is INamedCodeElement namedCodeElement && !(codeElement is DataTypeDescriptionEntry))
             {
                 var name = namedCodeElement.Name;
                 if (name != null && name.Length > MAX_NAME_LENGTH)
