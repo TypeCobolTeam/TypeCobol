@@ -1,0 +1,13 @@
+﻿--- Program ---
+PROGRAM: TYPEPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program
+-- TYPES -------
+  lessThanMaxAllowed:lessThanMaxAllowed
+  wayMoreThanMaxCharactersInDataNameAllowed:wayMoreThanMaxCharactersInDataNameAllowed
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
