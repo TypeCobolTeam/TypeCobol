@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPEPGM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * Both OK as typedef names are not checked for maximum length
+       01 lessThanMaxAllowed                        TYPEDEF STRICT
+                                                    PUBLIC  PIC X(01).
+       01 wayMoreThanMaxCharactersInDataNameAllowed TYPEDEF STRICT
+                                                    PUBLIC  PIC X(01).
+       PROCEDURE DIVISION.                                        
+           GOBACK
+           .
+       END PROGRAM TYPEPGM.
