@@ -97,6 +97,11 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public TypeCobolCheckOption CheckRecursivePerforms { get; set; }
 
+        /// <summary>
+        /// Check that CodeElement do not mix debug and non-debug lines.
+        /// </summary>
+        public TypeCobolCheckOption CheckCodeElementMixedDebugType { get; set; }
+
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
@@ -117,6 +122,7 @@ namespace TypeCobol.Compiler.Directives
             CheckPerformPrematureExits = config.CheckPerformPrematureExits;
             CheckPerformThruOrder = config.CheckPerformThruOrder;
             CheckRecursivePerforms = config.CheckRecursivePerforms;
+            CheckCodeElementMixedDebugType = config.CheckCodeElementMixedDebugType;
         }
 
         public TypeCobolOptions()
@@ -127,6 +133,7 @@ namespace TypeCobol.Compiler.Directives
             CheckPerformPrematureExits = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformPrematureExitsSeverity);
             CheckPerformThruOrder = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformThruOrderSeverity);
             CheckRecursivePerforms = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckRecursivePerformsSeverity);
+            CheckCodeElementMixedDebugType = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckCodeElementMixedDebugTypeSeverity);
         }
     }
 }
