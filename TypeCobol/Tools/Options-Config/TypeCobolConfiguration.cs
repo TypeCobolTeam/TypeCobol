@@ -42,7 +42,6 @@ namespace TypeCobol.Tools.Options_Config
 #endif
         // Checks
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
-        public TypeCobolCheckOption CheckEndProgram { get; set; }
         public TypeCobolCheckOption CheckPerformPrematureExits { get; set; }
         public TypeCobolCheckOption CheckPerformThruOrder { get; set; }
         public TypeCobolCheckOption CheckRecursivePerforms { get; set; }
@@ -131,7 +130,6 @@ namespace TypeCobol.Tools.Options_Config
         {
             // default values for checks
             CheckEndAlignment = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndAlignmentSeverity);
-            CheckEndProgram = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndProgramSeverity);
             CheckPerformPrematureExits = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformPrematureExitsSeverity);
             CheckPerformThruOrder = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformThruOrderSeverity);
             CheckRecursivePerforms = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckRecursivePerformsSeverity);
@@ -247,14 +245,12 @@ namespace TypeCobol.Tools.Options_Config
     public interface ITypeCobolCheckOptions
     {
         const Severity DefaultCheckEndAlignmentSeverity = Severity.Warning;
-        const Severity DefaultCheckEndProgramSeverity = Severity.Error;
         const Severity DefaultCheckPerformPrematureExitsSeverity = Severity.Warning;
         const Severity DefaultCheckPerformThruOrderSeverity = Severity.Warning;
         const Severity DefaultCheckRecursivePerformsSeverity = Severity.Warning;
         const Severity DefaultCheckCodeElementMixedDebugTypeSeverity = Severity.Warning;
 
         TypeCobolCheckOption CheckEndAlignment { get; set; }
-        TypeCobolCheckOption CheckEndProgram { get; set; }
         TypeCobolCheckOption CheckPerformPrematureExits { get; set; }
         TypeCobolCheckOption CheckPerformThruOrder { get; set; }
         TypeCobolCheckOption CheckRecursivePerforms { get; set; }
@@ -292,7 +288,6 @@ namespace TypeCobol.Tools.Options_Config
                 { "dcsm|disablecopysuffixingmechanism", "Disable EI Legacy automatic suffixing of data names from CPY copies.", v => typeCobolConfig.EILegacy_ApplyCopySuffixing = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
-                { "diag.cep|diagnostic.checkEndProgram=", "Indicate level of check end program: warning, error, info, ignore.", v => typeCobolConfig.CheckEndProgram = TypeCobolCheckOption.Parse(v) },
                 { "diag.cppe|diagnostic.checkPerformPrematureExits=", "Indicate level of check perform premature exits: warning, error, info, ignore.", v => typeCobolConfig.CheckPerformPrematureExits = TypeCobolCheckOption.Parse(v) },
                 { "diag.cpto|diagnostic.checkPerformThruOrder=", "Indicate level of check perform thru procedure order: warning, error, info, ignore.", v => typeCobolConfig.CheckPerformThruOrder = TypeCobolCheckOption.Parse(v) },
                 { "diag.crp|diagnostic.checkRecursivePerforms=", "Indicate level of check recursive performs: warning, error, info, ignore.", v => typeCobolConfig.CheckRecursivePerforms = TypeCobolCheckOption.Parse(v) },

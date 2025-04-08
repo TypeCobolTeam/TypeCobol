@@ -78,11 +78,6 @@ namespace TypeCobol.Compiler.Directives
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
         /// <summary>
-        /// Check if END PROGRAM have a program name associated and this name exists
-        /// </summary>
-        public TypeCobolCheckOption CheckEndProgram { get; set; }
-
-        /// <summary>
         /// Check that perform statements always return to caller, requires CFG.
         /// </summary>
         public TypeCobolCheckOption CheckPerformPrematureExits { get; set; }
@@ -118,7 +113,6 @@ namespace TypeCobol.Compiler.Directives
             IsCobolLanguage = config.IsCobolLanguage;
 
             CheckEndAlignment = config.CheckEndAlignment;
-            CheckEndProgram = config.CheckEndProgram;
             CheckPerformPrematureExits = config.CheckPerformPrematureExits;
             CheckPerformThruOrder = config.CheckPerformThruOrder;
             CheckRecursivePerforms = config.CheckRecursivePerforms;
@@ -129,7 +123,6 @@ namespace TypeCobol.Compiler.Directives
         {
             // default values for checks
             CheckEndAlignment = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndAlignmentSeverity);
-            CheckEndProgram = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckEndProgramSeverity);
             CheckPerformPrematureExits = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformPrematureExitsSeverity);
             CheckPerformThruOrder = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckPerformThruOrderSeverity);
             CheckRecursivePerforms = new TypeCobolCheckOption(ITypeCobolCheckOptions.DefaultCheckRecursivePerformsSeverity);
