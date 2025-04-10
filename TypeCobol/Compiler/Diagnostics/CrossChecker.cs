@@ -1446,18 +1446,18 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 // END PROGRAM is present
                 node.SetFlag(Node.Flag.MissingEndProgram, false);
-                var programEnd = (ProgramEnd)end.CodeElement;
-                if (programEnd.ProgramName?.Name == null)
+                string programEndName = ((ProgramEnd)end.CodeElement).ProgramName?.Name;
+                if (programEndName == null)
                 {
                     // No name is specified after END PROGRAM
                     DiagnosticUtils.AddError(end, $"\"PROGRAM END\" should have a program name. \"{node.Name}\" was assumed.");
                 }
                 else
                 {
-                    if (!node.Name.Equals(programEnd.ProgramName.Name, StringComparison.OrdinalIgnoreCase))
+                    if (!node.Name.Equals(programEndName, StringComparison.OrdinalIgnoreCase))
                     {
                         // Wrong name is specified after END PROGRAM
-                        DiagnosticUtils.AddError(end, $"Program name \"{programEnd.ProgramName.Name}\" did not match the name of any open program. The \"END PROGRAM\" marker was assumed to have ended program \"{node.Name}\".");
+                        DiagnosticUtils.AddError(end, $"Program name \"{programEndName}\" did not match the name of any open program. The \"END PROGRAM\" marker was assumed to have ended program \"{node.Name}\".");
                     }
                 }
             }
