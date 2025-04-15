@@ -18,7 +18,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         private const char DEBUG_INDICATOR = 'D';
         private const char COMMENT_INDICATOR = '*';
 
-        private static readonly string _SequenceNumber = new string(ONE_SPACE, CobolFormatAreas.EndNumber - CobolFormatAreas.BeginNumber + 1); // 6 spaces
+        public static readonly string SequenceNumber = new string(ONE_SPACE, CobolFormatAreas.EndNumber - CobolFormatAreas.BeginNumber + 1); // 6 spaces
 
         private readonly char _indicator;
         private readonly StringBuilder _text;
@@ -42,7 +42,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
         private void InitCurrentLine()
         {
-            _currentLine.Append(_SequenceNumber);
+            _currentLine.Append(SequenceNumber);
             _currentLine.Append(_indicator);
             _currentLineIsEmpty = true;
         }
@@ -52,7 +52,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             string currentLine = _currentLine.ToString();
 
             // Number of leading spaces on current line, does not include sequence number and indicator
-            int previousLineIndentLength = currentLine.Skip(_SequenceNumber.Length + 1).TakeWhile(c => c == ONE_SPACE).Count();
+            int previousLineIndentLength = currentLine.Skip(SequenceNumber.Length + 1).TakeWhile(c => c == ONE_SPACE).Count();
 
             _text.Append(currentLine);
             _currentLine.Clear();
@@ -116,7 +116,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             Debug.Assert(_currentLine.ToString().EndsWith("DISPLAY"));
 
             bool addSeparator = true;
-            int indent = _currentLine.Length - _SequenceNumber.Length; // If a new line is required, the text will be aligned with the beginning of the literal
+            int indent = _currentLine.Length - SequenceNumber.Length; // If a new line is required, the text will be aligned with the beginning of the literal
 
             string text = literalValue;
             int remaining; // Remaining available chars on current line
@@ -202,7 +202,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             {
                 // The current line only contains the sequence number and the indicator and optionally some leading spaces
                 _currentLine.Clear();
-                _currentLine.Append(_SequenceNumber);
+                _currentLine.Append(SequenceNumber);
                 _currentLine.Append(COMMENT_INDICATOR);
                 _currentLine.Append(comment);
                 AppendLine();

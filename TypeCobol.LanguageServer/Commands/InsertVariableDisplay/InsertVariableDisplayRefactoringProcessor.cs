@@ -147,18 +147,51 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         private static TextEdit InsertBefore(Node node, string code)
         {
             Debug.Assert(node.CodeElement != null);
-            int line = node.CodeElement.Line;
-            int character = 0;
-            return TextEdit.Insert(new Position() { line = line, character = character }, code + Environment.NewLine);
+            int line = node.CodeElement.Line; // On same line and inserted text ends with a line break
+            string newText = code + Environment.NewLine;
+            int character = 0; // At beginning of the line, except when CodeElement is not the first
+
+            var firstToken = node.CodeElement.ConsumedTokens.FirstOrDefault();
+            if (firstToken != null)
+            {
+                // Is CodeElement the first on the line ?
+                var tokensLine = firstToken.TokensLine;
+                if (firstToken != tokensLine.SourceTokens.First())
+                {
+                    // Insertion point is right before CodeElement
+                    character = node.CodeElement.StartIndex;
+                    // Start a new line and align text located beyond insertion point on its current column
+                    newText = $"{Environment.NewLine}{newText}{BeginLine(tokensLine.IndicatorChar, character)}";
+                }
+            }
+
+            return TextEdit.Insert(new Position() { line = line, character = character }, newText);
         }
 
         private static TextEdit InsertAfter(Node node, string code)
         {
             Debug.Assert(node.CodeElement != null);
-            int line = node.CodeElement.LineEnd;
-            int character = node.CodeElement.StopIndex + 1;
-            return TextEdit.Insert(new Position() { line = line, character = character }, Environment.NewLine + code);
+            int line = node.CodeElement.LineEnd; // On same line and inserted text starts with a line break:
+            string newText = Environment.NewLine + code;
+            int character = node.CodeElement.StopIndex + 1; // At CodeElement end
+
+            var lastToken = node.CodeElement.ConsumedTokens.LastOrDefault();
+            if (lastToken != null)
+            {
+                // Is there anything after insertion point ?
+                var tokensLine = lastToken.TokensLine;
+                if (tokensLine.Length > character)
+                {
+                    // Align text located beyond insertion point on its current column
+                    newText += BeginLine(tokensLine.IndicatorChar, character);
+                }
+            }
+
+            return TextEdit.Insert(new Position() { line = line, character = character }, newText);
         }
+
+        private static string BeginLine(char indicator, int column)
+            => $"{CobolStringBuilder.SequenceNumber}{indicator}{new string(' ', column - CobolStringBuilder.SequenceNumber.Length - 1)}";
 
         private static TextEdit InsertAtEnd(Node node, string code) => InsertAfter(node.GetLastNode(), code);
     }
