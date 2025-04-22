@@ -151,12 +151,12 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             string newText = code + Environment.NewLine;
             int character = 0; // At beginning of the line, except when CodeElement is not the first
 
-            var firstToken = node.CodeElement.ConsumedTokens.FirstOrDefault();
-            if (firstToken != null)
+            var insertionToken = node.CodeElement.ConsumedTokens.FirstOrDefault();
+            if (insertionToken != null)
             {
-                // Is CodeElement the first on the line ?
-                var tokensLine = firstToken.TokensLine;
-                if (firstToken != tokensLine.SourceTokens.First())
+                // Is the first token of the CodeElement also the first token on the line ?
+                var tokensLine = insertionToken.TokensLine;
+                if (insertionToken != tokensLine.SourceTokens.First())
                 {
                     // Insertion point is right before CodeElement
                     character = node.CodeElement.StartIndex;
@@ -175,11 +175,11 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             string newText = Environment.NewLine + code;
             int character = node.CodeElement.StopIndex + 1; // At CodeElement end
 
-            var lastToken = node.CodeElement.ConsumedTokens.LastOrDefault();
-            if (lastToken != null)
+            var insertionToken = node.CodeElement.ConsumedTokens.LastOrDefault();
+            if (insertionToken != null)
             {
                 // Is there anything after insertion point ?
-                var tokensLine = lastToken.TokensLine;
+                var tokensLine = insertionToken.TokensLine;
                 if (tokensLine.Length > character)
                 {
                     // Align text located beyond insertion point on its current column
