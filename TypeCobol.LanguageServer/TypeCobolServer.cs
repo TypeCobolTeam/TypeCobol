@@ -1,5 +1,4 @@
-﻿using System.Text;
-using TypeCobol.Compiler;
+﻿using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -562,11 +561,8 @@ namespace TypeCobol.LanguageServer
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
-                            {
-                                items = CompletionFactory.GetCompletionPerformParagraphAndSection(docContext.FileCompiler,
-                                    matchingCodeElement, userFilterToken);
-                                break;
-                            }
+                            items = new CompletionAfterPerform(userFilterToken).ComputeProposals(docContext.FileCompiler.CompilationResultsForProgram, matchingCodeElement);
+                            break;
                         case TokenType.CALL:
                             {
                                 this.FunctionDeclarations.Clear(); //Clear to avoid key collision
