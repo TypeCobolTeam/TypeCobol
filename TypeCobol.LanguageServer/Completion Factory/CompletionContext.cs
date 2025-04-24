@@ -7,7 +7,7 @@ using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer
 {
-    public abstract class CompletionContext
+    internal abstract class CompletionContext
     {
         public static Node GetMatchingNode(CompilationUnit compilationUnit, CodeElement codeElement)
         {
@@ -33,6 +33,15 @@ namespace TypeCobol.LanguageServer
         {
             string symbolName = symbol?.Name;
             return !string.IsNullOrEmpty(symbolName) && symbolName.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase);
+        }
+
+        protected bool StartsWithUserFilter(FunctionDeclaration symbol)
+        {
+            string symbolName = symbol?.Name;
+            string userFilterText = UserFilterText;
+            return !string.IsNullOrEmpty(symbolName)
+                   &&
+                   (symbolName.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) || symbol.VisualQualifiedName.ToString().StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase));
         }
 
         protected bool MatchesWithUserFilter(Node symbol)

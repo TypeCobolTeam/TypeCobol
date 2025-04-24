@@ -558,18 +558,17 @@ namespace TypeCobol.LanguageServer
 
                 if (lastSignificantToken != null)
                 {
+                    var compilationUnit = docContext.FileCompiler.CompilationResultsForProgram;
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
-                            items = new CompletionAfterPerform(userFilterToken).ComputeProposals(docContext.FileCompiler.CompilationResultsForProgram, matchingCodeElement);
+                            items = new CompletionAfterPerform(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.CALL:
                             {
-                                this.FunctionDeclarations.Clear(); //Clear to avoid key collision
-                                items = CompletionFactory.GetCompletionForProcedure(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken, this.FunctionDeclarations);
-                                items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken));
+                                FunctionDeclarations.Clear(); //Clear to avoid key collision
+                                items = new CompletionForProcedure(userFilterToken, FunctionDeclarations).ComputeProposals(compilationUnit, matchingCodeElement);
+                                items.AddRange(new CompletionForLibrary(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement));
                                 break;
                             }
                         case TokenType.TYPE:
