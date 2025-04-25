@@ -565,20 +565,14 @@ namespace TypeCobol.LanguageServer
                             items = new CompletionAfterPerform(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.CALL:
-                            {
-                                FunctionDeclarations.Clear(); //Clear to avoid key collision
-                                items = new CompletionForProcedure(userFilterToken, FunctionDeclarations).ComputeProposals(compilationUnit, matchingCodeElement);
-                                items.AddRange(new CompletionForLibrary(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement));
-                                break;
-                            }
+                            FunctionDeclarations.Clear(); //Clear to avoid key collision
+                            items = new CompletionForProcedure(userFilterToken, FunctionDeclarations).ComputeProposals(compilationUnit, matchingCodeElement);
+                            items.AddRange(new CompletionForLibrary(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement));
+                            break;
                         case TokenType.TYPE:
-                            {
-                                items = CompletionFactory.GetCompletionForType(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken);
-                                items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken));
-                                break;
-                            }
+                            items = new CompletionForType(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement);
+                            items.AddRange(new CompletionForLibrary(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement));
+                            break;
                         case TokenType.QualifiedNameSeparator:
                             {
                                 items = CompletionFactory.GetCompletionForQualifiedName(parameters.position,

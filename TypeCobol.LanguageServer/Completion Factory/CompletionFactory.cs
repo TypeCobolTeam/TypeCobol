@@ -223,45 +223,6 @@ namespace TypeCobol.LanguageServer
 
         #endregion
 
-        #region Library Completion
-        public static List<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
-        {
-            var callNode = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
-            if (callNode?.SymbolTable == null)
-            {
-                return new List<CompletionItem>();
-            }
-
-            IEnumerable<Program> programs = callNode.SymbolTable.GetPrograms(userFilterToken != null ? userFilterToken.Text : string.Empty);
-            return programs.Select(prog => new CompletionItem() { label = prog.Name, kind = CompletionItemKind.Module }).ToList();
-        }
-
-        #endregion
-
-        #region Types Completion
-        public static List<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
-        {
-            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
-            IEnumerable<TypeDefinition> types = null;
-            if (node?.SymbolTable == null)
-                return new List<CompletionItem>();
-
-            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-            types =
-                node.SymbolTable.GetTypes(
-                    t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
-                         ||
-                         (!t.IsFlagSet(Node.Flag.NodeIsIntrinsic) &&
-                          t.VisualQualifiedName.ToString()
-                              .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
-                          SymbolTable.Scope.Intrinsic
-                    );
-            
-
-            return CompletionFactoryHelpers.CreateCompletionItemsForType(types, node);
-        }
-        #endregion
-
         #region QualifiedName Completion
         public static List<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary)
         {
