@@ -114,18 +114,6 @@ namespace TypeCobol.LanguageServer
         public DataLayoutNodeFlags Flags { get => (DataLayoutNodeFlags)dataValues[INDEX_FLAGS]; set => dataValues[INDEX_FLAGS] = value; }
 
         /// <summary>
-        /// Flag indicating whether the max OCCURS exceeds the max capacity of an index declared as PIC 9(4) COMP-5
-        /// </summary>
-        [JsonIgnore]
-        public bool ExceedsMaxIndexCapacity { get; set; }
-
-        /// <summary>
-        /// Flag indicating whether the data is addressable in a DISPLAY statement (i.e is named or having at least one named parent)
-        /// </summary>
-        [JsonIgnore]
-        public bool IsAddressable { get; set; }
-
-        /// <summary>
         /// Array gathering all data values (to make Json more compact).
         /// Here is the matching between the array index and the data value:
         /// 0 = LogicalLevel

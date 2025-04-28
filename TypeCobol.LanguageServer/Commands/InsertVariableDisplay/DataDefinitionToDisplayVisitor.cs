@@ -27,10 +27,16 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
         protected override IEnumerable<Node> SelectChildren(Node parent)
         {
-            // Auto select mode: all data descriptions, except anonymous
+            // Auto select mode: all data descriptions, except anonymous and non-displayable
             foreach (var child in parent.Children.OfType<DataDescription>())
             {
+                // Do not select anonymous/FILLERs
                 if (string.IsNullOrEmpty(child.Name)) continue;
+
+                // Discard non-displayable and items having too many occurences
+                bool isDisplayable = child.IsFlagSet(Node.Flag.Displayable) && !child.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity);
+                if (!isDisplayable) continue;
+
                 yield return child;
             }
         }

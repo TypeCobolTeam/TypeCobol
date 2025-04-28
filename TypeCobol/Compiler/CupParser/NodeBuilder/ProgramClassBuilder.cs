@@ -5,6 +5,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Nodes;
+using TypeCobol.Compiler.Types;
 using TypeCobol.Logging;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
@@ -522,6 +523,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 node.SymbolTable.AddVariable(node);
                 CheckIfItsTyped(node, node.CodeElement);
+                ComputeAdditionalDataDefinitionFlags(entry, node);
             }
         }
 
@@ -574,6 +576,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartDataRedefinesEntry(entry);
 
             CheckIfItsTyped(node, node.CodeElement);
+            ComputeAdditionalDataDefinitionFlags(entry, node);
         }
 
         public virtual void CreateIndexAndAddToSymbolTable(CommonDataDescriptionAndDataRedefines entry, SymbolTable symbolTable)
@@ -587,6 +590,47 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
                 symbolTable.AddVariable(indexNode);
                 Exit();
+            }
+        }
+
+        private void ComputeAdditionalDataDefinitionFlags(CommonDataDescriptionAndDataRedefines codeElement, DataDefinition node)
+        {
+            // Max capacity of an index declared as PIC 9(4) COMP-5
+            const long MAX_STANDARD_INDEX_CAPACITY = 65535;
+
+            var parent = node.Parent;
+            bool exceedsStandardIndexCapacity = parent.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity) || (node.IsTableOccurence && node.MaxOccurencesCount > MAX_STANDARD_INDEX_CAPACITY);
+            node.SetFlag(Node.Flag.ExceedsStandardIndexCapacity, exceedsStandardIndexCapacity);
+
+            bool parentAddressable = parent.IsFlagSet(Node.Flag.Addressable);
+            bool isNamed = !string.IsNullOrEmpty(node.Name);
+            node.SetFlag(Node.Flag.Addressable, parentAddressable || isNamed);
+
+            node.SetFlag(Node.Flag.Displayable, IsDisplayable());
+
+            bool IsDisplayable()
+            {
+                // Usage Index, FunctionPointer and ProcedurePointer are not displayable
+                var dataUsage = codeElement.Usage?.Value;
+                if (dataUsage == DataUsage.Index || dataUsage == DataUsage.FunctionPointer || dataUsage == DataUsage.ProcedurePointer)
+                {
+                    return false;
+                }
+
+                // Named data are displayable
+                if (isNamed)
+                {
+                    return true;
+                }
+
+                // FILLER are displayable when having at least one named parent and not a National/NationalEdited picture
+                return parentAddressable && !IsNationalOrNationalEdited();
+            }
+
+            bool IsNationalOrNationalEdited()
+            {
+                var pictureCategory = node.PictureValidationResult?.Category;
+                return pictureCategory is PictureCategory.National or PictureCategory.NationalEdited;
             }
         }
 
