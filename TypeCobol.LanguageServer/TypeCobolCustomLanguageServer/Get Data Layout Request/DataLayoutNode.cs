@@ -8,7 +8,8 @@ namespace TypeCobol.LanguageServer
         None = 0,
         IsRedefines = 1,
         Displayable = 2, // Can be used in DISPLAY statement
-        Generated = 4 // Generated 01 = virtual node built by the parser
+        Generated = 4, // Generated 01 = virtual node built by the parser
+        ExceedsStandardIndexCapacity = 8 // Maximum number of occurences of the node exceeds the max capacity of an index declared as PIC 9(4) COMP-5
     }
 
     /// <summary>
@@ -55,13 +56,13 @@ namespace TypeCobol.LanguageServer
 
         /// <summary>
         /// Line number (starting at 1)
-        /// </summary>        
+        /// </summary>
         [JsonIgnore]
         public int Line { get => (int)dataValues[INDEX_LINE]; set => dataValues[INDEX_LINE] = value; }
 
         /// <summary>
         /// Level number
-        /// </summary>        
+        /// </summary>
         [JsonIgnore]
         public long PhysicalLevel { get => (long)dataValues[INDEX_PHYSICAL_LEVEL]; set => dataValues[INDEX_PHYSICAL_LEVEL] = value; }
 

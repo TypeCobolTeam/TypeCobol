@@ -233,7 +233,7 @@ namespace TypeCobol.LanguageServer
                         declarationItems.Add(usage.Token.Text);
                     }
 
-                    if (dataDefinition.IsFlagSet(Node.Flag.Displayable) && !dataDefinition.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity))
+                    if (dataDefinition.IsFlagSet(Node.Flag.Displayable))
                     {
                         flags |= DataLayoutNodeFlags.Displayable;
                     }
@@ -253,6 +253,11 @@ namespace TypeCobol.LanguageServer
                 if (incrementDimension)
                 {
                     declarationItems.Add($"OCCURS {dataDefinition.MaxOccurencesCount}");
+                }
+
+                if (dataDefinition.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity))
+                {
+                    flags |= DataLayoutNodeFlags.ExceedsStandardIndexCapacity;
                 }
 
                 return new()
