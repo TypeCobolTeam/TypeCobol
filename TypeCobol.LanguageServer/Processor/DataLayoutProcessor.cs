@@ -233,9 +233,14 @@ namespace TypeCobol.LanguageServer
                         declarationItems.Add(usage.Token.Text);
                     }
 
-                    if (dataDefinition.IsFlagSet(Node.Flag.Displayable) && !dataDefinition.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity))
+                    if (dataDefinition.IsFlagSet(Node.Flag.Displayable))
                     {
                         flags |= DataLayoutNodeFlags.Displayable;
+                    }
+
+                    if (dataDefinition.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity))
+                    {
+                        flags |= DataLayoutNodeFlags.ExceedsStandardIndexCapacity;
                     }
                 }
 
