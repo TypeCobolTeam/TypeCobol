@@ -574,11 +574,8 @@ namespace TypeCobol.LanguageServer
                             items.AddRange(new CompletionForLibrary(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement));
                             break;
                         case TokenType.QualifiedNameSeparator:
-                            {
-                                items = CompletionFactory.GetCompletionForQualifiedName(parameters.position,
-                                    docContext.FileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, this.FunctionDeclarations);
-                                break;
-                            }
+                            items = new CompletionForQualifiedName(userFilterToken, lastSignificantToken, parameters.position, FunctionDeclarations).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         case TokenType.INPUT:
                         case TokenType.OUTPUT:
                         case TokenType.IN_OUT:
