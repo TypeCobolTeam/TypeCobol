@@ -602,11 +602,8 @@ namespace TypeCobol.LanguageServer
                             items = new CompletionForVariable(userFilterToken, excludeLevel88).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.TO:
-                            {
-                                items = CompletionFactory.GetCompletionForTo(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken, lastSignificantToken);
-                                break;
-                            }
+                            items = new CompletionForTo(userFilterToken, lastSignificantToken).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         case TokenType.INTO:
                             {
                                 items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
