@@ -548,17 +548,15 @@ namespace TypeCobol.LanguageServer
                 if (wrappedCodeElements == null)
                     return new CompletionList();
 
-                Token userFilterToken = null;
-                Token lastSignificantToken = null;
-                //Try to get a significant token for competion and return the codeelement containing the matching token.
+                //Try to get a significant token for completion and return the codeelement containing the matching token.
                 CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
                     wrappedCodeElements,
-                    out userFilterToken, out lastSignificantToken); //Magic happens here
-                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                    out var userFilterToken, out var lastSignificantToken); //Magic happens here
 
+                var compilationUnit = docContext.FileCompiler.CompilationResultsForProgram;
                 if (lastSignificantToken != null)
                 {
-                    var compilationUnit = docContext.FileCompiler.CompilationResultsForProgram;
+                    
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
@@ -638,11 +636,7 @@ namespace TypeCobol.LanguageServer
                                     parameters.position.character <= t.StopIndex + 1 && parameters.position.character > t.StartIndex
                                     && t.Line == parameters.position.line + 1
                                     && t.TokenType == TokenType.UserDefinedWord); //Get the userFilterToken to filter the results
-
-                        userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text; //Convert token to text
-
-                        items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler,
-                           wrappedCodeElements.First(), da => da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase));
+                        items = new CompletionForVariable(userFilterToken, _ => true).ComputeProposals(compilationUnit, wrappedCodeElements.First());
                     }
                     else
                     {
