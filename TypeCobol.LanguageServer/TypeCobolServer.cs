@@ -579,11 +579,8 @@ namespace TypeCobol.LanguageServer
                         case TokenType.INPUT:
                         case TokenType.OUTPUT:
                         case TokenType.IN_OUT:
-                            {
-                                items = CompletionFactory.GetCompletionForProcedureParameter(parameters.position,
-                                    docContext.FileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, this.SignatureCompletionContext);
-                                break;
-                            }
+                            items = new CompletionForProcedureParameter(userFilterToken, lastSignificantToken, parameters.position, SignatureCompletionContext).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         case TokenType.DISPLAY:
                             {
                                 Func<DataDefinition, bool> predicate = dataDefinition =>
