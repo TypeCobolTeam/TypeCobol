@@ -1265,21 +1265,6 @@ namespace TypeCobol.Compiler.CodeModel
             return GetFromTableAndEnclosing(name, st => st.Programs, MatchUsingName, Scope.Namespace);
         }
 
-        public IEnumerable<Program> GetPrograms(string filter, bool exactMatch = false)
-        {
-            Func<Program, bool> predicate;
-            if (exactMatch)
-            {
-                predicate = program => program.Name.Equals(filter, StringComparison.OrdinalIgnoreCase);
-            }
-            else
-            {
-                predicate = program => program.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase);
-            }
-
-            return GetPrograms(predicate);
-        }
-
         public IEnumerable<Program> GetPrograms(Func<Program, bool> predicate) => GetPrograms().Where(predicate);
 
         public IEnumerable<Program> GetPrograms()

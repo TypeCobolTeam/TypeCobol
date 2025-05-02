@@ -183,13 +183,14 @@ namespace TypeCobol.LanguageServer
 
                 if (firstSignificantToken != null)
                 {
+                    Func<Program, bool> matchesDeclaringProgram = program => program.Name.Equals(userTokenToSeek.Text, StringComparison.OrdinalIgnoreCase);
                     switch (firstSignificantToken.TokenType)
                     {
                         case TokenType.CALL:
                             {
                                 _functionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
                                                                                 //On CALL get possible procedures and functions in the seeked program
-                                var program = node.SymbolTable.GetPrograms(userTokenToSeek.Text, true).FirstOrDefault();
+                                var program = node.SymbolTable.GetPrograms(matchesDeclaringProgram).FirstOrDefault();
                                 if (program != null)
                                 {
                                     var procedures = program.SymbolTable.GetFunctions(StartsWithUserFilter, SymbolTable.Scope.Program);
@@ -201,7 +202,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.TYPE:
                             {
                                 //On TYPE get possible public types in the seeked program
-                                var program = node.SymbolTable.GetPrograms(userTokenToSeek.Text, true).FirstOrDefault();
+                                var program = node.SymbolTable.GetPrograms(matchesDeclaringProgram).FirstOrDefault();
                                 if (program != null)
                                 {
                                     var types = program.SymbolTable.GetTypes(StartsWithUserFilter, SymbolTable.Scope.Program);
