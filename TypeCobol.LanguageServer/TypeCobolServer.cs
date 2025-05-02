@@ -619,11 +619,8 @@ namespace TypeCobol.LanguageServer
                             items = new CompletionForVariable(userFilterToken, keepCompatibleTypes).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.OF:
-                            {
-                                items = CompletionFactory.GetCompletionForOf(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken, parameters.position);
-                                break;
-                            }
+                            items = new CompletionForOf(userFilterToken, parameters.position).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         default:
                             // Unable to suggest anything
                             items = new List<CompletionItem>();
