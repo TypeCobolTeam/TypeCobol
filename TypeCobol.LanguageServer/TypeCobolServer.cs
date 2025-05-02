@@ -582,29 +582,25 @@ namespace TypeCobol.LanguageServer
                             items = new CompletionForProcedureParameter(userFilterToken, lastSignificantToken, parameters.position, SignatureCompletionContext).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.DISPLAY:
-                            {
-                                Func<DataDefinition, bool> predicate = dataDefinition =>
-                                    dataDefinition.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) // keep only variables with matching name
-                                    && dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
-                                    && dataDefinition.Usage != DataUsage.FunctionPointer
-                                    && dataDefinition.Usage != DataUsage.ObjectReference
-                                    && dataDefinition.Usage != DataUsage.Index
-                                    && (dataDefinition.CodeElement?.LevelNumber != null && dataDefinition.CodeElement.LevelNumber.Value < 88);
-                                // Ignore level 88. Note that dataDefinition.CodeElement != null condition also filters out IndexDefinition which is invalid in the context of DISPLAY
-                                // Filtering dataDefinition without LevelNumber also excludes FileDescription which are invalid for a DISPLAY
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement, predicate);
-                                break;
-                            }
+                            Predicate<DataDefinition> excludeNonDisplayable = dataDefinition =>
+                                dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
+                                && dataDefinition.Usage != DataUsage.FunctionPointer
+                                && dataDefinition.Usage != DataUsage.ObjectReference
+                                && dataDefinition.Usage != DataUsage.Index
+                                && dataDefinition.CodeElement?.LevelNumber != null
+                                && dataDefinition.CodeElement.LevelNumber.Value < 88;
+                            // Ignore level 88. Note that dataDefinition.CodeElement != null condition also filters out IndexDefinition which is invalid in the context of DISPLAY
+                            // Filtering dataDefinition without LevelNumber also excludes FileDescription which are invalid for a DISPLAY
+                            items = new CompletionForVariable(userFilterToken, excludeNonDisplayable).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         case TokenType.MOVE:
-                            {
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    da =>
-                                        da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) &&
-                                        ((da.CodeElement?.LevelNumber != null && da.CodeElement.LevelNumber.Value < 88)
-                                         || (da.CodeElement == null && da is IndexDefinition)));
-                                //Ignore 88 level variable
-                                break;
-                            }
+                            Predicate<DataDefinition> excludeLevel88 = dataDefinition =>
+                                (dataDefinition.CodeElement?.LevelNumber != null && dataDefinition.CodeElement.LevelNumber.Value < 88)
+                                ||
+                                (dataDefinition.CodeElement == null && dataDefinition is IndexDefinition);
+                            //Ignore 88 level variable
+                            items = new CompletionForVariable(userFilterToken, excludeLevel88).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         case TokenType.TO:
                             {
                                 items = CompletionFactory.GetCompletionForTo(docContext.FileCompiler, matchingCodeElement,
