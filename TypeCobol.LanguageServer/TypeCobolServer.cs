@@ -605,16 +605,12 @@ namespace TypeCobol.LanguageServer
                             items = new CompletionForTo(userFilterToken, lastSignificantToken).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.INTO:
-                            {
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
-                                         && (v.CodeElement != null &&
-                                             v.DataType == DataType.Alphabetic
-                                             || v.DataType == DataType.Alphanumeric
-                                             || v.DataType == DataType.AlphanumericEdited)
-                                );
-                                break;
-                            }
+                            Predicate<DataDefinition> onlyAlpha = v => v.CodeElement != null &&
+                                                                       (v.DataType == DataType.Alphabetic ||
+                                                                        v.DataType == DataType.Alphanumeric ||
+                                                                        v.DataType == DataType.AlphanumericEdited);
+                            items = new CompletionForVariable(userFilterToken, onlyAlpha).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         case TokenType.SET:
                             {
                                 items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
