@@ -605,24 +605,19 @@ namespace TypeCobol.LanguageServer
                             items = new CompletionForTo(userFilterToken, lastSignificantToken).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.INTO:
-                            Predicate<DataDefinition> onlyAlpha = v => v.CodeElement != null &&
-                                                                       (v.DataType == DataType.Alphabetic ||
-                                                                        v.DataType == DataType.Alphanumeric ||
-                                                                        v.DataType == DataType.AlphanumericEdited);
+                            Predicate<DataDefinition> onlyAlpha = dataDefinition => dataDefinition.CodeElement != null &&
+                                                                       (dataDefinition.DataType == DataType.Alphabetic ||
+                                                                        dataDefinition.DataType == DataType.Alphanumeric ||
+                                                                        dataDefinition.DataType == DataType.AlphanumericEdited);
                             items = new CompletionForVariable(userFilterToken, onlyAlpha).ComputeProposals(compilationUnit, matchingCodeElement);
                             break;
                         case TokenType.SET:
-                            {
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
-                                         &&
-                                         ((v.CodeElement?.Type == CodeElementType.DataConditionEntry)
-                                          //Level 88 Variable
-                                          || v.DataType == DataType.Numeric //Numeric Integer Variable
-                                          || v.Usage == DataUsage.Pointer || v.Usage == DataUsage.Pointer32) //Or usage is pointer/pointer-32 
-                                );
-                                break;
-                            }
+                            Predicate<DataDefinition> keepCompatibleTypes = dataDefinition => dataDefinition.CodeElement?.Type == CodeElementType.DataConditionEntry //Level 88 Variable
+                                                                               || dataDefinition.DataType == DataType.Numeric //Numeric Integer Variable
+                                                                               || dataDefinition.Usage == DataUsage.Pointer
+                                                                               || dataDefinition.Usage == DataUsage.Pointer32; //Or usage is pointer/pointer-32
+                            items = new CompletionForVariable(userFilterToken, keepCompatibleTypes).ComputeProposals(compilationUnit, matchingCodeElement);
+                            break;
                         case TokenType.OF:
                             {
                                 items = CompletionFactory.GetCompletionForOf(docContext.FileCompiler, matchingCodeElement,
