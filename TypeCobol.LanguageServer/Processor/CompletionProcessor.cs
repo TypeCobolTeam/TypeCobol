@@ -128,7 +128,7 @@ namespace TypeCobol.LanguageServer.Processor
             {
                 //Add the range object to let the client know the position of the user filter token
                 var range = Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
-                //-1 on lne to 0 based / +1 on stop index to include the last character
+                //-1 on line to 0 based / +1 on stop index to include the last character
                 items.ForEach(c =>
                 {
                     if (c.data != null && c.data.GetType().IsArray)
