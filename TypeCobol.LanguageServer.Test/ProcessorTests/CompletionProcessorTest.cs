@@ -41,8 +41,11 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             // Parse original source code
             var options = new TypeCobolOptions();
             var format = DocumentFormat.RDZReferenceFormat;
-            bool isCopy = !cobolString.TrimStart().StartsWith("IDENTIFICATION", StringComparison.OrdinalIgnoreCase); // Simple but should be enough, does not support copys starting with IDENTIFICATION...
-            var compilationUnit = ParserUtils.ParseCobolString(cobolString, isCopy, options, format);
+            /*
+             * Assuming the source code is not part of a copy. Testing completion inside a copy
+             * is not very meaningful as they are usually made of data definitions only.
+             */
+            var compilationUnit = ParserUtils.ParseCobolString(cobolString, false, options, format);
 
             // Get completion request argument (single arg is Position)
             var position = JToken.Parse(completionRequest).ToObject<Position>();
