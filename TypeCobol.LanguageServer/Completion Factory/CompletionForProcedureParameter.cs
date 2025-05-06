@@ -10,17 +10,17 @@ namespace TypeCobol.LanguageServer
 {
     internal class CompletionForProcedureParameter : CompletionContext
     {
-        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
+        private static void AddIn_OutSuffixToCompletionItems(Token parameterPassingDirectionToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
         {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.InOut] + " ";
+            var suffix = "\n" + new string(' ', parameterPassingDirectionToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.InOut] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
 
-        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
+        private static void AddOutputSuffixToCompletionItems(Token parameterPassingDirectionToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
         {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.Output] + " ";
+            var suffix = "\n" + new string(' ', parameterPassingDirectionToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.Output] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
 
@@ -49,15 +49,15 @@ namespace TypeCobol.LanguageServer
             IEnumerable<FunctionDeclaration> calledProcedures = null;
 
             if (_procedureSignatureContext == null ||
-                !(_procedureSignatureContext.QualifiedName.ToString().Equals(procedureName, StringComparison.InvariantCultureIgnoreCase)
-                  || _procedureSignatureContext.Name.Equals(procedureName, StringComparison.InvariantCultureIgnoreCase)))
+                !(_procedureSignatureContext.QualifiedName.ToString().Equals(procedureName, StringComparison.OrdinalIgnoreCase)
+                  || _procedureSignatureContext.Name.Equals(procedureName, StringComparison.OrdinalIgnoreCase)))
             {
                 //Try to get procedure by its name
                 calledProcedures =
                     node.SymbolTable.GetFunctions(
                         p =>
-                            p.Name.Equals(procedureName, StringComparison.InvariantCultureIgnoreCase) ||
-                            p.VisualQualifiedName.ToString().Equals(procedureName, StringComparison.InvariantCultureIgnoreCase),
+                            p.Name.Equals(procedureName, StringComparison.OrdinalIgnoreCase) ||
+                            p.VisualQualifiedName.ToString().Equals(procedureName, StringComparison.OrdinalIgnoreCase),
                             SymbolTable.Scope.Intrinsic
                         );
             }

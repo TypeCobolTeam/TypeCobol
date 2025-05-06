@@ -72,7 +72,7 @@ namespace TypeCobol.LanguageServer
                         t => (t?.TokenType == TokenType.UserDefinedWord || t?.TokenType == TokenType.QualifiedNameSeparator) && (t.EndColumn <= _position.character && t.Line == _position.line + 1) || t.Line < _position.line + 1));
                 //Remove all the userdefinedword token and also QualifiedNameToken
                 arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
-                //We only wants the token that in front of any QualifiedName 
+                //We only want the token that in front of any QualifiedName 
                 //Get the first significant token (i.e CALL/TYPE/...)
                 CodeElementMatcher.MatchCompletionCodeElement(_position, new List<CodeElementWrapper> { arrangedCodeElement }, out _, out var firstSignificantToken);
 

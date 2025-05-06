@@ -39,7 +39,7 @@ namespace TypeCobol.LanguageServer
             //MOVE will have node.CodeElement.StorageReads filled when completion is requested after TO
             //SET will have node.CodeElement.StorageWrites filled when completion is requested after TO
 
-            //MOVE can fill multiples variables (move var1 to var2 var3 ) completion can then be asked after var3
+            //MOVE can fill multiple variables (move var1 to var2 var3 ) completion can then be asked after var3
             //so both node.CodeElement.StorageReads and node.CodeElement.StorageWrites can be filled when completion is asked
 
             //SET can apply to multiple variables at once (set var1 var2 to true)
