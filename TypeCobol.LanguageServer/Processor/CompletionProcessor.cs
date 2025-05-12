@@ -32,8 +32,11 @@ namespace TypeCobol.LanguageServer.Processor
 
             if (lastSignificantToken != null)
             {
-
                 switch (lastSignificantToken.TokenType)
+                /*
+                 * WARNING: when adding completion support for a new keyword, do not forget
+                 * to reference the new keyword in CodeElementMatcher static class!
+                 */
                 {
                     case TokenType.PERFORM:
                         items = new CompletionAfterPerform(userFilterToken).ComputeProposals(compilationUnit, matchingCodeElement);
