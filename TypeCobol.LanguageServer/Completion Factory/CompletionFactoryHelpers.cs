@@ -1,5 +1,4 @@
-﻿using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
+﻿using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
@@ -27,56 +26,6 @@ namespace TypeCobol.LanguageServer
                                 && t.TokenType != TokenType.IN_OUT) // Take tokens until keyword found
                 .Where(t => t.TokenType == TokenType.UserDefinedWord)
                 .Select(t => t.Text));
-        }
-
-        /// <summary>
-        /// Get the matching node for the given CodeElement, returns null if not found.
-        /// </summary>
-        /// <param name="fileCompiler">Current file being compiled with its compilation results</param>
-        /// <param name="codeElement">Target CodeElement</param>
-        /// <returns>Corresponding Node instance, null if not found.</returns>
-        public static Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
-        {
-            var codeElementToNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
-            if (codeElementToNode != null && codeElementToNode.TryGetValue(codeElement, out var node))
-            {
-                return node;
-            }
-            return null;
-        }
-
-        public static IEnumerable<string> AggregateTokens(IEnumerable<Token> tokensToAggregate)
-        {
-            var aggregatedTokens = new Stack<string>();
-
-            Token previousToken = null;
-            foreach (var token in tokensToAggregate)
-            {
-                if (previousToken != null && previousToken.TokenType == TokenType.UserDefinedWord)
-                {
-                    if (token.TokenType != TokenType.QualifiedNameSeparator)
-                    {
-                        aggregatedTokens.Push(token.Text);
-                    }
-                    else if (previousToken.TokenType == TokenType.UserDefinedWord)
-                    {
-                        var retainedString = aggregatedTokens.Pop();
-                        aggregatedTokens.Push(retainedString + ".");
-                    }
-                }
-                else if (previousToken != null && previousToken.TokenType == TokenType.QualifiedNameSeparator)
-                {
-                    var retainedString = aggregatedTokens.Pop();
-                    aggregatedTokens.Push(retainedString + token.Text);
-                }
-
-                if (previousToken == null && token.TokenType == TokenType.UserDefinedWord)
-                    aggregatedTokens.Push(token.Text);
-
-                previousToken = token;
-            }
-
-            return aggregatedTokens.ToArray().Reverse();
         }
 
         public static List<CompletionItem> CreateCompletionItemsForType(IEnumerable<TypeDefinition> types, Node node, bool enablePublicFlag = true)
@@ -126,8 +75,8 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
 
-            Case textCase = GetTextCase(node.CodeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
-            Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = GetParamsWithCase(textCase);
+            Token callToken = node.CodeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL);
+            Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = GetParamsUsingMatchingCase(callToken);
 
             foreach (var proc in procedures)
             {
@@ -284,9 +233,12 @@ namespace TypeCobol.LanguageServer
             return new CompletionItem() { label = label, insertText = insertText, kind = CompletionItemKind.Variable };
         }
 
-        public static Case GetTextCase(string tokenText)
+        private static Case GetTextCase(Token token)
         {
+            string tokenText = token?.Text;
+
             if (string.IsNullOrEmpty(tokenText)) return Case.Lower;
+
             // check if upper case
             bool isUpper = true;
             foreach (char c in tokenText)
@@ -351,9 +303,9 @@ namespace TypeCobol.LanguageServer
             { ParameterDescription.PassingTypes.InOut, "in-out" }
         };
 
-        public static Dictionary<ParameterDescription.PassingTypes, string> GetParamsWithCase(Case textCase)
+        public static Dictionary<ParameterDescription.PassingTypes, string> GetParamsUsingMatchingCase(Token token)
         {
-            switch (textCase)
+            switch (GetTextCase(token))
             {
                 case Case.Upper:
                     return _UpperParams;
@@ -364,7 +316,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public enum Case
+        private enum Case
         {
             Lower = 0,   // default value
             Upper,

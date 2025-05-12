@@ -572,7 +572,7 @@ namespace TypeCobol.LanguageServer
             if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
-            var node = CompletionFactoryHelpers.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
+            var node = CompletionContext.GetMatchingNode(docContext.FileCompiler.CompilationResultsForProgram, wrappedCodeElement);
 
             //Get procedure name or qualified name
             string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);
@@ -607,20 +607,20 @@ namespace TypeCobol.LanguageServer
             //Else try to find the best matching signature
 
             //Get all given INPUT
-            var givenInputParameters = CompletionFactoryHelpers.AggregateTokens(
+            var givenInputParameters = AggregateTokens(
                 wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.INPUT)
                     .Skip(1) //Ignore the INPUT Token
                     .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT))).ToList();
             //Get all given OUTPUT
-            var givenOutputParameters = CompletionFactoryHelpers.AggregateTokens(
-               wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.OUTPUT)
-                   .Skip(1) //Ignore the INPUT Token
-                   .TakeWhile(t => !(t.TokenType == TokenType.INPUT || t.TokenType == TokenType.IN_OUT))).ToList();
+            var givenOutputParameters = AggregateTokens(
+                wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.OUTPUT)
+                    .Skip(1) //Ignore the INPUT Token
+                    .TakeWhile(t => !(t.TokenType == TokenType.INPUT || t.TokenType == TokenType.IN_OUT))).ToList();
             //Get all given INOUT
-            var givenInoutParameters = CompletionFactoryHelpers.AggregateTokens(
-              wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.IN_OUT)
-                  .Skip(1) //Ignore the INPUT Token
-                  .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
+            var givenInoutParameters = AggregateTokens(
+                wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.IN_OUT)
+                    .Skip(1) //Ignore the INPUT Token
+                    .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
             var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
 
             var signatureInformation = new List<SignatureInformation>();
@@ -677,6 +677,40 @@ namespace TypeCobol.LanguageServer
             }
 
             return signatureHelp;
+
+            static IEnumerable<string> AggregateTokens(IEnumerable<Token> tokensToAggregate)
+            {
+                var aggregatedTokens = new Stack<string>();
+
+                Token previousToken = null;
+                foreach (var token in tokensToAggregate)
+                {
+                    if (previousToken != null && previousToken.TokenType == TokenType.UserDefinedWord)
+                    {
+                        if (token.TokenType != TokenType.QualifiedNameSeparator)
+                        {
+                            aggregatedTokens.Push(token.Text);
+                        }
+                        else if (previousToken.TokenType == TokenType.UserDefinedWord)
+                        {
+                            var retainedString = aggregatedTokens.Pop();
+                            aggregatedTokens.Push(retainedString + ".");
+                        }
+                    }
+                    else if (previousToken != null && previousToken.TokenType == TokenType.QualifiedNameSeparator)
+                    {
+                        var retainedString = aggregatedTokens.Pop();
+                        aggregatedTokens.Push(retainedString + token.Text);
+                    }
+
+                    if (previousToken == null && token.TokenType == TokenType.UserDefinedWord)
+                        aggregatedTokens.Push(token.Text);
+
+                    previousToken = token;
+                }
+
+                return aggregatedTokens.Reverse();
+            }
         }
 
         protected override Location OnDefinition(TextDocumentPosition parameters)
