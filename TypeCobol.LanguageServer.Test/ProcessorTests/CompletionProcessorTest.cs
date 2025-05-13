@@ -31,7 +31,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
             // Parse test data file
             var folder = PlatformUtils.GetPathForProjectFile(RELATIVE_PATH, Path.GetFullPath(ROOT_PATH));
-            var testDataFilePath = $"{Path.Combine(folder, sourceFileName)}.txt";
+            var sourceFilePath = Path.Combine(sourceFileName.Split('_'));
+            var testDataFilePath = $"{Path.Combine(folder, sourceFilePath)}.txt";
             var testData = LanguageServerTestUtils.ParseMultiplePartsContent(testDataFilePath);
             Debug.Assert(testData.Count == 3);
             string cobolString = testData[0];
@@ -65,5 +66,17 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void CompletionAfterUnsupportedKeyword() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterPerform_NamesUsingHyphens() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterPerform_NamesUsingUnderscores() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterCall_WithoutUserFilterText() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterCall_WithUserFilterText() => ExecuteTest();
     }
 }
