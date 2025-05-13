@@ -17,6 +17,7 @@ namespace TypeCobol.LanguageServer
                 return completionItems;
 
             // TODO Do not take first but consider all possible parents, see #2717
+            // TODO Use user filter (if any) to pre-filter potential parents
             var currentVariable = node.SymbolTable.GetVariables(
                     v => v != null && v.Name.Equals(variableNameToken.Text, StringComparison.OrdinalIgnoreCase), SymbolTable.Scope.Global)
                 .FirstOrDefault();
