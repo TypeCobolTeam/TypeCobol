@@ -343,16 +343,16 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             if (parameters?.signatureInformation == null) //Means that the client leave the context
             {
                 //Make the context signature completion null
-                this.SignatureCompletionContext = null;
+                this.SignatureCompletionContext.BestMatch = null;
                 //Clean up the dictionary
-                this.FunctionDeclarations.Clear();
+                this.SignatureCompletionContext.Candidates.Clear();
                 return;
             }
 
-            var retrievedFuncDeclarationPair = this.FunctionDeclarations.FirstOrDefault(item => item.Key.Equals(parameters.signatureInformation));
-
-            if (retrievedFuncDeclarationPair.Key != null)
-                this.SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
+            if (this.SignatureCompletionContext.Candidates.TryGetValue(parameters.signatureInformation, out var bestMatch))
+            {
+                this.SignatureCompletionContext.BestMatch = bestMatch;
+            }
         }
 
         /// <summary>

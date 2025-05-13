@@ -108,7 +108,6 @@ namespace TypeCobol.Compiler.Nodes {
             /// Flag that indicates that the node has been visited for Type Cobol Qualification style detection.
             /// </summary>
             HasBeenTypeCobolQualifierVisited = 0x01 << 0,
-
             /// <summary>
             /// This flag is used during code generation to mark extra nodes added during linearization phase.
             /// </summary>
@@ -245,6 +244,21 @@ namespace TypeCobol.Compiler.Nodes {
             /// A TypeCobol boolean is set to FALSE on this node.
             /// </summary>
             IsTypeCobolSetToFalse = 0x01UL << 33,
+            /// <summary>
+            /// Flag indicating whether the maximum number of occurences of the node exceeds the max capacity of an index declared as PIC 9(4) COMP-5
+            /// Defined for DataDescription and DataRedefines
+            /// </summary>
+            ExceedsStandardIndexCapacity = 0x01UL << 34,
+            /// <summary>
+            /// Flag indicating whether the data is addressable (i.e is named or having at least one named parent)
+            /// Defined for DataDescription and DataRedefines
+            /// </summary>
+            Addressable = 0x01UL << 35,
+            /// <summary>
+            /// Flag indicating whether the data is allowed as a DISPLAY statement argument
+            /// Defined for DataDescription and DataRedefines
+            /// </summary>
+            Displayable = 0x01UL << 36
         };
         /// <summary>
         /// A 64 bits value for flags associated to this Node

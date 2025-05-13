@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
@@ -21,6 +18,8 @@ namespace TypeCobol.Compiler.Parser
         private ParserRuleContext Context;
         /// <summary>CodeElement object resulting of the visit the parse tree</summary>
         public CodeElement CodeElement { get; set; }
+
+        private readonly TypeCobolOptions _compilerOptions;
         private readonly CobolWordsBuilder _cobolWordsBuilder;
         private readonly CobolExpressionsBuilder _cobolExpressionsBuilder;
         private readonly CobolStatementsBuilder _cobolStatementsBuilder;
@@ -29,7 +28,8 @@ namespace TypeCobol.Compiler.Parser
 
         public CodeElementBuilder(TypeCobolOptions compilerOptions, bool isDebuggingModeEnabled)
         {
-            var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
+            _compilerOptions = compilerOptions;
+            var targetLevel = _compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
             _languageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
             _cobolWordsBuilder = new CobolWordsBuilder();
             _cobolExpressionsBuilder = new CobolExpressionsBuilder(_cobolWordsBuilder, _languageLevelChecker);
@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler.Parser
                 // Attach all tokens consumed by the parser for this code element
                 // Collect all error messages encountered while parsing this code element
                 AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement, Context);
-                CodeElementChecker.OnCodeElement(CodeElement, IsDebuggingModeEnabled);
+                CodeElementChecker.OnCodeElement(CodeElement, _compilerOptions, IsDebuggingModeEnabled);
             }
             // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
             else if (CodeElement == null && context.Diagnostics != null)

@@ -4,7 +4,6 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.LanguageServer.Commands.InsertVariableDisplay;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -218,7 +217,6 @@ namespace TypeCobol.LanguageServer
                 long start = dataDefinition.StartPosition;
                 long length = dataDefinition.PhysicalLength;
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
-                bool exceedsMaxIndexCapacity = parent.ExceedsMaxIndexCapacity || (incrementDimension && dataDefinition.MaxOccurencesCount > IndexGenerator.MAX_INDEX_CAPACITY);
                 bool generated = dataDefinition.CodeElement.LevelNumber is GeneratedIntegerValue; // Generated 01 = virtual node built by the parser
 
                 DataLayoutNodeFlags flags = generated ? DataLayoutNodeFlags.Generated : DataLayoutNodeFlags.None;
@@ -235,34 +233,14 @@ namespace TypeCobol.LanguageServer
                         declarationItems.Add(usage.Token.Text);
                     }
 
-                    if (IsDisplayable())
+                    if (dataDefinition.IsFlagSet(Node.Flag.Displayable))
                     {
                         flags |= DataLayoutNodeFlags.Displayable;
                     }
 
-                    bool IsDisplayable()
+                    if (dataDefinition.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity))
                     {
-                        // OCCURS that can not be looped by an index defined as PIC 9(4) COMP-5 (see IndexGenerator) are not displayable
-                        if (exceedsMaxIndexCapacity)
-                        {
-                            return false;
-                        }
-
-                        // Usage Index, FunctionPointer and ProcedurePointer are not displayable
-                        var dataUsage = usage?.Value;
-                        if (dataUsage == DataUsage.Index || dataUsage == DataUsage.FunctionPointer || dataUsage == DataUsage.ProcedurePointer)
-                        {
-                            return false;
-                        }
-
-                        // Named data are displayable
-                        if (isNamed)
-                        {
-                            return true;
-                        }
-
-                        // FILLER are displayable when having at least one named parent and not a National/NationalEdited picture
-                        return parent.IsAddressable && !dataDefinition.IsNationalOrNationalEdited();
+                        flags |= DataLayoutNodeFlags.ExceedsStandardIndexCapacity;
                     }
                 }
 
@@ -295,9 +273,7 @@ namespace TypeCobol.LanguageServer
                     Copy = copy,
                     Index = index,
                     Flags = flags,
-                    children = [],
-                    ExceedsMaxIndexCapacity = exceedsMaxIndexCapacity,
-                    IsAddressable = parent.IsAddressable || isNamed
+                    children = []
                 };
             }
         }

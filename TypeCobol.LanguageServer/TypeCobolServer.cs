@@ -1,5 +1,4 @@
-﻿using System.Text;
-using TypeCobol.Compiler;
+﻿using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -11,6 +10,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.Context;
+using TypeCobol.LanguageServer.Processor;
 using TypeCobol.LanguageServer.SignatureHelper;
 using TypeCobol.Tools;
 
@@ -24,18 +24,20 @@ namespace TypeCobol.LanguageServer
     class TypeCobolServer : VsCodeProtocol.LanguageServer
     {
         private readonly System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> _messagesActionsQueue;
-        protected Dictionary<SignatureInformation, FunctionDeclaration> FunctionDeclarations { get; }
+
+        private readonly CompletionProcessor _completionProcessor;
 
         public TypeCobolServer(IRPCServer rpcServer, System.Collections.Concurrent.ConcurrentQueue<MessageActionWrapper> messagesActionsQueue)
             : base(rpcServer)
         {
             this._messagesActionsQueue = messagesActionsQueue;
-            this.FunctionDeclarations = new Dictionary<SignatureInformation, FunctionDeclaration>();
+            this.SignatureCompletionContext = new SignatureCompletionContext();
+            this._completionProcessor = new CompletionProcessor(this.SignatureCompletionContext);
         }
 
         protected internal Workspace Workspace { get; private set; }
 
-        protected FunctionDeclaration SignatureCompletionContext { get; set; }
+        protected SignatureCompletionContext SignatureCompletionContext { get; }
 
         /// <summary>
         /// Are Log message notifications enabled ? false if yes, true otherwise.
@@ -78,19 +80,19 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool NoCopyDependencyWatchers { get; set; }
 
-        private List<CodeElementWrapper> CodeElementFinder(FileCompiler fileCompiler, Position position)
+        public static List<CodeElementWrapper> CodeElementFinder(CompilationUnit compilationUnit, Position position)
         {
             List<CodeElement> codeElements = new List<CodeElement>();
             List<CodeElement> ignoredCodeElements = new List<CodeElement>();
             int lineIndex = position.line;
             // Find the token located below the mouse pointer
-            int linesCount = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count;
+            int linesCount = compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count;
             if (linesCount != 0 && lineIndex < linesCount)
             {
                 while (codeElements.Count == 0 && lineIndex >= 0)
                 {
                     var codeElementsLine =
-                        fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
+                        compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
 
                     if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
                     {
@@ -433,8 +435,9 @@ namespace TypeCobol.LanguageServer
             if (docContext == null)
                 return resultHover;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
+            System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationResultsForProgram != null);
 
-            var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler, parameters.position);
+            var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler.CompilationResultsForProgram, parameters.position);
             if (wrappedCodeElements == null)
                 return resultHover;
 
@@ -542,167 +545,10 @@ namespace TypeCobol.LanguageServer
 
             List<CompletionItem> items;
 
-            if (docContext.FileCompiler.CompilationResultsForProgram != null &&
-                docContext.FileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
+            var compilationUnit = docContext.FileCompiler.CompilationResultsForProgram;
+            if (compilationUnit?.ProcessedTokensDocumentSnapshot != null)
             {
-                var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler, parameters.position);
-                if (wrappedCodeElements == null)
-                    return new CompletionList();
-
-                Token userFilterToken = null;
-                Token lastSignificantToken = null;
-                //Try to get a significant token for competion and return the codeelement containing the matching token.
-                CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
-                    wrappedCodeElements,
-                    out userFilterToken, out lastSignificantToken); //Magic happens here
-                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-
-                if (lastSignificantToken != null)
-                {
-                    switch (lastSignificantToken.TokenType)
-                    {
-                        case TokenType.PERFORM:
-                            {
-                                items = CompletionFactory.GetCompletionPerformParagraphAndSection(docContext.FileCompiler,
-                                    matchingCodeElement, userFilterToken);
-                                break;
-                            }
-                        case TokenType.CALL:
-                            {
-                                this.FunctionDeclarations.Clear(); //Clear to avoid key collision
-                                items = CompletionFactory.GetCompletionForProcedure(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken, this.FunctionDeclarations);
-                                items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken));
-                                break;
-                            }
-                        case TokenType.TYPE:
-                            {
-                                items = CompletionFactory.GetCompletionForType(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken);
-                                items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken));
-                                break;
-                            }
-                        case TokenType.QualifiedNameSeparator:
-                            {
-                                items = CompletionFactory.GetCompletionForQualifiedName(parameters.position,
-                                    docContext.FileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, this.FunctionDeclarations);
-                                break;
-                            }
-                        case TokenType.INPUT:
-                        case TokenType.OUTPUT:
-                        case TokenType.IN_OUT:
-                            {
-                                items = CompletionFactory.GetCompletionForProcedureParameter(parameters.position,
-                                    docContext.FileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, this.SignatureCompletionContext);
-                                break;
-                            }
-                        case TokenType.DISPLAY:
-                            {
-                                Func<DataDefinition, bool> predicate = dataDefinition =>
-                                    dataDefinition.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) // keep only variables with matching name
-                                    && dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
-                                    && dataDefinition.Usage != DataUsage.FunctionPointer
-                                    && dataDefinition.Usage != DataUsage.ObjectReference
-                                    && dataDefinition.Usage != DataUsage.Index
-                                    && (dataDefinition.CodeElement?.LevelNumber != null && dataDefinition.CodeElement.LevelNumber.Value < 88);
-                                // Ignore level 88. Note that dataDefinition.CodeElement != null condition also filters out IndexDefinition which is invalid in the context of DISPLAY
-                                // Filtering dataDefinition without LevelNumber also excludes FileDescription which are invalid for a DISPLAY
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement, predicate);
-                                break;
-                            }
-                        case TokenType.MOVE:
-                            {
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    da =>
-                                        da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) &&
-                                        ((da.CodeElement?.LevelNumber != null && da.CodeElement.LevelNumber.Value < 88)
-                                         || (da.CodeElement == null && da is IndexDefinition)));
-                                //Ignore 88 level variable
-                                break;
-                            }
-                        case TokenType.TO:
-                            {
-                                items = CompletionFactory.GetCompletionForTo(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken, lastSignificantToken);
-                                break;
-                            }
-                        case TokenType.INTO:
-                            {
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
-                                         && (v.CodeElement != null &&
-                                             v.DataType == DataType.Alphabetic
-                                             || v.DataType == DataType.Alphanumeric
-                                             || v.DataType == DataType.AlphanumericEdited)
-                                );
-                                break;
-                            }
-                        case TokenType.SET:
-                            {
-                                items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
-                                         &&
-                                         ((v.CodeElement?.Type == CodeElementType.DataConditionEntry)
-                                          //Level 88 Variable
-                                          || v.DataType == DataType.Numeric //Numeric Integer Variable
-                                          || v.Usage == DataUsage.Pointer || v.Usage == DataUsage.Pointer32) //Or usage is pointer/pointer-32 
-                                );
-                                break;
-                            }
-                        case TokenType.OF:
-                            {
-                                items = CompletionFactory.GetCompletionForOf(docContext.FileCompiler, matchingCodeElement,
-                                    userFilterToken, parameters.position);
-                                break;
-                            }
-                        default:
-                            // Unable to suggest anything
-                            items = new List<CompletionItem>();
-                            break;
-                    }
-                }
-                else
-                {
-                    //If no known keyword has been found, let's try to get the context and return available variables. 
-                    if (matchingCodeElement == null && wrappedCodeElements.Any())
-                    {
-                        userFilterToken =
-                            wrappedCodeElements.First().ArrangedConsumedTokens.FirstOrDefault(
-                                t =>
-                                    parameters.position.character <= t.StopIndex + 1 && parameters.position.character > t.StartIndex
-                                    && t.Line == parameters.position.line + 1
-                                    && t.TokenType == TokenType.UserDefinedWord); //Get the userFilterToken to filter the results
-
-                        userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text; //Convert token to text
-
-                        items = CompletionFactory.GetCompletionForVariable(docContext.FileCompiler,
-                           wrappedCodeElements.First(), da => da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase));
-                    }
-                    else
-                    {
-                        //Return a default text to inform the user that completion is not available after the given token
-                        items = new List<CompletionItem>(1)
-                        {
-                            new CompletionItem() { label = "Completion is not available in this context", insertText = string.Empty }
-                        };
-                    }
-                }
-
-                if (userFilterToken != null)
-                {
-                    //Add the range object to let the client know the position of the user filter token
-                    var range = Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
-                    //-1 on lne to 0 based / +1 on stop index to include the last character
-                    items.ForEach(c =>
-                    {
-                        if (c.data != null && c.data.GetType().IsArray)
-                            ((object[])c.data)[0] = range;
-                        else
-                            c.data = range;
-                    });
-                }
+                items = _completionProcessor.ComputeProposals(compilationUnit, parameters.position);
             }
             else
             {
@@ -722,7 +568,7 @@ namespace TypeCobol.LanguageServer
             if (docContext.FileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
-            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position)?.FirstOrDefault();
+            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler.CompilationResultsForProgram, parameters.position)?.FirstOrDefault();
             if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
@@ -753,7 +599,7 @@ namespace TypeCobol.LanguageServer
                 signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position);
 
                 //There is only one possibility so the context can be set right now 
-                this.SignatureCompletionContext = calledProcedure;
+                this.SignatureCompletionContext.BestMatch = calledProcedure;
 
                 return signatureHelp;
             }
@@ -778,7 +624,7 @@ namespace TypeCobol.LanguageServer
             var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
 
             var signatureInformation = new List<SignatureInformation>();
-            this.FunctionDeclarations.Clear();
+            this.SignatureCompletionContext.Candidates.Clear();
             FunctionDeclaration bestmatchingProcedure = null;
             int previousMatchingWeight = 0;
 
@@ -788,7 +634,7 @@ namespace TypeCobol.LanguageServer
                 {
                     var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
                     signatureInformation.Add(formattedSignatureInformation);
-                    this.FunctionDeclarations.Add(formattedSignatureInformation, procedure);
+                    this.SignatureCompletionContext.Candidates.Add(formattedSignatureInformation, procedure);
                 }
             }
             else
@@ -813,7 +659,7 @@ namespace TypeCobol.LanguageServer
 
                         var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
                         signatureInformation.Add(formattedSignatureInformation);
-                        this.FunctionDeclarations.Add(formattedSignatureInformation, procedure);
+                        this.SignatureCompletionContext.Candidates.Add(formattedSignatureInformation, procedure);
 
                         previousMatchingWeight = matchingWeight;
                         bestmatchingProcedure = procedure;
@@ -825,7 +671,7 @@ namespace TypeCobol.LanguageServer
 
             if (signatureInformation.Count == 1)
             {
-                this.SignatureCompletionContext = bestmatchingProcedure; //Set the completion context 
+                this.SignatureCompletionContext.BestMatch = bestmatchingProcedure; //Set the completion context 
                 signatureHelp.activeSignature = 0; //Select the only signature for the client
                 signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position); //Select the current parameter
             }
