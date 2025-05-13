@@ -677,40 +677,6 @@ namespace TypeCobol.LanguageServer
             }
 
             return signatureHelp;
-
-            static IEnumerable<string> AggregateTokens(IEnumerable<Token> tokensToAggregate)
-            {
-                var aggregatedTokens = new Stack<string>();
-
-                Token previousToken = null;
-                foreach (var token in tokensToAggregate)
-                {
-                    if (previousToken != null && previousToken.TokenType == TokenType.UserDefinedWord)
-                    {
-                        if (token.TokenType != TokenType.QualifiedNameSeparator)
-                        {
-                            aggregatedTokens.Push(token.Text);
-                        }
-                        else if (previousToken.TokenType == TokenType.UserDefinedWord)
-                        {
-                            var retainedString = aggregatedTokens.Pop();
-                            aggregatedTokens.Push(retainedString + ".");
-                        }
-                    }
-                    else if (previousToken != null && previousToken.TokenType == TokenType.QualifiedNameSeparator)
-                    {
-                        var retainedString = aggregatedTokens.Pop();
-                        aggregatedTokens.Push(retainedString + token.Text);
-                    }
-
-                    if (previousToken == null && token.TokenType == TokenType.UserDefinedWord)
-                        aggregatedTokens.Push(token.Text);
-
-                    previousToken = token;
-                }
-
-                return aggregatedTokens.Reverse();
-            }
         }
 
         protected override Location OnDefinition(TextDocumentPosition parameters)
