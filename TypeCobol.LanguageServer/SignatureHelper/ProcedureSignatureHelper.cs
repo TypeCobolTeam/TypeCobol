@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -121,7 +116,6 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             return activeParameter;
         }
 
-
         public static int ParametersTester(IList<ParameterDescription> parameters, List<string> parameters2, Node node)
         {
             var length = Math.Min(parameters.Count, parameters2.Count);
@@ -144,6 +138,46 @@ namespace TypeCobol.LanguageServer.SignatureHelper
         private static bool IsParameterCompatible(ParameterDescription parameter1, DataDefinition parameter2)
         {
             return parameter1.DataType == parameter2.DataType;
+        }
+
+        /// <summary>
+        /// Re-arrange parameters tokens to get their names in URI-style.
+        /// </summary>
+        /// <param name="parametersTokens">Set of tokens describing the procedure parameters list for a single
+        /// passing direction (INPUT, IN-OUT or OUTPUT).</param>
+        /// <returns>Enumeration of parameter names.</returns>
+        public static IEnumerable<string> CollectParameters(IEnumerable<Token> parametersTokens)
+        {
+            var aggregatedTokens = new Stack<string>();
+
+            Token previousToken = null;
+            foreach (var token in parametersTokens)
+            {
+                if (previousToken != null && previousToken.TokenType == TokenType.UserDefinedWord)
+                {
+                    if (token.TokenType != TokenType.QualifiedNameSeparator)
+                    {
+                        aggregatedTokens.Push(token.Text);
+                    }
+                    else if (previousToken.TokenType == TokenType.UserDefinedWord)
+                    {
+                        var retainedString = aggregatedTokens.Pop();
+                        aggregatedTokens.Push(retainedString + ".");
+                    }
+                }
+                else if (previousToken != null && previousToken.TokenType == TokenType.QualifiedNameSeparator)
+                {
+                    var retainedString = aggregatedTokens.Pop();
+                    aggregatedTokens.Push(retainedString + token.Text);
+                }
+
+                if (previousToken == null && token.TokenType == TokenType.UserDefinedWord)
+                    aggregatedTokens.Push(token.Text);
+
+                previousToken = token;
+            }
+
+            return aggregatedTokens.Reverse();
         }
     }
 }

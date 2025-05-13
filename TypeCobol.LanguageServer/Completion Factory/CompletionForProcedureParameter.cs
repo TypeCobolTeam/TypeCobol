@@ -171,8 +171,8 @@ namespace TypeCobol.LanguageServer
             var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions);
             completionItems.AddRange(items);
 
-            CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
-            Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
+            Token callToken = codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL);
+            Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsUsingMatchingCase(callToken);
             //If signature of procedure is available
             if (_procedureSignatureContext != null)
             {
