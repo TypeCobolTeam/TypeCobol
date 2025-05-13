@@ -99,7 +99,7 @@ namespace TypeCobol.LanguageServer
                 potentialVariables = node.SymbolTable.GetVariables(v => v != null
                                                 && v.IsFlagSet(Node.Flag.LinkageSectionNode)
                                                 && IsRootDataItem(v)
-                                                && StartsWithUserFilter(v),
+                                                && MatchesWithUserFilter(v),
                                                 SymbolTable.Scope.Program);
             }
             else
@@ -108,7 +108,7 @@ namespace TypeCobol.LanguageServer
                 potentialVariables = node.SymbolTable.GetVariables(
                     v => v != null
                          && IsRootDataItem(v)
-                         && StartsWithUserFilter(v),
+                         && MatchesWithUserFilter(v),
                         SymbolTable.Scope.Program);
             }
 

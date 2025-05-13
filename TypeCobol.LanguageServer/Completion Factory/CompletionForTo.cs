@@ -181,7 +181,7 @@ namespace TypeCobol.LanguageServer
                 //TODO Completion is already fast with this call, but to improve :
                 //don't do this if there is no need to qualify or let method CreateCompletionItemsForVariableSetAndDisambiguate call this if necessary
                 .SelectMany(v => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(v.Name)))
-                .Where(pair => StartsWithUserFilter(pair.Value));
+                .Where(pair => MatchesWithUserFilter(pair.Value));
 
             return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions);
         }

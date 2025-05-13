@@ -46,14 +46,19 @@ namespace TypeCobol.LanguageServer
 
         protected bool MatchesWithUserFilter(Node symbol)
         {
+            string symbolName = symbol?.Name;
+            if (string.IsNullOrEmpty(symbolName))
+            {
+                return false;
+            }
+
             string userFilterText = UserFilterText;
             if (userFilterText.Length == 0)
             {
                 return true;
             }
 
-            string symbolName = symbol?.Name;
-            return !string.IsNullOrEmpty(symbolName) && Regex.IsMatch(symbolName, $"(^{userFilterText})|((-|_){userFilterText})", RegexOptions.IgnoreCase);
+            return Regex.IsMatch(symbolName, $"(^{userFilterText})|((-|_){userFilterText})", RegexOptions.IgnoreCase);
         }
 
         public abstract List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement);
