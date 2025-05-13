@@ -7,8 +7,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
     /// </summary>
     internal class IndexGenerator : ICobolCodeProvider
     {
-        internal const int MAX_INDEX_CAPACITY = 65535; // Max capacity of an index declared as PIC 9(4) COMP-5
-
         private readonly string _hash;
         private readonly List<string> _indices;
 

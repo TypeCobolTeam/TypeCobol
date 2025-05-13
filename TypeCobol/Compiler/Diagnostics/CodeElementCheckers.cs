@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -431,17 +429,20 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         private const int MAX_NAME_LENGTH = 30;
 
-        public static void OnCodeElement(CodeElement codeElement, bool isDebuggingModeEnabled)
+        public static void OnCodeElement(CodeElement codeElement, TypeCobolOptions compilerOptions, bool isDebuggingModeEnabled)
         {
-            if (isDebuggingModeEnabled)
+            // Check code element debug type
+            if (compilerOptions.CheckCodeElementMixedDebugType.IsActive && isDebuggingModeEnabled)
             {
                 if (codeElement.DebugMode == CodeElement.DebugType.Mix)
                 {
-                    DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
+                    var messageCode = compilerOptions.CheckCodeElementMixedDebugType.GetMessageCode();
+                    DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.", messageCode);
                 }
             }
 
-            if (codeElement is INamedCodeElement namedCodeElement)
+            // Check name length, exclude typedefs as their names won't appear in generated Cobol.
+            if (codeElement is INamedCodeElement namedCodeElement and not DataTypeDescriptionEntry)
             {
                 var name = namedCodeElement.Name;
                 if (name != null && name.Length > MAX_NAME_LENGTH)
