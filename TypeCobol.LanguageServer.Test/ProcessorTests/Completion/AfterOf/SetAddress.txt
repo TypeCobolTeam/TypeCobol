@@ -1,0 +1,78 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should not suggest: matching variables but not in LINKAGE
+       01 WS-SAY-VAR1     PIC 9.
+       01 WS-SAY-POINTER USAGE POINTER.
+       01 WS-GROUP.
+          05 WS-SAY-VAR2  PIC 9.
+       77 WS-SAY-VAR3     PIC 9.
+       LOCAL-STORAGE SECTION.
+      * should not suggest: matching variables but not in LINKAGE
+       01 LS-SAY-VAR1     PIC 9.
+       01 LS-GROUP.
+          05 LS-SAY-VAR2  PIC 9.
+       77 LS-SAY-VAR3     PIC 9.
+       LINKAGE SECTION.
+      * should suggest: matching variables 01 in LINKAGE
+       01 LK-SAY-VAR1     PIC 9.
+      * should not suggest: not matching, not 01
+       01 LK-VAR3         PIC 9.
+       01 LK-GROUP.
+          05 LK-SAY-VAR3  PIC 9.
+      * should suggest: matching variables 77 in LINKAGE
+       77 LK-SAY-VAR2     PIC 9.
+      * should not suggest: not matching 77 in LINKAGE
+       77 LK-VAR4         PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           SET ADDRESS OF SAY TO WS-SAY-POINTER
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":30,"character":29}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "LK-SAY-VAR1 (Numeric) (LK-SAY-VAR1)",
+    "kind": 6,
+    "insertText": "LK-SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 26
+      },
+      "end": {
+        "line": 30,
+        "character": 29
+      }
+    }
+  },
+  {
+    "label": "LK-SAY-VAR2 (Numeric) (LK-SAY-VAR2)",
+    "kind": 6,
+    "insertText": "LK-SAY-VAR2",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 26
+      },
+      "end": {
+        "line": 30,
+        "character": 29
+      }
+    }
+  }
+]

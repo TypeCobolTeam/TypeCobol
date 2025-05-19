@@ -1,0 +1,51 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest: matching parent
+       01 SAY-GROUP1.
+          05 VAR1               PIC 9.
+      * should suggest but does not (see #2717)
+       01 GROUP2-SAY.
+          05 VAR1               PIC 9.
+       01 GROUP3-SAY-GROUP3.
+          05 VAR1               PIC 9.
+      * should not suggest: not matching parent
+       01 GROUP4.
+          05 VAR1               PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           DISPLAY VAR1 OF SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":18,"character":30}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-GROUP1 (Alphanumeric) (SAY-GROUP1)",
+    "kind": 6,
+    "insertText": "SAY-GROUP1",
+    "data": {
+      "start": {
+        "line": 18,
+        "character": 27
+      },
+      "end": {
+        "line": 18,
+        "character": 30
+      }
+    }
+  }
+]
