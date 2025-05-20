@@ -4,8 +4,7 @@
        WORKING-STORAGE SECTION.
       * should suggest: matching variables and literal type
        01 SAY-VAR1              PIC 9.
-       01 GROUP1-SAY.
-          05 VAR2-SAY           PIC 99.
+       01 VAR2-SAY              PIC 99.
        01 VAR3-SAY-VAR3         PIC 9(2).
        01 SAY-POINTER USAGE POINTER.
        01 SAY-POINTER-32 USAGE POINTER-32.
@@ -14,8 +13,9 @@
                                 PIC X.
        01 SAY-FUNCTION-POINTER USAGE FUNCTION-POINTER.
       * should not suggest (not literal type) but does
-       01 VAR7-SAY              PIC X.
-      * should not suggest: not matching, not literal type, 88
+       01 GROUP1-SAY.
+          05 VAR7-SAY           PIC X.
+      * should not suggest: not matching, 88
        01 VAR5                  PIC 9.
        01 VAR6SAY               PIC 9.
        01 GROUP3.
@@ -58,24 +58,9 @@
     }
   },
   {
-    "label": "GROUP1-SAY (Alphanumeric) (GROUP1-SAY)",
+    "label": "VAR2-SAY (Numeric) (VAR2-SAY)",
     "kind": 6,
-    "insertText": "GROUP1-SAY",
-    "data": {
-      "start": {
-        "line": 27,
-        "character": 20
-      },
-      "end": {
-        "line": 27,
-        "character": 23
-      }
-    }
-  },
-  {
-    "label": "VAR2-SAY (Numeric) (GROUP1-SAY::VAR2-SAY)",
-    "kind": 6,
-    "insertText": "GROUP1-SAY::VAR2-SAY",
+    "insertText": "VAR2-SAY",
     "data": {
       "start": {
         "line": 27,
@@ -178,9 +163,24 @@
     }
   },
   {
-    "label": "VAR7-SAY (Alphanumeric) (VAR7-SAY)",
+    "label": "GROUP1-SAY (Alphanumeric) (GROUP1-SAY)",
     "kind": 6,
-    "insertText": "VAR7-SAY",
+    "insertText": "GROUP1-SAY",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "VAR7-SAY (Alphanumeric) (GROUP1-SAY::VAR7-SAY)",
+    "kind": 6,
+    "insertText": "GROUP1-SAY::VAR7-SAY",
     "data": {
       "start": {
         "line": 27,
