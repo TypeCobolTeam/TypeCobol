@@ -1,0 +1,115 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest: matching alpha variables
+       01 SAY_VAR1              PIC X.
+       01 GROUP1_SAY.
+          05 VAR2_SAY           PIC BX.
+       01 VAR3_SAY_VAR3         PIC A.
+       01 SAY_FUNCTION-POINTER USAGE FUNCTION-POINTER.
+      * should not suggest: not matching, not alpha
+       01 VAR4                  PIC X.
+       01 VAR5_SAY              PIC 9.
+       01 GROUP2 OCCURS 10 INDEXED BY SAY_INDEX
+                                PIC X.
+       01 GROUP3.
+          05 VAR6               PIC X.
+             88 SAY88-YES              VALUE 'Y'.
+             88 SAY88-NO               VALUE 'N'.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           UNSTRING VAR4 DELIMITED BY SPACE INTO SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":22,"character":52}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY_VAR1 (Alphanumeric) (SAY_VAR1)",
+    "kind": 6,
+    "insertText": "SAY_VAR1",
+    "data": {
+      "start": {
+        "line": 22,
+        "character": 49
+      },
+      "end": {
+        "line": 22,
+        "character": 52
+      }
+    }
+  },
+  {
+    "label": "GROUP1_SAY (Alphanumeric) (GROUP1_SAY)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY",
+    "data": {
+      "start": {
+        "line": 22,
+        "character": 49
+      },
+      "end": {
+        "line": 22,
+        "character": 52
+      }
+    }
+  },
+  {
+    "label": "VAR2_SAY (AlphanumericEdited) (GROUP1_SAY::VAR2_SAY)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY::VAR2_SAY",
+    "data": {
+      "start": {
+        "line": 22,
+        "character": 49
+      },
+      "end": {
+        "line": 22,
+        "character": 52
+      }
+    }
+  },
+  {
+    "label": "VAR3_SAY_VAR3 (Alphabetic) (VAR3_SAY_VAR3)",
+    "kind": 6,
+    "insertText": "VAR3_SAY_VAR3",
+    "data": {
+      "start": {
+        "line": 22,
+        "character": 49
+      },
+      "end": {
+        "line": 22,
+        "character": 52
+      }
+    }
+  },
+  {
+    "label": "SAY_FUNCTION-POINTER (Alphanumeric) (SAY_FUNCTION-POINTER)",
+    "kind": 6,
+    "insertText": "SAY_FUNCTION-POINTER",
+    "data": {
+      "start": {
+        "line": 22,
+        "character": 49
+      },
+      "end": {
+        "line": 22,
+        "character": 52
+      }
+    }
+  }
+]

@@ -82,6 +82,7 @@ namespace TypeCobol.LanguageServer.Processor
                         items = new CompletionForTo(userFilterToken, lastSignificantToken).ComputeProposals(compilationUnit, matchingCodeElement);
                         break;
                     case TokenType.INTO:
+                        // We only target uses with STRING/UNSTRING => filtering on alpha dataDefinitions (note: all pointer USAGE will be also included)
                         Predicate<DataDefinition> onlyAlpha = dataDefinition => dataDefinition.CodeElement != null &&
                                                                    (dataDefinition.DataType == DataType.Alphabetic ||
                                                                     dataDefinition.DataType == DataType.Alphanumeric ||

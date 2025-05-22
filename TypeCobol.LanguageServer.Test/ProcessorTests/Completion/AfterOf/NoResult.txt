@@ -1,0 +1,31 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest nothing!
+       01 SAY-GROUP1.
+          05 VAR1               PIC 9.
+       01 GROUP2-SAY.
+          05 VAR1               PIC 9.
+       01 GROUP3-SAY-GROUP3.
+          05 VAR1               PIC 9.
+       01 GROUP4.
+          05 VAR1               PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           CALL 'OTHERPGM' USING VALUE LENGTH OF SAY
+           GOBACK
+           .
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":16,"character":52}
+---------------------------------------------------------------------------------
+[]

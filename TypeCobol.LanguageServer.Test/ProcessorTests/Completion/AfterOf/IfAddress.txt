@@ -1,0 +1,142 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest: matching variables 01/77
+       01 WS-SAY-VAR1              PIC 9.
+       77 WS-SAY-VAR2              PIC 9.
+      * should not suggest: not matching, not 01/77
+       01 WS-VAR3                  PIC 9.
+       66 WS-SAY-RENAME RENAMES WS-VAR3.
+       77 WS-VAR4                  PIC 9.
+       LOCAL-STORAGE SECTION.
+      * should suggest: matching variables 01/77
+       01 LS-SAY-VAR1              PIC 9.
+       77 LS-SAY-VAR2              PIC 9.
+      * should not suggest: not matching, not 01/77
+       01 LS-VAR3                  PIC 9.
+       01 LS-GROUP.
+          05 LS-SAY-VAR3           PIC 9.
+             88 LS-SAY-88-VAL0        VALUE 0.
+             88 LS-SAY-88-VAL1        VALUE 1.
+       77 LS-VAR4                  PIC 9.
+       LINKAGE SECTION.
+      * should suggest: matching variables 01/77
+       01 LK-SAY-VAR1              PIC 9.
+       77 LK-SAY-VAR2              PIC 9.
+      * should not suggest: not matching, not 01/77
+       01 LK-VAR3                  PIC 9.
+       01 LK-GROUP.
+          05 LK-SAY-VAR3           PIC 9.
+       77 LK-VAR4                  PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           IF ADDRESS OF SAY = NULL
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":34,"character":28}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "WS-SAY-VAR1 (Numeric) (WS-SAY-VAR1)",
+    "kind": 6,
+    "insertText": "WS-SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 34,
+        "character": 25
+      },
+      "end": {
+        "line": 34,
+        "character": 28
+      }
+    }
+  },
+  {
+    "label": "WS-SAY-VAR2 (Numeric) (WS-SAY-VAR2)",
+    "kind": 6,
+    "insertText": "WS-SAY-VAR2",
+    "data": {
+      "start": {
+        "line": 34,
+        "character": 25
+      },
+      "end": {
+        "line": 34,
+        "character": 28
+      }
+    }
+  },
+  {
+    "label": "LS-SAY-VAR1 (Numeric) (LS-SAY-VAR1)",
+    "kind": 6,
+    "insertText": "LS-SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 34,
+        "character": 25
+      },
+      "end": {
+        "line": 34,
+        "character": 28
+      }
+    }
+  },
+  {
+    "label": "LS-SAY-VAR2 (Numeric) (LS-SAY-VAR2)",
+    "kind": 6,
+    "insertText": "LS-SAY-VAR2",
+    "data": {
+      "start": {
+        "line": 34,
+        "character": 25
+      },
+      "end": {
+        "line": 34,
+        "character": 28
+      }
+    }
+  },
+  {
+    "label": "LK-SAY-VAR1 (Numeric) (LK-SAY-VAR1)",
+    "kind": 6,
+    "insertText": "LK-SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 34,
+        "character": 25
+      },
+      "end": {
+        "line": 34,
+        "character": 28
+      }
+    }
+  },
+  {
+    "label": "LK-SAY-VAR2 (Numeric) (LK-SAY-VAR2)",
+    "kind": 6,
+    "insertText": "LK-SAY-VAR2",
+    "data": {
+      "start": {
+        "line": 34,
+        "character": 25
+      },
+      "end": {
+        "line": 34,
+        "character": 28
+      }
+    }
+  }
+]
