@@ -10,6 +10,13 @@ namespace TypeCobol.LanguageServer.Utilities
     // TODO Factorize with TypeCobolServer.CodeElementFinder / CodeElementMatcher / other classes ?
     internal static class CodeElementLocator
     {
+        /// <summary>
+        /// Search for CodeElement and corresponding Node at the given position.
+        /// </summary>
+        /// <param name="compilationUnit">Compilation unit to search into.</param>
+        /// <param name="position">Targeted position in the document.</param>
+        /// <returns>A non-null pair of CodeElement and Node, both can be null when the method fails to
+        /// find anything. The method may also find a CodeElement without the corresponding Node.</returns>
         public static (CodeElement CodeElement, Node Node) FindCodeElementAt(CompilationUnit compilationUnit, Position position)
         {
             var programClassDocument = compilationUnit.ProgramClassDocumentSnapshot;
@@ -49,7 +56,10 @@ namespace TypeCobol.LanguageServer.Utilities
 
             static bool HasCodeElements(ICodeElementsLine line) => line.HasCodeElements;
 
-            (CodeElement, Node) WithCorrespondingNode(CodeElement codeElement) => (codeElement, programClassDocument.NodeCodeElementLinkers[codeElement]);
+            (CodeElement, Node) WithCorrespondingNode(CodeElement codeElement) =>
+                programClassDocument.NodeCodeElementLinkers.TryGetValue(codeElement, out var node)
+                    ? (codeElement, node)
+                    : (codeElement, null); // The dictionary may be incomplete (for example when CUP fails to parse whole document)
         }
 
         private static (ICodeElementsLine Line, int Index) FindLast(IReadOnlyList<ICodeElementsLine> list, int start, Predicate<ICodeElementsLine> predicate)
