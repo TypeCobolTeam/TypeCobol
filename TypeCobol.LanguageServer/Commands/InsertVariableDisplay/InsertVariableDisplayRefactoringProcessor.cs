@@ -115,7 +115,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 if (hasCodeForStatements)
                 {
                     // Insert COBOL code for statements
-                    if (_insertBeforeStatement && _location is not ProcedureDivision) // Avoid insering outside PROCEDURE DIVISION
+                    if (_insertBeforeStatement && _location is not ProcedureDivision) // Avoid inserting outside PROCEDURE DIVISION
                     {
                         textEdits.Add(InsertBefore(_location, cobolStringForStatements));
                     }

@@ -17,7 +17,7 @@ TypeCobol.LanguageServer.Commands.InsertVariableDisplay.InsertVariableDisplayRef
 [
     {
         "textDocument": { "uri": "file:/test.expected.cbl" },
-        "position": { "line": 8, "character": 17 }
+        "position": { "line": 8, "character": 15 }
     },
     true,
     {
