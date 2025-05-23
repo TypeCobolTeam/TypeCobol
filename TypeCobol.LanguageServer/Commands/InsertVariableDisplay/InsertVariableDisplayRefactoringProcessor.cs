@@ -58,7 +58,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
             // Check valid insertion location
             _location = CodeElementLocator.FindCodeElementAt(compilationUnit, _insertAt);
-            if (_location.CodeElement == null)
+            if (_location.CodeElement == null || _location.Node == null)
             {
                 throw new InvalidOperationException("Unable to locate program to modify.");
             }
@@ -68,7 +68,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         {
             // Get program DATA DIVISION
             var program = _location.Node.GetProgramNode();
-            var dataDivision = program.Children.OfType<DataDivision>().SingleOrDefault();
+            var dataDivision = program?.Children.OfType<DataDivision>().SingleOrDefault();
             var textEdits = new List<TextEdit>();
             if (dataDivision != null)
             {
