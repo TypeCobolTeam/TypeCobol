@@ -1,0 +1,4 @@
+{"line":10,"character":26}
+---------------------------------------------------------------------------------
+System.IO.InvalidDataException
+Could not find enclosing program in 'syntaxError' for position (10, 26).

@@ -36,6 +36,9 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void Empty() => ExecuteTest("empty");
 
         [TestMethod]
+        public void SyntaxError() => ExecuteTest("syntaxError");
+
+        [TestMethod]
         public void Copy() => ExecuteTest("copy", true);
 
         [TestMethod]

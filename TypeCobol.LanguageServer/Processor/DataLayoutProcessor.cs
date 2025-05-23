@@ -115,9 +115,23 @@ namespace TypeCobol.LanguageServer
             Debug.Assert(compilationUnit != null);
             Debug.Assert(position != null);
 
-            // Get the node corresponding to the position (if null use the main program)
+            var mainProgram = compilationUnit.ProgramClassDocumentSnapshot?.Root?.MainProgram;
+            if (mainProgram == null)
+            {
+                // Empty file, or at least no program declared
+                return null;
+            }
+
+            // Get the node corresponding to the position, and then its enclosing program
             var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
-            return location.Node?.GetProgramNode() ?? compilationUnit.ProgramClassDocumentSnapshot.Root?.MainProgram;
+            var program = location.Node?.GetProgramNode();
+            if (program == null)
+            {
+                // Most certainly the AST is invalid, abort with an exception
+                throw new InvalidDataException($"Could not find enclosing program in '{compilationUnit.TextSourceInfo.Name}' for position ({position.line}, {position.character}).");
+            }
+
+            return program;
         }
 
         private DataLayoutNode CollectInProgram(Program program, Action<DataLayoutNode> convert)
