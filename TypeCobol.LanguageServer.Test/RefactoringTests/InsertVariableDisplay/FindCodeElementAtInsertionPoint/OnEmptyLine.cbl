@@ -1,24 +1,23 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. TCOZERRCP.
+       PROGRAM-ID. TCOEMPTY.
        DATA DIVISION.
 
        WORKING-STORAGE SECTION.
 
        01 VAR-1 PIC X.
-      * Error: VAR 2 instead of VAR-2
-       01 VAR 2 PIC X.
 
        PROCEDURE DIVISION.
+
            GOBACK
            .
-       END PROGRAM TCOZERRCP.
+       END PROGRAM TCOEMPTY.
 -------------------------------------------------------------------------------------------------
 TypeCobol.LanguageServer.Commands.InsertVariableDisplay.InsertVariableDisplayRefactoringProcessor
 -------------------------------------------------------------------------------------------------
 [
     {
         "textDocument": { "uri": "file:/test.expected.cbl" },
-        "position": { "line": 10, "character": 26 }
+        "position": { "line": 9, "character": 0 }
     },
     false,
     {
@@ -30,5 +29,22 @@ TypeCobol.LanguageServer.Commands.InsertVariableDisplay.InsertVariableDisplayRef
     }
 ]
 -------------------------------------------------------------------------------------------------
-System.InvalidOperationException
-Unable to locate DISPLAY insertion location.
+refactoring.label=Debug instructions successfully generated.
+refactoring.source=
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOEMPTY.
+       DATA DIVISION.
+
+       WORKING-STORAGE SECTION.
+
+       01 VAR-1 PIC X.
+
+       PROCEDURE DIVISION.
+      *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
+      D    DISPLAY 'VAR-1 <' VAR-1 '>'
+      *</DBG>
+
+
+           GOBACK
+           .
+       END PROGRAM TCOEMPTY.
