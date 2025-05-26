@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -20,7 +19,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         private string _hash;
 
         // Computed when checking target program
-        private (CodeElement CodeElement, Node Node) _location;
+        private Node _location;
 
         public override TextDocumentIdentifier PrepareRefactoring(object[] arguments)
         {
@@ -57,17 +56,17 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             }
 
             // Check valid insertion location
-            _location = CodeElementLocator.FindCodeElementAt(compilationUnit, _insertAt);
-            if (_location.CodeElement == null || _location.Node == null)
+            _location = CodeElementLocator.FindCodeElementAt(compilationUnit, _insertAt).Node;
+            if (_location == null)
             {
-                throw new InvalidOperationException("Unable to locate program to modify.");
+                throw new InvalidOperationException("Unable to locate DISPLAY insertion location.");
             }
         }
 
         public override (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
         {
             // Get program DATA DIVISION
-            var program = _location.Node.GetProgramNode();
+            var program = _location.GetProgramNode();
             var dataDivision = program?.Children.OfType<DataDivision>().SingleOrDefault();
             var textEdits = new List<TextEdit>();
             if (dataDivision != null)
@@ -116,13 +115,13 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 if (hasCodeForStatements)
                 {
                     // Insert COBOL code for statements
-                    if (_insertBeforeStatement)
+                    if (_insertBeforeStatement && _location is not ProcedureDivision) // Avoid inserting outside PROCEDURE DIVISION
                     {
-                        textEdits.Add(InsertBefore(_location.Node, cobolStringForStatements));
+                        textEdits.Add(InsertBefore(_location, cobolStringForStatements));
                     }
                     else
                     {
-                        textEdits.Add(InsertAfter(_location.Node, cobolStringForStatements));
+                        textEdits.Add(InsertAfter(_location, cobolStringForStatements));
                     }
                 }
             }
