@@ -28,8 +28,17 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         protected override string FormatExpectedResult(string expected)
         {
             // Build expected result (JSON)
-            var expectedJson = JToken.Parse(expected);
-            return JToken.FromObject(expectedJson).ToString(Formatting.Indented);
+            try
+            {
+                // Try parse and re-indent to match the style of the actual JSON
+                var expectedJson = JToken.Parse(expected);
+                return JToken.FromObject(expectedJson).ToString(Formatting.Indented);
+            }
+            catch
+            {
+                // Parse error -> the expected is the description of an exception, return as is
+                return expected;
+            }
         }
 
         [TestInitialize]
@@ -51,6 +60,12 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             // Restore JSON default settings
             JsonConvert.DefaultSettings = _backupJsonSettings;
         }
+
+        [TestMethod]
+        public void Empty() => ExecuteTest("empty");
+
+        [TestMethod]
+        public void SyntaxError() => ExecuteTest("syntaxError");
 
         [TestMethod]
      

@@ -7,6 +7,31 @@ namespace TypeCobol.LanguageServer
     public static class CodeElementMatcher
     {
         /// <summary>
+        /// Completion Tokens is a Dictionary associating a boolean for each token supported for completion operation.
+        /// The boolean flag indicates whether the completion is allowed immediately after the token.
+        /// For instance for PERFORM token the last position is not allowed:
+        /// PERFORM
+        ///        ^
+        /// that is to say if the cursor is just after the M that no completion should occurs.
+        /// </summary>
+        private static Dictionary<TokenType, bool> _ElligibleCompletionTokens = new()
+        {
+            { TokenType.PERFORM, false },
+            { TokenType.CALL, false },
+            { TokenType.TYPE, false },
+            { TokenType.QualifiedNameSeparator, true },
+            { TokenType.INPUT, false },
+            { TokenType.OUTPUT, false },
+            { TokenType.IN_OUT, false },
+            { TokenType.MOVE, false },
+            { TokenType.TO, false },
+            { TokenType.SET, false },
+            { TokenType.OF, false },
+            { TokenType.INTO, false },
+            { TokenType.DISPLAY, false }
+        };
+
+        /// <summary>
         /// This method will try to found the best significant token that code be used fo completion. It depends on the given CodeElements and Position.
         /// It will also return the CodeElement that contains the significant token detected. 
         /// </summary>
@@ -45,8 +70,7 @@ namespace TypeCobol.LanguageServer
                 closestTokenToCursor.StopIndex + 1 >= position.character)
             //the cursor is at the end or in the middle of a token.
             {
-                if (closestTokenToCursor.StopIndex + 1 == position.character &&
-                    CompletionElligibleTokens.IsCompletionElligibleToken(closestTokenToCursor) && CompletionElligibleTokens.DoesTokenAllowLastPos(closestTokenToCursor))
+                if (closestTokenToCursor.StopIndex + 1 == position.character && DoesTokenAllowLastPos(closestTokenToCursor))
                 //Detect if token is eligible and if the cursor is at the end of the token
                 {
                     //the completion has to start from this token and this codeElement
@@ -112,7 +136,7 @@ namespace TypeCobol.LanguageServer
                         if (finalToken.StartIndex > position.character && !(finalToken.Line < position.line + 1))
                             break;
 
-                        if (CompletionElligibleTokens.IsCompletionElligibleToken(finalToken) &&
+                        if (_ElligibleCompletionTokens.ContainsKey(finalToken.TokenType) &&
                             (finalToken.StopIndex + 1 <= position.character || finalToken.Line <= position.line + 1))
                         {
                             lastSignificantToken = finalToken;
@@ -140,7 +164,7 @@ namespace TypeCobol.LanguageServer
                     {
                         //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
                         if ((lastSignificantToken != null &&
-                              (!CompletionElligibleTokens.DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.character &&
+                              (!DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.character &&
                                lastSignificantToken.Line == position.line + 1)) 
                              ||
                                  (consumedTokens.Last().TokenType == TokenType.UserDefinedWord &&
@@ -174,5 +198,8 @@ namespace TypeCobol.LanguageServer
 
             return significantCodeElement;
         }
+
+        private static bool DoesTokenAllowLastPos(Token token) =>
+            _ElligibleCompletionTokens.TryGetValue(token.TokenType, out bool allowLastPos) && allowLastPos;
     }
 }

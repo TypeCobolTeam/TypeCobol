@@ -106,14 +106,25 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             var textDocumentIdentifier = _refactoringProcessor.PrepareRefactoring(_arguments);
             Console.WriteLine($"Testing {_refactoringProcessor.GetType().Name} on '{textDocumentIdentifier.uri}'...");
 
-            // Validate refactoring
-            _refactoringProcessor.CheckTarget(_target);
+            string actualResult;
+            try
+            {
+                // Validate refactoring
+                _refactoringProcessor.CheckTarget(_target);
 
-            // Perform refactoring
-            var refactoring = _refactoringProcessor.PerformRefactoring(_target);
+                // Perform refactoring
+                var refactoring = _refactoringProcessor.PerformRefactoring(_target);
 
-            // Apply text edits on original source code
-            string actualResult = ApplyTextEdits(refactoring.Label, refactoring.TextEdits);
+                // Apply text edits on original source code
+                actualResult = ApplyTextEdits(refactoring.Label, refactoring.TextEdits);
+            }
+            catch (Exception exception)
+            {
+                var actualResultBuilder = new StringBuilder();
+                actualResultBuilder.AppendLine(exception.GetType().FullName);
+                actualResultBuilder.AppendLine(exception.Message);
+                actualResult = actualResultBuilder.ToString();
+            }
 
             // Compare actual modified code with expected modified code
             TestUtils.CompareContent(_testName, actualResult, _expectedResult);
