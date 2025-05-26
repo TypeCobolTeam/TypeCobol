@@ -58,6 +58,7 @@ namespace TypeCobol.LanguageServer
                 return true;
             }
 
+            // Starts with userFilterText or contains -userFilterText or contains _userFilterText
             return Regex.IsMatch(symbolName, $"(^{userFilterText})|((-|_){userFilterText})", RegexOptions.IgnoreCase);
         }
 
