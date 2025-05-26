@@ -33,6 +33,12 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         protected override string FormatExpectedResult(string expected) => expected;
 
         [TestMethod]
+        public void Empty() => ExecuteTest("empty");
+
+        [TestMethod]
+        public void SyntaxError() => ExecuteTest("syntaxError");
+
+        [TestMethod]
         public void Copy() => ExecuteTest("copy", true);
 
         [TestMethod]

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.LanguageServer.Test.Utilities;
@@ -30,8 +31,19 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             // Retrieve unique argument = position
             var position = JToken.Parse(testData[0]).ToObject<Position>();
 
-            // Execute processor and build actual result
-            var actual = GetActualResult(compilationUnit, position);
+            // Execute processor and build actual result, catch error if any
+            string actual;
+            try
+            {
+                actual = GetActualResult(compilationUnit, position);
+            }
+            catch (Exception exception)
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine(exception.GetType().FullName);
+                builder.AppendLine(exception.Message);
+                actual = builder.ToString();
+            }
 
             // Compare to expected
             var expected = FormatExpectedResult(testData[1]);

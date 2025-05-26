@@ -97,6 +97,15 @@ namespace TypeCobol.LanguageServer
         private DataLayoutNode CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, Action<DataLayoutNode> convert)
         {
             var program = GetProgram(compilationUnit, position);
+            if (program == null)
+            {
+                // Could not find target program, return empty node
+                return new()
+                {
+                    Name = compilationUnit.TextSourceInfo.Name,
+                    children = []
+                };
+            }
 
             return CollectInProgram(program, convert);
         }
@@ -105,15 +114,24 @@ namespace TypeCobol.LanguageServer
         {
             Debug.Assert(compilationUnit != null);
             Debug.Assert(position != null);
-            var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
-            // Get the node corresponding to the position (if null use the main program)
-            var locationNode = location.Node ?? (compilationUnit.ProgramClassDocumentSnapshot.Root?.MainProgram);
-            if (locationNode == null || locationNode.GetProgramNode() == null)
+
+            var mainProgram = compilationUnit.ProgramClassDocumentSnapshot?.Root?.MainProgram;
+            if (mainProgram == null)
             {
-                throw new Exception($"No program found in: '{compilationUnit.TextSourceInfo.Name}'");
+                // Empty file, or at least no program declared
+                return null;
             }
 
-            return locationNode.GetProgramNode();
+            // Get the node corresponding to the position, and then its enclosing program
+            var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
+            var program = location.Node?.GetProgramNode();
+            if (program == null)
+            {
+                // Most certainly the AST is invalid, abort with an exception
+                throw new InvalidDataException($"Could not find enclosing program in '{compilationUnit.TextSourceInfo.Name}' for position ({position.line}, {position.character}).");
+            }
+
+            return program;
         }
 
         private DataLayoutNode CollectInProgram(Program program, Action<DataLayoutNode> convert)
