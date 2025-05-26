@@ -1,0 +1,4 @@
+{"line":0,"character":0}
+---------------------------------------------------------------------------------
+empty
+LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length

@@ -62,5 +62,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void SimpleCompletionForVariable() => ExecuteTest();
+
+        [TestMethod]
+        public void CompletionAfterUnsupportedKeyword() => ExecuteTest();
     }
 }
