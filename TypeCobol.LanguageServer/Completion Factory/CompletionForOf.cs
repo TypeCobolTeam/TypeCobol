@@ -57,10 +57,7 @@ namespace TypeCobol.LanguageServer
             //Detect what's before the OF token
             var tokenBeforeOf = tokensUntilCursor?.Skip(1).FirstOrDefault(); //Skip(1) will skip the OF token
 
-            if (tokenBeforeOf == null || !(tokenBeforeOf.TokenType == TokenType.ADDRESS || tokenBeforeOf.TokenType == TokenType.UserDefinedWord))
-                return completionItems;
-
-            switch (tokenBeforeOf.TokenType) //In the future, this will allow to switch between different token declared before OF. 
+            switch (tokenBeforeOf?.TokenType) //In the future, this will allow to switch between different token declared before OF. 
             {
                 case TokenType.ADDRESS:
                 {
@@ -99,7 +96,7 @@ namespace TypeCobol.LanguageServer
                 potentialVariables = node.SymbolTable.GetVariables(v => v != null
                                                 && v.IsFlagSet(Node.Flag.LinkageSectionNode)
                                                 && IsRootDataItem(v)
-                                                && StartsWithUserFilter(v),
+                                                && MatchesWithUserFilter(v),
                                                 SymbolTable.Scope.Program);
             }
             else
@@ -108,7 +105,7 @@ namespace TypeCobol.LanguageServer
                 potentialVariables = node.SymbolTable.GetVariables(
                     v => v != null
                          && IsRootDataItem(v)
-                         && StartsWithUserFilter(v),
+                         && MatchesWithUserFilter(v),
                         SymbolTable.Scope.Program);
             }
 

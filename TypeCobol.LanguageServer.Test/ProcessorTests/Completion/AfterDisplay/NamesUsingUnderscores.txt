@@ -1,0 +1,168 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      * should suggest: matching variables
+       01 SAY_VAR1               PIC 9.
+       01 REDEF_SAY_VAR1 REDEFINES SAY_VAR1
+                                 PIC 9.
+       01 GROUP1_SAY.
+          05 VAR2_SAY            PIC X.
+          66 SAY66 RENAMES VAR2_SAY.
+       01 VAR3_SAY_VAR3          PIC 9.
+       01 SAY_POINTER USAGE POINTER.
+       77 SAY77                  PIC X.
+
+      * should not suggest: not matching, invalid usage, 88
+       01 VAR4                   PIC 9.
+       01 NOTSAY                 PIC 9.
+       01 SAY_PROCEDURE-POINTER USAGE PROCEDURE-POINTER.
+       01 SAY_FUNCTION-POINTER USAGE FUNCTION-POINTER.
+       01 GROUP2 OCCURS 10 INDEXED BY SAY_INDEX
+                                 PIC X.
+       01 GROUP3.
+          05 VAR5                PIC X.
+             88 SAY88-YES              VALUE 'Y'.
+             88 SAY88-NO               VALUE 'N'.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           DISPLAY SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "HELlO"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":30,"character":22}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY_VAR1 (Numeric) (SAY_VAR1)",
+    "kind": 6,
+    "insertText": "SAY_VAR1",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "REDEF_SAY_VAR1 (Numeric) (REDEF_SAY_VAR1)",
+    "kind": 6,
+    "insertText": "REDEF_SAY_VAR1",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "GROUP1_SAY (Alphanumeric) (GROUP1_SAY)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "VAR2_SAY (Alphanumeric) (GROUP1_SAY::VAR2_SAY)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY::VAR2_SAY",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "SAY66 (?) (GROUP1_SAY::SAY66)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY::SAY66",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "VAR3_SAY_VAR3 (Numeric) (VAR3_SAY_VAR3)",
+    "kind": 6,
+    "insertText": "VAR3_SAY_VAR3",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "SAY_POINTER (Alphanumeric) (SAY_POINTER)",
+    "kind": 6,
+    "insertText": "SAY_POINTER",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "SAY77 (Alphanumeric) (SAY77)",
+    "kind": 6,
+    "insertText": "SAY77",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  }
+]

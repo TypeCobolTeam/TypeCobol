@@ -1,0 +1,103 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest: matching variables and literal type
+       01 SAY-VAR1              PIC 9.
+       01 GROUP1.
+          05 VAR2-SAY           PIC 99.
+       01 VAR3-SAY-VAR3         PIC 9(2).
+       01 GROUP2 OCCURS 10 INDEXED BY SAY-INDEX
+                                PIC X.
+      * should not suggest: not matching, not literal type, 88
+       01 VAR5                  PIC 9.
+       01 VAR6SAY               PIC 9.
+       01 SAY-FUNCTION-POINTER USAGE FUNCTION-POINTER.
+       01 SAY-POINTER USAGE POINTER.
+       01 VAR7-SAY              PIC X.
+       01 VAR8-SAY              PIC N.
+       01 GROUP3.
+          05 VAR9               PIC 9.
+             88 SAY88-YES              VALUE 1.
+             88 SAY88-NO               VALUE 0.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           MOVE 1 TO SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P-SAY-HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S-SAY-CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":25,"character":24}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-VAR1 (Numeric) (SAY-VAR1)",
+    "kind": 6,
+    "insertText": "SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 21
+      },
+      "end": {
+        "line": 25,
+        "character": 24
+      }
+    }
+  },
+  {
+    "label": "VAR2-SAY (Numeric) (GROUP1::VAR2-SAY)",
+    "kind": 6,
+    "insertText": "GROUP1::VAR2-SAY",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 21
+      },
+      "end": {
+        "line": 25,
+        "character": 24
+      }
+    }
+  },
+  {
+    "label": "VAR3-SAY-VAR3 (Numeric) (VAR3-SAY-VAR3)",
+    "kind": 6,
+    "insertText": "VAR3-SAY-VAR3",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 21
+      },
+      "end": {
+        "line": 25,
+        "character": 24
+      }
+    }
+  },
+  {
+    "label": "SAY-INDEX (Numeric) (GROUP2::SAY-INDEX)",
+    "kind": 6,
+    "insertText": "GROUP2::SAY-INDEX",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 21
+      },
+      "end": {
+        "line": 25,
+        "character": 24
+      }
+    }
+  }
+]
