@@ -32,7 +32,7 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "proc1   ",
+    "label": "proc1",
     "kind": 3,
     "insertText": "proc1",
     "data": [
@@ -45,7 +45,7 @@
     ]
   },
   {
-    "label": "another-proc1   ",
+    "label": "another-proc1",
     "kind": 3,
     "insertText": "another-proc1",
     "data": [
@@ -58,7 +58,7 @@
     ]
   },
   {
-    "label": "func1   ",
+    "label": "func1",
     "kind": 3,
     "insertText": "func1",
     "data": [

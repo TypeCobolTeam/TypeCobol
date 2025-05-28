@@ -114,7 +114,8 @@ namespace TypeCobol.LanguageServer
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.VisualQualifiedName.ToString() : proc.Name;
                 var completionItem = new CompletionItem();
-                completionItem.label = string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams);
+                var paramLabel = string.Join(" ", new[] { inputParams, inoutParams, outputParams }.Where(p => p != null));
+                completionItem.label = string.Format("{0} {1}", procDisplayName, paramLabel).TrimEnd();
                 completionItem.insertText = procIsPublic
                     ? inputParams != null
                             ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Input])
