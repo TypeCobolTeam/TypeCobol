@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -99,6 +102,8 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 bool hasCodeForStatements = statementsForWorkingStorageVariables.HasContent || statementsForLocalStorageVariables.HasContent || statementsForLinkageVariables.HasContent;
                 string cobolStringForStatements = cobolStringBuilder.ToString();
 
+                var codeLines = compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines;
+
                 if (hasCodeForIndices)
                 {
                     // Insert COBOL code for indices
@@ -109,7 +114,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                         return ("Unable to generate indices: neither WORKING-STORAGE SECTION nor LOCAL-STORAGE SECTION could be found to add generated indices.", new List<TextEdit>());
                     }
 
-                    textEdits.Add(InsertAtEnd(targetSection, cobolStringForIndices));
+                    textEdits.Add(InsertAtEnd(codeLines, targetSection, cobolStringForIndices));
                 }
 
                 if (hasCodeForStatements)
@@ -117,11 +122,11 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     // Insert COBOL code for statements
                     if (_insertBeforeStatement && _location is not ProcedureDivision) // Avoid inserting outside PROCEDURE DIVISION
                     {
-                        textEdits.Add(InsertBefore(_location, cobolStringForStatements));
+                        textEdits.Add(InsertBefore(codeLines, _location, cobolStringForStatements));
                     }
                     else
                     {
-                        textEdits.Add(InsertAfter(_location, cobolStringForStatements));
+                        textEdits.Add(InsertAfter(codeLines, _location, cobolStringForStatements));
                     }
                 }
             }
@@ -143,7 +148,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             return visitor.GeneratedStatements;
         }
 
-        private static TextEdit InsertBefore(Node node, string code)
+        private static TextEdit InsertBefore(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
         {
             Debug.Assert(node.CodeElement != null);
             int line = node.CodeElement.Line; // On same line and inserted text ends with a line break
@@ -162,12 +167,33 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     // Start a new line and align text located beyond insertion point on its current column
                     newText = $"{Environment.NewLine}{newText}{BeginLine(tokensLine.IndicatorChar, character)}";
                 }
+                else
+                {
+                    // Nothing before insertion point, check for comments preceding the insertion line
+                    int lineIndex = line - 2; // Start with the index of the line before insertion line (line is 1-based whereas lineIndex is 0-based)
+                    while (lineIndex >= 0)
+                    {
+                        var codeLine = codeLines[lineIndex];
+                        if (codeLine.Type is CobolTextLineType.Comment or CobolTextLineType.MultiFormalizedComment)
+                        {
+                            // Insert before this comment/debug line
+                            line = lineIndex + 1;
+                            character = 0;
+                            lineIndex--;
+                        }
+                        else
+                        {
+                            // Source line: keep current insertion position
+                            break;
+                        }
+                    }
+                }
             }
 
             return TextEdit.Insert(new Position() { line = line, character = character }, newText);
         }
 
-        private static TextEdit InsertAfter(Node node, string code)
+        private static TextEdit InsertAfter(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
         {
             Debug.Assert(node.CodeElement != null);
             int line = node.CodeElement.LineEnd; // On same line and inserted text starts with a line break:
@@ -184,6 +210,26 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     // Align text located beyond insertion point on its current column
                     newText += BeginLine(tokensLine.IndicatorChar, character);
                 }
+                else
+                {
+                    // Nothing after insertion point, check for comments following the insertion line
+                    int lineIndex = line; // Initialize with insertion line which is 1-based, thus we start here with the index of the line after insertion line
+                    while (lineIndex < codeLines.Count)
+                    {
+                        var codeLine = codeLines[lineIndex];
+                        if (codeLine.Type is CobolTextLineType.Comment) // Do not consider MultiFormalizedComment as they are attached to the code following them
+                        {
+                            // Insert after this comment/debug line
+                            line = ++lineIndex;
+                            character = codeLine.Length;
+                        }
+                        else
+                        {
+                            // Source line: keep current insertion position
+                            break;
+                        }
+                    }
+                }
             }
 
             return TextEdit.Insert(new Position() { line = line, character = character }, newText);
@@ -192,6 +238,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         private static string BeginLine(char indicator, int column)
             => $"{CobolStringBuilder.SequenceNumber}{indicator}{new string(' ', column - CobolStringBuilder.SequenceNumber.Length - 1)}";
 
-        private static TextEdit InsertAtEnd(Node node, string code) => InsertAfter(node.GetLastNode(), code);
+        private static TextEdit InsertAtEnd(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
+            => InsertAfter(codeLines, node.GetLastNode(), code);
     }
 }
