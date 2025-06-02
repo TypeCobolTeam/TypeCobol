@@ -25,9 +25,9 @@ namespace TypeCobol.LanguageServer
 
             if (performNode?.SymbolTable != null)
             {
-                paragraphs = performNode.SymbolTable.GetParagraphs(StartsWithUserFilter);
-                sections = performNode.SymbolTable.GetSections(StartsWithUserFilter);
-                variables = performNode.SymbolTable.GetVariables(da => StartsWithUserFilter(da) && da.Picture != null && da.DataType == DataType.Numeric, SymbolTable.Scope.Program);
+                paragraphs = performNode.SymbolTable.GetParagraphs(MatchesWithUserFilter);
+                sections = performNode.SymbolTable.GetSections(MatchesWithUserFilter);
+                variables = performNode.SymbolTable.GetVariables(da => MatchesWithUserFilter(da) && da.Picture != null && da.DataType == DataType.Numeric, SymbolTable.Scope.Program);
             }
 
             if (paragraphs != null)

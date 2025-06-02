@@ -25,7 +25,7 @@ namespace TypeCobol.LanguageServer
                 return completionItems;
 
             var variables = node.SymbolTable
-                .GetVariables(d => StartsWithUserFilter(d) && _dataDefinitionFilter(d), SymbolTable.Scope.Program)
+                .GetVariables(d => MatchesWithUserFilter(d) && _dataDefinitionFilter(d), SymbolTable.Scope.Program)
                 .Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
             completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions));
 

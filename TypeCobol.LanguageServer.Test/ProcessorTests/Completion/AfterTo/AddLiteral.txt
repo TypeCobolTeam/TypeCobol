@@ -1,0 +1,195 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest: matching variables and literal type
+       01 SAY-VAR1              PIC 9.
+       01 VAR2-SAY              PIC 99.
+       01 VAR3-SAY-VAR3         PIC 9(2).
+       01 SAY-POINTER USAGE POINTER.
+       01 SAY-POINTER-32 USAGE POINTER-32.
+       01 VAR4-SAY              PIC X.
+       01 GROUP1 OCCURS 10 INDEXED BY SAY-INDEX
+                                PIC X.
+       01 SAY-FUNCTION-POINTER USAGE FUNCTION-POINTER.
+      * should not suggest (not literal type) but does
+       01 VAR5-SAY              PIC X.
+       01 GROUP2-SAY.
+          05 VAR6               PIC 9
+      * should not suggest: not matching, 88
+       01 VAR7SAY               PIC 9.
+       01 GROUP3.
+          05 VAR8               PIC 9.
+             88 SAY88-YES              VALUE 1.
+             88 SAY88-NO               VALUE 0.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           ADD 1 TO SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P-SAY-HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S-SAY-CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":27,"character":23}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-VAR1 (Numeric) (SAY-VAR1)",
+    "kind": 6,
+    "insertText": "SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "VAR2-SAY (Numeric) (VAR2-SAY)",
+    "kind": 6,
+    "insertText": "VAR2-SAY",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "VAR3-SAY-VAR3 (Numeric) (VAR3-SAY-VAR3)",
+    "kind": 6,
+    "insertText": "VAR3-SAY-VAR3",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-POINTER (Alphanumeric) (SAY-POINTER)",
+    "kind": 6,
+    "insertText": "SAY-POINTER",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-POINTER-32 (Alphanumeric) (SAY-POINTER-32)",
+    "kind": 6,
+    "insertText": "SAY-POINTER-32",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "VAR4-SAY (Alphanumeric) (VAR4-SAY)",
+    "kind": 6,
+    "insertText": "VAR4-SAY",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-INDEX (Numeric) (GROUP1::SAY-INDEX)",
+    "kind": 6,
+    "insertText": "GROUP1::SAY-INDEX",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-FUNCTION-POINTER (Alphanumeric) (SAY-FUNCTION-POINTER)",
+    "kind": 6,
+    "insertText": "SAY-FUNCTION-POINTER",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "VAR5-SAY (Alphanumeric) (VAR5-SAY)",
+    "kind": 6,
+    "insertText": "VAR5-SAY",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "GROUP2-SAY (Alphanumeric) (GROUP2-SAY)",
+    "kind": 6,
+    "insertText": "GROUP2-SAY",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  }
+]

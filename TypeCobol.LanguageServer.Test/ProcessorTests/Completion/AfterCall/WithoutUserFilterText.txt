@@ -1,0 +1,89 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       PROCEDURE DIVISION.
+       main.
+           CALL 
+           GOBACK
+           .
+       DECLARE PROCEDURE proc1 PRIVATE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE another-proc1 PRIVATE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE func1 PRIVATE.
+       END-DECLARE.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcNested1.
+       END PROGRAM ProcNested1.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc1.
+       END PROGRAM NestedProc1.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. AnotherNested.
+       END PROGRAM AnotherNested.
+       
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":4,"character":16}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "proc1   ",
+    "kind": 3,
+    "insertText": "proc1",
+    "data": [
+      null,
+      {
+        "label": "TCOMFL06.proc1",
+        "parameters": []
+      },
+      null
+    ]
+  },
+  {
+    "label": "another-proc1   ",
+    "kind": 3,
+    "insertText": "another-proc1",
+    "data": [
+      null,
+      {
+        "label": "TCOMFL06.another-proc1",
+        "parameters": []
+      },
+      null
+    ]
+  },
+  {
+    "label": "func1   ",
+    "kind": 3,
+    "insertText": "func1",
+    "data": [
+      null,
+      {
+        "label": "TCOMFL06.func1",
+        "parameters": []
+      },
+      null
+    ]
+  },
+  {
+    "label": "TCOMFL06",
+    "kind": 9
+  },
+  {
+    "label": "ProcNested1",
+    "kind": 9
+  },
+  {
+    "label": "NestedProc1",
+    "kind": 9
+  },
+  {
+    "label": "AnotherNested",
+    "kind": 9
+  }
+]

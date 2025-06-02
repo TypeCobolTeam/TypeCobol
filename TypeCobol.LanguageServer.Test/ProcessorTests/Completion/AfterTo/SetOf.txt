@@ -1,0 +1,65 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest: matching variables and sender type
+       01 VAR1                  PIC 9.
+       01 GROUP1.
+          05 VAR2               PIC 99.
+       01 VAR3                  PIC 9(2).
+       01 GROUP2 OCCURS 10 INDEXED BY VAR_INDEX
+                                PIC X.
+      * should not suggest: not matching variables, 88, not sender type
+       01 GROUP3.
+          05 VAR4               PIC X.
+             88 VAR88-YES              VALUE 1.
+             88 VAR88-NO               VALUE 0.
+       01 SAY_POINTER USAGE POINTER.
+       01 SAY_POINTER-32 USAGE POINTER-32.
+       01 VAR5                  PIC X.
+       01 SAY_FUNCTION-POINTER USAGE FUNCTION-POINTER.
+       01 GROUP4.
+          05 SENDER                PIC 9.
+       01 GROUP5.
+          05 SENDER                PIC X.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           SET SENDER OF GROUP4 TO 
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":27,"character":35}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "VAR1 (Numeric) (VAR1)",
+    "kind": 6,
+    "insertText": "VAR1"
+  },
+  {
+    "label": "VAR2 (Numeric) (GROUP1::VAR2)",
+    "kind": 6,
+    "insertText": "GROUP1::VAR2"
+  },
+  {
+    "label": "VAR3 (Numeric) (VAR3)",
+    "kind": 6,
+    "insertText": "VAR3"
+  },
+  {
+    "label": "VAR_INDEX (Numeric) (GROUP2::VAR_INDEX)",
+    "kind": 6,
+    "insertText": "GROUP2::VAR_INDEX"
+  }
+]

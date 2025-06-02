@@ -75,7 +75,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"ambiguous (Alphanumeric) (Group1::Level1::ambiguous)\",\"kind\":6,\"insertText\":\"Group1::Level1::ambiguous\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"ambiguous (Alphanumeric) (Group1::Level2::ambiguous)\",\"kind\":6,\"insertText\":\"Group1::Level2::ambiguous\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"ambiguous (Alphanumeric) (Group1::Level1::ambiguous)\",\"kind\":6,\"insertText\":\"Group1::Level1::ambiguous\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"ambiguous (Alphanumeric) (Group1::Level2::ambiguous)\",\"kind\":6,\"insertText\":\"Group1::Level2::ambiguous\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"non-ambiguous-1 (Alphanumeric) (Group1::Level1::non-ambiguous-1)\",\"kind\":6,\"insertText\":\"Group1::Level1::non-ambiguous-1\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}},{\"label\":\"non-ambiguous-2 (Alphanumeric) (Group1::Level2::non-ambiguous-2)\",\"kind\":6,\"insertText\":\"Group1::Level2::non-ambiguous-2\",\"data\":{\"start\":{\"line\":12,\"character\":19},\"end\":{\"line\":12,\"character\":22}}}]}}"
     },
     {
       "category": 0,

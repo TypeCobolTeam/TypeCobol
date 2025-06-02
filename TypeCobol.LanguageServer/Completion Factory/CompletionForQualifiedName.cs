@@ -170,7 +170,7 @@ namespace TypeCobol.LanguageServer
                     {
                         System.Diagnostics.Debug.Assert(child is DataDefinition);
                         var data = (DataDefinition)child;
-                        if (StartsWithUserFilter(data))
+                        if (MatchesWithUserFilter(data))
                         {
                             childrenCandidates.Add(data);
                         }
