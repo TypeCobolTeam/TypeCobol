@@ -149,6 +149,7 @@ namespace TypeCobol.LanguageServer
                 ISet<DataDefinition> tempDataDefinitions = new HashSet<DataDefinition>();
                 foreach (var compatibleDataType in compatibleDataTypes)
                 {
+                    //TODO proposals are ordered by DataType. Change to alphabetic order (see #2726)
                     tempDataDefinitions = node.SymbolTable.GetVariablesByType(compatibleDataType, tempDataDefinitions, SymbolTable.Scope.Program);
                 }
 
@@ -159,29 +160,31 @@ namespace TypeCobol.LanguageServer
                 potentialVariables = node.SymbolTable.GetVariables(variablePredicate, SymbolTable.Scope.Program);
             }
 
+            // Consider only the potential variables matching the user filter
+            IEnumerable<DataDefinition> matchingVariables = potentialVariables.Where(MatchesWithUserFilter);
+
             IEnumerable<DataDefinition> variablesWithoutSender;
             //Exclude all sending variables
             if (senderDataDefinitions != null)
             {
-                variablesWithoutSender = potentialVariables.Except(senderDataDefinitions.Values);
+                variablesWithoutSender = matchingVariables.Except(senderDataDefinitions.Values);
             }
             //Exclude sending variable
             else if (firstSendingVar != null)
             {
-                variablesWithoutSender = potentialVariables.Where(v => v != firstSendingVar);
+                variablesWithoutSender = matchingVariables.Where(v => v != firstSendingVar);
             }
             //No sending variable resolved
             else
             {
-                variablesWithoutSender = potentialVariables;
+                variablesWithoutSender = matchingVariables;
             }
 
             var variables = variablesWithoutSender
                 //Retrieve DataDefinitionPath which useful only if we need to qualify or use Type
                 //TODO Completion is already fast with this call, but to improve :
                 //don't do this if there is no need to qualify or let method CreateCompletionItemsForVariableSetAndDisambiguate call this if necessary
-                .SelectMany(v => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(v.Name)))
-                .Where(pair => StartsWithUserFilter(pair.Value));
+                .SelectMany(v => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(v.Name)));
 
             return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions);
         }

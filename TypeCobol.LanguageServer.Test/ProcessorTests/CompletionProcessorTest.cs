@@ -31,7 +31,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
             // Parse test data file
             var folder = PlatformUtils.GetPathForProjectFile(RELATIVE_PATH, Path.GetFullPath(ROOT_PATH));
-            var testDataFilePath = $"{Path.Combine(folder, sourceFileName)}.txt";
+            var sourceFilePath = Path.Combine(sourceFileName.Split('_'));
+            var testDataFilePath = $"{Path.Combine(folder, sourceFilePath)}.txt";
             var testData = LanguageServerTestUtils.ParseMultiplePartsContent(testDataFilePath);
             Debug.Assert(testData.Count == 3);
             string cobolString = testData[0];
@@ -54,7 +55,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             var completionItems = _processor.ComputeProposals(compilationUnit, position);
             string actualProposals = JToken.FromObject(completionItems, new JsonSerializer() { NullValueHandling = NullValueHandling.Ignore })
                 .ToString(Formatting.Indented)
-                + Environment.NewLine;
+            + Environment.NewLine;
 
             // Compare to expected
             TestUtils.CompareContent(sourceFileName, actualProposals, expectedProposals);
@@ -65,5 +66,86 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void CompletionAfterUnsupportedKeyword() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterCall_WithoutUserFilterText() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterCall_WithUserFilterText() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterDisplay_NamesUsingHyphens() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterDisplay_NamesUsingUnderscores() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterInto_String() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterInto_Unstring() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterMove_NamesUsingHyphens() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterMove_NamesUsingUnderscores() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_IfAddress() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_Multiple() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_NoResult() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_SetAddress() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_Variable() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterPerform_NamesUsingHyphens() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterPerform_NamesUsingUnderscores() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterSet_NamesUsingHyphens() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterSet_NamesUsingUnderscores() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_AddLiteral() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_AddVariable() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_Inspect() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_MoveLiteral() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_MoveSpaces() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_MoveVariable() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_MoveZero() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_Set() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_SetNothingAfterTo() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_SetOf() => ExecuteTest();
     }
 }

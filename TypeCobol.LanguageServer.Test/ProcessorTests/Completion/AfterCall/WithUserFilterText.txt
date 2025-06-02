@@ -1,0 +1,70 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       PROCEDURE DIVISION.
+       main.
+           CALL proc
+           GOBACK
+           .
+       DECLARE PROCEDURE proc1 PRIVATE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE another-proc1 PRIVATE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE func1 PRIVATE.
+       END-DECLARE.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcNested1.
+       END PROGRAM ProcNested1.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc1.
+       END PROGRAM NestedProc1.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. AnotherNested.
+       END PROGRAM AnotherNested.
+       
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":4,"character":20}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "proc1   ",
+    "kind": 3,
+    "insertText": "proc1",
+    "data": [
+      {
+        "start": {
+          "line": 4,
+          "character": 16
+        },
+        "end": {
+          "line": 4,
+          "character": 20
+        }
+      },
+      {
+        "label": "TCOMFL06.proc1",
+        "parameters": []
+      },
+      null
+    ]
+  },
+  {
+    "label": "ProcNested1",
+    "kind": 9,
+    "data": {
+      "start": {
+        "line": 4,
+        "character": 16
+      },
+      "end": {
+        "line": 4,
+        "character": 20
+      }
+    }
+  }
+]

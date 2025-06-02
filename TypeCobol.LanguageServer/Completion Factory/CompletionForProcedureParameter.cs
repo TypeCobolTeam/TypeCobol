@@ -165,7 +165,7 @@ namespace TypeCobol.LanguageServer
 
             //Convert potential variables into actual CompletionItems
             var variables = potentialVariablesForCompletion
-                .Where(StartsWithUserFilter) //Filter on user text
+                .Where(MatchesWithUserFilter) //Filter on user text
                 .Distinct()
                 .SelectMany(d => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(d.Name)));
             var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions);

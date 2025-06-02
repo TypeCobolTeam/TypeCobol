@@ -1,0 +1,207 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should be suggested
+       01 say_var1      PIC 9.
+       01 var2_say      PIC 9.
+       01 var3_say_var3 PIC 9.
+      * should not (does not contain 'say', not numeric)
+       01 item_numeric  PIC 9.
+       01 item_text_1   PIC X.
+       01 item_text_2   PIC X.
+       PROCEDURE DIVISION.
+       main.
+           PERFORM say
+           GOBACK
+           .
+       s1_say_hello_world SECTION.
+       p1_say_hello.
+           DISPLAY "hello"
+           .
+       p2_say_world.
+           DISPLAY "world"
+           .
+       s2_say_goodbye_end SECTION.
+       p1_say_goodbye.
+           DISPLAY "goodbye"
+           .
+       p2_say_end.
+           DISPLAY "end of PGM"
+           .
+       say_something.
+           DISPLAY "something"
+           .
+       say_nothing SECTION.
+           CONTINUE
+           .
+       do_something SECTION.
+       one_way.
+           MOVE item-text-1 TO item-text-2
+           .
+       and_the_other.
+           MOVE item-text-2 TO item-text-1
+           .
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":14,"character":22}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "p1_say_hello",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "p2_say_world",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "p1_say_goodbye",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "p2_say_end",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "say_something",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "s1_say_hello_world",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "s2_say_goodbye_end",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "say_nothing",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "say_var1 PIC9",
+    "kind": 6,
+    "insertText": "say_var1",
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "var2_say PIC9",
+    "kind": 6,
+    "insertText": "var2_say",
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "var3_say_var3 PIC9",
+    "kind": 6,
+    "insertText": "var3_say_var3",
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  }
+]

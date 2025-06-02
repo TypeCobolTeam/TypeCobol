@@ -29,7 +29,7 @@ namespace TypeCobol.LanguageServer
             if (node.SymbolTable != null)
             {
                 procedures = node.SymbolTable.GetFunctions(StartsWithUserFilter, SymbolTable.Scope.Intrinsic);
-                variables = node.SymbolTable.GetVariables(da => StartsWithUserFilter(da) && da.Picture != null && da.DataType == DataType.Alphanumeric, SymbolTable.Scope.Program);
+                variables = node.SymbolTable.GetVariables(da => MatchesWithUserFilter(da) && da.Picture != null && da.DataType == DataType.Alphanumeric, SymbolTable.Scope.Program);
             }
             else
             {
