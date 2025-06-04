@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.CodeElements;
+﻿using System.Text;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
@@ -78,31 +79,29 @@ namespace TypeCobol.LanguageServer
             Token callToken = node.CodeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL);
             Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = GetParamsUsingMatchingCase(callToken);
 
+            string inputLabel = paramWithCase[ParameterDescription.PassingTypes.Input];
+            string inoutLabel = paramWithCase[ParameterDescription.PassingTypes.InOut];
+            string outputLabel = paramWithCase[ParameterDescription.PassingTypes.Output];
+
             foreach (var proc in procedures)
             {
                 string inputParams = null, outputParams = null, inoutParams = null;
 
                 if (proc.Profile != null)
                 {
-                    if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
-                        inputParams = string.Format("{0} {1}",
-                            paramWithCase[ParameterDescription.PassingTypes.Input],
-                            string.Join(", ",
-                                proc.Profile.InputParameters.Select(
-                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                    if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
-                        inoutParams = string.Format("{0} {1}",
-                            paramWithCase[ParameterDescription.PassingTypes.InOut],
-                            string.Join(", ",
-                                proc.Profile.InoutParameters.Select(
-                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                    if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
-                        outputParams = string.Format("{0} {1}",
-                            paramWithCase[ParameterDescription.PassingTypes.Output],
-                            string.Join(", ",
-                                proc.Profile.OutputParameters.Select(
-                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                    inputParams = FormatParameters(inputLabel, proc.Profile.InputParameters);
+                    inoutParams = FormatParameters(inoutLabel, proc.Profile.InoutParameters);
+                    outputParams = FormatParameters(outputLabel, proc.Profile.OutputParameters);
 
+                    static string FormatParameters(string label, IList<ParameterDescription> parameters)
+                    {
+                        if (parameters == null || parameters.Count == 0)
+                        {
+                            return null;
+                        }
+                        var parameterList = string.Join(", ", parameters.Select(p => $"{p.DataName}({p.DataType.Name})"));
+                        return $"{label} {parameterList}";
+                    }
                 }
                 bool procIsPublic = false;
                 if (enablePublicFlag)
@@ -114,22 +113,23 @@ namespace TypeCobol.LanguageServer
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.VisualQualifiedName.ToString() : proc.Name;
                 var completionItem = new CompletionItem();
-                completionItem.label = string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams);
-                completionItem.insertText = procIsPublic
-                    ? inputParams != null
-                            ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Input])
-                            : inoutParams != null
-                                ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.InOut])
-                                : outputParams != null
-                                    ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Output])
-                                    : string.Format("{0}::{1}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
-                    : inputParams != null
-                        ? proc.Name + " " + paramWithCase[ParameterDescription.PassingTypes.Input]
-                        : inoutParams != null
-                            ? proc.Name + paramWithCase[ParameterDescription.PassingTypes.InOut]
-                            : outputParams != null
-                                ? proc.Name + " " + paramWithCase[ParameterDescription.PassingTypes.Output]
-                                : proc.Name;
+                // Completion item's label is procedure name followed by the not null parameters
+                var builder = new StringBuilder(procDisplayName);
+                AppendIf(inputParams, inputParams != null);
+                AppendIf(inoutParams, inoutParams != null);
+                AppendIf(outputParams, outputParams != null);
+                completionItem.label = builder.ToString();
+                builder.Clear();
+                // Completion item's insertText is (qualified) procedure name followed by the 1st meaningful parameter label
+                builder.Append(procIsPublic ? $"{proc.VisualQualifiedName.Tail}::{proc.VisualQualifiedName.Head}" : proc.Name);
+                if (!AppendIf(inputLabel, inputParams != null))
+                {
+                    if (!AppendIf(inoutLabel, inoutParams != null))
+                    {
+                        AppendIf(outputLabel, outputParams != null);
+                    }
+                }
+                completionItem.insertText = builder.ToString();
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
                 completionItem.data = new object[3];
@@ -140,6 +140,19 @@ namespace TypeCobol.LanguageServer
                 if (functionDeclarationSignatureDictionary.TryAdd(signatureInformation, proc))
                 {
                     completionItems.Add(completionItem);
+                }
+
+                bool AppendIf(string str, bool condition)
+                {
+                    if (condition)
+                    {
+                        builder.Append(" ");
+                        builder.Append(str);
+
+                        return true;
+                    }
+
+                    return false;
                 }
             }
 
