@@ -68,6 +68,9 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void CompletionAfterUnsupportedKeyword() => ExecuteTest();
 
         [TestMethod]
+        public void CompletionAfterUserDefinedWord() => ExecuteTest();
+
+        [TestMethod]
         public void AfterCall_WithoutUserFilterText() => ExecuteTest();
 
         [TestMethod]
@@ -147,5 +150,29 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void AfterTo_SetOf() => ExecuteTest();
+
+        [TestMethod]
+#if EUROINFO_RULES
+        public void AtBeginningOfLine_KeywordNoUserFilterEI() => ExecuteTest();
+#else
+        public void AtBeginningOfLine_KeywordNoUserFilter() => ExecuteTest();
+#endif
+
+        [TestMethod]
+#if EUROINFO_RULES
+        public void AtBeginningOfLine_KeywordUserFilter1EI() => ExecuteTest();
+#else
+        public void AtBeginningOfLine_KeywordUserFilter1() => ExecuteTest();
+#endif
+
+        [TestMethod]
+#if EUROINFO_RULES
+        public void AtBeginningOfLine_KeywordUserFilter2EI() => ExecuteTest();
+#else
+        public void AtBeginningOfLine_KeywordUserFilter2() => ExecuteTest();
+#endif
+
+        [TestMethod]
+        public void AtBeginningOfLine_KeywordUserFilter3() => ExecuteTest();
     }
 }

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace TypeCobol.Compiler.Scanner
 {
-    internal static class TokenUtils
+    public static class TokenUtils
     {
         private static readonly TokenFamily[] _TokenFamilyFromTokenType;
         private static readonly string?[] _TokenStringFromTokenType;

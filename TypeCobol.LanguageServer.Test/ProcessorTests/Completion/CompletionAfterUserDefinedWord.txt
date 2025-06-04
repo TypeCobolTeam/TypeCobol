@@ -1,0 +1,32 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X.
+       01 other-data PIC X.
+       01 var2 PIC 9.
+       PROCEDURE DIVISION.
+           STR 
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":8,"character":15}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "var1 (Alphanumeric) (var1)",
+    "kind": 6,
+    "insertText": "var1"
+  },
+  {
+    "label": "other-data (Alphanumeric) (other-data)",
+    "kind": 6,
+    "insertText": "other-data"
+  },
+  {
+    "label": "var2 (Numeric) (var2)",
+    "kind": 6,
+    "insertText": "var2"
+  }
+]

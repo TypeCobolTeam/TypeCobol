@@ -2,6 +2,7 @@
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 using Range = TypeCobol.LanguageServer.VsCodeProtocol.Range;
@@ -21,7 +22,7 @@ namespace TypeCobol.LanguageServer.Processor
         {
             List<CompletionItem> items;
 
-            var wrappedCodeElements = TypeCobolServer.CodeElementFinder(compilationUnit, position);
+            var wrappedCodeElements = TypeCobolServer.CodeElementFinder(compilationUnit, position, out var cursorLine);
             if (wrappedCodeElements == null)
                 return null;
 
@@ -107,16 +108,26 @@ namespace TypeCobol.LanguageServer.Processor
             }
             else
             {
-                //If no known keyword has been found, let's try to get the context and return available variables. 
-                if (matchingCodeElement == null && wrappedCodeElements.Any())
+                //If no known keyword has been found, let's try to get the context.
+                if (matchingCodeElement == null && wrappedCodeElements.Any() && cursorLine != null)
                 {
-                    userFilterToken =
-                        wrappedCodeElements.First().ArrangedConsumedTokens.FirstOrDefault(
-                            t =>
-                                position.character <= t.StopIndex + 1 && position.character > t.StartIndex
-                                && t.Line == position.line + 1
-                                && t.TokenType == TokenType.UserDefinedWord); //Get the userFilterToken to filter the results
-                    items = new CompletionForVariable(userFilterToken, _ => true).ComputeProposals(compilationUnit, wrappedCodeElements.First());
+                    bool insideProcedureDivision = !(cursorLine.ScanState?.InsideDataDivision ?? false);
+                    if (insideProcedureDivision && position.character >= (int)CobolFormatAreas.End_A && CursorIsAtTheBeginningOfTheLine())
+                    {
+                        // Suggest statement-starting keywords
+                        items = new CompletionForKeywords(userFilterToken).ComputeProposals(compilationUnit, wrappedCodeElements.First());
+                    }
+                    else
+                    {
+                        // Default to variables
+                        userFilterToken =
+                            wrappedCodeElements.First().ArrangedConsumedTokens.FirstOrDefault(
+                                t =>
+                                    position.character <= t.StopIndex + 1 && position.character > t.StartIndex
+                                                                          && t.Line == position.line + 1
+                                                                          && t.TokenType == TokenType.UserDefinedWord); //Get the userFilterToken to filter the results
+                        items = new CompletionForVariable(userFilterToken, _ => true).ComputeProposals(compilationUnit, wrappedCodeElements.First());
+                    }
                 }
                 else
                 {
@@ -143,6 +154,31 @@ namespace TypeCobol.LanguageServer.Processor
             }
 
             return items;
+
+            // Check what is before cursor, also set userFilterToken when possible
+            bool CursorIsAtTheBeginningOfTheLine()
+            {
+                var tokensBeforeCursor = cursorLine.SourceTokens.Where(t => t.StartIndex < position.character && t.TokenType != TokenType.SpaceSeparator).ToList();
+
+                if (tokensBeforeCursor.Count == 0)
+                {
+                    // Nothing before cursor
+                    userFilterToken = null;
+                    return true;
+                }
+
+                if (tokensBeforeCursor.Count == 1)
+                {
+                    // Check whether token ends before or after cursor and keep as userFilterToken if it is a UserDefinedWord
+                    var tokenBeforeCursor = tokensBeforeCursor[0];
+                    userFilterToken = tokenBeforeCursor.TokenType == TokenType.UserDefinedWord ? tokenBeforeCursor : null;
+                    return position.character <= tokenBeforeCursor.StopIndex + 1;
+                }
+
+                // Not at beginning of line
+                userFilterToken = null;
+                return false;
+            }
         }
     }
 }

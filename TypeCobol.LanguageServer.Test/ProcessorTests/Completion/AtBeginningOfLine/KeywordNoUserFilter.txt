@@ -1,0 +1,277 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X.
+       01 other-data PIC X.
+       01 var2 PIC 9.
+       PROCEDURE DIVISION.
+           
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":8,"character":11}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "ACCEPT",
+    "kind": 14
+  },
+  {
+    "label": "ADD",
+    "kind": 14
+  },
+  {
+    "label": "ALLOCATE",
+    "kind": 14
+  },
+  {
+    "label": "ALTER",
+    "kind": 14
+  },
+  {
+    "label": "CALL",
+    "kind": 14
+  },
+  {
+    "label": "CANCEL",
+    "kind": 14
+  },
+  {
+    "label": "CLOSE",
+    "kind": 14
+  },
+  {
+    "label": "COMPUTE",
+    "kind": 14
+  },
+  {
+    "label": "CONTINUE",
+    "kind": 14
+  },
+  {
+    "label": "DELETE",
+    "kind": 14
+  },
+  {
+    "label": "DISPLAY",
+    "kind": 14
+  },
+  {
+    "label": "DIVIDE",
+    "kind": 14
+  },
+  {
+    "label": "ELSE",
+    "kind": 14
+  },
+  {
+    "label": "END-ADD",
+    "kind": 14
+  },
+  {
+    "label": "END-CALL",
+    "kind": 14
+  },
+  {
+    "label": "END-COMPUTE",
+    "kind": 14
+  },
+  {
+    "label": "END-DELETE",
+    "kind": 14
+  },
+  {
+    "label": "END-DIVIDE",
+    "kind": 14
+  },
+  {
+    "label": "END-EVALUATE",
+    "kind": 14
+  },
+  {
+    "label": "END-IF",
+    "kind": 14
+  },
+  {
+    "label": "END-INVOKE",
+    "kind": 14
+  },
+  {
+    "label": "END-JSON",
+    "kind": 14
+  },
+  {
+    "label": "END-MULTIPLY",
+    "kind": 14
+  },
+  {
+    "label": "END-PERFORM",
+    "kind": 14
+  },
+  {
+    "label": "END-READ",
+    "kind": 14
+  },
+  {
+    "label": "END-RETURN",
+    "kind": 14
+  },
+  {
+    "label": "END-REWRITE",
+    "kind": 14
+  },
+  {
+    "label": "END-SEARCH",
+    "kind": 14
+  },
+  {
+    "label": "END-START",
+    "kind": 14
+  },
+  {
+    "label": "END-STRING",
+    "kind": 14
+  },
+  {
+    "label": "END-SUBTRACT",
+    "kind": 14
+  },
+  {
+    "label": "END-UNSTRING",
+    "kind": 14
+  },
+  {
+    "label": "END-WRITE",
+    "kind": 14
+  },
+  {
+    "label": "END-XML",
+    "kind": 14
+  },
+  {
+    "label": "ENTRY",
+    "kind": 14
+  },
+  {
+    "label": "EVALUATE",
+    "kind": 14
+  },
+  {
+    "label": "EXIT",
+    "kind": 14
+  },
+  {
+    "label": "FREE",
+    "kind": 14
+  },
+  {
+    "label": "GOBACK",
+    "kind": 14
+  },
+  {
+    "label": "GO",
+    "kind": 14
+  },
+  {
+    "label": "IF",
+    "kind": 14
+  },
+  {
+    "label": "INITIALIZE",
+    "kind": 14
+  },
+  {
+    "label": "INSPECT",
+    "kind": 14
+  },
+  {
+    "label": "INVOKE",
+    "kind": 14
+  },
+  {
+    "label": "JSON",
+    "kind": 14
+  },
+  {
+    "label": "MERGE",
+    "kind": 14
+  },
+  {
+    "label": "MOVE",
+    "kind": 14
+  },
+  {
+    "label": "MULTIPLY",
+    "kind": 14
+  },
+  {
+    "label": "OPEN",
+    "kind": 14
+  },
+  {
+    "label": "PERFORM",
+    "kind": 14
+  },
+  {
+    "label": "READ",
+    "kind": 14
+  },
+  {
+    "label": "RELEASE",
+    "kind": 14
+  },
+  {
+    "label": "RETURN",
+    "kind": 14
+  },
+  {
+    "label": "REWRITE",
+    "kind": 14
+  },
+  {
+    "label": "SEARCH",
+    "kind": 14
+  },
+  {
+    "label": "SET",
+    "kind": 14
+  },
+  {
+    "label": "SORT",
+    "kind": 14
+  },
+  {
+    "label": "START",
+    "kind": 14
+  },
+  {
+    "label": "STOP",
+    "kind": 14
+  },
+  {
+    "label": "STRING",
+    "kind": 14
+  },
+  {
+    "label": "SUBTRACT",
+    "kind": 14
+  },
+  {
+    "label": "UNSTRING",
+    "kind": 14
+  },
+  {
+    "label": "WHEN",
+    "kind": 14
+  },
+  {
+    "label": "WRITE",
+    "kind": 14
+  },
+  {
+    "label": "XML",
+    "kind": 14
+  }
+]
