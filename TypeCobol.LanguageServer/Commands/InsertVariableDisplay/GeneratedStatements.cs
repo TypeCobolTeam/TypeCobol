@@ -292,10 +292,10 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     wordBuilder.Append("')");
                 }
 
-                // Do not attempt to represent reference modifier when it is not a direct access (access using the direct parent)
-                if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
+                // Do not attempt to represent reference modifier when it is not a direct access (i.e. not accessing using the immediate parent)
+                // or too complex (using an expression when accessing an anonymous data located inside an OCCURS)
+                if (Accessor.Data == Target.Parent && Accessor.ReferenceModifier is { Count: 1 })
                 {
-                    Debug.Assert(Accessor.ReferenceModifier.Count == 1);
                     wordBuilder.Append(' ');
                     wordBuilder.Append(Accessor.ReferenceModifier[0]);
                 }
