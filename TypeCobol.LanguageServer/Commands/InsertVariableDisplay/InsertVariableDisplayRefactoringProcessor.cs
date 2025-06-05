@@ -195,6 +195,11 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
         private static TextEdit InsertAfter(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
         {
+            // Do not insert inside statements having a body (statement with nested statements)
+            // -> Reposition at the end of the whole statement (on its matching END-xxx node).
+            if (node is StatementWithBody) node = node.GetLastNode();
+
+            Debug.Assert(node != null);
             Debug.Assert(node.CodeElement != null);
             int line = node.CodeElement.LineEnd; // On same line and inserted text starts with a line break:
             string newText = Environment.NewLine + code;
