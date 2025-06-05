@@ -15,11 +15,11 @@ namespace TypeCobol.LanguageServer
         /// Beware of complex scenarios involving multiple chained OF.
         /// Chain example: firstVariable OF subGroupVariable OF variableBeforeOf OF [completion requested]
         /// </summary>
-        /// <param name="node">Current node</param>
-        /// <param name="variableNameBeforeOf">Token with the name of the variable before the OF to be completed</param>
-        /// <param name="firstVariableName">Token with the name of the first variable in the OF chain</param>
-        /// <param name="options">Compiler options</param>
-        /// <returns></returns>
+        /// <param name="node">The current node</param>
+        /// <param name="variableNameBeforeOf">The token with the name of the variable before the OF to be completed</param>
+        /// <param name="firstVariableName">The token with the name of the first variable in the OF chain</param>
+        /// <param name="options">The compiler options</param>
+        /// <returns>The completion items as a (not null) List</returns>
         private List<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameBeforeOf, Token firstVariableName, TypeCobolOptions options)
         {
             var completionItems = new List<CompletionItem>();
