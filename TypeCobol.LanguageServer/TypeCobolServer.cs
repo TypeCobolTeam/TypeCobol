@@ -7,6 +7,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.LanguageServer.Commands;
 using TypeCobol.LanguageServer.Context;
@@ -80,7 +81,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool NoCopyDependencyWatchers { get; set; }
 
-        public static List<CodeElementWrapper> CodeElementFinder(CompilationUnit compilationUnit, Position position)
+        public static List<CodeElementWrapper> CodeElementFinder(CompilationUnit compilationUnit, Position position, out ICodeElementsLine cursorLine)
         {
             List<CodeElement> codeElements = new List<CodeElement>();
             List<CodeElement> ignoredCodeElements = new List<CodeElement>();
@@ -89,10 +90,10 @@ namespace TypeCobol.LanguageServer
             int linesCount = compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count;
             if (linesCount != 0 && lineIndex < linesCount)
             {
+                cursorLine = compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
                 while (codeElements.Count == 0 && lineIndex >= 0)
                 {
-                    var codeElementsLine =
-                        compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
+                    var codeElementsLine = compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
 
                     if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
                     {
@@ -120,6 +121,10 @@ namespace TypeCobol.LanguageServer
 
                 if (!codeElements.Any(c => c.ConsumedTokens.Any(t => t.Line <= position.line + 1)))
                     return null; //If nothing is found near the cursor we can't do anything
+            }
+            else
+            {
+                cursorLine = null;
             }
 
             //Create a list of CodeElementWrapper in order to loose the ConsumedTokens ref. 
@@ -437,7 +442,7 @@ namespace TypeCobol.LanguageServer
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
             System.Diagnostics.Debug.Assert(docContext.FileCompiler.CompilationResultsForProgram != null);
 
-            var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler.CompilationResultsForProgram, parameters.position);
+            var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler.CompilationResultsForProgram, parameters.position, out _);
             if (wrappedCodeElements == null)
                 return resultHover;
 
@@ -568,7 +573,7 @@ namespace TypeCobol.LanguageServer
             if (docContext.FileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
-            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler.CompilationResultsForProgram, parameters.position)?.FirstOrDefault();
+            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler.CompilationResultsForProgram, parameters.position, out _)?.FirstOrDefault();
             if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
