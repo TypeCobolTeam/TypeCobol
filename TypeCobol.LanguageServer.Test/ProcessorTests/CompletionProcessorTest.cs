@@ -107,7 +107,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterOf_SetAddress() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_SeveralParent() => ExecuteTest();
+        public void AfterOf_SeveralParents() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_Variable() => ExecuteTest();

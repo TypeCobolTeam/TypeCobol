@@ -42,7 +42,7 @@ namespace TypeCobol.LanguageServer
                 Node parentNode = firstVariable.Parent;
                 while (parentNode is DataDefinition parentDataDefinition)
                 {
-                    if (parentDataDefinition.Name == variableNameBeforeOf.Text)
+                    if (parentDataDefinition.Name.Equals(variableNameBeforeOf.Text, StringComparison.OrdinalIgnoreCase))
                     {
                         // Variable before OF is reached in the chain => start matching parent
                         matching = true;
@@ -95,15 +95,10 @@ namespace TypeCobol.LanguageServer
                 case TokenType.UserDefinedWord:
                     {
                         // Retrieve the first variable in the IN/OF chain
-                        var tokenFirstVariable = tokensUntilCursor.TakeWhile(InChain).LastOrDefault();
+                        var tokenFirstVariable = tokensUntilCursor.TakeWhile(t => t.TokenType == TokenType.UserDefinedWord || t.TokenType == TokenType.IN || t.TokenType == TokenType.OF).LastOrDefault();
 
                         completionItems = GetCompletionForOfParent(node, tokenBeforeOf, tokenFirstVariable, compilationUnit.CompilerOptions);
                         break;
-
-                        static bool InChain(Token t)
-                        {
-                            return t.TokenType == TokenType.UserDefinedWord || t.TokenType == TokenType.IN || t.TokenType == TokenType.OF;
-                        }
                     }
             }
 
