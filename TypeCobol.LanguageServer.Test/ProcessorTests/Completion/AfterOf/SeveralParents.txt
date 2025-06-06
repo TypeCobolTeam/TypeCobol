@@ -1,0 +1,70 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest
+       01 MAIN-GROUP1.
+      * should suggest
+          05 SUB-GROUP1.
+             10 VAR1            PIC X.
+      * should suggest
+       01 MAIN-GROUP2.
+          05 VAR1               PIC X.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           MOVE 1 TO VAR1 OF GR
+           GOBACK
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":15,"character":31}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SUB-GROUP1 (Alphanumeric) (MAIN-GROUP1::SUB-GROUP1)",
+    "kind": 6,
+    "insertText": "MAIN-GROUP1::SUB-GROUP1",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 29
+      },
+      "end": {
+        "line": 15,
+        "character": 31
+      }
+    }
+  },
+  {
+    "label": "MAIN-GROUP1 (Alphanumeric) (MAIN-GROUP1)",
+    "kind": 6,
+    "insertText": "MAIN-GROUP1",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 29
+      },
+      "end": {
+        "line": 15,
+        "character": 31
+      }
+    }
+  },
+  {
+    "label": "MAIN-GROUP2 (Alphanumeric) (MAIN-GROUP2)",
+    "kind": 6,
+    "insertText": "MAIN-GROUP2",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 29
+      },
+      "end": {
+        "line": 15,
+        "character": 31
+      }
+    }
+  }
+]

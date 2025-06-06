@@ -5,7 +5,6 @@
       * should suggest: matching parent
        01 SAY-GROUP1.
           05 VAR1               PIC 9.
-      * should suggest but does not (see #2717)
        01 GROUP2-SAY.
           05 VAR1               PIC 9.
        01 GROUP3-SAY-GROUP3.
@@ -30,7 +29,7 @@
 
        END PROGRAM TCOBCOMP.
 ---------------------------------------------------------------------------------
-{"line":18,"character":30}
+{"line":17,"character":30}
 ---------------------------------------------------------------------------------
 [
   {
@@ -39,11 +38,41 @@
     "insertText": "SAY-GROUP1",
     "data": {
       "start": {
-        "line": 18,
+        "line": 17,
         "character": 27
       },
       "end": {
-        "line": 18,
+        "line": 17,
+        "character": 30
+      }
+    }
+  },
+  {
+    "label": "GROUP2-SAY (Alphanumeric) (GROUP2-SAY)",
+    "kind": 6,
+    "insertText": "GROUP2-SAY",
+    "data": {
+      "start": {
+        "line": 17,
+        "character": 27
+      },
+      "end": {
+        "line": 17,
+        "character": 30
+      }
+    }
+  },
+  {
+    "label": "GROUP3-SAY-GROUP3 (Alphanumeric) (GROUP3-SAY-GROUP3)",
+    "kind": 6,
+    "insertText": "GROUP3-SAY-GROUP3",
+    "data": {
+      "start": {
+        "line": 17,
+        "character": 27
+      },
+      "end": {
+        "line": 17,
         "character": 30
       }
     }
