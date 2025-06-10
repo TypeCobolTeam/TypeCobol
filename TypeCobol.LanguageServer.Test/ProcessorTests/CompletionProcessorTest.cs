@@ -65,9 +65,6 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void SimpleCompletionForVariable() => ExecuteTest();
 
         [TestMethod]
-        public void CompletionAfterUnsupportedKeyword() => ExecuteTest();
-
-        [TestMethod]
         public void CompletionAfterUserDefinedWord() => ExecuteTest();
 
         [TestMethod]
@@ -150,6 +147,18 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void AfterTo_SetOf() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_InsideKeyword() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_RightAfterKeyword() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_WithoutUserFilter() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_WithUserFilter() => ExecuteTest();
 
         [TestMethod]
 #if EUROINFO_RULES

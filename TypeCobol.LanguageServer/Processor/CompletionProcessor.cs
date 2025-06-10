@@ -5,8 +5,6 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
-using Range = TypeCobol.LanguageServer.VsCodeProtocol.Range;
-
 namespace TypeCobol.LanguageServer.Processor
 {
     public class CompletionProcessor
@@ -111,8 +109,7 @@ namespace TypeCobol.LanguageServer.Processor
                 //If no known keyword has been found, let's try to get the context.
                 if (matchingCodeElement == null && wrappedCodeElements.Any() && cursorLine != null)
                 {
-                    bool insideProcedureDivision = !(cursorLine.ScanState?.InsideDataDivision ?? false);
-                    if (insideProcedureDivision && position.character >= (int)CobolFormatAreas.End_A && CursorIsAtTheBeginningOfTheLine())
+                    if (ShouldSuggestKeywords())
                     {
                         // Suggest statement-starting keywords
                         items = new CompletionForKeywords(userFilterToken).ComputeProposals(compilationUnit, wrappedCodeElements.First());
@@ -142,7 +139,7 @@ namespace TypeCobol.LanguageServer.Processor
             if (userFilterToken != null)
             {
                 //Add the range object to let the client know the position of the user filter token
-                var range = Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                var range = VsCodeProtocol.Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
                 //-1 on line to 0 based / +1 on stop index to include the last character
                 items.ForEach(c =>
                 {
@@ -156,8 +153,14 @@ namespace TypeCobol.LanguageServer.Processor
             return items;
 
             // Check what is before cursor, also set userFilterToken when possible
-            bool CursorIsAtTheBeginningOfTheLine()
+            bool ShouldSuggestKeywords()
             {
+                // Inside PROCEDURE DIVISION ?
+                if (cursorLine.ScanState?.InsideDataDivision ?? false) return false;
+
+                // In AreaB ?
+                if (position.character < (int)CobolFormatAreas.End_A) return false;
+
                 var tokensBeforeCursor = cursorLine.SourceTokens.Where(t => t.StartIndex < position.character && t.TokenType != TokenType.SpaceSeparator).ToList();
 
                 if (tokensBeforeCursor.Count == 0)
@@ -169,9 +172,9 @@ namespace TypeCobol.LanguageServer.Processor
 
                 if (tokensBeforeCursor.Count == 1)
                 {
-                    // Check whether token ends before or after cursor and keep as userFilterToken if it is a UserDefinedWord
+                    // A single token is on the line, use it as filter. More often than not it is a UserDefinedWord or keyword so it will work...
                     var tokenBeforeCursor = tokensBeforeCursor[0];
-                    userFilterToken = tokenBeforeCursor.TokenType == TokenType.UserDefinedWord ? tokenBeforeCursor : null;
+                    userFilterToken = tokenBeforeCursor;
                     return position.character <= tokenBeforeCursor.StopIndex + 1;
                 }
 
