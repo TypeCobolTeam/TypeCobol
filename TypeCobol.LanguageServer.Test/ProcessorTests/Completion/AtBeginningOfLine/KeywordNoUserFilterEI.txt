@@ -143,15 +143,19 @@
     "kind": 14
   },
   {
-    "label": "EXIT METHOD ",
+    "label": "EXIT PARAGRAPH ",
     "kind": 14
   },
   {
-    "label": "EXIT PROCEDURE ",
+    "label": "EXIT PERFORM ",
     "kind": 14
   },
   {
     "label": "EXIT PROGRAM ",
+    "kind": 14
+  },
+  {
+    "label": "EXIT SECTION ",
     "kind": 14
   },
   {

@@ -113,7 +113,7 @@ namespace TypeCobol.LanguageServer
                 string keyword = TokenUtils.GetTokenStringFromTokenType(keywordType) + ' ';
                 string[] variants = keywordType switch
                 {
-                    TokenType.EXIT => [keyword, $"{keyword}METHOD ", $"{keyword}PROCEDURE ", $"{keyword}PROGRAM "],
+                    TokenType.EXIT => [keyword, $"{keyword}PARAGRAPH ", $"{keyword}PERFORM ", $"{keyword}PROGRAM ", $"{keyword}SECTION "],
                     TokenType.JSON => [$"{keyword}GENERATE ", $"{keyword}PARSE "],
                     TokenType.XML => [$"{keyword}GENERATE ", $"{keyword}PARSE "],
                     _ => null
