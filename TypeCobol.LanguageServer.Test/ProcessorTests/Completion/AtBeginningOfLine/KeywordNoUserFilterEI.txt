@@ -15,219 +15,239 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "ACCEPT",
+    "label": "ACCEPT ",
     "kind": 14
   },
   {
-    "label": "ADD",
+    "label": "ADD ",
     "kind": 14
   },
   {
-    "label": "CALL",
+    "label": "CALL ",
     "kind": 14
   },
   {
-    "label": "CLOSE",
+    "label": "CLOSE ",
     "kind": 14
   },
   {
-    "label": "COMPUTE",
+    "label": "COMPUTE ",
     "kind": 14
   },
   {
-    "label": "CONTINUE",
+    "label": "CONTINUE ",
     "kind": 14
   },
   {
-    "label": "DELETE",
+    "label": "DELETE ",
     "kind": 14
   },
   {
-    "label": "DISPLAY",
+    "label": "DISPLAY ",
     "kind": 14
   },
   {
-    "label": "DIVIDE",
+    "label": "DIVIDE ",
     "kind": 14
   },
   {
-    "label": "ELSE",
+    "label": "ELSE ",
     "kind": 14
   },
   {
-    "label": "END-ADD",
+    "label": "END-ADD ",
     "kind": 14
   },
   {
-    "label": "END-CALL",
+    "label": "END-CALL ",
     "kind": 14
   },
   {
-    "label": "END-COMPUTE",
+    "label": "END-COMPUTE ",
     "kind": 14
   },
   {
-    "label": "END-DELETE",
+    "label": "END-DELETE ",
     "kind": 14
   },
   {
-    "label": "END-DIVIDE",
+    "label": "END-DIVIDE ",
     "kind": 14
   },
   {
-    "label": "END-EVALUATE",
+    "label": "END-EVALUATE ",
     "kind": 14
   },
   {
-    "label": "END-IF",
+    "label": "END-IF ",
     "kind": 14
   },
   {
-    "label": "END-JSON",
+    "label": "END-JSON ",
     "kind": 14
   },
   {
-    "label": "END-MULTIPLY",
+    "label": "END-MULTIPLY ",
     "kind": 14
   },
   {
-    "label": "END-PERFORM",
+    "label": "END-PERFORM ",
     "kind": 14
   },
   {
-    "label": "END-READ",
+    "label": "END-READ ",
     "kind": 14
   },
   {
-    "label": "END-RETURN",
+    "label": "END-RETURN ",
     "kind": 14
   },
   {
-    "label": "END-REWRITE",
+    "label": "END-REWRITE ",
     "kind": 14
   },
   {
-    "label": "END-SEARCH",
+    "label": "END-SEARCH ",
     "kind": 14
   },
   {
-    "label": "END-START",
+    "label": "END-START ",
     "kind": 14
   },
   {
-    "label": "END-STRING",
+    "label": "END-STRING ",
     "kind": 14
   },
   {
-    "label": "END-SUBTRACT",
+    "label": "END-SUBTRACT ",
     "kind": 14
   },
   {
-    "label": "END-UNSTRING",
+    "label": "END-UNSTRING ",
     "kind": 14
   },
   {
-    "label": "END-WRITE",
+    "label": "END-WRITE ",
     "kind": 14
   },
   {
-    "label": "END-XML",
+    "label": "END-XML ",
     "kind": 14
   },
   {
-    "label": "EVALUATE",
+    "label": "EVALUATE ",
     "kind": 14
   },
   {
-    "label": "EXIT",
+    "label": "EXIT ",
     "kind": 14
   },
   {
-    "label": "GOBACK",
+    "label": "EXIT METHOD ",
     "kind": 14
   },
   {
-    "label": "IF",
+    "label": "EXIT PROCEDURE ",
     "kind": 14
   },
   {
-    "label": "INITIALIZE",
+    "label": "EXIT PROGRAM ",
     "kind": 14
   },
   {
-    "label": "INSPECT",
+    "label": "GOBACK ",
     "kind": 14
   },
   {
-    "label": "JSON",
+    "label": "IF ",
     "kind": 14
   },
   {
-    "label": "MOVE",
+    "label": "INITIALIZE ",
     "kind": 14
   },
   {
-    "label": "MULTIPLY",
+    "label": "INSPECT ",
     "kind": 14
   },
   {
-    "label": "OPEN",
+    "label": "JSON GENERATE ",
     "kind": 14
   },
   {
-    "label": "PERFORM",
+    "label": "JSON PARSE ",
     "kind": 14
   },
   {
-    "label": "READ",
+    "label": "MOVE ",
     "kind": 14
   },
   {
-    "label": "RETURN",
+    "label": "MULTIPLY ",
     "kind": 14
   },
   {
-    "label": "REWRITE",
+    "label": "OPEN ",
     "kind": 14
   },
   {
-    "label": "SEARCH",
+    "label": "PERFORM ",
     "kind": 14
   },
   {
-    "label": "SET",
+    "label": "READ ",
     "kind": 14
   },
   {
-    "label": "SORT",
+    "label": "RETURN ",
     "kind": 14
   },
   {
-    "label": "START",
+    "label": "REWRITE ",
     "kind": 14
   },
   {
-    "label": "STRING",
+    "label": "SEARCH ",
     "kind": 14
   },
   {
-    "label": "SUBTRACT",
+    "label": "SET ",
     "kind": 14
   },
   {
-    "label": "UNSTRING",
+    "label": "SORT ",
     "kind": 14
   },
   {
-    "label": "WHEN",
+    "label": "START ",
     "kind": 14
   },
   {
-    "label": "WRITE",
+    "label": "STRING ",
     "kind": 14
   },
   {
-    "label": "XML",
+    "label": "SUBTRACT ",
+    "kind": 14
+  },
+  {
+    "label": "UNSTRING ",
+    "kind": 14
+  },
+  {
+    "label": "WHEN ",
+    "kind": 14
+  },
+  {
+    "label": "WRITE ",
+    "kind": 14
+  },
+  {
+    "label": "XML GENERATE ",
+    "kind": 14
+  },
+  {
+    "label": "XML PARSE ",
     "kind": 14
   }
 ]

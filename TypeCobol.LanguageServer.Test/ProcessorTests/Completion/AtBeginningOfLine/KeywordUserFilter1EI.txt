@@ -15,7 +15,7 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SEARCH",
+    "label": "SEARCH ",
     "kind": 14,
     "data": {
       "start": {
@@ -29,7 +29,7 @@
     }
   },
   {
-    "label": "SET",
+    "label": "SET ",
     "kind": 14,
     "data": {
       "start": {
@@ -43,7 +43,7 @@
     }
   },
   {
-    "label": "SORT",
+    "label": "SORT ",
     "kind": 14,
     "data": {
       "start": {
@@ -57,7 +57,7 @@
     }
   },
   {
-    "label": "START",
+    "label": "START ",
     "kind": 14,
     "data": {
       "start": {
@@ -71,7 +71,7 @@
     }
   },
   {
-    "label": "STRING",
+    "label": "STRING ",
     "kind": 14,
     "data": {
       "start": {
@@ -85,7 +85,7 @@
     }
   },
   {
-    "label": "SUBTRACT",
+    "label": "SUBTRACT ",
     "kind": 14,
     "data": {
       "start": {

@@ -10,95 +10,118 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Hard-coded statement-starting keywords. The list is adapted for EI context
         /// as some statements are discouraged in EI environment.
+        /// Keys of the dictionary are keyword strings, each associated with an array of variations
+        /// of this keyword when it may be followed by other keywords. If the keyword is meant to
+        /// be used alone, the variation array is null.
         /// </summary>
-        private static TokenType[] _StatementStartingKeywords = new[]
+        private static Dictionary<string, string[]> _KeywordSuggestions;
+
+        static CompletionForKeywords()
         {
-            TokenType.ACCEPT,
-            TokenType.ADD,
+            _KeywordSuggestions = new Dictionary<string, string[]>();
+            TokenType[] statementStartingKeywords = new[]
+            {
+                TokenType.ACCEPT,
+                TokenType.ADD,
 #if !EUROINFO_RULES
-            TokenType.ALLOCATE,
-            TokenType.ALTER,
+                TokenType.ALLOCATE,
+                TokenType.ALTER,
 #endif
-            TokenType.CALL,
+                TokenType.CALL,
 #if !EUROINFO_RULES
-            TokenType.CANCEL,
+                TokenType.CANCEL,
 #endif
-            TokenType.CLOSE,
-            TokenType.COMPUTE,
-            TokenType.CONTINUE,
-            TokenType.DELETE,
-            TokenType.DISPLAY,
-            TokenType.DIVIDE,
-            TokenType.ELSE,
-            TokenType.END_ADD,
-            TokenType.END_CALL,
-            TokenType.END_COMPUTE,
-            TokenType.END_DELETE,
-            TokenType.END_DIVIDE,
-            TokenType.END_EVALUATE,
-            TokenType.END_IF,
+                TokenType.CLOSE,
+                TokenType.COMPUTE,
+                TokenType.CONTINUE,
+                TokenType.DELETE,
+                TokenType.DISPLAY,
+                TokenType.DIVIDE,
+                TokenType.ELSE,
+                TokenType.END_ADD,
+                TokenType.END_CALL,
+                TokenType.END_COMPUTE,
+                TokenType.END_DELETE,
+                TokenType.END_DIVIDE,
+                TokenType.END_EVALUATE,
+                TokenType.END_IF,
 #if !EUROINFO_RULES
-            TokenType.END_INVOKE,
+                TokenType.END_INVOKE,
 #endif
-            TokenType.END_JSON,
-            TokenType.END_MULTIPLY,
-            TokenType.END_PERFORM,
-            TokenType.END_READ,
-            TokenType.END_RETURN,
-            TokenType.END_REWRITE,
-            TokenType.END_SEARCH,
-            TokenType.END_START,
-            TokenType.END_STRING,
-            TokenType.END_SUBTRACT,
-            TokenType.END_UNSTRING,
-            TokenType.END_WRITE,
-            TokenType.END_XML,
+                TokenType.END_JSON,
+                TokenType.END_MULTIPLY,
+                TokenType.END_PERFORM,
+                TokenType.END_READ,
+                TokenType.END_RETURN,
+                TokenType.END_REWRITE,
+                TokenType.END_SEARCH,
+                TokenType.END_START,
+                TokenType.END_STRING,
+                TokenType.END_SUBTRACT,
+                TokenType.END_UNSTRING,
+                TokenType.END_WRITE,
+                TokenType.END_XML,
 #if !EUROINFO_RULES
-            TokenType.ENTRY,
+                TokenType.ENTRY,
 #endif
-            TokenType.EVALUATE,
-            TokenType.EXIT,
+                TokenType.EVALUATE,
+                TokenType.EXIT,
 #if !EUROINFO_RULES
-            TokenType.FREE,
+                TokenType.FREE,
 #endif
-            TokenType.GOBACK,
+                TokenType.GOBACK,
 #if !EUROINFO_RULES
-            TokenType.GO,
+                TokenType.GO,
 #endif
-            TokenType.IF,
-            TokenType.INITIALIZE,
-            TokenType.INSPECT,
+                TokenType.IF,
+                TokenType.INITIALIZE,
+                TokenType.INSPECT,
 #if !EUROINFO_RULES
-            TokenType.INVOKE,
+                TokenType.INVOKE,
 #endif
-            TokenType.JSON,
+                TokenType.JSON,
 #if !EUROINFO_RULES
-            TokenType.MERGE,
+                TokenType.MERGE,
 #endif
-            TokenType.MOVE,
-            TokenType.MULTIPLY,
-            TokenType.OPEN,
-            TokenType.PERFORM,
-            TokenType.READ,
+                TokenType.MOVE,
+                TokenType.MULTIPLY,
+                TokenType.OPEN,
+                TokenType.PERFORM,
+                TokenType.READ,
 #if !EUROINFO_RULES
-            TokenType.RELEASE,
+                TokenType.RELEASE,
 #endif
-            TokenType.RETURN,
-            TokenType.REWRITE,
-            TokenType.SEARCH,
-            TokenType.SET,
-            TokenType.SORT,
-            TokenType.START,
+                TokenType.RETURN,
+                TokenType.REWRITE,
+                TokenType.SEARCH,
+                TokenType.SET,
+                TokenType.SORT,
+                TokenType.START,
 #if !EUROINFO_RULES
-            TokenType.STOP,
+                TokenType.STOP,
 #endif
-            TokenType.STRING,
-            TokenType.SUBTRACT,
-            TokenType.UNSTRING,
-            TokenType.WHEN,
-            TokenType.WRITE,
-            TokenType.XML
-        };
+                TokenType.STRING,
+                TokenType.SUBTRACT,
+                TokenType.UNSTRING,
+                TokenType.WHEN,
+                TokenType.WRITE,
+                TokenType.XML
+            };
+
+            foreach (var keywordType in statementStartingKeywords)
+            {
+                string keyword = TokenUtils.GetTokenStringFromTokenType(keywordType) + ' ';
+                string[] variants = keywordType switch
+                {
+                    TokenType.EXIT => [keyword, $"{keyword}METHOD ", $"{keyword}PROCEDURE ", $"{keyword}PROGRAM "],
+                    TokenType.JSON => [$"{keyword}GENERATE ", $"{keyword}PARSE "],
+                    TokenType.XML => [$"{keyword}GENERATE ", $"{keyword}PARSE "],
+                    _ => null
+                };
+
+                _KeywordSuggestions.Add(keyword, variants);
+            }
+        }
 
         public CompletionForKeywords(Token userFilterToken)
             : base(userFilterToken)
@@ -108,11 +131,27 @@ namespace TypeCobol.LanguageServer
 
         public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            return _StatementStartingKeywords
-                .Select(TokenUtils.GetTokenStringFromTokenType)
-                .Where(t => t.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase))
-                .Select(t => new CompletionItem() { label = t, kind = CompletionItemKind.Keyword })
-                .ToList();
+            var results = new List<CompletionItem>();
+            foreach (var keywordSuggestion in _KeywordSuggestions)
+            {
+                if (!keywordSuggestion.Key.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase)) continue;
+
+                if (keywordSuggestion.Value != null)
+                {
+                    foreach (var variant in keywordSuggestion.Value)
+                    {
+                        Add(variant);
+                    }
+                }
+                else
+                {
+                    Add(keywordSuggestion.Key);
+                }
+            }
+
+            return results;
+
+            void Add(string v) => results.Add(new CompletionItem() { label = v, kind = CompletionItemKind.Keyword });
         }
     }
 }
