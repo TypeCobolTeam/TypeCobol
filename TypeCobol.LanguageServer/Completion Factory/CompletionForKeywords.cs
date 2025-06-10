@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler;
+﻿using System.Diagnostics;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -110,13 +111,15 @@ namespace TypeCobol.LanguageServer
 
             foreach (var keywordType in statementStartingKeywords)
             {
-                string keyword = TokenUtils.GetTokenStringFromTokenType(keywordType) + ' ';
+                string keyword = TokenUtils.GetTokenStringFromTokenType(keywordType);
+                Debug.Assert(keyword != null);
+
                 string[] variants = keywordType switch
                 {
-                    TokenType.EXIT => [keyword, $"{keyword}PARAGRAPH ", $"{keyword}PERFORM ", $"{keyword}PROGRAM ", $"{keyword}SECTION "],
-                    TokenType.JSON => [$"{keyword}GENERATE ", $"{keyword}PARSE "],
-                    TokenType.XML => [$"{keyword}GENERATE ", $"{keyword}PARSE "],
-                    _ => null
+                    TokenType.EXIT => [$"{keyword} ", $"{keyword} PARAGRAPH ", $"{keyword} PERFORM ", $"{keyword} PROGRAM ", $"{keyword} SECTION "],
+                    TokenType.JSON => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
+                    TokenType.XML => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
+                    _ => [$"{keyword} "] // Add a trailing space so it will be included in insertText
                 };
 
                 _KeywordSuggestions.Add(keyword, variants);
@@ -131,27 +134,11 @@ namespace TypeCobol.LanguageServer
 
         public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            var results = new List<CompletionItem>();
-            foreach (var keywordSuggestion in _KeywordSuggestions)
-            {
-                if (!keywordSuggestion.Key.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase)) continue;
-
-                if (keywordSuggestion.Value != null)
-                {
-                    foreach (var variant in keywordSuggestion.Value)
-                    {
-                        Add(variant);
-                    }
-                }
-                else
-                {
-                    Add(keywordSuggestion.Key);
-                }
-            }
-
-            return results;
-
-            void Add(string v) => results.Add(new CompletionItem() { label = v, kind = CompletionItemKind.Keyword });
+            return _KeywordSuggestions
+                .Where(suggestion => suggestion.Key.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(suggestion => suggestion.Value)
+                .Select(suggestionText => new CompletionItem() { label = suggestionText, kind = CompletionItemKind.Keyword })
+                .ToList();
         }
     }
 }
