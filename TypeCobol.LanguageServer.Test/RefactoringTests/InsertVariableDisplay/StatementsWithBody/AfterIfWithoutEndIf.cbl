@@ -13,7 +13,7 @@
               DISPLAY var2
            ELSE
               DISPLAY var3
-           DISPLAY "mislaeading indent"
+           DISPLAY "misleading indent"
            GOBACK
            .
        END PROGRAM TCOMFL06.
@@ -52,7 +52,7 @@ refactoring.source=
               DISPLAY var2
            ELSE
               DISPLAY var3
-           DISPLAY "mislaeading indent"
+           DISPLAY "misleading indent"
            GOBACK
       *<DBG>InsertVariableDisplay 1959/09/18 11:09 TESTUSER
       D    DISPLAY 'group1'
