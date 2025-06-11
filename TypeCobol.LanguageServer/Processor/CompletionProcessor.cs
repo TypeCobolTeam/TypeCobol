@@ -166,8 +166,6 @@ namespace TypeCobol.LanguageServer.Processor
                  * Moreover the flag is not updated when editing lines, its value depends on the state
                  * when the line was parsed initially.
                  */
-                // 
-                // 
                 if (cursorLine.ScanState?.InsideDataDivision ?? false) return false;
 
                 // In AreaB ?
