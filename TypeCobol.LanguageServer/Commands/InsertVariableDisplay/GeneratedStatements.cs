@@ -482,4 +482,34 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             builder.AppendWord("END-IF");
         }
     }
+
+    /// <summary>
+    /// Class to write a simple DISPLAY statement for a separator literal.
+    /// The separator is made of repeated '-' characters and starts with
+    /// indentation defined by given logical level.
+    /// </summary>
+    internal class GeneratedDisplaySeparator : GeneratedStatement
+    {
+        private const int SYSOUT_LINE_LENGTH = 120;
+
+        private readonly int _logicalLevel;
+
+        public GeneratedDisplaySeparator(int logicalLevel)
+            : base(true)
+        {
+            _logicalLevel = logicalLevel;
+        }
+
+        protected override void WriteStatementOpening(CobolStringBuilder builder)
+        {
+            string separator = new string(' ', 2 * _logicalLevel).PadRight(SYSOUT_LINE_LENGTH, '-');
+            builder.AppendWord("DISPLAY");
+            builder.AppendLiteralForDisplay(separator);
+        }
+
+        protected override void WriteStatementEnd(CobolStringBuilder builder)
+        {
+            throw new InvalidOperationException("DISPLAY statement is not composite.");
+        }
+    }
 }

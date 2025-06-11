@@ -59,6 +59,9 @@ refactoring.source=
       D        (Idx-d4df4249-1) '>'
       D        DISPLAY '    var2 (' Idx-d4df4249-1 ') <' var2
       D        (Idx-d4df4249-1) '>'
+      D        DISPLAY '    -------------------------------------------'
+      D                '-----------------------------------------------'
+      D                '--------------------------'
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-1" because its DEPENDI'
