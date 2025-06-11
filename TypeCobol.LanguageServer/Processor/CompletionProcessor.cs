@@ -155,7 +155,19 @@ namespace TypeCobol.LanguageServer.Processor
             // Check what is before cursor, also set userFilterToken when possible
             bool ShouldSuggestKeywords()
             {
-                // Inside PROCEDURE DIVISION ?
+                /*
+                 * Inside PROCEDURE DIVISION ?
+                 *
+                 * Using the scan state InsideDataDivision flag is imprecise as this flag only tracks
+                 * the encounter of 'DATA DIVISION' and 'PROCEDURE DIVISION' headers. Assuming being
+                 * inside PROCEDURE DIVISION when the flag is false is incorrect as we could be located
+                 * in ENVIRONMENT DIVISION.
+                 *
+                 * Moreover the flag is not updated when editing lines, its value depends on the state
+                 * when the line was parsed initially.
+                 */
+                // 
+                // 
                 if (cursorLine.ScanState?.InsideDataDivision ?? false) return false;
 
                 // In AreaB ?
