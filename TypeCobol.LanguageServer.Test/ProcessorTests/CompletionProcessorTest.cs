@@ -92,16 +92,22 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterMove_NamesUsingUnderscores() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_IfAddress() => ExecuteTest();
+        public void AfterOf_Chain1() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_Multiple() => ExecuteTest();
+        public void AfterOf_Chain2() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_IfAddress() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_NoResult() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_SetAddress() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_SeveralParents() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_Variable() => ExecuteTest();
